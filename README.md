@@ -21,7 +21,7 @@
 <div align="center">
 	<a href="https://www.landigit.com/auditbooks">Website</a>
 	-
-	<a href="https://docs.www.landigit.com/auditbooks">Documentation</a>
+	<a href="https://docs.landigit.com/auditbooks">Documentation</a>
 </div>
 
 ## AuditBooks
@@ -41,7 +41,7 @@ AuditBooks is an open-source accounting software aimed at simplifying financial 
 
 ### Motivation
 
-AuditBooks is an evolution of AuditBooks, transformed into a premium standalone web application. It combines high-performance cloud persistence with a stunning, modern UI designed for professional accounting.
+AuditBooks is an evolution of Frappe Books, transformed into a premium standalone web application. It combines high-performance cloud persistence with a stunning, modern UI designed for professional accounting.
 
 ### Key Features
 
