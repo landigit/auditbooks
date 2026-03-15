@@ -150,8 +150,17 @@ async function packageApp() {
     .command(['build', '*'], 'Build', configureBuildCommand)
     .parse();
 
-  for (const opt of ['nosign', 'nopackage']) {
+  for (const opt of ['nosign', 'nopackage', '_', '$0']) {
     delete builderArgs[opt];
+  }
+
+  // Filter out single character options which are usually typos like -x64
+  // but keep legitimate aliases like -w, -m, -l, -p, -c
+  const legitimateAliases = new Set(['w', 'm', 'l', 'p', 'c']);
+  for (const opt of Object.keys(builderArgs)) {
+    if (opt.length === 1 && !legitimateAliases.has(opt)) {
+      delete builderArgs[opt];
+    }
   }
 
   let buildOptions = {

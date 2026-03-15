@@ -35,7 +35,7 @@ console.log(`running AuditBooks in dev mode\nroot: ${root}`);
 /**
  * @type {import('execa').ExecaChildProcess<string>}
  */
-const viteProcess = $$`yarn vite`;
+const viteProcess = $$`bun x vite`;
 /**
  * Create esbuild context that is used
  * to [re]build the main process code
