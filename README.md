@@ -5,13 +5,12 @@
 
 <br/>
 
-<h1>Frappe Books</h1>
+<h1>AuditBooks</h1>
 
-**Modern Accounting Made Simple**
+**The Premium Standalone Web App for Modern Accounting**
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/frappe/books)](https://github.com/frappe/books/releases)
-![Platforms](https://img.shields.io/badge/platform-mac%2C%20windows%2C%20linux-yellowgreen)
-[![Publish](https://github.com/frappe/books/actions/workflows/publish.yml/badge.svg)](https://github.com/frappe/books/actions/workflows/publish.yml)
+[![GitHub release](https://img.shields.io/badge/release-v0.36.1--standalone-blue)](https://github.com/landigit/auditbooks)
+![Platforms](https://img.shields.io/badge/platform-web%20%7C%20pwa%20%7C%20linux-indigo)
 
 </div>
 
@@ -42,25 +41,16 @@ Frappe Books is an open-source accounting software aimed at simplifying financia
 
 ### Motivation
 
-Frappe Books addresses a market gap where small businesses face expensive, complex accounting tools. It offers an intuitive, open-source solution that combines simplicity with essential features, empowering businesses to manage finances effectively—even offline.
+AuditBooks is an evolution of Frappe Books, transformed into a premium standalone web application. It combines high-performance cloud persistence with a stunning, modern UI designed for professional accounting.
 
 ### Key Features
 
-- **Dashboard**: Provides an overview of key financial data and performance metrics.
-- **Point of Sale**: Simplifies retail transactions with an integrated POS system for easy sales processing.
-- **Works Offline**: Enables users to continue working without an internet connection and sync later.
-- **Double-entry accounting**: Ensures accurate financial tracking by recording each transaction in two accounts.
-- **Entries**
-  - **Invoicing**: Allows businesses to create and manage professional invoices effortlessly.
-  - **Billing**: Billing processes by generating bills and tracking payments.
-  - **Payments**: Records and tracks payments received and made.
-  - **Journal Entries**: Records financial transactions in the general ledger with detailed notes and adjustments.
-- **Financial Reports**
-  - **General Ledger**: Centralized record of all financial transactions, providing a comprehensive view of accounts.
-  - **Profit and Loss Statement**: Summarizes revenues, costs, and expenses to show business profitability.
-  - **Balance Sheet**: Displays a company’s assets, liabilities, and equity at a specific point in time.
-  - **Trial Balance**: Verifies the accuracy of accounting records by ensuring that debits and credits are balanced.
-    <br/>
+- **Premium UI**: Modern aesthetics featuring gradients, glassmorphism, and micro-animations.
+- **Deno KV Backend**: High-performance persistence powered by Deno KV for seamless data management.
+- **Standalone Web App (PWA)**: Fully installable as a PWA with offline resilience and mobile optimization.
+- **Independent Ecosystem**: Completely decoupled from the original source for exclusive development and deployment.
+- **Double-entry accounting**: Core accounting integrity maintained with a "Zero-Touch" layer.
+- **Financial Reports**: Real-time General Ledger, P&L, Balance Sheet, and Trial Balance.
 
 ### Under the Hood
 
