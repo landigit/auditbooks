@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "frappe-books",
+      "name": "auditbooks",
       "dependencies": {
         "@codemirror/autocomplete": "^6.4.2",
         "@codemirror/lang-vue": "^0.1.1",

@@ -1,7 +1,7 @@
 <div align="center" markdown="1">
 <br/>
 
-<img src="https://frappe.io/files/books.png" alt="Frappe Books logo" width="80"/>
+<img src="https://www.landigit.com/files/books.png" alt="AuditBooks logo" width="80"/>
 
 <br/>
 
@@ -15,18 +15,18 @@
 </div>
 
 <div align="center">
-<img src="https://user-images.githubusercontent.com/29507195/207267857-4ae48890-3fb2-4046-80cf-3256b46c72a0.png" alt="Frappe Books Preview"/>
+<img src="https://user-images.githubusercontent.com/29507195/207267857-4ae48890-3fb2-4046-80cf-3256b46c72a0.png" alt="AuditBooks Preview"/>
 </div>
 <br />
 <div align="center">
-	<a href="https://frappe.io/books">Website</a>
+	<a href="https://www.landigit.com/auditbooks">Website</a>
 	-
-	<a href="https://docs.frappe.io/books">Documentation</a>
+	<a href="https://docs.www.landigit.com/auditbooks">Documentation</a>
 </div>
 
-## Frappe Books
+## AuditBooks
 
-Frappe Books is an open-source accounting software aimed at simplifying financial management for businesses. With its clean and user-friendly interface, it streamlines accounting tasks for small and medium-sized enterprises, offering a seamless solution for modern businesses to manage their finances with ease.
+AuditBooks is an open-source accounting software aimed at simplifying financial management for businesses. With its clean and user-friendly interface, it streamlines accounting tasks for small and medium-sized enterprises, offering a seamless solution for modern businesses to manage their finances with ease.
 
 <details>
 <summary>Screenshots</summary>
@@ -41,7 +41,7 @@ Frappe Books is an open-source accounting software aimed at simplifying financia
 
 ### Motivation
 
-AuditBooks is an evolution of Frappe Books, transformed into a premium standalone web application. It combines high-performance cloud persistence with a stunning, modern UI designed for professional accounting.
+AuditBooks is an evolution of AuditBooks, transformed into a premium standalone web application. It combines high-performance cloud persistence with a stunning, modern UI designed for professional accounting.
 
 ### Key Features
 
@@ -54,11 +54,11 @@ AuditBooks is an evolution of Frappe Books, transformed into a premium standalon
 
 ### Under the Hood
 
-- **Vue.js**: In Frappe Books, Vue.js powers the front-end, enabling a reactive and component-based UI. It ensures seamless interactions and dynamic updates, giving users a modern, responsive experience.
+- **Vue.js**: In AuditBooks, Vue.js powers the front-end, enabling a reactive and component-based UI. It ensures seamless interactions and dynamic updates, giving users a modern, responsive experience.
 
-- **Electron**: Electron is used to package Frappe Books as a standalone desktop application, allowing it to run offline and provide a native-like experience across Windows, macOS, and Linux.
+- **Electron**: Electron is used to package AuditBooks as a standalone desktop application, allowing it to run offline and provide a native-like experience across Windows, macOS, and Linux.
 
-- **SQLite**: Frappe Books uses SQLite as its local database. All financial data, transactions, and configurations are stored securely in an SQLite file on the user's machine.
+- **SQLite**: AuditBooks uses SQLite as its local database. All financial data, transactions, and configurations are stored securely in an SQLite file on the user's machine.
 
 ## Production Setup
 
@@ -70,7 +70,7 @@ page](https://github.com/frappe/books/releases) .
 ### Using Homebrew (for MacOS and Linux)
 
 ```zsh
-brew install --cask frappe-books
+brew install --cask auditbooks
 ```
 
 ### Via Flatpak (Linux)
@@ -91,7 +91,7 @@ Next, you will need to install [yarn](https://classic.yarnpkg.com/lang/en/docs/i
 ### Clone and Run
 
 Once you are through the Pre-requisites, you can run the following commands to
-setup Frappe Books for development and building:
+setup AuditBooks for development and building:
 
 ```bash
 # clone the repository
@@ -104,7 +104,7 @@ cd books
 yarn
 ```
 
-To run Frappe Books in development mode (with hot reload, etc):
+To run AuditBooks in development mode (with hot reload, etc):
 
 ```bash
 # start the electron app
@@ -122,13 +122,13 @@ sent.
 
 When in dev mode electron runs with the `--inspect` flag which allows an
 external debugger to connect to port 5858. You can use chrome for this by
-visiting `chrome://inspect` while Frappe Books is running in dev mode.
+visiting `chrome://inspect` while AuditBooks is running in dev mode.
 
 See more [here](https://www.electronjs.org/docs/latest/tutorial/debugging-main-process#external-debuggers).
 
 #### Build
 
-To build Frappe Books and create an installer:
+To build AuditBooks and create an installer:
 
 ```bash
 # start the electron app
@@ -145,7 +145,7 @@ So to build for linux you could use the `--linux` flag like so: `yarn build --li
 
 ## Want to Just Try Out or Contribute?
 
-If you want to contribute to Frappe Books, please check our [Contribution Guidelines](https://github.com/frappe/books/blob/master/.github/CONTRIBUTING.md). There are many ways you can contribute even if you don't code:
+If you want to contribute to AuditBooks, please check our [Contribution Guidelines](https://github.com/frappe/books/blob/master/.github/CONTRIBUTING.md). There are many ways you can contribute even if you don't code:
 
 1. If you find any issues, no matter how small (even typos), you can [raise an issue](https://github.com/frappe/books/issues/new) to inform us.
 2. You can help us with language support by [contributing translations](https://github.com/frappe/books/wiki/Contributing-Translations).
@@ -178,6 +178,6 @@ If you want to contribute code then you can fork this repo, make changes and rai
 
 ## Learn and connect
 
-- [Telegram Group](https://t.me/frappebooks): Used for discussions and decisions regarding everything Frappe Books.
+- [Telegram Group](https://t.me/frappebooks): Used for discussions and decisions regarding everything AuditBooks.
 - [GitHub Discussions](https://github.com/frappe/books/discussions): Used for discussions around a specific topic.
-- [Documentation](https://docs.frappe.io/books): Official documentation for more details.
+- [Documentation](https://docs.www.landigit.com/auditbooks): Official documentation for more details.
