@@ -6,9 +6,9 @@ Since it's an electron project, there are two points from where the execution
 begins.
 
 1. **Main Process**: Think of this as the _server_, the file where this beings
-   is `books/main.ts`
+   is `main.ts`
 2. **Renderer Process**: Think of this as the _client_, the file where this
-   begins is `books/src/main.js`
+   begins is `src/renderer.ts`
 
 _Note: For more insight into how electron execution is structured check out electron's
 [Process Model](https://www.electronjs.org/docs/latest/tutorial/process-model)._
@@ -44,7 +44,7 @@ individual ones, check the `README.md` in those subdirectories:
 
 | Folder         | Side       | Description                                                                                                                |
 | -------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `main`         | _server_   | Electron main process specific code called from `books/main.ts`                                                            |
+| `main`         | _server_   | Electron main process specific code called from `main.ts`                                                                  |
 | `schemas`      | _server_   | Collection of database schemas in a `json` format and the code to combine them                                             |
 | `backend`      | _server_   | Database management and CRUD calls                                                                                         |
 | `scripts`      | _server_   | Code that is not called when the project is running, but separately to run some task for instance to generate translations |

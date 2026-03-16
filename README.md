@@ -1,11 +1,11 @@
 <div align="center" markdown="1">
 <br/>
 
-<img src="https://frappe.io/files/books.png" alt="Frappe Books logo" width="80"/>
+<img src="https://auditbooks.io/files/logo.png" alt="Auditbooks logo" width="80"/>
 
 <br/>
 
-<h1>Frappe Books</h1>
+<h1>Auditbooks</h1>
 
 **Modern Accounting Made Simple**
 
@@ -20,14 +20,14 @@
 </div>
 <br />
 <div align="center">
-	<a href="https://frappe.io/books">Website</a>
+	<a href="https://www.landigit.com">Website</a>
 	-
-	<a href="https://docs.frappe.io/books">Documentation</a>
+	<a href="https://www.landigit.com/auditbooks/docs">Documentation</a>
 </div>
 
-## Frappe Books
+## Auditbooks
 
-Frappe Books is an open-source accounting software aimed at simplifying financial management for businesses. With its clean and user-friendly interface, it streamlines accounting tasks for small and medium-sized enterprises, offering a seamless solution for modern businesses to manage their finances with ease.
+Auditbooks is an open-source accounting software aimed at simplifying financial management for businesses. With its clean and user-friendly interface, it streamlines accounting tasks for small and medium-sized enterprises, offering a seamless solution for modern businesses to manage their finances with ease.
 
 <details>
 <summary>Screenshots</summary>
@@ -42,7 +42,7 @@ Frappe Books is an open-source accounting software aimed at simplifying financia
 
 ### Motivation
 
-Frappe Books addresses a market gap where small businesses face expensive, complex accounting tools. It offers an intuitive, open-source solution that combines simplicity with essential features, empowering businesses to manage finances effectively—even offline.
+Auditbooks addresses a market gap where small businesses face expensive, complex accounting tools. It offers an intuitive, open-source solution that combines simplicity with essential features, empowering businesses to manage finances effectively—even offline.
 
 ### Key Features
 
@@ -64,11 +64,11 @@ Frappe Books addresses a market gap where small businesses face expensive, compl
 
 ### Under the Hood
 
-- **Vue.js**: In Frappe Books, Vue.js powers the front-end, enabling a reactive and component-based UI. It ensures seamless interactions and dynamic updates, giving users a modern, responsive experience.
+- **Vue.js**: In Auditbooks, Vue.js powers the front-end, enabling a reactive and component-based UI. It ensures seamless interactions and dynamic updates, giving users a modern, responsive experience.
 
-- **Electron**: Electron is used to package Frappe Books as a standalone desktop application, allowing it to run offline and provide a native-like experience across Windows, macOS, and Linux.
+- **Electron**: Electron is used to package Auditbooks as a standalone desktop application, allowing it to run offline and provide a native-like experience across Windows, macOS, and Linux.
 
-- **SQLite**: Frappe Books uses SQLite as its local database. All financial data, transactions, and configurations are stored securely in an SQLite file on the user's machine.
+- **SQLite**: Auditbooks uses SQLite as its local database. All financial data, transactions, and configurations are stored securely in an SQLite file on the user's machine.
 
 ## Production Setup
 
@@ -155,10 +155,10 @@ So to build for linux you could use the `--linux` flag like so: `yarn build --li
 
 ## Want to Just Try Out or Contribute?
 
-If you want to contribute to Frappe Books, please check our [Contribution Guidelines](https://github.com/frappe/books/blob/master/.github/CONTRIBUTING.md). There are many ways you can contribute even if you don't code:
+If you want to contribute to Auditbooks, please check our [Contribution Guidelines](https://github.com/auditbooks/auditbooks/blob/master/.github/CONTRIBUTING.md). There are many ways you can contribute even if you don't code:
 
-1. If you find any issues, no matter how small (even typos), you can [raise an issue](https://github.com/frappe/books/issues/new) to inform us.
-2. You can help us with language support by [contributing translations](https://github.com/frappe/books/wiki/Contributing-Translations).
+1. If you find any issues, no matter how small (even typos), you can [raise an issue](https://github.com/auditbooks/auditbooks/issues/new) to inform us.
+2. You can help us with language support by [contributing translations](https://github.com/auditbooks/auditbooks/wiki/Contributing-Translations).
 3. If you're an ardent user you can tell us what you would like to see.
 4. If you have accounting requirements, you can become an ardent user. 🙂
 
