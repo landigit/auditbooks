@@ -357,7 +357,7 @@ export default defineComponent({
   },
   methods: {
     openDocs() {
-      ipc.openLink('https://docs.frappe.io/' + docsPathMap.Search);
+      ipc.openLink('https://www.landigit.com/auditbooks/docs/' + docsPathMap.Search);
     },
     getShortcuts() {
       const ifOpen = (cb: Function) => () => this.openModal && cb();
