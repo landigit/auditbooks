@@ -20,7 +20,7 @@
 </div>
 <br />
 <div align="center">
-	<a href="https://www.landigit.com">Website</a>
+	<a href="https://www.landigit.com/auditbooks">Website</a>
 	-
 	<a href="https://www.landigit.com/auditbooks/docs">Documentation</a>
 </div>
