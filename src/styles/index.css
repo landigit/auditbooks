@@ -87,7 +87,7 @@ input, textarea, [contenteditable="true"], .selectable {
   justify-content: center;
 }
 
-.frappe-chart .chart-legend {
+.auditbooks-chart .chart-legend {
   display: none;
 }
 

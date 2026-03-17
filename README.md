@@ -9,14 +9,14 @@
 
 **Modern Accounting Made Simple**
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/frappe/books)](https://github.com/frappe/books/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/landigit/auditbooks)](https://github.com/landigit/auditbooks/releases)
 ![Platforms](https://img.shields.io/badge/platform-mac%2C%20windows%2C%20linux-yellowgreen)
-[![Publish](https://github.com/frappe/books/actions/workflows/publish.yml/badge.svg)](https://github.com/frappe/books/actions/workflows/publish.yml)
+[![Publish](https://github.com/landigit/auditbooks/actions/workflows/publish.yml/badge.svg)](https://github.com/landigit/auditbooks/actions/workflows/publish.yml)
 
 </div>
 
 <div align="center">
-<img src="https://user-images.githubusercontent.com/29507195/207267857-4ae48890-3fb2-4046-80cf-3256b46c72a0.png" alt="Frappe Books Preview"/>
+<img src="https://user-images.githubusercontent.com/29507195/207267857-4ae48890-3fb2-4046-80cf-3256b46c72a0.png" alt="Auditbooks Preview"/>
 </div>
 <br />
 <div align="center">
@@ -70,25 +70,6 @@ Auditbooks addresses a market gap where small businesses face expensive, complex
 
 - **SQLite**: Auditbooks uses SQLite as its local database. All financial data, transactions, and configurations are stored securely in an SQLite file on the user's machine.
 
-## Production Setup
-
-### Manual
-
-Download and install the latest release for your platform from the [releases
-page](https://github.com/frappe/books/releases) .
-
-### Using Homebrew (for MacOS and Linux)
-
-```zsh
-brew install --cask frappe-books
-```
-
-### Via Flatpak (Linux)
-
-<a href='https://flathub.org/apps/io.frappe.books'>
-    <img width='120' alt='Get it on Flathub' src='https://flathub.org/api/badge?locale=en'/>
-</a>
-
 ## Development Setup
 
 ### Pre-requisites
@@ -105,7 +86,7 @@ setup Frappe Books for development and building:
 
 ```bash
 # clone the repository
-git clone https://github.com/frappe/books.git
+git clone https://github.com/landigit/auditbooks.git
 
 # change directory
 cd books
@@ -188,6 +169,6 @@ If you want to contribute code then you can fork this repo, make changes and rai
 
 ## Learn and connect
 
-- [Telegram Group](https://t.me/frappebooks): Used for discussions and decisions regarding everything Frappe Books.
-- [GitHub Discussions](https://github.com/frappe/books/discussions): Used for discussions around a specific topic.
-- [Documentation](https://docs.frappe.io/books): Official documentation for more details.
+- [Telegram Group](https://t.me/landigit): Used for discussions regarding Auditbooks.
+- [GitHub Discussions](https://github.com/landigit/auditbooks/discussions): Used for discussions around a specific topic.
+- [Documentation](https://www.landigit.com/auditbooks/docs): Official documentation for more details.
