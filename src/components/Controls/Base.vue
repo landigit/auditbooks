@@ -83,7 +83,7 @@ export default defineComponent({
       return 'text';
     },
     labelClasses(): string {
-      return 'text-gray-600 dark:text-gray-500 text-sm mb-1';
+      return 'text-gray-800 dark:text-gray-200 text-sm mb-1';
     },
     inputClasses(): string[] {
       /**
@@ -118,10 +118,10 @@ export default defineComponent({
     },
     inputReadOnlyClasses(): string {
       if (this.isReadOnly) {
-        return 'text-gray-800 dark:text-gray-300 cursor-default';
+        return 'text-gray-900 dark:text-gray-200 cursor-default';
       }
 
-      return 'text-gray-900 dark:text-gray-100';
+      return 'text-black dark:text-white';
     },
     containerClasses(): string[] {
       /**

@@ -149,7 +149,7 @@ export default defineComponent({
       if (this.schemaName === ModelNameEnum.SalesInvoice) {
         return 'blue';
       }
-      return 'green';
+      return 'pink';
     },
     colors(): string {
       return uicolors[this.color][this.darkMode ? '600' : '500'];

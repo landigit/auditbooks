@@ -22,7 +22,7 @@
       <PageHeaderNavGroup />
       <h1
         v-if="title"
-        class="text-xl font-semibold select-none whitespace-nowrap dark:text-white"
+        class="text-xl font-semibold select-none whitespace-nowrap text-black dark:text-white"
       >
         {{ title }}
       </h1>

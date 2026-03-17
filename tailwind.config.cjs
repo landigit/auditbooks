@@ -8,7 +8,7 @@ module.exports = {
   content: ['./src/**/*.{vue,js,ts,jsx,tsx,html}', './templates/**/*.html'],
   theme: {
     fontFamily: {
-      sans: ['Inter', 'sans-serif'],
+      sans: ['Red Hat Text', 'sans-serif'],
     },
     screens: {
       sm: '640px',

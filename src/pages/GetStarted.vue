@@ -102,7 +102,7 @@ export default defineComponent({
   methods: {
     async handleDocumentation({ key, documentation }: ListItem) {
       if (documentation) {
-        ipc.openLink(documentation);
+        window.ipc.openExternalUrl(documentation);
       }
 
       switch (key) {

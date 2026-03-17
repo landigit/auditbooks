@@ -70,7 +70,7 @@ export default defineComponent({
       const colors = [
         {
           positive: uicolors.blue[this.darkMode ? '600' : '500'],
-          negative: uicolors.green[this.darkMode ? '600' : '500'],
+          negative: uicolors.pink[this.darkMode ? '600' : '500'],
         },
       ];
       const format = (value: number) => fyo.format(value ?? 0, 'Currency');

@@ -1,16 +1,14 @@
-@font-face {
-  font-family: 'Inter';
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: oblique 0deg 10deg;
-  src: url('../assets/fonts/Inter.var.woff2') format('woff2');
-}
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
 
 * {
-  outline-color: theme('colors.pink.400');
+  outline-color: theme('colors.green.400');
   font-variation-settings: 'slnt' 0deg;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply text-black dark:text-white;
 }
 .italic {
   font-variation-settings: 'slnt' 10deg;
@@ -23,7 +21,7 @@
 @tailwind utilities;
 
 html {
-  color: theme('colors.black');
+  color: theme('colors.gray.950');
   font-weight: 450;
   letter-spacing: theme('letterSpacing.tighter');
   background-color: #ffffff;
@@ -281,4 +279,29 @@ a,
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    backdrop-filter: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+  }
+
+  .glass {
+    background-color: white !important;
+    backdrop-filter: none !important;
+  }
+
+  .dark .glass {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
 }

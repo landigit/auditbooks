@@ -167,8 +167,8 @@
             <p>↩ {{ t`Select` }}</p>
             <p><span class="tracking-tighter">esc</span> {{ t`Close` }}</p>
             <button
-              class="flex items-center hover:text-gray-800 dark:hover:text-gray-300"
-              @click="openDocs"
+              class="flex items-center text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white"
+              @click="handleOpenDocs"
             >
               <feather-icon name="help-circle" class="w-4 h-4 me-1" />
               {{ t`Help` }}
@@ -321,8 +321,8 @@ export default defineComponent({
     this.shortcuts?.delete(COMPONENT_NAME);
   },
   methods: {
-    openDocs() {
-      ipc.openLink(
+    handleOpenDocs() {
+      window.ipc.openExternalUrl(
         'https://www.landigit.com/auditbooks/docs/' + docsPathMap.Search
       );
     },

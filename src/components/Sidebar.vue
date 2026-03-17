@@ -42,11 +42,11 @@
             :class="isGroupActive(group) && !group.items ? '-ms-1' : ''"
           />
           <div
-            class="ms-2 text-lg text-gray-700"
+            class="ms-2 text-sm font-medium text-gray-950"
             :class="
               isGroupActive(group) && !group.items
-                ? 'text-gray-900 dark:text-gray-25'
-                : 'dark:text-gray-300'
+                ? 'text-black dark:text-white'
+                : 'dark:text-gray-100'
             "
           >
             {{ group.label }}
@@ -61,8 +61,8 @@
             class="text-base h-10 ps-10 cursor-pointer flex items-center hover:bg-gray-100 dark:hover:bg-gray-875"
             :class="
               isItemActive(item)
-                ? 'bg-gray-100 dark:bg-gray-875 text-gray-900 dark:text-gray-100 border-s-4 border-gray-800 dark:border-gray-100'
-                : 'text-gray-700 dark:text-gray-400'
+                ? 'bg-gray-100 dark:bg-gray-875 text-black dark:text-white border-s-4 border-gray-800 dark:border-gray-100'
+                : 'text-gray-800 dark:text-gray-200'
             "
             @click="routeToSidebarItem(item)"
           >
@@ -75,10 +75,10 @@
     </div>
 
     <!-- Report Issue and DB Switcher -->
-    <div class="window-no-drag flex flex-col gap-2 py-2 px-4">
+    <div class="window-no-drag flex flex-col gap-2 py-2 px-4 relative z-50">
       <button
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
-        @click="openDocumentation"
+        class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
+        @click="handleOpenDocumentation"
       >
         <feather-icon name="help-circle" class="h-4 w-4 flex-shrink-0" />
         <p>
@@ -87,7 +87,7 @@
       </button>
 
       <button
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
+        class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
         @click="viewShortcuts = true"
       >
         <feather-icon name="command" class="h-4 w-4 flex-shrink-0" />
@@ -96,7 +96,7 @@
 
       <button
         data-testid="change-db"
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
+        class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
         @click="$emit('change-db-file')"
       >
         <feather-icon name="database" class="h-4 w-4 flex-shrink-0" />
@@ -104,8 +104,8 @@
       </button>
 
       <button
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
-        @click="() => reportIssue()"
+        class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
+        @click="handleReportIssue"
       >
         <feather-icon name="flag" class="h-4 w-4 flex-shrink-0" />
         <p>
@@ -125,8 +125,8 @@
 
     <!-- Hide Sidebar Button -->
     <button
-      class="absolute bottom-0 end-0 text-gray-600 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-875 rounded p-1 m-4 rtl-rotate-180"
-      @click="() => toggleSidebar()"
+      class="absolute bottom-0 end-0 text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-875 rounded p-1 m-4 rtl-rotate-180"
+      @click="toggleSidebar()"
     >
       <feather-icon name="chevrons-left" class="w-4 h-4" />
     </button>
@@ -212,10 +212,12 @@ export default defineComponent({
   },
   methods: {
     routeTo,
-    reportIssue,
+    handleReportIssue() {
+      reportIssue();
+    },
     toggleSidebar,
-    openDocumentation() {
-      ipc.openLink(
+    handleOpenDocumentation() {
+      window.ipc.openExternalUrl(
         'https://www.landigit.com/auditbooks/docs/' + docsPathRef.value
       );
     },
