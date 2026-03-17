@@ -1,13 +1,13 @@
 <template>
   <div
-    class="flex-1 flex justify-center items-center bg-gray-25 dark:bg-gray-900"
+    class="flex-1 flex justify-center items-center bg-white dark:bg-black"
     :class="{
       'pointer-events-none': loadingDatabase,
       'window-drag': platform === 'Mac',
     }"
   >
     <div
-      class="w-full w-form shadow-lg rounded-lg border dark:border-gray-800 relative bg-white dark:bg-gray-875"
+      class="w-full w-form shadow-vercel dark:shadow-vercel-dark rounded-lg border border-gray-100 dark:border-gray-900 relative bg-white dark:bg-black"
       style="height: 700px"
     >
       <!-- Welcome to Auditbooks -->
@@ -105,7 +105,7 @@
           </p>
         </div>
       </div>
-      <hr class="dark:border-gray-800" />
+      <hr class="border-gray-100 dark:border-gray-900" />
 
       <!-- File List -->
       <div class="overflow-y-auto" style="max-height: 340px">
@@ -151,7 +151,7 @@
           </button>
         </div>
       </div>
-      <hr v-if="files?.length" class="dark:border-gray-800" />
+      <hr v-if="files?.length" class="border-gray-100 dark:border-gray-900" />
 
       <!-- Language Selector -->
       <div

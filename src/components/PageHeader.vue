@@ -1,8 +1,8 @@
 <template>
   <div
-    class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 dark:bg-gray-875"
+    class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 glass sticky top-0 z-10"
     :class="[
-      border ? 'border-b dark:border-gray-800' : '',
+      border ? 'border-b border-gray-100 dark:border-gray-900' : '',
       platform === 'Mac' ? 'window-drag' : '',
     ]"
   >

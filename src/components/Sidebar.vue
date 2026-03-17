@@ -1,6 +1,6 @@
 <template>
   <div
-    class="py-2 h-full flex justify-between flex-col bg-gray-25 dark:bg-gray-900 relative"
+    class="py-2 h-full flex justify-between flex-col bg-white dark:bg-black relative border-e border-gray-100 dark:border-gray-900"
     :class="{
       'window-drag': platform === 'Mac',
     }"
@@ -24,10 +24,10 @@
       <!-- Sidebar Items -->
       <div v-for="group in groups" :key="group.label">
         <div
-          class="px-4 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-875 h-10"
+          class="px-4 flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 h-10 transition-colors"
           :class="
             isGroupActive(group) && !group.items
-              ? 'bg-gray-100 dark:bg-gray-875 border-s-4 border-gray-800 dark:border-gray-100'
+              ? 'bg-gray-50 dark:bg-gray-900 border-e-2 border-black dark:border-white'
               : ''
           "
           @click="routeToSidebarItem(group)"

@@ -25,11 +25,13 @@
 html {
   color: theme('colors.black');
   font-weight: 450;
+  letter-spacing: theme('letterSpacing.tighter');
+  background-color: #ffffff;
 }
 
 html.dark {
-  color: theme('colors.black');
-  background-color: theme('colors.gray.900');
+  color: #ffffff;
+  background-color: #000000;
   color-scheme: dark;
 }
 
@@ -89,6 +91,7 @@ input[type='number']::-webkit-inner-spin-button {
   --h-row-large: 3.5rem;
   --h-row-largest: 4rem;
   --h-app: 800px;
+  --blur: saturate(180%) blur(8px);
 }
 
 .backdrop {
@@ -140,6 +143,16 @@ input[type='number']::-webkit-inner-spin-button {
 
 .h-row-largest {
   height: var(--h-row-largest);
+}
+
+.glass {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: var(--blur);
+}
+
+.dark .glass {
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: var(--blur);
 }
 
 .w-sidebar {

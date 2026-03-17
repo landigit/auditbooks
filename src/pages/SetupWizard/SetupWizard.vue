@@ -7,7 +7,7 @@
     <template #body>
       <FormHeader
         :form-title="t`Set up your organization`"
-        class="sticky top-0 bg-white dark:bg-gray-890 border-b dark:border-gray-800"
+        class="sticky top-0 bg-white/90 dark:bg-black/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-900"
       >
       </FormHeader>
 
@@ -23,7 +23,7 @@
           class="p-4"
           :class="
             idx !== 0 && activeGroup.size > 1
-              ? 'border-t dark:border-gray-800'
+              ? 'border-t border-gray-100 dark:border-gray-900'
               : ''
           "
           :show-title="activeGroup.size > 1 && name !== t`Default`"
@@ -38,7 +38,7 @@
 
       <!-- Buttons Bar -->
       <div
-        class="mt-auto p-4 flex items-center justify-between border-t dark:border-gray-800 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-890"
+        class="mt-auto p-4 flex items-center justify-between border-t border-gray-100 dark:border-gray-900 flex-shrink-0 sticky bottom-0 bg-white/90 dark:bg-black/90 backdrop-blur-md"
       >
         <p v-if="loading" class="text-base text-gray-600 dark:text-gray-400">
           {{ t`Loading instance...` }}

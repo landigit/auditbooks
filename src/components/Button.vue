@@ -40,12 +40,9 @@ export default defineComponent({
       return {
         'opacity-50 cursor-not-allowed pointer-events-none': this.disabled,
         'text-white dark:text-black': this.type === 'primary',
-        'bg-black dark:bg-gray-300 dark:font-semibold':
-          this.type === 'primary' && this.background,
-        'text-gray-700 dark:text-gray-200': this.type !== 'primary',
-        'bg-gray-200 dark:bg-gray-900 shadow-sm border border-gray-300/50 dark:border-gray-700/50':
+        'bg-white dark:bg-black text-black dark:text-white border border-gray-200 dark:border-gray-800 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-900':
           this.type !== 'primary' && this.background,
-        'bg-gradient-to-b from-blue-500 to-blue-600 shadow-button active:shadow-none transition-all':
+        'bg-black dark:bg-white text-white dark:text-black border border-black dark:border-white hover:opacity-90 shadow-vercel dark:shadow-vercel-dark':
           this.type === 'primary' && this.background,
         'h-8': this.background,
         'px-3': this.padding && this.icon,
