@@ -145,11 +145,11 @@ export default defineComponent({
     title(): string {
       return fyo.schemaMap[this.schemaName]?.label ?? '';
     },
-    color(): 'blue' | 'pink' {
+    color(): 'blue' | 'green' {
       if (this.schemaName === ModelNameEnum.SalesInvoice) {
         return 'blue';
       }
-      return 'pink';
+      return 'green';
     },
     colors(): string {
       return uicolors[this.color][this.darkMode ? '600' : '500'];

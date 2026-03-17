@@ -92,7 +92,7 @@
         @click="createDemo"
       >
         <div
-          class="w-8 h-8 rounded-full bg-pink-500 dark:bg-pink-600 relative flex-center"
+          class="w-8 h-8 rounded-full bg-green-500 dark:bg-green-600 relative flex-center"
         >
           <feather-icon name="monitor" class="w-4 h-4 text-white" />
         </div>

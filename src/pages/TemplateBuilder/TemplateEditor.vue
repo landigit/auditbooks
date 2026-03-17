@@ -64,8 +64,8 @@ export default defineComponent({
       const editable = new Compartment();
 
       const highlightStyle = HighlightStyle.define([
-        { tag: tags.typeName, color: uicolors.pink[600] },
-        { tag: tags.angleBracket, color: uicolors.pink[600] },
+        { tag: tags.typeName, color: uicolors.green[600] },
+        { tag: tags.angleBracket, color: uicolors.green[600] },
         { tag: tags.attributeName, color: uicolors.gray[500] },
         { tag: tags.attributeValue, color: uicolors.blue[500] },
         { tag: tags.comment, color: uicolors.gray[500], fontStyle: 'italic' },

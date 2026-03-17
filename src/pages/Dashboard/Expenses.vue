@@ -120,21 +120,21 @@ export default defineComponent({
         toDate.toISO()
       );
       const shades = [
-        { class: 'bg-pink-500', hex: uicolors.pink['500'] },
-        { class: 'bg-pink-400', hex: uicolors.pink['400'] },
-        { class: 'bg-pink-300', hex: uicolors.pink['300'] },
-        { class: 'bg-pink-200', hex: uicolors.pink['200'] },
-        { class: 'bg-pink-100', hex: uicolors.pink['100'] },
+        { class: 'bg-green-500', hex: uicolors.green['500'] },
+        { class: 'bg-green-400', hex: uicolors.green['400'] },
+        { class: 'bg-green-300', hex: uicolors.green['300'] },
+        { class: 'bg-green-200', hex: uicolors.green['200'] },
+        { class: 'bg-green-100', hex: uicolors.green['100'] },
       ];
 
       const darkshades = [
-        { class: 'bg-pink-600', hex: uicolors.pink['600'] },
-        { class: 'bg-pink-500', hex: uicolors.pink['500'] },
-        { class: 'bg-pink-400', hex: uicolors.pink['400'] },
-        { class: 'bg-pink-300', hex: uicolors.pink['300'] },
+        { class: 'bg-green-600', hex: uicolors.green['600'] },
+        { class: 'bg-green-500', hex: uicolors.green['500'] },
+        { class: 'bg-green-400', hex: uicolors.green['400'] },
+        { class: 'bg-green-300', hex: uicolors.green['300'] },
         {
-          class: 'bg-pink-200 dark:bg-opacity-80',
-          hex: uicolors.pink['200'] + 'CC',
+          class: 'bg-green-200 dark:bg-opacity-80',
+          hex: uicolors.green['200'] + 'CC',
         },
       ];
 

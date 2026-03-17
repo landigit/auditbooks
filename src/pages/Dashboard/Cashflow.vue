@@ -91,7 +91,7 @@ export default defineComponent({
       let data = this.data;
       let colors = [
         uicolors.blue[this.darkMode ? '600' : '500'],
-        uicolors.pink[this.darkMode ? '600' : '500'],
+        uicolors.green[this.darkMode ? '600' : '500'],
       ];
       if (!this.hasData) {
         data = dummyData;
