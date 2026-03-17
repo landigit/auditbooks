@@ -38,9 +38,9 @@
       <button v-if="!isReadOnly" class="-me-0.5 ms-1">
         <FeatherIcon
           name="calendar"
-          class="w-4 h-4"
+          class="w-4 h-4 transition-colors duration-200"
           :class="
-            showMandatory ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'
+            showInput ? 'text-blue-500' : (showMandatory ? 'text-red-500' : 'text-gray-400 dark:text-gray-500')
           "
         />
       </button>
@@ -86,14 +86,14 @@ export default defineComponent({
         return '';
       }
 
-      const border = 'border border-gray-200 dark:border-gray-800';
-      let background = 'bg-gray-25 dark:bg-gray-875';
+      const border = 'border border-gray-200 dark:border-gray-800 focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/20';
+      let background = 'bg-white dark:bg-gray-875 shadow-sm transition-all duration-200';
       if (this.isReadOnly) {
         background = 'bg-gray-50 dark:bg-gray-850';
       }
 
       if (this.showInput) {
-        return background;
+        return background + ' ring-2 ring-blue-500/30 border-blue-500/50';
       }
 
       return border + ' ' + background;
