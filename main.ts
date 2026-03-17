@@ -89,7 +89,6 @@ export class Main {
       width: this.WIDTH,
       height: this.HEIGHT,
       title: this.title,
-      titleBarStyle: 'hidden',
       trafficLightPosition: { x: 16, y: 16 },
       webPreferences: {
         contextIsolation: true,
@@ -101,6 +100,10 @@ export class Main {
       frame: !this.isMac,
       resizable: true,
     };
+
+    if (this.isMac) {
+      options.titleBarStyle = 'hidden';
+    }
 
     if (this.isDevelopment || this.isLinux) {
       Object.assign(options, { icon: this.icon });

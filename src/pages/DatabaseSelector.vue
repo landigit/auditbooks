@@ -3,20 +3,11 @@
     class="flex-1 flex justify-center items-center bg-gray-25 dark:bg-gray-900"
     :class="{
       'pointer-events-none': loadingDatabase,
-      'window-drag': platform !== 'Windows',
+      'window-drag': platform === 'Mac',
     }"
   >
     <div
-      class="
-        w-full w-form
-        shadow-lg
-        rounded-lg
-        border
-        dark:border-gray-800
-        relative
-        bg-white
-        dark:bg-gray-875
-      "
+      class="w-full w-form shadow-lg rounded-lg border dark:border-gray-800 relative bg-white dark:bg-gray-875"
       style="height: 700px"
     >
       <!-- Welcome to Auditbooks -->
@@ -72,15 +63,7 @@
         @click="existingDatabase"
       >
         <div
-          class="
-            w-8
-            h-8
-            rounded-full
-            bg-green-500
-            dark:bg-green-600
-            relative
-            flex-center
-          "
+          class="w-8 h-8 rounded-full bg-green-500 dark:bg-green-600 relative flex-center"
         >
           <feather-icon
             name="upload"
@@ -109,15 +92,7 @@
         @click="createDemo"
       >
         <div
-          class="
-            w-8
-            h-8
-            rounded-full
-            bg-pink-500
-            dark:bg-pink-600
-            relative
-            flex-center
-          "
+          class="w-8 h-8 rounded-full bg-pink-500 dark:bg-pink-600 relative flex-center"
         >
           <feather-icon name="monitor" class="w-4 h-4 text-white" />
         </div>
@@ -147,20 +122,7 @@
           @click="selectFile(file)"
         >
           <div
-            class="
-              w-8
-              h-8
-              rounded-full
-              flex
-              justify-center
-              items-center
-              bg-gray-200
-              dark:bg-gray-800
-              text-gray-500
-              font-semibold
-              flex-shrink-0
-              text-base
-            "
+            class="w-8 h-8 rounded-full flex justify-center items-center bg-gray-200 dark:bg-gray-800 text-gray-500 font-semibold flex-shrink-0 text-base"
           >
             {{ i + 1 }}
           </div>
@@ -170,41 +132,19 @@
                 {{ file.companyName }}
               </h2>
               <p
-                class="
-                  whitespace-nowrap
-                  text-sm text-gray-600
-                  dark:text-gray-400
-                "
+                class="whitespace-nowrap text-sm text-gray-600 dark:text-gray-400"
               >
                 {{ formatDate(file.modified) }}
               </p>
             </div>
             <p
-              class="
-                text-sm text-gray-600
-                dark:text-gray-400
-                overflow-x-auto
-                no-scrollbar
-                whitespace-nowrap
-              "
+              class="text-sm text-gray-600 dark:text-gray-400 overflow-x-auto no-scrollbar whitespace-nowrap"
             >
               {{ truncate(file.dbPath) }}
             </p>
           </div>
           <button
-            class="
-              ms-auto
-              p-2
-              hover:bg-red-200
-              dark:hover:bg-red-900 dark:hover:bg-opacity-40
-              rounded-full
-              w-8
-              h-8
-              text-gray-600
-              dark:text-gray-400
-              hover:text-red-400
-              dark:hover:text-red-200
-            "
+            class="ms-auto p-2 hover:bg-red-200 dark:hover:bg-red-900 dark:hover:bg-opacity-40 rounded-full w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-red-400 dark:hover:text-red-200"
             @click.stop="() => deleteDb(i)"
           >
             <feather-icon name="x" class="w-4 h-4" />
@@ -215,36 +155,13 @@
 
       <!-- Language Selector -->
       <div
-        class="
-          w-full
-          flex
-          justify-between
-          items-center
-          absolute
-          p-4
-          text-gray-900
-          dark:text-gray-100
-        "
+        class="w-full flex justify-between items-center absolute p-4 text-gray-900 dark:text-gray-100"
         style="top: 100%; transform: translateY(-100%)"
       >
         <LanguageSelector v-show="!creatingDemo" class="text-sm w-28" />
         <button
           v-if="files?.length"
-          class="
-            text-sm
-            bg-gray-100
-            dark:bg-gray-890
-            hover:bg-gray-200
-            dark:hover:bg-gray-900
-            rounded
-            px-4
-            py-1.5
-            w-auto
-            h-8
-            no-scrollbar
-            overflow-x-auto
-            whitespace-nowrap
-          "
+          class="text-sm bg-gray-100 dark:bg-gray-890 hover:bg-gray-200 dark:hover:bg-gray-900 rounded px-4 py-1.5 w-auto h-8 no-scrollbar overflow-x-auto whitespace-nowrap"
           :disabled="creatingDemo"
           @click="createDemo"
         >
@@ -277,16 +194,7 @@
             v-model="baseCount"
             type="number"
             name="basecount"
-            class="
-              bg-gray-100
-              dark:bg-gray-875
-              focus:bg-gray-200
-              dark:focus:bg-gray-890
-              rounded-md
-              px-2
-              py-1
-              outline-none
-            "
+            class="bg-gray-100 dark:bg-gray-875 focus:bg-gray-200 dark:focus:bg-gray-890 rounded-md px-2 py-1 outline-none"
           />
         </div>
         <div class="flex justify-between">

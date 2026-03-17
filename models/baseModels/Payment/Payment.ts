@@ -306,7 +306,7 @@ export class Payment extends Transactional {
       }
     }
 
-    type Summary = typeof taxes[string][string] & { idx: number };
+    type Summary = (typeof taxes)[string][string] & { idx: number };
     const taxArr: Summary[] = [];
     let idx = 0;
     for (const payment_account in taxes) {

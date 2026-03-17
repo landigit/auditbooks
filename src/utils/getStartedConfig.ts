@@ -45,7 +45,8 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           description: t`Review your chart of accounts, add any account or tax heads as needed`,
           action: () => routeTo('/chart-of-accounts'),
           fieldname: 'chartOfAccountsReviewed',
-          documentation: 'https://www.landigit.com/auditbooks/docs/chart-of-accounts',
+          documentation:
+            'https://www.landigit.com/auditbooks/docs/chart-of-accounts',
         },
         {
           key: 'Opening Balances',
@@ -53,7 +54,8 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           icon: 'opening-ac',
           fieldname: 'openingBalanceChecked',
           description: t`Set up your opening balances before performing any accounting entries`,
-          documentation: 'https://www.landigit.com/auditbooks/docs/setup-opening-balances',
+          documentation:
+            'https://www.landigit.com/auditbooks/docs/setup-opening-balances',
         },
         {
           key: 'Add Taxes',
@@ -109,7 +111,8 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           description: t`Create your first sales invoice for the created customer`,
           action: () => routeTo('/list/SalesInvoice'),
           fieldname: 'invoiceCreated',
-          documentation: 'https://www.landigit.com/auditbooks/docs/sales-invoices',
+          documentation:
+            'https://www.landigit.com/auditbooks/docs/sales-invoices',
         },
       ],
     },
