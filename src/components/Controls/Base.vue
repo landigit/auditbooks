@@ -139,7 +139,7 @@ export default defineComponent({
     },
     containerReadOnlyClasses(): string {
       if (!this.isReadOnly) {
-        return 'focus-within:bg-white dark:focus-within:bg-gray-850 focus-within:ring-2 focus-within:ring-blue-500/30 focus-within:border-blue-500/50 shadow-sm transition-all duration-200';
+        return 'focus-within:bg-white dark:focus-within:bg-gray-850 focus-within:ring-2 focus-within:ring-blue-500/30 focus-within:border-blue-500/50 shadow-sm transition-[background-color,border-color,box-shadow,ring] duration-200';
       }
 
       return '';

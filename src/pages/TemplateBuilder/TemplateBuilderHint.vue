@@ -21,7 +21,7 @@
         </div>
         <div
           v-else
-          class="text-pink-600 dark:text-pink-100 bg-pink-100 dark:bg-pink-600 border-white dark:border-pink-600 border tracking-tighter rounded text-xs px-1"
+          class="text-green-600 dark:text-green-100 bg-green-100 dark:bg-green-600 border-white dark:border-green-600 border tracking-tighter rounded text-xs px-1"
         >
           Object
         </div>

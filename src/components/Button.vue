@@ -42,7 +42,7 @@ export default defineComponent({
         'text-white dark:text-black': this.type === 'primary',
         'bg-white dark:bg-black text-black dark:text-white border border-gray-200 dark:border-gray-800 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-900':
           this.type !== 'primary' && this.background,
-        'bg-black dark:bg-white text-white dark:text-black border border-black dark:border-white hover:opacity-90 shadow-vercel dark:shadow-vercel-dark':
+        'bg-black dark:bg-white text-white dark:text-black border border-black dark:border-white hover:opacity-90 shadow-vercel dark:shadow-vercel-dark transition-[background-color,opacity,box-shadow,transform]':
           this.type === 'primary' && this.background,
         'h-8': this.background,
         'px-3': this.padding && this.icon,
