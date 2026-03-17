@@ -1,10 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+@font-face {
+  font-family: 'Red Hat Text';
+  src: url('../assets/fonts/RedHatText/RedHatText-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Red Hat Text';
+  src: url('../assets/fonts/RedHatText/RedHatText-Italic-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 300 700;
+  font-style: italic;
+  font-display: swap;
+}
 
 * {
   outline-color: theme('colors.green.400');
   font-variation-settings: 'slnt' 0deg;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -25,6 +41,9 @@ html {
   font-weight: 450;
   letter-spacing: theme('letterSpacing.tighter');
   background-color: #ffffff;
+  overscroll-behavior: none;
+  height: 100vh;
+  overflow: hidden;
 }
 
 html.dark {
@@ -40,6 +59,10 @@ html.dark input[type='date']::-webkit-calendar-picker-indicator {
 
 input[type='number']::-webkit-inner-spin-button {
   appearance: none;
+}
+
+input, textarea, [contenteditable="true"], .selectable {
+  user-select: text;
 }
 
 .window-drag {
