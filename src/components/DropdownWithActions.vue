@@ -7,11 +7,11 @@
     right
   >
     <template #default="{ toggleDropdown }">
-      <Button :type="type" :icon="icon" @click="toggleDropdown()">
+      <UIButton :variant="type === 'primary' ? 'default' : 'secondary'" :size="icon ? 'icon' : 'default'" @click="toggleDropdown()" class="w-10 h-10 rounded-md">
         <slot>
-          <feather-icon name="more-horizontal" class="w-4 h-4" />
+          <LucideIcon name="more-horizontal" class="w-4 h-4 text-foreground/70" />
         </slot>
-      </Button>
+      </UIButton>
     </template>
   </Dropdown>
 </template>
@@ -19,7 +19,7 @@
 <script lang="ts">
 import { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
-import Button from 'src/components/Button.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import Dropdown from 'src/components/Dropdown.vue';
 import { DropdownItem } from 'src/utils/types';
 import { defineComponent, PropType } from 'vue';
@@ -28,7 +28,7 @@ export default defineComponent({
   name: 'DropdownWithActions',
   components: {
     Dropdown,
-    Button,
+    LucideIcon,
   },
   inject: {
     injectedDoc: {

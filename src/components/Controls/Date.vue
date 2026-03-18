@@ -36,9 +36,10 @@
       </p>
 
       <button v-if="!isReadOnly" class="-me-0.5 ms-1">
-        <FeatherIcon
+        <LucideIcon
           name="calendar"
           class="w-4 h-4 transition-colors duration-200"
+          :size="16"
           :class="
             showInput ? 'text-blue-500' : (showMandatory ? 'text-red-500' : 'text-gray-400 dark:text-gray-500')
           "
@@ -51,9 +52,11 @@
 import { DateTime } from 'luxon';
 import { fyo } from 'src/initFyo';
 import { defineComponent, nextTick } from 'vue';
+import LucideIcon from '../LucideIcon.vue';
 import Base from './Base.vue';
 
 export default defineComponent({
+  components: { LucideIcon },
   extends: Base,
   emits: ['input', 'focus'],
   data() {

@@ -11,11 +11,11 @@
       @mouseleave="isRowIndexVisible = true"
     >
       <span class="relative w-4 h-4 flex items-center justify-center">
-        <feather-icon
+        <LucideIcon
           v-if="!readOnly && !isRowIndexVisible"
           name="x"
+          :size="16"
           class="w-4 h-4 -ms-1 cursor-pointer rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-blue-50 dark:focus:bg-gray-800 transition"
-          :button="true"
           tabindex="0"
           role="button"
           aria-label="Delete row"
@@ -50,18 +50,19 @@
       @focus="onFieldFocus(i)"
       @blur="onFieldBlur(i)"
     />
-    <Button
+    <UIButton
       v-if="canEditRow"
-      :icon="true"
-      :padding="false"
-      :background="false"
+      variant="ghost"
+      size="icon"
+      class="w-6 h-6 p-0 hover:bg-transparent"
       @click="openRowQuickEdit"
     >
-      <feather-icon
+      <LucideIcon
         name="edit"
+        :size="16"
         class="w-4 h-4 text-gray-600 dark:text-gray-400"
       />
-    </Button>
+    </UIButton>
 
     <!-- Error Display -->
     <div
@@ -78,7 +79,7 @@ import { Doc } from 'fyo/model/doc';
 import Row from 'src/components/Row.vue';
 import { getErrorMessage } from 'src/utils';
 import { computed, nextTick } from 'vue';
-import Button from '../Button.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import FormControl from './FormControl.vue';
 
 export default {
@@ -86,7 +87,7 @@ export default {
   components: {
     Row,
     FormControl,
-    Button,
+    LucideIcon,
   },
   provide() {
     return {

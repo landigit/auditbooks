@@ -9,22 +9,28 @@
     >
       <div class="flex items-center justify-between px-4 h-row-largest">
         <!-- Close Button -->
-        <Button :icon="true" @click="$emit('close')">
-          <feather-icon name="x" class="w-4 h-4" />
-        </Button>
+        <UIButton variant="ghost" size="icon" @click="$emit('close')">
+          <LucideIcon name="x" :size="16" class="w-4 h-4" />
+        </UIButton>
 
         <!-- Actions, Badge and Status Change Buttons -->
         <div class="flex items-stretch gap-2">
-          <Button
+          <UIButton
             v-if="previous >= 0"
-            :icon="true"
+            variant="ghost"
+            size="icon"
             @click="$emit('previous', previous)"
           >
-            <feather-icon name="chevron-left" class="w-4 h-4" />
-          </Button>
-          <Button v-if="next >= 0" :icon="true" @click="$emit('next', next)">
-            <feather-icon name="chevron-right" class="w-4 h-4" />
-          </Button>
+            <LucideIcon name="chevron-left" :size="16" class="w-4 h-4" />
+          </UIButton>
+          <UIButton
+            v-if="next >= 0"
+            variant="ghost"
+            size="icon"
+            @click="$emit('next', next)"
+          >
+            <LucideIcon name="chevron-right" :size="16" class="w-4 h-4" />
+          </UIButton>
         </div>
       </div>
       <FormHeader
@@ -45,7 +51,7 @@
 <script lang="ts">
 import { Doc } from 'fyo/model/doc';
 import { ValueError } from 'fyo/utils/errors';
-import Button from 'src/components/Button.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import TwoColumnForm from 'src/components/TwoColumnForm.vue';
 import { shortcutsKey } from 'src/utils/injectionKeys';
@@ -56,7 +62,7 @@ import { defineComponent } from 'vue';
 const COMPONENT_NAME = 'RowEditForm';
 
 export default defineComponent({
-  components: { Button, TwoColumnForm, FormHeader },
+  components: { LucideIcon, TwoColumnForm, FormHeader },
   provide() {
     return {
       doc: computed(() => this.row),

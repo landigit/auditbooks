@@ -6,7 +6,7 @@
   >
     <!-- Loading Continer -->
     <div
-      class="border dark:border-gray-800 text-gray-900 dark:text-gray-100 shadow-lg px-3 py-3 items-center w-96 z-10 bg-white dark:bg-gray-900 rounded-lg"
+      class="border dark:border-gray-800 text-gray-900 dark:text-gray-100 shadow-lg px-3 py-3 items-center w-96 z-10 bg-white dark:bg-gray-900 rounded-md"
     >
       <!-- Message -->
       <p
@@ -36,9 +36,10 @@
         </div>
 
         <!-- Close Icon -->
-        <feather-icon
+        <LucideIcon
           v-if="showX"
           name="x"
+          :size="16"
           class="w-4 h-4 ms-auto text-gray-600 dark:text-gray-400 cursor-pointer hover:text-gray-800 dark:hover:text-gray-200"
           @click="closeToast"
         />
@@ -47,7 +48,10 @@
   </div>
 </template>
 <script>
+import LucideIcon from 'src/components/LucideIcon.vue';
+
 export default {
+  components: { LucideIcon },
   props: {
     open: { type: Boolean, default: false },
     percent: { type: Number, default: 0.5 },

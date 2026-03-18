@@ -98,7 +98,7 @@ test('create SINV return for one qty', async (t) => {
     'SINV-1001'
   )) as SalesInvoice;
 
-  let returnDoc = (await sinvDoc?.getReturnDoc()) as SalesInvoice;
+  const returnDoc = (await sinvDoc?.getReturnDoc()) as SalesInvoice;
 
   returnDoc.items = [];
   returnDoc.append('items', {

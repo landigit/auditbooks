@@ -1,7 +1,7 @@
 <template>
-  <p v-if="showStatus" class="pill font-medium" :class="styleClass">
+  <Badge v-if="showStatus" variant="outline" :class="cn('px-2.5 py-0.5 text-[10px] tracking-normal normal-case font-semibold border-none', customClass)">
     {{ text }}
-  </p>
+  </Badge>
 </template>
 <script lang="ts">
 import { Doc } from 'fyo/model/doc';
@@ -11,22 +11,34 @@ import { Party } from 'models/baseModels/Party/Party';
 import { LoyaltyProgram } from 'models/baseModels/LoyaltyProgram/LoyaltyProgram';
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
-import { getBgTextColorClass } from 'src/utils/colors';
 import { defineComponent } from 'vue';
+import { cn } from 'src/lib/utils';
 
 type Status = ReturnType<typeof getStatus>;
 type UIColors = 'gray' | 'orange' | 'red' | 'green' | 'blue' | 'yellow';
 
 export default defineComponent({
+  components: {},
   props: { doc: { type: Doc, required: true } },
+  setup() {
+    return { cn };
+  },
   data() {
     return {
       showStatus: true,
     };
   },
   computed: {
-    styleClass(): string {
-      return getBgTextColorClass(this.color);
+    customClass(): string {
+      const map: Record<UIColors, string> = {
+        gray: 'bg-white/10 text-foreground/70',
+        orange: 'bg-orange-500/20 text-orange-400',
+        red: 'bg-red-500/20 text-red-400',
+        green: 'bg-emerald-500/20 text-emerald-400',
+        blue: 'bg-blue-500/20 text-blue-400',
+        yellow: 'bg-amber-500/20 text-amber-500',
+      };
+      return map[this.color] || map.gray;
     },
     status(): Status {
       return getStatus(this.doc);

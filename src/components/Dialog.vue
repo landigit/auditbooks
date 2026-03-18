@@ -2,16 +2,17 @@
   <Teleport to="body">
     <Transition>
       <!-- Backdrop -->
-      <div v-if="open" class="backdrop z-20 flex justify-center items-center">
+      <div v-if="open" class="backdrop z-50 flex justify-center items-center bg-black/40">
         <!-- Dialog -->
         <div
-          class="bg-white dark:bg-gray-850 border dark:border-gray-800 rounded-lg text-gray-900 dark:text-gray-25 p-4 shadow-2xl w-dialog flex flex-col gap-4 inner"
+          class="glass border dark:border-gray-800 rounded-lg text-gray-900 dark:text-gray-25 p-6 shadow-2xl w-dialog flex flex-col gap-4 inner"
         >
           <div class="flex justify-between items-center">
             <h1 class="font-semibold">{{ title }}</h1>
-            <FeatherIcon
+            <LucideIcon
               :name="config.iconName"
               class="w-6 h-6"
+              :size="24"
               :class="config.iconColor"
             />
           </div>
@@ -26,16 +27,16 @@
             </div>
           </template>
           <div class="flex justify-end gap-4 mt-4">
-            <Button
+            <UIButton
               v-for="(b, index) of buttons"
               :ref="b.isPrimary ? 'primary' : 'secondary'"
               :key="b.label"
-              style="min-width: 5rem"
-              :type="b.isPrimary ? 'primary' : 'secondary'"
+              class="min-w-[5rem]"
+              :variant="b.isPrimary ? 'default' : 'secondary'"
               @click="() => handleClick(index)"
             >
               {{ b.label }}
-            </Button>
+            </UIButton>
           </div>
         </div>
       </div>
@@ -46,11 +47,10 @@
 import { getIconConfig } from 'src/utils/interactive';
 import { DialogButton, ToastType } from 'src/utils/types';
 import { defineComponent, nextTick, PropType, ref } from 'vue';
-import Button from './Button.vue';
-import FeatherIcon from './FeatherIcon.vue';
+import LucideIcon from './LucideIcon.vue';
 
 export default defineComponent({
-  components: { Button, FeatherIcon },
+  components: { LucideIcon },
   props: {
     type: { type: String as PropType<ToastType>, default: 'info' },
     title: { type: String, required: true },
@@ -65,8 +65,8 @@ export default defineComponent({
   },
   setup() {
     return {
-      primary: ref<InstanceType<typeof Button>[] | null>(null),
-      secondary: ref<InstanceType<typeof Button>[] | null>(null),
+      primary: ref<InstanceType<typeof UIButton>[] | null>(null),
+      secondary: ref<InstanceType<typeof UIButton>[] | null>(null),
     };
   },
   data() {

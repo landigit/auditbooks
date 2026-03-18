@@ -8,22 +8,18 @@
       style="z-index: 1"
     >
       <!-- Close Button  -->
-      <Button :icon="true" @click="routeToPrevious">
-        <feather-icon name="x" class="w-4 h-4" />
-      </Button>
+      <!-- Close Button  -->
+      <UIButton variant="ghost" size="icon" @click="routeToPrevious">
+        <LucideIcon name="x" :size="16" class="w-4 h-4" />
+      </UIButton>
 
       <!-- Save & Submit Buttons -->
-      <Button v-if="doc?.canSave" :icon="true" type="primary" @click="sync">
+      <UIButton v-if="doc?.canSave" @click="sync">
         {{ t`Save` }}
-      </Button>
-      <Button
-        v-else-if="doc?.canSubmit"
-        :icon="true"
-        type="primary"
-        @click="submit"
-      >
+      </UIButton>
+      <UIButton v-else-if="doc?.canSubmit" @click="submit">
         {{ t`Submit` }}
-      </Button>
+      </UIButton>
     </div>
 
     <!-- Name and image -->
@@ -56,7 +52,7 @@
         :df="titleField"
         :value="doc[titleField.fieldname]"
         :read-only="doc.inserted || doc.schema.naming !== 'manual'"
-        @change="(value) => valueChange(titleField as Field, value)"
+        @change="(value: DocValue) => valueChange(titleField as Field, value)"
       />
     </div>
 
@@ -74,7 +70,7 @@
 <script lang="ts">
 import { DocValue } from 'fyo/core/types';
 import { Field, Schema } from 'schemas/types';
-import Button from 'src/components/Button.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import AttachImage from 'src/components/Controls/AttachImage.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import TwoColumnForm from 'src/components/TwoColumnForm.vue';
@@ -92,7 +88,7 @@ import { computed, defineComponent, inject, ref } from 'vue';
 export default defineComponent({
   name: 'QuickEditForm',
   components: {
-    Button,
+    LucideIcon,
     FormControl,
     TwoColumnForm,
     AttachImage,
@@ -174,7 +170,7 @@ export default defineComponent({
   activated() {
     this.setShortcuts();
   },
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
   async mounted() {
     await this.initialize();
 

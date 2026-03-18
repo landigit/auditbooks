@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require('fs');
 const colors = JSON.parse(
   fs.readFileSync('colors.json', { encoding: 'utf-8' })
@@ -55,8 +56,10 @@ module.exports = {
         DEFAULT: '0 2px 4px 0 rgba(0, 0, 0, 0.05)',
         md: '0 0 2px 0 rgba(0, 0, 0, 0.10), 0 2px 4px 0 rgba(0, 0, 0, 0.08)',
         button: '0 0.5px 0 0 rgba(0, 0, 0, 0.08)',
-        vercel: '0 0 0 1px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.08), 0 12px 24px rgba(0,0,0,0.08)',
-        'vercel-dark': '0 0 0 1px rgba(255,255,255,0.145), 0 2px 4px rgba(0,0,0,0.4), 0 12px 24px rgba(0,0,0,0.4)',
+        vercel:
+          '0 0 0 1px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.08), 0 12px 24px rgba(0,0,0,0.08)',
+        'vercel-dark':
+          '0 0 0 1px rgba(255,255,255,0.145), 0 2px 4px rgba(0,0,0,0.4), 0 12px 24px rgba(0,0,0,0.4)',
       },
       borderRadius: {
         sm: '0.25rem', // 4px

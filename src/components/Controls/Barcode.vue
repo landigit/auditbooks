@@ -9,8 +9,9 @@
       :placeholder="t`Enter barcode`"
       @change="handleChange"
     />
-    <feather-icon
+    <LucideIcon
       name="maximize"
+      :size="12"
       class="w-3 h-3 text-gray-600 dark:text-gray-400 cursor-text"
       @click="() => ($refs.scanner as HTMLInputElement).focus()"
     />
@@ -20,7 +21,10 @@
 <script lang="ts">
 import { showToast } from 'src/utils/interactive';
 import { defineComponent } from 'vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
+
 export default defineComponent({
+  components: { LucideIcon },
   emits: ['item-selected'],
   data() {
     return {

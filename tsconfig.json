@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
+    "noEmit": true,
     "strict": true,
     "allowJs": true,
     "jsx": "preserve",
@@ -16,6 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "src/*": ["src/*"],
+      "@/*": ["src/*"],
       "schemas/*": ["schemas/*"],
       "main/*": ["main/*"],
       "backend/*": ["backend/*"],
@@ -50,7 +52,8 @@
     "utils/**/*.ts",
     "tests/**/*.ts",
     "dummy/**/*.ts",
-    "jobs/**/*.ts"
+    "jobs/**/*.ts",
+    "tailwind.config.cjs"
   ],
   "exclude": ["node_modules"]
 }

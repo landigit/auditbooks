@@ -1,73 +1,232 @@
 <template>
-  <Modal :open-modal="openModal" class="w-3/6 p-4">
-    <h1 class="text-xl font-semibold text-center dark:text-gray-100 pb-4">
-      {{ t`Close POS Shift` }}
-    </h1>
-
-    <h2 class="mt-4 mb-2 text-lg font-medium dark:text-gray-100">
-      {{ t`Closing Cash` }}
-    </h2>
-    <Table
-      v-if="isValuesSeeded"
-      class="text-base"
-      :df="getField('closingCash')"
-      :show-header="true"
-      :border="true"
-      :value="posClosingShiftDoc?.closingCash ?? []"
-      :read-only="false"
-      @row-change="setClosingCashAmount"
-    />
-
-    <h2 class="mt-6 mb-2 text-lg dark:text-gray-100 font-medium">
-      Closing Amounts
-    </h2>
-    <Table
-      v-if="isValuesSeeded"
-      class="text-base"
-      :df="getField('closingAmounts')"
-      :show-header="true"
-      :border="true"
-      :value="posClosingShiftDoc?.closingAmounts"
-      :read-only="true"
-      @row-change="setClosingCashAmount"
-    />
-
-    <div class="mt-4 grid grid-cols-2 gap-4 items-end">
-      <Button
-        class="w-full py-5 bg-red-500 dark:bg-red-700"
-        @click="$emit('toggleModal', 'ShiftClose', false)"
+  <Dialog
+    :open="openModal"
+    @update:open="$emit('toggleModal', 'ShiftClose', false)"
+  >
+    <DialogContent
+      class="sm:max-w-[800px] p-0 overflow-hidden border-none bg-transparent shadow-none"
+    >
+      <div
+        class="bg-white dark:bg-gray-875 border border-gray-100 dark:border-gray-800 rounded-lg shadow-xl overflow-hidden flex flex-col transition-all duration-500 animate-in fade-in zoom-in-95"
       >
-        <slot>
-          <p class="uppercase text-lg text-white font-semibold">
-            {{ t`Cancel` }}
-          </p>
-        </slot>
-      </Button>
+        <!-- Header -->
+        <div
+          class="px-8 py-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-890 flex items-center justify-between"
+        >
+          <div class="flex flex-col gap-1">
+            <h3
+              class="text-xs font-semibold normal-case tracking-[0.3em] text-primary dark:text-primary flex items-center gap-2"
+            >
+              <LucideIcon name="lock" class="w-4 h-4 text-primary" />
+              {{ t`Close POS Shift` }}
+            </h3>
+            <p
+              class="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-normal normal-case"
+            >
+              {{ t`Review and reconcile balances` }}
+            </p>
+          </div>
+        </div>
 
-      <Button
-        class="w-full py-5 bg-green-500 dark:bg-green-700"
-        @click="handleSubmit"
-      >
-        <slot>
-          <p class="uppercase text-lg text-white font-semibold">
-            {{ t`Submit` }}
-          </p>
-        </slot>
-      </Button>
-    </div>
-  </Modal>
+        <ScrollArea class="max-h-[70vh]">
+          <div class="p-8 space-y-8">
+            <!-- Closing Cash Section -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center"
+                >
+                  <LucideIcon name="banknote" class="w-4 h-4 text-primary" />
+                </div>
+                <h2
+                  class="text-sm font-semibold normal-case tracking-normal text-foreground/80"
+                >
+                  {{ t`Closing Cash` }}
+                </h2>
+              </div>
+
+              <div
+                v-if="isValuesSeeded"
+                class="border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-890"
+              >
+                <Table>
+                  <TableHeader class="bg-gray-50 dark:bg-gray-890">
+                    <TableRow class="hover:bg-transparent border-gray-100 dark:border-gray-800">
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-4"
+                        >{{ t`Denomination` }}</TableHead
+                      >
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-4"
+                        >{{ t`Count` }}</TableHead
+                      >
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-4 text-right"
+                        >{{ t`Amount` }}</TableHead
+                      >
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow
+                      v-for="(row, index) in posClosingShiftDoc?.closingCash"
+                      :key="index"
+                      class="border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:bg-gray-890 transition-colors"
+                    >
+                      <TableCell
+                        class="py-4 font-bold text-sm text-foreground/80"
+                        >{{ row.denomination }}</TableCell
+                      >
+                      <TableCell class="py-2">
+                        <Input
+                          v-model="row.count"
+                          type="number"
+                          class="h-10 w-24 bg-gray-50 dark:bg-gray-890 border-gray-100 dark:border-gray-800 rounded-md focus:ring-primary/20 font-bold"
+                          @input="setClosingCashAmount"
+                        />
+                      </TableCell>
+                      <TableCell
+                        class="py-4 text-right font-semibold text-primary"
+                      >
+                        {{
+                          fyo.pesa(Number(row.denomination) * Number(row.count))
+                        }}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            <!-- Closing Amounts Section -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center"
+                >
+                  <LucideIcon name="calculator" class="w-4 h-4 text-primary" />
+                </div>
+                <h2
+                  class="text-sm font-semibold normal-case tracking-normal text-foreground/80"
+                >
+                  {{ t`Closing Amounts` }}
+                </h2>
+              </div>
+
+              <div
+                v-if="isValuesSeeded"
+                class="border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-890"
+              >
+                <Table>
+                  <TableHeader class="bg-gray-50 dark:bg-gray-890">
+                    <TableRow class="hover:bg-transparent border-gray-100 dark:border-gray-800">
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-4"
+                        >{{ t`Method` }}</TableHead
+                      >
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-4 text-right"
+                        >{{ t`Expected` }}</TableHead
+                      >
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-4 text-right"
+                        >{{ t`Actual` }}</TableHead
+                      >
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-4 text-right"
+                        >{{ t`Difference` }}</TableHead
+                      >
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow
+                      v-for="(row, index) in posClosingShiftDoc?.closingAmounts"
+                      :key="index"
+                      class="border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:bg-gray-890 transition-colors"
+                    >
+                      <TableCell
+                        class="py-4 font-bold text-sm text-foreground/80"
+                        >{{ row.paymentMethod }}</TableCell
+                      >
+                      <TableCell
+                        class="py-4 text-right font-medium text-gray-500 dark:text-gray-400"
+                        >{{ row.expectedAmount }}</TableCell
+                      >
+                      <TableCell
+                        class="py-4 text-right font-semibold text-foreground"
+                        >{{ row.closingAmount }}</TableCell
+                      >
+                      <TableCell
+                        class="py-4 text-right font-semibold"
+                        :class="
+                          Number(row.differenceAmount) < 0
+                            ? 'text-red-400'
+                            : 'text-green-400'
+                        "
+                      >
+                        {{ row.differenceAmount }}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+
+        <!-- Footer -->
+        <div
+          class="px-8 py-6 bg-gray-50 dark:bg-gray-890 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-4"
+        >
+          <div class="flex flex-col">
+            <span
+              class="text-[10px] font-semibold normal-case tracking-[0.2em] text-gray-400 dark:text-gray-500"
+              >{{ t`Total Reconciliation` }}</span
+            >
+            <span class="text-xl font-semibold text-primary">{{
+              totalClosingAmount
+            }}</span>
+          </div>
+          <div class="flex gap-4">
+            <UIButton
+              variant="outline"
+              class="h-14 px-8 rounded-lg font-semibold normal-case tracking-normal text-[10px] border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:bg-gray-800 transition-all text-red-400"
+              @click="$emit('toggleModal', 'ShiftClose', false)"
+            >
+              {{ t`Cancel` }}
+            </UIButton>
+            <UIButton
+              class="h-14 px-12 rounded-lg font-semibold normal-case tracking-normal text-[10px] shadow-lg hover:translate-y-[-2px] active:translate-y-[0px] transition-all"
+              @click="handleSubmit"
+            >
+              {{ t`Finalize & Close Shift` }}
+            </UIButton>
+          </div>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Table from 'src/components/Controls/Table.vue';
+import UIButton from 'src/components/ui/Button.vue';
+import Dialog from 'src/components/ui/Dialog.vue';
+import DialogContent from 'src/components/ui/DialogContent.vue';
+import Input from 'src/components/ui/Input.vue';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  ScrollArea,
+} from 'src/components/ui';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import { OpeningAmounts } from 'models/inventory/Point of Sale/OpeningAmounts';
 import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { computed } from 'vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { fyo } from 'src/initFyo';
 import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
@@ -81,7 +240,19 @@ import { ForbiddenError } from 'fyo/utils/errors';
 
 export default defineComponent({
   name: 'ClosePOSShiftModal',
-  components: { Button, Modal, Table },
+  components: {
+    Dialog,
+    DialogContent,
+    Input,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    ScrollArea,
+    LucideIcon,
+  },
   provide() {
     return {
       doc: computed(() => this.posClosingShiftDoc),
@@ -94,10 +265,15 @@ export default defineComponent({
     },
   },
   emits: ['toggleModal'],
+  setup() {
+    return {
+      t,
+      fyo,
+    };
+  },
   data() {
     return {
       isValuesSeeded: false,
-
       posOpeningShiftDoc: undefined as POSOpeningShift | undefined,
       posClosingShiftDoc: undefined as POSClosingShift | undefined,
       transactedAmount: {} as Record<string, Money> | undefined,
@@ -107,12 +283,20 @@ export default defineComponent({
     isOnline() {
       return !!navigator.onLine;
     },
+    totalClosingAmount() {
+      if (!this.posClosingShiftDoc?.closingAmounts) return fyo.pesa(0);
+      return this.posClosingShiftDoc.closingAmounts.reduce((total, row) => {
+        return total.add(row.closingAmount as Money);
+      }, fyo.pesa(0));
+    },
   },
   watch: {
     openModal: {
-      async handler() {
-        await this.setTransactedAmount();
-        await this.seedClosingAmounts();
+      async handler(newVal) {
+        if (newVal) {
+          await this.setTransactedAmount();
+          await this.seedClosingAmounts();
+        }
       },
     },
   },
@@ -164,7 +348,7 @@ export default defineComponent({
         if (row.paymentMethod === 'Cash') {
           row.closingAmount = this.posClosingShiftDoc
             ?.closingCashAmount as Money;
-          row.differenceAmount = row.closingAmount.sub(
+          row.differenceAmount = (row.closingAmount as Money).sub(
             row.expectedAmount as Money
           );
         }
@@ -198,7 +382,7 @@ export default defineComponent({
           openingAmount: row.amount,
           closingAmount: fyo.pesa(0),
           expectedAmount: expectedAmount,
-          differenceAmount: fyo.pesa(0),
+          differenceAmount: (fyo.pesa(0) as Money).sub(expectedAmount),
         });
       }
     },
@@ -207,9 +391,6 @@ export default defineComponent({
       this.seedClosingCash();
       await this.seedClosingAmounts();
       this.isValuesSeeded = true;
-    },
-    getField(fieldname: string) {
-      return fyo.getField(ModelNameEnum.POSClosingShift, fieldname);
     },
     async handleSubmit() {
       try {

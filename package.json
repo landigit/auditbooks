@@ -17,27 +17,37 @@
     "test": "scripts/test.sh",
     "uitest": "node uitest/index.mjs | tap-spec",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "type-check": "vue-tsc --noEmit",
+    "prepare": "husky"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.1",
     "@codemirror/lang-vue": "^0.1.3",
     "@lezer/highlight": "^1.2.3",
     "@popperjs/core": "^2.11.8",
+    "@vee-validate/zod": "^4.15.1",
     "@vue/compiler-dom": "^3.5.30",
+    "@vueuse/core": "^14.2.1",
     "better-sqlite3": "^11.10.0",
     "bree": "^9.2.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "codemirror": "^6.0.2",
     "electron-store": "^8.2.0",
-    "feather-icons": "^4.29.2",
     "knex": "^2.5.1",
     "lodash": "^4.17.23",
+    "lucide-vue-next": "^0.577.0",
     "luxon": "^2.5.2",
     "node-fetch": "^2.7.0",
     "pesa": "^1.1.13",
+    "reka-ui": "^2.9.2",
     "source-map-support": "^0.5.21",
+    "tailwind-merge": "^3.5.0",
+    "vee-validate": "^4.15.1",
     "vue": "^3.5.30",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@codemirror/language": "^6.12.2",
@@ -73,6 +83,8 @@
     "execa": "^7.2.0",
     "fs-extra": "^11.3.4",
     "globals": "^15.15.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "playwright": "^1.58.2",
     "postcss": "^8.5.8",
     "prettier": "^3.8.1",
@@ -106,5 +118,14 @@
   "repository": {
     "url": "https://github.com/landigit/auditbooks"
   },
-  "license": "AGPL-3.0-only"
+  "license": "AGPL-3.0-only",
+  "lint-staged": {
+    "src/**/*.{js,ts,vue}": [
+      "pnpm eslint --fix",
+      "pnpm prettier --write"
+    ],
+    "src/**/*.{ts,vue}": [
+      "pnpm type-check"
+    ]
+  }
 }

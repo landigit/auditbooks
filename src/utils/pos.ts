@@ -177,10 +177,10 @@ export function validateIsPosSettingsSet(fyo: Fyo) {
         t`POS Write Off Account is not set. Please set it on POS Settings`
       );
     }
-  } catch (error) {
+  } catch (error: unknown) {
     showToast({
       type: 'error',
-      message: t`${error as string}`,
+      message: t`${String(error)}`,
       duration: 'long',
     });
   }
@@ -213,7 +213,9 @@ export function validateClosingAmounts(posShiftDoc: POSClosingShift) {
         );
       }
     });
-  } catch (error) {}
+  } catch {
+    // Silent catch as per original logic
+  }
 }
 
 export async function transferPOSCashAndWriteOff(

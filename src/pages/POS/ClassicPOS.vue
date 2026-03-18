@@ -250,7 +250,7 @@
               </div>
               <div class="w-full">
                 <div class="w-full flex gap-2">
-                  <Button
+                  <UIButton
                     class="w-full"
                     :style="{
                       backgroundColor:
@@ -261,12 +261,12 @@
                     @click="$emit('saveInvoiceAction')"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p class="normal-case text-lg text-white font-semibold">
                         {{ t`Save` }}
                       </p>
                     </slot>
-                  </Button>
-                  <Button
+                  </UIButton>
+                  <UIButton
                     class="w-full"
                     :style="{
                       backgroundColor:
@@ -277,17 +277,17 @@
                     @click="() => $emit('clearValues')"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p class="normal-case text-lg text-white font-semibold">
                         {{ t`Cancel` }}
                       </p>
                     </slot>
-                  </Button>
+                  </UIButton>
                 </div>
                 <div
                   class="w-full flex gap-2"
                   :class="`${isReturnInvoiceEnabledReturn ? 'mt-2' : 'mt-4'}`"
                 >
-                  <Button
+                  <UIButton
                     class="w-full"
                     :style="{
                       backgroundColor:
@@ -298,13 +298,13 @@
                     @click="emitEvent('toggleModal', 'SavedInvoice', true)"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p class="normal-case text-lg text-white font-semibold">
                         {{ t`held` }}
                       </p>
                     </slot>
-                  </Button>
+                  </UIButton>
 
-                  <Button
+                  <UIButton
                     v-if="isReturnInvoiceEnabledReturn"
                     class="w-full py-5"
                     :style="{
@@ -317,12 +317,12 @@
                     "
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p class="normal-case text-lg text-white font-semibold">
                         {{ t`Return` }}
                       </p>
                     </slot>
-                  </Button>
-                  <Button
+                  </UIButton>
+                  <UIButton
                     v-else
                     class="w-full"
                     :style="{
@@ -334,13 +334,13 @@
                     @click="emitEvent('handlePaymentAction')"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p class="normal-case text-lg text-white font-semibold">
                         {{ t`Pay` }}
                       </p>
                     </slot>
-                  </Button>
+                  </UIButton>
                 </div>
-                <Button
+                <UIButton
                   v-if="isReturnInvoiceEnabledReturn"
                   class="w-full mt-2 py-5"
                   :style="{
@@ -351,11 +351,11 @@
                   @click="emitEvent('handlePaymentAction')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p class="normal-case text-lg text-white font-semibold">
                       {{ t`Pay` }}
                     </p>
                   </slot>
-                </Button>
+                </UIButton>
               </div>
             </div>
           </div>
@@ -371,7 +371,6 @@ import { fyo } from 'src/initFyo';
 import { getItem } from 'src/utils/pos';
 import AlertModal from './AlertModal.vue';
 import PaymentModal from './PaymentModal.vue';
-import Button from 'src/components/Button.vue';
 import { defineComponent, PropType } from 'vue';
 import PriceListModal from './PriceListModal.vue';
 import ItemEnquiryModal from './ItemEnquiryModal.vue';
@@ -401,7 +400,6 @@ export default defineComponent({
   name: 'ClassicPOS',
   components: {
     Link,
-    Button,
     ItemsGrid,
     AlertModal,
     ItemsTable,

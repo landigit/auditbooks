@@ -8,9 +8,9 @@
     :close-on-click-content="false"
   >
     <template #target="{ togglePopover }">
-      <Button :icon="true" @click="togglePopover()">
+      <UIButton variant="outline" size="icon" @click="togglePopover()">
         <span class="flex items-center">
-          <Icon
+          <LucideIcon
             name="filter"
             size="12"
             class="stroke-current text-gray-700 dark:text-gray-400"
@@ -24,7 +24,7 @@
             </template>
           </span>
         </span>
-      </Button>
+      </UIButton>
     </template>
     <template #content>
       <div>
@@ -40,10 +40,10 @@
                   class="cursor-pointer w-4 h-4 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 rounded-md group"
                 >
                   <span class="hidden group-hover:inline-block">
-                    <feather-icon
+                    <LucideIcon
                       name="x"
+                      size="16"
                       class="w-4 h-4 cursor-pointer"
-                      :button="true"
                       @click="removeFilter(i)"
                     />
                   </span>
@@ -119,7 +119,7 @@
             class="text-base border-t dark:border-gray-800 p-2 flex items-center text-gray-600 dark:text-gray-500 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-875"
             @click.stop="addNewFilter"
           >
-            <feather-icon name="plus" class="w-4 h-4" />
+            <LucideIcon name="plus" size="16" class="w-4 h-4" />
             <span class="ms-2">{{ t`Add a filter` }}</span>
           </div>
 
@@ -129,7 +129,7 @@
               class="text-base p-2 flex items-center text-gray-600 dark:text-gray-500 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-875"
               @click="clearAllFilters"
             >
-              <feather-icon name="trash-2" class="w-4 h-4" />
+              <LucideIcon name="trash-2" size="16" class="w-4 h-4" />
               <span class="ms-2">{{ t`Clear` }}</span>
             </div>
 
@@ -138,7 +138,7 @@
               @click="applyFilters"
               class="text-base border-t dark:border-gray-800 p-2 flex items-center text-gray-600 dark:text-gray-500 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-875"
             >
-              <feather-icon name="search" class="w-4 h-4" />
+            <LucideIcon name="search" size="16" class="w-4 h-4" />
               <span class="ml-2 text-sm">{{ t`Apply` }}</span>
             </div>
           </div>
@@ -152,10 +152,8 @@ import { Field, FieldTypeEnum } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { getRandomString } from 'utils';
 import { defineComponent } from 'vue';
-import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
-import Icon from './Icon.vue';
 import Popover from './Popover.vue';
 import { QueryFilter } from 'utils/db/types';
 import { t } from 'fyo';
@@ -184,8 +182,6 @@ export default defineComponent({
   name: 'FilterDropdown',
   components: {
     Popover,
-    Button,
-    Icon,
     Select,
     Data,
   },

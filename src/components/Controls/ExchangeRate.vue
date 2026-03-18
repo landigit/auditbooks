@@ -47,8 +47,9 @@
       class="bg-green-100 dark:bg-green-600 px-2 ms-1 -me-0.5 h-full border-s dark:border-gray-800"
       @click="swap"
     >
-      <feather-icon
+      <LucideIcon
         name="refresh-cw"
+        :size="12"
         class="w-3 h-3 text-gray-600 dark:text-gray-400"
       />
     </button>
@@ -57,8 +58,10 @@
 <script lang="ts">
 import { safeParseFloat } from 'utils/index';
 import { defineComponent } from 'vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 
 export default defineComponent({
+  components: { LucideIcon },
   props: {
     disabled: { type: Boolean, default: false },
     fromCurrency: { type: String, default: 'USD' },

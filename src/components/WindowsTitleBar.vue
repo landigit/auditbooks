@@ -3,7 +3,6 @@
     class="relative window-drag flex items-center border-b dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-100 dark:border-gray-800"
     style="height: 28px"
   >
-    <Fb class="ms-2" />
     <p v-if="companyName && dbPath" class="mx-auto text-sm">
       {{ companyName }} - {{ dbPath }}
     </p>
@@ -15,35 +14,36 @@
         class="flex items-center px-4 h-full hover:bg-gray-300 dark:hover:bg-gray-875"
         @click="minimizeWindow"
       >
-        <feather-icon name="minus" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="minus" :size="16" class="h-4 w-4 flex-shrink-0" />
       </div>
       <div
         class="flex items-center px-4 h-full hover:bg-gray-300 dark:hover:bg-gray-875"
         @click="toggleMaximize"
       >
-        <feather-icon
+        <LucideIcon
           v-if="isMax"
           name="minimize"
+          :size="12"
           class="h-3 w-3 flex-shrink-0"
         />
-        <feather-icon v-else name="square" class="h-3 w-3 flex-shrink-0" />
+        <LucideIcon v-else name="square" :size="12" class="h-3 w-3 flex-shrink-0" />
       </div>
       <div
         class="flex items-center px-4 h-full hover:bg-red-600 hover:text-white"
         @click="closeWindow"
       >
-        <feather-icon name="x" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="x" :size="16" class="h-4 w-4 flex-shrink-0" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Fb from './Icons/18/fb.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 
 export default {
   name: 'WindowsTitleBar',
-  components: { Fb },
+  components: { LucideIcon },
   props: {
     dbPath: String,
     companyName: String,

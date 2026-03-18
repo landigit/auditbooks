@@ -35,16 +35,13 @@
       </div>
     </div>
     <div class="flex border-t dark:border-gray-800 p-4">
-      <Button class="ml-auto" type="primary" @click="done">{{
-        t`Done`
-      }}</Button>
+      <UIButton class="ml-auto" @click="done">{{ t`Done` }}</UIButton>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { PrintTemplate } from 'models/baseModels/PrintTemplate';
 import { OptionField } from 'schemas/types';
-import Button from 'src/components/Button.vue';
 import Float from 'src/components/Controls/Float.vue';
 import Select from 'src/components/Controls/Select.vue';
 import FormHeader from 'src/components/FormHeader.vue';
@@ -53,7 +50,7 @@ import { defineComponent } from 'vue';
 
 type SizeName = (typeof printSizes)[number];
 export default defineComponent({
-  components: { Float, FormHeader, Select, Button },
+  components: { Float, FormHeader, Select },
   props: { doc: { type: PrintTemplate, required: true } },
   emits: ['done'],
   data() {

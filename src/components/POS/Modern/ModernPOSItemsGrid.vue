@@ -13,18 +13,18 @@
         v-for="item in items as POSItem[]"
         :key="item.name"
       >
-        <div class="self-center w-full h-32 lg:h-28 p-1 rounded-lg">
+        <div class="self-center w-full h-32 lg:h-28 p-1 rounded-md">
           <div class="relative w-auto h-full">
             <img
               v-if="item.image"
               :src="item.image"
               alt=""
-              class="rounded-lg w-full h-full object-cover"
+              class="rounded-md w-full h-full object-cover"
             />
 
             <div
               v-else
-              class="rounded-lg bg-gray-100 w-full h-full flex justify-center items-center dark:bg-gray-850"
+              class="rounded-md bg-gray-100 w-full h-full flex justify-center items-center dark:bg-gray-850"
             >
               <p class="text-4xl font-semibold text-gray-400 select-none">
                 {{ getExtractedWords(item.name) }}

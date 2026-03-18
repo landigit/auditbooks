@@ -1,21 +1,28 @@
 <template>
-  <div v-if="(fields ?? []).length > 0">
+  <div v-if="(fields ?? []).length > 0" class="mb-4">
     <div
       v-if="showTitle && title"
-      class="flex justify-between items-center select-none"
-      :class="[collapsed ? '' : 'mb-4', collapsible ? 'cursor-pointer' : '']"
+      class="flex justify-between items-center select-none py-3 px-4 rounded-md transition-all"
+      :class="[
+        collapsed ? 'bg-white/5 hover:bg-white/10' : 'mb-6',
+        collapsible ? 'cursor-pointer' : '',
+      ]"
       @click="toggleCollapsed"
     >
-      <h2 class="text-base text-gray-900 dark:text-gray-25 font-semibold">
+      <h2
+        class="text-xs font-semibold normal-case tracking-[0.2em]"
+        :class="collapsed ? 'text-foreground/70' : 'text-primary'"
+      >
         {{ title }}
       </h2>
-      <feather-icon
+      <LucideIcon
         v-if="collapsible"
-        :name="collapsed ? 'chevron-up' : 'chevron-down'"
-        class="w-4 h-4 text-gray-600 dark:text-gray-400"
+        :name="collapsed ? 'chevron-down' : 'chevron-up'"
+        class="w-4 h-4 transition-all"
+        :class="collapsed ? 'text-muted-foreground/50' : 'text-primary/70'"
       />
     </div>
-    <div v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-2">
+    <div v-if="!collapsed" class="grid gap-6 gap-x-8 grid-cols-2 px-2">
       <div
         v-for="field of fields"
         :key="field.fieldname"
@@ -71,11 +78,12 @@ import { Doc } from 'fyo/model/doc';
 import { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Table from 'src/components/Controls/Table.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { focusOrSelectFormControl } from 'src/utils/ui';
 import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
-  components: { FormControl, Table },
+  components: { FormControl, Table, LucideIcon },
   props: {
     title: { type: String, default: '' },
     errors: {

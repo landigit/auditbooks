@@ -180,7 +180,7 @@
 
             <div class="flex w-full gap-2">
               <div class="w-full">
-                <Button
+                <UIButton
                   class="mt-2 w-full py-5"
                   :style="{
                     backgroundColor:
@@ -191,12 +191,12 @@
                   @click="$emit('saveInvoiceAction')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p class="normal-case text-lg text-white font-semibold">
                       {{ t`Save` }}
                     </p>
                   </slot>
-                </Button>
-                <Button
+                </UIButton>
+                <UIButton
                   class="w-full mt-2 py-5"
                   :style="{
                     backgroundColor:
@@ -207,14 +207,14 @@
                   @click="emitEvent('toggleModal', 'SavedInvoice', true)"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p class="normal-case text-lg text-white font-semibold">
                       {{ t`Held` }}
                     </p>
                   </slot>
-                </Button>
+                </UIButton>
               </div>
               <div class="w-full">
-                <Button
+                <UIButton
                   class="mt-2 w-full py-5"
                   :style="{
                     backgroundColor:
@@ -225,12 +225,12 @@
                   @click="() => $emit('clearValues')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p class="normal-case text-lg text-white font-semibold">
                       {{ t`Cancel` }}
                     </p>
                   </slot>
-                </Button>
-                <Button
+                </UIButton>
+                <UIButton
                   v-if="isReturnInvoiceEnabledReturn"
                   class="mt-2 w-full py-5"
                   :style="{
@@ -241,12 +241,12 @@
                   @click="emitEvent('toggleModal', 'ReturnSalesInvoice', true)"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p class="normal-case text-lg text-white font-semibold">
                       {{ t`Return` }}
                     </p>
                   </slot>
-                </Button>
-                <Button
+                </UIButton>
+                <UIButton
                   v-else
                   class="mt-2 w-full py-5"
                   :style="{
@@ -257,14 +257,14 @@
                   @click="emitEvent('handlePaymentAction')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p class="normal-case text-lg text-white font-semibold">
                       {{ t`Pay` }}
                     </p>
                   </slot>
-                </Button>
+                </UIButton>
               </div>
             </div>
-            <Button
+            <UIButton
               v-if="isReturnInvoiceEnabledReturn"
               class="mt-2 w-full py-5"
               :style="{
@@ -275,11 +275,11 @@
               @click="emitEvent('handlePaymentAction')"
             >
               <slot>
-                <p class="uppercase text-lg text-white font-semibold">
+                <p class="normal-case text-lg text-white font-semibold">
                   {{ t`Pay` }}
                 </p>
               </slot>
-            </Button>
+            </UIButton>
           </div>
         </div>
       </div>
@@ -372,7 +372,6 @@ import { defineComponent } from 'vue';
 import { getItem } from 'src/utils/pos';
 import AlertModal from './AlertModal.vue';
 import PaymentModal from './PaymentModal.vue';
-import Button from 'src/components/Button.vue';
 import KeyboardModal from './KeyboardModal.vue';
 import PriceListModal from './PriceListModal.vue';
 import ItemEnquiryModal from './ItemEnquiryModal.vue';
@@ -402,7 +401,6 @@ export default defineComponent({
   name: 'ModernPos',
   components: {
     Link,
-    Button,
     AlertModal,
     PaymentModal,
     KeyboardModal,

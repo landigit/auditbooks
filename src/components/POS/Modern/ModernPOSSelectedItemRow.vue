@@ -1,7 +1,8 @@
 <template>
   <div>
-    <feather-icon
+    <LucideIcon
       :name="isExapanded ? 'chevron-up' : 'chevron-down'"
+      :size="16"
       class="w-4 h-4 inline-flex dark:text-white"
       @click="toggleExpand"
     />
@@ -66,9 +67,10 @@
   />
 
   <div class="flex justify-center">
-    <feather-icon
+    <LucideIcon
       name="trash"
-      class="w-4 text-xl text-red-500"
+      :size="16"
+      class="w-4 text-xl text-red-500 cursor-pointer hover:text-red-600"
       @click="removeAddedItem(row)"
     />
   </div>
@@ -225,7 +227,7 @@
             fieldtype: 'Text',
             fieldname: 'serialNumber',
           }"
-          :value="row.serialNumber"
+          :value="row.serialNumber as string"
           :show-label="true"
           :border="true"
           :required="hasSerialNumber"
@@ -243,6 +245,7 @@ import Float from 'src/components/Controls/Float.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Link from 'src/components/Controls/Link.vue';
 import Text from 'src/components/Controls/Text.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { inject } from 'vue';
 import { fyo } from 'src/initFyo';
 import { defineComponent, PropType } from 'vue';
@@ -252,7 +255,7 @@ import { validateSerialNumberCount } from 'src/utils/pos';
 
 export default defineComponent({
   name: 'ModernPOSSelectedItemRow',
-  components: { Currency, Data, Float, Int, Link, Text },
+  components: { Currency, Data, Float, Int, Link, Text, LucideIcon },
   props: {
     row: { type: SalesInvoiceItem, required: true },
     batchAdded: { type: Boolean, default: false },

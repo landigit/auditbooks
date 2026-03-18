@@ -1,10 +1,12 @@
 <template>
   <div class="flex flex-col h-full">
     <PageHeader :title="t`Chart of Accounts`">
-      <Button v-if="!isAllExpanded" @click="expand">{{ t`Expand` }}</Button>
-      <Button v-if="!isAllCollapsed" @click="collapse">{{
+      <UIButton v-if="!isAllExpanded" variant="outline" @click="expand">{{
+        t`Expand`
+      }}</UIButton>
+      <UIButton v-if="!isAllCollapsed" variant="outline" @click="collapse">{{
         t`Collapse`
-      }}</Button>
+      }}</UIButton>
     </PageHeader>
 
     <!-- Chart of Accounts -->
@@ -122,14 +124,11 @@ import { docsPathMap } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
 import { commongDocDelete, openQuickEdit } from 'src/utils/ui';
 import { getMapFromList, removeAtIndex } from 'utils/index';
-import { defineComponent, nextTick } from 'vue';
-import Button from '../components/Button.vue';
-import { inject } from 'vue';
+import { defineComponent, nextTick, inject, Component } from 'vue';
 import { handleErrorWithDialog } from '../errorHandling';
 import { AccountRootType, AccountType } from 'models/baseModels/Account/types';
 import { TreeViewSettings } from 'fyo/model/types';
 import { Doc } from 'fyo/model/doc';
-import { Component } from 'vue';
 import { uicolors } from 'src/utils/colors';
 import { showDialog } from 'src/utils/interactive';
 
@@ -151,7 +150,6 @@ type AccKey = 'addingAccount' | 'addingGroupAccount';
 
 export default defineComponent({
   components: {
-    Button,
     PageHeader,
   },
   props: {

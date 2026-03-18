@@ -39,9 +39,10 @@
         class="bg-gray-100 dark:bg-gray-800 p-0.5 rounded mb-1"
         @click="handleClick"
       >
-        <FeatherIcon
+        <LucideIcon
           :name="shouldClear ? 'x' : 'upload'"
           class="w-4 h-4 text-gray-600 dark:text-gray-400"
+          :size="16"
         />
       </button>
     </div>
@@ -52,7 +53,7 @@ import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { getDataURL } from 'src/utils/misc';
 import { defineComponent, PropType } from 'vue';
-import FeatherIcon from '../FeatherIcon.vue';
+import LucideIcon from '../LucideIcon.vue';
 import Base from './Base.vue';
 
 const mime_types: Record<string, string> = {
@@ -65,7 +66,7 @@ const mime_types: Record<string, string> = {
 
 export default defineComponent({
   name: 'AttachImage',
-  components: { FeatherIcon },
+  components: { LucideIcon },
   extends: Base,
   props: {
     letterPlaceholder: { type: String, default: '' },
@@ -109,7 +110,10 @@ export default defineComponent({
         return;
       }
       const extension = name.split('.').at(-1);
-      const type = mime_types[extension];
+      const type = extension ? mime_types[extension.toLowerCase()] : undefined;
+      if (!type) {
+        return;
+      }
       const dataURL = await getDataURL(type, data);
 
       // @ts-ignore

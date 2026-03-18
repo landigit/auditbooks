@@ -1,6 +1,7 @@
 <template>
-  <feather-icon
+  <LucideIcon
     :name="isExapanded ? 'chevron-up' : 'chevron-down'"
+    :size="16"
     class="w-4 h-4 inline-flex cursor-pointer text-gray-700 dark:text-gray-200"
     @click="toggleExpand"
   />
@@ -40,13 +41,15 @@
       :read-only="true"
     />
     <div class="flex flex-col ml-1">
-      <feather-icon
+      <LucideIcon
         name="chevron-up"
+        :size="12"
         class="w-3 h-3 cursor-pointer hover:text-blue-500 text-gray-700 dark:text-gray-200"
         @click="adjustQuantity(1)"
       />
-      <feather-icon
+      <LucideIcon
         name="chevron-down"
+        :size="12"
         class="w-3 h-3 cursor-pointer hover:text-blue-500 text-gray-700 dark:text-gray-200"
         @click="adjustQuantity(-1)"
       />
@@ -91,9 +94,10 @@
   />
 
   <div class="px-4">
-    <feather-icon
+    <LucideIcon
       name="trash"
-      class="w-4 text-xl text-red-500"
+      :size="16"
+      class="w-4 text-xl text-red-500 cursor-pointer hover:text-red-600"
       @click="removeAddedItem(row)"
     />
   </div>
@@ -255,7 +259,7 @@
           fieldtype: 'Text',
           fieldname: 'serialNumber',
         }"
-        :value="itemSerialNumbers[row.item as string] || row.serialNumber"
+        :value="itemSerialNumbers[row.item as string] || (row.serialNumber as string)"
         :show-label="true"
         :border="true"
         :required="hasSerialNumber"
@@ -272,6 +276,7 @@ import Float from 'src/components/Controls/Float.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Link from 'src/components/Controls/Link.vue';
 import Text from 'src/components/Controls/Text.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { inject } from 'vue';
 import { fyo } from 'src/initFyo';
 import { defineComponent, PropType } from 'vue';
@@ -289,7 +294,7 @@ import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers'
 
 export default defineComponent({
   name: 'SelectedItemRow',
-  components: { Currency, Data, Float, Int, Link, Text, AutoComplete },
+  components: { Currency, Data, Float, Int, Link, Text, AutoComplete, LucideIcon },
   props: {
     row: { type: SalesInvoiceItem, required: true },
     batchAdded: { type: Boolean, default: false },

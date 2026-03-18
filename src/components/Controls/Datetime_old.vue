@@ -22,8 +22,7 @@
         </p>
 
         <button v-if="!isReadOnly" class="p-0.5 rounded -me-1 ms-1">
-          <FeatherIcon
-            name="calendar"
+          <Calendar
             class="w-4 h-4"
             :class="showMandatory ? 'text-red-600' : 'text-gray-600'"
           />
@@ -57,15 +56,15 @@
  * DatetimePicker's UX issues are solved.
  */
 
+import { Calendar } from 'lucide-vue-next';
 import { Field } from 'schemas/types';
 import { defineComponent, PropType } from 'vue';
 import DatetimePicker from './DatetimePicker.vue';
-import FeatherIcon from '../FeatherIcon.vue';
 import Popover from '../Popover.vue';
 import Base from './Base.vue';
 
 export default defineComponent({
-  components: { Popover, FeatherIcon, DatetimePicker },
+  components: { Popover, Calendar, DatetimePicker },
   extends: Base,
   props: { value: [Date, String], df: Object as PropType<Field> },
   data() {

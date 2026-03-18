@@ -12,8 +12,9 @@
 
     <!-- Pagination Selector -->
     <div class="flex gap-1 items-center justify-self-center">
-      <feather-icon
+      <LucideIcon
         name="chevron-left"
+        :size="16"
         class="w-4 h-4 rtl-rotate-180"
         :class="
           pageNo > 1
@@ -37,8 +38,9 @@
           {{ maxPages }}
         </p>
       </div>
-      <feather-icon
+      <LucideIcon
         name="chevron-right"
+        :size="16"
         class="w-4 h-4 rtl-rotate-180"
         :class="
           pageNo < maxPages
@@ -72,8 +74,10 @@
 </template>
 <script>
 import { defineComponent } from 'vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 
 export default defineComponent({
+  components: { LucideIcon },
   props: {
     itemCount: { type: Number, default: 0 },
     allowedCounts: { type: Array, default: () => [50, 100, 500, -1] },

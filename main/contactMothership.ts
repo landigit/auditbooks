@@ -18,8 +18,6 @@ export function getUrlAndTokenString(): Creds {
   }
 
   if (!fs.existsSync(errLogCredsPath)) {
-    // eslint-disable-next-line no-console
-    !inProduction && console.log(`${errLogCredsPath} doesn't exist, can't log`);
     return empty;
   }
 

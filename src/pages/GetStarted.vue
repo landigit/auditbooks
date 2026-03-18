@@ -17,7 +17,7 @@
             class="w-full md:w-1/3 sm:w-1/2"
           >
             <div
-              class="flex flex-col justify-between h-40 p-4 border dark:border-gray-800 dark:text-gray-50 rounded-lg"
+              class="flex flex-col justify-between h-44 p-5 bg-white dark:bg-gray-875 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 rounded-lg dark:text-gray-100 text-gray-900"
               @mouseenter="() => (activeCard = item.key)"
               @mouseleave="() => (activeCard = null)"
             >
@@ -25,39 +25,45 @@
                 <component
                   :is="getIconComponent(item)"
                   v-show="activeCard !== item.key && !isCompleted(item)"
-                  class="mb-4"
+                  class="mb-4 w-6 h-6 text-foreground/80"
                 />
-                <Icon
+                <LucideIcon
                   v-show="isCompleted(item)"
-                  name="green-check"
-                  size="24"
-                  class="w-5 h-5 mb-4"
+                  name="check"
+                  :size="24"
+                  class="w-6 h-6 mb-4 text-green-500"
                 />
-                <h3 class="font-medium">{{ item.label }}</h3>
-                <p class="mt-2 text-sm text-gray-800 dark:text-gray-400">
+                <h3 class="font-bold text-base tracking-tight">
+                  {{ item.label }}
+                </h3>
+                <p
+                  class="mt-2 text-xs font-medium text-muted-foreground leading-relaxed"
+                >
                   {{ item.description }}
                 </p>
               </div>
               <div
                 v-show="activeCard === item.key && !isCompleted(item)"
-                class="flex mt-2 overflow-hidden"
+                class="flex mt-3 overflow-hidden gap-2"
               >
-                <Button
+                <UIButton
                   v-if="item.action"
-                  class="leading-tight text-base"
-                  type="primary"
+                  variant="default"
+                  size="sm"
+                  class="flex-1"
                   @click="handleAction(item)"
                 >
                   {{ t`Set Up` }}
-                </Button>
-                <Button
+                </UIButton>
+                <UIButton
                   v-if="item.documentation"
-                  class="leading-tight text-base"
-                  :class="{ 'ms-4': item.action }"
+                  variant="outline"
+                  size="sm"
+                  class="flex-1"
                   @click="handleDocumentation(item)"
                 >
                   {{ t`Documentation` }}
-                </Button>
+                </UIButton>
               </div>
             </div>
           </div>
@@ -69,8 +75,7 @@
 
 <script lang="ts">
 import { DocValue } from 'fyo/core/types';
-import Button from 'src/components/Button.vue';
-import Icon from 'src/components/Icon.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
 import { getGetStartedConfig } from 'src/utils/getStartedConfig';
@@ -83,8 +88,7 @@ export default defineComponent({
   name: 'GetStarted',
   components: {
     PageHeader,
-    Button,
-    Icon,
+    LucideIcon,
   },
   props: {
     darkMode: { type: Boolean, default: false },
@@ -212,8 +216,7 @@ export default defineComponent({
       return {
         name,
         render() {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          return h(Icon, {
+          return h(LucideIcon, {
             ...Object.assign(
               {
                 name,

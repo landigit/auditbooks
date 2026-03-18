@@ -180,7 +180,6 @@ export default class DatabaseCore extends DatabaseBase {
     try {
       const qb = this.knex!(schemaName);
       if (name !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         qb.where({ name });
       }
       row = await qb.limit(1);

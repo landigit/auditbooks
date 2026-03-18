@@ -7,7 +7,7 @@
     <template #body>
       <FormHeader
         :form-title="t`Set up your organization`"
-        class="sticky top-0 bg-white/90 dark:bg-black/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-900"
+        class="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-900"
       >
       </FormHeader>
 
@@ -38,31 +38,33 @@
 
       <!-- Buttons Bar -->
       <div
-        class="mt-auto p-4 flex items-center justify-between border-t border-gray-100 dark:border-gray-900 flex-shrink-0 sticky bottom-0 bg-white/90 dark:bg-black/90 backdrop-blur-md"
+        class="mt-auto p-4 flex items-center justify-between border-t border-gray-100 dark:border-gray-900 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-900"
       >
         <p v-if="loading" class="text-base text-gray-600 dark:text-gray-400">
           {{ t`Loading instance...` }}
         </p>
-        <Button
+        <UIButton
           v-if="!loading"
-          class="w-24 border dark:border-gray-800"
+          variant="outline"
+          class="w-24"
           @click="cancel"
-          >{{ t`Cancel` }}</Button
+          >{{ t`Cancel` }}</UIButton
         >
-        <Button
+        <UIButton
           v-if="fyo.store.isDevelopment && !loading"
-          class="w-24 ml-auto mr-4 border dark:border-gray-800"
+          variant="outline"
+          class="w-24 ml-auto mr-4"
           :disabled="loading"
           @click="fill"
-          >{{ t`Fill` }}</Button
+          >{{ t`Fill` }}</UIButton
         >
-        <Button
-          type="primary"
+        <UIButton
+          variant="default"
           class="w-24"
           data-testid="submit-button"
           :disabled="!areAllValuesFilled || loading"
           @click="submit"
-          >{{ t`Submit` }}</Button
+          >{{ t`Submit` }}</UIButton
         >
       </div>
     </template>
@@ -75,7 +77,6 @@ import { Verb } from 'fyo/telemetry/types';
 import { TranslationString } from 'fyo/utils/translation';
 import { ModelNameEnum } from 'models/types';
 import { Field } from 'schemas/types';
-import Button from 'src/components/Button.vue';
 import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import { getErrorMessage } from 'src/utils';
@@ -88,7 +89,6 @@ import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 export default defineComponent({
   name: 'SetupWizard',
   components: {
-    Button,
     FormContainer,
     FormHeader,
     CommonFormSection,

@@ -32,11 +32,10 @@
           "
           @click="routeToSidebarItem(group)"
         >
-          <Icon
+          <LucideIcon
             class="flex-shrink-0"
-            :name="group.icon"
-            :size="group.iconSize || '18'"
-            :height="group.iconHeight ?? 0"
+            :name="getLucideIconName(group.icon)"
+            :size="parseInt(group.iconSize || '18')"
             :active="!!isGroupActive(group)"
             :darkMode="darkMode"
             :class="isGroupActive(group) && !group.items ? '-ms-1' : ''"
@@ -80,7 +79,7 @@
         class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
         @click="handleOpenDocumentation"
       >
-        <feather-icon name="help-circle" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="help-circle" :size="16" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Help` }}
         </p>
@@ -90,7 +89,7 @@
         class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
         @click="viewShortcuts = true"
       >
-        <feather-icon name="command" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="command" :size="16" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Shortcuts` }}</p>
       </button>
 
@@ -99,7 +98,7 @@
         class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
         @click="$emit('change-db-file')"
       >
-        <feather-icon name="database" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="database" :size="16" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Change DB` }}</p>
       </button>
 
@@ -107,7 +106,7 @@
         class="flex text-sm text-gray-800 dark:text-gray-300 hover:text-black dark:hover:text-white gap-1 items-center"
         @click="handleReportIssue"
       >
-        <feather-icon name="flag" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="flag" :size="16" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Report Issue` }}
         </p>
@@ -128,12 +127,17 @@
       class="absolute bottom-0 end-0 text-gray-800 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-875 rounded p-1 m-4 rtl-rotate-180"
       @click="toggleSidebar()"
     >
-      <feather-icon name="chevrons-left" class="w-4 h-4" />
+      <LucideIcon name="chevrons-left" :size="16" class="w-4 h-4" />
     </button>
 
-    <Modal :open-modal="viewShortcuts" @closemodal="viewShortcuts = false">
-      <ShortcutsHelper class="w-form" />
-    </Modal>
+    <Dialog :open="viewShortcuts" @update:open="viewShortcuts = $event">
+      <DialogContent class="sm:max-w-2xl glass p-0 overflow-hidden">
+        <DialogHeader class="p-4 border-b dark:border-gray-800">
+          <DialogTitle>{{ t`Shortcuts` }}</DialogTitle>
+        </DialogHeader>
+        <ShortcutsHelper />
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 <script lang="ts">
@@ -146,16 +150,19 @@ import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
 import { routeTo, toggleSidebar } from 'src/utils/ui';
 import { defineComponent, inject } from 'vue';
 import router from '../router';
-import Icon from './Icon.vue';
-import Modal from './Modal.vue';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui';
+import LucideIcon from './LucideIcon.vue';
 import ShortcutsHelper from './ShortcutsHelper.vue';
 
 const COMPONENT_NAME = 'Sidebar';
 
 export default defineComponent({
   components: {
-    Icon,
-    Modal,
+    LucideIcon,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
     ShortcutsHelper,
   },
   props: {
@@ -203,7 +210,9 @@ export default defineComponent({
         this.toggleSidebar();
       }
     });
-    this.shortcuts?.set(COMPONENT_NAME, ['F1'], () => this.openDocumentation());
+    this.shortcuts?.set(COMPONENT_NAME, ['F1'], () =>
+      this.handleOpenDocumentation()
+    );
 
     this.showDevMode = this.fyo.store.isDevelopment;
   },
@@ -274,6 +283,21 @@ export default defineComponent({
       }
 
       return { path, query: { filters: JSON.stringify(filters) } };
+    },
+    getLucideIconName(name: string): string {
+      const mapping: Record<string, string> = {
+        dashboard: 'layout-dashboard',
+        sales: 'badge-percent',
+        purchase: 'shopping-cart',
+        reports: 'bar-chart-3',
+        inventory: 'package',
+        pos: 'store',
+        settings: 'settings',
+        general: 'home',
+        gst: 'landmark',
+        'common-entries': 'layers',
+      };
+      return mapping[name] ?? name;
     },
   },
 });

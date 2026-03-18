@@ -7,7 +7,7 @@
     }"
   >
     <div
-      class="w-full w-form shadow-vercel dark:shadow-vercel-dark rounded-lg border border-gray-100 dark:border-gray-900 relative bg-white dark:bg-black"
+      class="w-full w-form shadow-vercel dark:shadow-vercel-dark rounded-md border border-gray-100 dark:border-gray-900 relative bg-white dark:bg-black"
       style="height: 700px"
     >
       <!-- Welcome to Auditbooks -->
@@ -36,8 +36,9 @@
         @click="newDatabase"
       >
         <div class="w-8 h-8 rounded-full bg-blue-500 relative flex-center">
-          <feather-icon
+          <LucideIcon
             name="plus"
+            :size="20"
             class="text-white dark:text-gray-900 w-5 h-5"
           />
         </div>
@@ -65,8 +66,9 @@
         <div
           class="w-8 h-8 rounded-full bg-green-500 dark:bg-green-600 relative flex-center"
         >
-          <feather-icon
+          <LucideIcon
             name="upload"
+            :size="16"
             class="w-4 h-4 text-white dark:text-gray-900"
           />
         </div>
@@ -94,7 +96,7 @@
         <div
           class="w-8 h-8 rounded-full bg-green-500 dark:bg-green-600 relative flex-center"
         >
-          <feather-icon name="monitor" class="w-4 h-4 text-white" />
+          <LucideIcon name="monitor" :size="16" class="w-4 h-4 text-white" />
         </div>
         <div>
           <p class="font-medium dark:text-gray-200">
@@ -147,7 +149,7 @@
             class="ms-auto p-2 hover:bg-red-200 dark:hover:bg-red-900 dark:hover:bg-opacity-40 rounded-full w-8 h-8 text-gray-600 dark:text-gray-400 hover:text-red-400 dark:hover:text-red-200"
             @click.stop="() => deleteDb(i)"
           >
-            <feather-icon name="x" class="w-4 h-4" />
+            <LucideIcon name="x" :size="16" class="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -179,14 +181,17 @@
     />
 
     <!-- Base Count Selection when Dev -->
-    <Modal :open-modal="openModal" @closemodal="openModal = false">
-      <div class="p-4 text-gray-900 dark:text-gray-100 w-form">
-        <h2 class="text-xl font-semibold select-none">Set Base Count</h2>
-        <p class="text-base mt-2">
-          Base Count is a lower bound on the number of entries made when
-          creating the dummy instance.
-        </p>
-        <div class="flex my-12 justify-center items-baseline gap-4 text-base">
+    <Dialog :open="openModal" @update:open="openModal = $event">
+      <DialogContent class="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Set Base Count</DialogTitle>
+          <DialogDescription>
+            Base Count is a lower bound on the number of entries made when
+            creating the dummy instance.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div class="flex my-6 justify-center items-baseline gap-4 text-base">
           <label for="basecount" class="text-gray-600 dark:text-gray-400"
             >Base Count</label
           >
@@ -194,24 +199,26 @@
             v-model="baseCount"
             type="number"
             name="basecount"
-            class="bg-gray-100 dark:bg-gray-875 focus:bg-gray-200 dark:focus:bg-gray-890 rounded-md px-2 py-1 outline-none"
+            class="bg-gray-100 dark:bg-gray-875 focus:bg-gray-200 dark:focus:bg-gray-890 rounded-md px-2 py-1 outline-none text-gray-900 dark:text-gray-100"
           />
         </div>
-        <div class="flex justify-between">
-          <Button @click="openModal = false">Cancel</Button>
-          <Button
-            type="primary"
+
+        <DialogFooter class="sm:justify-between">
+          <UIButton variant="outline" @click="openModal = false"
+            >Cancel</UIButton
+          >
+          <UIButton
             @click="
               () => {
                 openModal = false;
                 startDummyInstanceSetup();
               }
             "
-            >Create</Button
+            >Create</UIButton
           >
-        </div>
-      </div>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 <script lang="ts">
@@ -219,11 +226,17 @@ import { setupDummyInstance } from 'dummy';
 import { t } from 'fyo';
 import { Verb } from 'fyo/telemetry/types';
 import { DateTime } from 'luxon';
-import Button from 'src/components/Button.vue';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from 'src/components/ui';
 import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
-import FeatherIcon from 'src/components/FeatherIcon.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import Loading from 'src/components/Loading.vue';
-import Modal from 'src/components/Modal.vue';
 import { fyo } from 'src/initFyo';
 import { showDialog } from 'src/utils/interactive';
 import { updateConfigFiles } from 'src/utils/misc';
@@ -236,9 +249,13 @@ export default defineComponent({
   components: {
     LanguageSelector,
     Loading,
-    FeatherIcon,
-    Modal,
-    Button,
+    LucideIcon,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
   },
   emits: ['file-selected', 'new-database'],
   data() {

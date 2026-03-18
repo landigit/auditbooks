@@ -99,11 +99,7 @@ import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
 
 // Linting broken in this file cause of `extends: ...`
-/* 
-  eslint-disable @typescript-eslint/no-unsafe-argument, 
-  @typescript-eslint/restrict-template-expressions,
-  @typescript-eslint/no-unsafe-return
-*/
+
 export default defineComponent({
   name: 'UnpaidInvoices',
   components: {
@@ -149,7 +145,7 @@ export default defineComponent({
       if (this.schemaName === ModelNameEnum.SalesInvoice) {
         return 'blue';
       }
-      return 'pink';
+      return 'green';
     },
     colors(): string {
       return uicolors[this.color][this.darkMode ? '600' : '500'];

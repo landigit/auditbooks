@@ -217,11 +217,11 @@ export class Doc extends Observable<DocValue | Doc[]> {
       return false;
     }
 
-    if (!!this.submitted) {
+    if (this.submitted) {
       return false;
     }
 
-    if (!!this.cancelled) {
+    if (this.cancelled) {
       return false;
     }
 
@@ -241,7 +241,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       return false;
     }
 
-    if (!!this.cancelled) {
+    if (this.cancelled) {
       return false;
     }
 
@@ -1127,7 +1127,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
    * This may cause the lifecycle function to execute incorrectly.
    */
 
-  /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   async change(ch: ChangeArg) {}
   async validate() {}
   async beforeSync() {}

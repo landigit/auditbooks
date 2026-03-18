@@ -18,7 +18,7 @@
           class="font-mono text-gray-600 cursor-pointer"
           @click="prevClicked"
         >
-          <FeatherIcon name="chevron-left" class="w-4 h-4" />
+          <LucideIcon name="chevron-left" :size="16" class="w-4 h-4" />
         </button>
         <button
           class="font-mono cursor-pointer w-2 h-2 rounded-full border-gray-400 border-2"
@@ -28,7 +28,7 @@
           class="font-mono text-gray-600 cursor-pointer"
           @click="nextClicked"
         >
-          <FeatherIcon name="chevron-right" class="w-4 h-4" />
+          <LucideIcon name="chevron-right" :size="16" class="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -163,7 +163,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, nextTick, PropType } from 'vue';
-import FeatherIcon from '../FeatherIcon.vue';
+import LucideIcon from '../LucideIcon.vue';
 
 type WeekListItem = {
   year: number;
@@ -183,7 +183,7 @@ type DatetimeValues = {
 };
 
 export default defineComponent({
-  components: { FeatherIcon },
+  components: { LucideIcon },
   props: {
     modelValue: { type: Date },
     selectTime: { type: Boolean, default: true },

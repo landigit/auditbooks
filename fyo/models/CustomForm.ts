@@ -51,7 +51,6 @@ export class CustomForm extends Doc {
 
   hidden: HiddenMap = { customFields: () => !this.name };
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   override async validate(): Promise<void> {
     for (const row of this.customFields ?? []) {
       if (row.fieldtype === 'Select' || row.fieldtype === 'AutoComplete') {

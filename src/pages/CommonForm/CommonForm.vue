@@ -30,33 +30,39 @@
       </p>
     </template>
     <template v-if="hasDoc" #header>
-      <Button
+      <UIButton
         v-if="canShowLinks"
-        :icon="true"
+        variant="ghost"
+        size="icon"
         :title="t`View linked entries`"
+        class="w-10 h-10 rounded-md hover:bg-white/10"
         @click="showLinks = true"
       >
-        <feather-icon name="link" class="w-4 h-4"></feather-icon>
-      </Button>
-      <Button
+        <LucideIcon name="link" class="w-4 h-4" />
+      </UIButton>
+      <UIButton
         v-if="canPrint"
         ref="printButton"
-        :icon="true"
+        variant="ghost"
+        size="icon"
         :title="t`Open Print View`"
+        class="w-10 h-10 rounded-md hover:bg-white/10"
         @click="routeTo(`/print/${doc.schemaName}/${doc.name}`)"
       >
-        <feather-icon name="printer" class="w-4 h-4"></feather-icon>
-      </Button>
-      <Button
-        :icon="true"
+        <LucideIcon name="printer" class="w-4 h-4" />
+      </UIButton>
+      <UIButton
+        variant="ghost"
+        size="icon"
         :title="t`Toggle between form and full width`"
+        class="w-10 h-10 rounded-md hover:bg-white/10"
         @click="toggleWidth"
       >
-        <feather-icon
+        <LucideIcon
           :name="useFullWidth ? 'minimize' : 'maximize'"
           class="w-4 h-4"
-        ></feather-icon>
-      </Button>
+        />
+      </UIButton>
       <DropdownWithActions
         v-for="group of groupedActions"
         :key="group.label"
@@ -66,14 +72,22 @@
         <p v-if="group.group">
           {{ group.group }}
         </p>
-        <feather-icon v-else name="more-horizontal" class="w-4 h-4" />
+        <LucideIcon v-else name="more-horizontal" class="w-4 h-4" />
       </DropdownWithActions>
-      <Button v-if="doc?.canSave" type="primary" @click="sync">
+      <UIButton
+        v-if="doc?.canSave"
+        class="ml-2 px-6 shadow-md rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
+        @click="sync"
+      >
         {{ t`Save` }}
-      </Button>
-      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit">{{
-        t`Submit`
-      }}</Button>
+      </UIButton>
+      <UIButton
+        v-else-if="doc?.canSubmit"
+        class="ml-2 px-6 shadow-md rounded-md bg-primary text-primary-foreground hover:bg-primary/90"
+        @click="submit"
+      >
+        {{ t`Submit` }}
+      </UIButton>
     </template>
     <template #body>
       <FormHeader
@@ -162,7 +176,8 @@ import { ValidationError } from 'fyo/utils/errors';
 import { getDocStatus } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
 import { Field, Schema } from 'schemas/types';
-import Button from 'src/components/Button.vue';
+import { UIButton } from 'src/components/ui';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import Barcode from 'src/components/Controls/Barcode.vue';
 import ExchangeRate from 'src/components/Controls/ExchangeRate.vue';
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
@@ -195,7 +210,7 @@ export default defineComponent({
     FormContainer,
     FormHeader,
     CommonFormSection,
-    Button,
+    LucideIcon,
     DropdownWithActions,
     Barcode,
     ExchangeRate,
@@ -224,7 +239,7 @@ export default defineComponent({
       docOrNull,
       shortcuts,
       context,
-      printButton: ref<InstanceType<typeof Button> | null>(null),
+      printButton: ref<InstanceType<typeof UIButton> | null>(null),
     };
   },
   data() {

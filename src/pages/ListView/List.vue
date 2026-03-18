@@ -1,135 +1,145 @@
 <template>
-  <div class="text-base flex flex-col overflow-hidden">
-    <!-- Title Row -->
+  <div class="text-base flex flex-col overflow-hidden h-full">
     <div
-      class="flex items-center"
-      :style="{
-        paddingRight: dataSlice.length > 13 ? 'var(--w-scrollbar)' : '',
-      }"
+      class="flex-1 overflow-auto rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-875 custom-scroll custom-scroll-thumb1"
     >
-      <div
-        v-if="!isSelectionMode"
-        class="w-8 text-end me-2 text-gray-700 dark:text-gray-400"
-      >
-        #
-      </div>
-      <div v-else class="w-8 flex justify-end me-2">
-        <Check
-          :df="{
-            fieldtype: 'Check',
-            fieldname: 'selectAll',
-            label: '',
-          }"
-          :show-label="false"
-          :value="isAllSelected"
-          @change="toggleSelectAll"
-        />
-      </div>
-      <Row
-        class="flex-1 text-gray-700 dark:text-gray-400 h-row-mid"
-        :column-count="columns.length"
-        gap="1rem"
-      >
-        <div
-          v-for="(column, i) in columns"
-          :key="column.label"
-          class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
-          :class="{
-            'ms-auto': isNumeric(column.fieldtype),
-            'pe-4': i === columns.length - 1,
-          }"
+      <Table>
+        <TableHeader
+          class="sticky top-0 bg-white dark:bg-gray-875 z-10 border-b border-gray-200 dark:border-gray-800"
         >
-          {{ column.label }}
-        </div>
-      </Row>
-    </div>
-    <hr class="dark:border-gray-800" />
-
-    <!-- Data Rows -->
-    <div
-      v-if="dataSlice.length !== 0"
-      class="overflow-y-auto dark:dark-scroll custom-scroll custom-scroll-thumb1"
-    >
-      <div v-for="(row, i) in dataSlice" :key="row.name as string">
-        <!-- Row Content -->
-        <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center">
-          <div
-            v-if="!isSelectionMode"
-            class="w-8 text-end me-2 text-gray-700 dark:text-gray-400"
-          >
-            {{ i + pageStart + 1 }}
-          </div>
-          <div v-else class="w-8 flex justify-end me-2">
-            <Check
-              :df="{
-                fieldtype: 'Check',
-                fieldname: 'selectItem',
-                label: '',
-              }"
-              :show-label="false"
-              :value="selectedItems.includes(row.name as string)"
-              @change="toggleItemSelection(row.name as string)"
-            />
-          </div>
-
-          <Row
-            gap="1rem"
-            class="cursor-pointer text-gray-900 dark:text-gray-300 flex-1 h-row-mid"
-            :column-count="columns.length"
-            @click="isSelectionMode ? null : $emit('openDoc', row.name)"
-          >
-            <ListCell
-              v-for="(column, c) in columns"
+          <TableRow class="hover:bg-transparent">
+            <TableHead
+              v-if="!isSelectionMode"
+              class="w-12 text-center text-foreground/60 font-semibold tracking-normal normal-case text-[10px]"
+              >#</TableHead
+            >
+            <TableHead v-else class="w-12 text-center">
+              <Check
+                :df="{ fieldtype: 'Check', fieldname: 'selectAll', label: '' }"
+                :show-label="false"
+                :value="isAllSelected"
+                @change="toggleSelectAll"
+              />
+            </TableHead>
+            <TableHead
+              v-for="(column, i) in columns"
               :key="column.label"
+              class="text-foreground/60 font-semibold tracking-normal normal-case text-[10px]"
               :class="{
-                'text-end': isNumeric(column.fieldtype),
-                'pe-4': c === columns.length - 1,
+                'text-right': isNumeric(column.fieldtype),
+                'pr-6': i === columns.length - 1,
               }"
-              :row="row as RenderData"
-              :column="column"
-              @status-found="handleStatusFound"
-            />
-          </Row>
-        </div>
-        <hr
-          v-if="!(i === dataSlice.length - 1 && i > 13)"
-          class="dark:border-gray-800"
-        />
-      </div>
+            >
+              {{ column.label }}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          <template v-if="dataSlice.length !== 0">
+            <TableRow
+              v-for="(row, i) in dataSlice"
+              :key="row.name as string"
+              class="cursor-pointer group hover:bg-white/5 transition-colors"
+              @click="isSelectionMode ? null : $emit('openDoc', row.name)"
+            >
+              <TableCell
+                v-if="!isSelectionMode"
+                class="w-12 text-center text-muted-foreground font-semibold"
+              >
+                {{ i + pageStart + 1 }}
+              </TableCell>
+              <TableCell v-else class="w-12 text-center py-2" @click.stop>
+                <div class="flex justify-center">
+                  <Check
+                    :df="{
+                      fieldtype: 'Check',
+                      fieldname: 'selectItem',
+                      label: '',
+                    }"
+                    :show-label="false"
+                    :value="selectedItems.includes(row.name as string)"
+                    @change="toggleItemSelection(row.name as string)"
+                  />
+                </div>
+              </TableCell>
+
+              <TableCell
+                v-for="(column, c) in columns"
+                :key="column.label"
+                class="py-3 items-center"
+                :class="{
+                  'text-right': isNumeric(column.fieldtype),
+                  'pr-6': c === columns.length - 1,
+                }"
+              >
+                <ListCell
+                  :row="row as RenderData"
+                  :column="column"
+                  @status-found="handleStatusFound"
+                />
+              </TableCell>
+            </TableRow>
+          </template>
+
+          <template v-else>
+            <TableRow class="hover:bg-transparent border-0">
+              <TableCell
+                :colspan="columns.length + 1"
+                class="h-[400px] text-center"
+              >
+                <div
+                  class="flex flex-col items-center justify-center opacity-70"
+                >
+                  <div
+                    class="w-20 h-20 rounded-[2rem] bg-white/5 flex items-center justify-center border border-gray-100 dark:border-gray-800 shadow-inner mb-6"
+                  >
+                    <LucideIcon
+                      name="inbox"
+                      class="text-muted-foreground w-10 h-10"
+                    />
+                  </div>
+                  <span
+                    class="text-xs normal-case tracking-[0.25em] font-semibold text-muted-foreground mb-6"
+                  >
+                    {{ t`No entries found` }}
+                  </span>
+                  <UIButton
+                    v-if="canCreate"
+                    variant="default"
+                    @click="$emit('makeNewDoc')"
+                  >
+                    <LucideIcon name="plus" class="w-4 h-4 mr-2" />
+                    {{ t`Make Entry` }}
+                  </UIButton>
+                </div>
+              </TableCell>
+            </TableRow>
+          </template>
+        </TableBody>
+      </Table>
     </div>
 
     <!-- Pagination Footer -->
-    <div v-if="data?.length" class="mt-auto">
-      <hr class="dark:border-gray-800" />
-      <Paginator
-        :item-count="data.length"
-        class="px-4"
-        @index-change="setPageIndices"
-      />
-    </div>
-
-    <!-- Empty State -->
-    <div
-      v-if="!data?.length"
-      class="flex flex-col items-center justify-center my-auto"
-    >
-      <img src="../../assets/img/list-empty-state.svg" alt="" class="w-24" />
-      <p class="my-3 text-gray-800 dark:text-gray-200">
-        {{ t`No entries found` }}
-      </p>
-      <Button v-if="canCreate" type="primary" @click="$emit('makeNewDoc')">
-        {{ t`Make Entry` }}
-      </Button>
+    <div v-if="data?.length" class="mt-4 flex justify-end px-2">
+      <Paginator :item-count="data.length" @index-change="setPageIndices" />
     </div>
   </div>
 </template>
 <script lang="ts">
 import { ListViewSettings, RenderData } from 'fyo/model/types';
 import { cloneDeep } from 'lodash';
-import Button from 'src/components/Button.vue';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from 'src/components/ui';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Paginator from 'src/components/Paginator.vue';
-import Row from 'src/components/Row.vue';
 import { fyo } from 'src/initFyo';
 import { isNumeric } from 'src/utils';
 import { QueryFilter } from 'utils/db/types';
@@ -139,11 +149,16 @@ import ListCell from './ListCell.vue';
 export default defineComponent({
   name: 'List',
   components: {
-    Row,
     ListCell,
-    Button,
     Check,
     Paginator,
+    Table,
+    TableHeader,
+    TableBody,
+    TableRow,
+    TableHead,
+    TableCell,
+    LucideIcon,
   },
   props: {
     listConfig: {

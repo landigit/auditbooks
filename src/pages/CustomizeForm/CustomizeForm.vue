@@ -2,9 +2,9 @@
   <div>
     <PageHeader :title="t`Customize Form`">
       <DropdownWithActions :actions="[]" :disabled="false" :title="t`More`" />
-      <Button :title="t`Save Customizations`" type="primary">
+      <UIButton :title="t`Save Customizations`">
         {{ t`Save` }}
-      </Button>
+      </UIButton>
     </PageHeader>
     <div class="flex text-base w-full flex-col">
       <!-- Select Entry Type -->
@@ -43,13 +43,12 @@
 import { defineComponent } from 'vue';
 
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
-import Button from 'src/components/Button.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import { ModelNameEnum } from 'models/types';
 
 export default defineComponent({
-  components: { PageHeader, Button, DropdownWithActions, AutoComplete },
+  components: { PageHeader, DropdownWithActions, AutoComplete },
   data() {
     return { errorMessage: '', formType: '' };
   },

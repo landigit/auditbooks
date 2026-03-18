@@ -2,8 +2,9 @@ import { CUSTOM_EVENTS } from 'utils/messages';
 import { UnexpectedLogObject } from 'utils/types';
 import { App as VueApp, createApp } from 'vue';
 import App from './App.vue';
-import Badge from './components/Badge.vue';
-import FeatherIcon from './components/FeatherIcon.vue';
+import Badge from './components/ui/Badge.vue';
+import UIButton from './components/ui/Button.vue';
+import LucideIcon from './components/LucideIcon.vue';
 import { handleError, sendError } from './errorHandling';
 import { fyo } from './initFyo';
 import { outsideClickDirective } from './renderer/helpers';
@@ -33,13 +34,13 @@ import { setLanguageMap } from './utils/language';
   const app = createApp({
     template: '<App/>',
   });
-  app.config.unwrapInjectedRef = true;
   setErrorHandlers(app);
 
   app.use(router);
   app.component('App', App);
-  app.component('FeatherIcon', FeatherIcon);
   app.component('Badge', Badge);
+  app.component('UIButton', UIButton);
+  app.component('LucideIcon', LucideIcon);
   app.directive('on-outside-click', outsideClickDirective);
   app.mixin({
     computed: {

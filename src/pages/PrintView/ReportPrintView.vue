@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col w-full h-full">
     <PageHeader :title="t`Print ${title}`">
-      <Button class="text-xs" type="primary" @click="savePDF()">
+      <UIButton class="text-xs" @click="savePDF()">
         {{ t`Save as PDF` }}
-      </Button>
-      <Button class="text-xs" type="primary" @click="savePDF(true)">
+      </UIButton>
+      <UIButton class="text-xs" @click="savePDF(true)">
         {{ t`Print` }}
-      </Button>
+      </UIButton>
     </PageHeader>
 
     <div
@@ -156,7 +156,6 @@ import { Verb } from 'fyo/telemetry/types';
 import { Report } from 'reports/Report';
 import { reports } from 'reports/index';
 import { OptionField } from 'schemas/types';
-import Button from 'src/components/Button.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Select from 'src/components/Controls/Select.vue';
@@ -169,7 +168,7 @@ import { PropType, defineComponent } from 'vue';
 import ScaledContainer from '../TemplateBuilder/ScaledContainer.vue';
 
 export default defineComponent({
-  components: { PageHeader, Button, Check, Int, ScaledContainer, Select },
+  components: { PageHeader, Check, Int, ScaledContainer, Select },
   props: {
     reportName: {
       type: String as PropType<keyof typeof reports>,

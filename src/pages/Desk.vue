@@ -28,12 +28,15 @@ import { toggleSidebar } from 'src/utils/ui';
         </keep-alive>
       </router-view>
 
-      <router-view v-slot="{ Component, route }" name="edit">
+      <router-view v-slot="{ Component }" name="edit">
         <Transition name="quickedit">
-          <div v-if="route?.query?.edit">
+          <div v-if="$route?.query?.edit">
             <component
               :is="Component"
-              :key="route.query.schemaName + route.query.name"
+              :key="
+                ($route.query.schemaName as string) +
+                ($route.query.name as string)
+              "
               :dark-mode="darkMode"
             />
           </div>
@@ -47,7 +50,7 @@ import { toggleSidebar } from 'src/utils/ui';
       class="absolute bottom-0 start-0 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 rounded rtl-rotate-180 p-1 m-4 opacity-0 hover:opacity-100 hover:shadow-md"
       @click="() => toggleSidebar()"
     >
-      <feather-icon name="chevrons-right" class="w-4 h-4" />
+      <LucideIcon name="chevrons-right" size="16" class="w-4 h-4" />
     </button>
   </div>
 </template>

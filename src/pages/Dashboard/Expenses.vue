@@ -1,39 +1,60 @@
 <template>
-  <div class="flex flex-col h-full">
-    <SectionHeader>
-      <template #title>{{ t`Top Expenses` }}</template>
+  <div class="flex flex-col h-full w-full p-4">
+    <SectionHeader class="mb-8">
+      <template #title>
+        <span
+          class="text-lg font-semibold normal-case tracking-[0.15em] bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60"
+        >
+          {{ t`Top Expenses` }}
+        </span>
+      </template>
       <template #action>
         <PeriodSelector :value="period" @change="(value) => (period = value)" />
       </template>
     </SectionHeader>
 
-    <div v-show="hasData" class="flex relative">
+    <div
+      v-show="hasData"
+      class="flex flex-1 relative items-center justify-between"
+    >
       <!-- Chart Legend -->
-      <div class="w-1/2 flex flex-col gap-4 justify-center dark:text-gray-25">
+      <div class="w-1/2 flex flex-col gap-3 justify-center">
         <!-- Ledgend Item -->
         <div
           v-for="(d, i) in expenses"
           :key="d.account"
-          class="flex items-center text-sm"
+          class="flex items-center px-5 py-3 rounded-lg transition-all duration-300 group cursor-pointer border"
+          :class="
+            active === i
+              ? 'bg-white/10 border-white/20 shadow-md scale-105 z-10'
+              : 'bg-transparent border-transparent hover:bg-white/5'
+          "
           @mouseover="active = i"
-          @mouseleave="active = null"
+          @mouseleave="active = undefined"
         >
-          <div class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
-          <p class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28">
+          <div
+            class="w-3.5 h-3.5 rounded-full flex-shrink-0 shadow-inner"
+            :class="d.class"
+          />
+          <p
+            class="ms-4 font-bold text-sm text-foreground/70 group-hover:text-foreground transition-colors overflow-x-auto whitespace-nowrap no-scrollbar w-32"
+          >
             {{ d.account }}
           </p>
-          <p class="whitespace-nowrap flex-shrink-0 ms-auto">
+          <p
+            class="whitespace-nowrap flex-shrink-0 ms-auto font-semibold tracking-tight text-foreground group-hover:text-primary transition-colors"
+          >
             {{ fyo.format(d?.total ?? 0, 'Currency') }}
           </p>
         </div>
       </div>
       <DonutChart
-        class="w-1/2 my-auto"
+        class="w-1/2 drop-shadow-2xl"
         :active="active"
         :sectors="sectors"
-        :offset-x="3"
-        :thickness="10"
-        :text-offset-x="6.5"
+        :offset-x="0"
+        :thickness="14"
+        :text-offset-x="6.8"
         :value-formatter="(value: number) => fyo.format(value, 'Currency')"
         :total-label="t`Total Spending`"
         :dark-mode="darkMode"
@@ -44,9 +65,16 @@
     <!-- Empty Message -->
     <div
       v-if="expenses.length === 0"
-      class="flex-1 w-full h-full flex-center my-20"
+      class="flex-1 w-full h-full flex flex-col justify-center items-center gap-5 my-10 opacity-60"
     >
-      <span class="text-base text-gray-600 dark:text-gray-500">
+      <div
+        class="w-20 h-20 rounded-[2rem] bg-white/5 flex items-center justify-center border border-gray-100 dark:border-gray-800 shadow-inner"
+      >
+        <LucideIcon name="receipt" class="text-muted-foreground w-10 h-10" />
+      </div>
+      <span
+        class="text-xs normal-case tracking-[0.25em] font-semibold text-muted-foreground text-center max-w-[200px] leading-relaxed"
+      >
         {{ t`No expenses in this period` }}
       </span>
     </div>
@@ -63,26 +91,24 @@ import DonutChart from '../../components/Charts/DonutChart.vue';
 import DashboardChartBase from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 
 // Linting broken in this file cause of `extends: ...`
-/*
-  eslint-disable @typescript-eslint/no-unsafe-argument,
-  @typescript-eslint/no-unsafe-return,
-  @typescript-eslint/restrict-plus-operands
-*/
+
 export default defineComponent({
   name: 'Expenses',
   components: {
     DonutChart,
     PeriodSelector,
     SectionHeader,
+    LucideIcon,
   },
   extends: DashboardChartBase,
   props: {
     darkMode: { type: Boolean, default: false },
   },
   data: () => ({
-    active: null as null | number,
+    active: undefined as undefined | number,
     expenses: [] as {
       account: string;
       total: number;

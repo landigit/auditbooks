@@ -1,90 +1,222 @@
 <template>
-  <Modal class="w-3/6 p-4">
-    <h1 class="text-xl font-semibold text-center dark:text-gray-100 pb-4">
-      {{ t`Open POS Shift` }}
-    </h1>
+  <Dialog :open="true" @update:open="$router.back()">
+    <DialogContent
+      class="sm:max-w-[700px] p-0 overflow-hidden border-none bg-transparent shadow-none"
+    >
+      <div
+        class="bg-white dark:bg-gray-875 border border-gray-100 dark:border-gray-800 rounded-lg shadow-xl overflow-hidden flex flex-col transition-all duration-500 animate-in fade-in zoom-in-95"
+      >
+        <!-- Header -->
+        <div
+          class="px-8 py-6 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-890 flex items-center justify-between"
+        >
+          <div class="flex flex-col gap-1">
+            <h3
+              class="text-xs font-semibold normal-case tracking-[0.3em] text-primary dark:text-primary flex items-center gap-2"
+            >
+              <LucideIcon name="unlock" class="w-4 h-4 text-primary" />
+              {{ t`Open POS Shift` }}
+            </h3>
+            <p
+              class="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-normal normal-case"
+            >
+              {{ t`Initialize shift and cash balance` }}
+            </p>
+          </div>
+        </div>
 
-    <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-6">
-        <h2 class="text-lg font-medium dark:text-gray-100">
-          {{ t`Cash In Denominations` }}
-        </h2>
+        <ScrollArea class="max-h-[70vh]">
+          <div class="p-8 grid grid-cols-2 gap-8">
+            <!-- Left: Cash Denominations -->
+            <div class="space-y-4">
+              <h4
+                class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 px-1"
+              >
+                {{ t`Cash In Denominations` }}
+              </h4>
+              <div
+                v-if="isValuesSeeded"
+                class="border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-890"
+              >
+                <Table>
+                  <TableHeader class="bg-gray-50 dark:bg-gray-890">
+                    <TableRow class="hover:bg-transparent border-gray-100 dark:border-gray-800">
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-3"
+                        >{{ t`Denomination` }}</TableHead
+                      >
+                      <TableHead
+                        class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-3 text-right"
+                        >{{ t`Count` }}</TableHead
+                      >
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow
+                      v-for="(row, idx) in posShiftDoc?.openingCash"
+                      :key="idx"
+                      class="border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:bg-gray-890 transition-colors"
+                    >
+                      <TableCell class="py-3 font-bold text-sm">{{
+                        row.denomination
+                      }}</TableCell>
+                      <TableCell class="py-2 text-right">
+                        <Input
+                          v-model="row.count"
+                          type="number"
+                          min="0"
+                          class="h-9 w-20 ml-auto bg-gray-50 dark:bg-gray-890 border-gray-100 dark:border-gray-800 focus:border-primary/50 text-right font-bold text-xs rounded-md"
+                          @input="handleChange"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
 
-        <Table
-          v-if="isValuesSeeded"
-          class="mt-4 text-base"
-          :df="getField('openingCash')"
-          :show-header="true"
-          :border="true"
-          :value="posShiftDoc?.openingCash"
-          @row-change="handleChange"
-        />
-      </div>
+            <!-- Right: Opening Amounts -->
+            <div class="space-y-6">
+              <div class="space-y-4">
+                <h4
+                  class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 px-1"
+                >
+                  {{ t`Opening Amount` }}
+                </h4>
+                <div
+                  v-if="isValuesSeeded"
+                  class="border border-gray-100 dark:border-gray-800 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-890"
+                >
+                  <Table>
+                    <TableHeader class="bg-gray-50 dark:bg-gray-890">
+                      <TableRow class="hover:bg-transparent border-gray-100 dark:border-gray-800">
+                        <TableHead
+                          class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-3"
+                          >{{ t`Payment Method` }}</TableHead
+                        >
+                        <TableHead
+                          class="text-[10px] font-semibold normal-case tracking-normal text-gray-500 dark:text-gray-400 py-3 text-right"
+                          >{{ t`Amount` }}</TableHead
+                        >
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow
+                        v-for="(row, idx) in posShiftDoc?.openingAmounts"
+                        :key="idx"
+                        class="border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:bg-gray-890 transition-colors"
+                      >
+                        <TableCell class="py-3 font-bold text-sm capitalize">{{
+                          row.paymentMethod
+                        }}</TableCell>
+                        <TableCell
+                          class="py-3 text-right font-bold text-primary dark:text-primary"
+                        >
+                          {{ row.amount }}
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
 
-      <div class="col-span-6">
-        <h2 class="text-lg font-medium dark:text-gray-100">
-          {{ t`Opening Amount` }}
-        </h2>
+              <!-- Summary Card -->
+              <div
+                class="bg-primary/5 rounded-lg p-6 border border-primary/10 space-y-4"
+              >
+                <div class="flex items-center justify-between">
+                  <span
+                    class="text-[10px] font-semibold normal-case tracking-normal text-primary/60"
+                    >{{ t`Total Opening Cash` }}</span
+                  >
+                  <span class="text-xl font-semibold text-primary">{{
+                    posOpeningCashAmount
+                  }}</span>
+                </div>
+                <div
+                  class="flex items-center gap-3 pt-2 border-t border-primary/10"
+                >
+                  <div
+                    class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center"
+                  >
+                    <LucideIcon name="info" class="w-4 h-4 text-primary" />
+                  </div>
+                  <p
+                    class="text-[10px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed"
+                  >
+                    {{
+                      t`Ensure all cash and electronic balances are correctly entered before proceeding.`
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
 
-        <Table
-          v-if="isValuesSeeded"
-          class="mt-4 text-base"
-          :df="getField('openingAmounts')"
-          :show-header="true"
-          :border="true"
-          :max-rows-before-overflow="4"
-          :value="posShiftDoc?.openingAmounts"
-          :read-only="true"
-          @row-change="handleChange"
-        />
-
-        <div class="mt-4 grid grid-cols-2 gap-4 items-end">
-          <Button
-            class="w-full py-5 bg-red-500 dark:bg-red-700"
+        <!-- Footer -->
+        <div
+          class="px-8 py-6 bg-gray-50 dark:bg-gray-890 border-t border-gray-100 dark:border-gray-800 grid grid-cols-2 gap-4"
+        >
+          <UIButton
+            variant="outline"
+            class="h-14 rounded-lg font-semibold normal-case tracking-normal text-[10px] border-gray-100 dark:border-gray-800 hover:bg-gray-100 dark:bg-gray-800 transition-all text-red-400"
             @click="$router.back()"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Back` }}
-              </p>
-            </slot>
-          </Button>
-
-          <Button
-            class="w-full py-5 bg-green-500 dark:bg-green-700"
+            {{ t`Back` }}
+          </UIButton>
+          <UIButton
+            class="h-14 rounded-lg font-semibold normal-case tracking-normal text-[10px] shadow-lg hover:translate-y-[-2px] active:translate-y-[0px] transition-all"
             @click="handleSubmit"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Submit` }}
-              </p>
-            </slot>
-          </Button>
+            {{ t`Open Shift` }}
+          </UIButton>
         </div>
       </div>
-    </div>
-  </Modal>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Table from 'src/components/Controls/Table.vue';
+import { defineComponent, computed } from 'vue';
+import { t } from 'fyo';
+import { showToast } from 'src/utils/interactive';
+import {
+  Dialog,
+  DialogContent,
+  Input,
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  ScrollArea,
+} from 'src/components/ui';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { AccountTypeEnum } from 'models/baseModels/Account/types';
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { computed } from 'vue';
-import { defineComponent } from 'vue';
 import { fyo } from 'src/initFyo';
-import { showToast } from 'src/utils/interactive';
-import { t } from 'fyo';
 import { ValidationError } from 'fyo/utils/errors';
 import { getPOSOpeningShiftDoc } from 'src/utils/pos';
 
 export default defineComponent({
   name: 'OpenPOSShift',
-  components: { Button, Modal, Table },
+  components: {
+    Dialog,
+    DialogContent,
+    Input,
+    Table,
+    TableHeader,
+    TableBody,
+    TableRow,
+    TableHead,
+    TableCell,
+    ScrollArea,
+    LucideIcon,
+  },
   provide() {
     return {
       doc: computed(() => this.posShiftDoc),
@@ -94,41 +226,32 @@ export default defineComponent({
   data() {
     return {
       posShiftDoc: undefined as POSOpeningShift | undefined,
-
       isValuesSeeded: false,
     };
   },
   computed: {
     getDefaultCashDenominations() {
-      return this.fyo.singles.Defaults?.posCashDenominations;
+      return fyo.singles.Defaults?.posCashDenominations;
     },
     posCashAccount() {
       return fyo.singles.POSSettings?.cashAccount;
     },
     posOpeningCashAmount(): Money {
-      return this.posShiftDoc?.openingCashAmount as Money;
+      return (this.posShiftDoc?.openingCashAmount as Money) || fyo.pesa(0);
     },
   },
   async mounted() {
     this.isValuesSeeded = false;
     this.posShiftDoc = await getPOSOpeningShiftDoc(fyo);
-
     await this.seedDefaults();
     this.isValuesSeeded = true;
   },
   methods: {
     async seedDefaultCashDenomiations() {
-      if (!this.posShiftDoc) {
-        return;
-      }
-
+      if (!this.posShiftDoc) return;
       this.posShiftDoc.openingCash = [];
       const denominations = this.getDefaultCashDenominations;
-
-      if (!denominations) {
-        return;
-      }
-
+      if (!denominations) return;
       for (const row of denominations) {
         await this.posShiftDoc.append('openingCash', {
           denomination: row.denomination,
@@ -137,36 +260,22 @@ export default defineComponent({
       }
     },
     async seedPaymentMethods() {
-      if (!this.posShiftDoc) {
-        return;
-      }
-
+      if (!this.posShiftDoc) return;
       this.posShiftDoc.openingAmounts = [];
-
       const paymentMethods = (
-        (await this.fyo.db.getAll(ModelNameEnum.PaymentMethod, {
+        (await fyo.db.getAll(ModelNameEnum.PaymentMethod, {
           fields: ['name'],
         })) as { name: string }[]
       ).map((doc) => ({ paymentMethod: doc.name, amount: fyo.pesa(0) }));
-
       await this.posShiftDoc.set('openingAmounts', paymentMethods);
     },
     async seedDefaults() {
-      if (!!this.posShiftDoc?.isShiftOpen) {
-        return;
-      }
-
+      if (this.posShiftDoc?.isShiftOpen) return;
       await this.seedDefaultCashDenomiations();
       await this.seedPaymentMethods();
     },
-    getField(fieldname: string) {
-      return this.fyo.getField(ModelNameEnum.POSOpeningShift, fieldname);
-    },
     setOpeningCashAmount() {
-      if (!this.posShiftDoc?.openingAmounts) {
-        return;
-      }
-
+      if (!this.posShiftDoc?.openingAmounts) return;
       this.posShiftDoc.openingAmounts.map((row) => {
         if (row.paymentMethod === 'Cash') {
           row.amount = this.posShiftDoc?.openingCashAmount as Money;
@@ -178,10 +287,8 @@ export default defineComponent({
     },
     async handleSubmit() {
       try {
-        if (this.posShiftDoc?.openingCashAmount.isNegative()) {
-          throw new ValidationError(
-            t`Opening Cash Amount can not be negative.`
-          );
+        if (this.posOpeningCashAmount.isNegative()) {
+          throw new ValidationError(t`Opening Cash Amount cannot be negative.`);
         }
 
         await this.posShiftDoc?.setMultiple({
@@ -190,36 +297,35 @@ export default defineComponent({
         });
 
         await this.posShiftDoc?.sync();
-        await this.fyo.singles.POSSettings?.setAndSync('isShiftOpen', true);
+        await fyo.singles.POSSettings?.setAndSync('isShiftOpen', true);
 
-        if (!this.posShiftDoc?.openingCashAmount.isZero()) {
+        if (!this.posOpeningCashAmount.isZero()) {
           const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
             entryType: 'Journal Entry',
           });
 
           await jvDoc.append('accounts', {
             account: this.posCashAccount,
-            debit: this.posShiftDoc?.openingCashAmount as Money,
-            credit: this.fyo.pesa(0),
+            debit: this.posOpeningCashAmount,
+            credit: fyo.pesa(0),
           });
 
           await jvDoc.append('accounts', {
             account: AccountTypeEnum.Cash,
-            debit: this.fyo.pesa(0),
-            credit: this.posShiftDoc?.openingCashAmount as Money,
+            debit: fyo.pesa(0),
+            credit: this.posOpeningCashAmount,
           });
 
           await (await jvDoc.sync()).submit();
         }
 
         this.$emit('toggleModal', 'ShiftOpen');
+        showToast({ type: 'success', message: t`Shift opened successfully` });
       } catch (error) {
         showToast({
           type: 'error',
           message: t`${error as string}`,
-          duration: 'short',
         });
-        return;
       }
     },
   },

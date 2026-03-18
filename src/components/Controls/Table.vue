@@ -60,7 +60,7 @@
         @keydown.enter="addRow"
       >
         <div class="flex items-center ps-1">
-          <feather-icon name="plus" class="w-4 h-4 text-gray-500" />
+          <LucideIcon name="plus" :size="16" class="w-4 h-4 text-gray-500" />
         </div>
         <div
           class="flex justify-between px-2"
@@ -91,12 +91,14 @@ import { fyo } from 'src/initFyo';
 import { nextTick } from 'vue';
 import Base from './Base.vue';
 import TableRow from './TableRow.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 
 export default {
   name: 'Table',
   components: {
     Row,
     TableRow,
+    LucideIcon,
   },
   extends: Base,
   props: {

@@ -1,6 +1,5 @@
 <script>
 import { t } from 'fyo';
-import Badge from 'src/components/Badge.vue';
 import { fyo } from 'src/initFyo';
 import { fuzzyMatch } from 'src/utils';
 import { getCreateFiltersFromListViewFilters } from 'src/utils/misc';
@@ -142,7 +141,7 @@ export default {
         component: markRaw({
           template:
             '<div class="flex items-center font-semibold">{{ t`Create` }}' +
-            '<Badge color="blue" class="ms-2" v-if="isNewValue">{{ linkValue }}</Badge>' +
+            '<Badge variant="blue" class="ms-2" v-if="isNewValue">{{ linkValue }}</Badge>' +
             '</div>',
           computed: {
             value: () => this.value,

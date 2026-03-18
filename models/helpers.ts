@@ -1675,7 +1675,7 @@ export function removeFreeItems(sinvDoc: SalesInvoice) {
     return;
   }
 
-  if (!!sinvDoc.isPricingRuleApplied) {
+  if (sinvDoc.isPricingRuleApplied) {
     return;
   }
 

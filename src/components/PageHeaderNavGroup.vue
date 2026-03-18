@@ -12,7 +12,7 @@
       "
       @click="$router.back()"
     >
-      <feather-icon name="chevron-left" class="w-4 h-4" />
+      <LucideIcon name="chevron-left" :size="16" class="w-4 h-4" />
     </a>
     <!-- Forward Button -->
     <a
@@ -24,7 +24,7 @@
       "
       @click="$router.forward()"
     >
-      <feather-icon name="chevron-right" class="w-4 h-4" />
+      <LucideIcon name="chevron-right" :size="16" class="w-4 h-4" />
     </a>
   </div>
 </template>
@@ -34,11 +34,12 @@ import { ref, inject } from 'vue';
 import { defineComponent } from 'vue';
 import SearchBar from './SearchBar.vue';
 import { historyState } from 'src/utils/refs';
+import LucideIcon from 'src/components/LucideIcon.vue';
 
 const COMPONENT_NAME = 'PageHeaderNavGroup';
 
 export default defineComponent({
-  components: { SearchBar },
+  components: { SearchBar, LucideIcon },
   setup() {
     return {
       historyState,

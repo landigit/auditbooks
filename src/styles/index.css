@@ -14,8 +14,11 @@
   font-display: swap;
 }
 
+
+
 * {
-  outline-color: theme('colors.green.400');
+  outline-color: theme('colors.blue.500');
+  font-family: 'Red Hat Text', sans-serif;
   font-variation-settings: 'slnt' 0deg;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -112,7 +115,7 @@ input, textarea, [contenteditable="true"], .selectable {
   --h-row-large: 3.5rem;
   --h-row-largest: 4rem;
   --h-app: 800px;
-  --blur: saturate(180%) blur(8px);
+  --blur: blur(12px) saturate(190%);
 }
 
 .backdrop {
@@ -167,14 +170,7 @@ input, textarea, [contenteditable="true"], .selectable {
 }
 
 .glass {
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: var(--blur);
-  will-change: backdrop-filter;
-}
-
-.dark .glass {
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: var(--blur);
+  @apply bg-white dark:bg-gray-875 border-gray-100 dark:border-gray-800;
 }
 
 .w-sidebar {

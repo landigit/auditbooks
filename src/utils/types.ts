@@ -90,7 +90,8 @@ export type ActionGroup = {
 export type DropdownItem = {
   label: string;
   value?: string;
-  action?: () => unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  action?: (...args: any[]) => unknown;
   group?: string;
   component?: { template: string };
   isGroup?: boolean;

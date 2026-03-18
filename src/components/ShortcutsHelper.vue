@@ -1,7 +1,5 @@
 <template>
   <div>
-    <FormHeader :form-title="t`Shortcuts`" />
-    <hr class="dark:border-gray-800" />
     <div
       class="h-96 overflow-y-auto custom-scroll custom-scroll-thumb2 text-gray-900 dark:text-gray-100"
     >
@@ -45,7 +43,6 @@
 import { t } from 'fyo';
 import { ShortcutKey } from 'src/utils/ui';
 import { defineComponent } from 'vue';
-import FormHeader from './FormHeader.vue';
 import ShortcutKeys from './ShortcutKeys.vue';
 
 type Group = {
@@ -56,7 +53,7 @@ type Group = {
 };
 
 export default defineComponent({
-  components: { FormHeader, ShortcutKeys },
+  components: { ShortcutKeys },
   data() {
     return { groups: [] } as { groups: Group[] };
   },

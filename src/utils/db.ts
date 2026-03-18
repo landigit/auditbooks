@@ -39,7 +39,7 @@ export async function connectToDatabase(
 export async function handleDatabaseConnectionError(
   error: Error,
   dbPath: string
-) {
+): Promise<symbol | undefined> {
   const message = error.message;
   if (typeof message !== 'string') {
     throw error;
@@ -56,13 +56,17 @@ export async function handleDatabaseConnectionError(
   throw error;
 }
 
-async function handleUnableToAcquireConnection(dbPath: string) {
+async function handleUnableToAcquireConnection(
+  dbPath: string
+): Promise<symbol | undefined> {
   return await showDbErrorDialog(
     t`Could not connect to database file ${dbPath}, please select the file manually`
   );
 }
 
-async function handleDirectoryDoesNotExist(dbPath: string) {
+async function handleDirectoryDoesNotExist(
+  dbPath: string
+): Promise<symbol | undefined> {
   return await showDbErrorDialog(
     t`Directory for database file ${dbPath} does not exist, please select the file manually`
   );
@@ -90,5 +94,5 @@ async function showDbErrorDialog(detail: string) {
         isEscape: true,
       },
     ],
-  });
+  }) as Promise<symbol | undefined>;
 }

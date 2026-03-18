@@ -1,9 +1,9 @@
 <template>
   <FormContainer>
     <template #header>
-      <Button v-if="canSave" type="primary" @click="sync">
+      <UIButton v-if="canSave" @click="sync">
         {{ t`Save` }}
-      </Button>
+      </UIButton>
     </template>
     <template #body>
       <FormHeader
@@ -65,7 +65,6 @@ import { Doc } from 'fyo/model/doc';
 import { ValidationError } from 'fyo/utils/errors';
 import { ModelNameEnum } from 'models/types';
 import { Field, Schema } from 'schemas/types';
-import Button from 'src/components/Button.vue';
 import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import { handleErrorWithDialog } from 'src/errorHandling';
@@ -82,7 +81,7 @@ import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 const COMPONENT_NAME = 'Settings';
 
 export default defineComponent({
-  components: { FormContainer, Button, FormHeader, CommonFormSection },
+  components: { FormContainer, FormHeader, CommonFormSection },
   provide() {
     return { doc: computed(() => this.doc) };
   },

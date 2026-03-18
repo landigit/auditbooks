@@ -150,7 +150,6 @@ export class BespokeQueries {
     batch?: string,
     serialNumbers?: string[]
   ): Promise<number | null> {
-    /* eslint-disable @typescript-eslint/no-floating-promises */
     const query = db.knex!(ModelNameEnum.StockLedgerEntry)
       .sum('quantity')
       .where('item', item);
@@ -256,7 +255,7 @@ export class BespokeQueries {
       | undefined = {};
 
     for (const item of docItems) {
-      if (!!docItemsMap[item.item]) {
+      if (docItemsMap[item.item]) {
         if (item.batch) {
           let serialNumbers: string[] | undefined;
 

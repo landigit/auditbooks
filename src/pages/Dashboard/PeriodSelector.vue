@@ -22,7 +22,7 @@
         @keydown.enter="selectHighlightedItem"
       >
         {{ periodSelectorMap?.[value] ?? value }}
-        <feather-icon name="chevron-down" class="ms-1 w-3 h-3" />
+        <LucideIcon name="chevron-down" :size="12" class="ms-1 w-3 h-3" />
       </div>
     </template>
   </Dropdown>
@@ -30,6 +30,7 @@
 
 <script lang="ts">
 import { t } from 'fyo';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import Dropdown from 'src/components/Dropdown.vue';
 import { PeriodKey } from 'src/utils/types';
 import { PropType } from 'vue';
@@ -39,6 +40,7 @@ export default defineComponent({
   name: 'PeriodSelector',
   components: {
     Dropdown,
+    LucideIcon,
   },
   props: {
     value: { type: String as PropType<PeriodKey>, default: 'This Year' },

@@ -2,12 +2,12 @@
   <div class="flex-col">
     <PageHeader :title="t`Point of Sale`">
       <slot>
-        <Button
-          class="bg-red-500 dark:bg-red-700"
+        <UIButton
+          class="bg-red-500 dark:bg-red-700 hover:bg-red-600 dark:hover:bg-red-800"
           @click="toggleModal('ShiftClose')"
         >
           <span class="font-medium text-white">{{ t`Close POS Shift ` }}</span>
-        </Button>
+        </UIButton>
       </slot>
     </PageHeader>
     <ClassicPOS
@@ -142,7 +142,6 @@ import { fyo } from 'src/initFyo';
 import ModernPOS from './ModernPOS.vue';
 import ClassicPOS from './ClassicPOS.vue';
 import { ModelNameEnum } from 'models/types';
-import Button from 'src/components/Button.vue';
 import { showToast } from 'src/utils/interactive';
 import { Item } from 'models/baseModels/Item/Item';
 import { Shipment } from 'models/inventory/Shipment';
@@ -188,7 +187,6 @@ const COMPONENT_NAME = 'POS';
 export default defineComponent({
   name: 'POS',
   components: {
-    Button,
     ModernPOS,
     PageHeader,
     ClassicPOS,
@@ -746,7 +744,7 @@ export default defineComponent({
       for (const item of items) {
         let availableQty = 0;
 
-        if (!!this.itemQtyMap[item.name as string]) {
+        if (this.itemQtyMap[item.name as string]) {
           availableQty = this.itemQtyMap[item.name as string].availableQty;
         }
 
@@ -1194,7 +1192,6 @@ export default defineComponent({
 
         if (shouldPrint) {
           await routeTo(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `/print/${this.sinvDoc.schemaName}/${this.sinvDoc.name}`
           );
         }
@@ -1250,7 +1247,6 @@ export default defineComponent({
 
         if (shouldPrint) {
           await routeTo(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `/print/${this.sinvDoc.schemaName}/${this.sinvDoc.name}`
           );
         }

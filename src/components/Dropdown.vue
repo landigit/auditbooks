@@ -16,20 +16,20 @@
     </template>
     <template #content>
       <div
-        class="bg-white dark:bg-gray-850 dark:text-white rounded w-full min-w-40 overflow-hidden"
+        class="bg-white dark:bg-gray-875 border border-gray-100 dark:border-gray-800 shadow-xl dark:text-white rounded-lg w-full min-w-48 max-w-sm overflow-hidden z-50 animate-in fade-in zoom-in-95"
       >
         <div
-          class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm"
+          class="p-2 max-h-72 overflow-auto custom-scroll custom-scroll-thumb2 text-sm flex flex-col gap-1"
         >
           <div
             v-if="isLoading"
-            class="p-2 text-gray-600 dark:text-gray-400 italic"
+            class="p-4 text-muted-foreground italic text-center text-xs"
           >
             {{ t`Loading...` }}
           </div>
           <div
             v-else-if="dropdownItems.length === 0"
-            class="p-2 text-gray-600 dark:text-gray-400 italic"
+            class="p-4 text-muted-foreground italic text-center text-xs"
           >
             {{ getEmptyMessage() }}
           </div>
@@ -38,20 +38,21 @@
               v-for="(d, index) in dropdownItems"
               :key="`key-${index}`"
               ref="items"
+              class="flex flex-col"
             >
               <div
                 v-if="d.isGroup"
-                class="px-2 pt-3 pb-1 text-xs uppercase text-gray-700 dark:text-gray-400 font-semibold tracking-wider"
+                class="px-3 pt-4 pb-2 text-[10px] normal-case font-semibold tracking-normal text-primary/70"
               >
                 {{ d.label }}
               </div>
               <a
                 v-else
-                class="block p-2 rounded-md mt-1 first:mt-0 cursor-pointer truncate"
+                class="flex items-center gap-2 p-2.5 rounded-md cursor-pointer truncate transition-all font-semibold select-none bg-transparent hover:bg-white/10 active:scale-[0.98]"
                 :class="
                   index === highlightedIndex
-                    ? 'bg-gray-100 dark:bg-gray-875'
-                    : ''
+                    ? 'bg-white/10 text-foreground'
+                    : 'text-foreground/80 hover:text-foreground'
                 "
                 @mouseenter="highlightedIndex = index"
                 @mousedown.prevent

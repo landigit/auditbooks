@@ -22,7 +22,7 @@
         :class="
           useFullWidth
             ? 'w-full border-t dark:border-gray-800'
-            : 'w-form border dark:border-gray-800 rounded-lg shadow-lg mb-4 mx-4'
+            : 'w-form border dark:border-gray-800 rounded-md shadow-lg mb-4 mx-4'
         "
       >
         <slot name="body" />

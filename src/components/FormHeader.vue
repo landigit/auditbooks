@@ -1,12 +1,16 @@
 <template>
   <div
-    class="px-4 text-xl font-semibold flex justify-between h-row-large items-center flex-shrink-0"
+    class="px-8 py-4 flex justify-between items-center flex-shrink-0 bg-white dark:bg-gray-875 border-b border-gray-100 dark:border-gray-800 z-10"
   >
-    <h1 v-if="formTitle" class="dark:text-gray-25">{{ formTitle }}</h1>
-    <slot />
-    <p v-if="formSubTitle" class="text-gray-600 dark:text-gray-400">
-      {{ formSubTitle }}
-    </p>
+    <div class="flex flex-col gap-1">
+      <h1 v-if="formTitle" class="text-2xl font-semibold tracking-tight text-foreground">{{ formTitle }}</h1>
+      <p v-if="formSubTitle" class="text-xs font-semibold normal-case tracking-normal text-muted-foreground/70">
+        {{ formSubTitle }}
+      </p>
+    </div>
+    <div class="flex items-center gap-4">
+      <slot />
+    </div>
   </div>
 </template>
 <script lang="ts">

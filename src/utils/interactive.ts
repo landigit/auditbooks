@@ -5,7 +5,9 @@ import { App, createApp, h } from 'vue';
 import { getColorClass } from './colors';
 import { DialogButton, DialogOptions, ToastOptions, ToastType } from './types';
 
-export async function showDialog<DO extends DialogOptions>(options: DO) {
+export async function showDialog<DO extends DialogOptions>(
+  options: DO
+): Promise<unknown> {
   const preWrappedButtons: DialogButton[] = options.buttons ?? [
     { label: t`Okay`, action: () => null, isEscape: true },
   ];
@@ -55,12 +57,13 @@ function fragmentMountComponent(app: App<Element>) {
 }
 
 export function getIconConfig(type: ToastType) {
-  let iconName = 'alert-circle';
-  if (type === 'warning') {
-    iconName = 'alert-triangle';
-  } else if (type === 'success') {
-    iconName = 'check-circle';
-  }
+  const iconMap: Record<ToastType, string> = {
+    info: 'alert-circle',
+    warning: 'alert-triangle',
+    error: 'alert-circle',
+    success: 'check-circle',
+  };
+  const iconName = iconMap[type];
 
   const color = {
     info: 'blue',

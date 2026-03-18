@@ -9,7 +9,7 @@
       :readonly="isReadOnly"
       :tabindex="isReadOnly ? '-1' : '0'"
       @blur="onBlur"
-      class="block px-2.5 pb-2.5 pt-4 w-full font-medium text-gray-900 dark:text-gray-100 bg-gray-25 dark:bg-gray-850 rounded-lg border border-gray-200 dark:border-gray-800 appearance-none focus:outline-none focus:ring-0 peer"
+      class="block px-2.5 pb-2.5 pt-4 w-full font-medium text-gray-900 dark:text-gray-100 bg-gray-25 dark:bg-gray-850 rounded-md border border-gray-200 dark:border-gray-800 appearance-none focus:outline-none focus:ring-0 peer"
     />
     <label
       for="floating_outlined"

@@ -1,27 +1,32 @@
 <template>
-  <div>
+  <div class="flex flex-col h-full w-full p-4">
     <!-- Title and Period Selector -->
-    <div class="flex items-center justify-between">
-      <div class="font-semibold text-base dark:text-white">
+    <div class="flex items-center justify-between mb-8">
+      <div
+        class="text-lg font-semibold normal-case tracking-[0.15em] bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60"
+      >
         {{ t`Cashflow` }}
       </div>
 
       <!-- Chart Legend -->
-      <div v-if="hasData" class="flex text-base gap-8">
-        <div class="flex items-center gap-2">
+      <div v-if="hasData" class="flex text-sm font-bold tracking-tight gap-8">
+        <div class="flex items-center gap-3">
           <span
-            class="w-3 h-3 rounded-sm inline-block bg-blue-500 dark:bg-blue-600"
+            class="w-3.5 h-3.5 rounded-full shadow-inner inline-block bg-blue-500 dark:bg-blue-500"
           />
-          <span class="text-gray-900 dark:text-gray-25">{{ t`Inflow` }}</span>
+          <span class="text-foreground/80 lowercase">{{ t`Inflow` }}</span>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <span
-            class="w-3 h-3 rounded-sm inline-block bg-pink-500 dark:bg-pink-600"
+            class="w-3.5 h-3.5 rounded-full shadow-inner inline-block bg-pink-500 dark:bg-pink-500"
           />
-          <span class="text-gray-900 dark:text-gray-25">{{ t`Outflow` }}</span>
+          <span class="text-foreground/80 lowercase">{{ t`Outflow` }}</span>
         </div>
       </div>
-      <div v-else class="w-16 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
+      <div
+        v-else
+        class="w-24 h-5 bg-white/5 rounded-full animate-pulse blur-[1px]"
+      />
 
       <PeriodSelector
         v-if="hasData"
@@ -29,25 +34,30 @@
         :options="periodOptions"
         @change="(value) => (period = value)"
       />
-      <div v-else class="w-20 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
+      <div
+        v-else
+        class="w-32 h-8 bg-white/5 rounded-full animate-pulse blur-[1px]"
+      />
     </div>
 
     <!-- Line Chart -->
-    <LineChart
-      v-if="chartData.points.length"
-      class="mt-4"
-      :aspect-ratio="4.15"
-      :colors="chartData.colors"
-      :grid-color="chartData.gridColor"
-      :font-color="chartData.fontColor"
-      :points="chartData.points"
-      :x-labels="chartData.xLabels"
-      :format="chartData.format"
-      :format-x="chartData.formatX"
-      :y-max="chartData.yMax"
-      :draw-labels="hasData"
-      :show-tooltip="hasData"
-    />
+    <div class="flex-1 relative w-full mt-4">
+      <LineChart
+        v-if="chartData.points.length"
+        class="h-full w-full drop-shadow-xl"
+        :aspect-ratio="4.15"
+        :colors="chartData.colors"
+        :grid-color="chartData.gridColor"
+        :font-color="chartData.fontColor"
+        :points="chartData.points"
+        :x-labels="chartData.xLabels"
+        :format="chartData.format"
+        :format-x="chartData.formatX"
+        :y-max="chartData.yMax"
+        :draw-labels="hasData"
+        :show-tooltip="hasData"
+      />
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -65,10 +75,6 @@ import { getMapFromList } from 'utils/index';
 import { PeriodKey } from 'src/utils/types';
 
 // Linting broken in this file cause of `extends: ...`
-/* 
-  eslint-disable @typescript-eslint/no-unsafe-argument, 
-  @typescript-eslint/no-unsafe-return
-*/
 
 export default defineComponent({
   name: 'Cashflow',

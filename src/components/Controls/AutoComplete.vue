@@ -69,7 +69,7 @@
             @click.stop.prevent="clearValue"
             @mousedown.prevent
           >
-            <feather-icon name="x" class="w-3.5 h-3.5" />
+            <LucideIcon name="x" :size="14" class="w-3.5 h-3.5" />
           </button>
           <button
             class="p-0.5 rounded -me1 bg-transparent"
@@ -83,8 +83,9 @@
               placement="bottom"
             >
               <template #target>
-                <feather-icon
+                <LucideIcon
                   name="chevron-right"
+                  :size="16"
                   class="w-4 h-4 text-gray-600 dark:text-gray-400"
                 />
               </template>
@@ -105,8 +106,9 @@ import Dropdown from 'src/components/Dropdown.vue';
 import { fuzzyMatch } from 'src/utils';
 import { getFormRoute, routeTo } from 'src/utils/ui';
 import Popover from '../Popover.vue';
-import Base from './Base.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import QuickView from '../QuickView.vue';
+import Base from './Base.vue';
 
 export default {
   name: 'AutoComplete',
@@ -114,6 +116,7 @@ export default {
     Dropdown,
     Popover,
     QuickView,
+    LucideIcon,
   },
   extends: Base,
   emits: ['focus'],

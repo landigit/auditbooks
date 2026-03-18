@@ -84,7 +84,7 @@
       <p class="text-sm text-gray-600 dark:text-gray-400">
         {{ t`${numSelected} fields selected` }}
       </p>
-      <Button type="primary" @click="exportData">{{ t`Export` }}</Button>
+      <UIButton @click="exportData">{{ t`Export` }}</UIButton>
     </div>
   </div>
 </template>
@@ -103,7 +103,6 @@ import { ExportField, ExportFormat, ExportTableField } from 'src/utils/types';
 import { getSavePath, showExportInFolder } from 'src/utils/ui';
 import { QueryFilter } from 'utils/db/types';
 import { PropType, defineComponent } from 'vue';
-import Button from './Button.vue';
 import Check from './Controls/Check.vue';
 import Int from './Controls/Int.vue';
 import Select from './Controls/Select.vue';
@@ -119,7 +118,7 @@ interface ExportWizardData {
 }
 
 export default defineComponent({
-  components: { FormHeader, Check, Select, Button, Int },
+  components: { FormHeader, Check, Select, Int },
   props: {
     schemaName: { type: String, required: true },
     listFilters: { type: Object as PropType<QueryFilter>, default: () => {} },

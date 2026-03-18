@@ -26,9 +26,10 @@
           Object
         </div>
 
-        <feather-icon
+        <LucideIcon
           v-if="r.isCollapsible"
           :name="r.collapsed ? 'chevron-up' : 'chevron-down'"
+          :size="16"
           class="w-4 h-4 ms-auto"
         />
       </div>
@@ -44,6 +45,7 @@
 </template>
 <script lang="ts">
 import { PrintTemplateHint } from 'src/utils/printTemplates';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { PropType } from 'vue';
 import { defineComponent } from 'vue';
 type HintRow = {
@@ -54,6 +56,7 @@ type HintRow = {
 };
 export default defineComponent({
   name: 'TemplateBuilderHint',
+  components: { LucideIcon },
   props: {
     prefix: { type: String, default: '' },
     hints: {

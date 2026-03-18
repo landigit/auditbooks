@@ -1,55 +1,61 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full">
     <PageHeader :title="title">
-      <Button
+      <UIButton
         v-if="
           schemaName === 'Item' &&
           (!isSelectionMode || (isSelectionMode && selectedItems.length === 0))
         "
+        variant="outline"
         @click="toggleSelectionMode"
       >
         {{ t`Select` }}
-      </Button>
+      </UIButton>
       <div
         v-if="
           isSelectionMode && schemaName === 'Item' && selectedItems.length > 0
         "
         class="relative"
       >
-        <Button class="w-40" @click="toggleDropdown"> Create </Button>
+        <UIButton variant="default" class="w-40" @click="toggleDropdown">
+          Create
+        </UIButton>
         <div
           v-if="showDropdown"
-          class="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-40"
+          class="absolute top-full mt-1 bg-white dark:bg-gray-875 border border-gray-100 dark:border-gray-800 rounded-md shadow-lg z-20 w-40 overflow-hidden"
         >
           <div
             v-for="option in actionOptions"
             :key="option.value"
-            class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+            class="px-4 py-3 hover:bg-white/10 cursor-pointer text-sm font-medium transition-colors"
             @click="createInvoice(option.value)"
           >
             {{ option.label }}
           </div>
         </div>
       </div>
-      <Button ref="exportButton" :icon="false" @click="openExportModal = true">
+      <UIButton
+        ref="exportButton"
+        variant="outline"
+        @click="openExportModal = true"
+      >
+        <LucideIcon name="download" class="w-4 h-4 mr-2" />
         {{ t`Export` }}
-      </Button>
+      </UIButton>
       <FilterDropdown
         ref="filterDropdown"
         :schema-name="schemaName"
         @change="applyFilter"
       />
-      <Button
+      <UIButton
         v-if="canCreate"
         ref="makeNewDocButton"
-        :icon="true"
-        type="primary"
-        :padding="false"
-        class="px-3"
+        variant="default"
+        size="icon"
         @click="handleMakeNewDoc"
       >
-        <feather-icon name="plus" class="w-4 h-4" />
-      </Button>
+        <LucideIcon name="plus" class="w-4 h-4" />
+      </UIButton>
     </PageHeader>
     <List
       ref="list"
@@ -64,22 +70,26 @@
       @make-new-doc="makeNewDoc"
       @selected-items-changed="updateSelectedItems"
     />
-    <Modal :open-modal="openExportModal" @closemodal="openExportModal = false">
-      <ExportWizard
-        class="w-form"
-        :schema-name="schemaName"
-        :title="pageTitle"
-        :list-filters="listFilters"
-      />
-    </Modal>
+    <Dialog :open="openExportModal" @update:open="openExportModal = $event">
+      <DialogContent
+        class="sm:max-w-[600px] p-0 overflow-hidden border-none shadow-2xl glass"
+      >
+        <ExportWizard
+          :schema-name="schemaName"
+          :title="pageTitle"
+          :list-filters="listFilters"
+          @close="openExportModal = false"
+        />
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 <script lang="ts">
 import { Field } from 'schemas/types';
-import Button from 'src/components/Button.vue';
+import { Dialog, DialogContent, UIButton } from 'src/components/ui';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import ExportWizard from 'src/components/ExportWizard.vue';
 import FilterDropdown from 'src/components/FilterDropdown.vue';
-import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 
 import { fyo } from 'src/initFyo';
@@ -101,9 +111,10 @@ export default defineComponent({
   components: {
     PageHeader,
     List,
-    Button,
+    LucideIcon,
     FilterDropdown,
-    Modal,
+    Dialog,
+    DialogContent,
     ExportWizard,
   },
   props: {
@@ -115,8 +126,8 @@ export default defineComponent({
     return {
       shortcuts: inject(shortcutsKey),
       list: ref<InstanceType<typeof List> | null>(null),
-      makeNewDocButton: ref<InstanceType<typeof Button> | null>(null),
-      exportButton: ref<InstanceType<typeof Button> | null>(null),
+      makeNewDocButton: ref<InstanceType<typeof UIButton> | null>(null),
+      exportButton: ref<InstanceType<typeof UIButton> | null>(null),
       filterDropdown: ref<InstanceType<typeof FilterDropdown> | null>(null),
     };
   },

@@ -8,40 +8,40 @@
         :disabled="isMakingEntries"
         :title="t`More`"
       />
-      <Button
+      <UIButton
         v-if="hasImporter"
         :title="t`Add Row`"
         :disabled="isMakingEntries"
-        :icon="true"
+        variant="ghost"
+        size="icon"
         @click="() => importer.addRow()"
       >
-        <feather-icon name="plus" class="w-4 h-4" />
-      </Button>
-      <Button
+        <LucideIcon name="plus" :size="16" class="w-4 h-4" />
+      </UIButton>
+      <UIButton
         v-if="hasImporter"
         :title="t`Save Template`"
-        :icon="true"
+        variant="ghost"
+        size="icon"
         @click="saveTemplate"
       >
-        <feather-icon name="download" class="w-4 h-4" />
-      </Button>
-      <Button
+        <LucideIcon name="download" :size="16" class="w-4 h-4" />
+      </UIButton>
+      <UIButton
         v-if="canImportData"
         :title="t`Import Data`"
-        type="primary"
         :disabled="errorMessage.length > 0 || isMakingEntries"
         @click="importData"
       >
         {{ t`Import Data` }}
-      </Button>
-      <Button
+      </UIButton>
+      <UIButton
         v-if="importType && !canImportData"
         :title="t`Select File`"
-        type="primary"
         @click="selectFile"
       >
         {{ t`Select File` }}
-      </Button>
+      </UIButton>
     </PageHeader>
 
     <!-- Main Body of the Wizard -->
@@ -137,10 +137,10 @@
               class="index-cell group cursor-pointer"
               @click="importer.removeRow(ridx)"
             >
-              <feather-icon
+              <LucideIcon
                 name="x"
+                :size="16"
                 class="w-4 h-4 hidden group-hover:inline-block -me-1"
-                :button="true"
               />
               <span class="group-hover:hidden">
                 {{ ridx + 1 }}
@@ -222,156 +222,167 @@
     />
 
     <!-- Pick Column Modal -->
-    <Modal
-      :open-modal="showColumnPicker"
-      @closemodal="showColumnPicker = false"
-    >
-      <div class="w-form">
-        <!-- Pick Column Header -->
-        <FormHeader :form-title="t`Pick Import Columns`" />
-        <hr class="dark:border-gray-800" />
+    <Dialog :open="showColumnPicker" @update:open="showColumnPicker = $event">
+      <DialogContent
+        class="sm:max-w-2xl bg-white dark:bg-gray-900"
+      >
+        <DialogHeader>
+          <DialogTitle>{{ t`Pick Import Columns` }}</DialogTitle>
+        </DialogHeader>
 
         <!-- Pick Column Checkboxes -->
-        <div
-          v-for="[key, value] of columnPickerFieldsMap.entries()"
-          :key="key"
-          class="p-4 max-h-80 overflow-auto custom-scroll custom-scroll-thumb1"
-        >
-          <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-            {{ key }}
-          </h2>
+        <div class="max-h-[60vh] overflow-y-auto no-scrollbar py-2">
           <div
-            class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1"
+            v-for="[key, value] of columnPickerFieldsMap.entries()"
+            :key="key"
+            class="mb-6 last:mb-0"
           >
-            <div
-              v-for="tf of value"
-              :key="tf.fieldKey"
-              class="flex items-center"
+            <h2
+              class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2"
             >
-              <Check
-                :df="{
-                  fieldtype: 'Check',
-                  fieldname: tf.fieldname,
-                  label: tf.label,
-                }"
-                :show-label="true"
-                :read-only="tf.required"
-                :value="importer.templateFieldsPicked.get(tf.fieldKey)"
-                @change="(value: boolean) => pickColumn(tf.fieldKey, value)"
-              />
-              <p v-if="tf.required" class="w-0 text-red-600 -ml-4">*</p>
+              {{ key }}
+            </h2>
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 p-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-md"
+            >
+              <div
+                v-for="tf of value"
+                :key="tf.fieldKey"
+                class="flex items-center"
+              >
+                <Check
+                  :df="{
+                    fieldtype: 'Check',
+                    fieldname: tf.fieldname,
+                    label: tf.label,
+                  }"
+                  :show-label="true"
+                  :read-only="tf.required"
+                  :value="importer.templateFieldsPicked.get(tf.fieldKey)"
+                  @change="(value: boolean) => pickColumn(tf.fieldKey, value)"
+                />
+                <p v-if="tf.required" class="text-red-600 ml-1 mt-1">*</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Pick Column Footer -->
-        <hr class="dark:border-gray-800" />
-        <div class="p-4 flex justify-between items-center">
+        <DialogFooter
+          class="flex items-center justify-between sm:justify-between border-t pt-4 dark:border-gray-800"
+        >
           <p class="text-sm text-gray-600 dark:text-gray-400">
             {{ t`${numColumnsPicked} fields selected` }}
           </p>
-          <Button type="primary" @click="showColumnPicker = false">{{
-            t`Done`
-          }}</Button>
-        </div>
-      </div>
-    </Modal>
+          <UIButton @click="showColumnPicker = false">
+            {{ t`Done` }}
+          </UIButton>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <!-- Import Completed Modal -->
-    <Modal :open-modal="complete" @closemodal="clear">
-      <div class="w-form">
-        <!-- Import Completed Header -->
-        <FormHeader :form-title="t`Import Complete`" />
-        <hr class="dark:border-gray-800" />
-        <!-- Success -->
-        <div v-if="success.length > 0">
-          <!-- Success Section Header -->
-          <div class="flex justify-between px-4 pt-4 pb-1">
-            <p class="text-base font-semibold dark:text-gray-200">
-              {{ t`Success` }}
-            </p>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              {{
-                success.length === 1
-                  ? t`${success.length} entry imported`
-                  : t`${success.length} entries imported`
-              }}
-            </p>
-          </div>
-          <!-- Success Body -->
-          <div class="max-h-40 overflow-auto text-gray-900 dark:text-gray-50">
-            <div
-              v-for="(name, i) of success"
-              :key="name"
-              class="px-4 py-1 grid grid-cols-2 text-base gap-4"
-              style="grid-template-columns: 1rem auto"
-            >
-              <div class="text-end">{{ i + 1 }}.</div>
-              <p class="whitespace-nowrap overflow-auto no-scrollbar">
-                {{ name }}
+    <Dialog :open="complete" @update:open="clear">
+      <DialogContent class="sm:max-w-lg glass">
+        <DialogHeader>
+          <DialogTitle>{{ t`Import Complete` }}</DialogTitle>
+        </DialogHeader>
+
+        <div class="max-h-[60vh] overflow-y-auto no-scrollbar py-2">
+          <!-- Success -->
+          <div v-if="success.length > 0">
+            <div class="flex justify-between mb-2">
+              <p class="text-base font-semibold dark:text-gray-200">
+                {{ t`Success` }}
+              </p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{
+                  success.length === 1
+                    ? t`${success.length} entry imported`
+                    : t`${success.length} entries imported`
+                }}
               </p>
             </div>
-          </div>
-          <hr class="dark:border-gray-800" />
-        </div>
-
-        <!-- Failed -->
-        <div v-if="failed.length > 0">
-          <!-- Failed Section Header -->
-          <div class="flex justify-between px-4 pt-4 pb-1">
-            <p class="text-base font-semibold">{{ t`Failed` }}</p>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              {{
-                failed.length === 1
-                  ? t`${failed.length} entry failed`
-                  : t`${failed.length} entries failed`
-              }}
-            </p>
-          </div>
-          <!-- Failed Body -->
-          <div class="max-h-40 overflow-auto text-gray-900 dark:text-gray-50">
             <div
-              v-for="(f, i) of failed"
-              :key="f.name"
-              class="px-4 py-1 grid grid-cols-2 text-base gap-4"
-              style="grid-template-columns: 1rem 8rem auto"
+              class="space-y-1 mb-4 bg-green-50/10 dark:bg-green-900/10 p-2 rounded"
             >
-              <div class="text-end">{{ i + 1 }}.</div>
-              <p class="whitespace-nowrap overflow-auto no-scrollbar">
-                {{ f.name }}
-              </p>
-              <p class="whitespace-nowrap overflow-auto no-scrollbar">
-                {{ f.error.message }}
-              </p>
+              <div
+                v-for="(name, i) of success"
+                :key="name"
+                class="flex gap-2 text-sm text-gray-900 dark:text-gray-50"
+              >
+                <span class="w-5 text-gray-500">{{ i + 1 }}.</span>
+                <span class="truncate">{{ name }}</span>
+              </div>
             </div>
           </div>
-          <hr />
+
+          <!-- Failed -->
+          <div v-if="failed.length > 0">
+            <div
+              class="flex justify-between mb-2 border-t pt-4 dark:border-gray-800"
+            >
+              <p class="text-base font-semibold text-red-500">
+                {{ t`Failed` }}
+              </p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{
+                  failed.length === 1
+                    ? t`${failed.length} entry failed`
+                    : t`${failed.length} entries failed`
+                }}
+              </p>
+            </div>
+            <div class="space-y-1 bg-red-50/10 dark:bg-red-900/10 p-2 rounded">
+              <div
+                v-for="(f, i) of failed"
+                :key="f.name"
+                class="flex gap-2 text-sm text-gray-900 dark:text-gray-50"
+              >
+                <span class="w-5 text-gray-500">{{ i + 1 }}.</span>
+                <span class="w-32 truncate font-medium">{{ f.name }}</span>
+                <span class="flex-1 truncate text-red-400">{{
+                  f.error.message
+                }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fallback Div -->
+          <div
+            v-if="failed.length === 0 && success.length === 0"
+            class="py-4 text-center text-gray-500"
+          >
+            {{ t`No entries were imported.` }}
+          </div>
         </div>
 
-        <!-- Fallback Div -->
-        <div
-          v-if="failed.length === 0 && success.length === 0"
-          class="p-4 text-base dark:text-gray-200"
+        <DialogFooter
+          class="flex sm:justify-between items-center pt-4 border-t dark:border-gray-800"
         >
-          {{ t`No entries were imported.` }}
-        </div>
-
-        <!-- Footer Button -->
-        <div class="flex justify-between p-4">
-          <Button
-            v-if="failed.length > 0"
-            @click="clearSuccessfullyImportedEntries"
-            >{{ t`Fix Failed` }}</Button
-          >
-          <Button
-            v-if="failed.length === 0 && success.length > 0"
-            @click="showMe"
-            >{{ t`Show Me` }}</Button
-          >
-          <Button @click="clear">{{ t`Done` }}</Button>
-        </div>
-      </div>
-    </Modal>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <UIButton
+              v-if="failed.length > 0"
+              variant="outline"
+              class="flex-1 sm:flex-none"
+              @click="clearSuccessfullyImportedEntries"
+            >
+              {{ t`Fix Failed` }}
+            </UIButton>
+            <UIButton
+              v-if="failed.length === 0 && success.length > 0"
+              variant="outline"
+              class="flex-1 sm:flex-none"
+              @click="showMe"
+            >
+              {{ t`Show Me` }}
+            </UIButton>
+          </div>
+          <UIButton class="w-full sm:w-auto mt-2 sm:mt-0" @click="clear">
+            {{ t`Done` }}
+          </UIButton>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 <script lang="ts">
@@ -381,7 +392,15 @@ import { Verb } from 'fyo/telemetry/types';
 import { ValidationError } from 'fyo/utils/errors';
 import { ModelNameEnum } from 'models/types';
 import { OptionField, RawValue, SelectOption } from 'schemas/types';
-import Button from 'src/components/Button.vue';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from 'src/components/ui';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Data from 'src/components/Controls/Data.vue';
@@ -389,7 +408,6 @@ import FormControl from 'src/components/Controls/FormControl.vue';
 import Select from 'src/components/Controls/Select.vue';
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import FormHeader from 'src/components/FormHeader.vue';
-import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { Importer, TemplateField, getColumnLabel } from 'src/importer';
 import { fyo } from 'src/initFyo';
@@ -418,12 +436,16 @@ export default defineComponent({
   components: {
     PageHeader,
     FormControl,
-    Button,
+    LucideIcon,
     DropdownWithActions,
     Loading,
     AutoComplete,
     Data,
-    Modal,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
     FormHeader,
     Check,
     Select,

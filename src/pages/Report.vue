@@ -11,14 +11,15 @@
       >
         {{ group.group }}
       </DropdownWithActions>
-      <Button
+      <UIButton
         ref="printButton"
-        :icon="true"
+        variant="ghost"
+        size="icon"
         :title="t`Open Report Print View`"
         @click="routeTo(`/report-print/${reportClassName}`)"
       >
-        <feather-icon name="printer" class="w-4 h-4"></feather-icon>
-      </Button>
+        <LucideIcon name="printer" :size="16" class="w-4 h-4"></LucideIcon>
+      </UIButton>
     </PageHeader>
 
     <!-- Filters -->
@@ -36,7 +37,9 @@
         :df="field"
         :value="report.get(field.fieldname)"
         :read-only="loading"
-        @change="async (value) => await report?.set(field.fieldname, value)"
+        @change="
+          async (value: any) => await report?.set(field.fieldname, value)
+        "
       />
     </div>
 
@@ -49,7 +52,7 @@ import { t } from 'fyo';
 import { DocValue } from 'fyo/core/types';
 import { reports } from 'reports';
 import { Report } from 'reports/Report';
-import Button from 'src/components/Button.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import PageHeader from 'src/components/PageHeader.vue';
@@ -68,7 +71,7 @@ export default defineComponent({
     FormControl,
     ListReport,
     DropdownWithActions,
-    Button,
+    LucideIcon,
   },
   provide() {
     return {
@@ -122,7 +125,7 @@ export default defineComponent({
       return Object.values(actionsMap);
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
   async activated() {
     docsPathRef.value =
       docsPathMap[this.reportClassName] ?? docsPathMap.Reports!;
