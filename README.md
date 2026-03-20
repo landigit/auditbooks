@@ -5,13 +5,13 @@
 
 <br/>
 
-<h1>Frappe Books</h1>
+<h1>Auditbooks</h1>
 
 **Modern Accounting Made Simple**
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/frappe/books)](https://github.com/frappe/books/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/frappe/books)](https://github.com/Landigit/auditbooks/releases)
 ![Platforms](https://img.shields.io/badge/platform-mac%2C%20windows%2C%20linux-yellowgreen)
-[![Publish](https://github.com/frappe/books/actions/workflows/publish.yml/badge.svg)](https://github.com/frappe/books/actions/workflows/publish.yml)
+[![Publish](https://github.com/Landigit/auditbooks/actions/workflows/publish.yml/badge.svg)](https://github.com/Landigit/auditbooks/actions/workflows/publish.yml)
 
 </div>
 
@@ -20,14 +20,14 @@
 </div>
 <br />
 <div align="center">
-	<a href="https://frappe.io/books">Website</a>
+	<a href="https://www.landigit.com">Website</a>
 	-
-	<a href="https://docs.frappe.io/books">Documentation</a>
+	<a href="https://www.landigit.com/auditbooks/docs">Documentation</a>
 </div>
 
-## Frappe Books
+## Auditbooks
 
-Frappe Books is an open-source accounting software aimed at simplifying financial management for businesses. With its clean and user-friendly interface, it streamlines accounting tasks for small and medium-sized enterprises, offering a seamless solution for modern businesses to manage their finances with ease.
+Auditbooks is an open-source accounting software aimed at simplifying financial management for businesses. With its clean and user-friendly interface, it streamlines accounting tasks for small and medium-sized enterprises, offering a seamless solution for modern businesses to manage their finances with ease.
 
 <details>
 <summary>Screenshots</summary>
@@ -75,7 +75,7 @@ Frappe Books addresses a market gap where small businesses face expensive, compl
 ### Manual
 
 Download and install the latest release for your platform from the [releases
-page](https://github.com/frappe/books/releases) .
+page](https://github.com/Landigit/auditbooks/releases) .
 
 ### Using Homebrew (for MacOS and Linux)
 
@@ -105,7 +105,7 @@ setup Frappe Books for development and building:
 
 ```bash
 # clone the repository
-git clone https://github.com/frappe/books.git
+git clone https://github.com/Landigit/auditbooks.git
 
 # change directory
 cd books
@@ -155,10 +155,10 @@ So to build for linux you could use the `--linux` flag like so: `yarn build --li
 
 ## Want to Just Try Out or Contribute?
 
-If you want to contribute to Frappe Books, please check our [Contribution Guidelines](https://github.com/frappe/books/blob/master/.github/CONTRIBUTING.md). There are many ways you can contribute even if you don't code:
+If you want to contribute to Frappe Books, please check our [Contribution Guidelines](https://github.com/Landigit/auditbooks/blob/master/.github/CONTRIBUTING.md). There are many ways you can contribute even if you don't code:
 
-1. If you find any issues, no matter how small (even typos), you can [raise an issue](https://github.com/frappe/books/issues/new) to inform us.
-2. You can help us with language support by [contributing translations](https://github.com/frappe/books/wiki/Contributing-Translations).
+1. If you find any issues, no matter how small (even typos), you can [raise an issue](https://github.com/Landigit/auditbooks/issues/new) to inform us.
+2. You can help us with language support by [contributing translations](https://github.com/Landigit/auditbooks/wiki/Contributing-Translations).
 3. If you're an ardent user you can tell us what you would like to see.
 4. If you have accounting requirements, you can become an ardent user. 🙂
 
@@ -188,6 +188,6 @@ If you want to contribute code then you can fork this repo, make changes and rai
 
 ## Learn and connect
 
-- [Telegram Group](https://t.me/frappebooks): Used for discussions and decisions regarding everything Frappe Books.
-- [GitHub Discussions](https://github.com/frappe/books/discussions): Used for discussions around a specific topic.
-- [Documentation](https://docs.frappe.io/books): Official documentation for more details.
+- [Website](https://www.landigit.com): Visit Landigit for more information.
+- [Email](mailto:landigitagency@gmail.com): Contact us at landigitagency@gmail.com for support.
+- [Documentation](https://www.landigit.com/auditbooks/docs): Official documentation for more details.
