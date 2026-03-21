@@ -1,7 +1,7 @@
 {
-  "name": "DefaultCashDenominations",
-  "label": "Default Cash Denominations",
-  "isChild": true,
-  "extends": "CashDenominations",
-  "tableFields": ["denomination"]
+	"name": "DefaultCashDenominations",
+	"label": "Default Cash Denominations",
+	"isChild": true,
+	"extends": "CashDenominations",
+	"tableFields": ["denomination"]
 }

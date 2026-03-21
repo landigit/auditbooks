@@ -245,215 +245,216 @@
 </template>
 
 <script lang="ts">
-import { fyo } from 'src/initFyo';
-import { getBgTextColorClass } from 'src/utils/colors';
-import { searcherKey, shortcutsKey } from 'src/utils/injectionKeys';
-import { docsPathMap } from 'src/utils/misc';
+import { fyo } from "src/initFyo";
+import { getBgTextColorClass } from "src/utils/colors";
+import { searcherKey, shortcutsKey } from "src/utils/injectionKeys";
+import { docsPathMap } from "src/utils/misc";
 import {
-  SearchGroup,
-  SearchItems,
-  SearchItem,
-  getGroupLabelMap,
-  searchGroups,
-} from 'src/utils/search';
-import { defineComponent, inject, nextTick } from 'vue';
-import Button from './Button.vue';
-import Modal from './Modal.vue';
+	getGroupLabelMap,
+	type SearchGroup,
+	type SearchItems,
+	searchGroups,
+} from "src/utils/search";
+import { defineComponent, inject, nextTick } from "vue";
+import Button from "./Button.vue";
+import Modal from "./Modal.vue";
 
-const COMPONENT_NAME = 'SearchBar';
+const COMPONENT_NAME = "SearchBar";
 
 type SchemaFilters = { value: string; label: string; index: number }[];
 
 export default defineComponent({
-  components: { Modal, Button },
-  setup() {
-    return {
-      searcher: inject(searcherKey),
-      shortcuts: inject(shortcutsKey),
-    };
-  },
-  data() {
-    return {
-      idx: 0,
-      searchGroups,
-      openModal: false,
-      inputValue: '',
-      showMore: false,
-      limit: 50,
-      allowedLimits: [50, 100, 500, -1],
-    };
-  },
-  computed: {
-    groupLabelMap(): Record<SearchGroup, string> {
-      return getGroupLabelMap();
-    },
-    schemaFilters(): SchemaFilters {
-      const searchables = this.searcher?.searchables ?? {};
+	components: { Modal, Button },
+	setup() {
+		return {
+			searcher: inject(searcherKey),
+			shortcuts: inject(shortcutsKey),
+		};
+	},
+	data() {
+		return {
+			idx: 0,
+			searchGroups,
+			openModal: false,
+			inputValue: "",
+			showMore: false,
+			limit: 50,
+			allowedLimits: [50, 100, 500, -1],
+		};
+	},
+	computed: {
+		groupLabelMap(): Record<SearchGroup, string> {
+			return getGroupLabelMap();
+		},
+		schemaFilters(): SchemaFilters {
+			const searchables = this.searcher?.searchables ?? {};
 
-      const schemaNames = Object.keys(searchables);
-      const filters = schemaNames
-        .map((value) => {
-          const schema = fyo.schemaMap[value];
-          if (!schema) {
-            return;
-          }
+			const schemaNames = Object.keys(searchables);
+			const filters = schemaNames
+				.map((value) => {
+					const schema = fyo.schemaMap[value];
+					if (schema) {
+						let index = 1;
+						if (schema.isSubmittable) {
+							index = 0;
+						} else if (schema.isChild) {
+							index = 2;
+						}
 
-          let index = 1;
-          if (schema.isSubmittable) {
-            index = 0;
-          } else if (schema.isChild) {
-            index = 2;
-          }
+						return { value, label: schema.label, index };
+					}
+					return null;
+				})
+				.filter((f): f is NonNullable<typeof f> => !!f) as SchemaFilters;
 
-          return { value, label: schema.label, index };
-        })
-        .filter(Boolean) as SchemaFilters;
+			return filters.sort((a, b) => a.index - b.index);
+		},
+		groupColorMap(): Record<SearchGroup, string> {
+			return {
+				Docs: "blue",
+				Create: "green",
+				List: "teal",
+				Report: "yellow",
+				Page: "orange",
+				Recent: "purple",
+			};
+		},
+		groupColorClassMap(): Record<SearchGroup, string> {
+			return searchGroups.reduce(
+				(map, g) => {
+					map[g] = getBgTextColorClass(this.groupColorMap[g]);
+					return map;
+				},
+				{} as Record<SearchGroup, string>,
+			);
+		},
+		suggestions(): SearchItems {
+			if (!this.searcher) {
+				return [];
+			}
 
-      return filters.sort((a, b) => a.index - b.index);
-    },
-    groupColorMap(): Record<SearchGroup, string> {
-      return {
-        Docs: 'blue',
-        Create: 'green',
-        List: 'teal',
-        Report: 'yellow',
-        Page: 'orange',
-        Recent: 'purple',
-      };
-    },
-    groupColorClassMap(): Record<SearchGroup, string> {
-      return searchGroups.reduce((map, g) => {
-        map[g] = getBgTextColorClass(this.groupColorMap[g]);
-        return map;
-      }, {} as Record<SearchGroup, string>);
-    },
-    suggestions(): SearchItems {
-      if (!this.searcher) {
-        return [];
-      }
+			const suggestions = this.searcher.search(this.inputValue);
+			if (this.limit === -1) {
+				return suggestions;
+			}
 
-      const suggestions = this.searcher.search(this.inputValue);
-      if (this.limit === -1) {
-        return suggestions;
-      }
+			return suggestions.slice(0, this.limit);
+		},
+	},
+	async mounted() {
+		if (fyo.store.isDevelopment) {
+			// @ts-expect-error
+			window.search = this;
+		}
 
-      return suggestions.slice(0, this.limit);
-    },
-  },
-  async mounted() {
-    if (fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.search = this;
-    }
+		this.openModal = false;
+	},
+	activated() {
+		this.setShortcuts();
+		this.openModal = false;
+	},
+	deactivated() {
+		this.shortcuts?.delete(COMPONENT_NAME);
+	},
+	methods: {
+		openDocs() {
+			ipc.openLink(`https://docs.frappe.io/${docsPathMap.Search}`);
+		},
+		getShortcuts() {
+			const ifOpen = (cb: Function) => () => this.openModal && cb();
+			const ifClose = (cb: Function) => () => !this.openModal && cb();
 
-    this.openModal = false;
-  },
-  activated() {
-    this.setShortcuts();
-    this.openModal = false;
-  },
-  deactivated() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    openDocs() {
-      ipc.openLink('https://docs.frappe.io/' + docsPathMap.Search);
-    },
-    getShortcuts() {
-      const ifOpen = (cb: Function) => () => this.openModal && cb();
-      const ifClose = (cb: Function) => () => !this.openModal && cb();
+			const shortcuts = [
+				{
+					shortcut: "KeyK",
+					callback: ifClose(() => this.open()),
+				},
+			];
 
-      const shortcuts = [
-        {
-          shortcut: 'KeyK',
-          callback: ifClose(() => this.open()),
-        },
-      ];
+			for (const i in searchGroups) {
+				shortcuts.push({
+					shortcut: `Digit${Number(i) + 1}`,
+					callback: ifOpen(() => {
+						const group = searchGroups[i];
+						if (!this.searcher) {
+							return;
+						}
 
-      for (const i in searchGroups) {
-        shortcuts.push({
-          shortcut: `Digit${Number(i) + 1}`,
-          callback: ifOpen(() => {
-            const group = searchGroups[i];
-            if (!this.searcher) {
-              return;
-            }
+						const value = this.searcher.filters.groupFilters[group];
+						if (typeof value !== "boolean") {
+							return;
+						}
 
-            const value = this.searcher.filters.groupFilters[group];
-            if (typeof value !== 'boolean') {
-              return;
-            }
+						this.searcher.set(group, !value);
+					}),
+				});
+			}
 
-            this.searcher.set(group, !value);
-          }),
-        });
-      }
+			return shortcuts;
+		},
+		setShortcuts() {
+			for (const { shortcut, callback } of this.getShortcuts()) {
+				this.shortcuts!.pmod.set(COMPONENT_NAME, [shortcut], callback);
+			}
+		},
+		open(): void {
+			this.openModal = true;
+			this.searcher?.updateKeywords();
 
-      return shortcuts;
-    },
-    setShortcuts() {
-      for (const { shortcut, callback } of this.getShortcuts()) {
-        this.shortcuts!.pmod.set(COMPONENT_NAME, [shortcut], callback);
-      }
-    },
-    open(): void {
-      this.openModal = true;
-      this.searcher?.updateKeywords();
+			nextTick(() => {
+				(this.$refs.input as HTMLInputElement)?.focus();
+			});
+		},
+		close(): void {
+			this.openModal = false;
+			this.reset();
+		},
+		reset(): void {
+			this.inputValue = "";
+		},
+		up(): void {
+			this.idx = Math.max(this.idx - 1, 0);
+			this.scrollToHighlighted();
+		},
+		down(): void {
+			this.idx = Math.max(
+				Math.min(this.idx + 1, this.suggestions.length - 1),
+				0,
+			);
+			this.scrollToHighlighted();
+		},
+		select(idx?: number): void {
+			this.idx = idx ?? this.idx;
+			const selectedItem = this.suggestions[this.idx];
 
-      nextTick(() => {
-        (this.$refs.input as HTMLInputElement)?.focus();
-      });
-    },
-    close(): void {
-      this.openModal = false;
-      this.reset();
-    },
-    reset(): void {
-      this.inputValue = '';
-    },
-    up(): void {
-      this.idx = Math.max(this.idx - 1, 0);
-      this.scrollToHighlighted();
-    },
-    down(): void {
-      this.idx = Math.max(
-        Math.min(this.idx + 1, this.suggestions.length - 1),
-        0
-      );
-      this.scrollToHighlighted();
-    },
-    select(idx?: number): void {
-      this.idx = idx ?? this.idx;
-      const selectedItem = this.suggestions[this.idx];
+			if (selectedItem?.action) {
+				this.searcher?.addToRecent(selectedItem);
+				selectedItem.action();
+			}
 
-      if (selectedItem?.action) {
-        this.searcher?.addToRecent(selectedItem);
-        selectedItem.action();
-      }
+			this.close();
+		},
+		scrollToHighlighted(): void {
+			const query = `[data-index="search-suggestion-${this.idx}"]`;
+			const element = document.querySelectorAll(query)?.[0];
+			element?.scrollIntoView({ block: "nearest" });
+		},
+		getGroupFilterButtonClass(g: SearchGroup): string {
+			if (!this.searcher) {
+				return "";
+			}
 
-      this.close();
-    },
-    scrollToHighlighted(): void {
-      const query = `[data-index="search-suggestion-${this.idx}"]`;
-      const element = document.querySelectorAll(query)?.[0];
-      element?.scrollIntoView({ block: 'nearest' });
-    },
-    getGroupFilterButtonClass(g: SearchGroup): string {
-      if (!this.searcher) {
-        return '';
-      }
+			const isOn = this.searcher.filters.groupFilters[g];
+			const color = this.groupColorMap[g];
+			if (isOn) {
+				return `${getBgTextColorClass(
+					color,
+				)} border-${color}-100 dark:border-${color}-800`;
+			}
 
-      const isOn = this.searcher.filters.groupFilters[g];
-      const color = this.groupColorMap[g];
-      if (isOn) {
-        return `${getBgTextColorClass(
-          color
-        )} border-${color}-100 dark:border-${color}-800`;
-      }
-
-      return `text-${color}-600 dark:text-${color}-400 border-${color}-100 dark:border-${color}-800`;
-    },
-  },
+			return `text-${color}-600 dark:text-${color}-400 border-${color}-100 dark:border-${color}-800`;
+		},
+	},
 });
 </script>
 <style scoped>

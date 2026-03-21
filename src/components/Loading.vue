@@ -71,25 +71,25 @@
 </template>
 <script>
 export default {
-  props: {
-    open: { type: Boolean, default: false },
-    percent: { type: Number, default: 0.5 },
-    message: { type: String, default: '' },
-    fullWidth: { type: Boolean, default: false },
-    showX: { type: Boolean, default: true },
-  },
-  data() {
-    return {
-      close: false,
-    };
-  },
-  mounted() {
-    window.l = this;
-  },
-  methods: {
-    closeToast() {
-      this.close = true;
-    },
-  },
+	props: {
+		open: { type: Boolean, default: false },
+		percent: { type: Number, default: 0.5 },
+		message: { type: String, default: "" },
+		fullWidth: { type: Boolean, default: false },
+		showX: { type: Boolean, default: true },
+	},
+	data() {
+		return {
+			close: false,
+		};
+	},
+	mounted() {
+		window.l = this;
+	},
+	methods: {
+		closeToast() {
+			this.close = true;
+		},
+	},
 };
 </script>

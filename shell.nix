@@ -4,6 +4,7 @@ pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
     nodejs_22
     yarn
+    pnpm
     nodePackages.node-gyp
     python3
     pkg-config

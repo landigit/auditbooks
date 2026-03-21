@@ -1,6 +1,6 @@
 export async function sendAPIRequest(
-  endpoint: string,
-  options: RequestInit | undefined
+	endpoint: string,
+	options: RequestInit | undefined,
 ) {
-  return await ipc.sendAPIRequest(endpoint, options);
+	return await window.auditbooksIpc.sendAPIRequest(endpoint, options);
 }

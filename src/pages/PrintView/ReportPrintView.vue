@@ -160,169 +160,169 @@
   </div>
 </template>
 <script lang="ts">
-import { Verb } from 'fyo/telemetry/types';
-import { Report } from 'reports/Report';
-import { reports } from 'reports/index';
-import { OptionField } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import Check from 'src/components/Controls/Check.vue';
-import Int from 'src/components/Controls/Int.vue';
-import Select from 'src/components/Controls/Select.vue';
-import PageHeader from 'src/components/PageHeader.vue';
-import { getReport } from 'src/utils/misc';
-import { getPathAndMakePDF } from 'src/utils/printTemplates';
-import { showSidebar } from 'src/utils/refs';
-import { paperSizeMap, printSizes } from 'src/utils/ui';
-import { PropType, defineComponent } from 'vue';
-import ScaledContainer from '../TemplateBuilder/ScaledContainer.vue';
+import { Verb } from "fyo/telemetry/types";
+import { reports } from "reports/index";
+import type { Report } from "reports/Report";
+import type { OptionField } from "schemas/types";
+import Button from "src/components/Button.vue";
+import Check from "src/components/Controls/Check.vue";
+import Int from "src/components/Controls/Int.vue";
+import Select from "src/components/Controls/Select.vue";
+import PageHeader from "src/components/PageHeader.vue";
+import { getReport } from "src/utils/misc";
+import { getPathAndMakePDF } from "src/utils/printTemplates";
+import { showSidebar } from "src/utils/refs";
+import { paperSizeMap, printSizes } from "src/utils/ui";
+import { defineComponent, type PropType } from "vue";
+import ScaledContainer from "../TemplateBuilder/ScaledContainer.vue";
 
 export default defineComponent({
-  components: { PageHeader, Button, Check, Int, ScaledContainer, Select },
-  props: {
-    reportName: {
-      type: String as PropType<keyof typeof reports>,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      start: 1,
-      limit: 0,
-      printSize: 'A4' as typeof printSizes[number],
-      isLandscape: false,
-      scale: 0.65,
-      report: null as null | Report,
-      columnSelection: [] as boolean[],
-    };
-  },
-  computed: {
-    title(): string {
-      return reports[this.reportName]?.title ?? this.t`Report`;
-    },
-    printSizeDf(): OptionField {
-      return {
-        label: 'Print Size',
-        fieldname: 'printSize',
-        fieldtype: 'Select',
-        options: printSizes
-          .filter((p) => p !== 'Custom')
-          .map((name) => ({ value: name, label: name })),
-      };
-    },
-    matrix(): { value: string; idx: number }[][] {
-      if (!this.report) {
-        return [];
-      }
+	components: { PageHeader, Button, Check, Int, ScaledContainer, Select },
+	props: {
+		reportName: {
+			type: String as PropType<keyof typeof reports>,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			start: 1,
+			limit: 0,
+			printSize: "A4" as (typeof printSizes)[number],
+			isLandscape: false,
+			scale: 0.65,
+			report: null as null | Report,
+			columnSelection: [] as boolean[],
+		};
+	},
+	computed: {
+		title(): string {
+			return reports[this.reportName]?.title ?? this.t`Report`;
+		},
+		printSizeDf(): OptionField {
+			return {
+				label: "Print Size",
+				fieldname: "printSize",
+				fieldtype: "Select",
+				options: printSizes
+					.filter((p) => p !== "Custom")
+					.map((name) => ({ value: name, label: name })),
+			};
+		},
+		matrix(): { value: string; idx: number }[][] {
+			if (!this.report) {
+				return [];
+			}
 
-      const columns = this.report.columns
-        .map((col, idx) => ({ value: col.label, idx }))
-        .filter((_, i) => this.columnSelection[i]);
+			const columns = this.report.columns
+				.map((col, idx) => ({ value: col.label, idx }))
+				.filter((_, i) => this.columnSelection[i]);
 
-      const matrix: { value: string; idx: number }[][] = [columns];
-      const start = Math.max(this.start - 1, 0);
-      const end = Math.min(start + this.limit, this.report.reportData.length);
-      const slice = this.report.reportData.slice(start, end);
+			const matrix: { value: string; idx: number }[][] = [columns];
+			const start = Math.max(this.start - 1, 0);
+			const end = Math.min(start + this.limit, this.report.reportData.length);
+			const slice = this.report.reportData.slice(start, end);
 
-      for (let i = 0; i < slice.length; i++) {
-        const row = slice[i];
+			for (let i = 0; i < slice.length; i++) {
+				const row = slice[i];
 
-        matrix.push([]);
-        for (let j = 0; j < row.cells.length; j++) {
-          if (!this.columnSelection[j]) {
-            continue;
-          }
+				matrix.push([]);
+				for (let j = 0; j < row.cells.length; j++) {
+					if (!this.columnSelection[j]) {
+						continue;
+					}
 
-          const value = row.cells[j].value;
-          matrix.at(-1)?.push({ value, idx: Number(j) });
-        }
-      }
+					const value = row.cells[j].value;
+					matrix.at(-1)?.push({ value, idx: Number(j) });
+				}
+			}
 
-      return matrix;
-    },
-    rowStyles(): Record<string, string> {
-      const style: Record<string, string> = {};
-      const numColumns = this.columnSelection.filter(Boolean).length;
-      style['grid-template-columns'] = `repeat(${numColumns}, minmax(0, auto))`;
-      return style;
-    },
-    size(): { width: number; height: number } {
-      const size = paperSizeMap[this.printSize];
-      const long = size.width > size.height ? size.width : size.height;
-      const short = size.width <= size.height ? size.width : size.height;
+			return matrix;
+		},
+		rowStyles(): Record<string, string> {
+			const style: Record<string, string> = {};
+			const numColumns = this.columnSelection.filter(Boolean).length;
+			style["grid-template-columns"] = `repeat(${numColumns}, minmax(0, auto))`;
+			return style;
+		},
+		size(): { width: number; height: number } {
+			const size = paperSizeMap[this.printSize];
+			const long = size.width > size.height ? size.width : size.height;
+			const short = size.width <= size.height ? size.width : size.height;
 
-      if (this.isLandscape) {
-        return { width: long, height: short };
-      }
+			if (this.isLandscape) {
+				return { width: long, height: short };
+			}
 
-      return { width: short, height: long };
-    },
-  },
-  watch: {
-    size() {
-      this.setScale();
-    },
-  },
-  async mounted() {
-    this.report = await getReport(this.reportName);
-    this.limit = this.report.reportData.length;
-    this.columnSelection = this.report.columns.map(() => true);
-    this.setScale();
+			return { width: short, height: long };
+		},
+	},
+	watch: {
+		size() {
+			this.setScale();
+		},
+	},
+	async mounted() {
+		this.report = await getReport(this.reportName);
+		this.limit = this.report.reportData.length;
+		this.columnSelection = this.report.columns.map(() => true);
+		this.setScale();
 
-    // @ts-ignore
-    window.rpv = this;
-  },
-  methods: {
-    setScale() {
-      const width = this.size.width * 37.2;
-      let containerWidth = window.innerWidth - 26 * 16;
-      if (showSidebar.value) {
-        containerWidth -= 12 * 16;
-      }
+		// @ts-expect-error
+		window.rpv = this;
+	},
+	methods: {
+		setScale() {
+			const width = this.size.width * 37.2;
+			let containerWidth = window.innerWidth - 26 * 16;
+			if (showSidebar.value) {
+				containerWidth -= 12 * 16;
+			}
 
-      this.scale = Math.min(containerWidth / width, 1);
-    },
-    async savePDF(shouldPrint?: boolean): Promise<void> {
-      // @ts-ignore
-      const innerHTML = this.$refs.scaledContainer.$el.children[0].innerHTML;
-      if (typeof innerHTML !== 'string') {
-        return;
-      }
+			this.scale = Math.min(containerWidth / width, 1);
+		},
+		async savePDF(shouldPrint?: boolean): Promise<void> {
+			// @ts-expect-error
+			const innerHTML = this.$refs.scaledContainer.$el.children[0].innerHTML;
+			if (typeof innerHTML !== "string") {
+				return;
+			}
 
-      const name = this.title + ' - ' + this.fyo.format(new Date(), 'Date');
-      await getPathAndMakePDF(
-        name,
-        innerHTML,
-        this.size.width,
-        this.size.height,
-        shouldPrint
-      );
+			const name = `${this.title} - ${this.fyo.format(new Date(), "Date")}`;
+			await getPathAndMakePDF(
+				name,
+				innerHTML,
+				this.size.width,
+				this.size.height,
+				shouldPrint,
+			);
 
-      this.fyo.telemetry.log(Verb.Printed, this.report!.reportName);
-    },
-    cellClasses(cIdx: number, rIdx: number): string[] {
-      const classes: string[] = [];
-      if (!this.report) {
-        return classes;
-      }
+			this.fyo.telemetry.log(Verb.Printed, this.report?.reportName);
+		},
+		cellClasses(cIdx: number, rIdx: number): string[] {
+			const classes: string[] = [];
+			if (!this.report) {
+				return classes;
+			}
 
-      const col = this.report.columns[cIdx];
-      const isFirst = cIdx === 0;
-      if (col.align) {
-        classes.push(`text-${col.align}`);
-      }
+			const col = this.report.columns[cIdx];
+			const isFirst = cIdx === 0;
+			if (col.align) {
+				classes.push(`text-${col.align}`);
+			}
 
-      if (rIdx === 0) {
-        classes.push('font-semibold');
-      }
+			if (rIdx === 0) {
+				classes.push("font-semibold");
+			}
 
-      classes.push('border-t');
-      if (!isFirst) {
-        classes.push('border-l');
-      }
+			classes.push("border-t");
+			if (!isFirst) {
+				classes.push("border-l");
+			}
 
-      return classes;
-    },
-  },
+			return classes;
+		},
+	},
 });
 </script>
 <style scoped>

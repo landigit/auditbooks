@@ -95,89 +95,89 @@
   </Row>
 </template>
 <script>
-import { Doc } from 'fyo/model/doc';
-import Row from 'src/components/Row.vue';
-import { getErrorMessage } from 'src/utils';
-import { computed, nextTick } from 'vue';
-import Button from '../Button.vue';
-import FormControl from './FormControl.vue';
+import { Doc } from "fyo/model/doc";
+import Row from "src/components/Row.vue";
+import { getErrorMessage } from "src/utils";
+import { computed, nextTick } from "vue";
+import Button from "../Button.vue";
+import FormControl from "./FormControl.vue";
 
 export default {
-  name: 'TableRow',
-  components: {
-    Row,
-    FormControl,
-    Button,
-  },
-  provide() {
-    return {
-      doc: computed(() => this.row),
-    };
-  },
-  props: {
-    row: Doc,
-    tableFields: Array,
-    size: String,
-    ratio: Array,
-    isNumeric: Function,
-    readOnly: Boolean,
-    canEditRow: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['remove', 'change'],
-  data: () => ({
-    isRowIndexVisible: false,
-    errors: {},
-  }),
-  computed: {
-    hasErrors() {
-      return Object.values(this.errors).filter(Boolean).length;
-    },
-  },
-  beforeCreate() {
-    this.$options.components.FormControl = FormControl;
-  },
-  methods: {
-    async onChange(df, value) {
-      const fieldname = df.fieldname;
-      this.errors[fieldname] = null;
-      const oldValue = this.row[fieldname];
-      try {
-        await this.row.set(fieldname, value);
-        this.$emit('change', df, value);
-      } catch (e) {
-        this.errors[fieldname] = getErrorMessage(e, this.row);
-        this.row[fieldname] = '';
-        nextTick(() => (this.row[fieldname] = oldValue));
-      }
-    },
-    getErrorString() {
-      return Object.values(this.errors).filter(Boolean).join(' ');
-    },
-    openRowQuickEdit() {
-      if (!this.row) return;
-      this.$parent.$emit('editrow', this.row);
-    },
-    onFieldFocus(index) {
-      if (index === 0) {
-        this.isRowIndexVisible = true;
-      }
-    },
-    onFieldBlur(index) {
-      if (index === 0) {
-        this.isRowIndexVisible = false;
-      }
-    },
-    focusFirstInput() {
-      const firstControl = this.$el.querySelector(
-        '.form-control, input, textarea, select'
-      );
-      if (firstControl) {
-        firstControl.focus();
-      }
-    },
-  },
+	name: "TableRow",
+	components: {
+		Row,
+		FormControl,
+		Button,
+	},
+	provide() {
+		return {
+			doc: computed(() => this.row),
+		};
+	},
+	props: {
+		row: Doc,
+		tableFields: Array,
+		size: String,
+		ratio: Array,
+		isNumeric: Function,
+		readOnly: Boolean,
+		canEditRow: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ["remove", "change"],
+	data: () => ({
+		isRowIndexVisible: false,
+		errors: {},
+	}),
+	computed: {
+		hasErrors() {
+			return Object.values(this.errors).filter(Boolean).length;
+		},
+	},
+	beforeCreate() {
+		this.$options.components.FormControl = FormControl;
+	},
+	methods: {
+		async onChange(df, value) {
+			const fieldname = df.fieldname;
+			this.errors[fieldname] = null;
+			const oldValue = this.row[fieldname];
+			try {
+				await this.row.set(fieldname, value);
+				this.$emit("change", df, value);
+			} catch (e) {
+				this.errors[fieldname] = getErrorMessage(e, this.row);
+				this.row[fieldname] = "";
+				nextTick(() => (this.row[fieldname] = oldValue));
+			}
+		},
+		getErrorString() {
+			return Object.values(this.errors).filter(Boolean).join(" ");
+		},
+		openRowQuickEdit() {
+			if (!this.row) return;
+			this.$parent.$emit("editrow", this.row);
+		},
+		onFieldFocus(index) {
+			if (index === 0) {
+				this.isRowIndexVisible = true;
+			}
+		},
+		onFieldBlur(index) {
+			if (index === 0) {
+				this.isRowIndexVisible = false;
+			}
+		},
+		focusFirstInput() {
+			const firstControl = this.$el.querySelector(
+				".form-control, input, textarea, select",
+			);
+			if (firstControl) {
+				firstControl.focus();
+			}
+		},
+	},
 };
 </script>

@@ -33,41 +33,40 @@
   </div>
 </template>
 <script lang="ts">
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { ref, inject } from 'vue';
-import { defineComponent } from 'vue';
-import SearchBar from './SearchBar.vue';
-import { historyState } from 'src/utils/refs';
+import { shortcutsKey } from "src/utils/injectionKeys";
+import { historyState } from "src/utils/refs";
+import { defineComponent, inject, ref } from "vue";
+import SearchBar from "./SearchBar.vue";
 
-const COMPONENT_NAME = 'PageHeaderNavGroup';
+const COMPONENT_NAME = "PageHeaderNavGroup";
 
 export default defineComponent({
-  components: { SearchBar },
-  setup() {
-    return {
-      historyState,
-      backlink: ref<HTMLAnchorElement | null>(null),
-      shortcuts: inject(shortcutsKey),
-    };
-  },
-  computed: {
-    hasBack() {
-      return !!history.back;
-    },
-    hasForward() {
-      return !!history.forward;
-    },
-  },
-  activated() {
-    this.shortcuts?.shift.set(COMPONENT_NAME, ['Backspace'], () => {
-      this.backlink?.click();
-    });
-    // @ts-ignore
-    window.ng = this;
-  },
-  deactivated() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
+	components: { SearchBar },
+	setup() {
+		return {
+			historyState,
+			backlink: ref<HTMLAnchorElement | null>(null),
+			shortcuts: inject(shortcutsKey),
+		};
+	},
+	computed: {
+		hasBack() {
+			return !!history.back;
+		},
+		hasForward() {
+			return !!history.forward;
+		},
+	},
+	activated() {
+		this.shortcuts?.shift.set(COMPONENT_NAME, ["Backspace"], () => {
+			this.backlink?.click();
+		});
+		// @ts-expect-error
+		window.ng = this;
+	},
+	deactivated() {
+		this.shortcuts?.delete(COMPONENT_NAME);
+	},
 });
 </script>
 

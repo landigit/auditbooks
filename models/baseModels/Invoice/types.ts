@@ -1,11 +1,11 @@
-import { PricingRule } from '../PricingRule/PricingRule';
+import type { PricingRule } from "../PricingRule/PricingRule";
 
 export interface ApplicablePricingRules {
-  applyOnItem: string;
-  pricingRule: PricingRule;
+	applyOnItem: string;
+	pricingRule: PricingRule;
 }
 
 export interface ApplicableCouponCodes {
-  pricingRule: string;
-  coupon: string;
+	pricingRule: string;
+	coupon: string;
 }

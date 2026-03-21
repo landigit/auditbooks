@@ -48,95 +48,95 @@
   </div>
 </template>
 <script lang="ts">
-import { DateTime } from 'luxon';
-import { fyo } from 'src/initFyo';
-import { defineComponent, nextTick } from 'vue';
-import Base from './Base.vue';
+import { DateTime } from "luxon";
+import { fyo } from "src/initFyo";
+import { defineComponent, nextTick } from "vue";
+import Base from "./Base.vue";
 
 export default defineComponent({
-  extends: Base,
-  emits: ['input', 'focus'],
-  data() {
-    return {
-      showInput: false,
-    };
-  },
-  computed: {
-    inputValue(): string {
-      let value = this.value;
-      if (typeof value === 'string') {
-        value = new Date(value);
-      }
+	extends: Base,
+	emits: ["input", "focus"],
+	data() {
+		return {
+			showInput: false,
+		};
+	},
+	computed: {
+		inputValue(): string {
+			let value = this.value;
+			if (typeof value === "string") {
+				value = new Date(value);
+			}
 
-      if (value instanceof Date && !Number.isNaN(value.valueOf())) {
-        return DateTime.fromJSDate(value).toISODate();
-      }
+			if (value instanceof Date && !Number.isNaN(value.valueOf())) {
+				return DateTime.fromJSDate(value).toISODate();
+			}
 
-      return '';
-    },
-    inputType() {
-      return 'date';
-    },
-    formattedValue() {
-      const value = this.parse(this.value);
-      return fyo.format(value, this.df, this.doc);
-    },
-    borderClasses(): string {
-      if (!this.border) {
-        return '';
-      }
+			return "";
+		},
+		inputType() {
+			return "date";
+		},
+		formattedValue() {
+			const value = this.parse(this.value);
+			return fyo.format(value, this.df, this.doc);
+		},
+		borderClasses(): string {
+			if (!this.border) {
+				return "";
+			}
 
-      const border = 'border border-gray-200 dark:border-gray-800';
-      let background = 'bg-gray-25 dark:bg-gray-875';
-      if (this.isReadOnly) {
-        background = 'bg-gray-50 dark:bg-gray-850';
-      }
+			const border = "border border-gray-200 dark:border-gray-800";
+			let background = "bg-gray-25 dark:bg-gray-875";
+			if (this.isReadOnly) {
+				background = "bg-gray-50 dark:bg-gray-850";
+			}
 
-      if (this.showInput) {
-        return background;
-      }
+			if (this.showInput) {
+				return background;
+			}
 
-      return border + ' ' + background;
-    },
-  },
-  methods: {
-    onFocus(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
+			return `${border} ${background}`;
+		},
+	},
+	methods: {
+		onFocus(e: FocusEvent) {
+			const target = e.target;
+			if (!(target instanceof HTMLInputElement)) {
+				return;
+			}
 
-      target.select();
-      this.showInput = true;
-      this.$emit('focus', e);
-    },
-    onBlur(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
-      this.showInput = false;
+			target.select();
+			this.showInput = true;
+			this.$emit("focus", e);
+		},
+		onBlur(e: FocusEvent) {
+			const target = e.target;
+			if (!(target instanceof HTMLInputElement)) {
+				return;
+			}
+			this.showInput = false;
 
-      let value: Date | null = DateTime.fromISO(target.value).toJSDate();
-      if (Number.isNaN(value.valueOf())) {
-        value = null;
-      }
+			let value: Date | null = DateTime.fromISO(target.value).toJSDate();
+			if (Number.isNaN(value.valueOf())) {
+				value = null;
+			}
 
-      this.triggerChange(value);
-    },
-    activateInput() {
-      if (this.isReadOnly) {
-        return;
-      }
+			this.triggerChange(value);
+		},
+		activateInput() {
+			if (this.isReadOnly) {
+				return;
+			}
 
-      this.showInput = true;
-      nextTick(() => {
-        this.focus();
+			this.showInput = true;
+			nextTick(() => {
+				this.focus();
 
-        // @ts-ignore
-        this.$refs.input.showPicker();
-      });
-    },
-  },
+				// @ts-expect-error
+				this.$refs.input.showPicker();
+			});
+		},
+	},
 });
 </script>

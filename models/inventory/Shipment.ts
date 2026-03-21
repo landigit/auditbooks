@@ -1,29 +1,29 @@
-import { Fyo } from 'fyo';
-import { Action, ListViewSettings } from 'fyo/model/types';
+import type { Fyo } from "fyo";
+import type { Action, ListViewSettings } from "fyo/model/types";
 import {
-  getStockTransferActions,
-  getTransactionStatusColumn,
-} from 'models/helpers';
-import { ModelNameEnum } from 'models/types';
-import { ShipmentItem } from './ShipmentItem';
-import { StockTransfer } from './StockTransfer';
+	getStockTransferActions,
+	getTransactionStatusColumn,
+} from "models/helpers";
+import { ModelNameEnum } from "models/types";
+import type { ShipmentItem } from "./ShipmentItem";
+import { StockTransfer } from "./StockTransfer";
 
 export class Shipment extends StockTransfer {
-  items?: ShipmentItem[];
+	items?: ShipmentItem[];
 
-  static getListViewSettings(): ListViewSettings {
-    return {
-      columns: [
-        'name',
-        getTransactionStatusColumn(),
-        'party',
-        'date',
-        'grandTotal',
-      ],
-    };
-  }
+	static getListViewSettings(): ListViewSettings {
+		return {
+			columns: [
+				"name",
+				getTransactionStatusColumn(),
+				"party",
+				"date",
+				"grandTotal",
+			],
+		};
+	}
 
-  static getActions(fyo: Fyo): Action[] {
-    return getStockTransferActions(fyo, ModelNameEnum.Shipment);
-  }
+	static getActions(fyo: Fyo): Action[] {
+		return getStockTransferActions(fyo, ModelNameEnum.Shipment);
+	}
 }

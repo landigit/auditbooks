@@ -1,169 +1,167 @@
-import { Doc } from 'fyo/model/doc';
-import { DynamicLinkField, Field, TargetField } from 'schemas/types';
-import { GetAllOptions } from 'utils/db/types';
+import type { Doc } from "fyo/model/doc";
+import type { DynamicLinkField, Field, TargetField } from "schemas/types";
+import type { GetAllOptions } from "utils/db/types";
 
 export function evaluateReadOnly(field: Field, doc?: Doc) {
-  if (doc?.inserted && field.fieldname === 'numberSeries') {
-    return true;
-  }
+	if (doc?.inserted && field.fieldname === "numberSeries") {
+		return true;
+	}
 
-  if (
-    field.fieldname === 'name' &&
-    (doc?.inserted || doc?.schema.naming !== 'manual')
-  ) {
-    return true;
-  }
+	if (
+		field.fieldname === "name" &&
+		(doc?.inserted || doc?.schema.naming !== "manual")
+	) {
+		return true;
+	}
 
-  if (doc?.isSubmitted || doc?.parentdoc?.isSubmitted) {
-    return true;
-  }
+	if (doc?.isSubmitted || doc?.parentdoc?.isSubmitted) {
+		return true;
+	}
 
-  if (doc?.isCancelled || doc?.parentdoc?.isCancelled) {
-    return true;
-  }
+	if (doc?.isCancelled || doc?.parentdoc?.isCancelled) {
+		return true;
+	}
 
-  return evaluateFieldMeta(field, doc, 'readOnly');
+	return evaluateFieldMeta(field, doc, "readOnly");
 }
 
 export function evaluateHidden(field: Field, doc?: Doc) {
-  return evaluateFieldMeta(field, doc, 'hidden');
+	return evaluateFieldMeta(field, doc, "hidden");
 }
 
 export function evaluateInvisible(field: Field, doc?: Doc) {
-  return evaluateFieldMeta(field, doc, 'invisible');
+	return evaluateFieldMeta(field, doc, "invisible");
 }
 
 export function evaluateRequired(field: Field, doc?: Doc) {
-  return evaluateFieldMeta(field, doc, 'required');
+	return evaluateFieldMeta(field, doc, "required");
 }
 
 function evaluateFieldMeta(
-  field: Field,
-  doc?: Doc,
-  meta?: 'required' | 'hidden' | 'invisible' | 'readOnly',
-  defaultValue = false
+	field: Field,
+	doc?: Doc,
+	meta?: "required" | "hidden" | "invisible" | "readOnly",
+	defaultValue = false,
 ) {
-  if (meta === undefined) {
-    return defaultValue;
-  }
+	if (meta === undefined) {
+		return defaultValue;
+	}
 
-  const value = field[meta];
-  if (value !== undefined) {
-    return value;
-  }
+	const value = field[meta];
+	if (value !== undefined) {
+		return value;
+	}
 
-  const docRecord = doc as Record<string, unknown> | undefined;
-  const metaKey = meta as string;
-  const metaObj = docRecord?.[metaKey] as
-    | Record<string, (() => boolean) | undefined>
-    | undefined;
-  const evalFunction = metaObj?.[field.fieldname];
-  if (typeof evalFunction === 'function') {
-    return evalFunction();
-  }
+	const docRecord = doc as Record<string, unknown> | undefined;
+	const metaKey = meta as string;
+	const metaObj = docRecord?.[metaKey] as
+		| Record<string, (() => boolean) | undefined>
+		| undefined;
+	const evalFunction = metaObj?.[field.fieldname];
+	if (typeof evalFunction === "function") {
+		return evalFunction();
+	}
 
-  return defaultValue;
+	return defaultValue;
 }
 
 export async function getLinkedEntries(
-  doc: Doc
+	doc: Doc,
 ): Promise<Record<string, string[]>> {
-  // TODO: Normalize this function.
-  const fyo = doc.fyo;
-  const target = doc.schemaName;
+	// TODO: Normalize this function.
+	const fyo = doc.fyo;
+	const target = doc.schemaName;
 
-  const linkingFields = Object.values(fyo.schemaMap)
-    .filter((sch) => !sch?.isSingle)
-    .map((sch) => sch?.fields)
-    .flat()
-    .filter(
-      (f) => f?.fieldtype === 'Link' && f.target === target
-    ) as TargetField[];
+	const linkingFields = Object.values(fyo.schemaMap)
+		.filter((sch) => !sch?.isSingle)
+		.flatMap((sch) => sch?.fields)
+		.filter(
+			(f) => f?.fieldtype === "Link" && f.target === target,
+		) as TargetField[];
 
-  const dynamicLinkingFields = Object.values(fyo.schemaMap)
-    .filter((sch) => !sch?.isSingle)
-    .map((sch) => sch?.fields)
-    .flat()
-    .filter((f) => f?.fieldtype === 'DynamicLink') as DynamicLinkField[];
+	const dynamicLinkingFields = Object.values(fyo.schemaMap)
+		.filter((sch) => !sch?.isSingle)
+		.flatMap((sch) => sch?.fields)
+		.filter((f) => f?.fieldtype === "DynamicLink") as DynamicLinkField[];
 
-  type Detail = { name: string; created: string };
-  type ChildEntryDetail = {
-    name: string;
-    parent: string;
-    parentSchemaName: string;
-  };
-  const entries: Record<string, Detail[]> = {};
-  const childEntries: Record<string, ChildEntryDetail[]> = {};
+	type Detail = { name: string; created: string };
+	type ChildEntryDetail = {
+		name: string;
+		parent: string;
+		parentSchemaName: string;
+	};
+	const entries: Record<string, Detail[]> = {};
+	const childEntries: Record<string, ChildEntryDetail[]> = {};
 
-  for (const field of [linkingFields, dynamicLinkingFields].flat()) {
-    if (!field.schemaName) {
-      continue;
-    }
+	for (const field of [linkingFields, dynamicLinkingFields].flat()) {
+		if (!field.schemaName) {
+			continue;
+		}
 
-    const options: GetAllOptions = {
-      filters: { [field.fieldname]: doc.name! },
-      fields: ['name'],
-    };
+		const options: GetAllOptions = {
+			filters: { [field.fieldname]: doc.name || "" },
+			fields: ["name"],
+		};
 
-    if (field.fieldtype === 'DynamicLink') {
-      options.filters![field.references] = doc.schemaName!;
-    }
+		if (field.fieldtype === "DynamicLink" && options.filters) {
+			options.filters[field.references] = doc.schemaName || "";
+		}
 
-    const schema = fyo.schemaMap[field.schemaName];
-    if (schema?.isChild) {
-      options.fields!.push('parent', 'parentSchemaName');
-    } else {
-      options.fields?.push('created');
-    }
+		const schema = fyo.schemaMap[field.schemaName];
+		if (schema?.isChild) {
+			options.fields?.push("parent", "parentSchemaName");
+		} else {
+			options.fields?.push("created");
+		}
 
-    if (schema?.isSubmittable) {
-      options.filters!.cancelled = false;
-    }
+		if (schema?.isSubmittable && options.filters) {
+			options.filters.cancelled = false;
+		}
 
-    const details = (await fyo.db.getAllRaw(field.schemaName, options)) as
-      | Detail[]
-      | ChildEntryDetail[];
+		const details = (await fyo.db.getAllRaw(field.schemaName, options)) as
+			| Detail[]
+			| ChildEntryDetail[];
 
-    if (!details.length) {
-      continue;
-    }
+		if (!details.length) {
+			continue;
+		}
 
-    for (const d of details) {
-      if ('parent' in d) {
-        childEntries[field.schemaName] ??= [];
-        childEntries[field.schemaName]!.push(d);
-      } else {
-        entries[field.schemaName] ??= [];
-        entries[field.schemaName].push(d);
-      }
-    }
-  }
+		for (const d of details) {
+			if ("parent" in d) {
+				childEntries[field.schemaName] ??= [];
+				childEntries[field.schemaName]?.push(d);
+			} else {
+				entries[field.schemaName] ??= [];
+				entries[field.schemaName].push(d);
+			}
+		}
+	}
 
-  const parents = Object.values(childEntries)
-    .flat()
-    .map((c) => `${c.parentSchemaName}.${c.parent}`);
-  const parentsSet = new Set(parents);
-  for (const p of parentsSet) {
-    const i = p.indexOf('.');
-    const schemaName = p.slice(0, i);
-    const name = p.slice(i + 1);
+	const parents = Object.values(childEntries)
+		.flat()
+		.map((c) => `${c.parentSchemaName}.${c.parent}`);
+	const parentsSet = new Set(parents);
+	for (const p of parentsSet) {
+		const i = p.indexOf(".");
+		const schemaName = p.slice(0, i);
+		const name = p.slice(i + 1);
 
-    const details = (await fyo.db.getAllRaw(schemaName, {
-      filters: { name },
-      fields: ['name', 'created'],
-    })) as Detail[];
+		const details = (await fyo.db.getAllRaw(schemaName, {
+			filters: { name },
+			fields: ["name", "created"],
+		})) as Detail[];
 
-    entries[schemaName] ??= [];
-    entries[schemaName].push(...details);
-  }
+		entries[schemaName] ??= [];
+		entries[schemaName].push(...details);
+	}
 
-  const entryMap: Record<string, string[]> = {};
-  for (const schemaName in entries) {
-    entryMap[schemaName] = entries[schemaName]
-      .map((e) => ({ name: e.name, created: new Date(e.created) }))
-      .sort((a, b) => b.created.valueOf() - a.created.valueOf())
-      .map((e) => e.name);
-  }
+	const entryMap: Record<string, string[]> = {};
+	for (const schemaName in entries) {
+		entryMap[schemaName] = entries[schemaName]
+			.map((e) => ({ name: e.name, created: new Date(e.created) }))
+			.sort((a, b) => b.created.valueOf() - a.created.valueOf())
+			.map((e) => e.name);
+	}
 
-  return entryMap;
+	return entryMap;
 }

@@ -1,131 +1,131 @@
-import { Fyo } from 'fyo';
-import { Batch } from 'models/inventory/Batch';
-import { ModelNameEnum } from 'models/types';
-import { StockMovement } from '../StockMovement';
-import { StockTransfer } from '../StockTransfer';
-import { MovementTypeEnum } from '../types';
+import type { Fyo } from "fyo";
+import type { Batch } from "models/inventory/Batch";
+import { ModelNameEnum } from "models/types";
+import type { StockMovement } from "../StockMovement";
+import type { StockTransfer } from "../StockTransfer";
+import type { MovementTypeEnum } from "../types";
 
 type ALE = {
-  date: string;
-  account: string;
-  party: string;
-  debit: string;
-  credit: string;
-  reverted: number;
+	date: string;
+	account: string;
+	party: string;
+	debit: string;
+	credit: string;
+	reverted: number;
 };
 
 type SLE = {
-  date: string;
-  name: string;
-  item: string;
-  location: string;
-  rate: string;
-  quantity: string;
+	date: string;
+	name: string;
+	item: string;
+	location: string;
+	rate: string;
+	quantity: string;
 };
 
 type Transfer = {
-  item: string;
-  from?: string;
-  to?: string;
-  batch?: string;
-  serialNumber?: string;
-  quantity: number;
-  rate: number;
+	item: string;
+	from?: string;
+	to?: string;
+	batch?: string;
+	serialNumber?: string;
+	quantity: number;
+	rate: number;
 };
 
-interface TransferTwo extends Omit<Transfer, 'from' | 'to'> {
-  location: string;
+interface TransferTwo extends Omit<Transfer, "from" | "to"> {
+	location: string;
 }
 
 export function getItem(
-  name: string,
-  rate: number,
-  hasBatch = false,
-  hasSerialNumber = false
+	name: string,
+	rate: number,
+	hasBatch = false,
+	hasSerialNumber = false,
 ) {
-  return { name, rate, trackItem: true, hasBatch, hasSerialNumber };
+	return { name, rate, trackItem: true, hasBatch, hasSerialNumber };
 }
 
 export function getBatch(
-  schemaName: ModelNameEnum.Batch,
-  batch: string,
-  expiryDate: Date,
-  manufactureDate: Date,
-  fyo: Fyo
+	schemaName: ModelNameEnum.Batch,
+	batch: string,
+	expiryDate: Date,
+	manufactureDate: Date,
+	fyo: Fyo,
 ): Batch {
-  const doc = fyo.doc.getNewDoc(schemaName, {
-    batch,
-    expiryDate,
-    manufactureDate,
-  }) as Batch;
-  return doc;
+	const doc = fyo.doc.getNewDoc(schemaName, {
+		batch,
+		expiryDate,
+		manufactureDate,
+	}) as Batch;
+	return doc;
 }
 
 export async function getStockTransfer(
-  schemaName: ModelNameEnum.PurchaseReceipt | ModelNameEnum.Shipment,
-  party: string,
-  date: Date,
-  transfers: TransferTwo[],
-  fyo: Fyo
+	schemaName: ModelNameEnum.PurchaseReceipt | ModelNameEnum.Shipment,
+	party: string,
+	date: Date,
+	transfers: TransferTwo[],
+	fyo: Fyo,
 ): Promise<StockTransfer> {
-  const doc = fyo.doc.getNewDoc(schemaName, { party, date }) as StockTransfer;
-  for (const { item, location, quantity, rate } of transfers) {
-    await doc.append('items', { item, location, quantity, rate });
-  }
-  return doc;
+	const doc = fyo.doc.getNewDoc(schemaName, { party, date }) as StockTransfer;
+	for (const { item, location, quantity, rate } of transfers) {
+		await doc.append("items", { item, location, quantity, rate });
+	}
+	return doc;
 }
 
 export async function getStockMovement(
-  movementType: MovementTypeEnum,
-  date: Date,
-  transfers: Transfer[],
-  fyo: Fyo
+	movementType: MovementTypeEnum,
+	date: Date,
+	transfers: Transfer[],
+	fyo: Fyo,
 ): Promise<StockMovement> {
-  const doc = fyo.doc.getNewDoc(ModelNameEnum.StockMovement, {
-    movementType,
-    date,
-  }) as StockMovement;
-  for (const {
-    item,
-    from: fromLocation,
-    to: toLocation,
-    batch,
-    serialNumber,
-    quantity,
-    rate,
-  } of transfers) {
-    await doc.append('items', {
-      item,
-      fromLocation,
-      toLocation,
-      batch,
-      serialNumber,
-      rate,
-      quantity,
-    });
-  }
+	const doc = fyo.doc.getNewDoc(ModelNameEnum.StockMovement, {
+		movementType,
+		date,
+	}) as StockMovement;
+	for (const {
+		item,
+		from: fromLocation,
+		to: toLocation,
+		batch,
+		serialNumber,
+		quantity,
+		rate,
+	} of transfers) {
+		await doc.append("items", {
+			item,
+			fromLocation,
+			toLocation,
+			batch,
+			serialNumber,
+			rate,
+			quantity,
+		});
+	}
 
-  return doc;
+	return doc;
 }
 
 export async function getSLEs(
-  referenceName: string,
-  referenceType: string,
-  fyo: Fyo
+	referenceName: string,
+	referenceType: string,
+	fyo: Fyo,
 ) {
-  return (await fyo.db.getAllRaw(ModelNameEnum.StockLedgerEntry, {
-    filters: { referenceName, referenceType },
-    fields: ['date', 'name', 'item', 'location', 'rate', 'quantity'],
-  })) as SLE[];
+	return (await fyo.db.getAllRaw(ModelNameEnum.StockLedgerEntry, {
+		filters: { referenceName, referenceType },
+		fields: ["date", "name", "item", "location", "rate", "quantity"],
+	})) as SLE[];
 }
 
 export async function getALEs(
-  referenceName: string,
-  referenceType: string,
-  fyo: Fyo
+	referenceName: string,
+	referenceType: string,
+	fyo: Fyo,
 ) {
-  return (await fyo.db.getAllRaw(ModelNameEnum.AccountingLedgerEntry, {
-    filters: { referenceName, referenceType },
-    fields: ['date', 'account', 'party', 'debit', 'credit', 'reverted'],
-  })) as ALE[];
+	return (await fyo.db.getAllRaw(ModelNameEnum.AccountingLedgerEntry, {
+		filters: { referenceName, referenceType },
+		fields: ["date", "account", "party", "debit", "credit", "reverted"],
+	})) as ALE[];
 }

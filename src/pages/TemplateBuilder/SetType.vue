@@ -22,46 +22,50 @@
   </div>
 </template>
 <script lang="ts">
-import { PrintTemplate } from 'models/baseModels/PrintTemplate';
-import { OptionField } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import Select from 'src/components/Controls/Select.vue';
-import FormHeader from 'src/components/FormHeader.vue';
-import { defineComponent } from 'vue';
+import { PrintTemplate } from "models/baseModels/PrintTemplate";
+import type { OptionField, SelectOption } from "schemas/types";
+import Button from "src/components/Button.vue";
+import Select from "src/components/Controls/Select.vue";
+import FormHeader from "src/components/FormHeader.vue";
+import { fyo } from "src/initFyo";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  components: { FormHeader, Select, Button },
-  props: { doc: { type: PrintTemplate, required: true } },
-  emits: ['done'],
-  data() {
-    return { type: 'SalesInvoice' };
-  },
-  computed: {
-    df(): OptionField {
-      const options = PrintTemplate.lists.type(this.doc);
-      return {
-        ...fyo.getField('PrintTemplate', 'type'),
-        options,
-        fieldtype: 'Select',
-        default: options[0].value,
-      } as OptionField;
-    },
-  },
-  mounted() {
-    this.type = this.doc.type ?? 'SalesInvoice';
-  },
-  methods: {
-    typeChange(v: string) {
-      if (this.type === v) {
-        return;
-      }
+	components: { FormHeader, Select, Button },
+	props: { doc: { type: PrintTemplate, required: true } },
+	emits: ["done"],
+	data() {
+		return { type: "SalesInvoice" };
+	},
+	computed: {
+		df(): OptionField {
+			const options = (PrintTemplate.lists as any)?.type?.(this.doc) || [];
+			return {
+				...fyo.getField("PrintTemplate", "type"),
+				options,
+				fieldtype: "Select",
+				default:
+					typeof options[0] === "string"
+						? options[0]
+						: (options[0] as SelectOption)?.value,
+			} as OptionField;
+		},
+	},
+	mounted() {
+		this.type = this.doc.type ?? "SalesInvoice";
+	},
+	methods: {
+		typeChange(v: string) {
+			if (this.type === v) {
+				return;
+			}
 
-      this.type = v;
-    },
-    async done() {
-      await this.doc.set('type', this.type);
-      this.$emit('done');
-    },
-  },
+			this.type = v;
+		},
+		async done() {
+			await this.doc.set("type", this.type);
+			this.$emit("done");
+		},
+	},
 });
 </script>

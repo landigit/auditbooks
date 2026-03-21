@@ -1,175 +1,174 @@
-import { t } from 'fyo';
-import { COATree } from 'models/baseModels/Account/types';
+import type { COATree } from "models/baseModels/Account/types";
 
 export function getStandardCOA(): COATree {
-  return {
-    [t`Application of Funds (Assets)`]: {
-      [t`Current Assets`]: {
-        [t`Accounts Receivable`]: {
-          [t`Debtors`]: {
-            accountType: 'Receivable',
-          },
-        },
-        [t`Bank Accounts`]: {
-          accountType: 'Bank',
-          isGroup: true,
-        },
-        [t`Cash In Hand`]: {
-          [t`Cash`]: {
-            accountType: 'Cash',
-          },
-          accountType: 'Cash',
-        },
-        [t`Loans and Advances (Assets)`]: {
-          isGroup: true,
-        },
-        [t`Securities and Deposits`]: {
-          [t`Earnest Money`]: {},
-        },
-        [t`Stock Assets`]: {
-          [t`Stock In Hand`]: {
-            accountType: 'Stock',
-          },
-          accountType: 'Stock',
-        },
-        [t`Tax Assets`]: {
-          isGroup: true,
-        },
-      },
-      [t`Fixed Assets`]: {
-        [t`Capital Equipments`]: {
-          accountType: 'Fixed Asset',
-        },
-        [t`Electronic Equipments`]: {
-          accountType: 'Fixed Asset',
-        },
-        [t`Furnitures and Fixtures`]: {
-          accountType: 'Fixed Asset',
-        },
-        [t`Office Equipments`]: {
-          accountType: 'Fixed Asset',
-        },
-        [t`Plants and Machineries`]: {
-          accountType: 'Fixed Asset',
-        },
-        [t`Buildings`]: {
-          accountType: 'Fixed Asset',
-        },
-        [t`Softwares`]: {
-          accountType: 'Fixed Asset',
-        },
-        [t`Accumulated Depreciation`]: {
-          accountType: 'Accumulated Depreciation',
-        },
-      },
-      [t`Investments`]: {
-        isGroup: true,
-      },
-      [t`Temporary Accounts`]: {
-        [t`Temporary Opening`]: {
-          accountType: 'Temporary',
-        },
-      },
-      rootType: 'Asset',
-    },
-    [t`Expenses`]: {
-      [t`Direct Expenses`]: {
-        [t`Stock Expenses`]: {
-          [t`Cost of Goods Sold`]: {
-            accountType: 'Cost of Goods Sold',
-          },
-          [t`Expenses Included In Valuation`]: {
-            accountType: 'Expenses Included In Valuation',
-          },
-          [t`Stock Adjustment`]: {
-            accountType: 'Stock Adjustment',
-          },
-        },
-      },
-      [t`Indirect Expenses`]: {
-        [t`Administrative Expenses`]: {},
-        [t`Commission on Sales`]: {},
-        [t`Depreciation`]: {
-          accountType: 'Depreciation',
-        },
-        [t`Entertainment Expenses`]: {},
-        [t`Freight and Forwarding Charges`]: {
-          accountType: 'Chargeable',
-        },
-        [t`Legal Expenses`]: {},
-        [t`Marketing Expenses`]: {
-          accountType: 'Chargeable',
-        },
-        [t`Miscellaneous Expenses`]: {
-          accountType: 'Chargeable',
-        },
-        [t`Office Maintenance Expenses`]: {},
-        [t`Office Rent`]: {},
-        [t`Postal Expenses`]: {},
-        [t`Print and Stationery`]: {},
-        [t`Round Off`]: {
-          accountType: 'Round Off',
-        },
-        [t`Salary`]: {},
-        [t`Sales Expenses`]: {},
-        [t`Telephone Expenses`]: {},
-        [t`Travel Expenses`]: {},
-        [t`Utility Expenses`]: {},
-        [t`Write Off`]: {},
-        [t`Exchange Gain/Loss`]: {},
-        [t`Gain/Loss on Asset Disposal`]: {},
-      },
-      rootType: 'Expense',
-    },
-    [t`Income`]: {
-      [t`Direct Income`]: {
-        [t`Sales`]: {},
-        [t`Service`]: {},
-      },
-      [t`Indirect Income`]: {
-        isGroup: true,
-      },
-      rootType: 'Income',
-    },
-    [t`Source of Funds (Liabilities)`]: {
-      [t`Current Liabilities`]: {
-        [t`Accounts Payable`]: {
-          [t`Creditors`]: {
-            accountType: 'Payable',
-          },
-          [t`Payroll Payable`]: {},
-        },
-        [t`Stock Liabilities`]: {
-          [t`Stock Received But Not Billed`]: {
-            accountType: 'Stock Received But Not Billed',
-          },
-        },
-        [t`Duties and Taxes`]: {
-          accountType: 'Tax',
-          isGroup: true,
-        },
-        [t`Loans (Liabilities)`]: {
-          [t`Secured Loans`]: {},
-          [t`Unsecured Loans`]: {},
-          [t`Bank Overdraft Account`]: {},
-        },
-      },
-      rootType: 'Liability',
-    },
-    [t`Equity`]: {
-      [t`Capital Stock`]: {
-        accountType: 'Equity',
-      },
-      [t`Dividends Paid`]: {
-        accountType: 'Equity',
-      },
-      [t`Opening Balance Equity`]: {
-        accountType: 'Equity',
-      },
-      [t`Retained Earnings`]: {
-        accountType: 'Equity',
-      },
-      rootType: 'Equity',
-    },
-  };
+	return {
+		"Application of Funds (Assets)": {
+			"Current Assets": {
+				"Accounts Receivable": {
+					Debtors: {
+						accountType: "Receivable",
+					},
+				},
+				"Bank Accounts": {
+					accountType: "Bank",
+					isGroup: true,
+				},
+				"Cash In Hand": {
+					Cash: {
+						accountType: "Cash",
+					},
+					accountType: "Cash",
+				},
+				"Loans and Advances (Assets)": {
+					isGroup: true,
+				},
+				"Securities and Deposits": {
+					"Earnest Money": {},
+				},
+				"Stock Assets": {
+					"Stock In Hand": {
+						accountType: "Stock",
+					},
+					accountType: "Stock",
+				},
+				"Tax Assets": {
+					isGroup: true,
+				},
+			},
+			"Fixed Assets": {
+				"Capital Equipments": {
+					accountType: "Fixed Asset",
+				},
+				"Electronic Equipments": {
+					accountType: "Fixed Asset",
+				},
+				"Furnitures and Fixtures": {
+					accountType: "Fixed Asset",
+				},
+				"Office Equipments": {
+					accountType: "Fixed Asset",
+				},
+				"Plants and Machineries": {
+					accountType: "Fixed Asset",
+				},
+				Buildings: {
+					accountType: "Fixed Asset",
+				},
+				Softwares: {
+					accountType: "Fixed Asset",
+				},
+				"Accumulated Depreciation": {
+					accountType: "Accumulated Depreciation",
+				},
+			},
+			Investments: {
+				isGroup: true,
+			},
+			"Temporary Accounts": {
+				"Temporary Opening": {
+					accountType: "Temporary",
+				},
+			},
+			rootType: "Asset",
+		},
+		Expenses: {
+			"Direct Expenses": {
+				"Stock Expenses": {
+					"Cost of Goods Sold": {
+						accountType: "Cost of Goods Sold",
+					},
+					"Expenses Included In Valuation": {
+						accountType: "Expenses Included In Valuation",
+					},
+					"Stock Adjustment": {
+						accountType: "Stock Adjustment",
+					},
+				},
+			},
+			"Indirect Expenses": {
+				"Administrative Expenses": {},
+				"Commission on Sales": {},
+				Depreciation: {
+					accountType: "Depreciation",
+				},
+				"Entertainment Expenses": {},
+				"Freight and Forwarding Charges": {
+					accountType: "Chargeable",
+				},
+				"Legal Expenses": {},
+				"Marketing Expenses": {
+					accountType: "Chargeable",
+				},
+				"Miscellaneous Expenses": {
+					accountType: "Chargeable",
+				},
+				"Office Maintenance Expenses": {},
+				"Office Rent": {},
+				"Postal Expenses": {},
+				"Print and Stationery": {},
+				"Round Off": {
+					accountType: "Round Off",
+				},
+				Salary: {},
+				"Sales Expenses": {},
+				"Telephone Expenses": {},
+				"Travel Expenses": {},
+				"Utility Expenses": {},
+				"Write Off": {},
+				"Exchange Gain/Loss": {},
+				"Gain/Loss on Asset Disposal": {},
+			},
+			rootType: "Expense",
+		},
+		Income: {
+			"Direct Income": {
+				Sales: {},
+				Service: {},
+			},
+			"Indirect Income": {
+				isGroup: true,
+			},
+			rootType: "Income",
+		},
+		"Source of Funds (Liabilities)": {
+			"Current Liabilities": {
+				"Accounts Payable": {
+					Creditors: {
+						accountType: "Payable",
+					},
+					"Payroll Payable": {},
+				},
+				"Stock Liabilities": {
+					"Stock Received But Not Billed": {
+						accountType: "Stock Received But Not Billed",
+					},
+				},
+				"Duties and Taxes": {
+					accountType: "Tax",
+					isGroup: true,
+				},
+				"Loans (Liabilities)": {
+					"Secured Loans": {},
+					"Unsecured Loans": {},
+					"Bank Overdraft Account": {},
+				},
+			},
+			rootType: "Liability",
+		},
+		Equity: {
+			"Capital Stock": {
+				accountType: "Equity",
+			},
+			"Dividends Paid": {
+				accountType: "Equity",
+			},
+			"Opening Balance Equity": {
+				accountType: "Equity",
+			},
+			"Retained Earnings": {
+				accountType: "Equity",
+			},
+			rootType: "Equity",
+		},
+	};
 }

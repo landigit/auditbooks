@@ -67,161 +67,160 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Table from 'src/components/Controls/Table.vue';
-import { AccountTypeEnum } from 'models/baseModels/Account/types';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { computed } from 'vue';
-import { defineComponent } from 'vue';
-import { fyo } from 'src/initFyo';
-import { showToast } from 'src/utils/interactive';
-import { t } from 'fyo';
-import { ValidationError } from 'fyo/utils/errors';
-import { getPOSOpeningShiftDoc } from 'src/utils/pos';
+import { t } from "fyo";
+import { ValidationError } from "fyo/utils/errors";
+import { AccountTypeEnum } from "models/baseModels/Account/types";
+import type { POSOpeningShift } from "models/inventory/Point of Sale/POSOpeningShift";
+import { ModelNameEnum } from "models/types";
+import type { Money } from "pesa";
+import Button from "src/components/Button.vue";
+import Table from "src/components/Controls/Table.vue";
+import Modal from "src/components/Modal.vue";
+import { fyo } from "src/initFyo";
+import { showToast } from "src/utils/interactive";
+import { getPOSOpeningShiftDoc } from "src/utils/pos";
+import { computed, defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'OpenPOSShift',
-  components: { Button, Modal, Table },
-  provide() {
-    return {
-      doc: computed(() => this.posShiftDoc),
-    };
-  },
-  emits: ['toggleModal'],
-  data() {
-    return {
-      posShiftDoc: undefined as POSOpeningShift | undefined,
+	name: "OpenPOSShift",
+	components: { Button, Modal, Table },
+	provide() {
+		return {
+			doc: computed(() => this.posShiftDoc),
+		};
+	},
+	emits: ["toggleModal"],
+	data() {
+		return {
+			posShiftDoc: undefined as POSOpeningShift | undefined,
 
-      isValuesSeeded: false,
-    };
-  },
-  computed: {
-    getDefaultCashDenominations() {
-      return this.fyo.singles.Defaults?.posCashDenominations;
-    },
-    posCashAccount() {
-      return fyo.singles.POSSettings?.cashAccount;
-    },
-    posOpeningCashAmount(): Money {
-      return this.posShiftDoc?.openingCashAmount as Money;
-    },
-  },
-  async mounted() {
-    this.isValuesSeeded = false;
-    this.posShiftDoc = await getPOSOpeningShiftDoc(fyo);
+			isValuesSeeded: false,
+		};
+	},
+	computed: {
+		getDefaultCashDenominations() {
+			return this.fyo.singles.Defaults?.posCashDenominations;
+		},
+		posCashAccount() {
+			return fyo.singles.POSSettings?.cashAccount;
+		},
+		posOpeningCashAmount(): Money {
+			return this.posShiftDoc?.openingCashAmount as Money;
+		},
+	},
+	async mounted() {
+		this.isValuesSeeded = false;
+		this.posShiftDoc = await getPOSOpeningShiftDoc(fyo);
 
-    await this.seedDefaults();
-    this.isValuesSeeded = true;
-  },
-  methods: {
-    async seedDefaultCashDenomiations() {
-      if (!this.posShiftDoc) {
-        return;
-      }
+		await this.seedDefaults();
+		this.isValuesSeeded = true;
+	},
+	methods: {
+		async seedDefaultCashDenomiations() {
+			if (!this.posShiftDoc) {
+				return;
+			}
 
-      this.posShiftDoc.openingCash = [];
-      const denominations = this.getDefaultCashDenominations;
+			this.posShiftDoc.openingCash = [];
+			const denominations = this.getDefaultCashDenominations;
 
-      if (!denominations) {
-        return;
-      }
+			if (!denominations) {
+				return;
+			}
 
-      for (const row of denominations) {
-        await this.posShiftDoc.append('openingCash', {
-          denomination: row.denomination,
-          count: 0,
-        });
-      }
-    },
-    async seedPaymentMethods() {
-      if (!this.posShiftDoc) {
-        return;
-      }
+			for (const row of denominations) {
+				await this.posShiftDoc.append("openingCash", {
+					denomination: row.denomination,
+					count: 0,
+				});
+			}
+		},
+		async seedPaymentMethods() {
+			if (!this.posShiftDoc) {
+				return;
+			}
 
-      this.posShiftDoc.openingAmounts = [];
+			this.posShiftDoc.openingAmounts = [];
 
-      const paymentMethods = (
-        (await this.fyo.db.getAll(ModelNameEnum.PaymentMethod, {
-          fields: ['name'],
-        })) as { name: string }[]
-      ).map((doc) => ({ paymentMethod: doc.name, amount: fyo.pesa(0) }));
+			const paymentMethods = (
+				(await this.fyo.db.getAll(ModelNameEnum.PaymentMethod, {
+					fields: ["name"],
+				})) as { name: string }[]
+			).map((doc) => ({ paymentMethod: doc.name, amount: fyo.pesa(0) }));
 
-      await this.posShiftDoc.set('openingAmounts', paymentMethods);
-    },
-    async seedDefaults() {
-      if (!!this.posShiftDoc?.isShiftOpen) {
-        return;
-      }
+			await this.posShiftDoc.set("openingAmounts", paymentMethods);
+		},
+		async seedDefaults() {
+			if (this.posShiftDoc?.isShiftOpen) {
+				return;
+			}
 
-      await this.seedDefaultCashDenomiations();
-      await this.seedPaymentMethods();
-    },
-    getField(fieldname: string) {
-      return this.fyo.getField(ModelNameEnum.POSOpeningShift, fieldname);
-    },
-    setOpeningCashAmount() {
-      if (!this.posShiftDoc?.openingAmounts) {
-        return;
-      }
+			await this.seedDefaultCashDenomiations();
+			await this.seedPaymentMethods();
+		},
+		getField(fieldname: string) {
+			return this.fyo.getField(ModelNameEnum.POSOpeningShift, fieldname);
+		},
+		setOpeningCashAmount() {
+			if (!this.posShiftDoc?.openingAmounts) {
+				return;
+			}
 
-      this.posShiftDoc.openingAmounts.map((row) => {
-        if (row.paymentMethod === 'Cash') {
-          row.amount = this.posShiftDoc?.openingCashAmount as Money;
-        }
-      });
-    },
-    handleChange() {
-      this.setOpeningCashAmount();
-    },
-    async handleSubmit() {
-      try {
-        if (this.posShiftDoc?.openingCashAmount.isNegative()) {
-          throw new ValidationError(
-            t`Opening Cash Amount can not be negative.`
-          );
-        }
+			this.posShiftDoc.openingAmounts.forEach((row) => {
+				if (row.paymentMethod === "Cash") {
+					row.amount = this.posShiftDoc?.openingCashAmount as Money;
+				}
+			});
+		},
+		handleChange() {
+			this.setOpeningCashAmount();
+		},
+		async handleSubmit() {
+			try {
+				if (this.posShiftDoc?.openingCashAmount.isNegative()) {
+					throw new ValidationError(
+						t`Opening Cash Amount can not be negative.`,
+					);
+				}
 
-        await this.posShiftDoc?.setMultiple({
-          isShiftOpen: true,
-          openingDate: new Date(),
-        });
+				await this.posShiftDoc?.setMultiple({
+					isShiftOpen: true,
+					openingDate: new Date(),
+				});
 
-        await this.posShiftDoc?.sync();
-        await this.fyo.singles.POSSettings?.setAndSync('isShiftOpen', true);
+				await this.posShiftDoc?.sync();
+				await this.fyo.singles.POSSettings?.setAndSync("isShiftOpen", true);
 
-        if (!this.posShiftDoc?.openingCashAmount.isZero()) {
-          const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
-            entryType: 'Journal Entry',
-          });
+				if (!this.posShiftDoc?.openingCashAmount.isZero()) {
+					const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
+						entryType: "Journal Entry",
+					});
 
-          await jvDoc.append('accounts', {
-            account: this.posCashAccount,
-            debit: this.posShiftDoc?.openingCashAmount as Money,
-            credit: this.fyo.pesa(0),
-          });
+					await jvDoc.append("accounts", {
+						account: this.posCashAccount,
+						debit: this.posShiftDoc?.openingCashAmount as Money,
+						credit: this.fyo.pesa(0),
+					});
 
-          await jvDoc.append('accounts', {
-            account: AccountTypeEnum.Cash,
-            debit: this.fyo.pesa(0),
-            credit: this.posShiftDoc?.openingCashAmount as Money,
-          });
+					await jvDoc.append("accounts", {
+						account: AccountTypeEnum.Cash,
+						debit: this.fyo.pesa(0),
+						credit: this.posShiftDoc?.openingCashAmount as Money,
+					});
 
-          await (await jvDoc.sync()).submit();
-        }
+					await (await jvDoc.sync()).submit();
+				}
 
-        this.$emit('toggleModal', 'ShiftOpen');
-      } catch (error) {
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-          duration: 'short',
-        });
-        return;
-      }
-    },
-  },
+				this.$emit("toggleModal", "ShiftOpen");
+			} catch (error) {
+				showToast({
+					type: "error",
+					message: t`${error as string}`,
+					duration: "short",
+				});
+				return;
+			}
+		},
+	},
 });
 </script>

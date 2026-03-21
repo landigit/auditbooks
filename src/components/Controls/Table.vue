@@ -42,7 +42,7 @@
       <!-- Data Rows -->
       <div
         v-if="value"
-        class="overflow-auto custom-scroll custom-scroll-thumb1"
+        class="overflow-x-auto custom-scroll custom-scroll-thumb1"
         :style="{ 'max-height': maxHeight }"
       >
         <TableRow
@@ -104,121 +104,125 @@
 </template>
 
 <script>
-import Row from 'src/components/Row.vue';
-import { fyo } from 'src/initFyo';
-import { nextTick } from 'vue';
-import Base from './Base.vue';
-import TableRow from './TableRow.vue';
+import Row from "src/components/Row.vue";
+import { fyo } from "src/initFyo";
+import { nextTick } from "vue";
+import Base from "./Base.vue";
+import TableRow from "./TableRow.vue";
 
 export default {
-  name: 'Table',
-  components: {
-    Row,
-    TableRow,
-  },
-  extends: Base,
-  props: {
-    value: { type: Array, default: () => [] },
-    showHeader: {
-      type: Boolean,
-      default: true,
-    },
-    maxRowsBeforeOverflow: {
-      type: Number,
-      default: 3,
-    },
-    border: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['editrow', 'row-change'],
-  data() {
-    return { maxHeight: '' };
-  },
-  computed: {
-    height() {
-      if (this.size === 'small') {
-      }
-      return 2;
-    },
-    canEditRow() {
-      return this.df.edit;
-    },
-    ratio() {
-      const ratio = [0.3].concat(this.tableFields.map(() => 1));
+	name: "Table",
+	components: {
+		Row,
+		TableRow,
+	},
+	extends: Base,
+	props: {
+		value: { type: Array, default: () => [] },
+		showHeader: {
+			type: Boolean,
+			default: true,
+		},
+		maxRowsBeforeOverflow: {
+			type: Number,
+			default: 3,
+		},
+		border: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	emits: ["editrow", "row-change"],
+	data() {
+		return { maxHeight: "" };
+	},
+	computed: {
+		height() {
+			if (this.size === "small") {
+			}
+			return 2;
+		},
+		canEditRow() {
+			return this.df.edit;
+		},
+		ratio() {
+			const ratio = [0.3].concat(this.tableFields.map(() => 1));
 
-      if (this.canEditRow) {
-        return ratio.concat(0.3);
-      }
+			if (this.canEditRow) {
+				return ratio.concat(0.3);
+			}
 
-      return ratio;
-    },
-    tableFields() {
-      const fields = fyo.schemaMap[this.df.target].tableFields ?? [];
-      return fields.map((fieldname) => fyo.getField(this.df.target, fieldname));
-    },
-  },
-  watch: {
-    value() {
-      this.setMaxHeight();
-    },
-  },
-  mounted() {
-    if (fyo.store.isDevelopment) {
-      window.tab = this;
-    }
-  },
+			return ratio;
+		},
+		tableFields() {
+			const fields = fyo.schemaMap[this.df.target].tableFields ?? [];
+			return fields.map((fieldname) => fyo.getField(this.df.target, fieldname));
+		},
+	},
+	watch: {
+		value() {
+			this.setMaxHeight();
+		},
+	},
+	mounted() {
+		if (fyo.store.isDevelopment) {
+			window.tab = this;
+		}
+	},
 
-  methods: {
-    focus() {},
-    async addRow() {
-      await this.doc.append(this.df.fieldname);
-      await nextTick();
-      this.scrollToRow(this.value.length - 1);
-      this.triggerChange(this.value);
-      this.$nextTick(() => {
-        const rows = this.$refs['table-row'];
-        if (rows && rows.length > 0) {
-          const lastRow = rows[rows.length - 1];
-          if (lastRow.focusFirstInput) {
-            lastRow.focusFirstInput();
-          }
-        }
-      });
-    },
-    removeRow(row) {
-      this.doc.remove(this.df.fieldname, row.idx).then((s) => {
-        if (!s) {
-          return;
-        }
-        this.triggerChange(this.value);
-      });
-    },
+	methods: {
+		focus() {},
+		async addRow() {
+			await this.doc.append(this.df.fieldname);
+			await nextTick();
+			this.scrollToRow(this.value.length - 1);
+			this.triggerChange(this.value);
+			this.$nextTick(() => {
+				const rows = this.$refs["table-row"];
+				if (rows && rows.length > 0) {
+					const lastRow = rows[rows.length - 1];
+					if (lastRow.focusFirstInput) {
+						lastRow.focusFirstInput();
+					}
+				}
+			});
+		},
+		removeRow(row) {
+			this.doc.remove(this.df.fieldname, row.idx).then((s) => {
+				if (!s) {
+					return;
+				}
+				this.triggerChange(this.value);
+			});
+		},
 
-    scrollToRow(index) {
-      const row = this.$refs['table-row'][index];
-      row && row.$el.scrollIntoView({ block: 'nearest' });
-    },
+		scrollToRow(index) {
+			const row = this.$refs["table-row"][index];
+			row?.$el.scrollIntoView({ block: "nearest" });
+		},
 
-    setMaxHeight() {
-      if (this.maxRowsBeforeOverflow === 0) {
-        return (this.maxHeight = '');
-      }
+		setMaxHeight() {
+			if (this.maxRowsBeforeOverflow === 0) {
+				this.maxHeight = "";
+				return this.maxHeight;
+			}
 
-      const size = this?.value?.length ?? 0;
-      if (size === 0) {
-        return (this.maxHeight = '');
-      }
+			const size = this?.value?.length ?? 0;
+			if (size === 0) {
+				this.maxHeight = "";
+				return this.maxHeight;
+			}
 
-      const rowHeight = this.$refs?.['table-row']?.[0]?.$el.offsetHeight;
-      if (rowHeight === undefined) {
-        return (this.maxHeight = '');
-      }
+			const rowHeight = this.$refs?.["table-row"]?.[0]?.$el.offsetHeight;
+			if (rowHeight === undefined) {
+				this.maxHeight = "";
+				return this.maxHeight;
+			}
 
-      const maxHeight = rowHeight * Math.min(this.maxRowsBeforeOverflow, size);
-      return (this.maxHeight = `${maxHeight}px`);
-    },
-  },
+			const maxHeight = rowHeight * Math.min(this.maxRowsBeforeOverflow, size);
+			this.maxHeight = `${maxHeight}px`;
+			return this.maxHeight;
+		},
+	},
 };
 </script>

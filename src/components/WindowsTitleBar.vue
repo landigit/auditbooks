@@ -64,71 +64,71 @@
 </template>
 
 <script>
-import Fb from './Icons/18/fb.vue';
+import Fb from "./Icons/18/fb.vue";
 
 export default {
-  name: 'WindowsTitleBar',
-  components: { Fb },
-  props: {
-    dbPath: String,
-    companyName: String,
-  },
-  data() {
-    return {
-      isMax: Boolean,
-      isFullscreen: Boolean,
-    };
-  },
-  mounted() {
-    this.getIsMaximized();
-    this.getIsFullscreen();
-    window.addEventListener('resize', this.getIsFullscreen);
-    document.addEventListener('webkitfullscreenchange', this.getIsFullscreen);
-    document.addEventListener('mozfullscreenchange', this.getIsFullscreen);
-    document.addEventListener('fullscreenchange', this.getIsFullscreen);
-    document.addEventListener('MSFullscreenChange', this.getIsFullscreen);
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.getIsFullscreen);
-    document.removeEventListener(
-      'webkitfullscreenchange',
-      this.getIsFullscreen
-    );
-    document.removeEventListener('mozfullscreenchange', this.getIsFullscreen);
-    document.removeEventListener('fullscreenchange', this.getIsFullscreen);
-    document.removeEventListener('MSFullscreenChange', this.getIsFullscreen);
-  },
-  methods: {
-    minimizeWindow() {
-      ipc.minimizeWindow();
-    },
-    toggleMaximize() {
-      ipc.toggleMaximize();
-      this.getIsMaximized();
-    },
-    closeWindow() {
-      ipc.closeWindow();
-    },
-    getIsMaximized() {
-      ipc
-        .isMaximized()
-        .then((result) => {
-          this.isMax = result;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-    getIsFullscreen() {
-      ipc
-        .isFullscreen()
-        .then((result) => {
-          this.isFullscreen = result;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-  },
+	name: "WindowsTitleBar",
+	components: { Fb },
+	props: {
+		dbPath: String,
+		companyName: String,
+	},
+	data() {
+		return {
+			isMax: Boolean,
+			isFullscreen: Boolean,
+		};
+	},
+	mounted() {
+		this.getIsMaximized();
+		this.getIsFullscreen();
+		window.addEventListener("resize", this.getIsFullscreen);
+		document.addEventListener("webkitfullscreenchange", this.getIsFullscreen);
+		document.addEventListener("mozfullscreenchange", this.getIsFullscreen);
+		document.addEventListener("fullscreenchange", this.getIsFullscreen);
+		document.addEventListener("MSFullscreenChange", this.getIsFullscreen);
+	},
+	destroyed() {
+		window.removeEventListener("resize", this.getIsFullscreen);
+		document.removeEventListener(
+			"webkitfullscreenchange",
+			this.getIsFullscreen,
+		);
+		document.removeEventListener("mozfullscreenchange", this.getIsFullscreen);
+		document.removeEventListener("fullscreenchange", this.getIsFullscreen);
+		document.removeEventListener("MSFullscreenChange", this.getIsFullscreen);
+	},
+	methods: {
+		minimizeWindow() {
+			window.auditbooksIpc.minimizeWindow();
+		},
+		toggleMaximize() {
+			window.auditbooksIpc.toggleMaximize();
+			this.getIsMaximized();
+		},
+		closeWindow() {
+			window.auditbooksIpc.closeWindow();
+		},
+		getIsMaximized() {
+			window.auditbooksIpc
+				.isMaximized()
+				.then((result) => {
+					this.isMax = result;
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		},
+		getIsFullscreen() {
+			window.auditbooksIpc
+				.isFullscreen()
+				.then((result) => {
+					this.isFullscreen = result;
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		},
+	},
 };
 </script>

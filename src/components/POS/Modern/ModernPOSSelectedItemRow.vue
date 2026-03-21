@@ -237,140 +237,139 @@
 </template>
 
 <script lang="ts">
-import Currency from 'src/components/Controls/Currency.vue';
-import Data from 'src/components/Controls/Data.vue';
-import Float from 'src/components/Controls/Float.vue';
-import Int from 'src/components/Controls/Int.vue';
-import Link from 'src/components/Controls/Link.vue';
-import Text from 'src/components/Controls/Text.vue';
-import { inject } from 'vue';
-import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { Money } from 'pesa';
-import { validateSerialNumberCount } from 'src/utils/pos';
+import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import type { Money } from "pesa";
+import Currency from "src/components/Controls/Currency.vue";
+import Data from "src/components/Controls/Data.vue";
+import Float from "src/components/Controls/Float.vue";
+import Int from "src/components/Controls/Int.vue";
+import Link from "src/components/Controls/Link.vue";
+import Text from "src/components/Controls/Text.vue";
+import { fyo } from "src/initFyo";
+import { validateSerialNumberCount } from "src/utils/pos";
+import { defineComponent, inject, type PropType } from "vue";
 
 export default defineComponent({
-  name: 'ModernPOSSelectedItemRow',
-  components: { Currency, Data, Float, Int, Link, Text },
-  props: {
-    row: { type: SalesInvoiceItem, required: true },
-    batchAdded: { type: Boolean, default: false },
-    expandedBatchId: {
-      type: String as PropType<string | null | undefined>,
-      default: undefined,
-    },
-  },
-  emits: [
-    'toggleModal',
-    'runSinvFormulas',
-    'selectedRow',
-    'applyPricingRule',
-    'setExpandedBatchId',
-  ],
+	name: "ModernPOSSelectedItemRow",
+	components: { Currency, Data, Float, Int, Link, Text },
+	props: {
+		row: { type: SalesInvoiceItem, required: true },
+		batchAdded: { type: Boolean, default: false },
+		expandedBatchId: {
+			type: String as PropType<string | null | undefined>,
+			default: undefined,
+		},
+	},
+	emits: [
+		"toggleModal",
+		"runSinvFormulas",
+		"selectedRow",
+		"applyPricingRule",
+		"setExpandedBatchId",
+	],
 
-  setup() {
-    return {
-      isDiscountingEnabled: inject('isDiscountingEnabled') as boolean,
-      itemSerialNumbers: inject('itemSerialNumbers') as {
-        [item: string]: string;
-      },
-    };
-  },
-  data() {
-    return {
-      isExapanded: false,
-      batches: [] as string[],
-      availableQtyInBatch: 0,
-      itemVisibility: '',
+	setup() {
+		return {
+			isDiscountingEnabled: inject("isDiscountingEnabled") as boolean,
+			itemSerialNumbers: inject("itemSerialNumbers") as {
+				[item: string]: string;
+			},
+		};
+	},
+	data() {
+		return {
+			isExapanded: false,
+			batches: [] as string[],
+			availableQtyInBatch: 0,
+			itemVisibility: "",
 
-      defaultRate: this.row.rate as Money,
-    };
-  },
-  watch: {
-    expandedBatchId(newVal) {
-      if (newVal !== this.row.name) {
-        this.isExapanded = false;
-      }
-    },
-    'row.batch': {
-      async handler(newBatch) {
-        if (newBatch) {
-          this.availableQtyInBatch = await this.getAvailableQtyInBatch();
-          this.isExapanded = true;
-          this.$emit('setExpandedBatchId', this.row.name);
-        }
-      },
-      immediate: true,
-    },
-  },
-  computed: {
-    isUOMConversionEnabled(): boolean {
-      return !!fyo.singles.InventorySettings?.enableUomConversions;
-    },
-    hasSerialNumber(): boolean {
-      return !!(this.row.links?.item && this.row.links?.item.hasSerialNumber);
-    },
-    isReadOnly() {
-      return this.row.isFreeItem;
-    },
-  },
-  methods: {
-    toggleExpand() {
-      if (this.isExapanded) {
-        this.isExapanded = false;
-        this.$emit('setExpandedBatchId', undefined);
-      } else {
-        this.isExapanded = true;
-        this.$emit('setExpandedBatchId', this.row.name);
-      }
-    },
-    handleOpenKeyboard(row: SalesInvoiceItem, field: string) {
-      if (this.isReadOnly) {
-        return;
-      }
+			defaultRate: this.row.rate as Money,
+		};
+	},
+	watch: {
+		expandedBatchId(newVal) {
+			if (newVal !== this.row.name) {
+				this.isExapanded = false;
+			}
+		},
+		"row.batch": {
+			async handler(newBatch) {
+				if (newBatch) {
+					this.availableQtyInBatch = await this.getAvailableQtyInBatch();
+					this.isExapanded = true;
+					this.$emit("setExpandedBatchId", this.row.name);
+				}
+			},
+			immediate: true,
+		},
+	},
+	computed: {
+		isUOMConversionEnabled(): boolean {
+			return !!fyo.singles.InventorySettings?.enableUomConversions;
+		},
+		hasSerialNumber(): boolean {
+			return !!this.row.links?.item?.hasSerialNumber;
+		},
+		isReadOnly() {
+			return this.row.isFreeItem;
+		},
+	},
+	methods: {
+		toggleExpand() {
+			if (this.isExapanded) {
+				this.isExapanded = false;
+				this.$emit("setExpandedBatchId", undefined);
+			} else {
+				this.isExapanded = true;
+				this.$emit("setExpandedBatchId", this.row.name);
+			}
+		},
+		handleOpenKeyboard(row: SalesInvoiceItem, field: string) {
+			if (this.isReadOnly) {
+				return;
+			}
 
-      this.$emit('selectedRow', row, field);
-      this.$emit('toggleModal', 'Keyboard');
-    },
-    async getAvailableQtyInBatch(): Promise<number> {
-      if (!this.row.batch) {
-        return 0;
-      }
+			this.$emit("selectedRow", row, field);
+			this.$emit("toggleModal", "Keyboard");
+		},
+		async getAvailableQtyInBatch(): Promise<number> {
+			if (!this.row.batch) {
+				return 0;
+			}
 
-      return (
-        (await fyo.db.getStockQuantity(
-          this.row.item as string,
-          undefined,
-          undefined,
-          undefined,
-          this.row.batch
-        )) ?? 0
-      );
-    },
-    async setBatch(batch: string) {
-      this.row.set('batch', batch);
-      this.availableQtyInBatch = await this.getAvailableQtyInBatch();
-    },
-    setSerialNumber(serialNumber: string) {
-      if (!serialNumber) {
-        return;
-      }
-      this.itemSerialNumbers[this.row.item as string] = serialNumber;
+			return (
+				(await fyo.db.getStockQuantity(
+					this.row.item as string,
+					undefined,
+					undefined,
+					undefined,
+					this.row.batch,
+				)) ?? 0
+			);
+		},
+		async setBatch(batch: string) {
+			this.row.set("batch", batch);
+			this.availableQtyInBatch = await this.getAvailableQtyInBatch();
+		},
+		setSerialNumber(serialNumber: string) {
+			if (!serialNumber) {
+				return;
+			}
+			this.itemSerialNumbers[this.row.item as string] = serialNumber;
 
-      validateSerialNumberCount(
-        serialNumber,
-        this.row.quantity ?? 0,
-        this.row.item!
-      );
-    },
-    async removeAddedItem(row: SalesInvoiceItem) {
-      this.row.parentdoc?.remove('items', row?.idx as number);
+			validateSerialNumberCount(
+				serialNumber,
+				this.row.quantity ?? 0,
+				this.row.item,
+			);
+		},
+		async removeAddedItem(row: SalesInvoiceItem) {
+			this.row.parentdoc?.remove("items", row?.idx as number);
 
-      if (!row.isFreeItem) {
-        this.$emit('applyPricingRule');
-      }
-    },
-  },
+			if (!row.isFreeItem) {
+				this.$emit("applyPricingRule");
+			}
+		},
+	},
 });
 </script>

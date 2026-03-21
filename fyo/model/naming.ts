@@ -1,105 +1,111 @@
-import { Fyo } from 'fyo';
-import NumberSeries from 'fyo/models/NumberSeries';
-import { DEFAULT_SERIES_START } from 'fyo/utils/consts';
-import { BaseError } from 'fyo/utils/errors';
-import { getRandomString } from 'utils';
-import { Doc } from './doc';
+import type { Fyo } from "fyo";
+import type NumberSeries from "fyo/models/NumberSeries";
+import { DEFAULT_SERIES_START } from "fyo/utils/consts";
+import type { BaseError } from "fyo/utils/errors";
+import { getRandomString } from "utils";
+import type { Doc } from "./doc";
 
 export function isNameAutoSet(schemaName: string, fyo: Fyo): boolean {
-  const schema = fyo.schemaMap[schemaName]!;
-  if (schema.naming === 'manual') {
-    return false;
-  }
+	const schema = fyo.schemaMap[schemaName];
+	if (!schema) {
+		return false;
+	}
+	if (schema.naming === "manual") {
+		return false;
+	}
 
-  if (schema.naming === 'autoincrement') {
-    return true;
-  }
+	if (schema.naming === "autoincrement") {
+		return true;
+	}
 
-  if (schema.naming === 'random') {
-    return true;
-  }
+	if (schema.naming === "random") {
+		return true;
+	}
 
-  const numberSeries = fyo.getField(schema.name, 'numberSeries');
-  if (numberSeries) {
-    return true;
-  }
+	const numberSeries = fyo.getField(schema.name, "numberSeries");
+	if (numberSeries) {
+		return true;
+	}
 
-  return false;
+	return false;
 }
 
 export async function setName(doc: Doc, fyo: Fyo) {
-  if (doc.schema.naming === 'manual') {
-    return;
-  }
+	if (doc.schema.naming === "manual") {
+		return;
+	}
 
-  if (doc.schema.naming === 'autoincrement') {
-    return (doc.name = await getNextId(doc.schemaName, fyo));
-  }
+	if (doc.schema.naming === "autoincrement") {
+		doc.name = await getNextId(doc.schemaName, fyo);
+		return doc.name;
+	}
 
-  if (doc.numberSeries !== undefined) {
-    return (doc.name = await getSeriesNext(
-      doc.numberSeries as string,
-      doc.schemaName,
-      fyo
-    ));
-  }
+	if (doc.numberSeries !== undefined) {
+		doc.name = await getSeriesNext(
+			doc.numberSeries as string,
+			doc.schemaName,
+			fyo,
+		);
+		return doc.name;
+	}
 
-  // name === schemaName for Single
-  if (doc.schema.isSingle) {
-    return (doc.name = doc.schemaName);
-  }
+	// name === schemaName for Single
+	if (doc.schema.isSingle) {
+		doc.name = doc.schemaName;
+		return doc.name;
+	}
 
-  // Assign a random name by default
-  if (!doc.name) {
-    doc.name = getRandomString();
-  }
+	// Assign a random name by default
+	if (!doc.name) {
+		doc.name = getRandomString();
+	}
 
-  return doc.name;
+	return doc.name;
 }
 
 export async function getNextId(schemaName: string, fyo: Fyo): Promise<string> {
-  const lastInserted = await fyo.db.getLastInserted(schemaName);
-  return String(lastInserted + 1).padStart(9, '0');
+	const lastInserted = await fyo.db.getLastInserted(schemaName);
+	return String(lastInserted + 1).padStart(9, "0");
 }
 
 export async function getSeriesNext(
-  prefix: string,
-  schemaName: string,
-  fyo: Fyo
+	prefix: string,
+	schemaName: string,
+	fyo: Fyo,
 ) {
-  let series: NumberSeries;
+	let series: NumberSeries;
 
-  try {
-    series = (await fyo.doc.getDoc('NumberSeries', prefix)) as NumberSeries;
-  } catch (e) {
-    const { statusCode } = e as BaseError;
-    if (!statusCode || statusCode !== 404) {
-      throw e;
-    }
+	try {
+		series = (await fyo.doc.getDoc("NumberSeries", prefix)) as NumberSeries;
+	} catch (e) {
+		const { statusCode } = e as BaseError;
+		if (!statusCode || statusCode !== 404) {
+			throw e;
+		}
 
-    await createNumberSeries(prefix, schemaName, DEFAULT_SERIES_START, fyo);
-    series = (await fyo.doc.getDoc('NumberSeries', prefix)) as NumberSeries;
-  }
+		await createNumberSeries(prefix, schemaName, DEFAULT_SERIES_START, fyo);
+		series = (await fyo.doc.getDoc("NumberSeries", prefix)) as NumberSeries;
+	}
 
-  return await series.next(schemaName);
+	return await series.next(schemaName);
 }
 
 export async function createNumberSeries(
-  prefix: string,
-  referenceType: string,
-  start: number,
-  fyo: Fyo
+	prefix: string,
+	referenceType: string,
+	start: number,
+	fyo: Fyo,
 ) {
-  const exists = await fyo.db.exists('NumberSeries', prefix);
-  if (exists) {
-    return;
-  }
+	const exists = await fyo.db.exists("NumberSeries", prefix);
+	if (exists) {
+		return;
+	}
 
-  const series = fyo.doc.getNewDoc('NumberSeries', {
-    name: prefix,
-    start,
-    referenceType,
-  });
+	const series = fyo.doc.getNewDoc("NumberSeries", {
+		name: prefix,
+		start,
+		referenceType,
+	});
 
-  await series.sync();
+	await series.sync();
 }

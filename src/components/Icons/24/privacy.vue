@@ -8,9 +8,9 @@
   </svg>
 </template>
 <script>
-import Base from '../base.vue';
+import Base from "../base.vue";
 export default {
-  name: 'IconPrivacy',
-  extends: Base,
+	name: "IconPrivacy",
+	extends: Base,
 };
 </script>

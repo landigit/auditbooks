@@ -201,148 +201,148 @@
   </div>
 </template>
 <script lang="ts">
-import { Doc } from 'fyo/model/doc';
-import { isPesa } from 'fyo/utils';
-import { ModelNameEnum } from 'models/types';
-import Button from 'src/components/Button.vue';
-import { getBgTextColorClass } from 'src/utils/colors';
-import { getLinkedEntries } from 'src/utils/doc';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { getFormRoute, routeTo } from 'src/utils/ui';
-import { PropType, defineComponent, inject } from 'vue';
+import type { Doc } from "fyo/model/doc";
+import { isPesa } from "fyo/utils";
+import { ModelNameEnum } from "models/types";
+import Button from "src/components/Button.vue";
+import { getBgTextColorClass } from "src/utils/colors";
+import { getLinkedEntries } from "src/utils/doc";
+import { shortcutsKey } from "src/utils/injectionKeys";
+import { getFormRoute, routeTo } from "src/utils/ui";
+import { defineComponent, inject, type PropType } from "vue";
 
-const COMPONENT_NAME = 'LinkedEntries';
+const COMPONENT_NAME = "LinkedEntries";
 
 export default defineComponent({
-  components: { Button },
-  props: { doc: { type: Object as PropType<Doc>, required: true } },
-  emits: ['close'],
-  setup() {
-    return { shortcuts: inject(shortcutsKey) };
-  },
-  data() {
-    return { entries: {} } as {
-      entries: Record<
-        string,
-        { collapsed: boolean; details: Record<string, unknown>[] }
-      >;
-    };
-  },
-  computed: {
-    sequence(): string[] {
-      const seq: string[] = linkSequence.filter(
-        (s) => !!this.entries[s]?.details?.length
-      );
+	components: { Button },
+	props: { doc: { type: Object as PropType<Doc>, required: true } },
+	emits: ["close"],
+	setup() {
+		return { shortcuts: inject(shortcutsKey) };
+	},
+	data() {
+		return { entries: {} } as {
+			entries: Record<
+				string,
+				{ collapsed: boolean; details: Record<string, unknown>[] }
+			>;
+		};
+	},
+	computed: {
+		sequence(): string[] {
+			const seq: string[] = linkSequence.filter(
+				(s) => !!this.entries[s]?.details?.length,
+			);
 
-      for (const s in this.entries) {
-        if (seq.includes(s)) {
-          continue;
-        }
-        seq.push(s);
-      }
+			for (const s in this.entries) {
+				if (seq.includes(s)) {
+					continue;
+				}
+				seq.push(s);
+			}
 
-      return seq;
-    },
-  },
-  async mounted() {
-    await this.setLinkedEntries();
-    this.shortcuts?.set(COMPONENT_NAME, ['Escape'], () => this.$emit('close'));
-  },
-  unmounted() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    isPesa,
-    colorClass: getBgTextColorClass,
-    async routeTo(schemaName: string, name: string) {
-      const route = getFormRoute(schemaName, name);
-      await routeTo(route);
-    },
-    async setLinkedEntries() {
-      const linkedEntries = await getLinkedEntries(this.doc);
-      for (const key in linkedEntries) {
-        const collapsed = false;
-        const entryNames = linkedEntries[key];
-        if (!entryNames.length) {
-          continue;
-        }
+			return seq;
+		},
+	},
+	async mounted() {
+		await this.setLinkedEntries();
+		this.shortcuts?.set(COMPONENT_NAME, ["Escape"], () => this.$emit("close"));
+	},
+	unmounted() {
+		this.shortcuts?.delete(COMPONENT_NAME);
+	},
+	methods: {
+		isPesa,
+		colorClass: getBgTextColorClass,
+		async routeTo(schemaName: string, name: string) {
+			const route = getFormRoute(schemaName, name);
+			await routeTo(route);
+		},
+		async setLinkedEntries() {
+			const linkedEntries = await getLinkedEntries(this.doc);
+			for (const key in linkedEntries) {
+				const collapsed = false;
+				const entryNames = linkedEntries[key];
+				if (!entryNames.length) {
+					continue;
+				}
 
-        const fields = linkEntryDisplayFields[key] ?? ['name'];
-        const details = await this.fyo.db.getAll(key, {
-          fields,
-          filters: { name: ['in', entryNames] },
-        });
+				const fields = linkEntryDisplayFields[key] ?? ["name"];
+				const details = await this.fyo.db.getAll(key, {
+					fields,
+					filters: { name: ["in", entryNames] },
+				});
 
-        this.entries[key] = {
-          collapsed,
-          details,
-        };
-      }
-    },
-  },
+				this.entries[key] = {
+					collapsed,
+					details,
+				};
+			}
+		},
+	},
 });
 
 const linkSequence = [
-  // Invoices
-  ModelNameEnum.SalesInvoice,
-  ModelNameEnum.PurchaseInvoice,
-  // Stock Transfers
-  ModelNameEnum.Shipment,
-  ModelNameEnum.PurchaseReceipt,
-  // Other Transactional
-  ModelNameEnum.Payment,
-  ModelNameEnum.JournalEntry,
-  ModelNameEnum.StockMovement,
-  // Non Transfers
-  ModelNameEnum.Party,
-  ModelNameEnum.Item,
-  ModelNameEnum.Account,
-  ModelNameEnum.Location,
-  // Ledgers
-  ModelNameEnum.AccountingLedgerEntry,
-  ModelNameEnum.StockLedgerEntry,
+	// Invoices
+	ModelNameEnum.SalesInvoice,
+	ModelNameEnum.PurchaseInvoice,
+	// Stock Transfers
+	ModelNameEnum.Shipment,
+	ModelNameEnum.PurchaseReceipt,
+	// Other Transactional
+	ModelNameEnum.Payment,
+	ModelNameEnum.JournalEntry,
+	ModelNameEnum.StockMovement,
+	// Non Transfers
+	ModelNameEnum.Party,
+	ModelNameEnum.Item,
+	ModelNameEnum.Account,
+	ModelNameEnum.Location,
+	// Ledgers
+	ModelNameEnum.AccountingLedgerEntry,
+	ModelNameEnum.StockLedgerEntry,
 ];
 
 const linkEntryDisplayFields: Record<string, string[]> = {
-  // Invoices
-  [ModelNameEnum.SalesInvoice]: [
-    'name',
-    'date',
-    'party',
-    'grandTotal',
-    'outstandingAmount',
-    'stockNotTransferred',
-  ],
-  [ModelNameEnum.PurchaseInvoice]: [
-    'name',
-    'date',
-    'party',
-    'grandTotal',
-    'outstandingAmount',
-    'stockNotTransferred',
-  ],
-  // Stock Transfers
-  [ModelNameEnum.Shipment]: ['name', 'date', 'party', 'grandTotal'],
-  [ModelNameEnum.PurchaseReceipt]: ['name', 'date', 'party', 'grandTotal'],
-  // Other Transactional
-  [ModelNameEnum.Payment]: ['name', 'date', 'party', 'amount'],
-  [ModelNameEnum.JournalEntry]: ['name', 'date', 'entryType'],
-  [ModelNameEnum.StockMovement]: ['name', 'date', 'amount'],
-  // Ledgers
-  [ModelNameEnum.AccountingLedgerEntry]: [
-    'name',
-    'date',
-    'account',
-    'credit',
-    'debit',
-  ],
-  [ModelNameEnum.StockLedgerEntry]: [
-    'name',
-    'date',
-    'item',
-    'location',
-    'quantity',
-  ],
+	// Invoices
+	[ModelNameEnum.SalesInvoice]: [
+		"name",
+		"date",
+		"party",
+		"grandTotal",
+		"outstandingAmount",
+		"stockNotTransferred",
+	],
+	[ModelNameEnum.PurchaseInvoice]: [
+		"name",
+		"date",
+		"party",
+		"grandTotal",
+		"outstandingAmount",
+		"stockNotTransferred",
+	],
+	// Stock Transfers
+	[ModelNameEnum.Shipment]: ["name", "date", "party", "grandTotal"],
+	[ModelNameEnum.PurchaseReceipt]: ["name", "date", "party", "grandTotal"],
+	// Other Transactional
+	[ModelNameEnum.Payment]: ["name", "date", "party", "amount"],
+	[ModelNameEnum.JournalEntry]: ["name", "date", "entryType"],
+	[ModelNameEnum.StockMovement]: ["name", "date", "amount"],
+	// Ledgers
+	[ModelNameEnum.AccountingLedgerEntry]: [
+		"name",
+		"date",
+		"account",
+		"credit",
+		"debit",
+	],
+	[ModelNameEnum.StockLedgerEntry]: [
+		"name",
+		"date",
+		"item",
+		"location",
+		"quantity",
+	],
 };
 </script>
 <style scoped>

@@ -1,5 +1,5 @@
 {
-  "name": "SalesQuoteItem",
-  "label": "Sales Quote Item",
-  "extends": "InvoiceItem"
+	"name": "SalesQuoteItem",
+	"label": "Sales Quote Item",
+	"extends": "InvoiceItem"
 }

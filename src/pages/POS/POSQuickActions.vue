@@ -347,96 +347,96 @@
 </template>
 
 <script lang="ts">
-import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { ItemSerialNumbers } from 'src/components/POS/types';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
-import { t } from 'fyo';
+import { t } from "fyo";
+import type { Payment } from "models/baseModels/Payment/Payment";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import type { ItemSerialNumbers } from "src/components/POS/types";
+import { fyo } from "src/initFyo";
+import { showToast } from "src/utils/interactive";
+import { defineComponent, type PropType } from "vue";
 
 export default defineComponent({
-  name: 'POSQuickActions',
-  props: {
-    openAlertModal: Boolean,
-    loyaltyPoints: {
-      type: Number,
-      default: 0,
-    },
-    loyaltyProgram: {
-      type: String,
-      default: '',
-    },
-    appliedCouponsCount: {
-      type: Number,
-      default: 0,
-    },
-    sinvDoc: {
-      type: Object as PropType<SalesInvoice | undefined>,
-      default: undefined,
-    },
-  },
-  emits: ['toggleView', 'toggleModal', 'emitRouteToSinvList'],
-  data() {
-    return {
-      tableView: true,
+	name: "POSQuickActions",
+	props: {
+		openAlertModal: Boolean,
+		loyaltyPoints: {
+			type: Number,
+			default: 0,
+		},
+		loyaltyProgram: {
+			type: String,
+			default: "",
+		},
+		appliedCouponsCount: {
+			type: Number,
+			default: 0,
+		},
+		sinvDoc: {
+			type: Object as PropType<SalesInvoice | undefined>,
+			default: undefined,
+		},
+	},
+	emits: ["toggleView", "toggleModal", "emitRouteToSinvList"],
+	data() {
+		return {
+			tableView: true,
 
-      totalQuantity: 0,
-      totalTaxedAmount: fyo.pesa(0),
-      additionalDiscounts: fyo.pesa(0),
+			totalQuantity: 0,
+			totalTaxedAmount: fyo.pesa(0),
+			additionalDiscounts: fyo.pesa(0),
 
-      paymentDoc: {} as Payment,
-      itemSerialNumbers: {} as ItemSerialNumbers,
+			paymentDoc: {} as Payment,
+			itemSerialNumbers: {} as ItemSerialNumbers,
 
-      transferRefNo: undefined as string | undefined,
-      transferClearanceDate: undefined as Date | undefined,
-    };
-  },
-  computed: {
-    isPosShiftOpen: () => !!fyo.singles.POSShift?.isShiftOpen,
-  },
-  methods: {
-    setTransferRefNo(ref: string) {
-      this.transferRefNo = ref;
-    },
-    toggleItemsView() {
-      this.tableView = !this.tableView;
-      this.$emit('toggleView');
-    },
-    showValidationToast(action: string, isLoyalty = false) {
-      let message = '';
+			transferRefNo: undefined as string | undefined,
+			transferClearanceDate: undefined as Date | undefined,
+		};
+	},
+	computed: {
+		isPosShiftOpen: () => !!fyo.singles.POSShift?.isShiftOpen,
+	},
+	methods: {
+		setTransferRefNo(ref: string) {
+			this.transferRefNo = ref;
+		},
+		toggleItemsView() {
+			this.tableView = !this.tableView;
+			this.$emit("toggleView");
+		},
+		showValidationToast(action: string, isLoyalty = false) {
+			let message = "";
 
-      if (!this.sinvDoc?.items?.length) {
-        message = t`Please add items`;
-      } else if (!this.sinvDoc?.party) {
-        message = t`Please select a customer`;
-      } else if (isLoyalty && !this.loyaltyPoints) {
-        message = t`Customer has no loyalty points to redeem`;
-      }
+			if (!this.sinvDoc?.items?.length) {
+				message = t`Please add items`;
+			} else if (!this.sinvDoc?.party) {
+				message = t`Please select a customer`;
+			} else if (isLoyalty && !this.loyaltyPoints) {
+				message = t`Customer has no loyalty points to redeem`;
+			}
 
-      showToast({
-        type: 'error',
-        message: t`${message} before ${action}`,
-      });
-    },
-    openCouponModal() {
-      if (!this.sinvDoc?.items?.length || !this.sinvDoc?.party) {
-        this.showValidationToast('applying coupon');
-        return;
-      }
-      this.$emit('toggleModal', 'CouponCode');
-    },
-    openLoyaltyModal() {
-      if (
-        !this.sinvDoc?.items?.length ||
-        !this.sinvDoc?.party ||
-        !this.loyaltyPoints
-      ) {
-        this.showValidationToast('applying loyalty points', true);
-        return;
-      }
-      this.$emit('toggleModal', 'LoyaltyProgram');
-    },
-  },
+			showToast({
+				type: "error",
+				message: t`${message} before ${action}`,
+			});
+		},
+		openCouponModal() {
+			if (!this.sinvDoc?.items?.length || !this.sinvDoc?.party) {
+				this.showValidationToast("applying coupon");
+				return;
+			}
+			this.$emit("toggleModal", "CouponCode");
+		},
+		openLoyaltyModal() {
+			if (
+				!this.sinvDoc?.items?.length ||
+				!this.sinvDoc?.party ||
+				!this.loyaltyPoints
+			) {
+				this.showValidationToast("applying loyalty points", true);
+				return;
+			}
+			this.$emit("toggleModal", "LoyaltyProgram");
+		},
+	},
 });
 </script>

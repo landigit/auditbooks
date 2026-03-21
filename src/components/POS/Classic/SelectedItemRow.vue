@@ -278,452 +278,447 @@
 </template>
 
 <script lang="ts">
-import Currency from 'src/components/Controls/Currency.vue';
-import Data from 'src/components/Controls/Data.vue';
-import Float from 'src/components/Controls/Float.vue';
-import Int from 'src/components/Controls/Int.vue';
-import Link from 'src/components/Controls/Link.vue';
-import Text from 'src/components/Controls/Text.vue';
-import { inject } from 'vue';
-import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { Money } from 'pesa';
-import { DiscountType } from '../types';
-import { validateSerialNumberCount } from 'src/utils/pos';
-import { getItemVisibility, validateQty } from 'models/helpers';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
-import { ModelNameEnum } from 'models/types';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
-import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
+import type { InvoiceItem } from "models/baseModels/InvoiceItem/InvoiceItem";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import { getItemVisibility, validateQty } from "models/helpers";
+import { getExistingActiveSerialNumbersForItem } from "models/inventory/helpers";
+import { ModelNameEnum } from "models/types";
+import type { Money } from "pesa";
+import AutoComplete from "src/components/Controls/AutoComplete.vue";
+import Currency from "src/components/Controls/Currency.vue";
+import Data from "src/components/Controls/Data.vue";
+import Float from "src/components/Controls/Float.vue";
+import Int from "src/components/Controls/Int.vue";
+import Link from "src/components/Controls/Link.vue";
+import Text from "src/components/Controls/Text.vue";
+import { fyo } from "src/initFyo";
+import { showToast } from "src/utils/interactive";
+import { validateSerialNumberCount } from "src/utils/pos";
+import { defineComponent, inject, type PropType } from "vue";
+import type { DiscountType } from "../types";
 
 export default defineComponent({
-  name: 'SelectedItemRow',
-  components: { Currency, Data, Float, Int, Link, Text, AutoComplete },
-  props: {
-    row: { type: SalesInvoiceItem, required: true },
-    batchAdded: { type: Boolean, default: false },
-    expandedBatchId: {
-      type: String as PropType<string | null | undefined>,
-      default: undefined,
-    },
-  },
-  emits: [
-    'runSinvFormulas',
-    'applyPricingRule',
-    'selectedRow',
-    'setExpandedBatchId',
-  ],
-  setup() {
-    return {
-      isDiscountingEnabled: inject('isDiscountingEnabled') as boolean,
-      itemSerialNumbers: inject('itemSerialNumbers') as {
-        [item: string]: string;
-      },
-    };
-  },
-  data() {
-    return {
-      isExapanded: false,
-      batches: [] as string[],
-      availableQtyInBatch: 0,
-      itemVisibility: '',
-      defaultRate: this.row.rate as Money,
-      profileDiscountSetting: null as boolean | null,
-      profileRateSetting: null as boolean | null,
-      transferUnitOptions: [] as Array<{ label: string; value: string }>,
-      isMounted: false,
-      pendingTransferUnitChange: false,
-      transferUnitChangeOldQty: 0,
-    };
-  },
-  watch: {
-    expandedBatchId(newVal) {
-      if (newVal !== this.row.name) {
-        this.isExapanded = false;
-      }
-    },
-    'row.batch': {
-      async handler(newBatch) {
-        if (newBatch) {
-          this.availableQtyInBatch = await this.getAvailableQtyInBatch();
-          this.isExapanded = true;
-          this.$emit('setExpandedBatchId', this.row.name);
-        }
-      },
-      immediate: true,
-    },
-    'row.item': {
-      async handler(newItem) {
-        if (newItem) {
-          await this.updateTransferUnitOptions();
-        } else {
-          this.transferUnitOptions = [];
-        }
-      },
-      immediate: true,
-    },
-    'row.quantity': {
-      async handler(newQuantity, oldQuantity) {
-        if (
-          this.hasSerialNumber &&
-          newQuantity &&
-          newQuantity > 0 &&
-          this.isMounted &&
-          newQuantity !== oldQuantity
-        ) {
-          await this.fetchSerialNumbers(false, true);
-        }
-      },
-      immediate: false,
-    },
-    'row.transferQuantity': {
-      async handler(newTransferQuantity, oldTransferQuantity) {
-        if (
-          this.pendingTransferUnitChange &&
-          newTransferQuantity !== this.transferUnitChangeOldQty
-        ) {
-          this.pendingTransferUnitChange = false;
-          this.transferUnitChangeOldQty = 0;
+	name: "SelectedItemRow",
+	components: { Currency, Data, Float, Int, Link, Text, AutoComplete },
+	props: {
+		row: { type: SalesInvoiceItem, required: true },
+		batchAdded: { type: Boolean, default: false },
+		expandedBatchId: {
+			type: String as PropType<string | null | undefined>,
+			default: undefined,
+		},
+	},
+	emits: [
+		"runSinvFormulas",
+		"applyPricingRule",
+		"selectedRow",
+		"setExpandedBatchId",
+	],
+	setup() {
+		return {
+			isDiscountingEnabled: inject("isDiscountingEnabled") as boolean,
+			itemSerialNumbers: inject("itemSerialNumbers") as {
+				[item: string]: string;
+			},
+		};
+	},
+	data() {
+		return {
+			isExapanded: false,
+			batches: [] as string[],
+			availableQtyInBatch: 0,
+			itemVisibility: "",
+			defaultRate: this.row.rate as Money,
+			profileDiscountSetting: null as boolean | null,
+			profileRateSetting: null as boolean | null,
+			transferUnitOptions: [] as Array<{ label: string; value: string }>,
+			isMounted: false,
+			pendingTransferUnitChange: false,
+			transferUnitChangeOldQty: 0,
+		};
+	},
+	watch: {
+		expandedBatchId(newVal) {
+			if (newVal !== this.row.name) {
+				this.isExapanded = false;
+			}
+		},
+		"row.batch": {
+			async handler(newBatch) {
+				if (newBatch) {
+					this.availableQtyInBatch = await this.getAvailableQtyInBatch();
+					this.isExapanded = true;
+					this.$emit("setExpandedBatchId", this.row.name);
+				}
+			},
+			immediate: true,
+		},
+		"row.item": {
+			async handler(newItem) {
+				if (newItem) {
+					await this.updateTransferUnitOptions();
+				} else {
+					this.transferUnitOptions = [];
+				}
+			},
+			immediate: true,
+		},
+		"row.quantity": {
+			async handler(newQuantity, oldQuantity) {
+				if (
+					this.hasSerialNumber &&
+					newQuantity &&
+					newQuantity > 0 &&
+					this.isMounted &&
+					newQuantity !== oldQuantity
+				) {
+					await this.fetchSerialNumbers(false, true);
+				}
+			},
+			immediate: false,
+		},
+		"row.transferQuantity": {
+			async handler(newTransferQuantity, oldTransferQuantity) {
+				if (
+					this.pendingTransferUnitChange &&
+					newTransferQuantity !== this.transferUnitChangeOldQty
+				) {
+					this.pendingTransferUnitChange = false;
+					this.transferUnitChangeOldQty = 0;
 
-          await this.fetchSerialNumbers(true, false);
-          return;
-        }
+					await this.fetchSerialNumbers(true, false);
+					return;
+				}
 
-        if (
-          this.isUOMConversionEnabled &&
-          this.hasSerialNumber &&
-          newTransferQuantity &&
-          newTransferQuantity > 0 &&
-          this.isMounted &&
-          newTransferQuantity !== oldTransferQuantity &&
-          !this.pendingTransferUnitChange
-        ) {
-          await this.fetchSerialNumbers(false, false);
-        }
-      },
-      immediate: false,
-    },
-    'row.transferUnit': {
-      async handler(newTransferUnit, oldTransferUnit) {
-        if (
-          this.isUOMConversionEnabled &&
-          this.hasSerialNumber &&
-          newTransferUnit &&
-          oldTransferUnit &&
-          newTransferUnit !== oldTransferUnit &&
-          this.isMounted
-        ) {
-          delete this.itemSerialNumbers[this.row.item as string];
-          await this.row.set('serialNumber', '');
+				if (
+					this.isUOMConversionEnabled &&
+					this.hasSerialNumber &&
+					newTransferQuantity &&
+					newTransferQuantity > 0 &&
+					this.isMounted &&
+					newTransferQuantity !== oldTransferQuantity &&
+					!this.pendingTransferUnitChange
+				) {
+					await this.fetchSerialNumbers(false, false);
+				}
+			},
+			immediate: false,
+		},
+		"row.transferUnit": {
+			async handler(newTransferUnit, oldTransferUnit) {
+				if (
+					this.isUOMConversionEnabled &&
+					this.hasSerialNumber &&
+					newTransferUnit &&
+					oldTransferUnit &&
+					newTransferUnit !== oldTransferUnit &&
+					this.isMounted
+				) {
+					delete this.itemSerialNumbers[this.row.item as string];
+					await this.row.set("serialNumber", "");
 
-          this.pendingTransferUnitChange = true;
-          this.transferUnitChangeOldQty = this.row.transferQuantity ?? 0;
-        }
-      },
-      immediate: false,
-    },
-  },
-  computed: {
-    isUOMConversionEnabled(): boolean {
-      return !!fyo.singles.InventorySettings?.enableUomConversions;
-    },
-    hasSerialNumber(): boolean {
-      return !!(this.row.links?.item && this.row.links?.item.hasSerialNumber);
-    },
-    isReadOnly() {
-      return this.row.isFreeItem;
-    },
-    showAvlQuantityInBatch() {
-      return (
-        this.row.links?.item &&
-        this.row.links?.item.hasBatch &&
-        this.itemVisibility
-      );
-    },
-  },
+					this.pendingTransferUnitChange = true;
+					this.transferUnitChangeOldQty = this.row.transferQuantity ?? 0;
+				}
+			},
+			immediate: false,
+		},
+	},
+	computed: {
+		isUOMConversionEnabled(): boolean {
+			return !!fyo.singles.InventorySettings?.enableUomConversions;
+		},
+		hasSerialNumber(): boolean {
+			return !!this.row.links?.item?.hasSerialNumber;
+		},
+		isReadOnly() {
+			return this.row.isFreeItem;
+		},
+		showAvlQuantityInBatch() {
+			return this.row.links?.item?.hasBatch && this.itemVisibility;
+		},
+	},
 
-  async mounted() {
-    const posProfileName = this.fyo.singles.POSSettings?.posProfile;
+	async mounted() {
+		const posProfileName = this.fyo.singles.POSSettings?.posProfile;
 
-    if (posProfileName) {
-      const profile = await this.fyo.doc.getDoc(
-        ModelNameEnum.POSProfile,
-        posProfileName as string
-      );
+		if (posProfileName) {
+			const profile = await this.fyo.doc.getDoc(
+				ModelNameEnum.POSProfile,
+				posProfileName as string,
+			);
 
-      this.profileDiscountSetting =
-        !!profile?.canEditDiscount ||
-        !!this.fyo.singles.POSSettings?.canEditDiscount;
+			this.profileDiscountSetting =
+				!!profile?.canEditDiscount ||
+				!!this.fyo.singles.POSSettings?.canEditDiscount;
 
-      this.profileRateSetting =
-        !!profile?.canChangeRate ||
-        !!this.fyo.singles.POSSettings?.canChangeRate;
+			this.profileRateSetting =
+				!!profile?.canChangeRate ||
+				!!this.fyo.singles.POSSettings?.canChangeRate;
 
-      this.itemVisibility = await getItemVisibility(this.fyo);
-    } else {
-      this.profileDiscountSetting =
-        !!this.fyo.singles.POSSettings?.canEditDiscount;
+			this.itemVisibility = await getItemVisibility(this.fyo);
+		} else {
+			this.profileDiscountSetting =
+				!!this.fyo.singles.POSSettings?.canEditDiscount;
 
-      this.profileRateSetting = !!this.fyo.singles.POSSettings?.canChangeRate;
-      this.itemVisibility = await getItemVisibility(this.fyo);
-    }
+			this.profileRateSetting = !!this.fyo.singles.POSSettings?.canChangeRate;
+			this.itemVisibility = await getItemVisibility(this.fyo);
+		}
 
-    await this.$nextTick();
+		await this.$nextTick();
 
-    this.isMounted = true;
+		this.isMounted = true;
 
-    if (this.hasSerialNumber) {
-      await this.fetchSerialNumbers();
-    }
-  },
+		if (this.hasSerialNumber) {
+			await this.fetchSerialNumbers();
+		}
+	},
 
-  methods: {
-    toggleExpand() {
-      if (this.isExapanded) {
-        this.isExapanded = false;
-        this.$emit('setExpandedBatchId', undefined);
-      } else {
-        this.isExapanded = true;
-        this.$emit('setExpandedBatchId', this.row.name);
-      }
-    },
-    toggleExpandAndEmit() {
-      this.toggleExpand();
-      this.$emit('selectedRow', this.row);
-    },
-    emitSelectedRow() {
-      this.$emit('selectedRow', this.row);
-    },
-    adjustQuantity(change: number) {
-      let currentQuantity = this.row.quantity ?? 1;
-      let newQuantity = currentQuantity + change;
+	methods: {
+		toggleExpand() {
+			if (this.isExapanded) {
+				this.isExapanded = false;
+				this.$emit("setExpandedBatchId", undefined);
+			} else {
+				this.isExapanded = true;
+				this.$emit("setExpandedBatchId", this.row.name);
+			}
+		},
+		toggleExpandAndEmit() {
+			this.toggleExpand();
+			this.$emit("selectedRow", this.row);
+		},
+		emitSelectedRow() {
+			this.$emit("selectedRow", this.row);
+		},
+		adjustQuantity(change: number) {
+			let currentQuantity = this.row.quantity ?? 1;
+			let newQuantity = currentQuantity + change;
 
-      if (newQuantity === 0) {
-        return;
-      }
+			if (newQuantity === 0) {
+				return;
+			}
 
-      this.setQuantity(newQuantity);
-    },
-    async updateTransferUnitOptions() {
-      if (!this.row.item) {
-        this.transferUnitOptions = [];
-        return;
-      }
+			this.setQuantity(newQuantity);
+		},
+		async updateTransferUnitOptions() {
+			if (!this.row.item) {
+				this.transferUnitOptions = [];
+				return;
+			}
 
-      const itemDoc = await fyo.doc.getDoc('Item', this.row.item as string);
+			const itemDoc = await fyo.doc.getDoc("Item", this.row.item as string);
 
-      const conversions = (itemDoc?.uomConversions ?? []) as Array<{
-        uom: string;
-        conversionFactor: number;
-      }>;
+			const conversions = (itemDoc?.uomConversions ?? []) as Array<{
+				uom: string;
+				conversionFactor: number;
+			}>;
 
-      const allowedUoms = new Set<string>();
+			const allowedUoms = new Set<string>();
 
-      if (typeof itemDoc?.unit === 'string') {
-        allowedUoms.add(itemDoc.unit);
-      }
+			if (typeof itemDoc?.unit === "string") {
+				allowedUoms.add(itemDoc.unit);
+			}
 
-      for (const c of conversions) {
-        if (typeof c.uom === 'string') {
-          allowedUoms.add(c.uom);
-        }
-      }
+			for (const c of conversions) {
+				if (typeof c.uom === "string") {
+					allowedUoms.add(c.uom);
+				}
+			}
 
-      this.transferUnitOptions = [...allowedUoms].map((uom) => ({
-        label: uom,
-        value: uom,
-      }));
-    },
+			this.transferUnitOptions = [...allowedUoms].map((uom) => ({
+				label: uom,
+				value: uom,
+			}));
+		},
 
-    async getAvailableQtyInBatch(): Promise<number> {
-      if (!this.row.batch) {
-        return 0;
-      }
+		async getAvailableQtyInBatch(): Promise<number> {
+			if (!this.row.batch) {
+				return 0;
+			}
 
-      return (
-        (await fyo.db.getStockQuantity(
-          this.row.item as string,
-          undefined,
-          undefined,
-          undefined,
-          this.row.batch
-        )) ?? 0
-      );
-    },
+			return (
+				(await fyo.db.getStockQuantity(
+					this.row.item as string,
+					undefined,
+					undefined,
+					undefined,
+					this.row.batch,
+				)) ?? 0
+			);
+		},
 
-    getDisplayTransferQuantity() {
-      const transferQty = this.row.transferQuantity;
+		getDisplayTransferQuantity() {
+			const transferQty = this.row.transferQuantity;
 
-      if (!this.isUOMConversionEnabled) {
-        return transferQty;
-      }
+			if (!this.isUOMConversionEnabled) {
+				return transferQty;
+			}
 
-      const hasValidQuantity = transferQty && transferQty;
+			const hasValidQuantity = transferQty && transferQty;
 
-      if (this.row.isReturn && hasValidQuantity) {
-        return -Math.abs(transferQty);
-      }
+			if (this.row.isReturn && hasValidQuantity) {
+				return -Math.abs(transferQty);
+			}
 
-      return transferQty;
-    },
+			return transferQty;
+		},
 
-    isDiscountsReadOnly(isValidDiscount: boolean) {
-      const canEditDiscount = this.profileDiscountSetting;
+		isDiscountsReadOnly(isValidDiscount: boolean) {
+			const canEditDiscount = this.profileDiscountSetting;
 
-      return this.row.isFreeItem || !canEditDiscount || isValidDiscount;
-    },
-    async setBatch(batch: string) {
-      this.row.set('batch', batch);
-      await this.getAvailableQtyInBatch();
-    },
-    setSerialNumber(serialNumber: string) {
-      if (!serialNumber) {
-        return;
-      }
+			return this.row.isFreeItem || !canEditDiscount || isValidDiscount;
+		},
+		async setBatch(batch: string) {
+			this.row.set("batch", batch);
+			await this.getAvailableQtyInBatch();
+		},
+		setSerialNumber(serialNumber: string) {
+			if (!serialNumber) {
+				return;
+			}
 
-      this.row.set('serialNumber', serialNumber);
-      this.itemSerialNumbers[this.row.item as string] = serialNumber;
+			this.row.set("serialNumber", serialNumber);
+			this.itemSerialNumbers[this.row.item as string] = serialNumber;
 
-      validateSerialNumberCount(
-        serialNumber,
-        Math.abs(this.row.quantity ?? 0),
-        this.row.item!
-      );
-    },
-    async fetchSerialNumbers(forceRefetch = false, useDirectQuantity = false) {
-      if (!this.hasSerialNumber) {
-        return;
-      }
+			validateSerialNumberCount(
+				serialNumber,
+				Math.abs(this.row.quantity ?? 0),
+				this.row.item,
+			);
+		},
+		async fetchSerialNumbers(forceRefetch = false, useDirectQuantity = false) {
+			if (!this.hasSerialNumber) {
+				return;
+			}
 
-      let quantity = 0;
-      if (useDirectQuantity) {
-        quantity = Math.abs(this.row.quantity ?? 0);
-      } else if (this.isUOMConversionEnabled && this.row.transferQuantity) {
-        quantity = Math.abs(this.row.transferQuantity);
-      } else if (this.row.quantity) {
-        quantity = Math.abs(this.row.quantity);
-      }
+			let quantity = 0;
+			if (useDirectQuantity) {
+				quantity = Math.abs(this.row.quantity ?? 0);
+			} else if (this.isUOMConversionEnabled && this.row.transferQuantity) {
+				quantity = Math.abs(this.row.transferQuantity);
+			} else if (this.row.quantity) {
+				quantity = Math.abs(this.row.quantity);
+			}
 
-      if (quantity <= 0) {
-        return;
-      }
+			if (quantity <= 0) {
+				return;
+			}
 
-      const existingSerialNumbers =
-        this.itemSerialNumbers[this.row.item as string];
+			const existingSerialNumbers =
+				this.itemSerialNumbers[this.row.item as string];
 
-      if (existingSerialNumbers && !forceRefetch) {
-        const existingCount = existingSerialNumbers
-          .split('\n')
-          .filter((s) => s.trim()).length;
+			if (existingSerialNumbers && !forceRefetch) {
+				const existingCount = existingSerialNumbers
+					.split("\n")
+					.filter((s) => s.trim()).length;
 
-        if (existingCount === quantity) {
-          return;
-        } else {
-        }
-      }
+				if (existingCount === quantity) {
+					return;
+				} else {
+				}
+			}
 
-      try {
-        const serialNumbers = await getExistingActiveSerialNumbersForItem(
-          this.fyo,
-          this.row.item as string,
-          quantity
-        );
+			try {
+				const serialNumbers = await getExistingActiveSerialNumbersForItem(
+					this.fyo,
+					this.row.item as string,
+					quantity,
+				);
 
-        if (serialNumbers) {
-          await this.row.set('serialNumber', serialNumbers);
-          this.itemSerialNumbers[this.row.item as string] = serialNumbers;
-        } else {
-        }
-      } catch (error) {}
-    },
-    isRateReadOnly() {
-      const canChangeRate = this.profileRateSetting;
-      return this.row.isFreeItem || !canChangeRate;
-    },
-    setItemDiscount(type: DiscountType, value: Money | number) {
-      if (type === 'percent') {
-        this.row.set('setItemDiscountAmount', false);
-        this.row.set('itemDiscountPercent', value as number);
-        return;
-      }
-      this.row.set('setItemDiscountAmount', true);
-      this.row.set('itemDiscountAmount', value as Money);
-    },
-    setRate(rate: Money) {
-      this.row.setRate = rate;
-      this.$emit('runSinvFormulas');
-    },
-    async setQuantity(quantity: number) {
-      const hasManualDiscount = this.row.setItemDiscountAmount;
-      const isPercentageDiscount =
-        !hasManualDiscount && this.row.itemDiscountPercent !== 0;
-      const manualDiscountAmount = this.row.itemDiscountAmount;
-      const manualDiscountPercent = this.row.itemDiscountPercent;
+				if (serialNumbers) {
+					await this.row.set("serialNumber", serialNumbers);
+					this.itemSerialNumbers[this.row.item as string] = serialNumbers;
+				} else {
+				}
+			} catch (_error) {}
+		},
+		isRateReadOnly() {
+			const canChangeRate = this.profileRateSetting;
+			return this.row.isFreeItem || !canChangeRate;
+		},
+		setItemDiscount(type: DiscountType, value: Money | number) {
+			if (type === "percent") {
+				this.row.set("setItemDiscountAmount", false);
+				this.row.set("itemDiscountPercent", value as number);
+				return;
+			}
+			this.row.set("setItemDiscountAmount", true);
+			this.row.set("itemDiscountAmount", value as Money);
+		},
+		setRate(rate: Money) {
+			this.row.setRate = rate;
+			this.$emit("runSinvFormulas");
+		},
+		async setQuantity(quantity: number) {
+			const hasManualDiscount = this.row.setItemDiscountAmount;
+			const isPercentageDiscount =
+				!hasManualDiscount && this.row.itemDiscountPercent !== 0;
+			const manualDiscountAmount = this.row.itemDiscountAmount;
+			const manualDiscountPercent = this.row.itemDiscountPercent;
 
-      if (!this.row.isReturn && quantity <= 0) {
-        showToast({
-          type: 'error',
-          message: 'Quantity must be greater than zero.',
-          duration: 'short',
-        });
+			if (!this.row.isReturn && quantity <= 0) {
+				showToast({
+					type: "error",
+					message: "Quantity must be greater than zero.",
+					duration: "short",
+				});
 
-        quantity = this.row.quantity ?? 1;
-      }
+				quantity = this.row.quantity ?? 1;
+			}
 
-      this.row.set('quantity', quantity);
+			this.row.set("quantity", quantity);
 
-      const existingItems =
-        (this.row.parentdoc as SalesInvoice).items?.filter(
-          (invoiceItem: InvoiceItem) =>
-            invoiceItem.item === this.row.item && !invoiceItem.isFreeItem
-        ) ?? [];
+			const existingItems =
+				(this.row.parentdoc as SalesInvoice).items?.filter(
+					(invoiceItem: InvoiceItem) =>
+						invoiceItem.item === this.row.item && !invoiceItem.isFreeItem,
+				) ?? [];
 
-      quantity = this.row.quantity ?? 1;
+			quantity = this.row.quantity ?? 1;
 
-      try {
-        await validateQty(
-          this.row.parentdoc as SalesInvoice,
-          this.row,
-          existingItems
-        );
-      } catch (error) {
-        this.row.set('quantity', quantity);
+			try {
+				await validateQty(
+					this.row.parentdoc as SalesInvoice,
+					this.row,
+					existingItems,
+				);
+			} catch (error) {
+				this.row.set("quantity", quantity);
 
-        return showToast({
-          type: 'error',
-          message: this.t`${error as string}`,
-          duration: 'short',
-        });
-      }
+				return showToast({
+					type: "error",
+					message: this.t`${error as string}`,
+					duration: "short",
+				});
+			}
 
-      if (!this.row.isFreeItem) {
-        this.$emit('applyPricingRule');
-        this.$emit('runSinvFormulas');
+			if (!this.row.isFreeItem) {
+				this.$emit("applyPricingRule");
+				this.$emit("runSinvFormulas");
 
-        if (!hasManualDiscount && !isPercentageDiscount) {
-          this.row.set('setItemDiscountAmount', false);
-          this.row.set('itemDiscountPercent', 0);
-        }
+				if (!hasManualDiscount && !isPercentageDiscount) {
+					this.row.set("setItemDiscountAmount", false);
+					this.row.set("itemDiscountPercent", 0);
+				}
 
-        if (hasManualDiscount) {
-          this.row.set('setItemDiscountAmount', true);
-          this.row.set('itemDiscountAmount', manualDiscountAmount);
-        } else if (isPercentageDiscount) {
-          this.row.set('setItemDiscountAmount', false);
-          this.row.set('itemDiscountPercent', manualDiscountPercent);
-        }
-      }
-    },
-    async removeAddedItem(row: SalesInvoiceItem) {
-      this.row.parentdoc?.remove('items', row?.idx as number);
-      this.row.runFormulas();
-      if (!row.isFreeItem) {
-        this.$emit('applyPricingRule');
-      }
-    },
-  },
+				if (hasManualDiscount) {
+					this.row.set("setItemDiscountAmount", true);
+					this.row.set("itemDiscountAmount", manualDiscountAmount);
+				} else if (isPercentageDiscount) {
+					this.row.set("setItemDiscountAmount", false);
+					this.row.set("itemDiscountPercent", manualDiscountPercent);
+				}
+			}
+		},
+		async removeAddedItem(row: SalesInvoiceItem) {
+			this.row.parentdoc?.remove("items", row?.idx as number);
+			this.row.runFormulas();
+			if (!row.isFreeItem) {
+				this.$emit("applyPricingRule");
+			}
+		},
+	},
 });
 </script>

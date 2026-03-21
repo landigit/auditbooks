@@ -82,38 +82,38 @@
 </template>
 
 <script lang="ts">
-import FloatingLabelInputBase from './FloatingLabelInputBase.vue';
-import { safeParsePesa } from 'utils/index';
-import { isPesa } from 'fyo/utils';
-import { fyo } from 'src/initFyo';
-import { defineComponent } from 'vue';
-import { Money } from 'pesa';
+import { isPesa } from "fyo/utils";
+import type { Money } from "pesa";
+import { fyo } from "src/initFyo";
+import { safeParsePesa } from "utils/index";
+import { defineComponent } from "vue";
+import FloatingLabelInputBase from "./FloatingLabelInputBase.vue";
 
 export default defineComponent({
-  name: 'FloatingLabelCurrencyInput',
-  extends: FloatingLabelInputBase,
-  computed: {
-    currency(): string | undefined {
-      if (this.value) {
-        return (this.value as Money).getCurrency();
-      }
-    },
-  },
-  methods: {
-    round(v: unknown) {
-      if (!isPesa(v)) {
-        v = this.parse(v);
-      }
+	name: "FloatingLabelCurrencyInput",
+	extends: FloatingLabelInputBase,
+	computed: {
+		currency(): string | undefined {
+			if (this.value) {
+				return (this.value as Money).getCurrency();
+			}
+		},
+	},
+	methods: {
+		round(v: unknown) {
+			if (!isPesa(v)) {
+				v = this.parse(v);
+			}
 
-      if (isPesa(v)) {
-        return v.round();
-      }
+			if (isPesa(v)) {
+				return v.round();
+			}
 
-      return fyo.pesa(0).round();
-    },
-    parse(value: unknown): Money {
-      return safeParsePesa(value, this.fyo);
-    },
-  },
+			return fyo.pesa(0).round();
+		},
+		parse(value: unknown): Money {
+			return safeParsePesa(value, this.fyo);
+		},
+	},
 });
 </script>

@@ -68,73 +68,74 @@
   </div>
 </template>
 <script lang="ts">
-import { Field } from 'schemas/types';
-import { fyo } from 'src/initFyo';
-import { getDataURL } from 'src/utils/misc';
-import { defineComponent, PropType } from 'vue';
-import FeatherIcon from '../FeatherIcon.vue';
-import Base from './Base.vue';
+import type { Field } from "schemas/types";
+import { fyo } from "src/initFyo";
+import { getDataURL } from "src/utils/misc";
+import { defineComponent, type PropType } from "vue";
+import FeatherIcon from "../FeatherIcon.vue";
+import Base from "./Base.vue";
 
 const mime_types: Record<string, string> = {
-  png: 'image/png',
-  jpg: 'image/jpeg',
-  jpeg: 'image/jpeg',
-  webp: 'image/webp',
-  svg: 'image/svg+xml',
+	png: "image/png",
+	jpg: "image/jpeg",
+	jpeg: "image/jpeg",
+	webp: "image/webp",
+	svg: "image/svg+xml",
 };
 
 export default defineComponent({
-  name: 'AttachImage',
-  components: { FeatherIcon },
-  extends: Base,
-  props: {
-    letterPlaceholder: { type: String, default: '' },
-    value: { type: String, default: '' },
-    df: { type: Object as PropType<Field> },
-  },
-  computed: {
-    imageSizeStyle() {
-      if (this.size === 'form') {
-        return { width: '135px', height: '135px' };
-      }
-      return {};
-    },
-    shouldClear() {
-      return !!this.value;
-    },
-  },
-  methods: {
-    async handleClick() {
-      if (this.value) {
-        return await this.clearImage();
-      }
-      return await this.selectImage();
-    },
-    async clearImage() {
-      // @ts-ignore
-      this.triggerChange(null);
-    },
-    async selectImage() {
-      if (this.isReadOnly) {
-        return;
-      }
-      const options = {
-        title: fyo.t`Select Image`,
-        filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
-      };
+	name: "AttachImage",
+	components: { FeatherIcon },
+	extends: Base,
+	props: {
+		letterPlaceholder: { type: String, default: "" },
+		value: { type: String, default: "" },
+		df: { type: Object as PropType<Field> },
+	},
+	computed: {
+		imageSizeStyle() {
+			if (this.size === "form") {
+				return { width: "135px", height: "135px" };
+			}
+			return {};
+		},
+		shouldClear() {
+			return !!this.value;
+		},
+	},
+	methods: {
+		async handleClick() {
+			if (this.value) {
+				return await this.clearImage();
+			}
+			return await this.selectImage();
+		},
+		async clearImage() {
+			// @ts-expect-error
+			this.triggerChange(null);
+		},
+		async selectImage() {
+			if (this.isReadOnly) {
+				return;
+			}
+			const options = {
+				title: fyo.t`Select Image`,
+				filters: [{ name: "Image", extensions: Object.keys(mime_types) }],
+			};
 
-      const { name, success, data } = await ipc.selectFile(options);
+			const { name, success, data } =
+				await window.auditbooksIpc.selectFile(options);
 
-      if (!success) {
-        return;
-      }
-      const extension = name.split('.').at(-1);
-      const type = mime_types[extension];
-      const dataURL = await getDataURL(type, data);
+			if (!success) {
+				return;
+			}
+			const extension = name.split(".").at(-1);
+			const type = mime_types[extension];
+			const dataURL = await getDataURL(type, data);
 
-      // @ts-ignore
-      this.triggerChange(dataURL);
-    },
-  },
+			// @ts-expect-error
+			this.triggerChange(dataURL);
+		},
+	},
 });
 </script>

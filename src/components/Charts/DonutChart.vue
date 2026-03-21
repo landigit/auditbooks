@@ -3,6 +3,7 @@
     <svg
       version="1.1"
       viewBox="0 0 100 100"
+      class="w-full"
       @mouseleave="$emit('change', null)"
     >
       <defs>
@@ -90,79 +91,79 @@
 
 <script>
 export default {
-  props: {
-    sectors: {
-      default: () => [],
-      type: Array,
-    },
-    totalLabel: { default: 'Total', type: String },
-    radius: { default: 36, type: Number },
-    startAngle: { default: Math.PI, type: Number },
-    thickness: { default: 10, type: Number },
-    active: { default: null, type: Number },
-    valueFormatter: { default: (v) => v.toString(), Function },
-    offsetX: { default: 0, type: Number },
-    offsetY: { default: 0, type: Number },
-    textOffsetX: { default: 0, type: Number },
-    textOffsetY: { default: 0, type: Number },
-    darkMode: { type: Boolean, default: false },
-  },
-  emits: ['change'],
-  computed: {
-    cx() {
-      return 50 + this.offsetX;
-    },
-    cy() {
-      return 50 + this.offsetY;
-    },
-    totalValue() {
-      return this.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0);
-    },
-    thetasAndStarts() {
-      const thetas = this.sectors
-        .map(({ value }, i) => ({
-          value: (2 * Math.PI * value) / this.totalValue,
-          filterOut: value !== 0,
-          i,
-        }))
-        .filter(({ filterOut }) => filterOut);
+	props: {
+		sectors: {
+			default: () => [],
+			type: Array,
+		},
+		totalLabel: { default: "Total", type: String },
+		radius: { default: 36, type: Number },
+		startAngle: { default: Math.PI, type: Number },
+		thickness: { default: 10, type: Number },
+		active: { default: null, type: Number },
+		valueFormatter: { default: (v) => v.toString(), Function },
+		offsetX: { default: 0, type: Number },
+		offsetY: { default: 0, type: Number },
+		textOffsetX: { default: 0, type: Number },
+		textOffsetY: { default: 0, type: Number },
+		darkMode: { type: Boolean, default: false },
+	},
+	emits: ["change"],
+	computed: {
+		cx() {
+			return 50 + this.offsetX;
+		},
+		cy() {
+			return 50 + this.offsetY;
+		},
+		totalValue() {
+			return this.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0);
+		},
+		thetasAndStarts() {
+			const thetas = this.sectors
+				.map(({ value }, i) => ({
+					value: (2 * Math.PI * value) / this.totalValue,
+					filterOut: value !== 0,
+					i,
+				}))
+				.filter(({ filterOut }) => filterOut);
 
-      const starts = [...thetas.map(({ value }) => value)];
-      starts.forEach(({ value }, i) => {
-        starts[i] += starts[i - 1] ?? 0;
-      });
+			const starts = [...thetas.map(({ value }) => value)];
+			starts.forEach((_, i) => {
+				starts[i] += starts[i - 1] ?? 0;
+			});
 
-      starts.unshift(0);
-      starts.pop();
+			starts.unshift(0);
+			starts.pop();
 
-      return thetas.map((t, i) => [t.i, t.value, starts[i]]);
-    },
-    hasNonZeroValues() {
-      return this.thetasAndStarts.some((t) => this.sectors[t[0]].value !== 0);
-    },
-  },
-  methods: {
-    getArcPath(...args) {
-      let [cx, cy, r, start, theta] = args.map(parseFloat);
+			return thetas.map((t, i) => [t.i, t.value, starts[i]]);
+		},
+		hasNonZeroValues() {
+			return this.thetasAndStarts.some((t) => this.sectors[t[0]].value !== 0);
+		},
+	},
+	methods: {
+		getArcPath(...args) {
+			let [cx, cy, r, start, theta] = args.map(parseFloat);
 
-      start += parseFloat(this.startAngle);
-      const startX = cx + r * Math.cos(start);
-      const startY = cy + r * Math.sin(start);
-      const endX = cx + r * Math.cos(start + theta);
-      const endY = cy + r * Math.sin(start + theta);
-      const largeArcFlag = theta > Math.PI ? 1 : 0;
-      const sweepFlag = 1;
+			start += parseFloat(this.startAngle);
+			const startX = cx + r * Math.cos(start);
+			const startY = cy + r * Math.sin(start);
+			const endX = cx + r * Math.cos(start + theta);
+			const endY = cy + r * Math.sin(start + theta);
+			const largeArcFlag = theta > Math.PI ? 1 : 0;
+			const sweepFlag = 1;
 
-      return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
-    },
-    getSectorColor(index) {
-      if (this.darkMode) {
-        return this.sectors[index].color.darkColor;
-      } else {
-        return this.sectors[index].color.color;
-      }
-    },
-  },
+			return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
+		},
+		getSectorColor(index) {
+			if (this.darkMode) {
+				return this.sectors[index].color.darkColor;
+			} else {
+				return this.sectors[index].color.color;
+			}
+		},
+	},
 };
 </script>
 

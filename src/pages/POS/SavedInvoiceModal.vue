@@ -117,138 +117,138 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Row from 'src/components/Row.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
-import { ModelNameEnum } from 'models/types';
-import { Field } from 'schemas/types';
-import { Money } from 'pesa';
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { ModelNameEnum } from "models/types";
+import type { Money } from "pesa";
+import type { Field } from "schemas/types";
+import Button from "src/components/Button.vue";
+import FormControl from "src/components/Controls/FormControl.vue";
+import Modal from "src/components/Modal.vue";
+import Row from "src/components/Row.vue";
+import { defineComponent, inject } from "vue";
 
 export default defineComponent({
-  name: 'SavedInvoiceModal',
-  components: {
-    Modal,
-    Button,
-    FormControl,
-    Row,
-  },
-  props: {
-    modalStatus: Boolean,
-  },
-  emits: ['toggleModal', 'selectedInvoiceName'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  data() {
-    return {
-      savedInvoiceList: true,
-      savedInvoices: [] as SalesInvoice[],
-      submittedInvoices: [] as SalesInvoice[],
-      invoiceSearchTerm: '',
-    };
-  },
-  computed: {
-    ratio() {
-      return [1, 1, 1, 0.8];
-    },
-    tableFields() {
-      return [
-        {
-          fieldname: 'name',
-          label: 'Name',
-          fieldtype: 'Link',
-          target: 'SalesInvoice',
-          readOnly: true,
-        },
-        {
-          fieldname: 'party',
-          fieldtype: 'Link',
-          label: 'Customer',
-          target: 'Party',
-          placeholder: 'Customer',
-          readOnly: true,
-        },
-        {
-          fieldname: 'date',
-          label: 'Date',
-          fieldtype: 'Date',
-          readOnly: true,
-        },
-        {
-          fieldname: 'grandTotal',
-          label: 'Grand Total',
-          fieldtype: 'Currency',
-          readOnly: true,
-        },
-      ] as Field[];
-    },
-    filteredInvoices() {
-      const invoices = this.savedInvoiceList
-        ? this.savedInvoices
-        : this.submittedInvoices;
-      return invoices.filter((invoice) =>
-        (invoice.name as string)
-          .toLowerCase()
-          .includes(this.invoiceSearchTerm.toLowerCase())
-      );
-    },
-  },
-  watch: {
-    async modalStatus(newVal) {
-      if (newVal) {
-        await this.setSavedInvoices();
-        await this.setSubmittedInvoices();
-      }
-    },
-  },
-  async mounted() {
-    await this.setSavedInvoices();
-    await this.setSubmittedInvoices();
-  },
-  async activated() {
-    await this.setSavedInvoices();
-    await this.setSubmittedInvoices();
-  },
+	name: "SavedInvoiceModal",
+	components: {
+		Modal,
+		Button,
+		FormControl,
+		Row,
+	},
+	props: {
+		modalStatus: Boolean,
+	},
+	emits: ["toggleModal", "selectedInvoiceName"],
+	setup() {
+		return {
+			sinvDoc: inject("sinvDoc") as SalesInvoice,
+		};
+	},
+	data() {
+		return {
+			savedInvoiceList: true,
+			savedInvoices: [] as SalesInvoice[],
+			submittedInvoices: [] as SalesInvoice[],
+			invoiceSearchTerm: "",
+		};
+	},
+	computed: {
+		ratio() {
+			return [1, 1, 1, 0.8];
+		},
+		tableFields() {
+			return [
+				{
+					fieldname: "name",
+					label: "Name",
+					fieldtype: "Link",
+					target: "SalesInvoice",
+					readOnly: true,
+				},
+				{
+					fieldname: "party",
+					fieldtype: "Link",
+					label: "Customer",
+					target: "Party",
+					placeholder: "Customer",
+					readOnly: true,
+				},
+				{
+					fieldname: "date",
+					label: "Date",
+					fieldtype: "Date",
+					readOnly: true,
+				},
+				{
+					fieldname: "grandTotal",
+					label: "Grand Total",
+					fieldtype: "Currency",
+					readOnly: true,
+				},
+			] as Field[];
+		},
+		filteredInvoices() {
+			const invoices = this.savedInvoiceList
+				? this.savedInvoices
+				: this.submittedInvoices;
+			return invoices.filter((invoice) =>
+				(invoice.name as string)
+					.toLowerCase()
+					.includes(this.invoiceSearchTerm.toLowerCase()),
+			);
+		},
+	},
+	watch: {
+		async modalStatus(newVal) {
+			if (newVal) {
+				await this.setSavedInvoices();
+				await this.setSubmittedInvoices();
+			}
+		},
+	},
+	async mounted() {
+		await this.setSavedInvoices();
+		await this.setSubmittedInvoices();
+	},
+	async activated() {
+		await this.setSavedInvoices();
+		await this.setSubmittedInvoices();
+	},
 
-  methods: {
-    async setSavedInvoices() {
-      this.savedInvoices = (await this.fyo.db.getAll(
-        ModelNameEnum.SalesInvoice,
-        {
-          fields: [],
-          filters: { isPOS: true, submitted: false },
-        }
-      )) as SalesInvoice[];
-    },
-    async setSubmittedInvoices() {
-      const invoices = (await this.fyo.db.getAll(ModelNameEnum.SalesInvoice, {
-        fields: [],
-        filters: { isPOS: true, submitted: true, returnAgainst: null },
-      })) as SalesInvoice[];
+	methods: {
+		async setSavedInvoices() {
+			this.savedInvoices = (await this.fyo.db.getAll(
+				ModelNameEnum.SalesInvoice,
+				{
+					fields: [],
+					filters: { isPOS: true, submitted: false },
+				},
+			)) as SalesInvoice[];
+		},
+		async setSubmittedInvoices() {
+			const invoices = (await this.fyo.db.getAll(ModelNameEnum.SalesInvoice, {
+				fields: [],
+				filters: { isPOS: true, submitted: true, returnAgainst: null },
+			})) as SalesInvoice[];
 
-      this.submittedInvoices = invoices.filter(
-        (invoice) => !(invoice.outstandingAmount as Money).isZero()
-      );
-    },
-    async selectedInvoice(row: SalesInvoice) {
-      let selectedInvoiceDoc = (await this.fyo.doc.getDoc(
-        ModelNameEnum.SalesInvoice,
-        row.name
-      )) as SalesInvoice;
+			this.submittedInvoices = invoices.filter(
+				(invoice) => !(invoice.outstandingAmount as Money).isZero(),
+			);
+		},
+		async selectedInvoice(row: SalesInvoice) {
+			let selectedInvoiceDoc = (await this.fyo.doc.getDoc(
+				ModelNameEnum.SalesInvoice,
+				row.name,
+			)) as SalesInvoice;
 
-      this.sinvDoc = selectedInvoiceDoc;
-      this.$emit('toggleModal', 'SavedInvoice');
-    },
-    handleEnterKey() {
-      if (this.filteredInvoices.length === 1) {
-        this.$emit('selectedInvoiceName', this.filteredInvoices[0]);
-      }
-    },
-  },
+			this.sinvDoc = selectedInvoiceDoc;
+			this.$emit("toggleModal", "SavedInvoice");
+		},
+		handleEnterKey() {
+			if (this.filteredInvoices.length === 1) {
+				this.$emit("selectedInvoiceName", this.filteredInvoices[0]);
+			}
+		},
+	},
 });
 </script>

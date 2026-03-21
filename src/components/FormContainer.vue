@@ -35,7 +35,7 @@
         :class="
           useFullWidth
             ? 'w-full border-t dark:border-gray-800'
-            : 'w-form border dark:border-gray-800 rounded-lg shadow-lg mb-4 mx-4'
+            : 'w-full max-w-[var(--w-form)] border dark:border-gray-800 rounded-lg shadow-lg mb-4 mx-4'
         "
       >
         <slot name="body" />
@@ -47,16 +47,16 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import PageHeader from './PageHeader.vue';
+import { defineComponent } from "vue";
+import PageHeader from "./PageHeader.vue";
 
 export default defineComponent({
-  components: { PageHeader },
-  props: {
-    title: { type: String, default: '' },
-    useFullWidth: { type: Boolean, default: false },
-    showHeader: { type: Boolean, default: true },
-    searchborder: { type: Boolean, default: true },
-  },
+	components: { PageHeader },
+	props: {
+		title: { type: String, default: "" },
+		useFullWidth: { type: Boolean, default: false },
+		showHeader: { type: Boolean, default: true },
+		searchborder: { type: Boolean, default: true },
+	},
 });
 </script>

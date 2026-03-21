@@ -75,56 +75,56 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Base from './Base.vue';
+import { defineComponent } from "vue";
+import Base from "./Base.vue";
 
 export default defineComponent({
-  name: 'Check',
-  extends: Base,
-  props: {
-    spaceBetween: {
-      default: false,
-      type: Boolean,
-    },
-    labelRight: {
-      default: true,
-      type: Boolean,
-    },
-    labelClass: String,
-  },
-  emits: ['focus'],
-  data() {
-    return {
-      offColor: '#0000',
-      color: '#A1ABB4',
-    };
-  },
-  computed: {
-    labelClasses() {
-      if (this.labelClass) {
-        return this.labelClass;
-      }
+	name: "Check",
+	extends: Base,
+	props: {
+		spaceBetween: {
+			default: false,
+			type: Boolean,
+		},
+		labelRight: {
+			default: true,
+			type: Boolean,
+		},
+		labelClass: String,
+	},
+	emits: ["focus"],
+	data() {
+		return {
+			offColor: "#0000",
+			color: "#A1ABB4",
+		};
+	},
+	computed: {
+		labelClasses() {
+			if (this.labelClass) {
+				return this.labelClass;
+			}
 
-      return 'text-gray-600 text-base';
-    },
-  },
-  methods: {
-    getChecked(value: unknown) {
-      return Boolean(value);
-    },
-    onChange(e: Event) {
-      if (this.isReadOnly) {
-        return;
-      }
+			return "text-gray-600 text-base";
+		},
+	},
+	methods: {
+		getChecked(value: unknown) {
+			return Boolean(value);
+		},
+		onChange(e: Event) {
+			if (this.isReadOnly) {
+				return;
+			}
 
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
+			const target = e.target;
+			if (!(target instanceof HTMLInputElement)) {
+				return;
+			}
 
-      this.triggerChange(target.checked);
-    },
-  },
+			this.triggerChange(target.checked);
+		},
+	},
 });
 </script>
 

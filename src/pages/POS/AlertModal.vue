@@ -50,20 +50,20 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import { defineComponent } from 'vue';
-import { routeTo } from 'src/utils/ui';
+import Button from "src/components/Button.vue";
+import Modal from "src/components/Modal.vue";
+import { routeTo } from "src/utils/ui";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'AlertModal',
-  components: {
-    Modal,
-    Button,
-  },
-  emits: ['toggleModal', 'saveAndContinue'],
-  methods: {
-    routeTo,
-  },
+	name: "AlertModal",
+	components: {
+		Modal,
+		Button,
+	},
+	emits: ["toggleModal", "saveAndContinue"],
+	methods: {
+		routeTo,
+	},
 });
 </script>

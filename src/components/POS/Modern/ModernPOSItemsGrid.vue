@@ -102,35 +102,35 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { POSItem } from '../types';
+import { defineComponent } from "vue";
+import type { POSItem } from "../types";
 
 export default defineComponent({
-  name: 'ModernPOSItemsGrid',
-  emits: ['addItem', 'updateValues'],
-  props: {
-    items: {
-      type: Array,
-    },
-    itemQtyMap: {
-      type: Object,
-    },
-    itemVisibility: {
-      type: String,
-      default: 'Inventory Items',
-    },
-  },
-  methods: {
-    getExtractedWords(item: string) {
-      const initials = item.split(' ').map((word) => {
-        return word[0].toUpperCase();
-      });
-      return initials.join('');
-    },
-    handleChange(value: POSItem) {
-      this.$emit('addItem', value);
-      this.$emit('updateValues');
-    },
-  },
+	name: "ModernPOSItemsGrid",
+	emits: ["addItem", "updateValues"],
+	props: {
+		items: {
+			type: Array,
+		},
+		itemQtyMap: {
+			type: Object,
+		},
+		itemVisibility: {
+			type: String,
+			default: "Inventory Items",
+		},
+	},
+	methods: {
+		getExtractedWords(item: string) {
+			const initials = item.split(" ").map((word) => {
+				return word[0].toUpperCase();
+			});
+			return initials.join("");
+		},
+		handleChange(value: POSItem) {
+			this.$emit("addItem", value);
+			this.$emit("updateValues");
+		},
+	},
 });
 </script>

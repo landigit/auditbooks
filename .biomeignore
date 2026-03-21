@@ -1,0 +1,15 @@
+dist_electron/
+quasar.config.js.temporary.*mjs
+.quasar/
+node_modules/
+dist/
+.output/
+.nuxt/
+.pnpm-store/
+.yarn/
+templates/
+src/css/**
+src/css/*.css
+**/*.html
+**/*.template.html
+backend/

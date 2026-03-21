@@ -99,167 +99,167 @@
   </Popover>
 </template>
 <script lang="ts">
-import { Doc } from 'fyo/model/doc';
-import { Field } from 'schemas/types';
-import { fyo } from 'src/initFyo';
-import { DropdownItem } from 'src/utils/types';
-import { defineComponent, PropType } from 'vue';
-import Popover from './Popover.vue';
+import type { Doc } from "fyo/model/doc";
+import type { Field } from "schemas/types";
+import { fyo } from "src/initFyo";
+import type { DropdownItem } from "src/utils/types";
+import { defineComponent, type PropType } from "vue";
+import Popover from "./Popover.vue";
 
 export default defineComponent({
-  name: 'Dropdown',
-  components: {
-    Popover,
-  },
-  props: {
-    items: {
-      type: Array as PropType<DropdownItem[]>,
-      default: () => [],
-    },
-    right: {
-      type: Boolean,
-      default: false,
-    },
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-    df: {
-      type: Object as PropType<Field | null>,
-      default: null,
-    },
-    doc: {
-      type: Object as PropType<Doc | null>,
-      default: null,
-    },
-  },
-  data() {
-    return {
-      isShown: false,
-      highlightedIndex: -1,
-    };
-  },
-  computed: {
-    dropdownItems(): DropdownItem[] {
-      const groupedItems = getGroupedItems(this.items ?? []);
-      const groupNames = Object.keys(groupedItems).filter(Boolean).sort();
+	name: "Dropdown",
+	components: {
+		Popover,
+	},
+	props: {
+		items: {
+			type: Array as PropType<DropdownItem[]>,
+			default: () => [],
+		},
+		right: {
+			type: Boolean,
+			default: false,
+		},
+		isLoading: {
+			type: Boolean,
+			default: false,
+		},
+		df: {
+			type: Object as PropType<Field | null>,
+			default: null,
+		},
+		doc: {
+			type: Object as PropType<Doc | null>,
+			default: null,
+		},
+	},
+	data() {
+		return {
+			isShown: false,
+			highlightedIndex: -1,
+		};
+	},
+	computed: {
+		dropdownItems(): DropdownItem[] {
+			const groupedItems = getGroupedItems(this.items ?? []);
+			const groupNames = Object.keys(groupedItems).filter(Boolean).sort();
 
-      const items: DropdownItem[] = groupedItems[''] ?? [];
-      for (let group of groupNames) {
-        items.push({
-          label: group,
-          isGroup: true,
-        });
+			const items: DropdownItem[] = groupedItems[""] ?? [];
+			for (let group of groupNames) {
+				items.push({
+					label: group,
+					isGroup: true,
+				});
 
-        const grouped = groupedItems[group] ?? [];
-        items.push(...grouped);
-      }
+				const grouped = groupedItems[group] ?? [];
+				items.push(...grouped);
+			}
 
-      return items;
-    },
-  },
-  watch: {
-    highlightedIndex() {
-      this.scrollToHighlighted();
-    },
-    dropdownItems() {
-      const maxed = Math.max(this.highlightedIndex, -1);
-      this.highlightedIndex = Math.min(maxed, this.dropdownItems.length - 1);
-    },
-  },
-  methods: {
-    getEmptyMessage(): string {
-      const { schemaName, fieldname } = this.df ?? {};
-      if (!schemaName || !fieldname || !this.doc) {
-        return this.t`Empty`;
-      }
+			return items;
+		},
+	},
+	watch: {
+		highlightedIndex() {
+			this.scrollToHighlighted();
+		},
+		dropdownItems() {
+			const maxed = Math.max(this.highlightedIndex, -1);
+			this.highlightedIndex = Math.min(maxed, this.dropdownItems.length - 1);
+		},
+	},
+	methods: {
+		getEmptyMessage(): string {
+			const { schemaName, fieldname } = this.df ?? {};
+			if (!schemaName || !fieldname || !this.doc) {
+				return this.t`Empty`;
+			}
 
-      const emptyMessage = fyo.models[schemaName]?.emptyMessages[fieldname]?.(
-        this.doc
-      );
+			const emptyMessage = fyo.models[schemaName]?.emptyMessages[fieldname]?.(
+				this.doc,
+			);
 
-      if (!emptyMessage) {
-        return this.t`Empty`;
-      }
+			if (!emptyMessage) {
+				return this.t`Empty`;
+			}
 
-      return emptyMessage;
-    },
-    async selectItem(d?: DropdownItem): Promise<void> {
-      if (!d || !d?.action) {
-        return;
-      }
+			return emptyMessage;
+		},
+		async selectItem(d?: DropdownItem): Promise<void> {
+			if (!d || !d?.action) {
+				return;
+			}
 
-      if (this.doc) {
-        await d.action(this.doc, this.$router);
-      } else {
-        await d.action();
-      }
+			if (this.doc) {
+				await d.action(this.doc, this.$router);
+			} else {
+				await d.action();
+			}
 
-      this.toggleDropdown(false);
-    },
-    toggleDropdown(flag?: boolean): void {
-      if (typeof flag !== 'boolean') {
-        flag = !this.isShown;
-      }
+			this.toggleDropdown(false);
+		},
+		toggleDropdown(flag?: boolean): void {
+			if (typeof flag !== "boolean") {
+				flag = !this.isShown;
+			}
 
-      this.isShown = flag;
-    },
-    async selectHighlightedItem(): Promise<void> {
-      let item = this.dropdownItems[this.highlightedIndex];
-      if (!item) {
-        if (this.dropdownItems.length === 1) {
-          item = this.dropdownItems[0];
-        } else {
-          return;
-        }
-      }
+			this.isShown = flag;
+		},
+		async selectHighlightedItem(): Promise<void> {
+			let item = this.dropdownItems[this.highlightedIndex];
+			if (!item) {
+				if (this.dropdownItems.length === 1) {
+					item = this.dropdownItems[0];
+				} else {
+					return;
+				}
+			}
 
-      if (item.isGroup) {
-        return;
-      }
+			if (item.isGroup) {
+				return;
+			}
 
-      return await this.selectItem(item);
-    },
-    highlightItemUp(e?: Event): void {
-      e?.preventDefault();
+			return await this.selectItem(item);
+		},
+		highlightItemUp(e?: Event): void {
+			e?.preventDefault();
 
-      this.highlightedIndex = Math.max(0, this.highlightedIndex - 1);
-    },
-    highlightItemDown(e?: Event): void {
-      e?.preventDefault();
+			this.highlightedIndex = Math.max(0, this.highlightedIndex - 1);
+		},
+		highlightItemDown(e?: Event): void {
+			e?.preventDefault();
 
-      this.highlightedIndex = Math.min(
-        this.dropdownItems.length - 1,
-        this.highlightedIndex + 1
-      );
-    },
-    scrollToHighlighted(): void {
-      const elems = this.$refs.items;
-      if (!Array.isArray(elems)) {
-        return;
-      }
+			this.highlightedIndex = Math.min(
+				this.dropdownItems.length - 1,
+				this.highlightedIndex + 1,
+			);
+		},
+		scrollToHighlighted(): void {
+			const elems = this.$refs.items;
+			if (!Array.isArray(elems)) {
+				return;
+			}
 
-      const highlightedElement = elems[this.highlightedIndex];
-      if (!(highlightedElement instanceof Element)) {
-        return;
-      }
+			const highlightedElement = elems[this.highlightedIndex];
+			if (!(highlightedElement instanceof Element)) {
+				return;
+			}
 
-      highlightedElement.scrollIntoView({ block: 'nearest' });
-    },
-  },
+			highlightedElement.scrollIntoView({ block: "nearest" });
+		},
+	},
 });
 
 function getGroupedItems(
-  items: DropdownItem[]
+	items: DropdownItem[],
 ): Record<string, DropdownItem[]> {
-  const groupedItems: Record<string, DropdownItem[]> = {};
-  for (let item of items) {
-    const group = item.group ?? '';
+	const groupedItems: Record<string, DropdownItem[]> = {};
+	for (let item of items) {
+		const group = item.group ?? "";
 
-    groupedItems[group] ??= [];
-    groupedItems[group].push(item);
-  }
+		groupedItems[group] ??= [];
+		groupedItems[group].push(item);
+	}
 
-  return groupedItems;
+	return groupedItems;
 }
 </script>

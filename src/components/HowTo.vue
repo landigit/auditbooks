@@ -9,21 +9,21 @@
   </button>
 </template>
 <script>
-import FeatherIcon from './FeatherIcon.vue';
+import FeatherIcon from "./FeatherIcon.vue";
 
 export default {
-  components: { FeatherIcon },
-  props: {
-    link: String,
-    icon: {
-      default: true,
-      type: Boolean,
-    },
-  },
-  methods: {
-    openHelpLink() {
-      ipc.openLink(this.link);
-    },
-  },
+	components: { FeatherIcon },
+	props: {
+		link: String,
+		icon: {
+			default: true,
+			type: Boolean,
+		},
+	},
+	methods: {
+		openHelpLink() {
+			window.auditbooksIpc.openLink(this.link);
+		},
+	},
 };
 </script>

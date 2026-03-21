@@ -42,70 +42,70 @@
   </div>
 </template>
 <script lang="ts">
-import { PrintTemplate } from 'models/baseModels/PrintTemplate';
-import { OptionField } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import Float from 'src/components/Controls/Float.vue';
-import Select from 'src/components/Controls/Select.vue';
-import FormHeader from 'src/components/FormHeader.vue';
-import { paperSizeMap, printSizes } from 'src/utils/ui';
-import { defineComponent } from 'vue';
+import { PrintTemplate } from "models/baseModels/PrintTemplate";
+import type { OptionField } from "schemas/types";
+import Button from "src/components/Button.vue";
+import Float from "src/components/Controls/Float.vue";
+import Select from "src/components/Controls/Select.vue";
+import FormHeader from "src/components/FormHeader.vue";
+import { paperSizeMap, printSizes } from "src/utils/ui";
+import { defineComponent } from "vue";
 
-type SizeName = typeof printSizes[number];
+type SizeName = (typeof printSizes)[number];
 export default defineComponent({
-  components: { Float, FormHeader, Select, Button },
-  props: { doc: { type: PrintTemplate, required: true } },
-  emits: ['done'],
-  data() {
-    return { size: 'A4', width: 21, height: 29.7 };
-  },
-  computed: {
-    df(): OptionField {
-      return {
-        label: 'Page Size',
-        fieldname: 'size',
-        fieldtype: 'Select',
-        options: printSizes.map((value) => ({ value, label: value })),
-        default: 'A4',
-      };
-    },
-  },
-  mounted() {
-    this.width = this.doc.width ?? 21;
-    this.height = this.doc.height ?? 29.7;
+	components: { Float, FormHeader, Select, Button },
+	props: { doc: { type: PrintTemplate, required: true } },
+	emits: ["done"],
+	data() {
+		return { size: "A4", width: 21, height: 29.7 };
+	},
+	computed: {
+		df(): OptionField {
+			return {
+				label: "Page Size",
+				fieldname: "size",
+				fieldtype: "Select",
+				options: printSizes.map((value) => ({ value, label: value })),
+				default: "A4",
+			};
+		},
+	},
+	mounted() {
+		this.width = this.doc.width ?? 21;
+		this.height = this.doc.height ?? 29.7;
 
-    this.size = '';
-    Object.entries(paperSizeMap).forEach(([name, { width, height }]) => {
-      if (this.width === width && this.height === height) {
-        this.size = name;
-      }
-    });
+		this.size = "";
+		Object.entries(paperSizeMap).forEach(([name, { width, height }]) => {
+			if (this.width === width && this.height === height) {
+				this.size = name;
+			}
+		});
 
-    this.size ||= 'Custom';
-  },
-  methods: {
-    sizeChange(v: string) {
-      const size = paperSizeMap[v as SizeName];
-      if (!size) {
-        return;
-      }
+		this.size ||= "Custom";
+	},
+	methods: {
+		sizeChange(v: string) {
+			const size = paperSizeMap[v as SizeName];
+			if (!size) {
+				return;
+			}
 
-      this.height = size.height;
-      this.width = size.width;
-    },
-    valueChange(v: number, name: 'width' | 'height') {
-      if (this[name] === v) {
-        return;
-      }
+			this.height = size.height;
+			this.width = size.width;
+		},
+		valueChange(v: number, name: "width" | "height") {
+			if (this[name] === v) {
+				return;
+			}
 
-      this.size = 'Custom';
-      this[name] = v;
-    },
-    async done() {
-      await this.doc.set('width', this.width);
-      await this.doc.set('height', this.height);
-      this.$emit('done');
-    },
-  },
+			this.size = "Custom";
+			this[name] = v;
+		},
+		async done() {
+			await this.doc.set("width", this.width);
+			await this.doc.set("height", this.height);
+			this.$emit("done");
+		},
+	},
 });
 </script>

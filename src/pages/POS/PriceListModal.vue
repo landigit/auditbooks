@@ -62,52 +62,52 @@
 </template>
 
 <script lang="ts">
-import { t } from 'fyo';
-import Modal from 'src/components/Modal.vue';
-import { defineComponent, inject } from 'vue';
-import Button from 'src/components/Button.vue';
-import { showToast } from 'src/utils/interactive';
-import Link from 'src/components/Controls/Link.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { t } from "fyo";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import Button from "src/components/Button.vue";
+import Link from "src/components/Controls/Link.vue";
+import Modal from "src/components/Modal.vue";
+import { showToast } from "src/utils/interactive";
+import { defineComponent, inject } from "vue";
 
 export default defineComponent({
-  name: 'PriceListModal',
-  components: {
-    Link,
-    Modal,
-    Button,
-  },
-  emits: ['toggleModal'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  methods: {
-    async removePriceList() {
-      await this.sinvDoc.set('priceList', '');
-    },
-    async applyPriceList(value?: string) {
-      try {
-        if (!value || value == this.sinvDoc.priceList) {
-          return;
-        }
+	name: "PriceListModal",
+	components: {
+		Link,
+		Modal,
+		Button,
+	},
+	emits: ["toggleModal"],
+	setup() {
+		return {
+			sinvDoc: inject("sinvDoc") as SalesInvoice,
+		};
+	},
+	methods: {
+		async removePriceList() {
+			await this.sinvDoc.set("priceList", "");
+		},
+		async applyPriceList(value?: string) {
+			try {
+				if (!value || value === this.sinvDoc.priceList) {
+					return;
+				}
 
-        await this.sinvDoc.set('priceList', value);
-        this.$emit('toggleModal', 'PriceList');
-      } catch (error) {
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-        });
-      }
-    },
-    cancelPriceList() {
-      this.$emit('toggleModal', 'PriceList');
-    },
-    setPriceList() {
-      this.$emit('toggleModal', 'PriceList');
-    },
-  },
+				await this.sinvDoc.set("priceList", value);
+				this.$emit("toggleModal", "PriceList");
+			} catch (error) {
+				showToast({
+					type: "error",
+					message: t`${error as string}`,
+				});
+			}
+		},
+		cancelPriceList() {
+			this.$emit("toggleModal", "PriceList");
+		},
+		setPriceList() {
+			this.$emit("toggleModal", "PriceList");
+		},
+	},
 });
 </script>

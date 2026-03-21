@@ -107,141 +107,140 @@
   </div>
 </template>
 <script>
-import { Report } from 'reports/Report';
-import { isNumeric } from 'src/utils';
-import { languageDirectionKey } from 'src/utils/injectionKeys';
-import { defineComponent } from 'vue';
-import Paginator from '../Paginator.vue';
-import WithScroll from '../WithScroll.vue';
-import { inject } from 'vue';
+import { Report } from "reports/Report";
+import { isNumeric } from "src/utils";
+import { languageDirectionKey } from "src/utils/injectionKeys";
+import { defineComponent, inject } from "vue";
+import Paginator from "../Paginator.vue";
+import WithScroll from "../WithScroll.vue";
 
 export default defineComponent({
-  components: { Paginator, WithScroll },
-  props: {
-    report: Report,
-  },
-  setup() {
-    return {
-      languageDirection: inject(languageDirectionKey),
-    };
-  },
-  data() {
-    return {
-      wconst: 8,
-      hconst: 48,
-      pageStart: 0,
-      pageEnd: 0,
-    };
-  },
-  computed: {
-    dataSlice() {
-      if (this.report?.usePagination) {
-        return this.report.reportData.slice(this.pageStart, this.pageEnd);
-      }
+	components: { Paginator, WithScroll },
+	props: {
+		report: Report,
+	},
+	setup() {
+		return {
+			languageDirection: inject(languageDirectionKey),
+		};
+	},
+	data() {
+		return {
+			wconst: 8,
+			hconst: 48,
+			pageStart: 0,
+			pageEnd: 0,
+		};
+	},
+	computed: {
+		dataSlice() {
+			if (this.report?.usePagination) {
+				return this.report.reportData.slice(this.pageStart, this.pageEnd);
+			}
 
-      return this.report.reportData;
-    },
-  },
-  methods: {
-    scroll({ scrollLeft }) {
-      this.$refs.titlerow.scrollLeft = scrollLeft;
-    },
-    setPageIndices({ start, end }) {
-      this.pageStart = start;
-      this.pageEnd = end;
-    },
-    onRowClick(clickedRow, r) {
-      if (!clickedRow.isGroup) {
-        return;
-      }
+			return this.report.reportData;
+		},
+	},
+	methods: {
+		scroll({ scrollLeft }) {
+			this.$refs.titlerow.scrollLeft = scrollLeft;
+		},
+		setPageIndices({ start, end }) {
+			this.pageStart = start;
+			this.pageEnd = end;
+		},
+		onRowClick(clickedRow, r) {
+			if (!clickedRow.isGroup) {
+				return;
+			}
 
-      r += 1;
-      clickedRow.foldedBelow = !clickedRow.foldedBelow;
-      const folded = clickedRow.foldedBelow;
-      let row = this.dataSlice[r];
+			r += 1;
+			clickedRow.foldedBelow = !clickedRow.foldedBelow;
+			const folded = clickedRow.foldedBelow;
+			let row = this.dataSlice[r];
 
-      while (row && row.level > clickedRow.level) {
-        row.folded = folded;
-        r += 1;
-        row = this.dataSlice[r];
-      }
-    },
-    getCellStyle(cell, i) {
-      const styles = {};
-      const width = cell.width ?? 1;
+			while (row && row.level > clickedRow.level) {
+				row.folded = folded;
+				r += 1;
+				row = this.dataSlice[r];
+			}
+		},
+		getCellStyle(cell, i) {
+			const styles = {};
+			const width = cell.width ?? 1;
 
-      let align = cell.align ?? 'left';
-      if (this.languageDirection === 'rtl') {
-        align = this.languageDirection === 'rtl' ? 'right' : 'left';
-      }
+			let align = cell.align ?? "left";
+			if (this.languageDirection === "rtl") {
+				align = this.languageDirection === "rtl" ? "right" : "left";
+			}
 
-      styles['width'] = `${width * this.wconst}rem`;
-      styles['text-align'] = align;
+			styles.width = `${width * this.wconst}rem`;
+			styles["text-align"] = align;
 
-      if (cell.bold) {
-        styles['font-weight'] = 'bold';
-      }
+			if (cell.bold) {
+				styles["font-weight"] = "bold";
+			}
 
-      if (cell.italics) {
-        styles['font-style'] = 'oblique 15deg';
-      }
+			if (cell.italics) {
+				styles["font-style"] = "oblique 15deg";
+			}
 
-      if (i === 0) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-right'] = '0px';
-        } else {
-          styles['padding-left'] = '0px';
-        }
-      }
+			if (i === 0) {
+				if (this.languageDirection === "rtl") {
+					styles["padding-right"] = "0px";
+				} else {
+					styles["padding-left"] = "0px";
+				}
+			}
 
-      if (!cell.align && isNumeric(cell.fieldtype)) {
-        styles['text-align'] = 'right';
-      }
+			if (!cell.align && isNumeric(cell.fieldtype)) {
+				styles["text-align"] = "right";
+			}
 
-      if (i === this.report.columns.length - 1) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-left'] = '0px';
-        } else {
-          styles['padding-right'] = '0px';
-        }
-      }
+			if (i === this.report.columns.length - 1) {
+				if (this.languageDirection === "rtl") {
+					styles["padding-left"] = "0px";
+				} else {
+					styles["padding-right"] = "0px";
+				}
+			}
 
-      if (cell.indent) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-right'] = `${cell.indent * 2}rem`;
-        } else {
-          styles['padding-left'] = `${cell.indent * 2}rem`;
-        }
-      }
+			if (cell.indent) {
+				if (this.languageDirection === "rtl") {
+					styles["padding-right"] = `${cell.indent * 2}rem`;
+				} else {
+					styles["padding-left"] = `${cell.indent * 2}rem`;
+				}
+			}
 
-      return styles;
-    },
-    getCellColorClass(cell) {
-      if (cell.color === 'red') {
-        return 'text-red-600';
-      } else if (cell.color === 'green') {
-        return 'text-green-600';
-      }
+			return styles;
+		},
+		getCellColorClass(cell) {
+			if (cell.color === "red") {
+				return "text-red-600";
+			} else if (cell.color === "green") {
+				return "text-green-600";
+			}
 
-      if (!cell.rawValue) {
-        return 'text-gray-600 dark:text-gray-400';
-      }
+			if (!cell.rawValue) {
+				return "text-gray-600 dark:text-gray-400";
+			}
 
-      if (typeof cell.rawValue !== 'number') {
-        return 'text-gray-900 dark:text-gray-100';
-      }
+			if (typeof cell.rawValue !== "number") {
+				return "text-gray-900 dark:text-gray-100";
+			}
 
-      if (cell.rawValue === 0) {
-        return 'text-gray-600 dark:text-gray-400';
-      }
+			if (cell.rawValue === 0) {
+				return "text-gray-600 dark:text-gray-400";
+			}
 
-      const prec = this.fyo?.singles?.displayPrecision ?? 2;
-      if (Number(cell.rawValue.toFixed(prec)) === 0) {
-        return 'text-gray-600 dark:text-gray-500';
-      }
+			const prec = this.fyo?.singles?.displayPrecision ?? 2;
+			if (Number(cell.rawValue.toFixed(prec)) === 0) {
+				return "text-gray-600 dark:text-gray-500";
+			}
 
-      return 'text-gray-900 dark:text-gray-300';
-    },
-  },
+			return "text-gray-900 dark:text-gray-300";
+		},
+	},
 });
 </script>

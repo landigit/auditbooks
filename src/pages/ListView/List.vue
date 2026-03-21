@@ -1,122 +1,126 @@
 <template>
   <div class="text-base flex flex-col overflow-hidden">
-    <!-- Title Row -->
-    <div
-      class="flex items-center"
-      :style="{
-        paddingRight: dataSlice.length > 13 ? 'var(--w-scrollbar)' : '',
-      }"
-    >
+    <div class="flex-1 flex flex-col overflow-x-auto overflow-y-hidden">
+      <!-- Title Row -->
       <div
-        v-if="!isSelectionMode"
-        class="w-8 text-end me-2 text-gray-700 dark:text-gray-400"
-      >
-        #
-      </div>
-      <div v-else class="w-8 flex justify-end me-2">
-        <Check
-          :df="{
-            fieldtype: 'Check',
-            fieldname: 'selectAll',
-            label: '',
-          }"
-          :show-label="false"
-          :value="isAllSelected"
-          @change="toggleSelectAll"
-        />
-      </div>
-      <Row
-        class="flex-1 text-gray-700 dark:text-gray-400 h-row-mid"
-        :column-count="columns.length"
-        gap="1rem"
+        class="flex items-center flex-shrink-0"
+        :style="{
+          paddingRight: dataSlice.length > 13 ? 'var(--w-scrollbar)' : '',
+        }"
       >
         <div
-          v-for="(column, i) in columns"
-          :key="column.label"
-          class="
-            overflow-x-auto
-            no-scrollbar
-            whitespace-nowrap
-            h-row
-            items-center
-            flex
-          "
-          :class="{
-            'ms-auto': isNumeric(column.fieldtype),
-            'pe-4': i === columns.length - 1,
-          }"
+          v-if="!isSelectionMode"
+          class="w-10 text-end me-4 text-gray-700 dark:text-gray-400 flex-shrink-0"
         >
-          {{ column.label }}
+          #
         </div>
-      </Row>
-    </div>
-    <hr class="dark:border-gray-800" />
-
-    <!-- Data Rows -->
-    <div
-      v-if="dataSlice.length !== 0"
-      class="
-        overflow-y-auto
-        dark:dark-scroll
-        custom-scroll custom-scroll-thumb1
-      "
-    >
-      <div v-for="(row, i) in dataSlice" :key="(row.name as string)">
-        <!-- Row Content -->
-        <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center">
+        <div v-else class="w-10 flex justify-end me-4 flex-shrink-0">
+          <Check
+            :df="{
+              fieldtype: 'Check',
+              fieldname: 'selectAll',
+              label: '',
+            }"
+            :show-label="false"
+            :value="isAllSelected"
+            @change="toggleSelectAll"
+          />
+        </div>
+        <Row
+          class="flex-1 text-gray-700 dark:text-gray-400 h-row-mid min-w-[800px]"
+          :column-count="columns.length"
+          gap="1.5rem"
+        >
           <div
-            v-if="!isSelectionMode"
-            class="w-8 text-end me-2 text-gray-700 dark:text-gray-400"
-          >
-            {{ i + pageStart + 1 }}
-          </div>
-          <div v-else class="w-8 flex justify-end me-2">
-            <Check
-              :df="{
-                fieldtype: 'Check',
-                fieldname: 'selectItem',
-                label: '',
-              }"
-              :show-label="false"
-              :value="selectedItems.includes(row.name as string)"
-              @change="toggleItemSelection(row.name as string)"
-            />
-          </div>
-
-          <Row
-            gap="1rem"
+            v-for="(column, i) in columns"
+            :key="column.label"
             class="
-              cursor-pointer
-              text-gray-900
-              dark:text-gray-300
-              flex-1
-              h-row-mid
+              overflow-x-auto
+              no-scrollbar
+              whitespace-nowrap
+              h-row
+              items-center
+              flex
             "
-            :column-count="columns.length"
-            @click="isSelectionMode ? null : $emit('openDoc', row.name)"
+            :class="{
+              'ms-auto': isNumeric(column.fieldtype),
+              'pe-4': i === columns.length - 1,
+            }"
           >
-            <ListCell
-              v-for="(column, c) in columns"
-              :key="column.label"
-              :class="{
-                'text-end': isNumeric(column.fieldtype),
-                'pe-4': c === columns.length - 1,
-              }"
-              :row="(row as RenderData)"
-              :column="column"
-              @status-found="handleStatusFound"
-            />
-          </Row>
+            {{ column.label }}
+          </div>
+        </Row>
+      </div>
+      <hr class="dark:border-gray-800 flex-shrink-0" />
+
+      <!-- Data Rows -->
+      <div
+        v-if="dataSlice.length !== 0"
+        class="
+          flex-1
+          overflow-y-auto
+          dark:dark-scroll
+          custom-scroll custom-scroll-thumb1
+        "
+      >
+        <div v-for="(row, i) in dataSlice" :key="(row.name as string)">
+          <!-- Row Content -->
+          <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center">
+            <div
+              v-if="!isSelectionMode"
+              class="w-10 text-end me-4 text-gray-700 dark:text-gray-400 flex-shrink-0"
+            >
+              {{ i + pageStart + 1 }}
+            </div>
+            <div v-else class="w-10 flex justify-end me-4 flex-shrink-0">
+              <Check
+                :df="{
+                  fieldtype: 'Check',
+                  fieldname: 'selectItem',
+                  label: '',
+                }"
+                :show-label="false"
+                :value="selectedItems.includes(row.name as string)"
+                @change="toggleItemSelection(row.name as string)"
+              />
+            </div>
+
+            <Row
+              gap="1.5rem"
+              class="
+                cursor-pointer
+                text-gray-900
+                dark:text-gray-300
+                flex-1
+                h-row-mid
+                min-w-[800px]
+              "
+              :column-count="columns.length"
+              @click="isSelectionMode ? null : $emit('openDoc', row.name)"
+            >
+              <ListCell
+                v-for="(column, c) in columns"
+                :key="column.label"
+                :class="{
+                  'text-end': isNumeric(column.fieldtype),
+                  'pe-4': c === columns.length - 1,
+                }"
+                :row="(row as RenderData)"
+                :column="column"
+                @status-found="handleStatusFound"
+              />
+            </Row>
+          </div>
+          <hr
+            v-if="!(i === dataSlice.length - 1 && i > 13)"
+            class="dark:border-gray-800"
+          />
         </div>
-        <hr
-          v-if="!(i === dataSlice.length - 1 && i > 13)"
-          class="dark:border-gray-800"
-        />
       </div>
     </div>
 
     <!-- Pagination Footer -->
-    <div v-if="data?.length" class="mt-auto">
+    <div v-if="data?.length" class="mt-auto flex-shrink-0">
       <hr class="dark:border-gray-800" />
       <Paginator
         :item-count="data.length"
@@ -141,183 +145,183 @@
   </div>
 </template>
 <script lang="ts">
-import { ListViewSettings, RenderData } from 'fyo/model/types';
-import { cloneDeep } from 'lodash';
-import Button from 'src/components/Button.vue';
-import Check from 'src/components/Controls/Check.vue';
-import Paginator from 'src/components/Paginator.vue';
-import Row from 'src/components/Row.vue';
-import { fyo } from 'src/initFyo';
-import { isNumeric } from 'src/utils';
-import { QueryFilter } from 'utils/db/types';
-import { PropType, defineComponent, toRaw } from 'vue';
-import ListCell from './ListCell.vue';
+import type { ListViewSettings, RenderData } from "fyo/model/types";
+import { cloneDeep } from "lodash";
+import Button from "src/components/Button.vue";
+import Check from "src/components/Controls/Check.vue";
+import Paginator from "src/components/Paginator.vue";
+import Row from "src/components/Row.vue";
+import { fyo } from "src/initFyo";
+import { isNumeric } from "src/utils";
+import type { QueryFilter } from "utils/db/types";
+import { defineComponent, type PropType, toRaw } from "vue";
+import ListCell from "./ListCell.vue";
 
 export default defineComponent({
-  name: 'List',
-  components: {
-    Row,
-    ListCell,
-    Button,
-    Check,
-    Paginator,
-  },
-  props: {
-    listConfig: {
-      type: Object as PropType<ListViewSettings | undefined>,
-      default: () => ({ columns: [] }),
-    },
-    filters: {
-      type: Object as PropType<QueryFilter>,
-      default: () => ({}),
-    },
-    schemaName: { type: String, required: true },
-    canCreate: Boolean,
-    isSelectionMode: Boolean,
-  },
-  emits: ['openDoc', 'makeNewDoc', 'updatedData', 'selected-items-changed'],
-  data() {
-    return {
-      data: [] as RenderData[],
-      pageStart: 0,
-      pageEnd: 0,
-      statusMap: {} as Record<string, string>,
-      selectedItems: [] as string[],
-    };
-  },
-  computed: {
-    dataSlice() {
-      return this.data.slice(this.pageStart, this.pageEnd);
-    },
-    count() {
-      return this.pageEnd - this.pageStart + 1;
-    },
-    isAllSelected(): boolean {
-      return (
-        this.data.length > 0 && this.selectedItems.length === this.data.length
-      );
-    },
-    columns() {
-      let columns = this.listConfig?.columns ?? [];
+	name: "List",
+	components: {
+		Row,
+		ListCell,
+		Button,
+		Check,
+		Paginator,
+	},
+	props: {
+		listConfig: {
+			type: Object as PropType<ListViewSettings | undefined>,
+			default: () => ({ columns: [] }),
+		},
+		filters: {
+			type: Object as PropType<QueryFilter>,
+			default: () => ({}),
+		},
+		schemaName: { type: String, required: true },
+		canCreate: Boolean,
+		isSelectionMode: Boolean,
+	},
+	emits: ["openDoc", "makeNewDoc", "updatedData", "selected-items-changed"],
+	data() {
+		return {
+			data: [] as RenderData[],
+			pageStart: 0,
+			pageEnd: 0,
+			statusMap: {} as Record<string, string>,
+			selectedItems: [] as string[],
+		};
+	},
+	computed: {
+		dataSlice() {
+			return this.data.slice(this.pageStart, this.pageEnd);
+		},
+		count() {
+			return this.pageEnd - this.pageStart + 1;
+		},
+		isAllSelected(): boolean {
+			return (
+				this.data.length > 0 && this.selectedItems.length === this.data.length
+			);
+		},
+		columns() {
+			let columns = this.listConfig?.columns ?? [];
 
-      if (columns.length === 0) {
-        columns = fyo.schemaMap[this.schemaName]?.quickEditFields ?? [];
-        columns = [...new Set(['name', ...columns])];
-      }
+			if (columns.length === 0) {
+				columns = fyo.schemaMap[this.schemaName]?.quickEditFields ?? [];
+				columns = [...new Set(["name", ...columns])];
+			}
 
-      return columns
-        .map((fieldname) => {
-          if (typeof fieldname === 'object') {
-            return fieldname;
-          }
+			return columns
+				.map((fieldname) => {
+					if (typeof fieldname === "object") {
+						return fieldname;
+					}
 
-          return fyo.getField(this.schemaName, fieldname);
-        })
-        .filter(Boolean);
-    },
-  },
-  watch: {
-    async schemaName(oldValue, newValue) {
-      if (oldValue === newValue) {
-        return;
-      }
+					return fyo.getField(this.schemaName, fieldname);
+				})
+				.filter(Boolean);
+		},
+	},
+	watch: {
+		async schemaName(oldValue, newValue) {
+			if (oldValue === newValue) {
+				return;
+			}
 
-      await this.updateData();
-    },
-  },
-  async mounted() {
-    await this.updateData();
-    this.setUpdateListeners();
-  },
-  methods: {
-    handleStatusFound({ rowId, status }: { rowId: string; status: string }) {
-      this.statusMap[rowId] = status;
-    },
-    isNumeric,
-    setPageIndices({ start, end }: { start: number; end: number }) {
-      this.pageStart = start;
-      this.pageEnd = end;
-    },
-    setUpdateListeners() {
-      if (!this.schemaName) {
-        return;
-      }
+			await this.updateData();
+		},
+	},
+	async mounted() {
+		await this.updateData();
+		this.setUpdateListeners();
+	},
+	methods: {
+		handleStatusFound({ rowId, status }: { rowId: string; status: string }) {
+			this.statusMap[rowId] = status;
+		},
+		isNumeric,
+		setPageIndices({ start, end }: { start: number; end: number }) {
+			this.pageStart = start;
+			this.pageEnd = end;
+		},
+		setUpdateListeners() {
+			if (!this.schemaName) {
+				return;
+			}
 
-      const listener = async () => {
-        await this.updateData();
-      };
+			const listener = async () => {
+				await this.updateData();
+			};
 
-      if (fyo.schemaMap[this.schemaName]?.isSubmittable) {
-        fyo.doc.observer.on(`submit:${this.schemaName}`, listener);
-        fyo.doc.observer.on(`revert:${this.schemaName}`, listener);
-      }
+			if (fyo.schemaMap[this.schemaName]?.isSubmittable) {
+				fyo.doc.observer.on(`submit:${this.schemaName}`, listener);
+				fyo.doc.observer.on(`revert:${this.schemaName}`, listener);
+			}
 
-      fyo.doc.observer.on(`sync:${this.schemaName}`, listener);
-      fyo.db.observer.on(`delete:${this.schemaName}`, listener);
-      fyo.doc.observer.on(`rename:${this.schemaName}`, listener);
-    },
-    async updateData(filters?: Record<string, unknown>) {
-      const baseFilters = cloneDeep(toRaw(this.filters));
-      filters = cloneDeep({ ...baseFilters, ...filters });
+			fyo.doc.observer.on(`sync:${this.schemaName}`, listener);
+			fyo.db.observer.on(`delete:${this.schemaName}`, listener);
+			fyo.doc.observer.on(`rename:${this.schemaName}`, listener);
+		},
+		async updateData(filters?: Record<string, unknown>) {
+			const baseFilters = cloneDeep(toRaw(this.filters));
+			filters = cloneDeep({ ...baseFilters, ...filters });
 
-      let statusFilter: [string, string] | undefined;
+			let statusFilter: [string, string] | undefined;
 
-      if ('status' in filters) {
-        statusFilter = filters['status'] as [string, string];
-      }
+			if ("status" in filters) {
+				statusFilter = filters.status as [string, string];
+			}
 
-      const isStatusFilter =
-        Array.isArray(statusFilter) && statusFilter[0] === 'like';
-      if (isStatusFilter) {
-        delete filters['status'];
-      }
+			const isStatusFilter =
+				Array.isArray(statusFilter) && statusFilter[0] === "like";
+			if (isStatusFilter) {
+				delete filters.status;
+			}
 
-      const orderBy = ['created'];
-      if (fyo.db.fieldMap[this.schemaName]['date']) {
-        orderBy.unshift('date');
-      }
+			const orderBy = ["created"];
+			if (fyo.db.fieldMap[this.schemaName].date) {
+				orderBy.unshift("date");
+			}
 
-      const tableData = await fyo.db.getAll(this.schemaName, {
-        fields: ['*'],
-        filters: filters as QueryFilter,
-        orderBy,
-      });
+			const tableData = await fyo.db.getAll(this.schemaName, {
+				fields: ["*"],
+				filters: filters as QueryFilter,
+				orderBy,
+			});
 
-      let filteredData = tableData;
+			let filteredData = tableData;
 
-      if (isStatusFilter && statusFilter?.[1]) {
-        const lowercaseStatus = String(statusFilter[1]).toLowerCase();
+			if (isStatusFilter && statusFilter?.[1]) {
+				const lowercaseStatus = String(statusFilter[1]).toLowerCase();
 
-        const matchedNames = Object.entries(this.statusMap)
-          .filter((entry) => entry[1].toLowerCase() === lowercaseStatus)
-          .map((entry) => entry[0]);
+				const matchedNames = Object.entries(this.statusMap)
+					.filter((entry) => entry[1].toLowerCase() === lowercaseStatus)
+					.map((entry) => entry[0]);
 
-        filteredData = tableData.filter((row) =>
-          matchedNames.includes(String(row.name))
-        );
-      }
+				filteredData = tableData.filter((row) =>
+					matchedNames.includes(String(row.name)),
+				);
+			}
 
-      this.data = filteredData.map((d) => ({
-        ...d,
-        schema: fyo.schemaMap[this.schemaName],
-      })) as RenderData[];
-      this.$emit('updatedData', filters);
-    },
-    toggleItemSelection(itemName: string) {
-      const index = this.selectedItems.indexOf(itemName);
-      if (index > -1) {
-        this.selectedItems.splice(index, 1);
-      } else {
-        this.selectedItems.push(itemName);
-      }
-      this.$emit('selected-items-changed', this.selectedItems);
-    },
-    toggleSelectAll(checked: boolean) {
-      this.selectedItems = checked
-        ? this.data.map((row) => row.name as string)
-        : [];
-      this.$emit('selected-items-changed', this.selectedItems);
-    },
-  },
+			this.data = filteredData.map((d) => ({
+				...d,
+				schema: fyo.schemaMap[this.schemaName],
+			})) as RenderData[];
+			this.$emit("updatedData", filters);
+		},
+		toggleItemSelection(itemName: string) {
+			const index = this.selectedItems.indexOf(itemName);
+			if (index > -1) {
+				this.selectedItems.splice(index, 1);
+			} else {
+				this.selectedItems.push(itemName);
+			}
+			this.$emit("selected-items-changed", this.selectedItems);
+		},
+		toggleSelectAll(checked: boolean) {
+			this.selectedItems = checked
+				? this.data.map((row) => row.name as string)
+				: [];
+			this.$emit("selected-items-changed", this.selectedItems);
+		},
+	},
 });
 </script>

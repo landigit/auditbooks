@@ -4,20 +4,27 @@
       <p class="text-center dark:text-gray-400 font-semibold py-3">Keyboard</p>
       <hr class="dark:border-gray-800" />
       <div class="mx-6 my-3">
-        <component
-          :is="selectedItemRow?.fieldMap[selectedItemField!].fieldtype"
+        <Currency
+          v-if="fieldDescriptor?.fieldtype === 'Currency'"
           ref="dynamicInput"
-          :df="{
-            fieldname: selectedItemRow?.fieldMap[selectedItemField!].fieldname as string,
-            fieldtype: selectedItemRow?.fieldMap[selectedItemField!].fieldtype,
-            label: selectedItemRow?.fieldMap[selectedItemField!].label as string,
-          }"
+          :df="(fieldDescriptor as any)"
           class="mb-3"
           :border="true"
           :show-label="true"
           :value="selectedValue"
           :focus-input="true"
-          @change="(value: number) => handleInput(value.toString())"
+          @change="(value: number | string) => handleInput(value.toString())"
+        />
+        <Float
+          v-else-if="fieldDescriptor"
+          ref="dynamicInput"
+          :df="(fieldDescriptor as any)"
+          class="mb-3"
+          :border="true"
+          :show-label="true"
+          :value="selectedValue"
+          :focus-input="true"
+          @change="(value: number | string) => handleInput(value.toString())"
         />
 
         <div
@@ -318,204 +325,209 @@
 </template>
 
 <script lang="ts">
-import Modal from 'src/components/Modal.vue';
-import { ModelNameEnum } from 'models/types';
-import { defineComponent, inject } from 'vue';
-import Button from 'src/components/Button.vue';
-import Float from 'src/components/Controls/Float.vue';
-import Currency from 'src/components/Controls/Currency.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { ValidationError } from 'fyo/utils/errors';
-import { showToast } from 'src/utils/interactive';
-import { validateQty } from 'models/helpers';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import { ValidationError } from "fyo/utils/errors";
+import type { InvoiceItem } from "models/baseModels/InvoiceItem/InvoiceItem";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import { validateQty } from "models/helpers";
+import { ModelNameEnum } from "models/types";
+import type { Field } from "schemas/types";
+import Button from "src/components/Button.vue";
+import Currency from "src/components/Controls/Currency.vue";
+import Float from "src/components/Controls/Float.vue";
+import Modal from "src/components/Modal.vue";
+import { showToast } from "src/utils/interactive";
+import { defineComponent, inject } from "vue";
 
 export default defineComponent({
-  name: 'KeyboardModal',
-  components: {
-    Modal,
-    Float,
-    Button,
-    Currency,
-  },
-  props: {
-    modalStatus: Boolean,
-    selectedItemRow: SalesInvoiceItem,
-    selectedItemField: {
-      type: String,
-      default: '',
-    },
-  },
-  emits: ['toggleModal', 'applyPricingRule'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  data() {
-    return {
-      selectedValue: '',
-    };
-  },
-  watch: {
-    async modalStatus(newVal) {
-      if (newVal) {
-        await this.$nextTick();
-        await this.focusInput();
-      }
-      this.updateSelectedValue();
-    },
-  },
-  async mounted() {
-    this.updateSelectedValue();
-    await this.focusInput();
-  },
-  methods: {
-    async appendValue(value: string) {
-      if (value === '-') {
-        this.selectedValue = this.selectedValue.startsWith('-')
-          ? this.selectedValue
-          : `-${this.selectedValue}`;
-      } else if (value === '+') {
-        this.selectedValue = this.selectedValue.startsWith('-')
-          ? this.selectedValue.slice(1)
-          : this.selectedValue;
-      } else {
-        this.selectedValue =
-          this.selectedValue === '0' ? value : this.selectedValue + value;
-      }
+	name: "KeyboardModal",
+	components: {
+		Modal,
+		Float,
+		Button,
+		Currency,
+	},
+	props: {
+		modalStatus: Boolean,
+		selectedItemRow: SalesInvoiceItem,
+		selectedItemField: {
+			type: String,
+			default: "",
+		},
+	},
+	emits: ["toggleModal", "applyPricingRule"],
+	setup() {
+		return {
+			sinvDoc: inject("sinvDoc") as SalesInvoice,
+		};
+	},
+	data() {
+		return {
+			selectedValue: "",
+		};
+	},
+	computed: {
+		fieldDescriptor(): Field | undefined {
+			if (!this.selectedItemRow || !this.selectedItemField) {
+				return undefined;
+			}
+			return (this.selectedItemRow as any).fieldMap[this.selectedItemField];
+		},
+	},
+	watch: {
+		async modalStatus(newVal) {
+			if (newVal) {
+				await this.$nextTick();
+				await this.focusInput();
+			}
+			this.updateSelectedValue();
+		},
+	},
+	async mounted() {
+		this.updateSelectedValue();
+		await this.focusInput();
+	},
+	methods: {
+		async appendValue(value: string) {
+			if (value === "-") {
+				this.selectedValue = this.selectedValue.startsWith("-")
+					? this.selectedValue
+					: `-${this.selectedValue}`;
+			} else if (value === "+") {
+				this.selectedValue = this.selectedValue.startsWith("-")
+					? this.selectedValue.slice(1)
+					: this.selectedValue;
+			} else {
+				this.selectedValue =
+					this.selectedValue === "0" ? value : this.selectedValue + value;
+			}
 
-      await this.focusInput();
-    },
-    updateSelectedValue() {
-      this.selectedValue = '';
+			await this.focusInput();
+		},
+		updateSelectedValue() {
+			if (!this.selectedItemRow) return;
+			this.selectedValue = "";
 
-      if (
-        this.selectedItemRow?.fieldMap[this.selectedItemField].fieldtype !==
-        ModelNameEnum.Currency
-      ) {
-        this.selectedValue = this.selectedItemRow![
-          this.selectedItemField
-        ] as string;
-      }
-    },
-    handleInput(value: string) {
-      this.selectedValue = value;
-    },
-    async saveSelectedItem() {
-      try {
-        if (
-          this.selectedItemRow?.fieldMap[this.selectedItemField].fieldtype ===
-          ModelNameEnum.Currency
-        ) {
-          this.selectedItemRow[this.selectedItemField] = this.fyo.pesa(
-            Number(this.selectedValue)
-          );
+			if (this.fieldDescriptor?.fieldtype !== ModelNameEnum.Currency) {
+				this.selectedValue = (this.selectedItemRow as any)?.[
+					this.selectedItemField
+				] as string;
+			}
+		},
+		handleInput(value: string) {
+			this.selectedValue = value;
+		},
+		async saveSelectedItem() {
+			if (!this.selectedItemRow) return;
+			try {
+				if (this.fieldDescriptor?.fieldtype === ModelNameEnum.Currency) {
+					(this.selectedItemRow as any)[this.selectedItemField] = this.fyo.pesa(
+						Number(this.selectedValue),
+					);
 
-          if (this.selectedItemField === 'rate') {
-            this.selectedItemRow.setRate = this.fyo.pesa(
-              Number(this.selectedValue)
-            );
+					if (this.selectedItemField === "rate") {
+						this.selectedItemRow.setRate = this.fyo.pesa(
+							Number(this.selectedValue),
+						);
 
-            await this.sinvDoc.runFormulas();
-            this.$emit('toggleModal', 'Keyboard');
+						await this.sinvDoc.runFormulas();
+						this.$emit("toggleModal", "Keyboard");
 
-            return;
-          }
+						return;
+					}
 
-          if (this.selectedItemField === 'itemDiscountAmount') {
-            if (this.sinvDoc.grandTotal?.lte(this.selectedValue)) {
-              this.selectedItemRow.itemDiscountAmount = this.fyo.pesa(
-                Number(0)
-              );
+					if (this.selectedItemField === "itemDiscountAmount") {
+						if (this.sinvDoc.grandTotal?.lte(this.selectedValue)) {
+							this.selectedItemRow.itemDiscountAmount = this.fyo.pesa(
+								Number(0),
+							);
 
-              throw new ValidationError(
-                this.fyo.t`Discount Amount (${this.fyo.format(
-                  this.selectedValue,
-                  'Currency'
-                )}) cannot be greated than Amount (${this.fyo.format(
-                  this.sinvDoc.grandTotal,
-                  'Currency'
-                )}).`
-              );
-            }
+							throw new ValidationError(
+								this.fyo.t`Discount Amount (${this.fyo.format(
+									this.selectedValue,
+									"Currency",
+								)}) cannot be greated than Amount (${this.fyo.format(
+									this.sinvDoc.grandTotal,
+									"Currency",
+								)}).`,
+							);
+						}
 
-            await this.selectedItemRow.set('setItemDiscountAmount', true);
-            await this.selectedItemRow.set(
-              'itemDiscountAmount',
-              this.fyo.pesa(Number(this.selectedValue))
-            );
-          }
-        } else {
-          this.selectedItemRow![this.selectedItemField] = Number(
-            this.selectedValue
-          );
+						await this.selectedItemRow.set("setItemDiscountAmount", true);
+						await this.selectedItemRow.set(
+							"itemDiscountAmount",
+							this.fyo.pesa(Number(this.selectedValue)),
+						);
+					}
+				} else {
+					this.selectedItemRow![this.selectedItemField] = Number(
+						this.selectedValue,
+					);
 
-          if (this.selectedItemField === 'itemDiscountPercent') {
-            if (Number(this.selectedValue) > 100) {
-              await this.selectedItemRow?.set('itemDiscountPercent', 0);
+					if (this.selectedItemField === "itemDiscountPercent") {
+						if (Number(this.selectedValue) > 100) {
+							await this.selectedItemRow?.set("itemDiscountPercent", 0);
 
-              throw new ValidationError(
-                this.fyo
-                  .t`Discount Percent (${this.selectedValue}) cannot be greater than 100.`
-              );
-            }
+							throw new ValidationError(
+								this.fyo
+									.t`Discount Percent (${this.selectedValue}) cannot be greater than 100.`,
+							);
+						}
 
-            await this.selectedItemRow?.set('setItemDiscountAmount', false);
-            await this.selectedItemRow?.set(
-              'itemDiscountPercent',
-              this.selectedValue
-            );
-          }
+						await this.selectedItemRow?.set("setItemDiscountAmount", false);
+						await this.selectedItemRow?.set(
+							"itemDiscountPercent",
+							this.selectedValue,
+						);
+					}
 
-          if (this.selectedItemField === 'quantity') {
-            const existingItems =
-              this.sinvDoc.items?.filter(
-                (invoiceItem: InvoiceItem) =>
-                  invoiceItem.item === this.selectedItemRow?.item &&
-                  !invoiceItem.isFreeItem
-              ) ?? [];
+					if (this.selectedItemField === "quantity") {
+						const existingItems =
+							this.sinvDoc.items?.filter(
+								(invoiceItem: InvoiceItem) =>
+									invoiceItem.item === this.selectedItemRow?.item &&
+									!invoiceItem.isFreeItem,
+							) ?? [];
 
-            await validateQty(
-              this.sinvDoc,
-              this.selectedItemRow,
-              existingItems
-            );
+						await validateQty(
+							this.sinvDoc,
+							this.selectedItemRow,
+							existingItems,
+						);
 
-            this.$emit('applyPricingRule');
-          }
-        }
+						this.$emit("applyPricingRule");
+					}
+				}
 
-        await this.sinvDoc.runFormulas();
-        this.$emit('toggleModal', 'Keyboard');
-      } catch (error) {
-        showToast({
-          type: 'error',
-          message: this.t`${error as string}`,
-        });
+				await this.sinvDoc.runFormulas();
+				this.$emit("toggleModal", "Keyboard");
+			} catch (error) {
+				showToast({
+					type: "error",
+					message: this.t`${error as string}`,
+				});
 
-        if (this.selectedItemField === 'quantity') {
-          this.$emit('applyPricingRule');
-        }
-      }
-    },
-    async deleteLast() {
-      this.selectedValue = this.selectedValue?.slice(0, -1);
-      await this.focusInput();
-    },
-    async reset() {
-      this.selectedValue = '';
-      await this.focusInput();
-    },
-    async focusInput() {
-      await this.$nextTick();
-      (this.$refs.dynamicInput as HTMLInputElement)?.focus();
-    },
-    async closeKeyboardModal() {
-      await this.reset();
-      this.$emit('toggleModal', 'Keyboard');
-    },
-  },
+				if (this.selectedItemField === "quantity") {
+					this.$emit("applyPricingRule");
+				}
+			}
+		},
+		async deleteLast() {
+			this.selectedValue = this.selectedValue?.slice(0, -1);
+			await this.focusInput();
+		},
+		async reset() {
+			this.selectedValue = "";
+			await this.focusInput();
+		},
+		async focusInput() {
+			await this.$nextTick();
+			(this.$refs.dynamicInput as HTMLInputElement)?.focus();
+		},
+		async closeKeyboardModal() {
+			await this.reset();
+			this.$emit("toggleModal", "Keyboard");
+		},
+	},
 });
 </script>

@@ -1,29 +1,29 @@
-import { Action, ListViewSettings } from 'fyo/model/types';
+import type { Fyo } from "fyo";
+import type { Action, ListViewSettings } from "fyo/model/types";
 import {
-  getStockTransferActions,
-  getTransactionStatusColumn,
-} from 'models/helpers';
-import { PurchaseReceiptItem } from './PurchaseReceiptItem';
-import { StockTransfer } from './StockTransfer';
-import { Fyo } from 'fyo';
-import { ModelNameEnum } from 'models/types';
+	getStockTransferActions,
+	getTransactionStatusColumn,
+} from "models/helpers";
+import { ModelNameEnum } from "models/types";
+import type { PurchaseReceiptItem } from "./PurchaseReceiptItem";
+import { StockTransfer } from "./StockTransfer";
 
 export class PurchaseReceipt extends StockTransfer {
-  items?: PurchaseReceiptItem[];
+	items?: PurchaseReceiptItem[];
 
-  static getListViewSettings(): ListViewSettings {
-    return {
-      columns: [
-        'name',
-        getTransactionStatusColumn(),
-        'party',
-        'date',
-        'grandTotal',
-      ],
-    };
-  }
+	static getListViewSettings(): ListViewSettings {
+		return {
+			columns: [
+				"name",
+				getTransactionStatusColumn(),
+				"party",
+				"date",
+				"grandTotal",
+			],
+		};
+	}
 
-  static getActions(fyo: Fyo): Action[] {
-    return getStockTransferActions(fyo, ModelNameEnum.PurchaseReceipt);
-  }
+	static getActions(fyo: Fyo): Action[] {
+		return getStockTransferActions(fyo, ModelNameEnum.PurchaseReceipt);
+	}
 }

@@ -85,52 +85,52 @@
   </Teleport>
 </template>
 <script lang="ts">
-import { getIconConfig } from 'src/utils/interactive';
-import { ToastDuration, ToastType } from 'src/utils/types';
-import { toastDurationMap } from 'src/utils/ui';
-import { PropType, defineComponent, nextTick } from 'vue';
-import FeatherIcon from './FeatherIcon.vue';
+import { getIconConfig } from "src/utils/interactive";
+import type { ToastDuration, ToastType } from "src/utils/types";
+import { toastDurationMap } from "src/utils/ui";
+import { defineComponent, nextTick, type PropType } from "vue";
+import FeatherIcon from "./FeatherIcon.vue";
 
 export default defineComponent({
-  components: {
-    FeatherIcon,
-  },
-  props: {
-    message: { type: String, required: true },
-    action: { type: Function, default: () => {} },
-    actionText: { type: String, default: '' },
-    type: { type: String as PropType<ToastType>, default: 'info' },
-    duration: { type: String as PropType<ToastDuration>, default: 'long' },
-  },
-  data() {
-    return {
-      open: false,
-    };
-  },
-  computed: {
-    config() {
-      return getIconConfig(this.type);
-    },
-    isPersistent() {
-      return this.duration === 'very_long';
-    },
-  },
-  async mounted() {
-    const duration = toastDurationMap[this.duration];
-    await nextTick(() => (this.open = true));
-    if (duration !== Infinity) {
-      setTimeout(this.closeToast, duration);
-    }
-  },
-  methods: {
-    actionClicked() {
-      this.action();
-      this.closeToast();
-    },
-    closeToast() {
-      this.open = false;
-    },
-  },
+	components: {
+		FeatherIcon,
+	},
+	props: {
+		message: { type: String, required: true },
+		action: { type: Function, default: () => {} },
+		actionText: { type: String, default: "" },
+		type: { type: String as PropType<ToastType>, default: "info" },
+		duration: { type: String as PropType<ToastDuration>, default: "long" },
+	},
+	data() {
+		return {
+			open: false,
+		};
+	},
+	computed: {
+		config() {
+			return getIconConfig(this.type);
+		},
+		isPersistent() {
+			return this.duration === "very_long";
+		},
+	},
+	async mounted() {
+		const duration = toastDurationMap[this.duration];
+		await nextTick(() => (this.open = true));
+		if (duration !== Infinity) {
+			setTimeout(this.closeToast, duration);
+		}
+	},
+	methods: {
+		actionClicked() {
+			this.action();
+			this.closeToast();
+		},
+		closeToast() {
+			this.open = false;
+		},
+	},
 });
 </script>
 <style scoped>

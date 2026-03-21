@@ -3,9 +3,12 @@
     class="
       px-4
       flex
+      flex-wrap
       justify-between
       items-center
-      h-row-largest
+      min-h-row-largest
+      h-auto
+      py-2
       flex-shrink-0
       dark:bg-gray-875
     "
@@ -57,37 +60,37 @@
   </div>
 </template>
 <script lang="ts">
-import { languageDirectionKey } from 'src/utils/injectionKeys';
-import { showSidebar } from 'src/utils/refs';
-import { defineComponent, inject, Transition } from 'vue';
-import PageHeaderNavGroup from './PageHeaderNavGroup.vue';
+import { languageDirectionKey } from "src/utils/injectionKeys";
+import { showSidebar } from "src/utils/refs";
+import { defineComponent, inject, Transition } from "vue";
+import PageHeaderNavGroup from "./PageHeaderNavGroup.vue";
 
 export default defineComponent({
-  components: { Transition, PageHeaderNavGroup },
-  props: {
-    title: { type: String, default: '' },
-    border: { type: Boolean, default: true },
-    searchborder: { type: Boolean, default: true },
-  },
-  setup() {
-    return { showSidebar, languageDirection: inject(languageDirectionKey) };
-  },
-  computed: {
-    showBorder() {
-      return !!this.$slots.default && this.searchborder;
-    },
-    spacerClass() {
-      if (this.showSidebar) {
-        return '';
-      }
+	components: { Transition, PageHeaderNavGroup },
+	props: {
+		title: { type: String, default: "" },
+		border: { type: Boolean, default: true },
+		searchborder: { type: Boolean, default: true },
+	},
+	setup() {
+		return { showSidebar, languageDirection: inject(languageDirectionKey) };
+	},
+	computed: {
+		showBorder() {
+			return !!this.$slots.default && this.searchborder;
+		},
+		spacerClass() {
+			if (this.showSidebar) {
+				return "";
+			}
 
-      if (this.border) {
-        return 'w-tl me-4 border-e';
-      }
+			if (this.border) {
+				return "w-tl me-4 border-e";
+			}
 
-      return 'w-tl me-4';
-    },
-  },
+			return "w-tl me-4";
+		},
+	},
 });
 </script>
 <style scoped>

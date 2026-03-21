@@ -1,1 +1,1 @@
-export type GSTType = 'Unregistered' | 'Registered Regular' | 'Consumer';
+export type GSTType = "Unregistered" | "Registered Regular" | "Consumer";

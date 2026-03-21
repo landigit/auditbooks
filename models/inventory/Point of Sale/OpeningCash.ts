@@ -1,5 +1,5 @@
-import { CashDenominations } from './CashDenominations';
+import { CashDenominations } from "./CashDenominations";
 
 export class OpeningCash extends CashDenominations {
-  count?: number;
+	count?: number;
 }

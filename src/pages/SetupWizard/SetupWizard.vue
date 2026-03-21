@@ -89,146 +89,146 @@
   </FormContainer>
 </template>
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import { Verb } from 'fyo/telemetry/types';
-import { TranslationString } from 'fyo/utils/translation';
-import { ModelNameEnum } from 'models/types';
-import { Field } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import FormContainer from 'src/components/FormContainer.vue';
-import FormHeader from 'src/components/FormHeader.vue';
-import { getErrorMessage } from 'src/utils';
-import { showDialog } from 'src/utils/interactive';
-import { getSetupWizardDoc } from 'src/utils/misc';
-import { getFieldsGroupedByTabAndSection } from 'src/utils/ui';
-import { computed, defineComponent } from 'vue';
-import CommonFormSection from '../CommonForm/CommonFormSection.vue';
+import type { DocValue } from "fyo/core/types";
+import { Doc } from "fyo/model/doc";
+import { Verb } from "fyo/telemetry/types";
+import { TranslationString } from "fyo/utils/translation";
+import { ModelNameEnum } from "models/types";
+import type { Field } from "schemas/types";
+import Button from "src/components/Button.vue";
+import FormContainer from "src/components/FormContainer.vue";
+import FormHeader from "src/components/FormHeader.vue";
+import { getErrorMessage } from "src/utils";
+import { showDialog } from "src/utils/interactive";
+import { getSetupWizardDoc } from "src/utils/misc";
+import { getFieldsGroupedByTabAndSection } from "src/utils/ui";
+import { computed, defineComponent } from "vue";
+import CommonFormSection from "../CommonForm/CommonFormSection.vue";
 
 export default defineComponent({
-  name: 'SetupWizard',
-  components: {
-    Button,
-    FormContainer,
-    FormHeader,
-    CommonFormSection,
-  },
-  provide() {
-    return {
-      doc: computed(() => this.docOrNull),
-    };
-  },
-  emits: ['setup-complete', 'setup-canceled'],
-  data() {
-    return {
-      docOrNull: null,
-      errors: {},
-      loading: false,
-    } as {
-      errors: Record<string, string>;
-      docOrNull: null | Doc;
-      loading: boolean;
-    };
-  },
-  computed: {
-    hasDoc(): boolean {
-      return this.docOrNull instanceof Doc;
-    },
-    doc(): Doc {
-      if (this.docOrNull instanceof Doc) {
-        return this.docOrNull;
-      }
+	name: "SetupWizard",
+	components: {
+		Button,
+		FormContainer,
+		FormHeader,
+		CommonFormSection,
+	},
+	provide() {
+		return {
+			doc: computed(() => this.docOrNull),
+		};
+	},
+	emits: ["setup-complete", "setup-canceled"],
+	data() {
+		return {
+			docOrNull: null,
+			errors: {},
+			loading: false,
+		} as {
+			errors: Record<string, string>;
+			docOrNull: null | Doc;
+			loading: boolean;
+		};
+	},
+	computed: {
+		hasDoc(): boolean {
+			return this.docOrNull instanceof Doc;
+		},
+		doc(): Doc {
+			if (this.docOrNull instanceof Doc) {
+				return this.docOrNull;
+			}
 
-      throw new Error(`Doc is null`);
-    },
-    areAllValuesFilled(): boolean {
-      if (!this.hasDoc) {
-        return false;
-      }
+			throw new Error(`Doc is null`);
+		},
+		areAllValuesFilled(): boolean {
+			if (!this.hasDoc) {
+				return false;
+			}
 
-      const values = this.doc.schema.fields
-        .filter((f) => f.required)
-        .map((f) => this.doc[f.fieldname]);
+			const values = this.doc.schema.fields
+				.filter((f) => f.required)
+				.map((f) => this.doc[f.fieldname]);
 
-      return values.every(Boolean);
-    },
-    activeGroup(): Map<string, Field[]> {
-      if (!this.hasDoc) {
-        return new Map();
-      }
+			return values.every(Boolean);
+		},
+		activeGroup(): Map<string, Field[]> {
+			if (!this.hasDoc) {
+				return new Map();
+			}
 
-      const groupedFields = getFieldsGroupedByTabAndSection(
-        this.doc.schema,
-        this.doc
-      );
+			const groupedFields = getFieldsGroupedByTabAndSection(
+				this.doc.schema,
+				this.doc,
+			);
 
-      return [...groupedFields.values()][0];
-    },
-  },
-  async mounted() {
-    const languageMap = TranslationString.prototype.languageMap;
-    this.docOrNull = getSetupWizardDoc(languageMap);
-    if (!this.fyo.db.isConnected) {
-      await this.fyo.db.init();
-    }
+			return [...groupedFields.values()][0];
+		},
+	},
+	async mounted() {
+		const languageMap = TranslationString.prototype.languageMap;
+		this.docOrNull = getSetupWizardDoc(languageMap);
+		if (!this.fyo.db.isConnected) {
+			await this.fyo.db.init();
+		}
 
-    if (this.fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.sw = this;
-    }
-    this.fyo.telemetry.log(Verb.Started, ModelNameEnum.SetupWizard);
-  },
-  methods: {
-    async fill() {
-      if (!this.hasDoc) {
-        return;
-      }
+		if (this.fyo.store.isDevelopment) {
+			// @ts-expect-error
+			window.sw = this;
+		}
+		this.fyo.telemetry.log(Verb.Started, ModelNameEnum.SetupWizard);
+	},
+	methods: {
+		async fill() {
+			if (!this.hasDoc) {
+				return;
+			}
 
-      await this.doc.set('companyName', "Lin's Things");
-      await this.doc.set('email', 'lin@lthings.com');
-      await this.doc.set('fullname', 'Lin Slovenly');
-      await this.doc.set('bankName', 'Max Finance');
-      await this.doc.set('country', 'India');
-    },
-    async onValueChange(field: Field, value: DocValue) {
-      if (!this.hasDoc) {
-        return;
-      }
+			await this.doc.set("companyName", "Lin's Things");
+			await this.doc.set("email", "lin@lthings.com");
+			await this.doc.set("fullname", "Lin Slovenly");
+			await this.doc.set("bankName", "Max Finance");
+			await this.doc.set("country", "India");
+		},
+		async onValueChange(field: Field, value: DocValue) {
+			if (!this.hasDoc) {
+				return;
+			}
 
-      const { fieldname } = field;
-      delete this.errors[fieldname];
+			const { fieldname } = field;
+			delete this.errors[fieldname];
 
-      try {
-        await this.doc.set(fieldname, value);
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          return;
-        }
+			try {
+				await this.doc.set(fieldname, value);
+			} catch (err) {
+				if (!(err instanceof Error)) {
+					return;
+				}
 
-        this.errors[fieldname] = getErrorMessage(err, this.doc);
-      }
-    },
-    async submit() {
-      if (!this.hasDoc) {
-        return;
-      }
+				this.errors[fieldname] = getErrorMessage(err, this.doc);
+			}
+		},
+		async submit() {
+			if (!this.hasDoc) {
+				return;
+			}
 
-      if (!this.areAllValuesFilled) {
-        return await showDialog({
-          title: this.t`Mandatory Error`,
-          detail: this.t`Please fill all values.`,
-          type: 'error',
-        });
-      }
+			if (!this.areAllValuesFilled) {
+				return await showDialog({
+					title: this.t`Mandatory Error`,
+					detail: this.t`Please fill all values.`,
+					type: "error",
+				});
+			}
 
-      this.loading = true;
-      this.fyo.telemetry.log(Verb.Completed, ModelNameEnum.SetupWizard);
-      this.$emit('setup-complete', this.doc.getValidDict());
-    },
-    cancel() {
-      this.fyo.telemetry.log(Verb.Cancelled, ModelNameEnum.SetupWizard);
-      this.$emit('setup-canceled');
-    },
-  },
+			this.loading = true;
+			this.fyo.telemetry.log(Verb.Completed, ModelNameEnum.SetupWizard);
+			this.$emit("setup-complete", this.doc.getValidDict());
+		},
+		cancel() {
+			this.fyo.telemetry.log(Verb.Cancelled, ModelNameEnum.SetupWizard);
+			this.$emit("setup-canceled");
+		},
+	},
 });
 </script>

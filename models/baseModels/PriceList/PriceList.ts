@@ -1,20 +1,20 @@
-import { Doc } from 'fyo/model/doc';
-import { ListViewSettings } from 'fyo/model/types';
-import { PriceListItem } from './PriceListItem';
+import { Doc } from "fyo/model/doc";
+import type { ListViewSettings } from "fyo/model/types";
 import {
-  getIsDocEnabledColumn,
-  getPriceListStatusColumn,
-} from 'models/helpers';
+	getIsDocEnabledColumn,
+	getPriceListStatusColumn,
+} from "models/helpers";
+import type { PriceListItem } from "./PriceListItem";
 
 export class PriceList extends Doc {
-  isEnabled?: boolean;
-  isSales?: boolean;
-  isPurchase?: boolean;
-  priceListItem?: PriceListItem[];
+	isEnabled?: boolean;
+	isSales?: boolean;
+	isPurchase?: boolean;
+	priceListItem?: PriceListItem[];
 
-  static getListViewSettings(): ListViewSettings {
-    return {
-      columns: ['name', getIsDocEnabledColumn(), getPriceListStatusColumn()],
-    };
-  }
+	static getListViewSettings(): ListViewSettings {
+		return {
+			columns: ["name", getIsDocEnabledColumn(), getPriceListStatusColumn()],
+		};
+	}
 }

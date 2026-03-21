@@ -29,75 +29,75 @@
   </div>
 </template>
 <script lang="ts">
-import { isFalsy } from 'fyo/utils';
-import { Field } from 'schemas/types';
-import { defineComponent } from 'vue';
+import { isFalsy } from "fyo/utils";
+import type { Field } from "schemas/types";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    schemaName: { type: String, required: true },
-    name: { type: String, required: true },
-  },
-  data() {
-    return { values: [] } as { values: { label: string; value: string }[] };
-  },
-  computed: {
-    schema() {
-      return this.fyo.schemaMap[this.schemaName];
-    },
-  },
-  watch: {
-    async name(v1, v2) {
-      if (v1 === v2) {
-        return;
-      }
+	props: {
+		schemaName: { type: String, required: true },
+		name: { type: String, required: true },
+	},
+	data() {
+		return { values: [] } as { values: { label: string; value: string }[] };
+	},
+	computed: {
+		schema() {
+			return this.fyo.schemaMap[this.schemaName];
+		},
+	},
+	watch: {
+		async name(v1, v2) {
+			if (v1 === v2) {
+				return;
+			}
 
-      await this.setValues();
-    },
-  },
-  async mounted() {
-    await this.setValues();
-  },
-  methods: {
-    async setValues() {
-      const fields: Field[] = (this.schema?.fields ?? []).filter(
-        (f) =>
-          f &&
-          f.fieldtype !== 'Table' &&
-          f.fieldtype !== 'AttachImage' &&
-          f.fieldtype !== 'Attachment' &&
-          f.fieldname !== 'name' &&
-          !f.hidden &&
-          !f.meta &&
-          !f.abstract &&
-          !f.computed
-      );
+			await this.setValues();
+		},
+	},
+	async mounted() {
+		await this.setValues();
+	},
+	methods: {
+		async setValues() {
+			const fields: Field[] = (this.schema?.fields ?? []).filter(
+				(f) =>
+					f &&
+					f.fieldtype !== "Table" &&
+					f.fieldtype !== "AttachImage" &&
+					f.fieldtype !== "Attachment" &&
+					f.fieldname !== "name" &&
+					!f.hidden &&
+					!f.meta &&
+					!f.abstract &&
+					!f.computed,
+			);
 
-      const data = (
-        await this.fyo.db.getAll(this.schemaName, {
-          fields: fields.map((f) => f.fieldname),
-          filters: { name: this.name },
-        })
-      )[0];
+			const data = (
+				await this.fyo.db.getAll(this.schemaName, {
+					fields: fields.map((f) => f.fieldname),
+					filters: { name: this.name },
+				})
+			)[0];
 
-      if (!data) {
-        return;
-      }
+			if (!data) {
+				return;
+			}
 
-      this.values = fields
-        .map((f) => {
-          const value = data[f.fieldname];
-          if (isFalsy(value)) {
-            return { value: '', label: '' };
-          }
+			this.values = fields
+				.map((f) => {
+					const value = data[f.fieldname];
+					if (isFalsy(value)) {
+						return { value: "", label: "" };
+					}
 
-          return {
-            value: this.fyo.format(data[f.fieldname], f),
-            label: f.label,
-          };
-        })
-        .filter((i) => !!i.value);
-    },
-  },
+					return {
+						value: this.fyo.format(data[f.fieldname], f),
+						label: f.label,
+					};
+				})
+				.filter((i) => !!i.value);
+		},
+	},
 });
 </script>

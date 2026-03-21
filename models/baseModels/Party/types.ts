@@ -1,6 +1,6 @@
-export type PartyRole = 'Both' | 'Supplier' | 'Customer';
+export type PartyRole = "Both" | "Supplier" | "Customer";
 export enum PartyRoleEnum {
-  'Both' = 'Both',
-  'Supplier' = 'Supplier',
-  'Customer' = 'Customer',
+	Both = "Both",
+	Supplier = "Supplier",
+	Customer = "Customer",
 }

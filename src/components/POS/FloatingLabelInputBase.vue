@@ -56,11 +56,11 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Base from '../Controls/Base.vue';
+import { defineComponent } from "vue";
+import Base from "../Controls/Base.vue";
 
 export default defineComponent({
-  name: 'FloatingLabelInputBase',
-  extends: Base,
+	name: "FloatingLabelInputBase",
+	extends: Base,
 });
 </script>

@@ -28,22 +28,22 @@
 
 <script>
 export default {
-  name: 'Avatar',
-  props: {
-    imageURL: String,
-    label: String,
-    size: {
-      default: 'md',
-    },
-  },
-  computed: {
-    sizeClasses() {
-      return {
-        sm: 'w-5 h-5',
-        md: 'w-7 h-7',
-        lg: 'w-9 h-9',
-      }[this.size];
-    },
-  },
+	name: "Avatar",
+	props: {
+		imageURL: String,
+		label: String,
+		size: {
+			default: "md",
+		},
+	},
+	computed: {
+		sizeClasses() {
+			return {
+				sm: "w-5 h-5",
+				md: "w-7 h-7",
+				lg: "w-9 h-9",
+			}[this.size];
+		},
+	},
 };
 </script>

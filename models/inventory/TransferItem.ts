@@ -1,21 +1,21 @@
-import { Doc } from 'fyo/model/doc';
-import type { Transfer } from './Transfer';
-import type { Money } from 'pesa';
+import { Doc } from "fyo/model/doc";
+import type { Money } from "pesa";
+import type { Transfer } from "./Transfer";
 
 export class TransferItem extends Doc {
-  item?: string;
+	item?: string;
 
-  unit?: string;
-  transferUnit?: string;
-  quantity?: number;
-  transferQuantity?: number;
-  unitConversionFactor?: number;
+	unit?: string;
+	transferUnit?: string;
+	quantity?: number;
+	transferQuantity?: number;
+	unitConversionFactor?: number;
 
-  rate?: Money;
-  amount?: Money;
+	rate?: Money;
+	amount?: Money;
 
-  batch?: string;
-  serialNumber?: string;
+	batch?: string;
+	serialNumber?: string;
 
-  parentdoc?: Transfer;
+	parentdoc?: Transfer;
 }

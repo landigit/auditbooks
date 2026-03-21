@@ -10,19 +10,19 @@
   </div>
 </template>
 <script lang="ts">
-import { getShortcutKeyMap } from 'src/utils/ui';
-import { defineComponent, PropType } from 'vue';
+import { getShortcutKeyMap } from "src/utils/ui";
+import { defineComponent, type PropType } from "vue";
 export default defineComponent({
-  props: {
-    keys: { type: Array as PropType<string[]>, required: true },
-    simple: { type: Boolean, default: false },
-  },
-  method() {},
-  computed: {
-    keyMap(): Record<string, string> {
-      return getShortcutKeyMap(this.platform);
-    },
-  },
+	props: {
+		keys: { type: Array as PropType<string[]>, required: true },
+		simple: { type: Boolean, default: false },
+	},
+	method() {},
+	computed: {
+		keyMap(): Record<string, string> {
+			return getShortcutKeyMap(this.platform);
+		},
+	},
 });
 </script>
 <style scoped>

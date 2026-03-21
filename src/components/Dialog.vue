@@ -57,95 +57,95 @@
   </Teleport>
 </template>
 <script lang="ts">
-import { getIconConfig } from 'src/utils/interactive';
-import { DialogButton, ToastType } from 'src/utils/types';
-import { defineComponent, nextTick, PropType, ref } from 'vue';
-import Button from './Button.vue';
-import FeatherIcon from './FeatherIcon.vue';
+import { getIconConfig } from "src/utils/interactive";
+import type { DialogButton, ToastType } from "src/utils/types";
+import { defineComponent, nextTick, type PropType, ref } from "vue";
+import Button from "./Button.vue";
+import FeatherIcon from "./FeatherIcon.vue";
 
 export default defineComponent({
-  components: { Button, FeatherIcon },
-  props: {
-    type: { type: String as PropType<ToastType>, default: 'info' },
-    title: { type: String, required: true },
-    detail: {
-      type: [String, Array] as PropType<string | string[]>,
-      required: false,
-    },
-    buttons: {
-      type: Array as PropType<DialogButton[]>,
-      required: true,
-    },
-  },
-  setup() {
-    return {
-      primary: ref<InstanceType<typeof Button>[] | null>(null),
-      secondary: ref<InstanceType<typeof Button>[] | null>(null),
-    };
-  },
-  data() {
-    return { open: false };
-  },
-  computed: {
-    config() {
-      return getIconConfig(this.type);
-    },
-  },
-  watch: {
-    open(value) {
-      if (value) {
-        document.addEventListener('keydown', this.handleEscape);
-      } else {
-        document.removeEventListener('keydown', this.handleEscape);
-      }
-    },
-  },
-  async mounted() {
-    await nextTick(() => {
-      this.open = true;
-    });
+	components: { Button, FeatherIcon },
+	props: {
+		type: { type: String as PropType<ToastType>, default: "info" },
+		title: { type: String, required: true },
+		detail: {
+			type: [String, Array] as PropType<string | string[]>,
+			required: false,
+		},
+		buttons: {
+			type: Array as PropType<DialogButton[]>,
+			required: true,
+		},
+	},
+	setup() {
+		return {
+			primary: ref<InstanceType<typeof Button>[] | null>(null),
+			secondary: ref<InstanceType<typeof Button>[] | null>(null),
+		};
+	},
+	data() {
+		return { open: false };
+	},
+	computed: {
+		config() {
+			return getIconConfig(this.type);
+		},
+	},
+	watch: {
+		open(value) {
+			if (value) {
+				document.addEventListener("keydown", this.handleEscape);
+			} else {
+				document.removeEventListener("keydown", this.handleEscape);
+			}
+		},
+	},
+	async mounted() {
+		await nextTick(() => {
+			this.open = true;
+		});
 
-    this.focusButton();
-  },
-  methods: {
-    focusButton() {
-      let button = this.primary?.[0];
-      if (!button) {
-        button = this.secondary?.[0];
-      }
+		this.focusButton();
+	},
+	methods: {
+		focusButton() {
+			let button = this.primary?.[0];
+			if (!button) {
+				button = this.secondary?.[0];
+			}
 
-      if (!button) {
-        return;
-      }
+			if (!button) {
+				return;
+			}
 
-      button.$el.focus();
-    },
-    handleEscape(event: KeyboardEvent) {
-      if (event.code !== 'Escape') {
-        return;
-      }
+			button.$el.focus();
+		},
+		handleEscape(event: KeyboardEvent) {
+			if (event.code !== "Escape") {
+				return;
+			}
 
-      event.preventDefault();
-      event.stopPropagation();
+			event.preventDefault();
+			event.stopPropagation();
 
-      if (this.buttons.length === 1) {
-        return this.handleClick(0);
-      }
+			if (this.buttons.length === 1) {
+				return this.handleClick(0);
+			}
 
-      const index = this.buttons.findIndex(({ isEscape }) => isEscape);
+			const index = this.buttons.findIndex(({ isEscape }) => isEscape);
 
-      if (index === -1) {
-        return;
-      }
+			if (index === -1) {
+				return;
+			}
 
-      return this.handleClick(index);
-    },
-    handleClick(index: number) {
-      const button = this.buttons[index];
-      button.action();
-      this.open = false;
-    },
-  },
+			return this.handleClick(index);
+		},
+		handleClick(index: number) {
+			const button = this.buttons[index];
+			button.action();
+			this.open = false;
+		},
+	},
 });
 </script>
 <style scoped>

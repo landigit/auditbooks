@@ -75,53 +75,53 @@
   </div>
 </template>
 <script lang="ts">
-import { PrintTemplateHint } from 'src/utils/printTemplates';
-import { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import type { PrintTemplateHint } from "src/utils/printTemplates";
+import { defineComponent, type PropType } from "vue";
+
 type HintRow = {
-  key: string;
-  value: PrintTemplateHint[string];
-  isCollapsible: boolean;
-  collapsed: boolean;
+	key: string;
+	value: PrintTemplateHint[string];
+	isCollapsible: boolean;
+	collapsed: boolean;
 };
 export default defineComponent({
-  name: 'TemplateBuilderHint',
-  props: {
-    prefix: { type: String, default: '' },
-    hints: {
-      type: Object as PropType<PrintTemplateHint>,
-      required: true,
-    },
-    level: { type: Number, default: 0 },
-  },
-  data() {
-    return { rows: [] } as {
-      rows: HintRow[];
-    };
-  },
-  mounted() {
-    this.rows = Object.entries(this.hints)
-      .map(([key, value]) => ({
-        key,
-        value,
-        isCollapsible: typeof value === 'object',
-        collapsed: this.level > 0,
-      }))
-      .sort((a, b) => Number(a.isCollapsible) - Number(b.isCollapsible));
-  },
-  methods: {
-    getKey(row: HintRow) {
-      const isArray = Array.isArray(row.value);
-      if (isArray) {
-        return `${this.prefix}.${row.key}[number]`;
-      }
+	name: "TemplateBuilderHint",
+	props: {
+		prefix: { type: String, default: "" },
+		hints: {
+			type: Object as PropType<PrintTemplateHint>,
+			required: true,
+		},
+		level: { type: Number, default: 0 },
+	},
+	data() {
+		return { rows: [] } as {
+			rows: HintRow[];
+		};
+	},
+	mounted() {
+		this.rows = Object.entries(this.hints)
+			.map(([key, value]) => ({
+				key,
+				value,
+				isCollapsible: typeof value === "object",
+				collapsed: this.level > 0,
+			}))
+			.sort((a, b) => Number(a.isCollapsible) - Number(b.isCollapsible));
+	},
+	methods: {
+		getKey(row: HintRow) {
+			const isArray = Array.isArray(row.value);
+			if (isArray) {
+				return `${this.prefix}.${row.key}[number]`;
+			}
 
-      if (this.prefix.length) {
-        return `${this.prefix}.${row.key}`;
-      }
+			if (this.prefix.length) {
+				return `${this.prefix}.${row.key}`;
+			}
 
-      return row.key;
-    },
-  },
+			return row.key;
+		},
+	},
 });
 </script>

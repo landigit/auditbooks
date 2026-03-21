@@ -80,163 +80,163 @@
 </template>
 
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
-import Button from 'src/components/Button.vue';
-import Icon from 'src/components/Icon.vue';
-import PageHeader from 'src/components/PageHeader.vue';
-import { fyo } from 'src/initFyo';
-import { getGetStartedConfig } from 'src/utils/getStartedConfig';
-import { GetStartedConfigItem } from 'src/utils/types';
-import { Component, defineComponent, h } from 'vue';
+import type { DocValue } from "fyo/core/types";
+import Button from "src/components/Button.vue";
+import Icon from "src/components/Icon.vue";
+import PageHeader from "src/components/PageHeader.vue";
+import { fyo } from "src/initFyo";
+import { getGetStartedConfig } from "src/utils/getStartedConfig";
+import type { GetStartedConfigItem } from "src/utils/types";
+import { type Component, defineComponent, h } from "vue";
 
-type ListItem = GetStartedConfigItem['items'][number];
+type ListItem = GetStartedConfigItem["items"][number];
 
 export default defineComponent({
-  name: 'GetStarted',
-  components: {
-    PageHeader,
-    Button,
-    Icon,
-  },
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
-  data() {
-    return {
-      activeCard: null as string | null,
-      sections: getGetStartedConfig(),
-    };
-  },
-  async activated() {
-    await fyo.doc.getDoc('GetStarted');
-    await this.checkForCompletedTasks();
-  },
-  methods: {
-    async handleDocumentation({ key, documentation }: ListItem) {
-      if (documentation) {
-        ipc.openLink(documentation);
-      }
+	name: "GetStarted",
+	components: {
+		PageHeader,
+		Button,
+		Icon,
+	},
+	props: {
+		darkMode: { type: Boolean, default: false },
+	},
+	data() {
+		return {
+			activeCard: null as string | null,
+			sections: getGetStartedConfig(),
+		};
+	},
+	async activated() {
+		await fyo.doc.getDoc("GetStarted");
+		await this.checkForCompletedTasks();
+	},
+	methods: {
+		async handleDocumentation({ key, documentation }: ListItem) {
+			if (documentation) {
+				window.auditbooksIpc.openLink(documentation);
+			}
 
-      switch (key) {
-        case 'Opening Balances':
-          await this.updateChecks({ openingBalanceChecked: true });
-          break;
-      }
-    },
-    async handleAction({ key, action }: ListItem) {
-      if (action) {
-        action();
-        this.activeCard = null;
-      }
+			switch (key) {
+				case "Opening Balances":
+					await this.updateChecks({ openingBalanceChecked: true });
+					break;
+			}
+		},
+		async handleAction({ key, action }: ListItem) {
+			if (action) {
+				action();
+				this.activeCard = null;
+			}
 
-      switch (key) {
-        case 'Print':
-          await this.updateChecks({ printSetup: true });
-          break;
-        case 'General':
-          await this.updateChecks({ companySetup: true });
-          break;
-        case 'System':
-          await this.updateChecks({ systemSetup: true });
-          break;
-        case 'Review Accounts':
-          await this.updateChecks({ chartOfAccountsReviewed: true });
-          break;
-        case 'Add Taxes':
-          await this.updateChecks({ taxesAdded: true });
-          break;
-      }
-    },
-    async checkIsOnboardingComplete() {
-      if (fyo.singles.GetStarted?.onboardingComplete) {
-        return true;
-      }
+			switch (key) {
+				case "Print":
+					await this.updateChecks({ printSetup: true });
+					break;
+				case "General":
+					await this.updateChecks({ companySetup: true });
+					break;
+				case "System":
+					await this.updateChecks({ systemSetup: true });
+					break;
+				case "Review Accounts":
+					await this.updateChecks({ chartOfAccountsReviewed: true });
+					break;
+				case "Add Taxes":
+					await this.updateChecks({ taxesAdded: true });
+					break;
+			}
+		},
+		async checkIsOnboardingComplete() {
+			if (fyo.singles.GetStarted?.onboardingComplete) {
+				return true;
+			}
 
-      const doc = await fyo.doc.getDoc('GetStarted');
-      const onboardingComplete = fyo.schemaMap.GetStarted?.fields
-        .filter(({ fieldname }) => fieldname !== 'onboardingComplete')
-        .map(({ fieldname }) => doc.get(fieldname))
-        .every(Boolean);
+			const doc = await fyo.doc.getDoc("GetStarted");
+			const onboardingComplete = fyo.schemaMap.GetStarted?.fields
+				.filter(({ fieldname }) => fieldname !== "onboardingComplete")
+				.map(({ fieldname }) => doc.get(fieldname))
+				.every(Boolean);
 
-      if (onboardingComplete) {
-        await this.updateChecks({ onboardingComplete });
-        const systemSettings = await fyo.doc.getDoc('SystemSettings');
-        await systemSettings.set('hideGetStarted', true);
-        await systemSettings.sync();
-      }
+			if (onboardingComplete) {
+				await this.updateChecks({ onboardingComplete });
+				const systemSettings = await fyo.doc.getDoc("SystemSettings");
+				await systemSettings.set("hideGetStarted", true);
+				await systemSettings.sync();
+			}
 
-      return onboardingComplete;
-    },
-    async checkForCompletedTasks() {
-      let toUpdate: Record<string, DocValue> = {};
-      if (await this.checkIsOnboardingComplete()) {
-        return;
-      }
+			return onboardingComplete;
+		},
+		async checkForCompletedTasks() {
+			let toUpdate: Record<string, DocValue> = {};
+			if (await this.checkIsOnboardingComplete()) {
+				return;
+			}
 
-      if (!fyo.singles.GetStarted?.salesItemCreated) {
-        const count = await fyo.db.count('Item', { filters: { for: 'Sales' } });
-        toUpdate.salesItemCreated = count > 0;
-      }
+			if (!fyo.singles.GetStarted?.salesItemCreated) {
+				const count = await fyo.db.count("Item", { filters: { for: "Sales" } });
+				toUpdate.salesItemCreated = count > 0;
+			}
 
-      if (!fyo.singles.GetStarted?.purchaseItemCreated) {
-        const count = await fyo.db.count('Item', {
-          filters: { for: 'Purchases' },
-        });
-        toUpdate.purchaseItemCreated = count > 0;
-      }
+			if (!fyo.singles.GetStarted?.purchaseItemCreated) {
+				const count = await fyo.db.count("Item", {
+					filters: { for: "Purchases" },
+				});
+				toUpdate.purchaseItemCreated = count > 0;
+			}
 
-      if (!fyo.singles.GetStarted?.invoiceCreated) {
-        const count = await fyo.db.count('SalesInvoice');
-        toUpdate.invoiceCreated = count > 0;
-      }
+			if (!fyo.singles.GetStarted?.invoiceCreated) {
+				const count = await fyo.db.count("SalesInvoice");
+				toUpdate.invoiceCreated = count > 0;
+			}
 
-      if (!fyo.singles.GetStarted?.customerCreated) {
-        const count = await fyo.db.count('Party', {
-          filters: { role: 'Customer' },
-        });
-        toUpdate.customerCreated = count > 0;
-      }
+			if (!fyo.singles.GetStarted?.customerCreated) {
+				const count = await fyo.db.count("Party", {
+					filters: { role: "Customer" },
+				});
+				toUpdate.customerCreated = count > 0;
+			}
 
-      if (!fyo.singles.GetStarted?.billCreated) {
-        const count = await fyo.db.count('SalesInvoice');
-        toUpdate.billCreated = count > 0;
-      }
+			if (!fyo.singles.GetStarted?.billCreated) {
+				const count = await fyo.db.count("SalesInvoice");
+				toUpdate.billCreated = count > 0;
+			}
 
-      if (!fyo.singles.GetStarted?.supplierCreated) {
-        const count = await fyo.db.count('Party', {
-          filters: { role: 'Supplier' },
-        });
-        toUpdate.supplierCreated = count > 0;
-      }
-      await this.updateChecks(toUpdate);
-    },
-    async updateChecks(toUpdate: Record<string, DocValue>) {
-      await fyo.singles.GetStarted?.setAndSync(toUpdate);
-      await fyo.doc.getDoc('GetStarted');
-    },
-    isCompleted(item: ListItem) {
-      return fyo.singles.GetStarted?.get(item.fieldname) || false;
-    },
-    getIconComponent(item: ListItem) {
-      let completed = fyo.singles.GetStarted?.[item.fieldname] || false;
-      let name = completed ? 'green-check' : item.icon;
-      let size = completed ? '24' : '18';
-      return {
-        name,
-        render() {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          return h(Icon, {
-            ...Object.assign(
-              {
-                name,
-                size,
-              },
-              this.$attrs
-            ),
-          });
-        },
-      } as Component;
-    },
-  },
+			if (!fyo.singles.GetStarted?.supplierCreated) {
+				const count = await fyo.db.count("Party", {
+					filters: { role: "Supplier" },
+				});
+				toUpdate.supplierCreated = count > 0;
+			}
+			await this.updateChecks(toUpdate);
+		},
+		async updateChecks(toUpdate: Record<string, DocValue>) {
+			await fyo.singles.GetStarted?.setAndSync(toUpdate);
+			await fyo.doc.getDoc("GetStarted");
+		},
+		isCompleted(item: ListItem) {
+			return fyo.singles.GetStarted?.get(item.fieldname) || false;
+		},
+		getIconComponent(item: ListItem) {
+			let completed = fyo.singles.GetStarted?.[item.fieldname] || false;
+			let name = completed ? "green-check" : item.icon;
+			let size = completed ? "24" : "18";
+			return {
+				name,
+				render() {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+					return h(Icon, {
+						...Object.assign(
+							{
+								name,
+								size,
+							},
+							this.$attrs,
+						),
+					});
+				},
+			} as Component;
+		},
+	},
 });
 </script>

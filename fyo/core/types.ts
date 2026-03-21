@@ -1,19 +1,19 @@
-import type { Doc } from 'fyo/model/doc';
-import type { Money } from 'pesa';
-import type { RawValue } from 'schemas/types';
-import type { AuthDemuxBase } from 'utils/auth/types';
-import type { DatabaseDemuxBase } from 'utils/db/types';
+import type { Doc } from "fyo/model/doc";
+import type { Money } from "pesa";
+import type { RawValue } from "schemas/types";
+import type { AuthDemuxBase } from "utils/auth/types";
+import type { DatabaseDemuxBase } from "utils/db/types";
 
 export type Attachment = { name: string; type: string; data: string };
 export type DocValue =
-  | string
-  | number
-  | boolean
-  | Date
-  | Money
-  | null
-  | Attachment
-  | undefined;
+	| string
+	| number
+	| boolean
+	| Date
+	| Money
+	| null
+	| Attachment
+	| undefined;
 export type DocValueMap = Record<string, DocValue | Doc[] | DocValueMap[]>;
 export type RawValueMap = Record<string, RawValue | RawValueMap[]>;
 
@@ -26,28 +26,28 @@ export type RawValueMap = Record<string, RawValue | RawValueMap[]>;
  */
 
 export type DatabaseDemuxConstructor = new (
-  isElectron?: boolean
+	isElectron?: boolean,
 ) => DatabaseDemuxBase;
 
 export type AuthDemuxConstructor = new (isElectron?: boolean) => AuthDemuxBase;
 
 export type ConfigMap = {
-  files: ConfigFile[];
-  lastSelectedFilePath: null | string;
-  language: string 
-  deviceId: string
+	files: ConfigFile[];
+	lastSelectedFilePath: null | string;
+	language: string;
+	deviceId: string;
 };
 
 export interface ConfigFile {
-  id: string;
-  companyName: string;
-  dbPath: string;
-  openCount: number;
+	id: string;
+	companyName: string;
+	dbPath: string;
+	openCount: number;
 }
 
 export interface FyoConfig {
-  DatabaseDemux?: DatabaseDemuxConstructor;
-  AuthDemux?: AuthDemuxConstructor;
-  isElectron?: boolean;
-  isTest?: boolean;
+	DatabaseDemux?: DatabaseDemuxConstructor;
+	AuthDemux?: AuthDemuxConstructor;
+	isElectron?: boolean;
+	isTest?: boolean;
 }

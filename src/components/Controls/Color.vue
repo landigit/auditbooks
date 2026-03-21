@@ -55,36 +55,36 @@
 </template>
 
 <script>
-import Popover from 'src/components/Popover.vue';
-import Row from 'src/components/Row.vue';
-import Base from './Base.vue';
+import Popover from "src/components/Popover.vue";
+import Row from "src/components/Row.vue";
+import Base from "./Base.vue";
 
 export default {
-  name: 'Color',
-  components: {
-    Popover,
-    Row,
-  },
-  extends: Base,
-  computed: {
-    colors() {
-      return this.df.options;
-    },
-    selectedColorLabel() {
-      if (!this.colors) return this.value;
-      const color = this.colors.find((c) => this.value === c.value);
-      return color ? color.label : this.value;
-    },
-  },
-  methods: {
-    setColorValue(value) {
-      if (!value.startsWith('#')) {
-        value = '#' + value;
-      }
-      if (/^#[0-9A-F]{6}$/i.test(value)) {
-        this.triggerChange(value);
-      }
-    },
-  },
+	name: "Color",
+	components: {
+		Popover,
+		Row,
+	},
+	extends: Base,
+	computed: {
+		colors() {
+			return this.df.options;
+		},
+		selectedColorLabel() {
+			if (!this.colors) return this.value;
+			const color = this.colors.find((c) => this.value === c.value);
+			return color ? color.label : this.value;
+		},
+	},
+	methods: {
+		setColorValue(value) {
+			if (!value.startsWith("#")) {
+				value = `#${value}`;
+			}
+			if (/^#[0-9A-F]{6}$/i.test(value)) {
+				this.triggerChange(value);
+			}
+		},
+	},
 };
 </script>

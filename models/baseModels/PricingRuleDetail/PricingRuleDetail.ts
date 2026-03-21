@@ -1,6 +1,6 @@
-import { Doc } from 'fyo/model/doc';
+import { Doc } from "fyo/model/doc";
 
 export class PricingRuleDetail extends Doc {
-  referenceName?: string;
-  referenceItem?: string;
+	referenceName?: string;
+	referenceItem?: string;
 }

@@ -5,70 +5,70 @@
   </div>
 </template>
 <script lang="ts">
-import { ColumnConfig, RenderData } from 'fyo/model/types';
-import { Field } from 'schemas/types';
-import { fyo } from 'src/initFyo';
-import { isNumeric } from 'src/utils';
-import { defineComponent, PropType } from 'vue';
+import type { ColumnConfig, RenderData } from "fyo/model/types";
+import type { Field } from "schemas/types";
+import { fyo } from "src/initFyo";
+import { isNumeric } from "src/utils";
+import { defineComponent, type PropType } from "vue";
 
 type Column = ColumnConfig | Field;
 
 function isField(column: ColumnConfig | Field): column is Field {
-  if ((column as ColumnConfig).display || (column as ColumnConfig).render) {
-    return false;
-  }
+	if ((column as ColumnConfig).display || (column as ColumnConfig).render) {
+		return false;
+	}
 
-  return true;
+	return true;
 }
 
 export default defineComponent({
-  name: 'ListCell',
-  props: {
-    row: { type: Object as PropType<RenderData>, required: true },
-    column: { type: Object as PropType<Column>, required: true },
-  },
-  emits: ['status-found'],
-  computed: {
-    columnValue(): string {
-      const column = this.column;
-      const value = this.row[this.column.fieldname];
+	name: "ListCell",
+	props: {
+		row: { type: Object as PropType<RenderData>, required: true },
+		column: { type: Object as PropType<Column>, required: true },
+	},
+	emits: ["status-found"],
+	computed: {
+		columnValue(): string {
+			const column = this.column;
+			const value = this.row[this.column.fieldname];
 
-      if (isField(column)) {
-        return fyo.format(value, column);
-      }
+			if (isField(column)) {
+				return fyo.format(value, column);
+			}
 
-      return column.display?.(value, fyo) ?? '';
-    },
-    customRenderer() {
-      const { render } = this.column as ColumnConfig;
+			return column.display?.(value, fyo) ?? "";
+		},
+		customRenderer() {
+			const { render } = this.column as ColumnConfig;
 
-      if (!render) {
-        return;
-      }
+			if (!render) {
+				return;
+			}
 
-      return render(this.row);
-    },
-    cellClass() {
-      return isNumeric(this.column.fieldtype) ? 'justify-end' : '';
-    },
-  },
-  mounted() {
-    const { render } = this.column as ColumnConfig;
-    if (render) {
-      const result = render(this.row) as {
-        template: string;
-        metadata?: { status: string; color: string; label: string };
-      };
+			return render(this.row);
+		},
+		cellClass() {
+			return isNumeric(this.column.fieldtype) ? "justify-end" : "";
+		},
+	},
+	mounted() {
+		const { render } = this.column as ColumnConfig;
+		if (render) {
+			const result = render(this.row) as {
+				template: string;
+				metadata?: { status: string; color: string; label: string };
+			};
 
-      if (result?.metadata) {
-        this.$emit('status-found', {
-          rowId: this.row.name || this.row.id,
-          fieldname: this.column.fieldname,
-          status: result.metadata.status,
-          label: result.metadata.label,
-        });
-      }
-    }
-  },
+			if (result?.metadata) {
+				this.$emit("status-found", {
+					rowId: this.row.name || this.row.id,
+					fieldname: this.column.fieldname,
+					status: result.metadata.status,
+					label: result.metadata.label,
+				});
+			}
+		}
+	},
 });
 </script>

@@ -26,32 +26,32 @@
 </template>
 
 <script lang="ts">
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { defineComponent, inject } from 'vue';
+import { shortcutsKey } from "src/utils/injectionKeys";
+import { defineComponent, inject } from "vue";
 
 export default defineComponent({
-  props: {
-    openModal: {
-      default: false,
-      type: Boolean,
-    },
-  },
-  emits: ['closemodal'],
-  setup() {
-    const context = `Modal-` + Math.random().toString(36).slice(2, 6);
-    return { shortcuts: inject(shortcutsKey), context };
-  },
-  watch: {
-    openModal(value: boolean) {
-      if (value) {
-        this.shortcuts?.set(this.context, ['Escape'], () => {
-          this.$emit('closemodal');
-        });
-      } else {
-        this.shortcuts?.delete(this.context);
-      }
-    },
-  },
+	props: {
+		openModal: {
+			default: false,
+			type: Boolean,
+		},
+	},
+	emits: ["closemodal"],
+	setup() {
+		const context = `Modal-${Math.random().toString(36).slice(2, 6)}`;
+		return { shortcuts: inject(shortcutsKey), context };
+	},
+	watch: {
+		openModal(value: boolean) {
+			if (value) {
+				this.shortcuts?.set(this.context, ["Escape"], () => {
+					this.$emit("closemodal");
+				});
+			} else {
+				this.shortcuts?.delete(this.context);
+			}
+		},
+	},
 });
 </script>
 <style scoped>

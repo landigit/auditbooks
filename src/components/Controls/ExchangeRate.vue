@@ -91,56 +91,56 @@
   </div>
 </template>
 <script lang="ts">
-import { safeParseFloat } from 'utils/index';
-import { defineComponent } from 'vue';
+import { safeParseFloat } from "utils/index";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    disabled: { type: Boolean, default: false },
-    fromCurrency: { type: String, default: 'USD' },
-    toCurrency: { type: String, default: 'INR' },
-    exchangeRate: { type: Number, default: 75 },
-  },
-  emits: ['change'],
-  data() {
-    return { fromValue: 1, isSwapped: false };
-  },
-  computed: {
-    left(): string {
-      if (this.isSwapped) {
-        return this.toCurrency;
-      }
+	props: {
+		disabled: { type: Boolean, default: false },
+		fromCurrency: { type: String, default: "USD" },
+		toCurrency: { type: String, default: "INR" },
+		exchangeRate: { type: Number, default: 75 },
+	},
+	emits: ["change"],
+	data() {
+		return { fromValue: 1, isSwapped: false };
+	},
+	computed: {
+		left(): string {
+			if (this.isSwapped) {
+				return this.toCurrency;
+			}
 
-      return this.fromCurrency;
-    },
-    right(): string {
-      if (this.isSwapped) {
-        return this.fromCurrency;
-      }
+			return this.fromCurrency;
+		},
+		right(): string {
+			if (this.isSwapped) {
+				return this.fromCurrency;
+			}
 
-      return this.toCurrency;
-    },
-  },
-  methods: {
-    swap() {
-      this.isSwapped = !this.isSwapped;
-    },
-    rightChange(e: Event) {
-      let value: string | number = 1;
-      if (e.target instanceof HTMLInputElement) {
-        value = e.target.value;
-      }
+			return this.toCurrency;
+		},
+	},
+	methods: {
+		swap() {
+			this.isSwapped = !this.isSwapped;
+		},
+		rightChange(e: Event) {
+			let value: string | number = 1;
+			if (e.target instanceof HTMLInputElement) {
+				value = e.target.value;
+			}
 
-      value = safeParseFloat(value);
+			value = safeParseFloat(value);
 
-      let exchangeRate = value / this.fromValue;
-      if (this.isSwapped) {
-        exchangeRate = this.fromValue / value;
-      }
+			let exchangeRate = value / this.fromValue;
+			if (this.isSwapped) {
+				exchangeRate = this.fromValue / value;
+			}
 
-      this.$emit('change', exchangeRate);
-    },
-  },
+			this.$emit("change", exchangeRate);
+		},
+	},
 });
 </script>
 <style scoped>

@@ -1,20 +1,20 @@
-import type { Fyo } from 'fyo';
-import type { DocValue, DocValueMap } from 'fyo/core/types';
-import type SystemSettings from 'fyo/models/SystemSettings';
-import type { FieldType, Schema, SelectOption } from 'schemas/types';
-import type { QueryFilter } from 'utils/db/types';
-import type { RouteLocationRaw, Router } from 'vue-router';
-import type { Doc } from './doc';
-import type { AccountingSettings } from 'models/baseModels/AccountingSettings/AccountingSettings';
-import type { Defaults } from 'models/baseModels/Defaults/Defaults';
-import type { PrintSettings } from 'models/baseModels/PrintSettings/PrintSettings';
-import type { InventorySettings } from 'models/inventory/InventorySettings';
-import type { Misc } from 'models/baseModels/Misc';
-import type { POSSettings } from 'models/inventory/Point of Sale/POSSettings';
-import type { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import type { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
-import { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
-import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
+import type { Fyo } from "fyo";
+import type { DocValue, DocValueMap } from "fyo/core/types";
+import type SystemSettings from "fyo/models/SystemSettings";
+import type { AccountingSettings } from "models/baseModels/AccountingSettings/AccountingSettings";
+import type { Defaults } from "models/baseModels/Defaults/Defaults";
+import type { ERPNextSyncSettings } from "models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings";
+import type { Misc } from "models/baseModels/Misc";
+import type { POSProfile } from "models/baseModels/POSProfile/PosProfile";
+import type { PrintSettings } from "models/baseModels/PrintSettings/PrintSettings";
+import type { InventorySettings } from "models/inventory/InventorySettings";
+import type { POSClosingShift } from "models/inventory/Point of Sale/POSClosingShift";
+import type { POSOpeningShift } from "models/inventory/Point of Sale/POSOpeningShift";
+import type { POSSettings } from "models/inventory/Point of Sale/POSSettings";
+import type { FieldType, Schema, SelectOption } from "schemas/types";
+import type { QueryFilter } from "utils/db/types";
+import type { RouteLocationRaw, Router } from "vue-router";
+import type { Doc } from "./doc";
 
 /**
  * The functions below are used for dynamic evaluation
@@ -30,7 +30,7 @@ import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
  */
 export type FormulaReturn = DocValue | DocValueMap[] | undefined | Doc[];
 export type Formula = (
-  fieldname?: string
+	fieldname?: string,
 ) => Promise<FormulaReturn> | FormulaReturn;
 export type FormulaConfig = { dependsOn?: string[]; formula: Formula };
 export type Default = (doc: Doc) => DocValue;
@@ -58,18 +58,18 @@ export type ModelMap = Record<string, typeof Doc | undefined>;
 export type DocMap = Record<string, Doc | undefined>;
 
 export interface SinglesMap {
-  SystemSettings?: SystemSettings;
-  AccountingSettings?: AccountingSettings;
-  InventorySettings?: InventorySettings;
-  POSSettings?: POSSettings;
-  POSProfile?: POSProfile;
-  POSOpeningShift?: POSOpeningShift;
-  ERPNextSyncSettings?: ERPNextSyncSettings;
-  POSClosingShift?: POSClosingShift;
-  PrintSettings?: PrintSettings;
-  Defaults?: Defaults;
-  Misc?: Misc;
-  [key: string]: Doc | undefined;
+	SystemSettings?: SystemSettings;
+	AccountingSettings?: AccountingSettings;
+	InventorySettings?: InventorySettings;
+	POSSettings?: POSSettings;
+	POSProfile?: POSProfile;
+	POSOpeningShift?: POSOpeningShift;
+	ERPNextSyncSettings?: ERPNextSyncSettings;
+	POSClosingShift?: POSClosingShift;
+	PrintSettings?: PrintSettings;
+	Defaults?: Defaults;
+	Misc?: Misc;
+	[key: string]: Doc | undefined;
 }
 
 // Static Config properties
@@ -84,54 +84,54 @@ export type ListFunction = (doc?: Doc) => string[] | SelectOption[];
 export type ListsMap = Record<string, ListFunction | undefined>;
 
 export interface Action {
-  label: string;
-  action: (doc: Doc, router: Router) => Promise<void> | void | unknown;
-  condition?: (doc: Doc) => boolean;
-  group?: string;
-  type?: 'primary' | 'secondary';
-  component?: {
-    template: string;
-  };
+	label: string;
+	action: (doc: Doc, router: Router) => Promise<void> | void | unknown;
+	condition?: (doc: Doc) => boolean;
+	group?: string;
+	type?: "primary" | "secondary";
+	component?: {
+		template: string;
+	};
 }
 
 export interface RenderData {
-  schema: Schema;
-  [key: string]: DocValue | Schema;
+	schema: Schema;
+	[key: string]: DocValue | Schema;
 }
 
 export type ColumnConfig = {
-  label: string;
-  fieldtype: FieldType;
-  fieldname: string;
-  render?: (doc: RenderData) => { template: string };
-  display?: (value: unknown, fyo: Fyo) => string;
+	label: string;
+	fieldtype: FieldType;
+	fieldname: string;
+	render?: (doc: RenderData) => { template: string };
+	display?: (value: unknown, fyo: Fyo) => string;
 };
 
 export type ListViewColumn = string | ColumnConfig;
 export interface ListViewSettings {
-  formRoute?: (name: string) => RouteLocationRaw;
-  columns?: ListViewColumn[];
+	formRoute?: (name: string) => RouteLocationRaw;
+	columns?: ListViewColumn[];
 }
 
 export interface TreeViewSettings {
-  parentField: string;
-  getRootLabel: () => Promise<string>;
+	parentField: string;
+	getRootLabel: () => Promise<string>;
 }
 
 export type DocStatus =
-  | ''
-  | 'Draft'
-  | 'Saved'
-  | 'NotSaved'
-  | 'Submitted'
-  | 'Cancelled';
+	| ""
+	| "Draft"
+	| "Saved"
+	| "NotSaved"
+	| "Submitted"
+	| "Cancelled";
 
 export type LeadStatus =
-  | ''
-  | 'Open'
-  | 'Replied'
-  | 'Interested'
-  | 'Opportunity'
-  | 'Converted'
-  | 'Quotation'
-  | 'DonotContact';
+	| ""
+	| "Open"
+	| "Replied"
+	| "Interested"
+	| "Opportunity"
+	| "Converted"
+	| "Quotation"
+	| "DonotContact";

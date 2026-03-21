@@ -142,213 +142,213 @@
   </div>
 </template>
 <script>
-import { euclideanDistance, prefixFormat } from 'src/utils/chart';
-import Tooltip from '../Tooltip.vue';
+import { euclideanDistance, prefixFormat } from "src/utils/chart";
+import Tooltip from "../Tooltip.vue";
 
 export default {
-  components: { Tooltip },
-  props: {
-    colors: { type: Array, default: () => [] },
-    xLabels: { type: Array, default: () => [] },
-    yLabelDivisions: { type: Number, default: 4 },
-    points: { type: Array, default: () => [[]] },
-    drawAxis: { type: Boolean, default: false },
-    drawXGrid: { type: Boolean, default: true },
-    drawLabels: { type: Boolean, default: true },
-    viewBoxHeight: { type: Number, default: 500 },
-    aspectRatio: { type: Number, default: 4 },
-    axisPadding: { type: Number, default: 30 },
-    pointsPadding: { type: Number, default: 24 },
-    xLabelOffset: { type: Number, default: 20 },
-    yLabelOffset: { type: Number, default: 5 },
-    gridColor: { type: String, default: 'rgba(0, 0, 0, 0.2)' },
-    axisColor: { type: String, default: 'rgba(0, 0, 0, 0.5)' },
-    thickness: { type: Number, default: 5 },
-    axisThickness: { type: Number, default: 1 },
-    gridThickness: { type: Number, default: 0.5 },
-    yMin: { type: Number, default: null },
-    yMax: { type: Number, default: null },
-    format: { type: Function, default: (n) => n.toFixed(1) },
-    formatY: { type: Function, default: prefixFormat },
-    formatX: { type: Function, default: (v) => v },
-    fontSize: { type: Number, default: 20 },
-    fontColor: { type: String, default: '#415668' },
-    bottom: { type: Number, default: 0 },
-    left: { type: Number, default: 55 },
-    extendGridX: { type: Number, default: -20 },
-    tooltipDispDistThreshold: { type: Number, default: 40 },
-    showTooltip: { type: Boolean, default: true },
-  },
-  data() {
-    return { cx: -1, cy: -1, xi: -1, yi: -1 };
-  },
-  computed: {
-    fontStyle() {
-      return { fontSize: this.fontSize, fill: this.fontColor };
-    },
-    viewBoxWidth() {
-      return this.aspectRatio * this.viewBoxHeight;
-    },
-    num() {
-      return this.points.length;
-    },
-    count() {
-      return Math.max(...this.points.map((p) => p.length));
-    },
-    xs() {
-      return Array(this.count)
-        .fill()
-        .map(
-          (_, i) =>
-            this.padding +
-            this.left +
-            (i * (this.viewBoxWidth - this.left - 2 * this.padding)) /
-              (this.count - 1 || 1) // The "or" one (1) prevents accidentally dividing by 0
-        );
-    },
-    ys() {
-      const min = this.hMin;
-      const max = this.hMax;
-      return this.points.map((pp) =>
-        pp.map(
-          (p) =>
-            this.padding +
-            (1 - (p - min) / (max - min)) *
-              (this.viewBoxHeight - 2 * this.padding - this.bottom)
-        )
-      );
-    },
-    xy() {
-      return this.xs.map((x, i) => [x, this.ys.map((y) => y[i])]);
-    },
-    min() {
-      return Math.min(...this.points.flat());
-    },
-    max() {
-      return Math.max(...this.points.flat());
-    },
-    axis() {
-      return `M ${this.axisPadding + this.left} ${this.axisPadding} V ${
-        this.viewBoxHeight - this.axisPadding - this.bottom
-      } H ${this.viewBoxWidth - this.axisPadding}`;
-    },
-    padding() {
-      return this.axisPadding + this.pointsPadding;
-    },
-    xGrid() {
-      const { l, r } = this.xLims;
-      const lo = l + this.extendGridX;
-      const ro = r - this.extendGridX;
-      const ys = Array(this.yLabelDivisions + 1)
-        .fill()
-        .map((_, i) => this.yScalerLocation(i));
-      return ys.map((y) => `M ${lo} ${y} H ${ro}`).join(' ');
-    },
-    yGrid() {
-      return [];
-    },
-    xLims() {
-      const l = this.padding + this.left;
-      const r = this.viewBoxWidth - this.padding;
-      return { l, r };
-    },
-    hMin() {
-      return Math.min(this.yMin ?? this.min, 0);
-    },
-    hMax() {
-      let hMax = Math.max(this.yMax ?? this.max, 0);
-      if (hMax === this.hMin) {
-        return hMax + 1000;
-      }
-      return hMax;
-    },
-  },
-  methods: {
-    gradY(i) {
-      return Math.min(...this.ys[i]).toFixed();
-    },
-    yScalerLocation(i) {
-      return (
-        ((this.yLabelDivisions - i) *
-          (this.viewBoxHeight - this.padding * 2 - this.bottom)) /
-          this.yLabelDivisions +
-        this.padding
-      );
-    },
-    yScalerValue(i) {
-      const min = this.hMin;
-      const max = this.hMax;
-      return this.formatY((i * (max - min)) / this.yLabelDivisions + min);
-    },
-    getLine(i) {
-      const [x, y] = this.xy[0];
-      let d = `M ${x} ${y[i]} `;
-      this.xy.slice(1).forEach(([x, y]) => {
-        d += `L ${x} ${y[i]} `;
-      });
-      return d;
-    },
-    getGradLine(i) {
-      let bo = this.viewBoxHeight - this.padding - this.bottom;
-      let d = `M ${this.padding + this.left} ${bo}`;
-      this.xy.forEach(([x, y]) => {
-        d += `L ${x} ${y[i]} `;
-      });
-      return d + ` V ${bo} Z`;
-    },
-    getRandomColor() {
-      const rgb = Array(3)
-        .fill()
-        .map(() => parseInt(Math.random() * 255))
-        .join(',');
-      return `rgb(${rgb})`;
-    },
-    update(event) {
-      if (!this.showTooltip) {
-        return;
-      }
+	components: { Tooltip },
+	props: {
+		colors: { type: Array, default: () => [] },
+		xLabels: { type: Array, default: () => [] },
+		yLabelDivisions: { type: Number, default: 4 },
+		points: { type: Array, default: () => [[]] },
+		drawAxis: { type: Boolean, default: false },
+		drawXGrid: { type: Boolean, default: true },
+		drawLabels: { type: Boolean, default: true },
+		viewBoxHeight: { type: Number, default: 500 },
+		aspectRatio: { type: Number, default: 4 },
+		axisPadding: { type: Number, default: 30 },
+		pointsPadding: { type: Number, default: 24 },
+		xLabelOffset: { type: Number, default: 20 },
+		yLabelOffset: { type: Number, default: 5 },
+		gridColor: { type: String, default: "rgba(0, 0, 0, 0.2)" },
+		axisColor: { type: String, default: "rgba(0, 0, 0, 0.5)" },
+		thickness: { type: Number, default: 5 },
+		axisThickness: { type: Number, default: 1 },
+		gridThickness: { type: Number, default: 0.5 },
+		yMin: { type: Number, default: null },
+		yMax: { type: Number, default: null },
+		format: { type: Function, default: (n) => n.toFixed(1) },
+		formatY: { type: Function, default: prefixFormat },
+		formatX: { type: Function, default: (v) => v },
+		fontSize: { type: Number, default: 20 },
+		fontColor: { type: String, default: "#415668" },
+		bottom: { type: Number, default: 0 },
+		left: { type: Number, default: 55 },
+		extendGridX: { type: Number, default: -20 },
+		tooltipDispDistThreshold: { type: Number, default: 40 },
+		showTooltip: { type: Boolean, default: true },
+	},
+	data() {
+		return { cx: -1, cy: -1, xi: -1, yi: -1 };
+	},
+	computed: {
+		fontStyle() {
+			return { fontSize: this.fontSize, fill: this.fontColor };
+		},
+		viewBoxWidth() {
+			return this.aspectRatio * this.viewBoxHeight;
+		},
+		num() {
+			return this.points.length;
+		},
+		count() {
+			return Math.max(...this.points.map((p) => p.length));
+		},
+		xs() {
+			return Array(this.count)
+				.fill()
+				.map(
+					(_, i) =>
+						this.padding +
+						this.left +
+						(i * (this.viewBoxWidth - this.left - 2 * this.padding)) /
+							(this.count - 1 || 1), // The "or" one (1) prevents accidentally dividing by 0
+				);
+		},
+		ys() {
+			const min = this.hMin;
+			const max = this.hMax;
+			return this.points.map((pp) =>
+				pp.map(
+					(p) =>
+						this.padding +
+						(1 - (p - min) / (max - min)) *
+							(this.viewBoxHeight - 2 * this.padding - this.bottom),
+				),
+			);
+		},
+		xy() {
+			return this.xs.map((x, i) => [x, this.ys.map((y) => y[i])]);
+		},
+		min() {
+			return Math.min(...this.points.flat());
+		},
+		max() {
+			return Math.max(...this.points.flat());
+		},
+		axis() {
+			return `M ${this.axisPadding + this.left} ${this.axisPadding} V ${
+				this.viewBoxHeight - this.axisPadding - this.bottom
+			} H ${this.viewBoxWidth - this.axisPadding}`;
+		},
+		padding() {
+			return this.axisPadding + this.pointsPadding;
+		},
+		xGrid() {
+			const { l, r } = this.xLims;
+			const lo = l + this.extendGridX;
+			const ro = r - this.extendGridX;
+			const ys = Array(this.yLabelDivisions + 1)
+				.fill()
+				.map((_, i) => this.yScalerLocation(i));
+			return ys.map((y) => `M ${lo} ${y} H ${ro}`).join(" ");
+		},
+		yGrid() {
+			return [];
+		},
+		xLims() {
+			const l = this.padding + this.left;
+			const r = this.viewBoxWidth - this.padding;
+			return { l, r };
+		},
+		hMin() {
+			return Math.min(this.yMin ?? this.min, 0);
+		},
+		hMax() {
+			let hMax = Math.max(this.yMax ?? this.max, 0);
+			if (hMax === this.hMin) {
+				return hMax + 1000;
+			}
+			return hMax;
+		},
+	},
+	methods: {
+		gradY(i) {
+			return Math.min(...this.ys[i]).toFixed();
+		},
+		yScalerLocation(i) {
+			return (
+				((this.yLabelDivisions - i) *
+					(this.viewBoxHeight - this.padding * 2 - this.bottom)) /
+					this.yLabelDivisions +
+				this.padding
+			);
+		},
+		yScalerValue(i) {
+			const min = this.hMin;
+			const max = this.hMax;
+			return this.formatY((i * (max - min)) / this.yLabelDivisions + min);
+		},
+		getLine(i) {
+			const [x, y] = this.xy[0];
+			let d = `M ${x} ${y[i]} `;
+			this.xy.slice(1).forEach(([x, y]) => {
+				d += `L ${x} ${y[i]} `;
+			});
+			return d;
+		},
+		getGradLine(i) {
+			let bo = this.viewBoxHeight - this.padding - this.bottom;
+			let d = `M ${this.padding + this.left} ${bo}`;
+			this.xy.forEach(([x, y]) => {
+				d += `L ${x} ${y[i]} `;
+			});
+			return `${d} V ${bo} Z`;
+		},
+		getRandomColor() {
+			const rgb = Array(3)
+				.fill()
+				.map(() => parseInt(Math.random() * 255, 10))
+				.join(",");
+			return `rgb(${rgb})`;
+		},
+		update(event) {
+			if (!this.showTooltip) {
+				return;
+			}
 
-      const { x, y } = this.getSvgXY(event);
-      const { xi, yi, cx, cy, d } = this.getPointIndexAndCoords(x, y);
+			const { x, y } = this.getSvgXY(event);
+			const { xi, yi, cx, cy, d } = this.getPointIndexAndCoords(x, y);
 
-      if (d > this.tooltipDispDistThreshold) {
-        this.xi = -1;
-        this.yi = -1;
-        this.cx = -1;
-        this.cy = -1;
-        this.$refs.tooltip.destroy();
-        return;
-      }
-      this.$refs.tooltip.create();
+			if (d > this.tooltipDispDistThreshold) {
+				this.xi = -1;
+				this.yi = -1;
+				this.cx = -1;
+				this.cy = -1;
+				this.$refs.tooltip.destroy();
+				return;
+			}
+			this.$refs.tooltip.create();
 
-      this.xi = xi;
-      this.yi = yi;
-      this.cx = cx;
-      this.cy = cy;
-      this.$refs.tooltip.update(event);
-    },
-    getSvgXY({ clientX, clientY }) {
-      const inv = this.$refs.chartSvg.getScreenCTM().inverse();
-      const point = new DOMPoint(clientX, clientY);
-      const { x, y } = point.matrixTransform(inv);
-      return { x, y };
-    },
-    getPointIndexAndCoords(x, y) {
-      const { l, r } = this.xLims;
-      const xi = Math.round((x - l) / ((r - l) / (this.count - 1)));
-      if (xi < 0 || xi > this.count - 1) {
-        return { d: this.tooltipDispDistThreshold + 1 };
-      }
-      const px = this.xs[xi];
-      const pys = this.ys.map((yarr) => yarr[xi]);
-      const dists = pys.map((py) => euclideanDistance(x, y, px, py));
-      const minDist = Math.min(...dists);
-      const yi = dists
-        .map((j, i) => [j - minDist, i])
-        .filter(([j, _]) => j === 0)
-        .at(-1)[1];
-      return { xi, yi, cx: px, cy: pys[yi], d: minDist };
-    },
-  },
+			this.xi = xi;
+			this.yi = yi;
+			this.cx = cx;
+			this.cy = cy;
+			this.$refs.tooltip.update(event);
+		},
+		getSvgXY({ clientX, clientY }) {
+			const inv = this.$refs.chartSvg.getScreenCTM().inverse();
+			const point = new DOMPoint(clientX, clientY);
+			const { x, y } = point.matrixTransform(inv);
+			return { x, y };
+		},
+		getPointIndexAndCoords(x, y) {
+			const { l, r } = this.xLims;
+			const xi = Math.round((x - l) / ((r - l) / (this.count - 1)));
+			if (xi < 0 || xi > this.count - 1) {
+				return { d: this.tooltipDispDistThreshold + 1 };
+			}
+			const px = this.xs[xi];
+			const pys = this.ys.map((yarr) => yarr[xi]);
+			const dists = pys.map((py) => euclideanDistance(x, y, px, py));
+			const minDist = Math.min(...dists);
+			const yi = dists
+				.map((j, i) => [j - minDist, i])
+				.filter(([j, _]) => j === 0)
+				.at(-1)[1];
+			return { xi, yi, cx: px, cy: pys[yi], d: minDist };
+		},
+	},
 };
 </script>

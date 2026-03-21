@@ -22,12 +22,12 @@
 </template>
 
 <script>
-import Base from './Base.vue';
+import Base from "./Base.vue";
 
 export default {
-  name: 'Text',
-  extends: Base,
-  props: { rows: { type: Number, default: 3 } },
-  emits: ['focus', 'input'],
+	name: "Text",
+	extends: Base,
+	props: { rows: { type: Number, default: 3 } },
+	emits: ["focus", "input"],
 };
 </script>

@@ -1,6 +1,6 @@
-import { Doc } from 'fyo/model/doc';
-import { ModelNameEnum } from 'models/types';
-import { LedgerPosting } from './LedgerPosting';
+import { Doc } from "fyo/model/doc";
+import { ModelNameEnum } from "models/types";
+import type { LedgerPosting } from "./LedgerPosting";
 
 /**
  * # Transactional
@@ -20,79 +20,79 @@ import { LedgerPosting } from './LedgerPosting';
  */
 
 export abstract class Transactional extends Doc {
-  date?: Date;
+	date?: Date;
 
-  get isTransactional() {
-    return true;
-  }
+	get isTransactional() {
+		return true;
+	}
 
-  abstract getPosting(): Promise<LedgerPosting | null>;
+	abstract getPosting(): Promise<LedgerPosting | null>;
 
-  async validate() {
-    await super.validate();
-    if (!this.isTransactional) {
-      return;
-    }
+	async validate() {
+		await super.validate();
+		if (!this.isTransactional) {
+			return;
+		}
 
-    const posting = await this.getPosting();
-    if (posting === null) {
-      return;
-    }
+		const posting = await this.getPosting();
+		if (posting === null) {
+			return;
+		}
 
-    posting.validate();
-  }
+		posting.validate();
+	}
 
-  async afterSubmit(): Promise<void> {
-    await super.afterSubmit();
-    if (!this.isTransactional) {
-      return;
-    }
+	async afterSubmit(): Promise<void> {
+		await super.afterSubmit();
+		if (!this.isTransactional) {
+			return;
+		}
 
-    const posting = await this.getPosting();
-    if (posting === null) {
-      return;
-    }
+		const posting = await this.getPosting();
+		if (posting === null) {
+			return;
+		}
 
-    await posting.post();
-  }
+		await posting.post();
+	}
 
-  async afterCancel(): Promise<void> {
-    await super.afterCancel();
-    if (!this.isTransactional) {
-      return;
-    }
+	async afterCancel(): Promise<void> {
+		await super.afterCancel();
+		if (!this.isTransactional) {
+			return;
+		}
 
-    const posting = await this.getPosting();
-    if (posting === null) {
-      return;
-    }
+		const posting = await this.getPosting();
+		if (posting === null) {
+			return;
+		}
 
-    await posting.postReverse();
-  }
+		await posting.postReverse();
+	}
 
-  async afterDelete(): Promise<void> {
-    await super.afterDelete();
-    if (!this.isTransactional) {
-      return;
-    }
+	async afterDelete(): Promise<void> {
+		await super.afterDelete();
+		if (!this.isTransactional) {
+			return;
+		}
 
-    const ledgerEntryIds = (await this.fyo.db.getAll(
-      ModelNameEnum.AccountingLedgerEntry,
-      {
-        fields: ['name'],
-        filters: {
-          referenceType: this.schemaName,
-          referenceName: this.name!,
-        },
-      }
-    )) as { name: string }[];
+		const ledgerEntryIds = (await this.fyo.db.getAll(
+			ModelNameEnum.AccountingLedgerEntry,
+			{
+				fields: ["name"],
+				filters: {
+					referenceType: this.schemaName,
+					referenceName: this.name!,
+				},
+			},
+		)) as { name: string }[];
 
-    for (const { name } of ledgerEntryIds) {
-      const ledgerEntryDoc = await this.fyo.doc.getDoc(
-        ModelNameEnum.AccountingLedgerEntry,
-        name
-      );
-      await ledgerEntryDoc.delete();
-    }
-  }
+		for (const { name } of ledgerEntryIds) {
+			const ledgerEntryDoc = await this.fyo.doc.getDoc(
+				ModelNameEnum.AccountingLedgerEntry,
+				name,
+			);
+			await ledgerEntryDoc.delete();
+		}
+	}
 }

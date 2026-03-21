@@ -214,140 +214,143 @@
   </div>
 </template>
 <script lang="ts">
-import { reportIssue } from 'src/errorHandling';
-import { fyo } from 'src/initFyo';
-import { languageDirectionKey, shortcutsKey } from 'src/utils/injectionKeys';
-import { docsPathRef } from 'src/utils/refs';
-import { getSidebarConfig } from 'src/utils/sidebarConfig';
-import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
-import { routeTo, toggleSidebar } from 'src/utils/ui';
-import { defineComponent, inject } from 'vue';
-import router from '../router';
-import Icon from './Icon.vue';
-import Modal from './Modal.vue';
-import ShortcutsHelper from './ShortcutsHelper.vue';
+import { reportIssue } from "src/errorHandling";
+import { fyo } from "src/initFyo";
+import { languageDirectionKey, shortcutsKey } from "src/utils/injectionKeys";
+import { docsPathRef } from "src/utils/refs";
+import { getSidebarConfig } from "src/utils/sidebarConfig";
+import type { SidebarConfig, SidebarItem, SidebarRoot } from "src/utils/types";
+import { routeTo, toggleSidebar } from "src/utils/ui";
+import { defineComponent, inject } from "vue";
+import router from "../router";
+import Icon from "./Icon.vue";
+import Modal from "./Modal.vue";
+import ShortcutsHelper from "./ShortcutsHelper.vue";
 
-const COMPONENT_NAME = 'Sidebar';
+const COMPONENT_NAME = "Sidebar";
 
 export default defineComponent({
-  components: {
-    Icon,
-    Modal,
-    ShortcutsHelper,
-  },
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
-  emits: ['change-db-file', 'toggle-darkmode'],
-  setup() {
-    return {
-      languageDirection: inject(languageDirectionKey),
-      shortcuts: inject(shortcutsKey),
-    };
-  },
-  data() {
-    return {
-      companyName: '',
-      groups: [],
-      viewShortcuts: false,
-      activeGroup: null,
-      showDevMode: false,
-    } as {
-      companyName: string;
-      groups: SidebarConfig;
-      viewShortcuts: boolean;
-      activeGroup: null | SidebarRoot;
-      showDevMode: boolean;
-    };
-  },
-  computed: {
-    appVersion() {
-      return fyo.store.appVersion;
-    },
-  },
-  async mounted() {
-    const { companyName } = await fyo.doc.getDoc('AccountingSettings');
-    this.companyName = companyName as string;
-    this.groups = await getSidebarConfig();
+	components: {
+		Icon,
+		Modal,
+		ShortcutsHelper,
+	},
+	props: {
+		darkMode: { type: Boolean, default: false },
+	},
+	emits: ["change-db-file", "toggle-darkmode"],
+	setup() {
+		return {
+			languageDirection: inject(languageDirectionKey),
+			shortcuts: inject(shortcutsKey),
+		};
+	},
+	data() {
+		return {
+			companyName: "",
+			groups: [],
+			viewShortcuts: false,
+			activeGroup: null,
+			showDevMode: false,
+		} as {
+			companyName: string;
+			groups: SidebarConfig;
+			viewShortcuts: boolean;
+			activeGroup: null | SidebarRoot;
+			showDevMode: boolean;
+		};
+	},
+	computed: {
+		appVersion() {
+			return fyo.store.appVersion;
+		},
+	},
+	async mounted() {
+		const { companyName } = await fyo.doc.getDoc("AccountingSettings");
+		this.companyName = companyName as string;
+		this.groups = await getSidebarConfig();
 
-    this.setActiveGroup();
-    router.afterEach(() => {
-      this.setActiveGroup();
-    });
+		this.setActiveGroup();
+		router.afterEach(() => {
+			this.setActiveGroup();
+		});
 
-    this.shortcuts?.shift.set(COMPONENT_NAME, ['KeyH'], () => {
-      if (document.body === document.activeElement) {
-        this.toggleSidebar();
-      }
-    });
-    this.shortcuts?.set(COMPONENT_NAME, ['F1'], () => this.openDocumentation());
+		this.shortcuts?.shift.set(COMPONENT_NAME, ["KeyH"], () => {
+			if (document.body === document.activeElement) {
+				this.toggleSidebar();
+			}
+		});
+		this.shortcuts?.set(COMPONENT_NAME, ["F1"], () => this.openDocumentation());
 
-    this.showDevMode = this.fyo.store.isDevelopment;
-  },
-  unmounted() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    routeTo,
-    reportIssue,
-    toggleSidebar,
-    openDocumentation() {
-      ipc.openLink('https://docs.frappe.io/' + docsPathRef.value);
-    },
-    setActiveGroup() {
-      const { fullPath } = this.$router.currentRoute.value;
-      const fallBackGroup = this.activeGroup;
-      this.activeGroup =
-        this.groups.find((g) => {
-          if (fullPath.startsWith(g.route) && g.route !== '/') {
-            return true;
-          }
+		this.showDevMode = this.fyo.store.isDevelopment;
+	},
+	unmounted() {
+		this.shortcuts?.delete(COMPONENT_NAME);
+	},
+	methods: {
+		routeTo,
+		reportIssue,
+		toggleSidebar,
+		openDocumentation() {
+			ipc.openLink(
+				`https://www.landigit.com/auditbooks/docs/${docsPathRef.value}`,
+			);
+		},
+		setActiveGroup() {
+			const { fullPath } = this.$router.currentRoute.value;
+			const fallBackGroup = this.activeGroup;
+			this.activeGroup =
+				this.groups.find((g) => {
+					if (fullPath.startsWith(g.route) && g.route !== "/") {
+						return true;
+					}
 
-          if (g.route === fullPath) {
-            return true;
-          }
+					if (g.route === fullPath) {
+						return true;
+					}
 
-          if (g.items) {
-            let activeItem = g.items.filter(
-              ({ route }) => route === fullPath || fullPath.startsWith(route)
-            );
+					if (g.items) {
+						const activeItem = g.items.filter(
+							({ route }) => route === fullPath || fullPath.startsWith(route),
+						);
 
-            if (activeItem.length) {
-              return true;
-            }
-          }
-        }) ??
-        fallBackGroup ??
-        this.groups[0];
-    },
-    isItemActive(item: SidebarItem) {
-      const { path: currentRoute, params } = this.$route;
-      const routeMatch = currentRoute === item.route;
+						if (activeItem.length) {
+							return true;
+						}
+					}
+					return false;
+				}) ??
+				fallBackGroup ??
+				this.groups[0];
+		},
+		isItemActive(item: SidebarItem) {
+			const { path: currentRoute, params } = this.$route;
+			const routeMatch = currentRoute === item.route;
 
-      const schemaNameMatch =
-        item.schemaName && params.schemaName === item.schemaName;
+			const schemaNameMatch =
+				item.schemaName && params.schemaName === item.schemaName;
 
-      const isMatch = routeMatch || schemaNameMatch;
-      if (params.name && item.schemaName && !isMatch) {
-        return currentRoute.includes(`${item.schemaName}/${params.name}`);
-      }
+			const isMatch = routeMatch || schemaNameMatch;
+			if (params.name && item.schemaName && !isMatch) {
+				return currentRoute.includes(`${item.schemaName}/${params.name}`);
+			}
 
-      return isMatch;
-    },
-    isGroupActive(group: SidebarRoot) {
-      return this.activeGroup && group.label === this.activeGroup.label;
-    },
-    routeToSidebarItem(item: SidebarItem | SidebarRoot) {
-      routeTo(this.getPath(item));
-    },
-    getPath(item: SidebarItem | SidebarRoot) {
-      const { route: path, filters } = item;
-      if (!filters) {
-        return path;
-      }
+			return isMatch;
+		},
+		isGroupActive(group: SidebarRoot) {
+			return this.activeGroup && group.label === this.activeGroup.label;
+		},
+		routeToSidebarItem(item: SidebarItem | SidebarRoot) {
+			routeTo(this.getPath(item));
+		},
+		getPath(item: SidebarItem | SidebarRoot) {
+			const { route: path, filters } = item;
+			if (!filters) {
+				return path;
+			}
 
-      return { path, query: { filters: JSON.stringify(filters) } };
-    },
-  },
+			return { path, query: { filters: JSON.stringify(filters) } };
+		},
+	},
 });
 </script>

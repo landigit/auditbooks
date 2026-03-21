@@ -13,9 +13,9 @@
   </svg>
 </template>
 <script>
-import Base from '../base.vue';
+import Base from "../base.vue";
 export default {
-  name: 'IconSales',
-  extends: Base,
+	name: "IconSales",
+	extends: Base,
 };
 </script>

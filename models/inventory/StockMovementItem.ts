@@ -1,417 +1,417 @@
-import { t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import {
-  ChangeArg,
-  FiltersMap,
-  FormulaMap,
-  HiddenMap,
-  ReadOnlyMap,
-  RequiredMap,
-  ValidationMap,
-} from 'fyo/model/types';
-import { ValidationError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { safeParseFloat } from 'utils/index';
-import { generateSerialNumbersForItem, getSuggestedBatchName } from './helpers';
-import { StockMovement } from './StockMovement';
-import { TransferItem } from './TransferItem';
-import { MovementTypeEnum } from './types';
-import { Doc } from 'fyo/model/doc';
+import { t } from "fyo";
+import type { DocValue } from "fyo/core/types";
+import type { Doc } from "fyo/model/doc";
+import type {
+	ChangeArg,
+	FiltersMap,
+	FormulaMap,
+	HiddenMap,
+	ReadOnlyMap,
+	RequiredMap,
+	ValidationMap,
+} from "fyo/model/types";
+import { ValidationError } from "fyo/utils/errors";
+import { ModelNameEnum } from "models/types";
+import type { Money } from "pesa";
+import { safeParseFloat } from "utils/index";
+import { generateSerialNumbersForItem, getSuggestedBatchName } from "./helpers";
+import type { StockMovement } from "./StockMovement";
+import { TransferItem } from "./TransferItem";
+import { MovementTypeEnum } from "./types";
 
 export class StockMovementItem extends TransferItem {
-  name?: string;
-  item?: string;
-  fromLocation?: string;
-  toLocation?: string;
+	name?: string;
+	item?: string;
+	fromLocation?: string;
+	toLocation?: string;
 
-  unit?: string;
-  transferUnit?: string;
-  quantity?: number;
-  transferQuantity?: number;
-  unitConversionFactor?: number;
+	unit?: string;
+	transferUnit?: string;
+	quantity?: number;
+	transferQuantity?: number;
+	unitConversionFactor?: number;
 
-  rate?: Money;
-  amount?: Money;
+	rate?: Money;
+	amount?: Money;
 
-  batch?: string;
-  serialNumber?: string;
+	batch?: string;
+	serialNumber?: string;
 
-  parentdoc?: StockMovement;
+	parentdoc?: StockMovement;
 
-  get isIssue() {
-    return this.parentdoc?.movementType === MovementTypeEnum.MaterialIssue;
-  }
+	get isIssue() {
+		return this.parentdoc?.movementType === MovementTypeEnum.MaterialIssue;
+	}
 
-  get isReceipt() {
-    return this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt;
-  }
+	get isReceipt() {
+		return this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt;
+	}
 
-  get isTransfer() {
-    return this.parentdoc?.movementType === MovementTypeEnum.MaterialTransfer;
-  }
+	get isTransfer() {
+		return this.parentdoc?.movementType === MovementTypeEnum.MaterialTransfer;
+	}
 
-  get isManufacture() {
-    return this.parentdoc?.movementType === MovementTypeEnum.Manufacture;
-  }
+	get isManufacture() {
+		return this.parentdoc?.movementType === MovementTypeEnum.Manufacture;
+	}
 
-  static filters: FiltersMap = {
-    item: () => ({ trackItem: true }),
-    transferUnit: async (doc: Doc) => {
-      const conversionItems = await doc.fyo.db.getAll(
-        ModelNameEnum.UOMConversionItem,
-        {
-          fields: ['uom'],
-          filters: { parent: doc.item as string },
-        }
-      );
-      const conversionUoms = conversionItems.map((i) => i.uom) as string[];
+	static filters: FiltersMap = {
+		item: () => ({ trackItem: true }),
+		transferUnit: async (doc: Doc) => {
+			const conversionItems = await doc.fyo.db.getAll(
+				ModelNameEnum.UOMConversionItem,
+				{
+					fields: ["uom"],
+					filters: { parent: doc.item as string },
+				},
+			);
+			const conversionUoms = conversionItems.map((i) => i.uom) as string[];
 
-      const baseUnit = await doc.fyo.getValue(
-        ModelNameEnum.Item,
-        doc.item as string,
-        'unit'
-      );
-      const validUoms = [...conversionUoms, baseUnit].filter(
-        Boolean
-      ) as string[];
-      return {
-        name: ['in', validUoms],
-      };
-    },
-    batch: async (doc: Doc) => {
-      let suggestedBatch: string | undefined;
-      let hasBatch = false;
+			const baseUnit = await doc.fyo.getValue(
+				ModelNameEnum.Item,
+				doc.item as string,
+				"unit",
+			);
+			const validUoms = [...conversionUoms, baseUnit].filter(
+				Boolean,
+			) as string[];
+			return {
+				name: ["in", validUoms],
+			};
+		},
+		batch: async (doc: Doc) => {
+			let suggestedBatch: string | undefined;
+			let hasBatch = false;
 
-      if (doc.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt) {
-        hasBatch = !!(await doc.fyo.getValue(
-          ModelNameEnum.Item,
-          doc.item as string,
-          'hasBatch'
-        ));
+			if (doc.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt) {
+				hasBatch = !!(await doc.fyo.getValue(
+					ModelNameEnum.Item,
+					doc.item as string,
+					"hasBatch",
+				));
 
-        if (hasBatch) {
-          suggestedBatch = await getSuggestedBatchName(
-            doc.fyo,
-            doc.item as string
-          );
+				if (hasBatch) {
+					suggestedBatch = await getSuggestedBatchName(
+						doc.fyo,
+						doc.item as string,
+					);
 
-          if (suggestedBatch) {
-            await doc.set('batch', suggestedBatch);
-          }
-        }
-      }
+					if (suggestedBatch) {
+						await doc.set("batch", suggestedBatch);
+					}
+				}
+			}
 
-      const batches = await doc.fyo.db.getAll(ModelNameEnum.Batch, {
-        fields: ['name'],
-        filters: { item: doc.item as string },
-      });
-      const existingBatchNames = batches.map((b) => b.name) as string[];
+			const batches = await doc.fyo.db.getAll(ModelNameEnum.Batch, {
+				fields: ["name"],
+				filters: { item: doc.item as string },
+			});
+			const existingBatchNames = batches.map((b) => b.name) as string[];
 
-      const allBatches = new Set<string>(existingBatchNames);
-      if (suggestedBatch) {
-        allBatches.add(suggestedBatch);
-      }
+			const allBatches = new Set<string>(existingBatchNames);
+			if (suggestedBatch) {
+				allBatches.add(suggestedBatch);
+			}
 
-      const finalBatchList = Array.from(allBatches);
+			const finalBatchList = Array.from(allBatches);
 
-      return {
-        name: ['in', finalBatchList],
-      };
-    },
-  };
+			return {
+				name: ["in", finalBatchList],
+			};
+		},
+	};
 
-  async validate() {
-    await super.validate();
-    await this.validateBatchAndItemConsistency();
-  }
+	async validate() {
+		await super.validate();
+		await this.validateBatchAndItemConsistency();
+	}
 
-  async validateBatchAndItemConsistency() {
-    if (!this.batch || !this.item) {
-      return;
-    }
+	async validateBatchAndItemConsistency() {
+		if (!this.batch || !this.item) {
+			return;
+		}
 
-    const batchDoc = await this.fyo.doc.getDoc(ModelNameEnum.Batch, this.batch);
-    if (!batchDoc) {
-      return;
-    }
+		const batchDoc = await this.fyo.doc.getDoc(ModelNameEnum.Batch, this.batch);
+		if (!batchDoc) {
+			return;
+		}
 
-    if (batchDoc.item !== this.item) {
-      throw new ValidationError(
-        t`Batch ${this.batch} does not belong to Item ${this.item}`
-      );
-    }
-  }
+		if (batchDoc.item !== this.item) {
+			throw new ValidationError(
+				t`Batch ${this.batch} does not belong to Item ${this.item}`,
+			);
+		}
+	}
 
-  formulas: FormulaMap = {
-    rate: {
-      formula: async () => {
-        if (!this.item) {
-          return this.rate;
-        }
+	formulas: FormulaMap = {
+		rate: {
+			formula: async () => {
+				if (!this.item) {
+					return this.rate;
+				}
 
-        return await this.fyo.getValue(ModelNameEnum.Item, this.item, 'rate');
-      },
-      dependsOn: ['item'],
-    },
-    amount: {
-      formula: () => this.rate!.mul(this.quantity!),
-      dependsOn: ['item', 'rate', 'quantity'],
-    },
-    fromLocation: {
-      formula: () => {
-        if (this.isReceipt || this.isTransfer || this.isManufacture) {
-          return null;
-        }
+				return await this.fyo.getValue(ModelNameEnum.Item, this.item, "rate");
+			},
+			dependsOn: ["item"],
+		},
+		amount: {
+			formula: () => this.rate?.mul(this.quantity!),
+			dependsOn: ["item", "rate", "quantity"],
+		},
+		fromLocation: {
+			formula: () => {
+				if (this.isReceipt || this.isTransfer || this.isManufacture) {
+					return null;
+				}
 
-        const defaultLocation =
-          this.fyo.singles.InventorySettings?.defaultLocation;
-        if (defaultLocation && !this.fromLocation && this.isIssue) {
-          return defaultLocation;
-        }
+				const defaultLocation =
+					this.fyo.singles.InventorySettings?.defaultLocation;
+				if (defaultLocation && !this.fromLocation && this.isIssue) {
+					return defaultLocation;
+				}
 
-        return this.toLocation;
-      },
-      dependsOn: ['movementType'],
-    },
-    toLocation: {
-      formula: () => {
-        if (this.isIssue || this.isTransfer || this.isManufacture) {
-          return null;
-        }
+				return this.toLocation;
+			},
+			dependsOn: ["movementType"],
+		},
+		toLocation: {
+			formula: () => {
+				if (this.isIssue || this.isTransfer || this.isManufacture) {
+					return null;
+				}
 
-        const defaultLocation =
-          this.fyo.singles.InventorySettings?.defaultLocation;
-        if (defaultLocation && !this.toLocation && this.isReceipt) {
-          return defaultLocation;
-        }
+				const defaultLocation =
+					this.fyo.singles.InventorySettings?.defaultLocation;
+				if (defaultLocation && !this.toLocation && this.isReceipt) {
+					return defaultLocation;
+				}
 
-        return this.toLocation;
-      },
-      dependsOn: ['movementType'],
-    },
-    unit: {
-      formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string,
-      dependsOn: ['item'],
-    },
-    transferUnit: {
-      formula: async (fieldname) => {
-        if (fieldname === 'quantity' || fieldname === 'unit') {
-          return this.unit;
-        }
+				return this.toLocation;
+			},
+			dependsOn: ["movementType"],
+		},
+		unit: {
+			formula: async () =>
+				(await this.fyo.getValue(
+					"Item",
+					this.item as string,
+					"unit",
+				)) as string,
+			dependsOn: ["item"],
+		},
+		transferUnit: {
+			formula: async (fieldname) => {
+				if (fieldname === "quantity" || fieldname === "unit") {
+					return this.unit;
+				}
 
-        return (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string;
-      },
-      dependsOn: ['item', 'unit'],
-    },
-    transferQuantity: {
-      formula: (fieldname) => {
-        if (fieldname === 'quantity' || this.unit === this.transferUnit) {
-          return this.quantity;
-        }
+				return (await this.fyo.getValue(
+					"Item",
+					this.item as string,
+					"unit",
+				)) as string;
+			},
+			dependsOn: ["item", "unit"],
+		},
+		transferQuantity: {
+			formula: (fieldname) => {
+				if (fieldname === "quantity" || this.unit === this.transferUnit) {
+					return this.quantity;
+				}
 
-        return this.transferQuantity;
-      },
-      dependsOn: ['item', 'quantity'],
-    },
-    quantity: {
-      formula: async (fieldname) => {
-        if (!this.item) {
-          return this.quantity as number;
-        }
+				return this.transferQuantity;
+			},
+			dependsOn: ["item", "quantity"],
+		},
+		quantity: {
+			formula: async (fieldname) => {
+				if (!this.item) {
+					return this.quantity as number;
+				}
 
-        const itemDoc = await this.fyo.doc.getDoc(
-          ModelNameEnum.Item,
-          this.item
-        );
-        const unitDoc = itemDoc.getLink('uom');
+				const itemDoc = await this.fyo.doc.getDoc(
+					ModelNameEnum.Item,
+					this.item,
+				);
+				const unitDoc = itemDoc.getLink("uom");
 
-        let quantity: number = this.quantity ?? 1;
-        if (fieldname === 'transferQuantity') {
-          quantity = this.transferQuantity! * this.unitConversionFactor!;
-        }
+				let quantity: number = this.quantity ?? 1;
+				if (fieldname === "transferQuantity") {
+					quantity = this.transferQuantity! * this.unitConversionFactor!;
+				}
 
-        if (unitDoc?.isWhole) {
-          return Math.round(quantity);
-        }
+				if (unitDoc?.isWhole) {
+					return Math.round(quantity);
+				}
 
-        return safeParseFloat(quantity);
-      },
-      dependsOn: [
-        'quantity',
-        'transferQuantity',
-        'transferUnit',
-        'unitConversionFactor',
-      ],
-    },
-    unitConversionFactor: {
-      formula: async () => {
-        if (this.unit === this.transferUnit) {
-          return 1;
-        }
+				return safeParseFloat(quantity);
+			},
+			dependsOn: [
+				"quantity",
+				"transferQuantity",
+				"transferUnit",
+				"unitConversionFactor",
+			],
+		},
+		unitConversionFactor: {
+			formula: async () => {
+				if (this.unit === this.transferUnit) {
+					return 1;
+				}
 
-        const conversionFactor = await this.fyo.db.getAll(
-          ModelNameEnum.UOMConversionItem,
-          {
-            fields: ['conversionFactor'],
-            filters: { parent: this.item! },
-          }
-        );
+				const conversionFactor = await this.fyo.db.getAll(
+					ModelNameEnum.UOMConversionItem,
+					{
+						fields: ["conversionFactor"],
+						filters: { parent: this.item! },
+					},
+				);
 
-        return safeParseFloat(conversionFactor[0]?.conversionFactor ?? 1);
-      },
-      dependsOn: ['transferUnit'],
-    },
-  };
+				return safeParseFloat(conversionFactor[0]?.conversionFactor ?? 1);
+			},
+			dependsOn: ["transferUnit"],
+		},
+	};
 
-  validations: ValidationMap = {
-    fromLocation: (value) => {
-      if (!this.isManufacture) {
-        return;
-      }
+	validations: ValidationMap = {
+		fromLocation: (value) => {
+			if (!this.isManufacture) {
+				return;
+			}
 
-      if (value && this.toLocation) {
-        throw new ValidationError(
-          this.fyo.t`Only From or To can be set for Manufacture`
-        );
-      }
-    },
-    toLocation: (value) => {
-      if (!this.isManufacture) {
-        return;
-      }
+			if (value && this.toLocation) {
+				throw new ValidationError(
+					this.fyo.t`Only From or To can be set for Manufacture`,
+				);
+			}
+		},
+		toLocation: (value) => {
+			if (!this.isManufacture) {
+				return;
+			}
 
-      if (value && this.fromLocation) {
-        throw new ValidationError(
-          this.fyo.t`Only From or To can be set for Manufacture`
-        );
-      }
-    },
-    batch: async () => {
-      if (!this.item || !this.batch) return;
+			if (value && this.fromLocation) {
+				throw new ValidationError(
+					this.fyo.t`Only From or To can be set for Manufacture`,
+				);
+			}
+		},
+		batch: async () => {
+			if (!this.item || !this.batch) return;
 
-      const batchDoc = await this.fyo.doc.getDoc(
-        ModelNameEnum.Batch,
-        this.batch
-      );
-      if (!batchDoc) return;
+			const batchDoc = await this.fyo.doc.getDoc(
+				ModelNameEnum.Batch,
+				this.batch,
+			);
+			if (!batchDoc) return;
 
-      if (batchDoc.item !== this.item) {
-        throw new ValidationError(
-          t`Batch ${this.batch} does not belong to Item ${this.item}`
-        );
-      }
-    },
-    transferUnit: async (value: DocValue) => {
-      if (!this.item) {
-        return;
-      }
+			if (batchDoc.item !== this.item) {
+				throw new ValidationError(
+					t`Batch ${this.batch} does not belong to Item ${this.item}`,
+				);
+			}
+		},
+		transferUnit: async (value: DocValue) => {
+			if (!this.item) {
+				return;
+			}
 
-      const item = await this.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
-        fields: ['parent'],
-        filters: { uom: value as string, parent: this.item },
-      });
+			const item = await this.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
+				fields: ["parent"],
+				filters: { uom: value as string, parent: this.item },
+			});
 
-      if (item.length < 1)
-        throw new ValidationError(
-          t`Transfer Unit ${value as string} is not applicable for Item ${
-            this.item
-          }`
-        );
-    },
-  };
+			if (item.length < 1)
+				throw new ValidationError(
+					t`Transfer Unit ${value as string} is not applicable for Item ${
+						this.item
+					}`,
+				);
+		},
+	};
 
-  required: RequiredMap = {
-    fromLocation: () => this.isIssue || this.isTransfer,
-    toLocation: () => this.isReceipt || this.isTransfer,
-  };
+	required: RequiredMap = {
+		fromLocation: () => this.isIssue || this.isTransfer,
+		toLocation: () => this.isReceipt || this.isTransfer,
+	};
 
-  readOnly: ReadOnlyMap = {
-    fromLocation: () => this.isReceipt,
-    toLocation: () => this.isIssue,
-  };
+	readOnly: ReadOnlyMap = {
+		fromLocation: () => this.isReceipt,
+		toLocation: () => this.isIssue,
+	};
 
-  override hidden: HiddenMap = {
-    batch: () => !this.fyo.singles.InventorySettings?.enableBatches,
-    serialNumber: () => !this.fyo.singles.InventorySettings?.enableSerialNumber,
-    transferUnit: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-    transferQuantity: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-    unitConversionFactor: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-  };
+	override hidden: HiddenMap = {
+		batch: () => !this.fyo.singles.InventorySettings?.enableBatches,
+		serialNumber: () => !this.fyo.singles.InventorySettings?.enableSerialNumber,
+		transferUnit: () =>
+			!this.fyo.singles.InventorySettings?.enableUomConversions,
+		transferQuantity: () =>
+			!this.fyo.singles.InventorySettings?.enableUomConversions,
+		unitConversionFactor: () =>
+			!this.fyo.singles.InventorySettings?.enableUomConversions,
+	};
 
-  static createFilters: FiltersMap = {
-    item: () => ({ trackItem: true, itemType: 'Product' }),
-  };
+	static createFilters: FiltersMap = {
+		item: () => ({ trackItem: true, itemType: "Product" }),
+	};
 
-  override async change(ch: ChangeArg): Promise<void> {
-    await super.change(ch);
+	override async change(ch: ChangeArg): Promise<void> {
+		await super.change(ch);
 
-    const shouldGenerateSerialNumbers =
-      this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt &&
-      this.item &&
-      this.quantity &&
-      this.quantity > 0;
+		const shouldGenerateSerialNumbers =
+			this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt &&
+			this.item &&
+			this.quantity &&
+			this.quantity > 0;
 
-    if (ch.changed === 'item') {
-      await this.set('serialNumber', '');
+		if (ch.changed === "item") {
+			await this.set("serialNumber", "");
 
-      if (
-        this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt &&
-        this.item
-      ) {
-        const hasBatch = await this.fyo.getValue(
-          ModelNameEnum.Item,
-          this.item,
-          'hasBatch'
-        );
+			if (
+				this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt &&
+				this.item
+			) {
+				const hasBatch = await this.fyo.getValue(
+					ModelNameEnum.Item,
+					this.item,
+					"hasBatch",
+				);
 
-        if (hasBatch) {
-          const batchName = await getSuggestedBatchName(this.fyo, this.item);
-          if (batchName) {
-            await this.set('batch', batchName);
-          }
-        }
-      }
+				if (hasBatch) {
+					const batchName = await getSuggestedBatchName(this.fyo, this.item);
+					if (batchName) {
+						await this.set("batch", batchName);
+					}
+				}
+			}
 
-      if (shouldGenerateSerialNumbers) {
-        await this.generateAndSetSerialNumbers();
-      }
-    }
+			if (shouldGenerateSerialNumbers) {
+				await this.generateAndSetSerialNumbers();
+			}
+		}
 
-    if (ch.changed === 'quantity') {
-      if (!this.quantity || this.quantity <= 0) {
-        await this.set('serialNumber', '');
-      } else if (shouldGenerateSerialNumbers) {
-        await this.generateAndSetSerialNumbers();
-      }
-    }
-  }
+		if (ch.changed === "quantity") {
+			if (!this.quantity || this.quantity <= 0) {
+				await this.set("serialNumber", "");
+			} else if (shouldGenerateSerialNumbers) {
+				await this.generateAndSetSerialNumbers();
+			}
+		}
+	}
 
-  private async generateAndSetSerialNumbers(): Promise<void> {
-    if (!this.item || !this.quantity) {
-      return;
-    }
+	private async generateAndSetSerialNumbers(): Promise<void> {
+		if (!this.item || !this.quantity) {
+			return;
+		}
 
-    const serialNumbers = await generateSerialNumbersForItem(
-      this.fyo,
-      this.item,
-      Math.abs(this.quantity)
-    );
+		const serialNumbers = await generateSerialNumbersForItem(
+			this.fyo,
+			this.item,
+			Math.abs(this.quantity),
+		);
 
-    if (serialNumbers) {
-      await this.set('serialNumber', serialNumbers);
-    }
-  }
+		if (serialNumbers) {
+			await this.set("serialNumber", serialNumbers);
+		}
+	}
 }

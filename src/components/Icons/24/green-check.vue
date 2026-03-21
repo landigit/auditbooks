@@ -17,9 +17,9 @@
   </svg>
 </template>
 <script>
-import Base from '../base.vue';
+import Base from "../base.vue";
 export default {
-  name: 'IconGreenCheck',
-  extends: Base,
+	name: "IconGreenCheck",
+	extends: Base,
 };
 </script>

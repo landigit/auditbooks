@@ -67,77 +67,77 @@
 </template>
 
 <script lang="ts">
-import FormControl from 'src/components/Controls/FormControl.vue';
-import Row from 'src/components/Row.vue';
-import { isNumeric } from 'src/utils';
-import { defineComponent } from 'vue';
-import { Field } from 'schemas/types';
-import { POSItem } from '../types';
+import type { Field } from "schemas/types";
+import FormControl from "src/components/Controls/FormControl.vue";
+import Row from "src/components/Row.vue";
+import { isNumeric } from "src/utils";
+import { defineComponent } from "vue";
+import type { POSItem } from "../types";
 
 export default defineComponent({
-  name: 'ItemsTable',
-  components: { FormControl, Row },
-  emits: ['addItem', 'updateValues'],
-  props: {
-    items: Array,
-    itemQtyMap: Object,
-    itemVisibility: {
-      type: String,
-      default: 'Inventory Items',
-    },
-  },
-  computed: {
-    ratio() {
-      if (this.itemVisibility === 'ERP Sync Items') {
-        return [1, 1.5, 0.8];
-      }
-      return [1, 1, 1, 0.7];
-    },
-    tableFields() {
-      const fields = [
-        {
-          fieldname: 'name',
-          fieldtype: 'Data',
-          label: 'Item',
-          placeholder: 'Item',
-          readOnly: true,
-        },
-        {
-          fieldname: 'rate',
-          label: 'Rate',
-          placeholder: 'Rate',
-          fieldtype: 'Currency',
-          readOnly: true,
-        },
-        {
-          fieldname: 'unit',
-          label: 'Unit',
-          placeholder: 'Unit',
-          fieldtype: 'Data',
-          target: 'UOM',
-          readOnly: true,
-        },
-      ] as Field[];
+	name: "ItemsTable",
+	components: { FormControl, Row },
+	emits: ["addItem", "updateValues"],
+	props: {
+		items: Array,
+		itemQtyMap: Object,
+		itemVisibility: {
+			type: String,
+			default: "Inventory Items",
+		},
+	},
+	computed: {
+		ratio() {
+			if (this.itemVisibility === "ERP Sync Items") {
+				return [1, 1.5, 0.8];
+			}
+			return [1, 1, 1, 0.7];
+		},
+		tableFields() {
+			const fields = [
+				{
+					fieldname: "name",
+					fieldtype: "Data",
+					label: "Item",
+					placeholder: "Item",
+					readOnly: true,
+				},
+				{
+					fieldname: "rate",
+					label: "Rate",
+					placeholder: "Rate",
+					fieldtype: "Currency",
+					readOnly: true,
+				},
+				{
+					fieldname: "unit",
+					label: "Unit",
+					placeholder: "Unit",
+					fieldtype: "Data",
+					target: "UOM",
+					readOnly: true,
+				},
+			] as Field[];
 
-      if (this.itemVisibility !== 'ERP Sync Items') {
-        fields.splice(2, 0, {
-          fieldname: 'availableQty',
-          label: 'Qty',
-          placeholder: 'Available Qty',
-          fieldtype: 'Float',
-          readOnly: true,
-        });
-      }
+			if (this.itemVisibility !== "ERP Sync Items") {
+				fields.splice(2, 0, {
+					fieldname: "availableQty",
+					label: "Qty",
+					placeholder: "Available Qty",
+					fieldtype: "Float",
+					readOnly: true,
+				});
+			}
 
-      return fields;
-    },
-  },
-  methods: {
-    handleChange(value: POSItem) {
-      this.$emit('addItem', value);
-      this.$emit('updateValues');
-    },
-    isNumeric,
-  },
+			return fields;
+		},
+	},
+	methods: {
+		handleChange(value: POSItem) {
+			this.$emit("addItem", value);
+			this.$emit("updateValues");
+		},
+		isNumeric,
+	},
 });
 </script>

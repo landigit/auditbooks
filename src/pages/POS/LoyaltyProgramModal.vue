@@ -70,118 +70,118 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
-import { t } from 'fyo';
-import { showToast } from 'src/utils/interactive';
-import { ModelNameEnum } from 'models/types';
-import Int from 'src/components/Controls/Int.vue';
+import { t } from "fyo";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { ModelNameEnum } from "models/types";
+import Button from "src/components/Button.vue";
+import Int from "src/components/Controls/Int.vue";
+import Modal from "src/components/Modal.vue";
+import { showToast } from "src/utils/interactive";
+import { defineComponent, inject } from "vue";
 
 export default defineComponent({
-  name: 'LoyaltyProgramModal',
-  components: {
-    Modal,
-    Button,
-    Int,
-  },
-  props: {
-    loyaltyPoints: {
-      type: Number,
-      default: 0,
-    },
+	name: "LoyaltyProgramModal",
+	components: {
+		Modal,
+		Button,
+		Int,
+	},
+	props: {
+		loyaltyPoints: {
+			type: Number,
+			default: 0,
+		},
 
-    loyaltyProgram: {
-      type: String,
-      default: '',
-    },
-  },
-  emits: ['setLoyaltyPoints', 'toggleModal'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  data() {
-    return {
-      validationError: false,
-    };
-  },
-  methods: {
-    async keydownEnter(value: number) {
-      await this.updateLoyaltyPoints(value);
-      this.setLoyaltyPoints();
-    },
-    cancelLoyaltyProgram() {
-      this.$emit('setLoyaltyPoints', 0);
-      this.$emit('toggleModal', 'LoyaltyProgram');
-    },
-    async updateLoyaltyPoints(newValue: number) {
-      try {
-        const partyData = await this.fyo.db.get(
-          ModelNameEnum.Party,
-          this.sinvDoc.party as string
-        );
+		loyaltyProgram: {
+			type: String,
+			default: "",
+		},
+	},
+	emits: ["setLoyaltyPoints", "toggleModal"],
+	setup() {
+		return {
+			sinvDoc: inject("sinvDoc") as SalesInvoice,
+		};
+	},
+	data() {
+		return {
+			validationError: false,
+		};
+	},
+	methods: {
+		async keydownEnter(value: number) {
+			await this.updateLoyaltyPoints(value);
+			this.setLoyaltyPoints();
+		},
+		cancelLoyaltyProgram() {
+			this.$emit("setLoyaltyPoints", 0);
+			this.$emit("toggleModal", "LoyaltyProgram");
+		},
+		async updateLoyaltyPoints(newValue: number) {
+			try {
+				const partyData = await this.fyo.db.get(
+					ModelNameEnum.Party,
+					this.sinvDoc.party as string,
+				);
 
-        if (!partyData.loyaltyProgram) {
-          return;
-        }
+				if (!partyData.loyaltyProgram) {
+					return;
+				}
 
-        const loyaltyProgramDoc = await this.fyo.db.getAll(
-          ModelNameEnum.LoyaltyProgram,
-          {
-            fields: ['conversionFactor', 'toDate'],
-            filters: { name: partyData.loyaltyProgram as string },
-          }
-        );
+				const loyaltyProgramDoc = await this.fyo.db.getAll(
+					ModelNameEnum.LoyaltyProgram,
+					{
+						fields: ["conversionFactor", "toDate"],
+						filters: { name: partyData.loyaltyProgram as string },
+					},
+				);
 
-        const toDate = loyaltyProgramDoc[0]?.toDate as Date;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+				const toDate = loyaltyProgramDoc[0]?.toDate as Date;
+				const today = new Date();
+				today.setHours(0, 0, 0, 0);
 
-        if (toDate && new Date(toDate).getTime() < today.getTime()) {
-          throw new Error(t`Loyalty program has expired and cannot be applied`);
-        }
+				if (toDate && new Date(toDate).getTime() < today.getTime()) {
+					throw new Error(t`Loyalty program has expired and cannot be applied`);
+				}
 
-        if (this.loyaltyPoints >= newValue) {
-          this.sinvDoc.loyaltyPoints = newValue;
-        } else {
-          throw new Error(
-            `${this.sinvDoc.party as string} only has ${
-              this.loyaltyPoints
-            } points`
-          );
-        }
+				if (this.loyaltyPoints >= newValue) {
+					this.sinvDoc.loyaltyPoints = newValue;
+				} else {
+					throw new Error(
+						`${this.sinvDoc.party as string} only has ${
+							this.loyaltyPoints
+						} points`,
+					);
+				}
 
-        const loyaltyPoint =
-          newValue * ((loyaltyProgramDoc[0]?.conversionFactor as number) || 0);
+				const loyaltyPoint =
+					newValue * ((loyaltyProgramDoc[0]?.conversionFactor as number) || 0);
 
-        if (this.sinvDoc.baseGrandTotal?.lt(loyaltyPoint)) {
-          throw new Error(t`no need ${newValue} points to purchase this item`);
-        }
+				if (this.sinvDoc.baseGrandTotal?.lt(loyaltyPoint)) {
+					throw new Error(t`no need ${newValue} points to purchase this item`);
+				}
 
-        if (newValue < 0) {
-          throw new Error(t`Points must be greater than 0`);
-        }
+				if (newValue < 0) {
+					throw new Error(t`Points must be greater than 0`);
+				}
 
-        this.$emit('setLoyaltyPoints', this.sinvDoc.loyaltyPoints);
+				this.$emit("setLoyaltyPoints", this.sinvDoc.loyaltyPoints);
 
-        this.validationError = false;
-      } catch (error) {
-        this.validationError = true;
+				this.validationError = false;
+			} catch (error) {
+				this.validationError = true;
 
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-        });
+				showToast({
+					type: "error",
+					message: t`${error as string}`,
+				});
 
-        return;
-      }
-    },
-    setLoyaltyPoints() {
-      this.$emit('toggleModal', 'LoyaltyProgram');
-    },
-  },
+				return;
+			}
+		},
+		setLoyaltyPoints() {
+			this.$emit("toggleModal", "LoyaltyProgram");
+		},
+	},
 });
 </script>

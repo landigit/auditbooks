@@ -410,597 +410,594 @@
   </div>
 </template>
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
-import { Action } from 'fyo/model/types';
-import { Verb } from 'fyo/telemetry/types';
-import { ValidationError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { OptionField, RawValue, SelectOption } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
-import Check from 'src/components/Controls/Check.vue';
-import Data from 'src/components/Controls/Data.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import Select from 'src/components/Controls/Select.vue';
-import DropdownWithActions from 'src/components/DropdownWithActions.vue';
-import FormHeader from 'src/components/FormHeader.vue';
-import Modal from 'src/components/Modal.vue';
-import PageHeader from 'src/components/PageHeader.vue';
-import { Importer, TemplateField, getColumnLabel } from 'src/importer';
-import { fyo } from 'src/initFyo';
-import { showDialog } from 'src/utils/interactive';
-import { docsPathMap } from 'src/utils/misc';
-import { docsPathRef } from 'src/utils/refs';
-import { getSavePath, selectTextFile } from 'src/utils/ui';
-import { defineComponent } from 'vue';
-import Loading from '../components/Loading.vue';
+import type { DocValue } from "fyo/core/types";
+import type { Action } from "fyo/model/types";
+import { Verb } from "fyo/telemetry/types";
+import { ValidationError } from "fyo/utils/errors";
+import { ModelNameEnum } from "models/types";
+import type { OptionField, RawValue, SelectOption } from "schemas/types";
+import Button from "src/components/Button.vue";
+import AutoComplete from "src/components/Controls/AutoComplete.vue";
+import Check from "src/components/Controls/Check.vue";
+import Data from "src/components/Controls/Data.vue";
+import FormControl from "src/components/Controls/FormControl.vue";
+import Select from "src/components/Controls/Select.vue";
+import DropdownWithActions from "src/components/DropdownWithActions.vue";
+import FormHeader from "src/components/FormHeader.vue";
+import Modal from "src/components/Modal.vue";
+import PageHeader from "src/components/PageHeader.vue";
+import { getColumnLabel, Importer, type TemplateField } from "src/importer";
+import { fyo } from "src/initFyo";
+import { showDialog } from "src/utils/interactive";
+import { docsPathMap } from "src/utils/misc";
+import { docsPathRef } from "src/utils/refs";
+import { getSavePath, selectTextFile } from "src/utils/ui";
+import { defineComponent } from "vue";
+import Loading from "../components/Loading.vue";
 
 type ImportWizardData = {
-  showColumnPicker: boolean;
-  complete: boolean;
-  success: string[];
-  successOldName: string[];
-  failed: { name: string; error: Error }[];
-  file: null | { name: string; filePath: string; text: string };
-  nullOrImporter: null | Importer;
-  importType: string;
-  isMakingEntries: boolean;
-  percentLoading: number;
-  messageLoading: string;
+	showColumnPicker: boolean;
+	complete: boolean;
+	success: string[];
+	successOldName: string[];
+	failed: { name: string; error: Error }[];
+	file: null | { name: string; filePath: string; text: string };
+	nullOrImporter: null | Importer;
+	importType: string;
+	isMakingEntries: boolean;
+	percentLoading: number;
+	messageLoading: string;
 };
 
 export default defineComponent({
-  components: {
-    PageHeader,
-    FormControl,
-    Button,
-    DropdownWithActions,
-    Loading,
-    AutoComplete,
-    Data,
-    Modal,
-    FormHeader,
-    Check,
-    Select,
-  },
-  data() {
-    return {
-      showColumnPicker: false,
-      complete: false,
-      success: [],
-      successOldName: [],
-      failed: [],
-      file: null,
-      nullOrImporter: null,
-      importType: '',
-      isMakingEntries: false,
-      percentLoading: 0,
-      messageLoading: '',
-    } as ImportWizardData;
-  },
-  computed: {
-    gridTemplateColumn(): string {
-      return `grid-template-columns: 4rem repeat(${this.columnCount}, 10rem)`;
-    },
-    duplicates(): string[] {
-      if (!this.hasImporter) {
-        return [];
-      }
+	components: {
+		PageHeader,
+		FormControl,
+		Button,
+		DropdownWithActions,
+		Loading,
+		AutoComplete,
+		Data,
+		Modal,
+		FormHeader,
+		Check,
+		Select,
+	},
+	data() {
+		return {
+			showColumnPicker: false,
+			complete: false,
+			success: [],
+			successOldName: [],
+			failed: [],
+			file: null,
+			nullOrImporter: null,
+			importType: "",
+			isMakingEntries: false,
+			percentLoading: 0,
+			messageLoading: "",
+		} as ImportWizardData;
+	},
+	computed: {
+		gridTemplateColumn(): string {
+			return `grid-template-columns: 4rem repeat(${this.columnCount}, 10rem)`;
+		},
+		duplicates(): string[] {
+			if (!this.hasImporter) {
+				return [];
+			}
 
-      const dupes = new Set<string>();
-      const assignedSet = new Set<string>();
+			const dupes = new Set<string>();
+			const assignedSet = new Set<string>();
 
-      for (const key of this.importer.assignedTemplateFields) {
-        if (!key) {
-          continue;
-        }
+			for (const key of this.importer.assignedTemplateFields) {
+				if (!key) {
+					continue;
+				}
 
-        const tf = this.importer.templateFieldsMap.get(key);
-        if (assignedSet.has(key) && tf) {
-          dupes.add(getColumnLabel(tf));
-        }
+				const tf = this.importer.templateFieldsMap.get(key);
+				if (assignedSet.has(key) && tf) {
+					dupes.add(getColumnLabel(tf));
+				}
 
-        assignedSet.add(key);
-      }
+				assignedSet.add(key);
+			}
 
-      return Array.from(dupes);
-    },
-    requiredNotSelected(): string[] {
-      if (!this.hasImporter) {
-        return [];
-      }
+			return Array.from(dupes);
+		},
+		requiredNotSelected(): string[] {
+			if (!this.hasImporter) {
+				return [];
+			}
 
-      const assigned = new Set(this.importer.assignedTemplateFields);
-      return [...this.importer.templateFieldsMap.values()]
-        .filter((f) => {
-          if (assigned.has(f.fieldKey) || !f.required) {
-            return false;
-          }
+			const assigned = new Set(this.importer.assignedTemplateFields);
+			return [...this.importer.templateFieldsMap.values()]
+				.filter((f) => {
+					if (assigned.has(f.fieldKey) || !f.required) {
+						return false;
+					}
 
-          if (f.parentSchemaChildField && !f.parentSchemaChildField.required) {
-            return false;
-          }
+					if (f.parentSchemaChildField && !f.parentSchemaChildField.required) {
+						return false;
+					}
 
-          return f.required;
-        })
-        .map((f) => getColumnLabel(f));
-    },
-    errorMessage(): string {
-      if (this.duplicates.length) {
-        return this.t`Duplicate columns found: ${this.duplicates.join(', ')}`;
-      }
+					return f.required;
+				})
+				.map((f) => getColumnLabel(f));
+		},
+		errorMessage(): string {
+			if (this.duplicates.length) {
+				return this.t`Duplicate columns found: ${this.duplicates.join(", ")}`;
+			}
 
-      if (this.requiredNotSelected.length) {
-        return this
-          .t`Required fields not selected: ${this.requiredNotSelected.join(
-          ', '
-        )}`;
-      }
+			if (this.requiredNotSelected.length) {
+				return this
+					.t`Required fields not selected: ${this.requiredNotSelected.join(
+					", ",
+				)}`;
+			}
 
-      return '';
-    },
-    canImportData(): boolean {
-      if (!this.hasImporter) {
-        return false;
-      }
+			return "";
+		},
+		canImportData(): boolean {
+			if (!this.hasImporter) {
+				return false;
+			}
 
-      return this.importer.valueMatrix.length > 0;
-    },
-    canSelectFile(): boolean {
-      return !this.file;
-    },
-    columnCount(): number {
-      if (!this.hasImporter) {
-        return 0;
-      }
+			return this.importer.valueMatrix.length > 0;
+		},
+		canSelectFile(): boolean {
+			return !this.file;
+		},
+		columnCount(): number {
+			if (!this.hasImporter) {
+				return 0;
+			}
 
-      if (!this.file) {
-        return this.numColumnsPicked;
-      }
+			if (!this.file) {
+				return this.numColumnsPicked;
+			}
 
-      if (!this.importer.valueMatrix.length) {
-        return this.importer.assignedTemplateFields.length;
-      }
+			if (!this.importer.valueMatrix.length) {
+				return this.importer.assignedTemplateFields.length;
+			}
 
-      return Math.min(
-        this.importer.assignedTemplateFields.length,
-        this.importer.valueMatrix[0].length
-      );
-    },
-    columnIterator(): number[] {
-      return Array(this.columnCount)
-        .fill(null)
-        .map((_, i) => i);
-    },
-    hasImporter(): boolean {
-      return !!this.nullOrImporter;
-    },
-    numColumnsPicked(): number {
-      return [...this.importer.templateFieldsPicked.values()].filter(Boolean)
-        .length;
-    },
-    columnPickerFieldsMap(): Map<string, TemplateField[]> {
-      const map: Map<string, TemplateField[]> = new Map();
+			return Math.min(
+				this.importer.assignedTemplateFields.length,
+				this.importer.valueMatrix[0].length,
+			);
+		},
+		columnIterator(): number[] {
+			return Array(this.columnCount)
+				.fill(null)
+				.map((_, i) => i);
+		},
+		hasImporter(): boolean {
+			return !!this.nullOrImporter;
+		},
+		numColumnsPicked(): number {
+			return [...this.importer.templateFieldsPicked.values()].filter(Boolean)
+				.length;
+		},
+		columnPickerFieldsMap(): Map<string, TemplateField[]> {
+			const map: Map<string, TemplateField[]> = new Map();
 
-      for (const value of this.importer.templateFieldsMap.values()) {
-        let label = value.schemaLabel;
-        if (value.parentSchemaChildField) {
-          label = `${value.parentSchemaChildField.label} (${value.schemaLabel})`;
-        }
+			for (const value of this.importer.templateFieldsMap.values()) {
+				let label = value.schemaLabel;
+				if (value.parentSchemaChildField) {
+					label = `${value.parentSchemaChildField.label} (${value.schemaLabel})`;
+				}
 
-        if (!map.has(label)) {
-          map.set(label, []);
-        }
+				if (!map.has(label)) {
+					map.set(label, []);
+				}
 
-        map.get(label)!.push(value);
-      }
+				map.get(label)?.push(value);
+			}
 
-      return map;
-    },
-    importer(): Importer {
-      if (!this.nullOrImporter) {
-        throw new ValidationError(this.t`Importer not set, reload tool`, false);
-      }
+			return map;
+		},
+		importer(): Importer {
+			if (!this.nullOrImporter) {
+				throw new ValidationError(this.t`Importer not set, reload tool`, false);
+			}
 
-      return this.nullOrImporter as Importer;
-    },
-    importableSchemaNames(): ModelNameEnum[] {
-      const importables = [
-        ModelNameEnum.SalesInvoice,
-        ModelNameEnum.PurchaseInvoice,
-        ModelNameEnum.Payment,
-        ModelNameEnum.Party,
-        ModelNameEnum.Item,
-        ModelNameEnum.JournalEntry,
-        ModelNameEnum.Tax,
-        ModelNameEnum.Account,
-        ModelNameEnum.Address,
-        ModelNameEnum.NumberSeries,
-      ];
+			return this.nullOrImporter as Importer;
+		},
+		importableSchemaNames(): ModelNameEnum[] {
+			const importables = [
+				ModelNameEnum.SalesInvoice,
+				ModelNameEnum.PurchaseInvoice,
+				ModelNameEnum.Payment,
+				ModelNameEnum.Party,
+				ModelNameEnum.Item,
+				ModelNameEnum.JournalEntry,
+				ModelNameEnum.Tax,
+				ModelNameEnum.Account,
+				ModelNameEnum.Address,
+				ModelNameEnum.NumberSeries,
+			];
 
-      const hasInventory = fyo.doc.singles.AccountingSettings?.enableInventory;
-      if (hasInventory) {
-        importables.push(
-          ModelNameEnum.StockMovement,
-          ModelNameEnum.Shipment,
-          ModelNameEnum.PurchaseReceipt,
-          ModelNameEnum.Location
-        );
-      }
+			const hasInventory = fyo.doc.singles.AccountingSettings?.enableInventory;
+			if (hasInventory) {
+				importables.push(
+					ModelNameEnum.StockMovement,
+					ModelNameEnum.Shipment,
+					ModelNameEnum.PurchaseReceipt,
+					ModelNameEnum.Location,
+				);
+			}
 
-      return importables;
-    },
-    actions(): Action[] {
-      const actions: Action[] = [];
+			return importables;
+		},
+		actions(): Action[] {
+			const actions: Action[] = [];
 
-      let selectFileLabel = this.t`Select File`;
-      if (this.file) {
-        selectFileLabel = this.t`Change File`;
-      }
+			let selectFileLabel = this.t`Select File`;
+			if (this.file) {
+				selectFileLabel = this.t`Change File`;
+			}
 
-      if (this.canImportData) {
-        actions.push({
-          label: selectFileLabel,
-          component: {
-            template: `<span>{{ "${selectFileLabel}" }}</span>`,
-          },
-          action: this.selectFile.bind(this),
-        });
-      }
+			if (this.canImportData) {
+				actions.push({
+					label: selectFileLabel,
+					component: {
+						template: `<span>{{ "${selectFileLabel}" }}</span>`,
+					},
+					action: this.selectFile.bind(this),
+				});
+			}
 
-      const pickColumnsAction = {
-        label: this.t`Pick Import Columns`,
-        component: {
-          template: '<span>{{ t`Pick Import Columns` }}</span>',
-        },
-        action: () => (this.showColumnPicker = true),
-      };
+			const pickColumnsAction = {
+				label: this.t`Pick Import Columns`,
+				component: {
+					template: "<span>{{ t`Pick Import Columns` }}</span>",
+				},
+				action: () => (this.showColumnPicker = true),
+			};
 
-      const cancelAction = {
-        label: this.t`Cancel`,
-        component: {
-          template: '<span class="text-red-700" >{{ t`Cancel` }}</span>',
-        },
-        action: this.clear.bind(this),
-      };
-      actions.push(pickColumnsAction, cancelAction);
+			const cancelAction = {
+				label: this.t`Cancel`,
+				component: {
+					template: '<span class="text-red-700" >{{ t`Cancel` }}</span>',
+				},
+				action: this.clear.bind(this),
+			};
+			actions.push(pickColumnsAction, cancelAction);
 
-      return actions;
-    },
-    fileName(): string {
-      if (!this.file) {
-        return '';
-      }
+			return actions;
+		},
+		fileName(): string {
+			if (!this.file) {
+				return "";
+			}
 
-      return this.file.name;
-    },
-    helperMessage(): string {
-      if (!this.importType) {
-        return this.t`Set an Import Type`;
-      } else if (!this.fileName) {
-        return '';
-      }
+			return this.file.name;
+		},
+		helperMessage(): string {
+			if (!this.importType) {
+				return this.t`Set an Import Type`;
+			} else if (!this.fileName) {
+				return "";
+			}
 
-      return this.fileName;
-    },
-    isSubmittable(): boolean {
-      const schemaName = this.importer.schemaName;
-      return fyo.schemaMap[schemaName]?.isSubmittable ?? false;
-    },
-    gridColumnTitleDf(): OptionField {
-      const options: SelectOption[] = [];
-      for (const field of this.importer.templateFieldsMap.values()) {
-        const value = field.fieldKey;
-        if (!this.importer.templateFieldsPicked.get(value)) {
-          continue;
-        }
+			return this.fileName;
+		},
+		isSubmittable(): boolean {
+			const schemaName = this.importer.schemaName;
+			return fyo.schemaMap[schemaName]?.isSubmittable ?? false;
+		},
+		gridColumnTitleDf(): OptionField {
+			const options: SelectOption[] = [];
+			for (const field of this.importer.templateFieldsMap.values()) {
+				const value = field.fieldKey;
+				if (!this.importer.templateFieldsPicked.get(value)) {
+					continue;
+				}
 
-        const label = getColumnLabel(field);
+				const label = getColumnLabel(field);
 
-        options.push({ value, label });
-      }
+				options.push({ value, label });
+			}
 
-      options.push({ value: '', label: this.t`None` });
-      return {
-        fieldname: 'col',
-        fieldtype: 'Select',
-        options,
-      } as OptionField;
-    },
-    pickedArray(): string[] {
-      return [...this.importer.templateFieldsPicked.entries()]
-        .filter(([, picked]) => picked)
-        .map(([key]) => key);
-    },
-  },
-  watch: {
-    columnCount(val) {
-      if (!this.hasImporter) {
-        return;
-      }
+			options.push({ value: "", label: this.t`None` });
+			return {
+				fieldname: "col",
+				fieldtype: "Select",
+				options,
+			} as OptionField;
+		},
+		pickedArray(): string[] {
+			return [...this.importer.templateFieldsPicked.entries()]
+				.filter(([, picked]) => picked)
+				.map(([key]) => key);
+		},
+	},
+	watch: {
+		columnCount(val) {
+			if (!this.hasImporter) {
+				return;
+			}
 
-      const possiblyAssigned = this.importer.assignedTemplateFields.length;
-      if (val >= this.importer.assignedTemplateFields.length) {
-        return;
-      }
+			const possiblyAssigned = this.importer.assignedTemplateFields.length;
+			if (val >= this.importer.assignedTemplateFields.length) {
+				return;
+			}
 
-      for (let i = val; i < possiblyAssigned; i++) {
-        this.importer.assignedTemplateFields[i] = null;
-      }
-    },
-  },
-  mounted() {
-    if (fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.iw = this;
-    }
-  },
-  activated(): void {
-    docsPathRef.value = docsPathMap.ImportWizard ?? '';
-  },
-  deactivated(): void {
-    docsPathRef.value = '';
-    if (!this.complete) {
-      return;
-    }
+			for (let i = val; i < possiblyAssigned; i++) {
+				this.importer.assignedTemplateFields[i] = null;
+			}
+		},
+	},
+	mounted() {
+		if (fyo.store.isDevelopment) {
+			// @ts-expect-error
+			window.iw = this;
+		}
+	},
+	activated(): void {
+		docsPathRef.value = docsPathMap.ImportWizard ?? "";
+	},
+	deactivated(): void {
+		docsPathRef.value = "";
+		if (!this.complete) {
+			return;
+		}
 
-    this.clear();
-  },
-  methods: {
-    getFieldTitle(vmi: {
-      value?: DocValue;
-      rawValue?: RawValue;
-      error?: boolean;
-    }): string {
-      const title: string[] = [];
-      if (vmi.value != null) {
-        title.push(this.t`Value: ${String(vmi.value)}`);
-      }
+		this.clear();
+	},
+	methods: {
+		getFieldTitle(vmi: {
+			value?: DocValue;
+			rawValue?: RawValue;
+			error?: boolean;
+		}): string {
+			const title: string[] = [];
+			if (vmi.value != null) {
+				title.push(this.t`Value: ${String(vmi.value)}`);
+			}
 
-      if (vmi.rawValue != null) {
-        title.push(this.t`Raw Value: ${String(vmi.rawValue)}`);
-      }
+			if (vmi.rawValue != null) {
+				title.push(this.t`Raw Value: ${String(vmi.rawValue)}`);
+			}
 
-      if (vmi.error) {
-        title.push(this.t`Conversion Error`);
-      }
+			if (vmi.error) {
+				title.push(this.t`Conversion Error`);
+			}
 
-      if (!title.length) {
-        return this.t`No Value`;
-      }
+			if (!title.length) {
+				return this.t`No Value`;
+			}
 
-      return title.join(', ');
-    },
-    pickColumn(fieldKey: string, value: boolean): void {
-      this.importer.templateFieldsPicked.set(fieldKey, value);
-      if (value) {
-        return;
-      }
+			return title.join(", ");
+		},
+		pickColumn(fieldKey: string, value: boolean): void {
+			this.importer.templateFieldsPicked.set(fieldKey, value);
+			if (value) {
+				return;
+			}
 
-      const idx = this.importer.assignedTemplateFields.findIndex(
-        (f) => f === fieldKey
-      );
+			const idx = this.importer.assignedTemplateFields.indexOf(fieldKey);
 
-      if (idx >= 0) {
-        this.importer.assignedTemplateFields[idx] = null;
-        this.reassignTemplateFields();
-      }
-    },
-    reassignTemplateFields(): void {
-      if (this.importer.valueMatrix.length) {
-        return;
-      }
+			if (idx >= 0) {
+				this.importer.assignedTemplateFields[idx] = null;
+				this.reassignTemplateFields();
+			}
+		},
+		reassignTemplateFields(): void {
+			if (this.importer.valueMatrix.length) {
+				return;
+			}
 
-      for (
-        let idx = 0;
-        idx < this.importer.assignedTemplateFields.length;
-        idx++
-      ) {
-        this.importer.assignedTemplateFields[idx] = null;
-      }
+			for (
+				let idx = 0;
+				idx < this.importer.assignedTemplateFields.length;
+				idx++
+			) {
+				this.importer.assignedTemplateFields[idx] = null;
+			}
 
-      let idx = 0;
-      for (const [fieldKey, value] of this.importer.templateFieldsPicked) {
-        if (!value) {
-          continue;
-        }
+			let idx = 0;
+			for (const [fieldKey, value] of this.importer.templateFieldsPicked) {
+				if (!value) {
+					continue;
+				}
 
-        this.importer.assignedTemplateFields[idx] = fieldKey;
-        idx += 1;
-      }
-    },
-    async showMe(): Promise<void> {
-      const schemaName = this.importer.schemaName;
-      this.clear();
-      await this.$router.push(`/list/${schemaName}`);
-    },
-    clear(): void {
-      this.file = null;
-      this.success = [];
-      this.successOldName = [];
-      this.failed = [];
-      this.nullOrImporter = null;
-      this.importType = '';
-      this.complete = false;
-      this.isMakingEntries = false;
-      this.percentLoading = 0;
-      this.messageLoading = '';
-    },
-    async saveTemplate(): Promise<void> {
-      const template = this.importer.getCSVTemplate();
-      const templateName = this.importType + ' ' + this.t`Template`;
-      const { canceled, filePath } = await getSavePath(templateName, 'csv');
+				this.importer.assignedTemplateFields[idx] = fieldKey;
+				idx += 1;
+			}
+		},
+		async showMe(): Promise<void> {
+			const schemaName = this.importer.schemaName;
+			this.clear();
+			await this.$router.push(`/list/${schemaName}`);
+		},
+		clear(): void {
+			this.file = null;
+			this.success = [];
+			this.successOldName = [];
+			this.failed = [];
+			this.nullOrImporter = null;
+			this.importType = "";
+			this.complete = false;
+			this.isMakingEntries = false;
+			this.percentLoading = 0;
+			this.messageLoading = "";
+		},
+		async saveTemplate(): Promise<void> {
+			const template = this.importer.getCSVTemplate();
+			const templateName = `${this.importType} ${this.t`Template`}`;
+			const { canceled, filePath } = await getSavePath(templateName, "csv");
 
-      if (canceled || !filePath) {
-        return;
-      }
+			if (canceled || !filePath) {
+				return;
+			}
 
-      await ipc.saveData(template, filePath);
-    },
-    async preImportValidations(): Promise<boolean> {
-      const title = this.t`Cannot Import`;
-      if (this.errorMessage.length) {
-        await showDialog({
-          title,
-          type: 'error',
-          detail: this.errorMessage,
-        });
-        return false;
-      }
+			await window.auditbooksIpc.saveData(template, filePath);
+		},
+		async preImportValidations(): Promise<boolean> {
+			const title = this.t`Cannot Import`;
+			if (this.errorMessage.length) {
+				await showDialog({
+					title,
+					type: "error",
+					detail: this.errorMessage,
+				});
+				return false;
+			}
 
-      const cellErrors = this.importer.checkCellErrors();
-      if (cellErrors.length) {
-        await showDialog({
-          title,
-          type: 'error',
-          detail: this.t`Following cells have errors: ${cellErrors.join(
-            ', '
-          )}.`,
-        });
-        return false;
-      }
+			const cellErrors = this.importer.checkCellErrors();
+			if (cellErrors.length) {
+				await showDialog({
+					title,
+					type: "error",
+					detail: this.t`Following cells have errors: ${cellErrors.join(
+						", ",
+					)}.`,
+				});
+				return false;
+			}
 
-      const absentLinks = await this.importer.checkLinks();
-      if (absentLinks.length) {
-        await showDialog({
-          title,
-          type: 'error',
-          detail: this.t`Following links do not exist: ${absentLinks
-            .map((l) => `(${l.schemaLabel ?? l.schemaName}, ${l.name})`)
-            .join(', ')}.`,
-        });
-        return false;
-      }
+			const absentLinks = await this.importer.checkLinks();
+			if (absentLinks.length) {
+				await showDialog({
+					title,
+					type: "error",
+					detail: this.t`Following links do not exist: ${absentLinks
+						.map((l) => `(${l.schemaLabel ?? l.schemaName}, ${l.name})`)
+						.join(", ")}.`,
+				});
+				return false;
+			}
 
-      return true;
-    },
-    async importData(): Promise<void> {
-      const isValid = await this.preImportValidations();
-      if (!isValid || this.isMakingEntries || this.complete) {
-        return;
-      }
+			return true;
+		},
+		async importData(): Promise<void> {
+			const isValid = await this.preImportValidations();
+			if (!isValid || this.isMakingEntries || this.complete) {
+				return;
+			}
 
-      this.isMakingEntries = true;
-      this.importer.populateDocs();
+			this.isMakingEntries = true;
+			this.importer.populateDocs();
 
-      const shouldSubmit = await this.askShouldSubmit();
+			const shouldSubmit = await this.askShouldSubmit();
 
-      let doneCount = 0;
-      for (const doc of this.importer.docs) {
-        this.setLoadingStatus(doneCount, this.importer.docs.length);
-        const oldName = doc.name ?? '';
-        try {
-          await doc.sync();
-          if (shouldSubmit) {
-            await doc.submit();
-          }
-          doneCount += 1;
+			let doneCount = 0;
+			for (const doc of this.importer.docs) {
+				this.setLoadingStatus(doneCount, this.importer.docs.length);
+				const oldName = doc.name ?? "";
+				try {
+					await doc.sync();
+					if (shouldSubmit) {
+						await doc.submit();
+					}
+					doneCount += 1;
 
-          this.success.push(doc.name!);
-          this.successOldName.push(oldName);
-        } catch (error) {
-          if (error instanceof Error) {
-            this.failed.push({ name: doc.name!, error });
-          }
-        }
-      }
+					this.success.push(doc.name!);
+					this.successOldName.push(oldName);
+				} catch (error) {
+					if (error instanceof Error) {
+						this.failed.push({ name: doc.name!, error });
+					}
+				}
+			}
 
-      this.fyo.telemetry.log(Verb.Imported, this.importer.schemaName);
-      this.isMakingEntries = false;
-      this.complete = true;
-    },
-    async askShouldSubmit(): Promise<boolean> {
-      if (!this.fyo.schemaMap[this.importType]?.isSubmittable) {
-        return false;
-      }
+			this.fyo.telemetry.log(Verb.Imported, this.importer.schemaName);
+			this.isMakingEntries = false;
+			this.complete = true;
+		},
+		async askShouldSubmit(): Promise<boolean> {
+			if (!this.fyo.schemaMap[this.importType]?.isSubmittable) {
+				return false;
+			}
 
-      let shouldSubmit = false;
-      await showDialog({
-        title: this.t`Submit entries?`,
-        type: 'info',
-        details: this.t`Should entries be submitted after syncing?`,
-        buttons: [
-          {
-            label: this.t`Yes`,
-            action() {
-              shouldSubmit = true;
-            },
-            isPrimary: true,
-          },
-          {
-            label: this.t`No`,
-            action() {
-              return null;
-            },
-            isEscape: true,
-          },
-        ],
-      });
+			let shouldSubmit = false;
+			await showDialog({
+				title: this.t`Submit entries?`,
+				type: "info",
+				details: this.t`Should entries be submitted after syncing?`,
+				buttons: [
+					{
+						label: this.t`Yes`,
+						action() {
+							shouldSubmit = true;
+						},
+						isPrimary: true,
+					},
+					{
+						label: this.t`No`,
+						action() {
+							return null;
+						},
+						isEscape: true,
+					},
+				],
+			});
 
-      return shouldSubmit;
-    },
-    clearSuccessfullyImportedEntries() {
-      const schemaName = this.importer.schemaName;
-      const nameFieldKey = `${schemaName}.name`;
-      const nameIndex = this.importer.assignedTemplateFields.findIndex(
-        (n) => n === nameFieldKey
-      );
+			return shouldSubmit;
+		},
+		clearSuccessfullyImportedEntries() {
+			const schemaName = this.importer.schemaName;
+			const nameFieldKey = `${schemaName}.name`;
+			const nameIndex =
+				this.importer.assignedTemplateFields.indexOf(nameFieldKey);
 
-      const failedEntriesValueMatrix = this.importer.valueMatrix.filter(
-        (row) => {
-          const value = row[nameIndex].value;
-          if (typeof value !== 'string') {
-            return false;
-          }
+			const failedEntriesValueMatrix = this.importer.valueMatrix.filter(
+				(row) => {
+					const value = row[nameIndex].value;
+					if (typeof value !== "string") {
+						return false;
+					}
 
-          return !this.successOldName.includes(value);
-        }
-      );
+					return !this.successOldName.includes(value);
+				},
+			);
 
-      this.setImportType(this.importType);
-      this.importer.valueMatrix = failedEntriesValueMatrix;
-    },
-    setImportType(importType: string): void {
-      this.clear();
-      if (!importType) {
-        return;
-      }
+			this.setImportType(this.importType);
+			this.importer.valueMatrix = failedEntriesValueMatrix;
+		},
+		setImportType(importType: string): void {
+			this.clear();
+			if (!importType) {
+				return;
+			}
 
-      this.importType = importType;
-      this.nullOrImporter = new Importer(importType, fyo);
-    },
-    setLoadingStatus(entriesMade: number, totalEntries: number): void {
-      this.percentLoading = entriesMade / totalEntries;
-      this.messageLoading = this.isMakingEntries
-        ? `${entriesMade} entries made out of ${totalEntries}...`
-        : '';
-    },
-    async selectFile(): Promise<void> {
-      const { text, name, filePath } = await selectTextFile([
-        { name: 'CSV', extensions: ['csv'] },
-      ]);
+			this.importType = importType;
+			this.nullOrImporter = new Importer(importType, fyo);
+		},
+		setLoadingStatus(entriesMade: number, totalEntries: number): void {
+			this.percentLoading = entriesMade / totalEntries;
+			this.messageLoading = this.isMakingEntries
+				? `${entriesMade} entries made out of ${totalEntries}...`
+				: "";
+		},
+		async selectFile(): Promise<void> {
+			const { text, name, filePath } = await selectTextFile([
+				{ name: "CSV", extensions: ["csv"] },
+			]);
 
-      if (!text) {
-        return;
-      }
+			if (!text) {
+				return;
+			}
 
-      const isValid = this.importer.selectFile(text);
-      if (!isValid) {
-        await showDialog({
-          title: this.t`Cannot read file`,
-          detail: this.t`Bad import data, could not read file.`,
-          type: 'error',
-        });
-        return;
-      }
+			const isValid = this.importer.selectFile(text);
+			if (!isValid) {
+				await showDialog({
+					title: this.t`Cannot read file`,
+					detail: this.t`Bad import data, could not read file.`,
+					type: "error",
+				});
+				return;
+			}
 
-      this.file = {
-        name,
-        filePath,
-        text,
-      };
-    },
-  },
+			this.file = {
+				name,
+				filePath,
+				text,
+			};
+		},
+	},
 });
 </script>
 <style scoped>

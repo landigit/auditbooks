@@ -118,51 +118,51 @@
 </template>
 
 <script lang="ts">
-import Base from './Base.vue';
+import type { SelectOption } from "schemas/types";
 
-import { defineComponent } from 'vue';
-import { SelectOption } from 'schemas/types';
+import { defineComponent } from "vue";
+import Base from "./Base.vue";
 export default defineComponent({
-  name: 'Select',
-  extends: Base,
-  emits: ['focus'],
-  data() {
-    return {
-      dropdownVisible: false,
-      selectValue: this.value,
-    };
-  },
-  props: {
-    closeDropDown: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  computed: {
-    options(): SelectOption[] {
-      if (this.df.fieldtype !== 'Select') {
-        return [];
-      }
+	name: "Select",
+	extends: Base,
+	emits: ["focus"],
+	data() {
+		return {
+			dropdownVisible: false,
+			selectValue: this.value,
+		};
+	},
+	props: {
+		closeDropDown: {
+			type: Boolean,
+			default: true,
+		},
+	},
+	computed: {
+		options(): SelectOption[] {
+			if (this.df.fieldtype !== "Select") {
+				return [];
+			}
 
-      return this.df.options;
-    },
-  },
-  methods: {
-    toggleDropdown() {
-      if (!this.closeDropDown) {
-        this.dropdownVisible = true;
-      } else if (!this.isReadOnly) {
-        this.dropdownVisible = !this.dropdownVisible;
-      }
-    },
-    selectOption(option: SelectOption) {
-      this.selectValue = option.label;
-      this.triggerChange(option.value);
+			return this.df.options;
+		},
+	},
+	methods: {
+		toggleDropdown() {
+			if (!this.closeDropDown) {
+				this.dropdownVisible = true;
+			} else if (!this.isReadOnly) {
+				this.dropdownVisible = !this.dropdownVisible;
+			}
+		},
+		selectOption(option: SelectOption) {
+			this.selectValue = option.label;
+			this.triggerChange(option.value);
 
-      if (this.closeDropDown) {
-        this.dropdownVisible = !this.dropdownVisible;
-      }
-    },
-  },
+			if (this.closeDropDown) {
+				this.dropdownVisible = !this.dropdownVisible;
+			}
+		},
+	},
 });
 </script>

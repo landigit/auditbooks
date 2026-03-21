@@ -1,20 +1,20 @@
-import { Doc } from 'fyo/model/doc';
-import { Money } from 'pesa';
+import type { Doc } from "fyo/model/doc";
+import type { Money } from "pesa";
 
 export interface LedgerPostingOptions {
-  reference: Doc;
-  party?: string;
+	reference: Doc;
+	party?: string;
 }
 
 export interface LedgerEntry {
-  account: string;
-  party: string;
-  date: string;
-  referenceType: string;
-  referenceName: string;
-  reverted: boolean;
-  debit: Money;
-  credit: Money;
+	account: string;
+	party: string;
+	date: string;
+	referenceType: string;
+	referenceName: string;
+	reverted: boolean;
+	debit: Money;
+	credit: Money;
 }
 
-export type TransactionType = 'credit' | 'debit';
+export type TransactionType = "credit" | "debit";

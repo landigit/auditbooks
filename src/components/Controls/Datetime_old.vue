@@ -57,50 +57,50 @@
  * DatetimePicker's UX issues are solved.
  */
 
-import { Field } from 'schemas/types';
-import { defineComponent, PropType } from 'vue';
-import DatetimePicker from './DatetimePicker.vue';
-import FeatherIcon from '../FeatherIcon.vue';
-import Popover from '../Popover.vue';
-import Base from './Base.vue';
+import type { Field } from "schemas/types";
+import { defineComponent, type PropType } from "vue";
+import FeatherIcon from "../FeatherIcon.vue";
+import Popover from "../Popover.vue";
+import Base from "./Base.vue";
+import DatetimePicker from "./DatetimePicker.vue";
 
 export default defineComponent({
-  components: { Popover, FeatherIcon, DatetimePicker },
-  extends: Base,
-  props: { value: [Date, String], df: Object as PropType<Field> },
-  data() {
-    return { selectTime: true };
-  },
-  computed: {
-    internalValue() {
-      if (this.value == null) {
-        return undefined;
-      }
+	components: { Popover, FeatherIcon, DatetimePicker },
+	extends: Base,
+	props: { value: [Date, String], df: Object as PropType<Field> },
+	data() {
+		return { selectTime: true };
+	},
+	computed: {
+		internalValue() {
+			if (this.value == null) {
+				return undefined;
+			}
 
-      if (typeof this.value === 'string') {
-        return new Date(this.value);
-      }
+			if (typeof this.value === "string") {
+				return new Date(this.value);
+			}
 
-      return this.value;
-    },
-    formattedValue() {
-      return this.formatValue(this.internalValue);
-    },
-  },
-  methods: {
-    triggerChange(value: Date | null) {
-      this.$emit('change', value);
-    },
-    formatValue(value?: Date | null) {
-      if (value == null) {
-        return '';
-      }
+			return this.value;
+		},
+		formattedValue() {
+			return this.formatValue(this.internalValue);
+		},
+	},
+	methods: {
+		triggerChange(value: Date | null) {
+			this.$emit("change", value);
+		},
+		formatValue(value?: Date | null) {
+			if (value == null) {
+				return "";
+			}
 
-      return this.fyo.format(
-        value,
-        this.df ?? (this.selectTime ? 'Datetime' : 'Date')
-      );
-    },
-  },
+			return this.fyo.format(
+				value,
+				this.df ?? (this.selectTime ? "Datetime" : "Date"),
+			);
+		},
+	},
 });
 </script>

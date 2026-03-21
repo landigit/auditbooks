@@ -1,14 +1,14 @@
-import chokidar from 'chokidar';
-import esbuild from 'esbuild';
-import { $ } from 'execa';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { getMainProcessCommonConfig } from './helpers.mjs';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import chokidar from "chokidar";
+import esbuild from "esbuild";
+import { $ } from "execa";
+import { getMainProcessCommonConfig } from "./helpers.mjs";
 
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
-process.env['NODE_ENV'] = 'development';
-process.env['VITE_HOST'] = '127.0.0.1';
-process.env['VITE_PORT'] = 6969;
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
+process.env.NODE_ENV = "development";
+process.env.VITE_HOST = "127.0.0.1";
+process.env.VITE_PORT = 6969;
 
 /**
  * This script does several things:
@@ -22,8 +22,8 @@ process.env['VITE_PORT'] = 6969;
  * @type {null | Function} global function used to stop dev
  */
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.join(dirname, '..', '..');
-const $$ = $({ stdio: 'inherit' });
+const root = path.join(dirname, "..", "..");
+const $$ = $({ stdio: "inherit" });
 let isReload = false;
 
 /**
@@ -41,8 +41,8 @@ const viteProcess = $$`yarn vite`;
  * to [re]build the main process code
  */
 const ctx = await esbuild.context({
-  ...getMainProcessCommonConfig(root),
-  outdir: path.join(root, 'dist_electron', 'dev'),
+	...getMainProcessCommonConfig(root),
+	outdir: path.join(root, "dist_electron", "dev"),
 });
 
 /**
@@ -51,10 +51,10 @@ const ctx = await esbuild.context({
  * file changes.
  */
 const fswatcher = chokidar.watch([
-  path.join(root, 'main.ts'),
-  path.join(root, 'main'),
-  path.join(root, 'backend'),
-  path.join(root, 'schemas'),
+	path.join(root, "main.ts"),
+	path.join(root, "main"),
+	path.join(root, "backend"),
+	path.join(root, "schemas"),
 ]);
 
 /**
@@ -64,22 +64,22 @@ const fswatcher = chokidar.watch([
  * Called on CTRL+C and kill
  */
 const terminate = async () => {
-  await fswatcher.close();
-  await ctx.dispose();
+	await fswatcher.close();
+	await ctx.dispose();
 
-  if (electronProcess) {
-    electronProcess.kill();
-  }
+	if (electronProcess) {
+		electronProcess.kill();
+	}
 
-  if (viteProcess) {
-    viteProcess.kill();
-  }
-  process.exit();
+	if (viteProcess) {
+		viteProcess.kill();
+	}
+	process.exit();
 };
-process.on('SIGINT', terminate);
-process.on('SIGTERM', terminate);
+process.on("SIGINT", terminate);
+process.on("SIGTERM", terminate);
 if (viteProcess) {
-  viteProcess.on('close', terminate);
+	viteProcess.on("close", terminate);
 }
 
 /**
@@ -93,50 +93,50 @@ electronProcess = runElectron();
  * - rebuild main process
  * - restart electron
  */
-fswatcher.on('change', async (path) => {
-  console.log(`change detected:\n\t${path}`);
-  const result = await ctx.rebuild();
-  await handleResult(result);
-  console.log(`main process source rebuilt\nrestarting electron`);
+fswatcher.on("change", async (path) => {
+	console.log(`change detected:\n\t${path}`);
+	const result = await ctx.rebuild();
+	await handleResult(result);
+	console.log(`main process source rebuilt\nrestarting electron`);
 
-  if (electronProcess) {
-    isReload = true;
-    electronProcess.kill();
-    electronProcess = runElectron();
-  }
+	if (electronProcess) {
+		isReload = true;
+		electronProcess.kill();
+		electronProcess = runElectron();
+	}
 });
 
 /**
  * @param {esbuild.BuildResult} result
  */
 async function handleResult(result) {
-  if (!result.errors.length) {
-    return;
-  }
+	if (!result.errors.length) {
+		return;
+	}
 
-  console.log('error on build');
-  for (const error of result.errors) {
-    console.log(error);
-  }
+	console.log("error on build");
+	for (const error of result.errors) {
+		console.log(error);
+	}
 
-  await terminate();
+	await terminate();
 }
 
 function runElectron() {
-  const electronProcess = $$`npx electron --inspect=5858 ${path.join(
-    root,
-    'dist_electron',
-    'dev',
-    'main.js'
-  )}`;
+	const electronProcess = $$`npx electron --inspect=5858 ${path.join(
+		root,
+		"dist_electron",
+		"dev",
+		"main.js",
+	)}`;
 
-  electronProcess.on('close', async () => {
-    if (isReload) {
-      return;
-    }
+	electronProcess.on("close", async () => {
+		if (isReload) {
+			return;
+		}
 
-    await terminate();
-  });
+		await terminate();
+	});
 
-  return electronProcess;
+	return electronProcess;
 }

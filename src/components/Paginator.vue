@@ -91,70 +91,70 @@
   </div>
 </template>
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  props: {
-    itemCount: { type: Number, default: 0 },
-    allowedCounts: { type: Array, default: () => [50, 100, 500, -1] },
-  },
-  emits: ['index-change'],
-  data() {
-    return {
-      pageNo: 1,
-      count: 0,
-    };
-  },
-  computed: {
-    maxPages() {
-      return Math.ceil(this.itemCount / this.count);
-    },
-    filteredCounts() {
-      return this.allowedCounts.filter(this.filterCount);
-    },
-  },
-  mounted() {
-    this.count = this.allowedCounts[0];
-    this.emitIndices();
-  },
-  methods: {
-    filterCount(count) {
-      if (count !== -1 && this.itemCount < count) {
-        return false;
-      }
+	props: {
+		itemCount: { type: Number, default: 0 },
+		allowedCounts: { type: Array, default: () => [50, 100, 500, -1] },
+	},
+	emits: ["index-change"],
+	data() {
+		return {
+			pageNo: 1,
+			count: 0,
+		};
+	},
+	computed: {
+		maxPages() {
+			return Math.ceil(this.itemCount / this.count);
+		},
+		filteredCounts() {
+			return this.allowedCounts.filter(this.filterCount);
+		},
+	},
+	mounted() {
+		this.count = this.allowedCounts[0];
+		this.emitIndices();
+	},
+	methods: {
+		filterCount(count) {
+			if (count !== -1 && this.itemCount < count) {
+				return false;
+			}
 
-      if (count === -1 && this.itemCount < this.allowedCounts[0]) {
-        return false;
-      }
+			if (count === -1 && this.itemCount < this.allowedCounts[0]) {
+				return false;
+			}
 
-      return true;
-    },
-    setPageNo(value) {
-      value = parseInt(value);
-      if (isNaN(value)) {
-        return;
-      }
+			return true;
+		},
+		setPageNo(value) {
+			value = parseInt(value, 10);
+			if (Number.isNaN(value)) {
+				return;
+			}
 
-      this.pageNo = Math.min(Math.max(1, value), this.maxPages);
-      this.emitIndices();
-    },
-    setCount(count) {
-      this.pageNo = 1;
-      if (count === -1) {
-        count = this.itemCount;
-      }
-      this.count = count;
-      this.emitIndices();
-    },
-    emitIndices() {
-      const indices = this.getSliceIndices();
-      this.$emit('index-change', indices);
-    },
-    getSliceIndices() {
-      const start = (this.pageNo - 1) * this.count;
-      const end = this.pageNo * this.count;
-      return { start, end };
-    },
-  },
+			this.pageNo = Math.min(Math.max(1, value), this.maxPages);
+			this.emitIndices();
+		},
+		setCount(count) {
+			this.pageNo = 1;
+			if (count === -1) {
+				count = this.itemCount;
+			}
+			this.count = count;
+			this.emitIndices();
+		},
+		emitIndices() {
+			const indices = this.getSliceIndices();
+			this.$emit("index-change", indices);
+		},
+		getSliceIndices() {
+			const start = (this.pageNo - 1) * this.count;
+			const end = this.pageNo * this.count;
+			return { start, end };
+		},
+	},
 });
 </script>

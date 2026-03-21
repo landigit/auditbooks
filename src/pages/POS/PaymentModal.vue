@@ -213,180 +213,177 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Currency from 'src/components/Controls/Currency.vue';
-import Data from 'src/components/Controls/Data.vue';
-import Date from 'src/components/Controls/Date.vue';
-import Modal from 'src/components/Modal.vue';
-import { Money } from 'pesa';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
-import { fyo } from 'src/initFyo';
-import { isPesa } from 'fyo/utils';
-import { ModelNameEnum } from 'models/types';
-import { showToast } from 'src/utils/interactive';
+import { isPesa } from "fyo/utils";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { ModelNameEnum } from "models/types";
+import type { Money } from "pesa";
+import Button from "src/components/Button.vue";
+import Currency from "src/components/Controls/Currency.vue";
+import Data from "src/components/Controls/Data.vue";
+import DateControl from "src/components/Controls/Date.vue";
+import Modal from "src/components/Modal.vue";
+import { fyo } from "src/initFyo";
+import { showToast } from "src/utils/interactive";
+import { defineComponent, inject } from "vue";
 
 export default defineComponent({
-  name: 'PaymentModal',
-  components: {
-    Modal,
-    Currency,
-    Button,
-    Data,
-    Date,
-  },
-  emits: [
-    'createTransaction',
-    'setPaidAmount',
-    'setPaymentMethod',
-    'setTransferClearanceDate',
-    'setTransferRefNo',
-    'toggleModal',
-  ],
-  setup() {
-    return {
-      paidAmount: inject('paidAmount') as Money,
-      paymentMethod: inject('paymentMethod') as string,
-      isDiscountingEnabled: inject('isDiscountingEnabled') as boolean,
-      itemDiscounts: inject('itemDiscounts') as Money,
-      transferAmount: inject('transferAmount') as Money,
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-      transferRefNo: inject('transferRefNo') as string,
-      transferClearanceDate: inject('transferClearanceDate') as Date,
-      totalTaxedAmount: inject('totalTaxedAmount') as Money,
-    };
-  },
-  data() {
-    return {
-      paymentMethods: [] as string[],
-    };
-  },
-  computed: {
-    isPaymentMethodIsCash(): boolean {
-      return this.paymentMethod === 'Cash';
-    },
-    balanceAmount(): Money {
-      const grandTotal = this.sinvDoc?.grandTotal ?? fyo.pesa(0);
+	name: "PaymentModal",
+	components: {
+		Modal,
+		Currency,
+		Button,
+		Data,
+		Date: DateControl,
+	},
+	emits: [
+		"createTransaction",
+		"setPaidAmount",
+		"setPaymentMethod",
+		"setTransferClearanceDate",
+		"setTransferRefNo",
+		"toggleModal",
+	],
+	setup() {
+		return {
+			paidAmount: inject("paidAmount") as Money,
+			paymentMethod: inject("paymentMethod") as string,
+			isDiscountingEnabled: inject("isDiscountingEnabled") as boolean,
+			itemDiscounts: inject("itemDiscounts") as Money,
+			transferAmount: inject("transferAmount") as Money,
+			sinvDoc: inject("sinvDoc") as SalesInvoice,
+			transferRefNo: inject("transferRefNo") as string,
+			transferClearanceDate: inject("transferClearanceDate") as Date,
+			totalTaxedAmount: inject("totalTaxedAmount") as Money,
+		};
+	},
+	data() {
+		return {
+			paymentMethods: [] as string[],
+		};
+	},
+	computed: {
+		isPaymentMethodIsCash(): boolean {
+			return this.paymentMethod === "Cash";
+		},
+		balanceAmount(): Money {
+			const grandTotal = this.sinvDoc?.grandTotal ?? fyo.pesa(0);
 
-      if (isPesa(this.paidAmount) && this.paidAmount.isZero()) {
-        return grandTotal.sub(this.transferAmount);
-      }
+			if (isPesa(this.paidAmount) && this.paidAmount.isZero()) {
+				return grandTotal.sub(this.transferAmount);
+			}
 
-      return grandTotal.sub(this.paidAmount);
-    },
-    paidChange(): Money {
-      const grandTotal = this.sinvDoc?.grandTotal ?? fyo.pesa(0);
+			return grandTotal.sub(this.paidAmount);
+		},
+		paidChange(): Money {
+			const grandTotal = this.sinvDoc?.grandTotal ?? fyo.pesa(0);
 
-      if (this.fyo.pesa(this.paidAmount.float).isZero()) {
-        return this.transferAmount.sub(grandTotal);
-      }
+			if (this.fyo.pesa(this.paidAmount.float).isZero()) {
+				return this.transferAmount.sub(grandTotal);
+			}
 
-      return this.fyo.pesa(this.paidAmount.float).sub(grandTotal);
-    },
-    showBalanceAmount(): boolean {
-      if (this.paidAmount.float === 0) {
-        return false;
-      }
+			return this.fyo.pesa(this.paidAmount.float).sub(grandTotal);
+		},
+		showBalanceAmount(): boolean {
+			if (this.paidAmount.float === 0) {
+				return false;
+			}
 
-      if (
-        this.fyo
-          .pesa(this.paidAmount.float)
-          .gte(this.sinvDoc?.grandTotal ?? fyo.pesa(0))
-      ) {
-        return false;
-      }
+			if (
+				this.fyo
+					.pesa(this.paidAmount.float)
+					.gte(this.sinvDoc?.grandTotal ?? fyo.pesa(0))
+			) {
+				return false;
+			}
 
-      if (this.transferAmount.gte(this.sinvDoc?.grandTotal ?? fyo.pesa(0))) {
-        return false;
-      }
+			if (this.transferAmount.gte(this.sinvDoc?.grandTotal ?? fyo.pesa(0))) {
+				return false;
+			}
 
-      return true;
-    },
-    showPaidChange(): boolean {
-      if (this.sinvDoc.isReturn) {
-        return false;
-      }
+			return true;
+		},
+		showPaidChange(): boolean {
+			if (this.sinvDoc.isReturn) {
+				return false;
+			}
 
-      if (
-        this.fyo.pesa(this.paidAmount.float).eq(fyo.pesa(0)) &&
-        this.transferAmount.eq(fyo.pesa(0))
-      ) {
-        return false;
-      }
+			if (
+				this.fyo.pesa(this.paidAmount.float).eq(fyo.pesa(0)) &&
+				this.transferAmount.eq(fyo.pesa(0))
+			) {
+				return false;
+			}
 
-      if (
-        this.fyo
-          .pesa(this.paidAmount.float)
-          .gt(this.sinvDoc?.grandTotal ?? fyo.pesa(0))
-      ) {
-        return true;
-      }
+			if (
+				this.fyo
+					.pesa(this.paidAmount.float)
+					.gt(this.sinvDoc?.grandTotal ?? fyo.pesa(0))
+			) {
+				return true;
+			}
 
-      if (this.transferAmount.gt(this.sinvDoc?.grandTotal ?? fyo.pesa(0))) {
-        return true;
-      }
+			if (this.transferAmount.gt(this.sinvDoc?.grandTotal ?? fyo.pesa(0))) {
+				return true;
+			}
 
-      return false;
-    },
-  },
-  async mounted() {
-    await this.setPaymentMethods();
-  },
-  methods: {
-    setPaymentMethodAndAmount(paymentMethod?: string) {
-      if (paymentMethod) {
-        this.$emit('setPaymentMethod', paymentMethod);
-        this.$emit(
-          'setPaidAmount',
-          (this.sinvDoc.outstandingAmount as Money).float
-        );
-      }
-    },
-    async setPaymentMethods() {
-      this.paymentMethods = (
-        (await this.fyo.db.getAll(ModelNameEnum.PaymentMethod, {
-          fields: ['name'],
-        })) as { name: string }[]
-      ).map((d) => d.name);
-    },
-    submitTransaction() {
-      if (!this.paymentMethod) {
-        return showToast({
-          type: 'error',
-          message: this.fyo
-            .t`Please select a payment method before submitting.`,
-        });
-        return;
-      }
-      this.$emit('createTransaction');
-    },
-    payTransaction() {
-      if (!this.paymentMethod) {
-        return showToast({
-          type: 'error',
-          message: this.fyo
-            .t`Please select a payment method before proceeding with payment.`,
-        });
-        return;
-      }
-      this.$emit('createTransaction', false, true);
-    },
-    payAndPrintTransaction() {
-      if (!this.paymentMethod) {
-        return showToast({
-          type: 'error',
-          message: this.fyo
-            .t`Please select a payment method before proceeding with payment.`,
-        });
-        return;
-      }
+			return false;
+		},
+	},
+	async mounted() {
+		await this.setPaymentMethods();
+	},
+	methods: {
+		setPaymentMethodAndAmount(paymentMethod?: string) {
+			if (paymentMethod) {
+				this.$emit("setPaymentMethod", paymentMethod);
+				this.$emit(
+					"setPaidAmount",
+					(this.sinvDoc.outstandingAmount as Money).float,
+				);
+			}
+		},
+		async setPaymentMethods() {
+			this.paymentMethods = (
+				(await this.fyo.db.getAll(ModelNameEnum.PaymentMethod, {
+					fields: ["name"],
+				})) as { name: string }[]
+			).map((d) => d.name);
+		},
+		submitTransaction() {
+			if (!this.paymentMethod) {
+				return showToast({
+					type: "error",
+					message: this.fyo
+						.t`Please select a payment method before submitting.`,
+				});
+			}
+			this.$emit("createTransaction");
+		},
+		payTransaction() {
+			if (!this.paymentMethod) {
+				return showToast({
+					type: "error",
+					message: this.fyo
+						.t`Please select a payment method before proceeding with payment.`,
+				});
+			}
+			this.$emit("createTransaction", false, true);
+		},
+		payAndPrintTransaction() {
+			if (!this.paymentMethod) {
+				return showToast({
+					type: "error",
+					message: this.fyo
+						.t`Please select a payment method before proceeding with payment.`,
+				});
+			}
 
-      this.$emit('createTransaction', true, true);
-    },
-    cancelTransaction() {
-      this.$emit('setPaidAmount', fyo.pesa(0));
-      this.$emit('toggleModal', 'Payment');
-    },
-  },
+			this.$emit("createTransaction", true, true);
+		},
+		cancelTransaction() {
+			this.$emit("setPaidAmount", fyo.pesa(0));
+			this.$emit("toggleModal", "Payment");
+		},
+	},
 });
 </script>

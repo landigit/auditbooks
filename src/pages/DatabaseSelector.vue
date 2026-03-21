@@ -22,7 +22,7 @@
       <!-- Welcome to Frappe Books -->
       <div class="px-4 py-4">
         <h1 class="text-2xl font-semibold select-none dark:text-gray-25">
-          {{ t`Welcome to Frappe Books` }}
+          {{ t`Welcome to Auditbooks` }}
         </h1>
         <p class="text-gray-600 dark:text-gray-400 text-base select-none">
           {{
@@ -307,164 +307,164 @@
   </div>
 </template>
 <script lang="ts">
-import { setupDummyInstance } from 'dummy';
-import { t } from 'fyo';
-import { Verb } from 'fyo/telemetry/types';
-import { DateTime } from 'luxon';
-import Button from 'src/components/Button.vue';
-import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
-import FeatherIcon from 'src/components/FeatherIcon.vue';
-import Loading from 'src/components/Loading.vue';
-import Modal from 'src/components/Modal.vue';
-import { fyo } from 'src/initFyo';
-import { showDialog } from 'src/utils/interactive';
-import { updateConfigFiles } from 'src/utils/misc';
-import { deleteDb, getSavePath, getSelectedFilePath } from 'src/utils/ui';
-import type { ConfigFilesWithModified } from 'utils/types';
-import { defineComponent } from 'vue';
+import { setupDummyInstance } from "dummy";
+import { t } from "fyo";
+import { Verb } from "fyo/telemetry/types";
+import { DateTime } from "luxon";
+import Button from "src/components/Button.vue";
+import LanguageSelector from "src/components/Controls/LanguageSelector.vue";
+import FeatherIcon from "src/components/FeatherIcon.vue";
+import Loading from "src/components/Loading.vue";
+import Modal from "src/components/Modal.vue";
+import { fyo } from "src/initFyo";
+import { showDialog } from "src/utils/interactive";
+import { updateConfigFiles } from "src/utils/misc";
+import { deleteDb, getSavePath, getSelectedFilePath } from "src/utils/ui";
+import type { ConfigFilesWithModified } from "utils/types";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'DatabaseSelector',
-  components: {
-    LanguageSelector,
-    Loading,
-    FeatherIcon,
-    Modal,
-    Button,
-  },
-  emits: ['file-selected', 'new-database'],
-  data() {
-    return {
-      openModal: false,
-      baseCount: 100,
-      creationMessage: '',
-      creationPercent: 0,
-      creatingDemo: false,
-      loadingDatabase: false,
-      files: [],
-    } as {
-      openModal: boolean;
-      baseCount: number;
-      creationMessage: string;
-      creationPercent: number;
-      creatingDemo: boolean;
-      loadingDatabase: boolean;
-      files: ConfigFilesWithModified[];
-    };
-  },
-  async mounted() {
-    await this.setFiles();
+	name: "DatabaseSelector",
+	components: {
+		LanguageSelector,
+		Loading,
+		FeatherIcon,
+		Modal,
+		Button,
+	},
+	emits: ["file-selected", "new-database"],
+	data() {
+		return {
+			openModal: false,
+			baseCount: 100,
+			creationMessage: "",
+			creationPercent: 0,
+			creatingDemo: false,
+			loadingDatabase: false,
+			files: [],
+		} as {
+			openModal: boolean;
+			baseCount: number;
+			creationMessage: string;
+			creationPercent: number;
+			creatingDemo: boolean;
+			loadingDatabase: boolean;
+			files: ConfigFilesWithModified[];
+		};
+	},
+	async mounted() {
+		await this.setFiles();
 
-    if (fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.ds = this;
-    }
-  },
-  methods: {
-    truncate(value: string) {
-      if (value.length < 72) {
-        return value;
-      }
+		if (fyo.store.isDevelopment) {
+			// @ts-expect-error
+			window.ds = this;
+		}
+	},
+	methods: {
+		truncate(value: string) {
+			if (value.length < 72) {
+				return value;
+			}
 
-      return '...' + value.slice(value.length - 72);
-    },
-    formatDate(isoDate: string) {
-      return DateTime.fromISO(isoDate).toRelative();
-    },
-    async deleteDb(i: number) {
-      const file = this.files[i];
-      const setFiles = this.setFiles.bind(this);
+			return `...${value.slice(value.length - 72)}`;
+		},
+		formatDate(isoDate: string) {
+			return DateTime.fromISO(isoDate).toRelative();
+		},
+		async deleteDb(i: number) {
+			const file = this.files[i];
+			const setFiles = this.setFiles.bind(this);
 
-      await showDialog({
-        title: t`Delete ${file.companyName}?`,
-        detail: t`Database file: ${file.dbPath}`,
-        type: 'warning',
-        buttons: [
-          {
-            label: this.t`Yes`,
-            async action() {
-              await deleteDb(file.dbPath);
-              await setFiles();
-            },
-            isPrimary: true,
-          },
-          {
-            label: this.t`No`,
-            action() {
-              return null;
-            },
-            isEscape: true,
-          },
-        ],
-      });
-    },
-    async createDemo() {
-      if (!fyo.store.isDevelopment) {
-        await this.startDummyInstanceSetup();
-      } else {
-        this.openModal = true;
-      }
-    },
-    async startDummyInstanceSetup() {
-      const { filePath, canceled } = await getSavePath('demo', 'db');
-      if (canceled || !filePath) {
-        return;
-      }
+			await showDialog({
+				title: t`Delete ${file.companyName}?`,
+				detail: t`Database file: ${file.dbPath}`,
+				type: "warning",
+				buttons: [
+					{
+						label: this.t`Yes`,
+						async action() {
+							await deleteDb(file.dbPath);
+							await setFiles();
+						},
+						isPrimary: true,
+					},
+					{
+						label: this.t`No`,
+						action() {
+							return null;
+						},
+						isEscape: true,
+					},
+				],
+			});
+		},
+		async createDemo() {
+			if (!fyo.store.isDevelopment) {
+				await this.startDummyInstanceSetup();
+			} else {
+				this.openModal = true;
+			}
+		},
+		async startDummyInstanceSetup() {
+			const { filePath, canceled } = await getSavePath("demo", "db");
+			if (canceled || !filePath) {
+				return;
+			}
 
-      this.creatingDemo = true;
-      await setupDummyInstance(
-        filePath,
-        fyo,
-        1,
-        this.baseCount,
-        (message, percent) => {
-          this.creationMessage = message;
-          this.creationPercent = percent;
-        }
-      );
+			this.creatingDemo = true;
+			await setupDummyInstance(
+				filePath,
+				fyo,
+				1,
+				this.baseCount,
+				(message, percent) => {
+					this.creationMessage = message;
+					this.creationPercent = percent;
+				},
+			);
 
-      updateConfigFiles(fyo);
-      await fyo.purgeCache();
-      await this.setFiles();
-      this.fyo.telemetry.log(Verb.Created, 'dummy-instance');
-      this.creatingDemo = false;
-      this.$emit('file-selected', filePath);
-    },
-    async setFiles() {
-      const dbList = await ipc.getDbList();
-      this.files = dbList?.sort(
-        (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
-      );
-    },
-    newDatabase() {
-      if (this.creatingDemo) {
-        return;
-      }
+			updateConfigFiles(fyo);
+			await fyo.purgeCache();
+			await this.setFiles();
+			this.fyo.telemetry.log(Verb.Created, "dummy-instance");
+			this.creatingDemo = false;
+			this.$emit("file-selected", filePath);
+		},
+		async setFiles() {
+			const dbList = await ipc.getDbList();
+			this.files = dbList?.sort(
+				(a, b) => Date.parse(b.modified) - Date.parse(a.modified),
+			);
+		},
+		newDatabase() {
+			if (this.creatingDemo) {
+				return;
+			}
 
-      this.$emit('new-database');
-    },
-    async existingDatabase() {
-      if (this.creatingDemo) {
-        return;
-      }
+			this.$emit("new-database");
+		},
+		async existingDatabase() {
+			if (this.creatingDemo) {
+				return;
+			}
 
-      const filePath = (await getSelectedFilePath())?.filePaths?.[0];
-      this.emitFileSelected(filePath);
-    },
-    selectFile(file: ConfigFilesWithModified) {
-      if (this.creatingDemo) {
-        return;
-      }
+			const filePath = (await getSelectedFilePath())?.filePaths?.[0];
+			this.emitFileSelected(filePath);
+		},
+		selectFile(file: ConfigFilesWithModified) {
+			if (this.creatingDemo) {
+				return;
+			}
 
-      this.emitFileSelected(file.dbPath);
-    },
-    emitFileSelected(filePath: string) {
-      if (!filePath) {
-        return;
-      }
+			this.emitFileSelected(file.dbPath);
+		},
+		emitFileSelected(filePath: string) {
+			if (!filePath) {
+				return;
+			}
 
-      this.$emit('file-selected', filePath);
-    },
-  },
+			this.$emit("file-selected", filePath);
+		},
+	},
 });
 </script>

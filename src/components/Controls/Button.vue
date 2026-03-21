@@ -34,40 +34,40 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Base from './Base.vue';
+import { defineComponent } from "vue";
+import Base from "./Base.vue";
 
 export default defineComponent({
-  name: 'Button',
-  extends: Base,
-  props: {
-    spaceBetween: {
-      type: Boolean,
-      default: true,
-    },
-    labelRight: {
-      type: Boolean,
-      default: false,
-    },
-    labelClass: {
-      type: String,
-      default: '',
-    },
-    showLabel: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  computed: {
-    labelClasses() {
-      return this.labelClass || 'text-gray-600 text-base';
-    },
-  },
-  methods: {
-    onClick(e: Event) {
-      if (this.isReadOnly) return;
-      this.triggerChange(true);
-    },
-  },
+	name: "Button",
+	extends: Base,
+	props: {
+		spaceBetween: {
+			type: Boolean,
+			default: true,
+		},
+		labelRight: {
+			type: Boolean,
+			default: false,
+		},
+		labelClass: {
+			type: String,
+			default: "",
+		},
+		showLabel: {
+			type: Boolean,
+			default: true,
+		},
+	},
+	computed: {
+		labelClasses() {
+			return this.labelClass || "text-gray-600 text-base";
+		},
+	},
+	methods: {
+		onClick(_e: Event) {
+			if (this.isReadOnly) return;
+			this.triggerChange(true);
+		},
+	},
 });
 </script>

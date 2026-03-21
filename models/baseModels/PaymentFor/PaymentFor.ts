@@ -1,117 +1,117 @@
-import { t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import { FiltersMap, FormulaMap, ValidationMap } from 'fyo/model/types';
-import { NotFoundError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { PartyRoleEnum } from '../Party/types';
-import { Payment } from '../Payment/Payment';
+import { t } from "fyo";
+import type { DocValue } from "fyo/core/types";
+import { Doc } from "fyo/model/doc";
+import type { FiltersMap, FormulaMap, ValidationMap } from "fyo/model/types";
+import { NotFoundError } from "fyo/utils/errors";
+import { ModelNameEnum } from "models/types";
+import type { Money } from "pesa";
+import { PartyRoleEnum } from "../Party/types";
+import type { Payment } from "../Payment/Payment";
 
 export class PaymentFor extends Doc {
-  parentdoc?: Payment | undefined;
-  referenceType?: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice;
-  referenceName?: string;
-  amount?: Money;
+	parentdoc?: Payment | undefined;
+	referenceType?: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice;
+	referenceName?: string;
+	amount?: Money;
 
-  formulas: FormulaMap = {
-    referenceType: {
-      formula: async () => {
-        if (this.referenceType) {
-          return;
-        }
+	formulas: FormulaMap = {
+		referenceType: {
+			formula: async () => {
+				if (this.referenceType) {
+					return;
+				}
 
-        const party = await this.parentdoc?.loadAndGetLink('party');
-        if (!party) {
-          return ModelNameEnum.SalesInvoice;
-        }
+				const party = await this.parentdoc?.loadAndGetLink("party");
+				if (!party) {
+					return ModelNameEnum.SalesInvoice;
+				}
 
-        if (party.role === PartyRoleEnum.Supplier) {
-          return ModelNameEnum.PurchaseInvoice;
-        }
+				if (party.role === PartyRoleEnum.Supplier) {
+					return ModelNameEnum.PurchaseInvoice;
+				}
 
-        return ModelNameEnum.SalesInvoice;
-      },
-    },
-    referenceName: {
-      formula: async () => {
-        if (!this.referenceName || !this.referenceType) {
-          return this.referenceName;
-        }
+				return ModelNameEnum.SalesInvoice;
+			},
+		},
+		referenceName: {
+			formula: async () => {
+				if (!this.referenceName || !this.referenceType) {
+					return this.referenceName;
+				}
 
-        const exists = await this.fyo.db.exists(
-          this.referenceType,
-          this.referenceName
-        );
+				const exists = await this.fyo.db.exists(
+					this.referenceType,
+					this.referenceName,
+				);
 
-        if (!exists) {
-          return null;
-        }
+				if (!exists) {
+					return null;
+				}
 
-        return this.referenceName;
-      },
-      dependsOn: ['referenceType'],
-    },
-    amount: {
-      formula: async () => {
-        if (!this.referenceName) {
-          return this.fyo.pesa(0);
-        }
+				return this.referenceName;
+			},
+			dependsOn: ["referenceType"],
+		},
+		amount: {
+			formula: async () => {
+				if (!this.referenceName) {
+					return this.fyo.pesa(0);
+				}
 
-        const outstandingAmount = (await this.fyo.getValue(
-          this.referenceType as string,
-          this.referenceName,
-          'outstandingAmount'
-        )) as Money;
+				const outstandingAmount = (await this.fyo.getValue(
+					this.referenceType as string,
+					this.referenceName,
+					"outstandingAmount",
+				)) as Money;
 
-        if (outstandingAmount) {
-          return outstandingAmount;
-        }
+				if (outstandingAmount) {
+					return outstandingAmount;
+				}
 
-        return this.fyo.pesa(0);
-      },
-      dependsOn: ['referenceName'],
-    },
-  };
+				return this.fyo.pesa(0);
+			},
+			dependsOn: ["referenceName"],
+		},
+	};
 
-  static filters: FiltersMap = {
-    referenceName: (doc) => {
-      const zero =
-        '0.' +
-        '0'.repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11);
+	static filters: FiltersMap = {
+		referenceName: (doc) => {
+			const zero =
+				"0." +
+				"0".repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11);
 
-      const baseFilters = {
-        outstandingAmount: ['!=', zero],
-        submitted: true,
-        cancelled: false,
-      };
+			const baseFilters = {
+				outstandingAmount: ["!=", zero],
+				submitted: true,
+				cancelled: false,
+			};
 
-      const party = doc?.parentdoc?.party as undefined | string;
-      if (!party) {
-        return baseFilters;
-      }
+			const party = doc?.parentdoc?.party as undefined | string;
+			if (!party) {
+				return baseFilters;
+			}
 
-      return { ...baseFilters, party };
-    },
-  };
+			return { ...baseFilters, party };
+		},
+	};
 
-  validations: ValidationMap = {
-    referenceName: async (value: DocValue) => {
-      const exists = await this.fyo.db.exists(
-        this.referenceType!,
-        value as string
-      );
-      if (exists) {
-        return;
-      }
+	validations: ValidationMap = {
+		referenceName: async (value: DocValue) => {
+			const exists = await this.fyo.db.exists(
+				this.referenceType!,
+				value as string,
+			);
+			if (exists) {
+				return;
+			}
 
-      const referenceType = this.referenceType ?? ModelNameEnum.SalesInvoice;
-      const label = this.fyo.schemaMap[referenceType]?.label ?? referenceType;
+			const referenceType = this.referenceType ?? ModelNameEnum.SalesInvoice;
+			const label = this.fyo.schemaMap[referenceType]?.label ?? referenceType;
 
-      throw new NotFoundError(
-        t`${label} ${value as string} does not exist`,
-        false
-      );
-    },
-  };
+			throw new NotFoundError(
+				t`${label} ${value as string} does not exist`,
+				false,
+			);
+		},
+	};
 }

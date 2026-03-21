@@ -9,7 +9,7 @@
 
 **Modern Accounting Made Simple**
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/frappe/books)](https://github.com/Landigit/auditbooks/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Landigit/auditbooks)](https://github.com/Landigit/auditbooks/releases)
 ![Platforms](https://img.shields.io/badge/platform-mac%2C%20windows%2C%20linux-yellowgreen)
 [![Publish](https://github.com/Landigit/auditbooks/actions/workflows/publish.yml/badge.svg)](https://github.com/Landigit/auditbooks/actions/workflows/publish.yml)
 
@@ -80,7 +80,7 @@ page](https://github.com/Landigit/auditbooks/releases) .
 ### Using Homebrew (for MacOS and Linux)
 
 ```zsh
-brew install --cask frappe-books
+brew install --cask auditbooks
 ```
 
 ### Via Flatpak (Linux)

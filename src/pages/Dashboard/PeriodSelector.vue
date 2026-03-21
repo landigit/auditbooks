@@ -42,56 +42,55 @@
 </template>
 
 <script lang="ts">
-import { t } from 'fyo';
-import Dropdown from 'src/components/Dropdown.vue';
-import { PeriodKey } from 'src/utils/types';
-import { PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { t } from "fyo";
+import Dropdown from "src/components/Dropdown.vue";
+import type { PeriodKey } from "src/utils/types";
+import { defineComponent, type PropType } from "vue";
 
 export default defineComponent({
-  name: 'PeriodSelector',
-  components: {
-    Dropdown,
-  },
-  props: {
-    value: { type: String as PropType<PeriodKey>, default: 'This Year' },
-    options: {
-      type: Array as PropType<PeriodKey[]>,
-      default: () => ['This Year', 'This Quarter', 'This Month', 'YTD'],
-    },
-  },
-  emits: ['change'],
-  data() {
-    return {
-      periodSelectorMap: {} as Record<PeriodKey | '', string>,
-      periodOptions: [] as { label: string; action: () => void }[],
-    };
-  },
-  mounted() {
-    this.periodSelectorMap = {
-      '': t`Set Period`,
-      'This Year': t`This Year`,
-      YTD: t`Year to Date`,
-      'This Quarter': t`This Quarter`,
-      'This Month': t`This Month`,
-    };
+	name: "PeriodSelector",
+	components: {
+		Dropdown,
+	},
+	props: {
+		value: { type: String as PropType<PeriodKey>, default: "This Year" },
+		options: {
+			type: Array as PropType<PeriodKey[]>,
+			default: () => ["This Year", "This Quarter", "This Month", "YTD"],
+		},
+	},
+	emits: ["change"],
+	data() {
+		return {
+			periodSelectorMap: {} as Record<PeriodKey | "", string>,
+			periodOptions: [] as { label: string; action: () => void }[],
+		};
+	},
+	mounted() {
+		this.periodSelectorMap = {
+			"": t`Set Period`,
+			"This Year": t`This Year`,
+			YTD: t`Year to Date`,
+			"This Quarter": t`This Quarter`,
+			"This Month": t`This Month`,
+		};
 
-    this.periodOptions = this.options.map((option) => {
-      let label = this.periodSelectorMap[option] ?? option;
+		this.periodOptions = this.options.map((option) => {
+			let label = this.periodSelectorMap[option] ?? option;
 
-      return {
-        label,
-        action: () => this.selectOption(option),
-      };
-    });
-  },
-  methods: {
-    selectOption(value: PeriodKey) {
-      this.$emit('change', value);
-      (this.$refs.dropdown as InstanceType<typeof Dropdown>).toggleDropdown(
-        false
-      );
-    },
-  },
+			return {
+				label,
+				action: () => this.selectOption(option),
+			};
+		});
+	},
+	methods: {
+		selectOption(value: PeriodKey) {
+			this.$emit("change", value);
+			(this.$refs.dropdown as InstanceType<typeof Dropdown>).toggleDropdown(
+				false,
+			);
+		},
+	},
 });
 </script>

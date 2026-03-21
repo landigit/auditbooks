@@ -1,3 +1,3 @@
-import { StockTransferItem } from './StockTransferItem';
+import { StockTransferItem } from "./StockTransferItem";
 
 export class PurchaseReceiptItem extends StockTransferItem {}

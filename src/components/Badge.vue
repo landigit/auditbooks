@@ -8,19 +8,19 @@
 </template>
 
 <script>
-import { getBgTextColorClass } from 'src/utils/colors';
+import { getBgTextColorClass } from "src/utils/colors";
 
 export default {
-  name: 'Badge',
-  props: {
-    color: {
-      default: 'gray',
-    },
-  },
-  computed: {
-    colorClass() {
-      return getBgTextColorClass(this.color);
-    },
-  },
+	name: "Badge",
+	props: {
+		color: {
+			default: "gray",
+		},
+	},
+	computed: {
+		colorClass() {
+			return getBgTextColorClass(this.color);
+		},
+	},
 };
 </script>

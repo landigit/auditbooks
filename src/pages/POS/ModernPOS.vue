@@ -91,8 +91,8 @@
       @apply-pricing-rule="emitEvent('applyPricingRule')"
     />
 
-    <div class="bg-gray-25 dark:bg-gray-875 grid grid-cols-9 gap-3 p-4">
-      <div class="col-span-3 flex h-auto w-full">
+    <div class="bg-gray-25 dark:bg-gray-875 grid grid-cols-1 md:grid-cols-9 gap-3 p-4">
+      <div class="col-span-1 md:col-span-3 flex h-auto w-full">
         <div class="grid grid-rows-5 w-full gap-3">
           <div
             class="
@@ -303,11 +303,11 @@
           bg-white
           border
           rounded-md
-          col-span-6
+          col-span-1 md:col-span-6
           flex flex-col
           dark:bg-gray-850 dark:border-gray-800
+          h-full md:h-[calc(100vh-6rem)]
         "
-        style="height: calc(100vh - 6rem)"
       >
         <div class="rounded-md p-4 col-span-5">
           <div class="flex gap-x-2">
@@ -379,199 +379,198 @@
 </template>
 
 <script lang="ts">
-import { Money } from 'pesa';
-import { PropType } from 'vue';
-import { fyo } from 'src/initFyo';
-import { defineComponent } from 'vue';
-import { getItem } from 'src/utils/pos';
-import AlertModal from './AlertModal.vue';
-import PaymentModal from './PaymentModal.vue';
-import Button from 'src/components/Button.vue';
-import KeyboardModal from './KeyboardModal.vue';
-import PriceListModal from './PriceListModal.vue';
-import ItemEnquiryModal from './ItemEnquiryModal.vue';
-import { Item } from 'models/baseModels/Item/Item';
-import Link from 'src/components/Controls/Link.vue';
-import CouponCodeModal from './CouponCodeModal.vue';
-import POSQuickActions from './POSQuickActions.vue';
-import OpenPOSShiftModal from './OpenPOSShiftModal.vue';
-import SavedInvoiceModal from './SavedInvoiceModal.vue';
-import ClosePOSShiftModal from './ClosePOSShiftModal.vue';
-import LoyaltyProgramModal from './LoyaltyProgramModal.vue';
-import ReturnSalesInvoiceModal from './ReturnSalesInvoiceModal.vue';
-import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
-import MultiLabelLink from 'src/components/Controls/MultiLabelLink.vue';
-import { POSItem, PosEmits, ItemQtyMap } from 'src/components/POS/types';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import ModernPOSItemsGrid from 'src/components/POS/Modern/ModernPOSItemsGrid.vue';
-import ModernPOSItemsTable from 'src/components/POS/Modern/ModernPOSItemsTable.vue';
-import FloatingLabelFloatInput from 'src/components/POS/FloatingLabelFloatInput.vue';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import FloatingLabelCurrencyInput from 'src/components/POS/FloatingLabelCurrencyInput.vue';
-import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
-import ModernPOSSelectedItemTable from 'src/components/POS/Modern/ModernPOSSelectedItemTable.vue';
-import BatchSelectionModal from 'src/pages/POS/BatchSelectionModal.vue';
+import type { AppliedCouponCodes } from "models/baseModels/AppliedCouponCodes/AppliedCouponCodes";
+import type { Item } from "models/baseModels/Item/Item";
+import type { POSProfile } from "models/baseModels/POSProfile/PosProfile";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import type { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import { Money } from "pesa";
+import Button from "src/components/Button.vue";
+import Link from "src/components/Controls/Link.vue";
+import MultiLabelLink from "src/components/Controls/MultiLabelLink.vue";
+import FloatingLabelCurrencyInput from "src/components/POS/FloatingLabelCurrencyInput.vue";
+import FloatingLabelFloatInput from "src/components/POS/FloatingLabelFloatInput.vue";
+import ModernPOSItemsGrid from "src/components/POS/Modern/ModernPOSItemsGrid.vue";
+import ModernPOSItemsTable from "src/components/POS/Modern/ModernPOSItemsTable.vue";
+import ModernPOSSelectedItemTable from "src/components/POS/Modern/ModernPOSSelectedItemTable.vue";
+import type { ItemQtyMap, POSItem, PosEmits } from "src/components/POS/types";
+import { fyo } from "src/initFyo";
+import BatchSelectionModal from "src/pages/POS/BatchSelectionModal.vue";
+import { getItem } from "src/utils/pos";
+import { defineComponent, type PropType } from "vue";
+import AlertModal from "./AlertModal.vue";
+import ClosePOSShiftModal from "./ClosePOSShiftModal.vue";
+import CouponCodeModal from "./CouponCodeModal.vue";
+import ItemEnquiryModal from "./ItemEnquiryModal.vue";
+import KeyboardModal from "./KeyboardModal.vue";
+import LoyaltyProgramModal from "./LoyaltyProgramModal.vue";
+import OpenPOSShiftModal from "./OpenPOSShiftModal.vue";
+import PaymentModal from "./PaymentModal.vue";
+import POSQuickActions from "./POSQuickActions.vue";
+import PriceListModal from "./PriceListModal.vue";
+import ReturnSalesInvoiceModal from "./ReturnSalesInvoiceModal.vue";
+import SavedInvoiceModal from "./SavedInvoiceModal.vue";
 
 export default defineComponent({
-  name: 'ModernPos',
-  components: {
-    Link,
-    Button,
-    AlertModal,
-    PaymentModal,
-    KeyboardModal,
-    MultiLabelLink,
-    PriceListModal,
-    ItemEnquiryModal,
-    POSQuickActions,
-    CouponCodeModal,
-    OpenPOSShiftModal,
-    SavedInvoiceModal,
-    ModernPOSItemsGrid,
-    ClosePOSShiftModal,
-    LoyaltyProgramModal,
-    ModernPOSItemsTable,
-    FloatingLabelFloatInput,
-    ReturnSalesInvoiceModal,
-    FloatingLabelCurrencyInput,
-    ModernPOSSelectedItemTable,
-    BatchSelectionModal,
-  },
-  props: {
-    paidAmount: Money,
-    tableView: Boolean,
-    itemDiscounts: Money,
-    openAlertModal: Boolean,
-    isPosShiftOpen: Boolean,
-    disablePayButton: Boolean,
-    openPaymentModal: Boolean,
-    openKeyboardModal: Boolean,
-    openPriceListModal: Boolean,
-    openItemEnquiryModal: Boolean,
-    openCouponCodeModal: Boolean,
-    openShiftCloseModal: Boolean,
-    openSavedInvoiceModal: Boolean,
-    openLoyaltyProgramModal: Boolean,
-    openAppliedCouponsModal: Boolean,
-    openReturnSalesInvoiceModal: Boolean,
-    openBatchSelectionModal: Boolean,
-    totalQuantity: {
-      type: Number,
-      default: 0,
-    },
-    loyaltyPoints: {
-      type: Number,
-      default: 0,
-    },
-    itemSearchTerm: {
-      type: String,
-      default: '',
-    },
-    selectedItemGroup: {
-      type: String,
-      default: '',
-    },
-    loyaltyProgram: {
-      type: String,
-      default: '',
-    },
-    appliedCouponsCount: {
-      type: Number,
-      default: 0,
-    },
-    coupons: {
-      type: Object as PropType<AppliedCouponCodes>,
-      default: () => ({}),
-    },
-    sinvDoc: {
-      type: Object as PropType<SalesInvoice | undefined>,
-      default: undefined,
-    },
-    itemQuantityMap: {
-      type: Object as PropType<ItemQtyMap>,
-      default: () => ({}),
-    },
-    items: {
-      type: Array as PropType<POSItem[] | undefined>,
-      default: () => [],
-    },
-    itemVisibility: {
-      type: String,
-      default: 'Inventory Items',
-    },
-    profile: {
-      type: Object as PropType<POSProfile>,
-      required: false,
-      default: null,
-    },
-    batchAddedItems: {
-      type: Array as () => string[],
-      default: () => [],
-    },
-    selectedItemForBatch: {
-      type: String,
-      default: '',
-    },
-    expandedBatchId: {
-      type: String as PropType<string | null | undefined>,
-      default: undefined,
-    },
-  },
-  emits: [
-    'setExpandedBatchId',
-    'addItem',
-    'toggleView',
-    'toggleModal',
-    'setCustomer',
-    'clearValues',
-    'setItemGroup',
-    'setPaidAmount',
-    'setCouponsCount',
-    'routeToSinvList',
-    'handleItemSearch',
-    'setLoyaltyPoints',
-    'setPaymentMethod',
-    'setTransferRefNo',
-    'applyPricingRule',
-    'saveInvoiceAction',
-    'createTransaction',
-    'setTransferAmount',
-    'selectedInvoiceName',
-    'selectedReturnInvoice',
-    'setTransferClearanceDate',
-    'saveAndContinue',
-    'handlePaymentAction',
-    'selectedRow',
-    'batchSelected',
-  ],
-  data() {
-    return {
-      additionalDiscounts: fyo.pesa(0),
+	name: "ModernPos",
+	components: {
+		Link,
+		Button,
+		AlertModal,
+		PaymentModal,
+		KeyboardModal,
+		MultiLabelLink,
+		PriceListModal,
+		ItemEnquiryModal,
+		POSQuickActions,
+		CouponCodeModal,
+		OpenPOSShiftModal,
+		SavedInvoiceModal,
+		ModernPOSItemsGrid,
+		ClosePOSShiftModal,
+		LoyaltyProgramModal,
+		ModernPOSItemsTable,
+		FloatingLabelFloatInput,
+		ReturnSalesInvoiceModal,
+		FloatingLabelCurrencyInput,
+		ModernPOSSelectedItemTable,
+		BatchSelectionModal,
+	},
+	props: {
+		paidAmount: Money,
+		tableView: Boolean,
+		itemDiscounts: Money,
+		openAlertModal: Boolean,
+		isPosShiftOpen: Boolean,
+		disablePayButton: Boolean,
+		openPaymentModal: Boolean,
+		openKeyboardModal: Boolean,
+		openPriceListModal: Boolean,
+		openItemEnquiryModal: Boolean,
+		openCouponCodeModal: Boolean,
+		openShiftCloseModal: Boolean,
+		openSavedInvoiceModal: Boolean,
+		openLoyaltyProgramModal: Boolean,
+		openAppliedCouponsModal: Boolean,
+		openReturnSalesInvoiceModal: Boolean,
+		openBatchSelectionModal: Boolean,
+		totalQuantity: {
+			type: Number,
+			default: 0,
+		},
+		loyaltyPoints: {
+			type: Number,
+			default: 0,
+		},
+		itemSearchTerm: {
+			type: String,
+			default: "",
+		},
+		selectedItemGroup: {
+			type: String,
+			default: "",
+		},
+		loyaltyProgram: {
+			type: String,
+			default: "",
+		},
+		appliedCouponsCount: {
+			type: Number,
+			default: 0,
+		},
+		coupons: {
+			type: Object as PropType<AppliedCouponCodes>,
+			default: () => ({}),
+		},
+		sinvDoc: {
+			type: Object as PropType<SalesInvoice | undefined>,
+			default: undefined,
+		},
+		itemQuantityMap: {
+			type: Object as PropType<ItemQtyMap>,
+			default: () => ({}),
+		},
+		items: {
+			type: Array as PropType<POSItem[] | undefined>,
+			default: () => [],
+		},
+		itemVisibility: {
+			type: String,
+			default: "Inventory Items",
+		},
+		profile: {
+			type: Object as PropType<POSProfile>,
+			required: false,
+			default: null,
+		},
+		batchAddedItems: {
+			type: Array as () => string[],
+			default: () => [],
+		},
+		selectedItemForBatch: {
+			type: String,
+			default: "",
+		},
+		expandedBatchId: {
+			type: String as PropType<string | null | undefined>,
+			default: undefined,
+		},
+	},
+	emits: [
+		"setExpandedBatchId",
+		"addItem",
+		"toggleView",
+		"toggleModal",
+		"setCustomer",
+		"clearValues",
+		"setItemGroup",
+		"setPaidAmount",
+		"setCouponsCount",
+		"routeToSinvList",
+		"handleItemSearch",
+		"setLoyaltyPoints",
+		"setPaymentMethod",
+		"setTransferRefNo",
+		"applyPricingRule",
+		"saveInvoiceAction",
+		"createTransaction",
+		"setTransferAmount",
+		"selectedInvoiceName",
+		"selectedReturnInvoice",
+		"setTransferClearanceDate",
+		"saveAndContinue",
+		"handlePaymentAction",
+		"selectedRow",
+		"batchSelected",
+	],
+	data() {
+		return {
+			additionalDiscounts: fyo.pesa(0),
 
-      selectedItemField: '',
-      selectedItemRow: {} as SalesInvoiceItem,
+			selectedItemField: "",
+			selectedItemRow: {} as SalesInvoiceItem,
 
-      itemGroupFilter: '',
-    };
-  },
-  computed: {
-    isReturnInvoiceEnabledReturn: () =>
-      fyo.singles.AccountingSettings?.enableInvoiceReturns ?? undefined,
-  },
-  methods: {
-    emitEvent(
-      eventName: PosEmits,
-      ...args: (string | boolean | Item | number | Money)[]
-    ) {
-      this.$emit(eventName, ...args);
-    },
-    selectedRow(row: SalesInvoiceItem, field: string) {
-      this.selectedItemRow = row;
-      this.selectedItemField = field;
-      // Bubble up to POS to allow keyboard shortcuts to target this row
-      this.$emit('selectedRow', row);
-    },
-    getItem,
-  },
+			itemGroupFilter: "",
+		};
+	},
+	computed: {
+		isReturnInvoiceEnabledReturn: () =>
+			fyo.singles.AccountingSettings?.enableInvoiceReturns ?? undefined,
+	},
+	methods: {
+		emitEvent(
+			eventName: PosEmits,
+			...args: (string | boolean | Item | number | Money)[]
+		) {
+			this.$emit(eventName, ...args);
+		},
+		selectedRow(row: SalesInvoiceItem, field: string) {
+			this.selectedItemRow = row;
+			this.selectedItemField = field;
+			// Bubble up to POS to allow keyboard shortcuts to target this row
+			this.$emit("selectedRow", row);
+		},
+		getItem,
+	},
 });
 </script>

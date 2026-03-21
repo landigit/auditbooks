@@ -1,375 +1,375 @@
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
+import type { DocValue } from "fyo/core/types";
+import type { Doc } from "fyo/model/doc";
+import type {
+	FiltersMap,
+	FormulaMap,
+	HiddenMap,
+	ValidationMap,
+} from "fyo/model/types";
+import { ValidationError } from "fyo/utils/errors";
+import type { PurchaseInvoice } from "models/baseModels/PurchaseInvoice/PurchaseInvoice";
+import type { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { ModelNameEnum } from "models/types";
+import type { Money } from "pesa";
+import { safeParseFloat } from "utils/index";
 import {
-  FiltersMap,
-  FormulaMap,
-  HiddenMap,
-  ValidationMap,
-} from 'fyo/model/types';
-import { ValidationError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { safeParseFloat } from 'utils/index';
-import { StockTransfer } from './StockTransfer';
-import { TransferItem } from './TransferItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
-import {
-  generateSerialNumbersForItem,
-  getExistingActiveSerialNumbersForItem,
-} from './helpers';
+	generateSerialNumbersForItem,
+	getExistingActiveSerialNumbersForItem,
+} from "./helpers";
+import type { StockTransfer } from "./StockTransfer";
+import { TransferItem } from "./TransferItem";
 
 export class StockTransferItem extends TransferItem {
-  item?: string;
-  location?: string;
+	item?: string;
+	location?: string;
 
-  unit?: string;
-  transferUnit?: string;
-  quantity?: number;
-  transferQuantity?: number;
-  unitConversionFactor?: number;
+	unit?: string;
+	transferUnit?: string;
+	quantity?: number;
+	transferQuantity?: number;
+	unitConversionFactor?: number;
 
-  itemDiscountAmount?: Money;
-  itemDiscountPercent?: number;
+	itemDiscountAmount?: Money;
+	itemDiscountPercent?: number;
 
-  rate?: Money;
-  amount?: Money;
+	rate?: Money;
+	amount?: Money;
 
-  description?: string;
-  hsnCode?: number;
+	description?: string;
+	hsnCode?: number;
 
-  batch?: string;
-  serialNumber?: string;
+	batch?: string;
+	serialNumber?: string;
 
-  parentdoc?: StockTransfer;
+	parentdoc?: StockTransfer;
 
-  get isSales() {
-    return this.schemaName === ModelNameEnum.ShipmentItem;
-  }
+	get isSales() {
+		return this.schemaName === ModelNameEnum.ShipmentItem;
+	}
 
-  get isReturn(): boolean {
-    return !!this.parentdoc?.isReturn;
-  }
+	get isReturn(): boolean {
+		return !!this.parentdoc?.isReturn;
+	}
 
-  async getItemDiscountAmount(): Promise<Money | undefined> {
-    const docData = (await this.fyo.doc.getDoc(
-      this.parentSchemaName == ModelNameEnum.Shipment
-        ? ModelNameEnum.SalesInvoice
-        : ModelNameEnum.PurchaseInvoice,
-      this.parentdoc?.backReference
-    )) as SalesInvoice | PurchaseInvoice;
+	async getItemDiscountAmount(): Promise<Money | undefined> {
+		const docData = (await this.fyo.doc.getDoc(
+			this.parentSchemaName === ModelNameEnum.Shipment
+				? ModelNameEnum.SalesInvoice
+				: ModelNameEnum.PurchaseInvoice,
+			this.parentdoc?.backReference,
+		)) as SalesInvoice | PurchaseInvoice;
 
-    const discountAmount = docData?.items?.find(
-      (val) => val.item === this.item
-    )?.itemDiscountAmount;
+		const discountAmount = docData?.items?.find(
+			(val) => val.item === this.item,
+		)?.itemDiscountAmount;
 
-    return discountAmount;
-  }
+		return discountAmount;
+	}
 
-  async getItemDiscountPercent() {
-    const docData = (await this.fyo.doc.getDoc(
-      this.parentSchemaName == ModelNameEnum.Shipment
-        ? ModelNameEnum.SalesInvoice
-        : ModelNameEnum.PurchaseInvoice,
-      this.parentdoc?.backReference
-    )) as SalesInvoice | PurchaseInvoice;
+	async getItemDiscountPercent() {
+		const docData = (await this.fyo.doc.getDoc(
+			this.parentSchemaName === ModelNameEnum.Shipment
+				? ModelNameEnum.SalesInvoice
+				: ModelNameEnum.PurchaseInvoice,
+			this.parentdoc?.backReference,
+		)) as SalesInvoice | PurchaseInvoice;
 
-    const discountPercent = docData?.items?.find(
-      (val) => val.item === this.item
-    )?.itemDiscountPercent;
+		const discountPercent = docData?.items?.find(
+			(val) => val.item === this.item,
+		)?.itemDiscountPercent;
 
-    return discountPercent;
-  }
+		return discountPercent;
+	}
 
-  formulas: FormulaMap = {
-    description: {
-      formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'description'
-        )) as string,
-      dependsOn: ['item'],
-    },
-    unit: {
-      formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string,
-      dependsOn: ['item'],
-    },
-    transferUnit: {
-      formula: async (fieldname) => {
-        if (fieldname === 'quantity' || fieldname === 'unit') {
-          return this.unit;
-        }
+	formulas: FormulaMap = {
+		description: {
+			formula: async () =>
+				(await this.fyo.getValue(
+					"Item",
+					this.item as string,
+					"description",
+				)) as string,
+			dependsOn: ["item"],
+		},
+		unit: {
+			formula: async () =>
+				(await this.fyo.getValue(
+					"Item",
+					this.item as string,
+					"unit",
+				)) as string,
+			dependsOn: ["item"],
+		},
+		transferUnit: {
+			formula: async (fieldname) => {
+				if (fieldname === "quantity" || fieldname === "unit") {
+					return this.unit;
+				}
 
-        return (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string;
-      },
-      dependsOn: ['item', 'unit'],
-    },
-    transferQuantity: {
-      formula: (fieldname) => {
-        if (fieldname === 'quantity' || this.unit === this.transferUnit) {
-          return this.quantity;
-        }
+				return (await this.fyo.getValue(
+					"Item",
+					this.item as string,
+					"unit",
+				)) as string;
+			},
+			dependsOn: ["item", "unit"],
+		},
+		transferQuantity: {
+			formula: (fieldname) => {
+				if (fieldname === "quantity" || this.unit === this.transferUnit) {
+					return this.quantity;
+				}
 
-        return this.transferQuantity;
-      },
-      dependsOn: ['item', 'quantity'],
-    },
-    quantity: {
-      formula: async (fieldname) => {
-        if (!this.item) {
-          return this.quantity as number;
-        }
+				return this.transferQuantity;
+			},
+			dependsOn: ["item", "quantity"],
+		},
+		quantity: {
+			formula: async (fieldname) => {
+				if (!this.item) {
+					return this.quantity as number;
+				}
 
-        const itemDoc = await this.fyo.doc.getDoc(
-          ModelNameEnum.Item,
-          this.item
-        );
-        const unitDoc = itemDoc.getLink('uom');
+				const itemDoc = await this.fyo.doc.getDoc(
+					ModelNameEnum.Item,
+					this.item,
+				);
+				const unitDoc = itemDoc.getLink("uom");
 
-        let quantity: number = this.quantity ?? 1;
+				let quantity: number = this.quantity ?? 1;
 
-        if (this.isReturn && quantity > 0) {
-          quantity *= -1;
-        }
+				if (this.isReturn && quantity > 0) {
+					quantity *= -1;
+				}
 
-        if (!this.isReturn && quantity < 0) {
-          quantity *= -1;
-        }
+				if (!this.isReturn && quantity < 0) {
+					quantity *= -1;
+				}
 
-        if (fieldname === 'transferQuantity') {
-          quantity = this.transferQuantity! * this.unitConversionFactor!;
-        }
+				if (fieldname === "transferQuantity") {
+					quantity = this.transferQuantity! * this.unitConversionFactor!;
+				}
 
-        if (unitDoc?.isWhole) {
-          return Math.round(quantity);
-        }
+				if (unitDoc?.isWhole) {
+					return Math.round(quantity);
+				}
 
-        return safeParseFloat(quantity);
-      },
-      dependsOn: [
-        'quantity',
-        'transferQuantity',
-        'transferUnit',
-        'unitConversionFactor',
-        'isReturn',
-      ],
-    },
-    unitConversionFactor: {
-      formula: async () => {
-        if (this.unit === this.transferUnit) {
-          return 1;
-        }
+				return safeParseFloat(quantity);
+			},
+			dependsOn: [
+				"quantity",
+				"transferQuantity",
+				"transferUnit",
+				"unitConversionFactor",
+				"isReturn",
+			],
+		},
+		unitConversionFactor: {
+			formula: async () => {
+				if (this.unit === this.transferUnit) {
+					return 1;
+				}
 
-        const conversionFactor = await this.fyo.db.getAll(
-          ModelNameEnum.UOMConversionItem,
-          {
-            fields: ['conversionFactor'],
-            filters: { parent: this.item! },
-          }
-        );
+				const conversionFactor = await this.fyo.db.getAll(
+					ModelNameEnum.UOMConversionItem,
+					{
+						fields: ["conversionFactor"],
+						filters: { parent: this.item! },
+					},
+				);
 
-        return safeParseFloat(conversionFactor[0]?.conversionFactor ?? 1);
-      },
-      dependsOn: ['transferUnit'],
-    },
-    hsnCode: {
-      formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'hsnCode'
-        )) as string,
-      dependsOn: ['item'],
-    },
-    amount: {
-      formula: () => {
-        return this.rate?.mul(this.quantity ?? 0) ?? this.fyo.pesa(0);
-      },
-      dependsOn: ['rate', 'quantity'],
-    },
-    itemDiscountAmount: {
-      formula: async () => {
-        return await this.getItemDiscountAmount();
-      },
-      dependsOn: ['items'],
-    },
-    itemDiscountPercent: {
-      formula: () => this.getItemDiscountPercent(),
-      dependsOn: ['items'],
-    },
-    rate: {
-      formula: async () => {
-        const rate = (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'rate'
-        )) as undefined | Money;
+				return safeParseFloat(conversionFactor[0]?.conversionFactor ?? 1);
+			},
+			dependsOn: ["transferUnit"],
+		},
+		hsnCode: {
+			formula: async () =>
+				(await this.fyo.getValue(
+					"Item",
+					this.item as string,
+					"hsnCode",
+				)) as string,
+			dependsOn: ["item"],
+		},
+		amount: {
+			formula: () => {
+				return this.rate?.mul(this.quantity ?? 0) ?? this.fyo.pesa(0);
+			},
+			dependsOn: ["rate", "quantity"],
+		},
+		itemDiscountAmount: {
+			formula: async () => {
+				return await this.getItemDiscountAmount();
+			},
+			dependsOn: ["items"],
+		},
+		itemDiscountPercent: {
+			formula: () => this.getItemDiscountPercent(),
+			dependsOn: ["items"],
+		},
+		rate: {
+			formula: async () => {
+				const rate = (await this.fyo.getValue(
+					"Item",
+					this.item as string,
+					"rate",
+				)) as undefined | Money;
 
-        if (!rate?.float && this.rate?.float) {
-          return this.rate;
-        }
+				if (!rate?.float && this.rate?.float) {
+					return this.rate;
+				}
 
-        return rate ?? this.fyo.pesa(0);
-      },
-      dependsOn: ['item'],
-    },
-    account: {
-      formula: () => {
-        let accountType = 'expenseAccount';
-        if (this.isSales) {
-          accountType = 'incomeAccount';
-        }
-        return this.fyo.getValue('Item', this.item as string, accountType);
-      },
-      dependsOn: ['item'],
-    },
-    location: {
-      formula: () => {
-        if (this.location) {
-          return;
-        }
+				return rate ?? this.fyo.pesa(0);
+			},
+			dependsOn: ["item"],
+		},
+		account: {
+			formula: () => {
+				let accountType = "expenseAccount";
+				if (this.isSales) {
+					accountType = "incomeAccount";
+				}
+				return this.fyo.getValue("Item", this.item as string, accountType);
+			},
+			dependsOn: ["item"],
+		},
+		location: {
+			formula: () => {
+				if (this.location) {
+					return;
+				}
 
-        const defaultLocation =
-          this.fyo.singles.InventorySettings?.defaultLocation;
+				const defaultLocation =
+					this.fyo.singles.InventorySettings?.defaultLocation;
 
-        if (defaultLocation && !this.location) {
-          return defaultLocation;
-        }
-      },
-    },
-    serialNumber: {
-      formula: async () => {
-        if (this.serialNumber) {
-          return this.serialNumber;
-        }
+				if (defaultLocation && !this.location) {
+					return defaultLocation;
+				}
+			},
+		},
+		serialNumber: {
+			formula: async () => {
+				if (this.serialNumber) {
+					return this.serialNumber;
+				}
 
-        if (!this.item || !this.parentdoc?.backReference) {
-          return undefined;
-        }
+				if (!this.item || !this.parentdoc?.backReference) {
+					return undefined;
+				}
 
-        const hasSerialNumber = await this.fyo.getValue(
-          ModelNameEnum.Item,
-          this.item,
-          'hasSerialNumber'
-        );
+				const hasSerialNumber = await this.fyo.getValue(
+					ModelNameEnum.Item,
+					this.item,
+					"hasSerialNumber",
+				);
 
-        if (!hasSerialNumber) {
-          return undefined;
-        }
+				if (!hasSerialNumber) {
+					return undefined;
+				}
 
-        const quantity = Math.abs(this.quantity ?? 0);
-        if (quantity <= 0) {
-          return undefined;
-        }
+				const quantity = Math.abs(this.quantity ?? 0);
+				if (quantity <= 0) {
+					return undefined;
+				}
 
-        try {
-          if (
-            !this.isSales &&
-            this.parentdoc?.schemaName === ModelNameEnum.PurchaseReceipt
-          ) {
-            const serialNumbers = await generateSerialNumbersForItem(
-              this.fyo,
-              this.item,
-              quantity
-            );
+				try {
+					if (
+						!this.isSales &&
+						this.parentdoc?.schemaName === ModelNameEnum.PurchaseReceipt
+					) {
+						const serialNumbers = await generateSerialNumbersForItem(
+							this.fyo,
+							this.item,
+							quantity,
+						);
 
-            if (serialNumbers) {
-              return serialNumbers;
-            }
-          }
+						if (serialNumbers) {
+							return serialNumbers;
+						}
+					}
 
-          if (
-            this.isSales &&
-            this.parentdoc?.schemaName === ModelNameEnum.Shipment
-          ) {
-            const salesInvoice = (await this.fyo.doc.getDoc(
-              ModelNameEnum.SalesInvoice,
-              this.parentdoc.backReference
-            )) as SalesInvoice;
+					if (
+						this.isSales &&
+						this.parentdoc?.schemaName === ModelNameEnum.Shipment
+					) {
+						const salesInvoice = (await this.fyo.doc.getDoc(
+							ModelNameEnum.SalesInvoice,
+							this.parentdoc.backReference,
+						)) as SalesInvoice;
 
-            const invoiceItem = salesInvoice?.items?.find(
-              (val) => val.item === this.item
-            );
+						const invoiceItem = salesInvoice?.items?.find(
+							(val) => val.item === this.item,
+						);
 
-            if (invoiceItem?.serialNumber) {
-              return invoiceItem.serialNumber as string;
-            }
+						if (invoiceItem?.serialNumber) {
+							return invoiceItem.serialNumber as string;
+						}
 
-            const serialNumbers = await getExistingActiveSerialNumbersForItem(
-              this.fyo,
-              this.item,
-              quantity
-            );
+						const serialNumbers = await getExistingActiveSerialNumbersForItem(
+							this.fyo,
+							this.item,
+							quantity,
+						);
 
-            if (serialNumbers) {
-              return serialNumbers;
-            }
-          }
-        } catch (error) {}
+						if (serialNumbers) {
+							return serialNumbers;
+						}
+					}
+				} catch (_error) {}
 
-        return undefined;
-      },
-      dependsOn: ['item', 'quantity'],
-    },
-  };
+				return undefined;
+			},
+			dependsOn: ["item", "quantity"],
+		},
+	};
 
-  validations: ValidationMap = {
-    transferUnit: async (value: DocValue) => {
-      if (!this.item) {
-        return;
-      }
+	validations: ValidationMap = {
+		transferUnit: async (value: DocValue) => {
+			if (!this.item) {
+				return;
+			}
 
-      const item = await this.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
-        fields: ['parent'],
-        filters: { uom: value as string, parent: this.item },
-      });
+			const item = await this.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
+				fields: ["parent"],
+				filters: { uom: value as string, parent: this.item },
+			});
 
-      if (item.length < 1)
-        throw new ValidationError(
-          this.fyo.t`Transfer Unit ${
-            value as string
-          } is not applicable for Item ${this.item}`
-        );
-    },
-  };
+			if (item.length < 1)
+				throw new ValidationError(
+					this.fyo.t`Transfer Unit ${
+						value as string
+					} is not applicable for Item ${this.item}`,
+				);
+		},
+	};
 
-  static filters: FiltersMap = {
-    item: (doc: Doc) => {
-      let itemNotFor = 'Sales';
-      if (doc.isSales) {
-        itemNotFor = 'Purchases';
-      }
+	static filters: FiltersMap = {
+		item: (doc: Doc) => {
+			let itemNotFor = "Sales";
+			if (doc.isSales) {
+				itemNotFor = "Purchases";
+			}
 
-      return { for: ['not in', [itemNotFor]], trackItem: true };
-    },
-  };
+			return { for: ["not in", [itemNotFor]], trackItem: true };
+		},
+	};
 
-  override hidden: HiddenMap = {
-    itemDiscountAmount: () => {
-      if (this.itemDiscountAmount && !this.itemDiscountAmount?.isZero()) {
-        return false;
-      }
+	override hidden: HiddenMap = {
+		itemDiscountAmount: () => {
+			if (this.itemDiscountAmount && !this.itemDiscountAmount?.isZero()) {
+				return false;
+			}
 
-      return true;
-    },
-    itemDiscountPercent: () => !this.itemDiscountPercent,
-    batch: () => !this.fyo.singles.InventorySettings?.enableBatches,
-    serialNumber: () => !this.fyo.singles.InventorySettings?.enableSerialNumber,
-    transferUnit: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-    transferQuantity: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-    unitConversionFactor: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-  };
+			return true;
+		},
+		itemDiscountPercent: () => !this.itemDiscountPercent,
+		batch: () => !this.fyo.singles.InventorySettings?.enableBatches,
+		serialNumber: () => !this.fyo.singles.InventorySettings?.enableSerialNumber,
+		transferUnit: () =>
+			!this.fyo.singles.InventorySettings?.enableUomConversions,
+		transferQuantity: () =>
+			!this.fyo.singles.InventorySettings?.enableUomConversions,
+		unitConversionFactor: () =>
+			!this.fyo.singles.InventorySettings?.enableUomConversions,
+	};
 }

@@ -48,61 +48,61 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { t } from 'fyo';
-import { showToast } from 'src/utils/interactive';
-import Modal from 'src/components/Modal.vue';
-import Button from 'src/components/Button.vue';
-import Link from 'src/components/Controls/Link.vue';
-import { ModelNameEnum } from 'models/types';
-import { fyo } from 'src/initFyo';
+import { t } from "fyo";
+import { ModelNameEnum } from "models/types";
+import Button from "src/components/Button.vue";
+import Link from "src/components/Controls/Link.vue";
+import Modal from "src/components/Modal.vue";
+import { fyo } from "src/initFyo";
+import { showToast } from "src/utils/interactive";
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'BatchSelectionModal',
-  components: {
-    Modal,
-    Button,
-    Link,
-  },
-  props: {
-    itemCode: {
-      type: String,
-      required: true,
-    },
-  },
-  emits: ['toggleModal', 'batchSelected'],
-  data() {
-    return {
-      selectedBatch: '' as string,
-    };
-  },
-  methods: {
-    async getBatchOptions() {
-      if (!this.itemCode) {
-        return [];
-      }
+	name: "BatchSelectionModal",
+	components: {
+		Modal,
+		Button,
+		Link,
+	},
+	props: {
+		itemCode: {
+			type: String,
+			required: true,
+		},
+	},
+	emits: ["toggleModal", "batchSelected"],
+	data() {
+		return {
+			selectedBatch: "" as string,
+		};
+	},
+	methods: {
+		async getBatchOptions() {
+			if (!this.itemCode) {
+				return [];
+			}
 
-      try {
-        const batches = (await fyo.db.getAll(ModelNameEnum.Batch, {
-          filters: { item: this.itemCode },
-          fields: ['name'],
-        })) as { name: string; itemCode: string }[];
+			try {
+				const batches = (await fyo.db.getAll(ModelNameEnum.Batch, {
+					filters: { item: this.itemCode },
+					fields: ["name"],
+				})) as { name: string; itemCode: string }[];
 
-        return batches.map((b) => ({ label: b.name, value: b.name }));
-      } catch (error) {
-        showToast({ type: 'error', message: t`Failed to load batches` });
-        return [];
-      }
-    },
-    submitSelection() {
-      this.$emit('batchSelected', this.selectedBatch);
-      this.$emit('toggleModal', 'BatchSelection');
-      this.selectedBatch = '';
-    },
-    closeModal() {
-      this.$emit('toggleModal', 'BatchSelection');
-      this.selectedBatch = '';
-    },
-  },
+				return batches.map((b) => ({ label: b.name, value: b.name }));
+			} catch (_error) {
+				showToast({ type: "error", message: t`Failed to load batches` });
+				return [];
+			}
+		},
+		submitSelection() {
+			this.$emit("batchSelected", this.selectedBatch);
+			this.$emit("toggleModal", "BatchSelection");
+			this.selectedBatch = "";
+		},
+		closeModal() {
+			this.$emit("toggleModal", "BatchSelection");
+			this.selectedBatch = "";
+		},
+	},
 });
 </script>
