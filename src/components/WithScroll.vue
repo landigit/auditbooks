@@ -14,7 +14,7 @@ export default defineComponent({
   },
   mounted() {
     this.listener = () => {
-      let { scrollLeft, scrollTop } = this.$el;
+      const { scrollLeft, scrollTop } = this.$el;
       this.$emit('scroll', { scrollLeft, scrollTop });
     };
     this.$el.addEventListener('scroll', this.listener);
@@ -25,7 +25,7 @@ export default defineComponent({
     }
 
     this.$el.removeEventListener('scroll', this.listener);
-    delete this.listener;
+    this.listener = undefined;
   },
 });
 </script>

@@ -318,18 +318,18 @@
 </template>
 
 <script lang="ts">
-import Modal from 'src/components/Modal.vue';
-import { ModelNameEnum } from 'models/types';
-import { defineComponent, inject } from 'vue';
-import Button from 'src/components/Button.vue';
-import Float from 'src/components/Controls/Float.vue';
-import Currency from 'src/components/Controls/Currency.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { ValidationError } from 'fyo/utils/errors';
-import { showToast } from 'src/utils/interactive';
+import type { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { validateQty } from 'models/helpers';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import { ModelNameEnum } from 'models/types';
+import Button from 'src/components/Button.vue';
+import Currency from 'src/components/Controls/Currency.vue';
+import Float from 'src/components/Controls/Float.vue';
+import Modal from 'src/components/Modal.vue';
+import { showToast } from 'src/utils/interactive';
+import { defineComponent, inject } from 'vue';
 
 export default defineComponent({
   name: 'KeyboardModal',
@@ -395,7 +395,7 @@ export default defineComponent({
         this.selectedItemRow?.fieldMap[this.selectedItemField].fieldtype !==
         ModelNameEnum.Currency
       ) {
-        this.selectedValue = this.selectedItemRow![
+        this.selectedValue = this.selectedItemRow?.[
           this.selectedItemField
         ] as string;
       }

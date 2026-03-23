@@ -1,4 +1,6 @@
-import { Fyo, t } from 'fyo';
+import { type Fyo, t } from 'fyo';
+import type BatchSeries from 'fyo/models/BatchSeries';
+import type SerialNumberSeries from 'fyo/models/SerialNumberSeries';
 import { ValidationError } from 'fyo/utils/errors';
 import type { Invoice } from 'models/baseModels/Invoice/Invoice';
 import type { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
@@ -6,13 +8,11 @@ import { ModelNameEnum } from 'models/types';
 import { SerialNumber } from './SerialNumber';
 import type { StockMovement } from './StockMovement';
 import type { StockMovementItem } from './StockMovementItem';
-import { StockTransfer } from './StockTransfer';
+import type { StockTransfer } from './StockTransfer';
 import type { StockTransferItem } from './StockTransferItem';
-import { Transfer } from './Transfer';
-import { TransferItem } from './TransferItem';
+import type { Transfer } from './Transfer';
+import type { TransferItem } from './TransferItem';
 import type { SerialNumberStatus } from './types';
-import BatchSeries from 'fyo/models/BatchSeries';
-import SerialNumberSeries from 'fyo/models/SerialNumberSeries';
 
 export async function validateBatch(
   doc: StockMovement | StockTransfer | Invoice
@@ -231,20 +231,19 @@ export function getSerialNumberFromDoc(doc: StockTransfer | StockMovement) {
   }
 
   return doc.items
-    .map((item) =>
+    .flatMap((item) =>
       getSerialNumbers(item.serialNumber ?? '').map((serialNumber) => ({
         serialNumber,
         item,
       }))
     )
-    .flat()
     .filter(Boolean);
 }
 
 export async function createSerialNumbers(doc: Transfer) {
   const items = doc.items ?? [];
   const serialNumberCreateList = items
-    .map((item) => {
+    .flatMap((item) => {
       const serialNumbers = getSerialNumbers(item.serialNumber ?? '');
       return serialNumbers.map((serialNumber) => ({
         item: item.item ?? '',
@@ -252,7 +251,6 @@ export async function createSerialNumbers(doc: Transfer) {
         isIncoming: isSerialNumberIncoming(item),
       }));
     })
-    .flat()
     .filter(({ item, isIncoming }) => isIncoming && item);
 
   for (const { item, serialNumber } of serialNumberCreateList) {
@@ -475,9 +473,9 @@ async function getHighestSerialNumberForItem(
 
     if (name.startsWith(seriesName)) {
       const numericPart = name.substring(seriesName.length);
-      const value = parseInt(numericPart, 10);
+      const value = Number.parseInt(numericPart, 10);
 
-      if (!isNaN(value) && value > highestValue) {
+      if (!Number.isNaN(value) && value > highestValue) {
         highestValue = value;
       }
     }
@@ -613,9 +611,9 @@ export async function getSuggestedBatchName(
         const batchName = batch.name;
         // Extract numeric part from batch name (handles names like "com-1001")
         const numericPart = batchName.replace(seriesName, '');
-        const num = parseInt(numericPart, 10);
+        const num = Number.parseInt(numericPart, 10);
 
-        if (!isNaN(num) && num > highestNumber) {
+        if (!Number.isNaN(num) && num > highestNumber) {
           highestNumber = num;
         }
       }
@@ -670,8 +668,8 @@ export async function createBatch(
         seriesName
       )) as BatchSeries;
 
-      const num = parseInt(batchName, 10);
-      if (!isNaN(num)) {
+      const num = Number.parseInt(batchName, 10);
+      if (!Number.isNaN(num)) {
         await batchSeriesDoc.set('current', num);
         await batchSeriesDoc.sync();
       }

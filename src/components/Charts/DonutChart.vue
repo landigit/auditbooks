@@ -143,9 +143,9 @@ export default {
   },
   methods: {
     getArcPath(...args) {
-      let [cx, cy, r, start, theta] = args.map(parseFloat);
+      let [cx, cy, r, start, theta] = args.map(Number.parseFloat);
 
-      start += parseFloat(this.startAngle);
+      start += Number.parseFloat(this.startAngle);
       const startX = cx + r * Math.cos(start);
       const startY = cy + r * Math.sin(start);
       const endX = cx + r * Math.cos(start + theta);
@@ -158,9 +158,8 @@ export default {
     getSectorColor(index) {
       if (this.darkMode) {
         return this.sectors[index].color.darkColor;
-      } else {
-        return this.sectors[index].color.color;
       }
+      return this.sectors[index].color.color;
     },
   },
 };

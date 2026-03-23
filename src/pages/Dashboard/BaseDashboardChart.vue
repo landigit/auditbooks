@@ -1,6 +1,6 @@
 <script lang="ts">
-import { PeriodKey } from 'src/utils/types';
-import { PropType } from 'vue';
+import type { PeriodKey } from 'src/utils/types';
+import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({

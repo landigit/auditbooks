@@ -1,6 +1,6 @@
-import { Fyo } from 'fyo';
-import { DocValueMap } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
+import type { Fyo } from 'fyo';
+import type { DocValueMap } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
 import { createNumberSeries } from 'fyo/model/naming';
 import {
   DEFAULT_CURRENCY,
@@ -11,9 +11,9 @@ import {
   AccountRootTypeEnum,
   AccountTypeEnum,
 } from 'models/baseModels/Account/types';
-import { AccountingSettings } from 'models/baseModels/AccountingSettings/AccountingSettings';
+import type { AccountingSettings } from 'models/baseModels/AccountingSettings/AccountingSettings';
 import { numberSeriesDefaultsMap } from 'models/baseModels/Defaults/Defaults';
-import { InventorySettings } from 'models/inventory/InventorySettings';
+import type { InventorySettings } from 'models/inventory/InventorySettings';
 import { ValuationMethod } from 'models/inventory/types';
 import { ModelNameEnum } from 'models/types';
 import { createRegionalRecords } from 'src/regional';
@@ -24,9 +24,9 @@ import {
 import { getRandomString } from 'utils';
 import { getDefaultLocations, getDefaultUOMs } from 'utils/defaults';
 import { getCountryCodeFromCountry, getCountryInfo } from 'utils/misc';
-import { CountryInfo } from 'utils/types';
+import type { CountryInfo } from 'utils/types';
 import { CreateCOA } from './createCOA';
-import { SetupWizardOptions } from './types';
+import type { SetupWizardOptions } from './types';
 
 export default async function setupInstance(
   dbPath: string,
@@ -116,7 +116,7 @@ async function updatePrintSettings(
     logo,
     companyName,
     email,
-    displayLogo: logo ? true : false,
+    displayLogo: !!logo,
   });
 }
 
@@ -217,7 +217,7 @@ export async function createDiscountAccount(fyo: Fyo) {
   };
 
   await checkAndCreateDoc(ModelNameEnum.Account, discountAccountDoc, fyo);
-  await fyo.singles.AccountingSettings!.setAndSync(
+  await fyo.singles.AccountingSettings?.setAndSync(
     'discountAccount',
     discountAccountName
   );
@@ -242,12 +242,12 @@ async function setDefaultAccount(key: string, accountName: string, fyo: Fyo) {
     return false;
   }
 
-  await fyo.singles.AccountingSettings!.setAndSync(key, accountName);
+  await fyo.singles.AccountingSettings?.setAndSync(key, accountName);
   return true;
 }
 
 async function completeSetup(companyName: string, fyo: Fyo) {
-  await fyo.singles.AccountingSettings!.setAndSync('setupComplete', true);
+  await fyo.singles.AccountingSettings?.setAndSync('setupComplete', true);
 }
 
 async function checkAndCreateDoc(
@@ -285,7 +285,7 @@ async function checkIfExactRecordAbsent(
   const matchList = Object.keys(newDocObject).map((key) => {
     const newValue = newDocObject[key];
     const storedValue = storedDocObject[key];
-    return newValue == storedValue; // Should not be type sensitive.
+    return newValue === storedValue; // Should not be type sensitive.
   });
 
   if (!matchList.every(Boolean)) {
@@ -305,7 +305,8 @@ async function getBankAccountParentName(country: string, fyo: Fyo) {
   if (parentBankAccount.length === 0) {
     // This should not happen if the fixtures are correct.
     return 'Bank Accounts';
-  } else if (parentBankAccount.length > 1) {
+  }
+  if (parentBankAccount.length > 1) {
     switch (country) {
       case 'Indonesia':
         return 'Bank Rupiah - 1121.000';
@@ -319,8 +320,7 @@ async function getBankAccountParentName(country: string, fyo: Fyo) {
 
 async function createDefaultNumberSeries(fyo: Fyo) {
   const numberSeriesFields = Object.values(fyo.schemaMap)
-    .map((f) => f?.fields)
-    .flat()
+    .flatMap((f) => f?.fields)
     .filter((f) => f?.fieldname === 'numberSeries');
 
   for (const field of numberSeriesFields) {

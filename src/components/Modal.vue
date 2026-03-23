@@ -38,7 +38,7 @@ export default defineComponent({
   },
   emits: ['closemodal'],
   setup() {
-    const context = `Modal-` + Math.random().toString(36).slice(2, 6);
+    const context = `Modal-${Math.random().toString(36).slice(2, 6)}`;
     return { shortcuts: inject(shortcutsKey), context };
   },
   watch: {

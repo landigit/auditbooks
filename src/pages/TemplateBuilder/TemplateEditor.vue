@@ -5,7 +5,10 @@
   ></div>
 </template>
 <script lang="ts">
-import { autocompletion, CompletionContext } from '@codemirror/autocomplete';
+import {
+  type CompletionContext,
+  autocompletion,
+} from '@codemirror/autocomplete';
 import { vue } from '@codemirror/lang-vue';
 import {
   HighlightStyle,
@@ -13,7 +16,7 @@ import {
   syntaxTree,
 } from '@codemirror/language';
 import { Compartment, EditorState } from '@codemirror/state';
-import { EditorView, ViewUpdate } from '@codemirror/view';
+import { EditorView, type ViewUpdate } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { basicSetup } from 'codemirror';
 import { uicolors } from 'src/utils/colors';
@@ -117,7 +120,7 @@ export default defineComponent({
 function getCompletionsFromHints(hints: Record<string, unknown>) {
   const options = hintsToCompletionOptions(hints);
   return function completions(context: CompletionContext) {
-    let word = context.matchBefore(/\w*/);
+    const word = context.matchBefore(/\w*/);
     if (word == null) {
       return null;
     }
@@ -177,7 +180,7 @@ function getCompletionOption(
 ): null | CompletionOption | CompletionOption[] {
   let label = key;
   if (prefix.length) {
-    label = prefix + '.' + key;
+    label = `${prefix}.${key}`;
   }
 
   if (Array.isArray(value)) {

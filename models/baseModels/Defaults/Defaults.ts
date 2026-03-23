@@ -1,6 +1,6 @@
-import { DefaultCashDenominations } from 'models/inventory/Point of Sale/DefaultCashDenominations';
 import { Doc } from 'fyo/model/doc';
-import { FiltersMap, HiddenMap } from 'fyo/model/types';
+import type { FiltersMap, HiddenMap } from 'fyo/model/types';
+import type { DefaultCashDenominations } from 'models/inventory/Point of Sale/DefaultCashDenominations';
 import { ModelNameEnum } from 'models/types';
 import { PartyRoleEnum } from '../Party/types';
 

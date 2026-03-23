@@ -27,10 +27,11 @@ export default {
   },
   computed: {
     style() {
-      let obj = {};
+      const obj = {};
       if (this.columnCount) {
         // prettier-ignore
-        obj['grid-template-columns'] = `repeat(${this.columnCount}, ${this.columnWidth})`;
+        obj['grid-template-columns'] =
+          `repeat(${this.columnCount}, ${this.columnWidth})`;
       }
       if (this.ratio.length) {
         obj['grid-template-columns'] = this.ratio

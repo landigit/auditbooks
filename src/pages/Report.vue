@@ -46,9 +46,9 @@
 </template>
 <script lang="ts">
 import { t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { reports } from 'reports';
-import { Report } from 'reports/Report';
+import type { Report } from 'reports/Report';
 import Button from 'src/components/Button.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
@@ -58,9 +58,9 @@ import { fyo } from 'src/initFyo';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap, getReport } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
-import { ActionGroup } from 'src/utils/types';
+import type { ActionGroup } from 'src/utils/types';
 import { routeTo } from 'src/utils/ui';
-import { PropType, computed, defineComponent, inject } from 'vue';
+import { type PropType, computed, defineComponent, inject } from 'vue';
 
 export default defineComponent({
   components: {
@@ -100,21 +100,24 @@ export default defineComponent({
     },
     groupedActions() {
       const actions = this.report?.getActions() ?? [];
-      const actionsMap = actions.reduce((acc, ac) => {
-        if (!ac.group) {
-          ac.group = 'none';
-        }
+      const actionsMap = actions.reduce(
+        (acc, ac) => {
+          if (!ac.group) {
+            ac.group = 'none';
+          }
 
-        acc[ac.group] ??= {
-          group: ac.group,
-          label: ac.label ?? '',
-          type: ac.type ?? 'secondary',
-          actions: [],
-        };
+          acc[ac.group] ??= {
+            group: ac.group,
+            label: ac.label ?? '',
+            type: ac.type ?? 'secondary',
+            actions: [],
+          };
 
-        acc[ac.group].actions.push(ac);
-        return acc;
-      }, {} as Record<string, ActionGroup>);
+          acc[ac.group].actions.push(ac);
+          return acc;
+        },
+        {} as Record<string, ActionGroup>
+      );
 
       return Object.values(actionsMap);
     },

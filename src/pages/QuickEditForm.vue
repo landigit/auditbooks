@@ -90,15 +90,15 @@
   </div>
 </template>
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
-import { Field, Schema } from 'schemas/types';
+import type { DocValue } from 'fyo/core/types';
+import type { Field, Schema } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import AttachImage from 'src/components/Controls/AttachImage.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import TwoColumnForm from 'src/components/TwoColumnForm.vue';
 import { fyo } from 'src/initFyo';
 import { shortcutsKey } from 'src/utils/injectionKeys';
-import { DocRef } from 'src/utils/types';
+import type { DocRef } from 'src/utils/types';
 import {
   commonDocSubmit,
   commonDocSync,
@@ -256,7 +256,7 @@ export default defineComponent({
         await this.doc.load();
       }
 
-      if (this.doc && this.doc.notInserted) {
+      if (this.doc?.notInserted) {
         await this.doc.delete();
       }
 

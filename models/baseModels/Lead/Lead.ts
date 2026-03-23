@@ -1,16 +1,16 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import {
+import type {
   Action,
   LeadStatus,
   ListViewSettings,
   ValidationMap,
 } from 'fyo/model/types';
-import { getLeadActions, getLeadStatusColumn } from 'models/helpers';
 import {
   validateEmail,
   validatePhoneNumber,
 } from 'fyo/model/validationFunction';
+import { getLeadActions, getLeadStatusColumn } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
 
 export class Lead extends Doc {

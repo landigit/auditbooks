@@ -1,17 +1,21 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import {
+import type {
   DefaultMap,
   FiltersMap,
+  FormulaMap,
   ListViewSettings,
+  ReadOnlyMap,
   RequiredMap,
   TreeViewSettings,
-  ReadOnlyMap,
-  FormulaMap,
 } from 'fyo/model/types';
 import { ModelNameEnum } from 'models/types';
-import { QueryFilter } from 'utils/db/types';
-import { AccountRootType, AccountRootTypeEnum, AccountType } from './types';
+import type { QueryFilter } from 'utils/db/types';
+import {
+  type AccountRootType,
+  AccountRootTypeEnum,
+  type AccountType,
+} from './types';
 
 export class Account extends Doc {
   rootType?: AccountRootType;
@@ -69,7 +73,7 @@ export class Account extends Doc {
     };
   }
 
-  static getTreeSettings(fyo: Fyo): void | TreeViewSettings {
+  static getTreeSettings(fyo: Fyo): undefined | TreeViewSettings {
     return {
       parentField: 'parentAccount',
       async getRootLabel(): Promise<string> {

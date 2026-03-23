@@ -14,8 +14,9 @@ export function generateCSV(matrix: unknown[][]): string {
 }
 
 function splitCsvBlock(text: string, splitter = '\r\n'): string[] {
-  if (!text.endsWith(splitter)) {
-    text += splitter;
+  let targetText = text;
+  if (!targetText.endsWith(splitter)) {
+    targetText += splitter;
   }
   const lines = [];
   let line = '';
@@ -50,7 +51,8 @@ function splitCsvBlock(text: string, splitter = '\r\n'): string[] {
 }
 
 export function splitCsvLine(line: string): string[] {
-  line += ',';
+  let targetLine = line;
+  targetLine += ',';
 
   const items = [];
   let item = '';
@@ -122,23 +124,24 @@ function getFormattedItem(item: unknown): string {
 
 function formatStringToCSV(item: string): string {
   let shouldDq = false;
-  if (item.match(/^".*"$/)) {
+  let result = item;
+  if (result.match(/^".*"$/)) {
     shouldDq = true;
-    item = item.slice(1, -1);
+    result = result.slice(1, -1);
   }
 
-  if (item.match(/"/)) {
+  if (result.match(/"/)) {
     shouldDq = true;
-    item = item.replaceAll('"', '""');
+    result = result.replaceAll('"', '""');
   }
 
-  if (item.match(/,|\s/)) {
+  if (result.match(/,|\s/)) {
     shouldDq = true;
   }
 
   if (shouldDq) {
-    return '"' + item + '"';
+    return `"${result}"`;
   }
 
-  return item;
+  return result;
 }

@@ -1,14 +1,16 @@
-import { getMoneyMaker, MoneyMaker } from 'pesa';
-import { Field, FieldType } from 'schemas/types';
+import { type MoneyMaker, getMoneyMaker } from 'pesa';
+import type { Report } from 'reports/Report';
+import type { reports } from 'reports/index';
+import type { Field, FieldType } from 'schemas/types';
 import { getIsNullOrUndef } from 'utils';
 import { markRaw } from 'vue';
 import { AuthHandler } from './core/authHandler';
 import { DatabaseHandler } from './core/dbHandler';
 import { DocHandler } from './core/docHandler';
-import { DocValue, FyoConfig } from './core/types';
+import type { DocValue, FyoConfig } from './core/types';
 import { Config } from './demux/config';
-import { Doc } from './model/doc';
-import { ModelMap } from './model/types';
+import type { Doc } from './model/doc';
+import type { ModelMap } from './model/types';
 import { TelemetryManager } from './telemetry/telemetry';
 import {
   DEFAULT_CURRENCY,
@@ -17,10 +19,8 @@ import {
 } from './utils/consts';
 import * as errors from './utils/errors';
 import { format } from './utils/format';
-import { t, T } from './utils/translation';
-import { ErrorLog } from './utils/types';
-import type { reports } from 'reports/index';
-import type { Report } from 'reports/Report';
+import { T, t } from './utils/translation';
+import type { ErrorLog } from './utils/types';
 
 export class Fyo {
   t = t;
@@ -143,10 +143,13 @@ export class Fyo {
         }
       )) ?? [];
 
-    const acc = values.reduce((acc, sv) => {
-      acc[sv.fieldname] = sv.value as string | number | undefined;
-      return acc;
-    }, {} as Record<string, string | number | undefined>);
+    const acc = values.reduce(
+      (acc, sv) => {
+        acc[sv.fieldname] = sv.value as string | number | undefined;
+        return acc;
+      },
+      {} as Record<string, string | number | undefined>
+    );
 
     const precision: number =
       (acc.internalPrecision as number) ?? DEFAULT_INTERNAL_PRECISION;

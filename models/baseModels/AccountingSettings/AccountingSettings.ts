@@ -1,5 +1,5 @@
 import { Doc } from 'fyo/model/doc';
-import {
+import type {
   ChangeArg,
   FiltersMap,
   HiddenMap,
@@ -8,7 +8,7 @@ import {
   ValidationMap,
 } from 'fyo/model/types';
 import { validateEmail } from 'fyo/model/validationFunction';
-import { InventorySettings } from 'models/inventory/InventorySettings';
+import type { InventorySettings } from 'models/inventory/InventorySettings';
 import { ModelNameEnum } from 'models/types';
 import { createDiscountAccount } from 'src/setup/setupInstance';
 import { getCountryInfo } from 'utils/misc';
@@ -98,7 +98,7 @@ export class AccountingSettings extends Doc {
     }
 
     if (
-      ch.changed == 'enablePointOfSaleWithOutInventory' &&
+      ch.changed === 'enablePointOfSaleWithOutInventory' &&
       this.enablePointOfSaleWithOutInventory
     ) {
       const inventorySettings = (await this.fyo.doc.getDoc(

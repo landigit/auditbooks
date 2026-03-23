@@ -1,8 +1,8 @@
+import path from 'node:path';
 import BetterSQLite3 from 'better-sqlite3';
 import fs from 'fs-extra';
 import { DatabaseError } from 'fyo/utils/errors';
-import path from 'path';
-import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
+import { DatabaseDemuxBase, type DatabaseMethod } from 'utils/db/types';
 import { getMapFromList } from 'utils/index';
 import { Version } from 'utils/version';
 import { getSchemas } from '../../schemas';
@@ -11,7 +11,7 @@ import patches from '../patches';
 import { BespokeQueries } from './bespoke';
 import DatabaseCore from './core';
 import { runPatches } from './runPatch';
-import { BespokeFunction, Patch, RawCustomField } from './types';
+import type { BespokeFunction, Patch, RawCustomField } from './types';
 
 export class DatabaseManager extends DatabaseDemuxBase {
   db?: DatabaseCore;
@@ -35,19 +35,20 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async connectToDatabase(dbPath: string, countryCode?: string) {
-    countryCode = await this._connect(dbPath, countryCode);
+    const connectedCountryCode = await this._connect(dbPath, countryCode);
     await this.#migrate();
-    return countryCode;
+    return connectedCountryCode;
   }
 
   async _connect(dbPath: string, countryCode?: string) {
-    countryCode ??= await DatabaseCore.getCountryCode(dbPath);
+    let effectiveCountryCode = countryCode;
+    effectiveCountryCode ??= await DatabaseCore.getCountryCode(dbPath);
     this.db = new DatabaseCore(dbPath);
     await this.db.connect();
     await this.setRawCustomFields();
-    const schemaMap = getSchemas(countryCode, this.rawCustomFields);
+    const schemaMap = getSchemas(effectiveCountryCode, this.rawCustomFields);
     this.db.setSchemaMap(schemaMap);
-    return countryCode;
+    return effectiveCountryCode;
   }
 
   async setRawCustomFields() {
@@ -65,7 +66,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
     const isFirstRun = await this.#getIsFirstRun();
     if (isFirstRun) {
-      await this.db!.migrate();
+      await this.db?.migrate();
     }
 
     await this.#executeMigration();
@@ -81,7 +82,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     }
 
     await runPatches(patches.pre, this, version);
-    await this.db!.migrate({
+    await this.db?.migrate({
       pre: async () => {
         if (hasPatches) {
           return;
@@ -100,7 +101,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return { pre: [], post: [] };
     }
 
-    const query = (await this.db.knex!('PatchRun').select()) as {
+    const query = (await this.db.knex?.('PatchRun').select()) as {
       name: string;
       version?: string;
       failed?: boolean;
@@ -146,7 +147,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     // @ts-ignore
     const response = await this.db[method](...args);
     if (method === 'close') {
-      delete this.db;
+      this.db = undefined;
     }
 
     return response;

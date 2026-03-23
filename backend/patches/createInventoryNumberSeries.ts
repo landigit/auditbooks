@@ -1,5 +1,5 @@
 import { getDefaultMetaFieldValueMap } from '../../backend/helpers';
-import { DatabaseManager } from '../database/manager';
+import type { DatabaseManager } from '../database/manager';
 
 async function execute(dm: DatabaseManager) {
   const s = (await dm.db?.getAll('SingleValue', {

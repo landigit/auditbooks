@@ -1,7 +1,7 @@
-import { Fyo } from 'fyo';
-import { DocValue } from 'fyo/core/types';
+import type { Fyo } from 'fyo';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import {
+import type {
   Action,
   FiltersMap,
   FormulaMap,
@@ -11,7 +11,7 @@ import {
   ValidationMap,
 } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { AccountRootTypeEnum, AccountTypeEnum } from '../Account/types';
 
 interface UOMConversionItem {
@@ -62,9 +62,8 @@ export class Item extends Doc {
 
         if (cogs.length === 0) {
           return '';
-        } else {
-          return cogs[0].name as string;
         }
+        return cogs[0].name as string;
       },
       dependsOn: ['itemType', 'trackItem'],
     },
@@ -99,14 +98,14 @@ export class Item extends Doc {
     if (this.serialNumberSeries && this.hasSerialNumber) {
       const series = this.serialNumberSeries.trim();
       if (series && !series.endsWith('-')) {
-        this.serialNumberSeries = series + '-';
+        this.serialNumberSeries = `${series}-`;
       }
     }
 
     if (this.batchSeries && this.hasBatch) {
       const series = this.batchSeries.trim();
       if (series && !series.endsWith('-')) {
-        this.batchSeries = series + '-';
+        this.batchSeries = `${series}-`;
       }
     }
   }

@@ -1,6 +1,6 @@
 // App is tagged with a .mjs extension to allow
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * electron-builder doesn't look for the APPLE_TEAM_ID environment variable for some reason.
@@ -14,74 +14,74 @@ const root = dirname; // redundant, but is meant to keep with the previous line
 const buildDirPath = path.join(root, 'dist_electron', 'build');
 const packageDirPath = path.join(root, 'dist_electron', 'bundled');
 
-const frappeBooksConfig = {
+const auditbooksConfig = {
   productName: 'AuditBooks',
   appId: 'com.landigit.auditbooks',
   artifactName: '${productName}-v${version}-${os}-${arch}.${ext}',
   asarUnpack: '**/*.node',
-    extraResources: [
-      // { from: 'log_creds.txt', to: '../creds/log_creds.txt' },
-      { from: 'translations', to: '../translations' },
-      { from: 'templates', to: '../templates' },
-    ],
-    files: '**',
-    extends: null,
-    directories: {
-      output: packageDirPath,
-      app: buildDirPath,
+  extraResources: [
+    // { from: 'log_creds.txt', to: '../creds/log_creds.txt' },
+    { from: 'translations', to: '../translations' },
+    { from: 'templates', to: '../templates' },
+  ],
+  files: '**',
+  extends: null,
+  directories: {
+    output: packageDirPath,
+    app: buildDirPath,
+  },
+  mac: {
+    type: 'distribution',
+    artifactName: '${productName}-v${version}-mac-${arch}.${ext}',
+    category: 'public.app-category.finance',
+    icon: 'build/icon.icns',
+    notarize: {
+      teamId: process.env.APPLE_TEAM_ID || '',
     },
-    mac: {
-      type: 'distribution',
-      artifactName: '${productName}-v${version}-mac-${arch}.${ext}',
-      category: 'public.app-category.finance',
-      icon: 'build/icon.icns',
-      notarize: {
-        teamId: process.env.APPLE_TEAM_ID || '',
+    hardenedRuntime: true,
+    gatekeeperAssess: false,
+    darkModeSupport: false,
+    entitlements: 'build/entitlements.mac.plist',
+    entitlementsInherit: 'build/entitlements.mac.plist',
+    publish: ['github'],
+  },
+  win: {
+    publisherName: 'Landigit Agency',
+    artifactName: '${productName}-v${version}-windows-${arch}.${ext}',
+    signDlls: true,
+    icon: 'build/icon.ico',
+    publish: ['github'],
+    target: [
+      {
+        target: 'nsis',
+        arch: ['x64', 'ia32'],
       },
-      hardenedRuntime: true,
-      gatekeeperAssess: false,
-      darkModeSupport: false,
-      entitlements: 'build/entitlements.mac.plist',
-      entitlementsInherit: 'build/entitlements.mac.plist',
-      publish: ['github'],
-    },
-    win: {
-      publisherName: 'Landigit Agency',
-      artifactName: '${productName}-v${version}-windows-${arch}.${ext}',
-      signDlls: true,
-      icon: 'build/icon.ico',
-      publish: ['github'],
-      target: [
-        {
-          target: 'nsis',
-          arch: ['x64', 'ia32'],
-        },
-        {
-          target: 'portable',
-          arch: ['x64', 'ia32'],
-        },
-      ],
-    },
-    nsis: {
-      oneClick: false,
-      perMachine: false,
-      allowToChangeInstallationDirectory: true,
-      installerIcon: 'build/installericon.ico',
-      uninstallerIcon: 'build/uninstallericon.ico',
-      publish: ['github'],
-    },
-    linux: {
-      icon: 'build/icons',
-      artifactName: '${productName}-v${version}-linux-${arch}.${ext}',
-      category: 'Finance',
-      publish: ['github'],
-      target: [
-        {
-          target: 'deb',
-          arch: ['x64'],
-        },
-      ],
-    },
-  };
+      {
+        target: 'portable',
+        arch: ['x64', 'ia32'],
+      },
+    ],
+  },
+  nsis: {
+    oneClick: false,
+    perMachine: false,
+    allowToChangeInstallationDirectory: true,
+    installerIcon: 'build/installericon.ico',
+    uninstallerIcon: 'build/uninstallericon.ico',
+    publish: ['github'],
+  },
+  linux: {
+    icon: 'build/icons',
+    artifactName: '${productName}-v${version}-linux-${arch}.${ext}',
+    category: 'Finance',
+    publish: ['github'],
+    target: [
+      {
+        target: 'deb',
+        arch: ['x64'],
+      },
+    ],
+  },
+};
 
-export default frappeBooksConfig;
+export default auditbooksConfig;

@@ -25,6 +25,12 @@ yarn-error.log*
 *.sw?
 *.code-workspace
 
-#Electron-builder output
+# Electron-builder output
 /dist_electron
+/dist-electron
+/src/dist-electron
+/build
+/out
+/dist
 log_creds.txt
+.yarn/install-state.gz

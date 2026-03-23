@@ -1,33 +1,33 @@
-import { SingleValue } from 'backend/database/types';
-import { Fyo } from 'fyo';
+import type { SingleValue } from 'backend/database/types';
+import type { Fyo } from 'fyo';
 import { DatabaseDemux } from 'fyo/demux/db';
 import { ValueError } from 'fyo/utils/errors';
 import Observable from 'fyo/utils/observable';
 import { translateSchema } from 'fyo/utils/translation';
-import { Field, RawValue, SchemaMap } from 'schemas/types';
+import type { ReturnDocItem } from 'models/inventory/types';
+import type { Money } from 'pesa';
+import type { Field, RawValue, SchemaMap } from 'schemas/types';
 import { getMapFromList } from 'utils';
 import {
-  Cashflow,
+  type Cashflow,
   DatabaseBase,
-  DatabaseDemuxBase,
-  GetAllOptions,
-  IncomeExpense,
-  QueryFilter,
-  TopExpenses,
-  TotalCreditAndDebit,
-  TotalOutstanding,
+  type DatabaseDemuxBase,
+  type GetAllOptions,
+  type IncomeExpense,
+  type QueryFilter,
+  type TopExpenses,
+  type TotalCreditAndDebit,
+  type TotalOutstanding,
 } from 'utils/db/types';
 import { schemaTranslateables } from 'utils/translationHelpers';
-import { LanguageMap } from 'utils/types';
+import type { LanguageMap } from 'utils/types';
 import { Converter } from './converter';
-import {
+import type {
   DatabaseDemuxConstructor,
   DocValue,
   DocValueMap,
   RawValueMap,
 } from './types';
-import { ReturnDocItem } from 'models/inventory/types';
-import { Money } from 'pesa';
 
 type FieldMap = Record<string, Record<string, Field>>;
 
@@ -177,7 +177,7 @@ export class DatabaseHandler extends DatabaseBase {
       });
     }
 
-    this.observer.trigger(`getSingleValues`, fieldnames);
+    this.observer.trigger('getSingleValues', fieldnames);
     return docSingleValue;
   }
 

@@ -1,11 +1,11 @@
-import { Fyo, t } from 'fyo';
+import { type Fyo, t } from 'fyo';
 import { ValidationError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { StockLedgerEntry } from './StockLedgerEntry';
-import { SMDetails, SMIDetails, SMTransferDetails } from './types';
-import { getSerialNumbers } from './helpers';
 import { getItemVisibility } from 'models/helpers';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
+import type { StockLedgerEntry } from './StockLedgerEntry';
+import { getSerialNumbers } from './helpers';
+import type { SMDetails, SMIDetails, SMTransferDetails } from './types';
 
 export class StockManager {
   /**
@@ -162,7 +162,7 @@ export class StockManager {
       quantityBefore += details.quantity;
     }
 
-    const batchMessage = !!batch ? t` in Batch ${batch}` : '';
+    const batchMessage = batch ? t` in Batch ${batch}` : '';
 
     if (!details.isReturn && quantityBefore < details.quantity) {
       throw new ValidationError(
@@ -261,7 +261,7 @@ class StockManagerItem {
       .filter(Boolean);
 
     for (const sle of sles) {
-      await sle!.sync();
+      await sle?.sync();
     }
   }
 

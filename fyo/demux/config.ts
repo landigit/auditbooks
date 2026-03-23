@@ -1,4 +1,4 @@
-import { ConfigMap } from 'fyo/core/types';
+import type { ConfigMap } from 'fyo/core/types';
 import type { IPC } from 'main/preload';
 
 export class Config {

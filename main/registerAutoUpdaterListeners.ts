@@ -1,7 +1,7 @@
 import { app, dialog } from 'electron';
-import { autoUpdater, UpdateInfo } from 'electron-updater';
+import { type UpdateInfo, autoUpdater } from 'electron-updater';
 import { emitMainProcessError } from '../backend/helpers';
-import { Main } from '../main';
+import type { Main } from '../main';
 import { isNetworkError } from './helpers';
 
 export default function registerAutoUpdaterListeners(main: Main) {

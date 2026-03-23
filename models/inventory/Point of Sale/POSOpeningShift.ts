@@ -1,7 +1,7 @@
 import { Doc } from 'fyo/model/doc';
-import { OpeningAmounts } from './OpeningAmounts';
-import { OpeningCash } from './OpeningCash';
-import { ListViewSettings } from 'fyo/model/types';
+import type { ListViewSettings } from 'fyo/model/types';
+import type { OpeningAmounts } from './OpeningAmounts';
+import type { OpeningCash } from './OpeningCash';
 
 export class POSOpeningShift extends Doc {
   openingAmounts?: OpeningAmounts[];

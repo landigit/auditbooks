@@ -252,11 +252,11 @@
 </template>
 <script lang="ts">
 import { EditorView } from 'codemirror';
-import { Doc } from 'fyo/model/doc';
-import { PrintTemplate } from 'models/baseModels/PrintTemplate';
+import type { Doc } from 'fyo/model/doc';
+import type { PrintTemplate } from 'models/baseModels/PrintTemplate';
 import { ModelNameEnum } from 'models/types';
 import { saveExportData } from 'reports/commonExporter';
-import { Field, TargetField } from 'schemas/types';
+import type { Field, TargetField } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Link from 'src/components/Controls/Link.vue';
@@ -270,13 +270,13 @@ import { shortcutsKey } from 'src/utils/injectionKeys';
 import { showDialog, showToast } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
 import {
-  PrintTemplateHint,
+  type PrintTemplateHint,
   baseTemplate,
   getPrintTemplatePropHints,
   getPrintTemplatePropValues,
 } from 'src/utils/printTemplates';
 import { docsPathRef, showSidebar } from 'src/utils/refs';
-import { DocRef, PrintValues } from 'src/utils/types';
+import type { DocRef, PrintValues } from 'src/utils/types';
 import {
   ShortcutKey,
   focusOrSelectFormControl,
@@ -476,7 +476,7 @@ export default defineComponent({
       const styles: Record<string, string> = {};
 
       styles['grid-template-columns'] = `auto 0px ${this.panelWidth}px`;
-      styles['height'] = 'calc(100vh - var(--h-row-largest) - 1px)';
+      styles.height = 'calc(100vh - var(--h-row-largest) - 1px)';
 
       return styles;
     },
@@ -484,7 +484,7 @@ export default defineComponent({
       const styles: Record<string, string> = {};
 
       styles.height = `calc(100vh - var(--h-row-largest) - 1px - ${
-        this.platform == 'Windows' ? 'var(--h-row-smallest)' : '0px'
+        this.platform === 'Windows' ? 'var(--h-row-smallest)' : '0px'
       }`;
       return styles;
     },
@@ -597,7 +597,7 @@ export default defineComponent({
         return;
       }
 
-      let message = this.t`Please set a Display Doc`;
+      const message = this.t`Please set a Display Doc`;
       if (!this.displayDoc) {
         return showToast({ type: 'warning', message, duration: 'short' });
       }
@@ -710,7 +710,7 @@ export default defineComponent({
     },
     async setDisplayDoc(value: string) {
       if (!value) {
-        delete this.hints;
+        this.hints = undefined;
         this.values = null;
         this.displayDoc = null;
         return;

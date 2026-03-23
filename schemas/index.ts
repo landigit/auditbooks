@@ -1,4 +1,4 @@
-import { RawCustomField } from 'backend/database/types';
+import type { RawCustomField } from 'backend/database/types';
 import { cloneDeep } from 'lodash';
 import { getListFromMap, getMapFromList } from 'utils';
 import regionalSchemas from './regional';
@@ -17,14 +17,14 @@ import type {
 
 const NAME_FIELD = {
   fieldname: 'name',
-  label: `ID`,
+  label: 'ID',
   fieldtype: 'Data',
   required: true,
   readOnly: true,
 };
 
 export function getSchemas(
-  countryCode = '-',
+  countryCode,
   rawCustomFields: RawCustomField[]
 ): Readonly<SchemaMap> {
   const builtCoreSchemas = getCoreSchemas();
@@ -66,11 +66,11 @@ function removeFields(schemaMap: SchemaMap): SchemaMap {
       );
 
       if (schema.linkDisplayField === fieldname) {
-        delete schema.linkDisplayField;
+        schema.linkDisplayField = undefined;
       }
     }
 
-    delete schema.removeFields;
+    schema.removeFields = undefined;
   }
 
   return schemaMap;
@@ -171,8 +171,8 @@ export function cleanSchemas(schemaMap: SchemaMap): SchemaMap {
       continue;
     }
 
-    delete schema.extends;
-    delete schema.isAbstract;
+    schema.extends = undefined;
+    schema.isAbstract = undefined;
   }
 
   return schemaMap;

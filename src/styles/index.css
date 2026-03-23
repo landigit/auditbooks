@@ -1,18 +1,18 @@
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-weight: 100 900;
   font-display: swap;
   font-style: oblique 0deg 10deg;
-  src: url('../assets/fonts/Inter.var.woff2') format('woff2');
+  src: url("../assets/fonts/Inter.var.woff2") format("woff2");
 }
 
 * {
-  outline-color: theme('colors.pink.400');
-  font-variation-settings: 'slnt' 0deg;
+  outline-color: theme("colors.pink.400");
+  font-variation-settings: "slnt" 0deg;
 }
 
 .italic {
-  font-variation-settings: 'slnt' 10deg;
+  font-variation-settings: "slnt" 10deg;
 }
 
 @tailwind base;
@@ -22,21 +22,21 @@
 @tailwind utilities;
 
 html {
-  color: theme('colors.black');
+  color: theme("colors.black");
 }
 
 html.dark {
-  color: theme('colors.black');
-  background-color: theme('colors.gray.900');
+  color: theme("colors.black");
+  background-color: theme("colors.gray.900");
   color-scheme: dark;
 }
 
-html.dark input[type='date']::-webkit-calendar-picker-indicator {
+html.dark input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: transparent;
   color-scheme: dark;
 }
 
-input[type='number']::-webkit-inner-spin-button {
+input[type="number"]::-webkit-inner-spin-button {
   appearance: none;
 }
 
@@ -149,7 +149,7 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 .show-mandatory::after {
-  content: '*';
+  content: "*";
   display: inline-block;
   width: 0px;
   height: 0px;
@@ -164,19 +164,19 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 .custom-scroll::-webkit-scrollbar-track:vertical {
-  border-left: solid 1px theme('colors.gray.100');
+  border-left: solid 1px theme("colors.gray.100");
 }
 
 .custom-scroll::-webkit-scrollbar-track:horizontal {
-  border-top: solid 1px theme('colors.gray.100');
+  border-top: solid 1px theme("colors.gray.100");
 }
 
 .custom-scroll::-webkit-scrollbar-thumb {
-  background: theme('colors.gray.100');
+  background: theme("colors.gray.100");
 }
 
 .custom-scroll::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.gray.200');
+  background: theme("colors.gray.200");
 }
 
 .custom-scroll::-webkit-scrollbar-corner {
@@ -185,32 +185,32 @@ input[type='number']::-webkit-inner-spin-button {
 
 .dark.custom-scroll::-webkit-scrollbar-track:vertical,
 .dark .custom-scroll::-webkit-scrollbar-track:vertical {
-  border-left-color: theme('colors.gray.800');
+  border-left-color: theme("colors.gray.800");
 }
 
 .dark.custom-scroll::-webkit-scrollbar-track:horizontal,
 .dark .custom-scroll::-webkit-scrollbar-track:horizontal {
-  border-top-color: theme('colors.gray.800');
+  border-top-color: theme("colors.gray.800");
 }
 
 .dark.custom-scroll-thumb1::-webkit-scrollbar-thumb,
 .dark .custom-scroll-thumb1::-webkit-scrollbar-thumb {
-  background: theme('colors.gray.850');
+  background: theme("colors.gray.850");
 }
 
 .dark.custom-scroll-thumb1::-webkit-scrollbar-thumb:hover,
 .dark .custom-scroll-thumb1::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.gray.800');
+  background: theme("colors.gray.800");
 }
 
 .dark.custom-scroll-thumb2::-webkit-scrollbar-thumb,
 .dark .custom-scroll-thumb2::-webkit-scrollbar-thumb {
-  background: theme('colors.gray.800');
+  background: theme("colors.gray.800");
 }
 
 .dark.custom-scroll-thumb2::-webkit-scrollbar-thumb:hover,
 .dark .custom-scroll-thumb2::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.gray.875');
+  background: theme("colors.gray.875");
 }
 
 /*
@@ -240,17 +240,17 @@ input[type='number']::-webkit-inner-spin-button {
   RTL
  */
 
-[dir='rtl'] .rtl-rotate-180 {
+[dir="rtl"] .rtl-rotate-180 {
   transform: rotate(180deg);
 }
 
-[dir='rtl'] .custom-scroll::-webkit-scrollbar-track:vertical {
-  border-right: solid 1px theme('colors.gray.200');
+[dir="rtl"] .custom-scroll::-webkit-scrollbar-track:vertical {
+  border-right: solid 1px theme("colors.gray.200");
 }
 
-[dir='rtl'].dark.custom-scroll::-webkit-scrollbar-track:vertical,
-[dir='rtl'].dark .custom-scroll::-webkit-scrollbar-track:vertical {
-  border-right: solid 1px theme('colors.gray.850');
+[dir="rtl"].dark.custom-scroll::-webkit-scrollbar-track:vertical,
+[dir="rtl"].dark .custom-scroll::-webkit-scrollbar-track:vertical {
+  border-right: solid 1px theme("colors.gray.850");
 }
 
 .pill {

@@ -1,10 +1,10 @@
+import { getLoyaltyProgramTier } from 'models/helpers';
+import { ModelNameEnum } from 'models/types';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { ModelNameEnum } from 'models/types';
-import { Party } from '../Party/Party';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
-import { getLoyaltyProgramTier } from 'models/helpers';
-import { CollectionRulesItems } from '../CollectionRulesItems/CollectionRulesItems';
+import type { CollectionRulesItems } from '../CollectionRulesItems/CollectionRulesItems';
+import type { Party } from '../Party/Party';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);
@@ -248,7 +248,7 @@ test('redeem loyalty points and verify a new loyalty point entry doc is created'
   t.equals(
     loyaltyPointEntryData?.loyaltyPoints,
     -1000,
-    `redeemed loyalty point matches the loyalty points used`
+    'redeemed loyalty point matches the loyalty points used'
   );
 
   const partyDoc = (await fyo.doc.getDoc(

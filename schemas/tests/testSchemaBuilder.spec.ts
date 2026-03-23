@@ -17,7 +17,7 @@ import {
 } from './helpers';
 
 const { appSchemaMap, regionalSchemaMap } = getTestSchemaMap();
-test('Meta Properties', function (t) {
+test('Meta Properties', (t) => {
   t.equal(appSchemaMap.Party.isAbstract, true);
   t.equal(appSchemaMap.Customer.extends, 'Party');
   t.equal(appSchemaMap.Account.isTree, true);
@@ -25,7 +25,7 @@ test('Meta Properties', function (t) {
   t.end();
 });
 
-test('Field Counts', function (t) {
+test('Field Counts', (t) => {
   t.equal(appSchemaMap.Account.fields?.length, 5);
   t.equal(appSchemaMap.JournalEntry.fields?.length, 9);
   t.equal(appSchemaMap.JournalEntryAccount.fields?.length, 3);
@@ -35,7 +35,7 @@ test('Field Counts', function (t) {
   t.end();
 });
 
-test('Quick Edit Field Counts', function (t) {
+test('Quick Edit Field Counts', (t) => {
   t.equal(appSchemaMap.Party.quickEditFields?.length, 5);
   t.equal(regionalSchemaMap.Party.quickEditFields?.length, 8);
   t.end();
@@ -46,17 +46,17 @@ const regionalCombined = getRegionalCombinedSchemas(
   regionalSchemaMap
 );
 
-test('Field Counts', function (t) {
+test('Field Counts', (t) => {
   t.equal(regionalCombined.Party.fields?.length, 11);
   t.end();
 });
 
-test('Quick Edit Field Counts', function (t) {
+test('Quick Edit Field Counts', (t) => {
   t.equal(regionalSchemaMap.Party.quickEditFields?.length, 8);
   t.end();
 });
 
-test('Schema Equality with App Schemas', function (t) {
+test('Schema Equality with App Schemas', (t) => {
   t.equal(isEqual(regionalCombined.Account, appSchemaMap.Account), true);
   t.equal(
     isEqual(regionalCombined.JournalEntry, appSchemaMap.JournalEntry),
@@ -78,27 +78,27 @@ const abstractCombined = cleanSchemas(
   getAbstractCombinedSchemas(regionalCombined)
 );
 
-test('Meta Properties', function (t) {
-  t.equal(abstractCombined.Customer!.extends, undefined);
+test('Meta Properties', (t) => {
+  t.equal(abstractCombined.Customer?.extends, undefined);
   t.end();
 });
 
-test('Abstract Schema Existance', function (t) {
+test('Abstract Schema Existance', (t) => {
   t.equal(abstractCombined.Party, undefined);
   t.end();
 });
 
-test('Field Counts', function (t) {
-  t.equal(abstractCombined.Customer!.fields?.length, 11);
+test('Field Counts', (t) => {
+  t.equal(abstractCombined.Customer?.fields?.length, 11);
   t.end();
 });
 
-test('Quick Edit Field Counts', function (t) {
-  t.equal(abstractCombined.Customer!.quickEditFields?.length, 8);
+test('Quick Edit Field Counts', (t) => {
+  t.equal(abstractCombined.Customer?.quickEditFields?.length, 8);
   t.end();
 });
 
-test('Schema Equality with App Schemas', function (t) {
+test('Schema Equality with App Schemas', (t) => {
   t.equal(isEqual(abstractCombined.Account, appSchemaMap.Account), true);
   t.equal(
     isEqual(abstractCombined.JournalEntry, appSchemaMap.JournalEntry),
@@ -115,7 +115,7 @@ test('Schema Equality with App Schemas', function (t) {
   t.end();
 });
 
-test('Schema Field Existance', function (t) {
+test('Schema Field Existance', (t) => {
   t.equal(
     everyFieldExists(
       regionalSchemaMap.Party.quickEditFields ?? [],
@@ -130,10 +130,10 @@ let almostFinalSchemas = cloneDeep(abstractCombined);
 almostFinalSchemas = addMetaFields(almostFinalSchemas);
 const finalSchemas = setSchemaNameOnFields(almostFinalSchemas);
 const metaSchemaMap = getMapFromList(metaSchemas, 'name');
-const baseFieldNames = metaSchemaMap.base.fields!.map((f) => f.fieldname);
-const childFieldNames = metaSchemaMap.child.fields!.map((f) => f.fieldname);
-const treeFieldNames = metaSchemaMap.tree.fields!.map((f) => f.fieldname);
-const submittableFieldNames = metaSchemaMap.submittable.fields!.map(
+const baseFieldNames = metaSchemaMap.base.fields?.map((f) => f.fieldname);
+const childFieldNames = metaSchemaMap.child.fields?.map((f) => f.fieldname);
+const treeFieldNames = metaSchemaMap.tree.fields?.map((f) => f.fieldname);
+const submittableFieldNames = metaSchemaMap.submittable.fields?.map(
   (f) => f.fieldname
 );
 const allFieldNames = [
@@ -143,7 +143,7 @@ const allFieldNames = [
   ...submittableFieldNames,
 ];
 
-test('Schema Name Existsance', function (t) {
+test('Schema Name Existsance', (t) => {
   for (const schemaName in finalSchemas) {
     for (const field of finalSchemas[schemaName]?.fields!) {
       t.equal(field.schemaName, schemaName);
@@ -152,7 +152,7 @@ test('Schema Name Existsance', function (t) {
   t.end();
 });
 
-test('Schema Field Existance', function (t) {
+test('Schema Field Existance', (t) => {
   t.equal(everyFieldExists(baseFieldNames, finalSchemas.Customer!), true);
 
   t.equal(

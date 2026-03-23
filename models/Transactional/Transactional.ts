@@ -1,6 +1,6 @@
 import { Doc } from 'fyo/model/doc';
 import { ModelNameEnum } from 'models/types';
-import { LedgerPosting } from './LedgerPosting';
+import type { LedgerPosting } from './LedgerPosting';
 
 /**
  * # Transactional

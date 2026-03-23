@@ -38,10 +38,10 @@ import { formatXLabels, getYMax, getYMin } from 'src/utils/chart';
 import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { getValueMapFromList } from 'utils';
+import { defineComponent } from 'vue';
 import DashboardChartBase from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
-import { defineComponent } from 'vue';
 
 // Linting broken in this file cause of `extends: ...`
 /*

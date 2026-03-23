@@ -366,7 +366,7 @@ export default defineComponent({
         return value;
       }
 
-      return '...' + value.slice(value.length - 72);
+      return `...${value.slice(value.length - 72)}`;
     },
     formatDate(isoDate: string) {
       return DateTime.fromISO(isoDate).toRelative();

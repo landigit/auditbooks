@@ -1,7 +1,7 @@
-import { Fyo, t } from 'fyo';
-import { DocValueMap } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import {
+import { type Fyo, t } from 'fyo';
+import type { DocValueMap } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type {
   CurrenciesMap,
   DefaultMap,
   FiltersMap,
@@ -19,44 +19,44 @@ import {
   filterPricingRules,
   getAddedLPWithGrandTotal,
   getExchangeRate,
-  getNumberSeries,
-  removeUnusedCoupons,
-  getPricingRulesConflicts,
-  removeLoyaltyPoint,
-  roundFreeItemQty,
-  getReturnQtyTotal,
-  getReturnLoyaltyPoints,
   getItemQtyMap,
   getItemVisibility,
-  validateLoyaltyProgram,
   getLoyaltyProgramTier,
+  getNumberSeries,
+  getPricingRulesConflicts,
+  getReturnLoyaltyPoints,
+  getReturnQtyTotal,
   isLoyaltyProgramExpiredAndMaxed,
+  removeLoyaltyPoint,
+  removeUnusedCoupons,
+  roundFreeItemQty,
+  validateLoyaltyProgram,
 } from 'models/helpers';
-import { StockTransfer } from 'models/inventory/StockTransfer';
+import type { StockTransfer } from 'models/inventory/StockTransfer';
 import { validateBatch } from 'models/inventory/helpers';
+import type { ReturnDocItem } from 'models/inventory/types';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { FieldTypeEnum, Schema } from 'schemas/types';
-import { getIsNullOrUndef, joinMapLists, safeParseFloat } from 'utils';
-import { Defaults } from '../Defaults/Defaults';
-import { InvoiceItem } from '../InvoiceItem/InvoiceItem';
-import { Item } from '../Item/Item';
-import { Party } from '../Party/Party';
-import { Payment } from '../Payment/Payment';
-import { Tax } from '../Tax/Tax';
-import { TaxSummary } from '../TaxSummary/TaxSummary';
-import { ReturnDocItem } from 'models/inventory/types';
-import { AccountFieldEnum, PaymentTypeEnum } from '../Payment/types';
-import { PricingRule } from '../PricingRule/PricingRule';
-import { ApplicablePricingRules } from './types';
-import { PricingRuleDetail } from '../PricingRuleDetail/PricingRuleDetail';
-import { LoyaltyProgram } from '../LoyaltyProgram/LoyaltyProgram';
-import { AppliedCouponCodes } from '../AppliedCouponCodes/AppliedCouponCodes';
-import { CouponCode } from '../CouponCode/CouponCode';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
-import { SalesInvoiceItem } from '../SalesInvoiceItem/SalesInvoiceItem';
-import { PricingRuleItem } from '../PricingRuleItem/PricingRuleItem';
+import type { Money } from 'pesa';
+import { FieldTypeEnum, type Schema } from 'schemas/types';
 import { getLinkedEntries } from 'src/utils/doc';
+import { getIsNullOrUndef, joinMapLists, safeParseFloat } from 'utils';
+import type { AppliedCouponCodes } from '../AppliedCouponCodes/AppliedCouponCodes';
+import type { CouponCode } from '../CouponCode/CouponCode';
+import type { Defaults } from '../Defaults/Defaults';
+import type { InvoiceItem } from '../InvoiceItem/InvoiceItem';
+import type { Item } from '../Item/Item';
+import type { LoyaltyProgram } from '../LoyaltyProgram/LoyaltyProgram';
+import type { Party } from '../Party/Party';
+import type { Payment } from '../Payment/Payment';
+import { AccountFieldEnum, PaymentTypeEnum } from '../Payment/types';
+import type { PricingRule } from '../PricingRule/PricingRule';
+import type { PricingRuleDetail } from '../PricingRuleDetail/PricingRuleDetail';
+import type { PricingRuleItem } from '../PricingRuleItem/PricingRuleItem';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
+import type { SalesInvoiceItem } from '../SalesInvoiceItem/SalesInvoiceItem';
+import type { Tax } from '../Tax/Tax';
+import type { TaxSummary } from '../TaxSummary/TaxSummary';
+import type { ApplicablePricingRules } from './types';
 
 export type TaxDetail = {
   account: string;
@@ -115,12 +115,12 @@ export abstract class Invoice extends Transactional {
 
   get isSales() {
     return (
-      this.schemaName === 'SalesInvoice' || this.schemaName == 'SalesQuote'
+      this.schemaName === 'SalesInvoice' || this.schemaName === 'SalesQuote'
     );
   }
 
   get isQuote() {
-    return this.schemaName == 'SalesQuote';
+    return this.schemaName === 'SalesQuote';
   }
 
   get enableDiscounting() {
@@ -132,7 +132,7 @@ export abstract class Invoice extends Transactional {
       return false;
     }
 
-    return this.fyo.singles.SystemSettings!.currency !== this.currency;
+    return this.fyo.singles.SystemSettings?.currency !== this.currency;
   }
 
   get companyCurrency() {
@@ -390,7 +390,7 @@ export abstract class Invoice extends Transactional {
       orderBy: 'name',
     })) as { parent: string }[];
 
-    if (payments.length != 0) {
+    if (payments.length !== 0) {
       return [...new Set(payments.map(({ parent }) => parent))];
     }
 
@@ -482,7 +482,7 @@ export abstract class Invoice extends Transactional {
       taxes[account].amount = taxes[account].amount.add(taxAmount);
     }
 
-    type Summary = typeof taxes[string] & { idx: number };
+    type Summary = (typeof taxes)[string] & { idx: number };
     const taxArr: Summary[] = [];
     let idx = 0;
     for (const account in taxes) {
@@ -537,7 +537,7 @@ export abstract class Invoice extends Transactional {
   getGrandTotal() {
     const totalDiscount = this.getTotalDiscount();
 
-    if (!this.taxes!.length) {
+    if (!this.taxes?.length) {
       if (this.redeemLoyaltyPoints) {
         return this.getLPAddedBaseGrandTotal();
       }
@@ -688,7 +688,7 @@ export abstract class Invoice extends Transactional {
     return discountAmount;
   }
   async getTotalTaxRate(row: InvoiceItem): Promise<number> {
-    if (!this.taxes!.length) {
+    if (!this.taxes?.length) {
       return 0;
     }
 
@@ -777,7 +777,7 @@ export abstract class Invoice extends Transactional {
           const returnData = totalQtyOfReturnedItems[item.item as string];
           if (typeof returnData === 'object' && returnData?.batches) {
             returnDocItems = docItems.map((docItem: DocValueMap) => {
-              const qty = -returnData?.batches![docItem.batch as string] || 0;
+              const qty = -returnData?.batches?.[docItem.batch as string] || 0;
               const transferQty =
                 qty / ((docItem.unitConversionFactor as number) || 1);
               return {
@@ -820,7 +820,7 @@ export abstract class Invoice extends Transactional {
       }
 
       const returnedItem: ReturnDocItem | undefined =
-        returnBalanceItemsQty![item.item as string];
+        returnBalanceItemsQty?.[item.item as string];
 
       if (!returnedItem) {
         continue;
@@ -1183,7 +1183,7 @@ export abstract class Invoice extends Transactional {
         if (!getIsNullOrUndef(currency)) {
           return currency;
         }
-        return this.fyo.singles.SystemSettings!.currency as string;
+        return this.fyo.singles.SystemSettings?.currency as string;
       },
       dependsOn: ['party'],
     },
@@ -1226,17 +1226,16 @@ export abstract class Invoice extends Transactional {
           )) as Invoice;
           if (sinvreturnedDoc.outstandingAmount?.isZero()) {
             return this.grandTotal?.abs();
-          } else {
-            const totalPaid = sinvreturnedDoc
-              .grandTotal!.abs()
-              .sub(sinvreturnedDoc.outstandingAmount!);
-
-            const outstandingAmount = this.grandTotal!.abs();
-
-            return outstandingAmount.lte(totalPaid)
-              ? outstandingAmount
-              : totalPaid;
           }
+          const totalPaid = sinvreturnedDoc.grandTotal
+            ?.abs()
+            .sub(sinvreturnedDoc.outstandingAmount!);
+
+          const outstandingAmount = this.grandTotal?.abs();
+
+          return outstandingAmount.lte(totalPaid)
+            ? outstandingAmount
+            : totalPaid;
         }
 
         return this.baseGrandTotal;
@@ -1256,9 +1255,8 @@ export abstract class Invoice extends Transactional {
 
           if (sinvreturnedDoc.stockNotTransferred === 0) {
             return this.getStockNotTransferred();
-          } else {
-            return 0;
           }
+          return 0;
         }
 
         return this.getStockNotTransferred();
@@ -1286,10 +1284,9 @@ export abstract class Invoice extends Transactional {
         if (pricingRule) {
           await this.appendPricingRuleDetail(pricingRule);
           return !!pricingRule;
-        } else {
-          this.pricingRuleDetail = [];
-          return false;
         }
+        this.pricingRuleDetail = [];
+        return false;
       },
       dependsOn: ['items', 'coupons'],
     },
@@ -1354,7 +1351,7 @@ export abstract class Invoice extends Transactional {
     discountAfterTax: () => !this.enableDiscounting,
     taxes: () => !this.taxes?.length,
     baseGrandTotal: () =>
-      this.exchangeRate === 1 || this.baseGrandTotal!.isZero(),
+      this.exchangeRate === 1 || this.baseGrandTotal?.isZero(),
     terms: () => !(this.terms || !(this.isSubmitted || this.isCancelled)),
     attachment: () =>
       !(this.attachment || !(this.isSubmitted || this.isCancelled)),
@@ -1544,7 +1541,7 @@ export abstract class Invoice extends Transactional {
       terms,
       numberSeries,
       backReference: this.name,
-      returnAgainst: linkedEntries ? linkedEntries.Shipment![0] : '',
+      returnAgainst: linkedEntries ? linkedEntries.Shipment?.[0] : '',
     };
 
     let location = this.autoStockTransferLocation;
@@ -1746,12 +1743,12 @@ export abstract class Invoice extends Transactional {
       cancelled: number;
     }[];
 
-    const itemSchemaName = schemaName + 'Item';
+    const itemSchemaName = `${schemaName}Item`;
     const transferItems = (await this.fyo.db.getAllRaw(itemSchemaName, {
       fields: ['parent', 'quantity', 'location', 'amount'],
       filters: {
         parent: ['in', transfers.map((t) => t.name)],
-        item: ['in', this.items!.map((i) => i.item!)],
+        item: ['in', this.items?.map((i) => i.item!)],
       },
     })) as {
       parent: string;
@@ -1937,7 +1934,7 @@ export abstract class Invoice extends Transactional {
 
       const duplicatePricingRule = this.pricingRuleDetail?.filter(
         (pricingrule: PricingRuleDetail) =>
-          pricingrule.referenceItem == item.item
+          pricingrule.referenceItem === item.item
       );
 
       if (duplicatePricingRule && duplicatePricingRule?.length >= 2) {

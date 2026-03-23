@@ -1,5 +1,5 @@
-import { Fyo } from 'fyo';
-import { ConfigFile } from 'fyo/core/types';
+import type { Fyo } from 'fyo';
+import type { ConfigFile } from 'fyo/core/types';
 import { translateSchema } from 'fyo/utils/translation';
 import { cloneDeep } from 'lodash';
 import { DateTime } from 'luxon';
@@ -7,12 +7,12 @@ import { SetupWizard } from 'models/baseModels/SetupWizard/SetupWizard';
 import { ModelNameEnum } from 'models/types';
 import { reports } from 'reports/index';
 import SetupWizardSchema from 'schemas/app/SetupWizard.json';
-import { Schema } from 'schemas/types';
+import type { Schema } from 'schemas/types';
 import { fyo } from 'src/initFyo';
-import { QueryFilter } from 'utils/db/types';
+import type { QueryFilter } from 'utils/db/types';
 import { schemaTranslateables } from 'utils/translationHelpers';
 import type { LanguageMap } from 'utils/types';
-import { PeriodKey } from './types';
+import type { PeriodKey } from './types';
 
 export function getDatesAndPeriodList(period: PeriodKey): {
   periodList: DateTime[];
@@ -39,7 +39,7 @@ export function getDatesAndPeriodList(period: PeriodKey): {
    */
   const periodList: DateTime[] = [toDate];
   while (true) {
-    const nextDate = periodList.at(0)!.minus({ months: 1 });
+    const nextDate = periodList.at(0)?.minus({ months: 1 });
     if (nextDate.toMillis() < fromDate.toMillis()) {
       if (period === 'YTD') {
         periodList.unshift(nextDate);
@@ -80,10 +80,10 @@ export function getSetupWizardDoc(languageMap?: LanguageMap) {
 export function updateConfigFiles(fyo: Fyo): ConfigFile {
   const configFiles = fyo.config.get('files', []) as ConfigFile[];
 
-  const companyName = fyo.singles.AccountingSettings!.companyName as string;
-  const id = fyo.singles.SystemSettings!.instanceId as string;
+  const companyName = fyo.singles.AccountingSettings?.companyName as string;
+  const id = fyo.singles.SystemSettings?.instanceId as string;
   const dbPath = fyo.db.dbPath!;
-  const openCount = fyo.singles.Misc!.openCount as number;
+  const openCount = fyo.singles.Misc?.openCount as number;
 
   const fileIndex = configFiles.findIndex((f) => f.id === id);
   let newFile = { id, companyName, dbPath, openCount } as ConfigFile;
@@ -162,7 +162,7 @@ export function getCreateFiltersFromListViewFilters(filters: QueryFilter) {
   const createFilters: Record<string, string | number | boolean | null> = {};
 
   for (const key in filters) {
-    let value: typeof filters[string] | undefined | number = filters[key];
+    let value: (typeof filters)[string] | undefined | number = filters[key];
 
     if (Array.isArray(value) && value[0] === 'in' && Array.isArray(value[1])) {
       value = value[1].filter((v) => v !== 'Both')[0];

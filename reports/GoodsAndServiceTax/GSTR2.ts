@@ -1,5 +1,5 @@
 import { BaseGSTR } from './BaseGSTR';
-import { GSTRType } from './types';
+import type { GSTRType } from './types';
 
 export class GSTR2 extends BaseGSTR {
   static title = 'GSTR2';

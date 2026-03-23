@@ -82,12 +82,12 @@
 </template>
 
 <script lang="ts">
-import FloatingLabelInputBase from './FloatingLabelInputBase.vue';
-import { safeParsePesa } from 'utils/index';
 import { isPesa } from 'fyo/utils';
+import type { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
+import { safeParsePesa } from 'utils/index';
 import { defineComponent } from 'vue';
-import { Money } from 'pesa';
+import FloatingLabelInputBase from './FloatingLabelInputBase.vue';
 
 export default defineComponent({
   name: 'FloatingLabelCurrencyInput',

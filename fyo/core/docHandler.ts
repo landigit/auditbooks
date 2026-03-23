@@ -1,12 +1,12 @@
 import { Doc } from 'fyo/model/doc';
-import { DocMap, ModelMap, SinglesMap } from 'fyo/model/types';
+import type { DocMap, ModelMap, SinglesMap } from 'fyo/model/types';
 import { coreModels } from 'fyo/models';
 import { NotFoundError, ValueError } from 'fyo/utils/errors';
 import Observable from 'fyo/utils/observable';
-import { Schema } from 'schemas/types';
+import type { Schema } from 'schemas/types';
 import { getRandomString } from 'utils';
-import { Fyo } from '..';
-import { DocValueMap, RawValueMap } from './types';
+import type { Fyo } from '..';
+import type { DocValueMap, RawValueMap } from './types';
 
 export class DocHandler {
   fyo: Fyo;

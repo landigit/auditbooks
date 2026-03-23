@@ -23,27 +23,28 @@ export function getIndexFormat(inp: string | string[] | unknown) {
 
   if (typeof inp === 'string') {
     string = inp;
-  } else if (inp instanceof Array) {
+  } else if (Array.isArray(inp)) {
     snippets = inp;
   } else {
     throw new Error(`invalid input ${String(inp)} of type ${typeof inp}`);
   }
 
-  if (snippets === undefined) {
-    snippets = getSnippets(string as string);
+  let targetSnippets = snippets;
+  if (targetSnippets === undefined) {
+    targetSnippets = getSnippets(string as string);
   }
 
-  if (snippets.length === 1) {
-    return snippets[0];
+  if (targetSnippets.length === 1) {
+    return targetSnippets[0];
   }
 
   let str = '';
-  snippets.forEach((s, i) => {
-    if (i === snippets!.length - 1) {
+  targetSnippets.forEach((s, i) => {
+    if (i === targetSnippets.length - 1) {
       str += s;
       return;
     }
-    str += s + '${' + String(i) + '}';
+    str += `${s}\${${String(i)}}`;
   });
 
   return str;
@@ -70,5 +71,5 @@ export function getWhitespaceSanitized(str: string) {
 }
 
 export function getIndexList(str: string) {
-  return [...str.matchAll(/\${([^}]+)}/g)].map(([, i]) => parseInt(i));
+  return [...str.matchAll(/\${([^}]+)}/g)].map(([, i]) => Number.parseInt(i));
 }

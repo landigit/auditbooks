@@ -179,25 +179,28 @@
 </template>
 <script lang="ts">
 import { t } from 'fyo';
+import type { Doc } from 'fyo/model/doc';
+import type { TreeViewSettings } from 'fyo/model/types';
+import type {
+  AccountRootType,
+  AccountType,
+} from 'models/baseModels/Account/types';
 import { isCredit } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
+import { uicolors } from 'src/utils/colors';
 import { languageDirectionKey } from 'src/utils/injectionKeys';
+import { showDialog } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
 import { commongDocDelete, openQuickEdit } from 'src/utils/ui';
 import { getMapFromList, removeAtIndex } from 'utils/index';
 import { defineComponent, nextTick } from 'vue';
-import Button from '../components/Button.vue';
 import { inject } from 'vue';
+import type { Component } from 'vue';
+import Button from '../components/Button.vue';
 import { handleErrorWithDialog } from '../errorHandling';
-import { AccountRootType, AccountType } from 'models/baseModels/Account/types';
-import { TreeViewSettings } from 'fyo/model/types';
-import { Doc } from 'fyo/model/doc';
-import { Component } from 'vue';
-import { uicolors } from 'src/utils/colors';
-import { showDialog } from 'src/utils/interactive';
 
 type AccountItem = {
   name: string;
@@ -500,13 +503,13 @@ export default defineComponent({
         parentAccount.expanded = true;
       }
       // activate editing of type 'key' and deactivate other type
-      let otherKey: AccKey =
+      const otherKey: AccKey =
         key === 'addingAccount' ? 'addingGroupAccount' : 'addingAccount';
       parentAccount[key] = true;
       parentAccount[otherKey] = false;
 
       await nextTick();
-      let input = (this.$refs[parentAccount.name] as HTMLInputElement[])[0];
+      const input = (this.$refs[parentAccount.name] as HTMLInputElement[])[0];
       input.focus();
     },
     cancelAddingAccount(parentAccount: AccountItem) {
@@ -521,7 +524,7 @@ export default defineComponent({
       const accountName = this.newAccountName.trim();
       const doc = fyo.doc.getNewDoc('Account');
       try {
-        let { name, rootType, accountType } = parentAccount;
+        const { name, rootType, accountType } = parentAccount;
         await doc.set({
           name: accountName,
           parentAccount: name,
@@ -552,13 +555,15 @@ export default defineComponent({
       }
     },
     isQuickEditOpen(account: AccountItem) {
-      let { edit, schemaName, name } = this.$route.query;
+      const { edit, schemaName, name } = this.$route.query;
       return !!(edit && schemaName === 'Account' && name === account.name);
     },
     getIconComponent(isGroup: boolean, name?: string): Component {
-      let lightColor = this.darkMode ? uicolors.gray[600] : uicolors.gray[400];
-      let darkColor = this.darkMode ? uicolors.gray[400] : uicolors.gray[700];
-      let icons = {
+      const lightColor = this.darkMode
+        ? uicolors.gray[600]
+        : uicolors.gray[400];
+      const darkColor = this.darkMode ? uicolors.gray[400] : uicolors.gray[700];
+      const icons = {
         'Application of Funds (Assets)': `<svg class="w-4 h-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
             <g fill="none" fill-rule="evenodd">
               <path d="M15.333 5.333H.667A.667.667 0 000 6v9.333c0 .368.299.667.667.667h14.666a.667.667 0 00.667-.667V6a.667.667 0 00-.667-.667zM8 12.667a2 2 0 110-4 2 2 0 010 4z" fill="${darkColor}" fill-rule="nonzero"/>
@@ -582,15 +587,15 @@ export default defineComponent({
           </svg>`,
       };
 
-      let leaf = `<svg class="w-2 h-2" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+      const leaf = `<svg class="w-2 h-2" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
         <circle stroke="${darkColor}" cx="4" cy="4" r="3.5" fill="none" fill-rule="evenodd"/>
       </svg>`;
 
-      let folder = `<svg class="w-3 h-3" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+      const folder = `<svg class="w-3 h-3" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
         <path d="M8.333 3.367L6.333.7H.667A.667.667 0 000 1.367v12a2 2 0 002 2h12a2 2 0 002-2V4.033a.667.667 0 00-.667-.666h-7z" fill="${darkColor}" fill-rule="evenodd"/>
       </svg>`;
 
-      let icon = isGroup ? folder : leaf;
+      const icon = isGroup ? folder : leaf;
 
       return {
         template: icons[name as keyof typeof icons] || icon,

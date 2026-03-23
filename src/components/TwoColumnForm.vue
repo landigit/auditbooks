@@ -53,16 +53,16 @@
   </div>
 </template>
 <script lang="ts">
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
+import type { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import { fyo } from 'src/initFyo';
 import { getErrorMessage } from 'src/utils';
 import { evaluateHidden } from 'src/utils/doc';
-import Table from './Controls/Table.vue';
 import { defineComponent } from 'vue';
-import { Field } from 'schemas/types';
-import { PropType } from 'vue';
-import { DocValue } from 'fyo/core/types';
+import type { PropType } from 'vue';
+import Table from './Controls/Table.vue';
 
 export default defineComponent({
   name: 'TwoColumnForm',
@@ -86,7 +86,7 @@ export default defineComponent({
   },
   computed: {
     style() {
-      let templateColumns = (this.columnRatio || [1, 1])
+      const templateColumns = (this.columnRatio || [1, 1])
         .map((r) => `minmax(0, ${r}fr)`)
         .join(' ');
       return {

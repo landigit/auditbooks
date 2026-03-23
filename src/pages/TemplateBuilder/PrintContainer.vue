@@ -59,16 +59,16 @@
 </template>
 <script lang="ts">
 import {
+  type CompilerError,
+  type SourceLocation,
   compile,
-  CompilerError,
   generateCodeFrame,
-  SourceLocation,
 } from '@vue/compiler-dom';
 import { Verb } from 'fyo/telemetry/types';
 import ErrorBoundary from 'src/components/ErrorBoundary.vue';
 import { getPathAndMakePDF } from 'src/utils/printTemplates';
-import { PrintValues } from 'src/utils/types';
-import { defineComponent, PropType } from 'vue';
+import type { PrintValues } from 'src/utils/types';
+import { type PropType, defineComponent } from 'vue';
 import ScaledContainer from './ScaledContainer.vue';
 
 export const baseSafeTemplate = `<main class="h-full w-full bg-white">

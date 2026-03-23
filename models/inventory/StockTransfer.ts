@@ -1,7 +1,7 @@
 import { t } from 'fyo';
-import { Attachment, DocValueMap } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import {
+import type { Attachment, DocValueMap } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type {
   ChangeArg,
   DefaultMap,
   FiltersMap,
@@ -10,26 +10,26 @@ import {
 } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
 import { LedgerPosting } from 'models/Transactional/LedgerPosting';
-import { Defaults } from 'models/baseModels/Defaults/Defaults';
+import type { Defaults } from 'models/baseModels/Defaults/Defaults';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
+import type { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
 import { addItem, getNumberSeries } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { TargetField } from 'schemas/types';
+import type { Money } from 'pesa';
+import { getShipmentCOGSAmountFromSLEs } from 'reports/inventory/helpers';
+import type { TargetField } from 'schemas/types';
 import { SerialNumber } from './SerialNumber';
-import { StockTransferItem } from './StockTransferItem';
+import type { StockTransferItem } from './StockTransferItem';
 import { Transfer } from './Transfer';
 import {
   canValidateSerialNumber,
+  generateSerialNumbersForItem,
   getSerialNumberFromDoc,
   updateSerialNumbers,
   validateBatch,
   validateSerialNumber,
-  generateSerialNumbersForItem,
 } from './helpers';
-import { ReturnDocItem } from './types';
-import { getShipmentCOGSAmountFromSLEs } from 'reports/inventory/helpers';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import type { ReturnDocItem } from './types';
 
 export abstract class StockTransfer extends Transfer {
   name?: string;
@@ -406,20 +406,23 @@ export abstract class StockTransfer extends Transfer {
   }
 
   _getTransferMap() {
-    return (this.items ?? []).reduce((acc, item) => {
-      if (!item.item) {
+    return (this.items ?? []).reduce(
+      (acc, item) => {
+        if (!item.item) {
+          return acc;
+        }
+
+        if (!item.quantity) {
+          return acc;
+        }
+
+        acc[item.item] ??= 0;
+        acc[item.item] += item.quantity;
+
         return acc;
-      }
-
-      if (!item.quantity) {
-        return acc;
-      }
-
-      acc[item.item] ??= 0;
-      acc[item.item] += item.quantity;
-
-      return acc;
-    }, {} as Record<string, number>);
+      },
+      {} as Record<string, number>
+    );
   }
 
   override duplicate(): Doc {

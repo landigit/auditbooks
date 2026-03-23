@@ -1,18 +1,21 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { Converter } from 'fyo/core/converter';
-import { DocValue, DocValueMap, RawValueMap } from 'fyo/core/types';
+import type { DocValue, DocValueMap, RawValueMap } from 'fyo/core/types';
 import { Verb } from 'fyo/telemetry/types';
 import { DEFAULT_USER } from 'fyo/utils/consts';
 import { ConflictError, MandatoryError, NotFoundError } from 'fyo/utils/errors';
 import Observable from 'fyo/utils/observable';
+import type { DocItem } from 'models/inventory/types';
+import { ModelNameEnum } from 'models/types';
 import {
-  DynamicLinkField,
-  Field,
+  type DynamicLinkField,
+  type Field,
   FieldTypeEnum,
-  RawValue,
-  Schema,
-  TargetField,
+  type RawValue,
+  type Schema,
+  type TargetField,
 } from 'schemas/types';
+import { getShouldDocSyncToERPNext } from 'src/utils/erpnextSync';
 import { getIsNullOrUndef, getMapFromList, getRandomString } from 'utils';
 import { markRaw, reactive } from 'vue';
 import { isPesa } from '../utils/index';
@@ -26,7 +29,7 @@ import {
   shouldApplyFormula,
 } from './helpers';
 import { setName } from './naming';
-import {
+import type {
   Action,
   ChangeArg,
   CurrenciesMap,
@@ -44,9 +47,6 @@ import {
   ValidationMap,
 } from './types';
 import { validateOptions, validateRequired } from './validationFunction';
-import { getShouldDocSyncToERPNext } from 'src/utils/erpnextSync';
-import { ModelNameEnum } from 'models/types';
-import { DocItem } from 'models/inventory/types';
 
 export class Doc extends Observable<DocValue | Doc[]> {
   /* eslint-disable @typescript-eslint/no-floating-promises */
@@ -120,7 +120,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       fieldnames = [];
     }
 
-    if (fieldnames.length === 0 && this.fieldMap['name']) {
+    if (fieldnames.length === 0 && this.fieldMap.name) {
       fieldnames = ['name'];
     }
 
@@ -217,11 +217,11 @@ export class Doc extends Observable<DocValue | Doc[]> {
       return false;
     }
 
-    if (!!this.submitted) {
+    if (this.submitted) {
       return false;
     }
 
-    if (!!this.cancelled) {
+    if (this.cancelled) {
       return false;
     }
 
@@ -241,7 +241,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       return false;
     }
 
-    if (!!this.cancelled) {
+    if (this.cancelled) {
       return false;
     }
 
@@ -632,7 +632,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       data.name = this.name!;
     }
 
-    if (data && data.name) {
+    if (data?.name) {
       await this._syncValues(data);
       await this.loadLinks();
     } else {
@@ -772,9 +772,8 @@ export class Doc extends Observable<DocValue | Doc[]> {
 
     if (dbValues && docModified !== dbModified) {
       throw new ConflictError(
-        this.fyo
-          .t`${this.schema.label} ${this.name} has been modified after loading please reload entry.` +
-          ` ${dbModified}, ${docModified}`
+        `${this.fyo
+          .t`${this.schema.label} ${this.name} has been modified after loading please reload entry.`} ${dbModified}, ${docModified}`
       );
     }
   }
@@ -936,7 +935,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
         'datafromErp'
       );
       if (isFromERP) continue;
-      else return false;
+      return false;
     }
     return true;
   }
@@ -1097,14 +1096,14 @@ export class Doc extends Observable<DocValue | Doc[]> {
       }
 
       for (const row of value) {
-        delete row.name;
+        row.name = undefined;
       }
     }
 
     if (this.numberSeries) {
-      delete updateMap.name;
+      updateMap.name = undefined;
     } else {
-      updateMap.name = String(updateMap.name) + ' CPY';
+      updateMap.name = `${String(updateMap.name)} CPY`;
     }
 
     const rawUpdateMap = this.fyo.db.converter.toRawValueMap(
@@ -1158,7 +1157,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
     return {};
   }
 
-  static getTreeSettings(fyo: Fyo): TreeViewSettings | void {
+  static getTreeSettings(fyo: Fyo): TreeViewSettings | undefined {
     return;
   }
 

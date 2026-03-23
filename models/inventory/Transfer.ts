@@ -1,8 +1,8 @@
 import { Transactional } from 'models/Transactional/Transactional';
 import { StockManager } from './StockManager';
-import type { SMTransferDetails } from './types';
 import type { TransferItem } from './TransferItem';
 import { createSerialNumbers } from './helpers';
+import type { SMTransferDetails } from './types';
 
 export abstract class Transfer extends Transactional {
   date?: Date;

@@ -1,8 +1,8 @@
-import { constants } from 'fs';
-import fs from 'fs/promises';
-import { DatabaseMethod } from 'utils/db/types';
+import { constants } from 'node:fs';
+import fs from 'node:fs/promises';
+import type { DatabaseMethod } from 'utils/db/types';
 import { CUSTOM_EVENTS } from 'utils/messages';
-import { KnexColumnType } from './database/types';
+import type { KnexColumnType } from './database/types';
 
 export const sqliteTypeMap: Record<string, KnexColumnType> = {
   AutoComplete: 'text',

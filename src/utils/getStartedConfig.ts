@@ -1,7 +1,7 @@
 import { t } from 'fyo';
 import { ModelNameEnum } from 'models/types';
+import type { GetStartedConfigItem } from './types';
 import { openSettings, routeTo } from './ui';
-import { GetStartedConfigItem } from './types';
 
 export function getGetStartedConfig(): GetStartedConfigItem[] {
   /* eslint-disable @typescript-eslint/no-misused-promises */
@@ -45,7 +45,8 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           description: t`Review your chart of accounts, add any account or tax heads as needed`,
           action: () => routeTo('/chart-of-accounts'),
           fieldname: 'chartOfAccountsReviewed',
-          documentation: 'https://docs.www.landigit.com/auditbooks/chart-of-accounts',
+          documentation:
+            'https://docs.www.landigit.com/auditbooks/chart-of-accounts',
         },
         {
           key: 'Opening Balances',
@@ -53,7 +54,8 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           icon: 'opening-ac',
           fieldname: 'openingBalanceChecked',
           description: t`Set up your opening balances before performing any accounting entries`,
-          documentation: 'https://docs.www.landigit.com/auditbooks/setup-opening-balances',
+          documentation:
+            'https://docs.www.landigit.com/auditbooks/setup-opening-balances',
         },
         {
           key: 'Add Taxes',
@@ -109,7 +111,8 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           description: t`Create your first sales invoice for the created customer`,
           action: () => routeTo('/list/SalesInvoice'),
           fieldname: 'invoiceCreated',
-          documentation: 'https://docs.www.landigit.com/auditbooks/sales-invoices',
+          documentation:
+            'https://docs.www.landigit.com/auditbooks/sales-invoices',
         },
       ],
     },

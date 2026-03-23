@@ -1,9 +1,9 @@
-import { Fyo } from 'fyo';
-import { Batch } from 'models/inventory/Batch';
+import type { Fyo } from 'fyo';
+import type { Batch } from 'models/inventory/Batch';
 import { ModelNameEnum } from 'models/types';
-import { StockMovement } from '../StockMovement';
-import { StockTransfer } from '../StockTransfer';
-import { MovementTypeEnum } from '../types';
+import type { StockMovement } from '../StockMovement';
+import type { StockTransfer } from '../StockTransfer';
+import type { MovementTypeEnum } from '../types';
 
 type ALE = {
   date: string;

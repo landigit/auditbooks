@@ -1,7 +1,7 @@
 import { Doc } from 'fyo/model/doc';
-import { Account } from '../Account/Account';
-import { ListViewSettings } from 'fyo/model/types';
-import { PaymentMethodType } from 'models/types';
+import type { ListViewSettings } from 'fyo/model/types';
+import type { PaymentMethodType } from 'models/types';
+import type { Account } from '../Account/Account';
 
 export class PaymentMethod extends Doc {
   name?: string;

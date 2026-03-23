@@ -1,8 +1,8 @@
+import { ModelNameEnum } from 'models/types';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { ModelNameEnum } from 'models/types';
-import { Lead } from '../Lead/Lead';
-import { Party } from '../Party/Party';
+import type { Lead } from '../Lead/Lead';
+import type { Party } from '../Party/Party';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);

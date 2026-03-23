@@ -1,16 +1,16 @@
 import { Fyo, t } from 'fyo';
 import { DateTime } from 'luxon';
-import { ModelNameEnum } from 'models/types';
+import type { ModelNameEnum } from 'models/types';
 import { LedgerReport } from 'reports/LedgerReport';
-import {
+import type {
   ColumnField,
   GroupedMap,
   LedgerEntry,
   ReportData,
   ReportRow,
 } from 'reports/types';
-import { Field, FieldTypeEnum } from 'schemas/types';
-import { QueryFilter } from 'utils/db/types';
+import { type Field, FieldTypeEnum } from 'schemas/types';
+import type { QueryFilter } from 'utils/db/types';
 
 type ReferenceType =
   | ModelNameEnum.SalesInvoice
@@ -32,10 +32,6 @@ export class GeneralLedger extends LedgerReport {
   referenceType: ReferenceType = 'All';
   groupBy: 'none' | 'party' | 'account' | 'referenceName' = 'none';
   _rawData: LedgerEntry[] = [];
-
-  constructor(fyo: Fyo) {
-    super(fyo);
-  }
 
   setDefaultFilters() {
     if (!this.toDate) {

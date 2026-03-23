@@ -1,7 +1,7 @@
 import { t } from 'fyo';
 import { routeFilters } from 'src/utils/filters';
 import { fyo } from '../initFyo';
-import { SidebarConfig, SidebarItem, SidebarRoot } from './types';
+import type { SidebarConfig, SidebarItem, SidebarRoot } from './types';
 
 export function getSidebarConfig(): SidebarConfig {
   const sideBar = getCompleteSidebar();
@@ -222,7 +222,7 @@ function getCompleteSidebar(): SidebarConfig {
         {
           label: t`Coupon Code`,
           name: 'coupon-code',
-          route: `/list/CouponCode`,
+          route: '/list/CouponCode',
           schemaName: 'CouponCode',
           hidden: () => !fyo.singles.AccountingSettings?.enableCouponCode,
         },

@@ -48,14 +48,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { t } from 'fyo';
-import { showToast } from 'src/utils/interactive';
-import Modal from 'src/components/Modal.vue';
+import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
 import Link from 'src/components/Controls/Link.vue';
-import { ModelNameEnum } from 'models/types';
+import Modal from 'src/components/Modal.vue';
 import { fyo } from 'src/initFyo';
+import { showToast } from 'src/utils/interactive';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'BatchSelectionModal',

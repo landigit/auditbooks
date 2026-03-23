@@ -49,9 +49,9 @@
   </div>
 </template>
 <script lang="ts">
-import { Doc } from 'fyo/model/doc';
-import { Action } from 'fyo/model/types';
-import { PrintTemplate } from 'models/baseModels/PrintTemplate';
+import type { Doc } from 'fyo/model/doc';
+import type { Action } from 'fyo/model/types';
+import type { PrintTemplate } from 'models/baseModels/PrintTemplate';
 import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
 import AutoComplete from 'src/components/Controls/AutoComplete.vue';
@@ -61,7 +61,7 @@ import { handleErrorWithDialog } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import { getPrintTemplatePropValues } from 'src/utils/printTemplates';
 import { showSidebar } from 'src/utils/refs';
-import { PrintValues } from 'src/utils/types';
+import type { PrintValues } from 'src/utils/types';
 import { getFormRoute, openSettings, routeTo } from 'src/utils/ui';
 import { defineComponent } from 'vue';
 import PrintContainer from '../TemplateBuilder/PrintContainer.vue';
@@ -269,7 +269,7 @@ export default defineComponent({
       let templateName;
 
       if (
-        this.schemaName == ModelNameEnum.SalesInvoice &&
+        this.schemaName === ModelNameEnum.SalesInvoice &&
         (this.doc as Doc).isPOS
       ) {
         templateName = this.fyo.singles.Defaults?.posPrintTemplate;

@@ -1,5 +1,5 @@
+import * as fs from 'node:fs';
 import { getSchemas } from '../schemas';
-import * as fs from 'fs';
 
 async function exportSchemas() {
   console.log('Exporting schemas...');

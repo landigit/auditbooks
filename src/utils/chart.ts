@@ -16,7 +16,7 @@ export function prefixFormat(value: number): string {
 
   const ten = Math.floor(Math.log10(Math.abs(value)));
   const three = Math.floor(ten / 3);
-  const num = Math.round(value / Math.pow(10, three * 3));
+  const num = Math.round(value / 10 ** (three * 3));
   const suffix = ['', 'K', 'M', 'B', 'T', 'Q', 'P'][three];
   return `${num} ${suffix}`;
 }
@@ -27,7 +27,7 @@ export function euclideanDistance(
   x2: number,
   y2: number
 ): number {
-  const dsq = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
+  const dsq = (x2 - x1) ** 2 + (y2 - y1) ** 2;
   return Math.sqrt(dsq);
 }
 

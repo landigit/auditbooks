@@ -43,7 +43,7 @@
 </template>
 <script lang="ts">
 import { PrintTemplate } from 'models/baseModels/PrintTemplate';
-import { OptionField } from 'schemas/types';
+import type { OptionField } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import Float from 'src/components/Controls/Float.vue';
 import Select from 'src/components/Controls/Select.vue';
@@ -51,7 +51,7 @@ import FormHeader from 'src/components/FormHeader.vue';
 import { paperSizeMap, printSizes } from 'src/utils/ui';
 import { defineComponent } from 'vue';
 
-type SizeName = typeof printSizes[number];
+type SizeName = (typeof printSizes)[number];
 export default defineComponent({
   components: { Float, FormHeader, Select, Button },
   props: { doc: { type: PrintTemplate, required: true } },

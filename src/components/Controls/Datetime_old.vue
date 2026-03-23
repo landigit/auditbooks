@@ -57,12 +57,12 @@
  * DatetimePicker's UX issues are solved.
  */
 
-import { Field } from 'schemas/types';
-import { defineComponent, PropType } from 'vue';
-import DatetimePicker from './DatetimePicker.vue';
+import type { Field } from 'schemas/types';
+import { type PropType, defineComponent } from 'vue';
 import FeatherIcon from '../FeatherIcon.vue';
 import Popover from '../Popover.vue';
 import Base from './Base.vue';
+import DatetimePicker from './DatetimePicker.vue';
 
 export default defineComponent({
   components: { Popover, FeatherIcon, DatetimePicker },

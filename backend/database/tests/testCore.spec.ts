@@ -1,13 +1,13 @@
-import { FieldTypeEnum, RawValue, Schema } from 'schemas/types';
+import { FieldTypeEnum, type RawValue, type Schema } from 'schemas/types';
 import test from 'tape';
 import { getMapFromList, getValueMapFromList, sleep } from 'utils';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap } from '../../helpers';
 import DatabaseCore from '../core';
-import { FieldValueMap, SqliteTableInfo } from '../types';
+import type { FieldValueMap, SqliteTableInfo } from '../types';
 import {
+  type BaseMetaKey,
   assertDoesNotThrow,
   assertThrows,
-  BaseMetaKey,
   getBuiltTestSchemaMap,
 } from './helpers';
 
@@ -23,7 +23,7 @@ import {
  */
 
 const schemaMap = getBuiltTestSchemaMap();
-async function getDb(shouldMigrate: boolean = true): Promise<DatabaseCore> {
+async function getDb(shouldMigrate = true): Promise<DatabaseCore> {
   const db = new DatabaseCore();
   await db.connect();
   db.setSchemaMap(schemaMap);
@@ -55,7 +55,7 @@ test('db init, migrate, close', async (t) => {
  * DatabaseCore: Migrate and Check Db
  */
 
-test(`Pre Migrate TableInfo`, async function (t) {
+test('Pre Migrate TableInfo', async (t) => {
   const db = await getDb(false);
   for (const schemaName in schemaMap) {
     const columns = await db.knex?.raw('pragma table_info(??)', schemaName);
@@ -64,12 +64,12 @@ test(`Pre Migrate TableInfo`, async function (t) {
   await db.close();
 });
 
-test('Post Migrate TableInfo', async function (t) {
+test('Post Migrate TableInfo', async (t) => {
   const db = await getDb();
   for (const schemaName in schemaMap) {
     const schema = schemaMap[schemaName] as Schema;
     const fieldMap = getMapFromList(schema.fields, 'fieldname');
-    const columns: SqliteTableInfo[] = await db.knex!.raw(
+    const columns: SqliteTableInfo[] = await db.knex?.raw(
       'pragma table_info(??)',
       schemaName
     );
@@ -137,7 +137,7 @@ test('Post Migrate TableInfo', async function (t) {
   await db.close();
 });
 
-test('exists() before insertion', async function (t) {
+test('exists() before insertion', async (t) => {
   const db = await getDb();
   for (const schemaName in schemaMap) {
     const doesExist = await db.exists(schemaName);
@@ -150,13 +150,13 @@ test('exists() before insertion', async function (t) {
   await db.close();
 });
 
-test('CRUD single values', async function (t) {
+test('CRUD single values', async (t) => {
   const db = await getDb();
   /**
    * Checking default values which are created when db.migrate
    * takes place.
    */
-  let rows: Record<string, RawValue>[] = await db.knex!.raw(
+  let rows: Record<string, RawValue>[] = await db.knex?.raw(
     'select * from SingleValue'
   );
   const defaultMap = getValueMapFromList(
@@ -184,7 +184,7 @@ test('CRUD single values', async function (t) {
 
   let locale = 'hi-IN';
   await db.insert('SystemSettings', { locale });
-  rows = await db.knex!.raw('select * from SingleValue');
+  rows = await db.knex?.raw('select * from SingleValue');
   localeRow = rows.find((r) => r.fieldname === 'locale');
 
   t.notEqual(localeEntryName, undefined, 'localeEntryName');
@@ -206,7 +206,7 @@ test('CRUD single values', async function (t) {
    */
   locale = 'ca-ES';
   await db.update('SystemSettings', { locale });
-  rows = await db.knex!.raw('select * from SingleValue');
+  rows = await db.knex?.raw('select * from SingleValue');
   localeRow = rows.find((r) => r.fieldname === 'locale');
 
   t.notEqual(localeEntryName, undefined, 'localeEntryName');
@@ -227,15 +227,15 @@ test('CRUD single values', async function (t) {
    * Delete
    */
   await db.delete('SystemSettings', 'locale');
-  rows = await db.knex!.raw('select * from SingleValue');
+  rows = await db.knex?.raw('select * from SingleValue');
   t.equal(rows.length, 1, 'delete one');
   await db.delete('SystemSettings', 'dateFormat');
-  rows = await db.knex!.raw('select * from SingleValue');
+  rows = await db.knex?.raw('select * from SingleValue');
   t.equal(rows.length, 0, 'delete two');
 
   const dateFormat = 'dd/mm/yy';
   await db.insert('SystemSettings', { locale, dateFormat });
-  rows = await db.knex!.raw('select * from SingleValue');
+  rows = await db.knex?.raw('select * from SingleValue');
   t.equal(rows.length, 2, 'delete two');
 
   /**
@@ -265,10 +265,10 @@ test('CRUD single values', async function (t) {
   await db.close();
 });
 
-test('CRUD nondependent schema', async function (t) {
+test('CRUD nondependent schema', async (t) => {
   const db = await getDb();
   const schemaName = 'Customer';
-  let rows = await db.knex!(schemaName);
+  let rows = await db.knex?.(schemaName);
   t.equal(rows.length, 0, 'rows length before insertion');
 
   /**
@@ -284,7 +284,7 @@ test('CRUD nondependent schema', async function (t) {
 
   const updateMap = Object.assign({}, metaValues, { name });
   await db.insert(schemaName, updateMap);
-  rows = await db.knex!(schemaName);
+  rows = await db.knex?.(schemaName);
   let firstRow = rows?.[0];
   t.equal(rows.length, 1, `rows length insert ${rows.length}`);
   t.equal(firstRow.name, name, `name check ${firstRow.name}, ${name}`);
@@ -304,7 +304,7 @@ test('CRUD nondependent schema', async function (t) {
     email,
     modified: new Date().toISOString(),
   });
-  rows = await db.knex!(schemaName);
+  rows = await db.knex?.(schemaName);
   firstRow = rows?.[0];
   t.equal(rows.length, 1, `rows length update ${rows.length}`);
   t.equal(firstRow.name, name, `name check update ${firstRow.name}, ${name}`);
@@ -317,7 +317,7 @@ test('CRUD nondependent schema', async function (t) {
     phone,
     modified: new Date().toISOString(),
   });
-  rows = await db.knex!(schemaName);
+  rows = await db.knex?.(schemaName);
   firstRow = rows?.[0];
   t.equal(firstRow.email, email, `email check update ${firstRow.email}`);
   t.equal(firstRow.phone, phone, `email check update ${firstRow.phone}`);
@@ -336,7 +336,7 @@ test('CRUD nondependent schema', async function (t) {
    * Delete
    */
   await db.delete(schemaName, name);
-  rows = await db.knex!(schemaName);
+  rows = await db.knex?.(schemaName);
   t.equal(rows.length, 0, `rows length delete ${rows.length}`);
 
   /**
@@ -358,10 +358,10 @@ test('CRUD nondependent schema', async function (t) {
 
   // Insert
   await db.insert(schemaName, cOne);
-  t.equal((await db.knex!(schemaName)).length, 1, `rows length minsert`);
+  t.equal((await db.knex?.(schemaName)).length, 1, 'rows length minsert');
   await db.insert(schemaName, cTwo);
-  rows = await db.knex!(schemaName);
-  t.equal(rows.length, 2, `rows length minsert`);
+  rows = await db.knex?.(schemaName);
+  t.equal(rows.length, 2, 'rows length minsert');
 
   const cs = [cOne, cTwo];
   for (const i in cs) {
@@ -398,13 +398,13 @@ test('CRUD nondependent schema', async function (t) {
 
   // Delete
   await db.delete(schemaName, newName);
-  rows = await db.knex!(schemaName);
+  rows = await db.knex?.(schemaName);
   t.equal(rows.length, 1, `mi delete length ${rows.length}`);
   t.equal(rows[0].name, cTwo.name, `mi delete name ${rows[0].name}`);
   await db.close();
 });
 
-test('CRUD dependent schema', async function (t) {
+test('CRUD dependent schema', async (t) => {
   const db = await getDb();
 
   const Customer = 'Customer';
@@ -540,7 +540,7 @@ test('CRUD dependent schema', async function (t) {
     modified: invoice.modified,
   });
 
-  rows = await db.knex!(SalesInvoiceItem);
+  rows = await db.knex?.(SalesInvoiceItem);
   t.equal(rows.length, 2, `postupdate ct empty ${rows.length}`);
 
   await db.delete(SalesInvoice, invoice.name as string);

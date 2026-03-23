@@ -1,11 +1,11 @@
 import { t } from 'fyo';
-import { Action } from 'fyo/model/types';
+import type { Action } from 'fyo/model/types';
 import { Verb } from 'fyo/telemetry/types';
 import { getSavePath, showExportInFolder } from 'src/utils/ui';
 import { getIsNullOrUndef } from 'utils';
 import { generateCSV } from 'utils/csvParser';
-import { Report } from './Report';
-import { ExportExtention, ReportCell } from './types';
+import type { Report } from './Report';
+import type { ExportExtention, ReportCell } from './types';
 
 interface JSONExport {
   columns: { fieldname: string; label: string }[];

@@ -1,16 +1,16 @@
-import { Fyo } from 'fyo';
-import { sendAPIRequest } from './api';
-import { ModelNameEnum } from 'models/types';
-import { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
-import { DocValueMap } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import { ERPNextSyncQueue } from 'models/baseModels/ERPNextSyncQueue/ERPNextSyncQueue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { StockMovementItem } from 'models/inventory/StockMovementItem';
-import { getRandomString } from '../../utils';
+import type { Fyo } from 'fyo';
+import type { DocValueMap } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
 import { ValidationError } from 'fyo/utils/errors';
-import { PricingRule } from 'models/baseModels/PricingRule/PricingRule';
-import { PricingRuleItem } from 'models/baseModels/PricingRuleItem/PricingRuleItem';
+import type { ERPNextSyncQueue } from 'models/baseModels/ERPNextSyncQueue/ERPNextSyncQueue';
+import type { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
+import type { PricingRule } from 'models/baseModels/PricingRule/PricingRule';
+import type { PricingRuleItem } from 'models/baseModels/PricingRuleItem/PricingRuleItem';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import type { StockMovementItem } from 'models/inventory/StockMovementItem';
+import { ModelNameEnum } from 'models/types';
+import { getRandomString } from '../../utils';
+import { sendAPIRequest } from './api';
 
 export async function registerInstanceToERPNext(fyo: Fyo) {
   if (!navigator.onLine) {
@@ -320,7 +320,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
       for (const uomDoc of doc.uomConversions as DocValueMap[]) {
         if (!uomDoc.uom || !uomDoc.conversionFactor) {
           throw new ValidationError(
-            `Invalid UOM conversion data: missing uom or conversionFactor`
+            'Invalid UOM conversion data: missing uom or conversionFactor'
           );
         }
         await (newDoc as Doc).append('uomConversions', {
@@ -330,7 +330,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
       }
       break;
 
-    case ModelNameEnum.PriceList:
+    case ModelNameEnum.PriceList: {
       (newDoc as Doc).priceListItem = [];
       const uniqueKeys = new Set<string>();
 
@@ -341,7 +341,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
 
           if (itemValue == null || unitValue == null) {
             throw new ValidationError(
-              `Price list item missing required fields: item or unit`
+              'Price list item missing required fields: item or unit'
             );
           }
           const key = `${String(itemValue)}::${String(unitValue)}`;
@@ -353,8 +353,9 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
         }
       }
       break;
+    }
 
-    case ModelNameEnum.PricingRule:
+    case ModelNameEnum.PricingRule: {
       const itemSet = new Set<string>();
 
       (newDoc as Doc).appliedItems = (
@@ -383,6 +384,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
         docItemSet.has(`${row.item as string}::${row.unit as string}`)
       );
       break;
+    }
   }
 }
 
@@ -391,9 +393,9 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
     fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
   const isInitialSync = !initialSyncData;
   switch (doc.doctype) {
-    case ModelNameEnum.Item:
+    case ModelNameEnum.Item: {
       if (!doc.unit) {
-        throw new ValidationError(`Item missing required field: unit`);
+        throw new ValidationError('Item missing required field: unit');
       }
 
       const isUnitExists = await fyo.db.exists(
@@ -447,7 +449,7 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
         for (const row of doc.uomConversions as DocValueMap[]) {
           if (!row.uom) {
             throw new ValidationError(
-              `UOM conversion missing required field: uom`
+              'UOM conversion missing required field: uom'
             );
           }
 
@@ -467,9 +469,10 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
         }
       }
       return;
+    }
 
     case 'Customer':
-    case 'Supplier':
+    case 'Supplier': {
       const isAddressExists = await fyo.db.exists(
         ModelNameEnum.Address,
         doc.address as string
@@ -483,6 +486,7 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
       }
 
       return;
+    }
 
     case ModelNameEnum.SalesInvoice:
       return await preSyncSalesInvoice(fyo, doc as SalesInvoice);
@@ -680,7 +684,7 @@ async function getAllDocsForInitialSync(
 
 async function preSyncSalesInvoice(fyo: Fyo, doc: SalesInvoice) {
   if (!doc.party) {
-    throw new ValidationError(`Sales invoice missing required field: party`);
+    throw new ValidationError('Sales invoice missing required field: party');
   }
 
   const isPartyExists = await fyo.db.exists(ModelNameEnum.Party, doc.party);
@@ -696,12 +700,12 @@ async function preSyncSalesInvoice(fyo: Fyo, doc: SalesInvoice) {
     for (const item of doc.items) {
       if (!item.unit) {
         throw new ValidationError(
-          `Sales invoice item missing required field: unit`
+          'Sales invoice item missing required field: unit'
         );
       }
       if (!item.item) {
         throw new ValidationError(
-          `Sales invoice item missing required field: item`
+          'Sales invoice item missing required field: item'
         );
       }
 

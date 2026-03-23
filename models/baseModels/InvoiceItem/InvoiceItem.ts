@@ -1,39 +1,39 @@
-import { Fyo, t } from 'fyo';
-import { DocValue, DocValueMap } from 'fyo/core/types';
+import { type Fyo, t } from 'fyo';
+import type { DocValue, DocValueMap } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import {
-  CurrenciesMap,
+import type {
   ChangeArg,
+  CurrenciesMap,
   FiltersMap,
   FormulaMap,
   HiddenMap,
   ValidationMap,
 } from 'fyo/model/types';
+import { isPesa } from 'fyo/utils';
 import { DEFAULT_CURRENCY } from 'fyo/utils/consts';
 import { ValidationError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { FieldTypeEnum, Schema } from 'schemas/types';
-import { safeParseFloat } from 'utils/index';
-import { Invoice } from '../Invoice/Invoice';
-import { Item } from '../Item/Item';
-import { StockTransfer } from 'models/inventory/StockTransfer';
-import { isPesa } from 'fyo/utils';
-import { PricingRule } from '../PricingRule/PricingRule';
 import {
   getItemRateFromPriceList,
-  getPricingRule,
   getItemVisibility,
+  getPricingRule,
 } from 'models/helpers';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
+import type { StockTransfer } from 'models/inventory/StockTransfer';
 import { getSuggestedBatchName } from 'models/inventory/helpers';
 import { ValuationMethod } from 'models/inventory/types';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
 import {
   getRawStockLedgerEntries,
-  getStockLedgerEntries,
   getStockBalanceEntries,
+  getStockLedgerEntries,
 } from 'reports/inventory/helpers';
-import { QueryFilter } from 'utils/db/types';
+import { FieldTypeEnum, type Schema } from 'schemas/types';
+import type { QueryFilter } from 'utils/db/types';
+import { safeParseFloat } from 'utils/index';
+import type { Invoice } from '../Invoice/Invoice';
+import type { Item } from '../Item/Item';
+import type { PricingRule } from '../PricingRule/PricingRule';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 export abstract class InvoiceItem extends Doc {
   item?: string;
@@ -529,9 +529,8 @@ export abstract class InvoiceItem extends Doc {
           if (!this.prule) {
             await this.set('itemDiscountAmount', this.itemDiscountAmount);
             return true;
-          } else {
-            await this.set('itemDiscountAmount', this.fyo.pesa(0));
           }
+          await this.set('itemDiscountAmount', this.fyo.pesa(0));
           return false;
         }
         this.prule = itemRule;
@@ -562,9 +561,8 @@ export abstract class InvoiceItem extends Doc {
         if (!pricingRule || !pricingRule.length) {
           if (!this.prule) {
             return this.itemDiscountPercent;
-          } else {
-            return 0;
           }
+          return 0;
         }
 
         const pricingRuleDoc = (await this.fyo.doc.getDoc(
@@ -1028,7 +1026,8 @@ function getDiscountedTotalBeforeTaxation(
 
   if (setDiscountAmount) {
     return rate.sub(itemDiscountAmount).mul(quantity);
-  } else if (itemDiscountPercent > 0) {
+  }
+  if (itemDiscountPercent > 0) {
     return rate.mul(quantity).percent(itemDiscountPercent);
   }
   return rate.mul(quantity);

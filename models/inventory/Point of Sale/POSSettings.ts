@@ -1,5 +1,5 @@
 import { Doc } from 'fyo/model/doc';
-import { FiltersMap, HiddenMap } from 'fyo/model/types';
+import type { FiltersMap, HiddenMap } from 'fyo/model/types';
 import {
   AccountRootTypeEnum,
   AccountTypeEnum,

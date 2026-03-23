@@ -67,12 +67,12 @@
 </template>
 
 <script lang="ts">
+import type { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Row from 'src/components/Row.vue';
 import { isNumeric } from 'src/utils';
 import { defineComponent } from 'vue';
-import { Field } from 'schemas/types';
-import { POSItem } from '../types';
+import type { POSItem } from '../types';
 
 export default defineComponent({
   name: 'ItemsTable',

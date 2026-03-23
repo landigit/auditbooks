@@ -186,7 +186,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, nextTick, PropType } from 'vue';
+import { type PropType, defineComponent, nextTick } from 'vue';
 import FeatherIcon from '../FeatherIcon.vue';
 
 type WeekListItem = {
@@ -339,7 +339,7 @@ export default defineComponent({
   },
   methods: {
     getDayClass(item: WeekListItem) {
-      let dclass = [];
+      const dclass = [];
       const today = this.today;
       const todayDay = today.getDate();
       const todayMonth = today.getMonth();
@@ -359,7 +359,7 @@ export default defineComponent({
       return dclass;
     },
     getMonthClass(item: number) {
-      let dclass = [];
+      const dclass = [];
       if (item === this.month) {
         dclass.push('font-semibold');
       }

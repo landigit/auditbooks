@@ -1,12 +1,17 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { ValueError } from 'fyo/utils/errors';
 import { DateTime } from 'luxon';
-import { Field, FieldTypeEnum, RawValue, TargetField } from 'schemas/types';
+import {
+  type Field,
+  FieldTypeEnum,
+  type RawValue,
+  type TargetField,
+} from 'schemas/types';
 import { getIsNullOrUndef, safeParseFloat, safeParseInt } from 'utils';
-import { DatabaseHandler } from './dbHandler';
-import { Attachment, DocValue, DocValueMap, RawValueMap } from './types';
+import type { DatabaseHandler } from './dbHandler';
+import type { Attachment, DocValue, DocValueMap, RawValueMap } from './types';
 
 /**
  * # Converter
@@ -39,9 +44,8 @@ export class Converter {
     rawValueMap ??= {};
     if (Array.isArray(rawValueMap)) {
       return rawValueMap.map((dv) => this.#toDocValueMap(schemaName, dv));
-    } else {
-      return this.#toDocValueMap(schemaName, rawValueMap);
     }
+    return this.#toDocValueMap(schemaName, rawValueMap);
   }
 
   toRawValueMap(
@@ -51,9 +55,8 @@ export class Converter {
     docValueMap ??= {};
     if (Array.isArray(docValueMap)) {
       return docValueMap.map((dv) => this.#toRawValueMap(schemaName, dv));
-    } else {
-      return this.#toRawValueMap(schemaName, docValueMap);
     }
+    return this.#toRawValueMap(schemaName, docValueMap);
   }
 
   static toDocValue(value: RawValue, field: Field, fyo: Fyo): DocValue {

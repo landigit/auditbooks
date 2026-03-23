@@ -78,7 +78,7 @@
                   :value="filter.fieldname"
                   @mousedown.stop
                   @click.stop
-                  @change="(value) => updateNewFilters(i, 'fieldname', value)"
+                  @change="(v: string) => updateNewFilters(i, 'fieldname', v)"
                   @keydown.enter="applyFilters"
                 />
 
@@ -97,7 +97,7 @@
                   :close-drop-down="false"
                   @mousedown.stop
                   @click.stop
-                  @change="(value) => updateNewFilters(i, 'condition', value)"
+                  @change="(v: Condition) => updateNewFilters(i, 'condition', v)"
                   @keydown.enter="applyFilters"
                 />
 
@@ -115,7 +115,7 @@
                   :close-drop-down="false"
                   @mousedown.stop
                   @click.stop
-                  @change="(value) => updateNewFilters(i, 'value', value)"
+                  @change="(v: string) => updateNewFilters(i, 'value', v)"
                   @keydown.enter="applyFilters"
                 />
               </div>
@@ -194,18 +194,25 @@
     </template>
   </Popover>
 </template>
-<script lang="ts">
-import { Field, FieldTypeEnum } from 'schemas/types';
+
+<script setup lang="ts">
+import { t } from 'fyo';
+import { type Field, FieldTypeEnum } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { getRandomString } from 'utils';
-import { defineComponent } from 'vue';
+import type { QueryFilter } from 'utils/db/types';
+import { computed, ref } from 'vue';
 import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
 import Icon from './Icon.vue';
-import Popover from './Popover.vue';
-import { QueryFilter } from 'utils/db/types';
-import { t } from 'fyo';
+import type Popover from './Popover.vue';
+
+const props = defineProps<{
+  schemaName: string;
+}>();
+
+const emit = defineEmits<(e: 'change', filters: QueryFilter) => void>();
 
 const conditions = [
   { label: t`Is`, value: '=' },
@@ -218,7 +225,8 @@ const conditions = [
   { label: t`Is Not Empty`, value: 'is not null' },
 ] as const;
 
-type Condition = typeof conditions[number]['label'];
+type ConditionValue = (typeof conditions)[number]['value'];
+type Condition = (typeof conditions)[number]['label'];
 
 type Filter = {
   fieldname: string;
@@ -227,228 +235,203 @@ type Filter = {
   implicit: boolean;
 };
 
-export default defineComponent({
-  name: 'FilterDropdown',
-  components: {
-    Popover,
-    Button,
-    Icon,
-    Select,
-    Data,
-  },
-  props: { schemaName: { type: String, required: true } },
-  emits: ['change'],
-  data() {
-    return {
-      filters: [] as Filter[],
-      newFilters: [] as Filter[],
-    };
-  },
-  computed: {
-    fields(): Field[] {
-      const excludedFieldsTypes: string[] = [
-        FieldTypeEnum.Table,
-        FieldTypeEnum.Attachment,
-        FieldTypeEnum.AttachImage,
-      ];
+const filters = ref<Filter[]>([]);
+const newFilters = ref<Filter[]>([]);
+const filterPopover = ref<InstanceType<typeof Popover> | null>(null);
 
-      const listViewSettings =
-        fyo.models[this.schemaName]?.getListViewSettings?.(fyo);
-      const statusField = listViewSettings?.columns?.[1] as any;
+const fields = computed(() => {
+  const excludedFieldsTypes: string[] = [
+    FieldTypeEnum.Table,
+    FieldTypeEnum.Attachment,
+    FieldTypeEnum.AttachImage,
+  ];
 
-      const fields = fyo.schemaMap[this.schemaName]?.fields ?? [];
-      const filteredFields = fields.filter((f) => {
-        if (f.filter) {
-          return true;
-        }
+  const model = fyo.models[props.schemaName];
+  // biome-ignore lint/suspicious/noExplicitAny: library interop
+  const listViewSettings = (model as any)?.getListViewSettings?.(fyo);
+  // biome-ignore lint/suspicious/noExplicitAny: library interop
+  const statusField = (listViewSettings as any)?.columns?.[1] as any;
 
-        if (excludedFieldsTypes.includes(f.fieldtype)) {
-          return false;
-        }
+  const schemaFields = fyo.schemaMap[props.schemaName]?.fields ?? [];
+  const filteredFields = schemaFields.filter((f) => {
+    if (f.filter) return true;
+    if (excludedFieldsTypes.includes(f.fieldtype)) return false;
+    if (f.computed || f.meta || f.readOnly) return false;
+    return true;
+  });
 
-        if (f.computed || f.meta || f.readOnly) {
-          return false;
-        }
+  if (statusField?.fieldname) {
+    const statusFieldExists = filteredFields.some(
+      (field) => field.fieldname === statusField.fieldname
+    );
 
-        return true;
-      });
-
-      if (statusField && statusField.fieldname) {
-        const statusFieldExists = filteredFields.some(
-          (field) => field.fieldname === statusField.fieldname
-        );
-
-        if (!statusFieldExists) {
-          const originalStatusField = fields.find(
-            (field) => field.fieldname === statusField.fieldname
-          );
-          if (originalStatusField) {
-            filteredFields.unshift(originalStatusField);
-          } else {
-            filteredFields.unshift(statusField);
-          }
-        }
-      }
-
-      return filteredFields;
-    },
-    fieldOptions(): { label: string; value: string }[] {
-      return this.fields.map((df) => ({
-        label: df.fieldname,
-        value: df.fieldname,
-      }));
-    },
-    conditions(): { label: string; value: string }[] {
-      return [...conditions];
-    },
-    conditionsForDropdown(): { label: string; value: string }[] {
-      return conditions.map((c) => ({
-        label: c.label,
-        value: c.label,
-      }));
-    },
-    explicitFilters(): Filter[] {
-      return this.filters.filter((f) => !f.implicit);
-    },
-    activeFilterCount(): number {
-      return this.explicitFilters.filter((filter) => filter.value).length;
-    },
-    filterAppliedMessage(): string {
-      if (this.activeFilterCount === 1) {
-        return this.t`1 filter applied`;
-      }
-
-      return this.t`${this.activeFilterCount} filters applied`;
-    },
-  },
-
-  methods: {
-    getRandomString,
-    getConditionLabel(value: string): string {
-      const condition = conditions.find((c) => c.value === value);
-      return condition ? condition.label : value;
-    },
-
-    getConditionValue(label: string): string {
-      const condition = conditions.find((c) => c.label === label);
-      return condition ? condition.value : label;
-    },
-
-    addNewFilter(): void {
-      const df = this.fields[0];
-      if (!df) {
-        return;
-      }
-
-      this.addFilter(df.fieldname, 'like', '', false);
-    },
-    addFilter(
-      fieldname: string,
-      condition: string,
-      value: Filter['value'],
-      implicit?: boolean
-    ): void {
-      const displayCondition = this.getConditionLabel(condition);
-      const newFilter = {
-        fieldname,
-        condition: displayCondition,
-        value,
-        implicit: !!implicit,
-      };
-      this.filters.push(newFilter);
-      this.newFilters.push(newFilter);
-    },
-
-    applyFilters() {
-      this.emitFilterChange();
-    },
-
-    removeFilter(index: number): void {
-      this.filters.splice(index, 1);
-      this.newFilters.splice(index, 1);
-    },
-
-    clearAllFilters(): void {
-      this.filters = [];
-      this.newFilters = [];
-
-      this.$emit('change', {});
-    },
-
-    updateNewFilters<K extends keyof Filter>(
-      index: number,
-      key: K,
-      value: Filter[K]
-    ) {
-      if (key === 'condition') {
-        const displayCondition = this.getConditionLabel(value as string);
-        this.newFilters![index][key] = displayCondition as Filter[K];
-        this.filters[index][key] = displayCondition as Filter[K];
-      } else {
-        this.newFilters![index][key] = value;
-        this.filters[index][key] = value;
-      }
-    },
-
-    setFilter(filters: QueryFilter, implicit?: boolean): void {
-      this.filters = [];
-      this.newFilters = [];
-
-      Object.keys(filters).map((fieldname) => {
-        let parts = filters[fieldname];
-        let condition: Condition;
-        let value: Filter['value'];
-
-        if (Array.isArray(parts)) {
-          condition = parts[0] as Condition;
-          value = parts[1] as Filter['value'];
-        } else {
-          condition = '=';
-          value = parts;
-        }
-
-        this.addFilter(fieldname, condition, value, implicit);
-      });
-
-      this.emitFilterChange();
-    },
-
-    emitFilterChange(): void {
-      const filters: Record<string, [Condition, Filter['value']]> = {};
-
-      for (const { condition, value, fieldname } of this.newFilters) {
-        if (value === '' || value === null || value === undefined) {
-          continue;
-        }
-
-        const sqlCondition = this.getConditionValue(condition);
-
-        if (fieldname === 'numberSeries') {
-          filters['name'] = [sqlCondition, value];
-        } else {
-          filters[fieldname] = [sqlCondition, value];
-        }
-      }
-
-      this.$emit('change', filters);
-      this.filters = [...this.newFilters];
-
-      if (this.newFilters.length) {
-        this.filters = this.filters.filter(
-          (filter) => filter.condition && filter.value && filter.fieldname
-        );
-        this.filters.push(this.newFilters[this.newFilters.length - 1]);
-      }
-
-      this.filters = Array.from(
-        new Map(
-          this.filters.map((filter) => [
-            `${filter.condition}-${filter.value}-${filter.fieldname}`,
-            filter,
-          ])
-        ).values()
+    if (!statusFieldExists) {
+      const originalStatusField = schemaFields.find(
+        (field) => field.fieldname === statusField.fieldname
       );
-    },
-  },
+      if (originalStatusField) {
+        filteredFields.unshift(originalStatusField);
+      } else {
+        filteredFields.unshift(statusField);
+      }
+    }
+  }
+
+  return filteredFields;
+});
+
+const fieldOptions = computed(() => {
+  return fields.value.map((df) => ({
+    label: df.fieldname,
+    value: df.fieldname,
+  }));
+});
+
+const conditionsForDropdown = computed(() => {
+  return conditions.map((c) => ({
+    label: c.label,
+    value: c.label,
+  }));
+});
+
+const explicitFilters = computed(() => {
+  return filters.value.filter((f) => !f.implicit);
+});
+
+const activeFilterCount = computed(() => {
+  return explicitFilters.value.filter((filter) => filter.value).length;
+});
+
+const filterAppliedMessage = computed(() => {
+  const count = activeFilterCount.value;
+  if (count === 1) return t`1 filter applied`;
+  return t`${count} filters applied`;
+});
+
+function getConditionLabel(value: string): Condition {
+  const condition = conditions.find((c) => c.value === value);
+  return (condition ? condition.label : value) as Condition;
+}
+
+function getConditionValue(label: string): string {
+  const condition = conditions.find((c) => c.label === label);
+  return condition ? condition.value : label;
+}
+
+function addNewFilter(): void {
+  const df = fields.value[0];
+  if (!df) return;
+  addFilter(df.fieldname, 'like', '', false);
+}
+
+function addFilter(
+  fieldname: string,
+  condition: string,
+  value: Filter['value'],
+  implicit?: boolean
+): void {
+  const displayCondition = getConditionLabel(condition);
+  const newFilter: Filter = {
+    fieldname,
+    condition: displayCondition,
+    value,
+    implicit: !!implicit,
+  };
+  filters.value.push(newFilter);
+  newFilters.value.push(newFilter);
+}
+
+function applyFilters() {
+  emitFilterChange();
+}
+
+function removeFilter(index: number): void {
+  filters.value.splice(index, 1);
+  newFilters.value.splice(index, 1);
+}
+
+function clearAllFilters(): void {
+  filters.value = [];
+  newFilters.value = [];
+  emit('change', {});
+}
+
+function updateNewFilters<K extends keyof Filter>(
+  index: number,
+  key: K,
+  value: Filter[K]
+) {
+  if (key === 'condition') {
+    const displayCondition = getConditionLabel(value as string);
+    newFilters.value[index][key] = displayCondition as Filter[K];
+    filters.value[index][key] = displayCondition as Filter[K];
+  } else {
+    newFilters.value[index][key] = value;
+    filters.value[index][key] = value;
+  }
+}
+
+function setFilter(queryFilters: QueryFilter, implicit?: boolean): void {
+  filters.value = [];
+  newFilters.value = [];
+
+  for (const fieldname of Object.keys(queryFilters)) {
+    const parts = queryFilters[fieldname];
+    let condition: string;
+    let value: Filter['value'];
+
+    if (Array.isArray(parts)) {
+      condition = parts[0];
+      value = parts[1];
+    } else {
+      condition = '=';
+      value = parts;
+    }
+
+    addFilter(fieldname, condition, value, implicit);
+  }
+
+  emitFilterChange();
+}
+
+function emitFilterChange(): void {
+  const queryFilters: QueryFilter = {};
+
+  for (const { condition, value, fieldname } of newFilters.value) {
+    if (value === '' || value === null || value === undefined) {
+      continue;
+    }
+
+    const sqlCondition = getConditionValue(condition);
+
+    if (fieldname === 'numberSeries') {
+      queryFilters.name = [sqlCondition, value];
+    } else {
+      queryFilters[fieldname] = [sqlCondition, value];
+    }
+  }
+
+  emit('change', queryFilters);
+  filters.value = [...newFilters.value];
+
+  if (newFilters.value.length) {
+    filters.value = filters.value.filter(
+      (filter) => filter.condition && filter.value && filter.fieldname
+    );
+    filters.value.push(newFilters.value[newFilters.value.length - 1]);
+  }
+
+  filters.value = Array.from(
+    new Map(
+      filters.value.map((filter) => [
+        `${filter.condition}-${filter.value}-${filter.fieldname}`,
+        filter,
+      ])
+    ).values()
+  );
+}
+
+defineExpose({
+  setFilter,
 });
 </script>

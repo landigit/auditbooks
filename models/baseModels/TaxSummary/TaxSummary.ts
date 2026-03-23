@@ -1,11 +1,11 @@
-import { Fyo } from 'fyo';
-import { DocValueMap } from 'fyo/core/types';
+import type { Fyo } from 'fyo';
+import type { DocValueMap } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import { CurrenciesMap } from 'fyo/model/types';
+import type { CurrenciesMap } from 'fyo/model/types';
 import { DEFAULT_CURRENCY } from 'fyo/utils/consts';
-import { Money } from 'pesa';
-import { FieldTypeEnum, Schema } from 'schemas/types';
-import { Invoice } from '../Invoice/Invoice';
+import type { Money } from 'pesa';
+import { FieldTypeEnum, type Schema } from 'schemas/types';
+import type { Invoice } from '../Invoice/Invoice';
 
 export class TaxSummary extends Doc {
   account?: string;

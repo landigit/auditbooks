@@ -79,7 +79,7 @@ export default {
   methods: {
     setColorValue(value) {
       if (!value.startsWith('#')) {
-        value = '#' + value;
+        value = `#${value}`;
       }
       if (/^#[0-9A-F]{6}$/i.test(value)) {
         this.triggerChange(value);

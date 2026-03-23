@@ -66,18 +66,18 @@
 </template>
 
 <script lang="ts">
-import FormContainer from 'src/components/FormContainer.vue';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import type { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Link from 'src/components/Controls/Link.vue';
+import FormContainer from 'src/components/FormContainer.vue';
 import Row from 'src/components/Row.vue';
 import RowEditForm from 'src/pages/CommonForm/RowEditForm.vue';
-import SelectedItemRow from './SelectedItemRow.vue';
 import { isNumeric } from 'src/utils';
 import { inject } from 'vue';
-import { defineComponent, PropType } from 'vue';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { Field } from 'schemas/types';
+import { type PropType, defineComponent } from 'vue';
+import SelectedItemRow from './SelectedItemRow.vue';
 
 export default defineComponent({
   name: 'SelectedItemTable',

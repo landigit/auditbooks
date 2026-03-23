@@ -1,14 +1,14 @@
-import test from 'tape';
-import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { ModelNameEnum } from 'models/types';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
-import { Payment } from '../Payment/Payment';
-import { PaymentTypeEnum } from '../Payment/types';
 import {
   assertDoesNotThrow,
   assertThrows,
 } from 'backend/database/tests/helpers';
-import { PurchaseInvoice } from '../PurchaseInvoice/PurchaseInvoice';
+import { ModelNameEnum } from 'models/types';
+import test from 'tape';
+import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
+import type { Payment } from '../Payment/Payment';
+import { PaymentTypeEnum } from '../Payment/types';
+import type { PurchaseInvoice } from '../PurchaseInvoice/PurchaseInvoice';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);
@@ -98,7 +98,7 @@ test('create SINV return for one qty', async (t) => {
     'SINV-1001'
   )) as SalesInvoice;
 
-  let returnDoc = (await sinvDoc?.getReturnDoc()) as SalesInvoice;
+  const returnDoc = (await sinvDoc?.getReturnDoc()) as SalesInvoice;
 
   returnDoc.items = [];
   returnDoc.append('items', {
@@ -264,7 +264,7 @@ test('creating PINV return when invoice is not paid', async (t) => {
     if (ale.account === 'Creditors') {
       t.equal(
         0,
-        returnDoc.outstandingAmount!.float,
+        returnDoc.outstandingAmount?.float,
         `return Invoice debited from ${ale.account}`
       );
     }
@@ -272,7 +272,7 @@ test('creating PINV return when invoice is not paid', async (t) => {
     if (ale.account === 'Cost of Goods Sold') {
       t.equal(
         fyo.pesa(ale.credit as string).float,
-        returnDoc.outstandingAmount!.float,
+        returnDoc.outstandingAmount?.float,
         `return Invoice credited to ${ale.account}`
       );
     }

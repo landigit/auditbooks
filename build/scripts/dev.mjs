@@ -1,14 +1,14 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import chokidar from 'chokidar';
 import esbuild from 'esbuild';
 import { $ } from 'execa';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { getMainProcessCommonConfig } from './helpers.mjs';
 
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
-process.env['NODE_ENV'] = 'development';
-process.env['VITE_HOST'] = '127.0.0.1';
-process.env['VITE_PORT'] = 6969;
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+process.env.NODE_ENV = 'development';
+process.env.VITE_HOST = '127.0.0.1';
+process.env.VITE_PORT = 6969;
 
 /**
  * This script does several things:
@@ -97,7 +97,7 @@ fswatcher.on('change', async (path) => {
   console.log(`change detected:\n\t${path}`);
   const result = await ctx.rebuild();
   await handleResult(result);
-  console.log(`main process source rebuilt\nrestarting electron`);
+  console.log('main process source rebuilt\nrestarting electron');
 
   if (electronProcess) {
     isReload = true;

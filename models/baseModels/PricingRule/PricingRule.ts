@@ -1,16 +1,16 @@
+import { t } from 'fyo';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import { Money } from 'pesa';
-import { PricingRuleItem } from '../PricingRuleItem/PricingRuleItem';
-import { getIsDocEnabledColumn } from 'models/helpers';
-import {
+import type {
   HiddenMap,
   ListViewSettings,
   RequiredMap,
   ValidationMap,
 } from 'fyo/model/types';
-import { DocValue } from 'fyo/core/types';
 import { ValidationError } from 'fyo/utils/errors';
-import { t } from 'fyo';
+import { getIsDocEnabledColumn } from 'models/helpers';
+import type { Money } from 'pesa';
+import type { PricingRuleItem } from '../PricingRuleItem/PricingRuleItem';
 
 export class PricingRule extends Doc {
   isEnabled?: boolean;

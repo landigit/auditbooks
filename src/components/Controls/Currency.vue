@@ -31,7 +31,7 @@
 </template>
 <script lang="ts">
 import { isPesa } from 'fyo/utils';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
 import { safeParsePesa } from 'utils/index';
 import { defineComponent, nextTick } from 'vue';

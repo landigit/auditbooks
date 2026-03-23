@@ -1,4 +1,4 @@
-import { Keys } from 'utils/types';
+import type { Keys } from 'utils/types';
 import { watch } from 'vue';
 import { getIsMac } from './misc';
 
@@ -187,7 +187,7 @@ export class Shortcuts {
     const shortcutString = shortcut.sort().join('+');
     const modString = mods.filter((k) => _modMap[k]).join('+');
     if (shortcutString && modString) {
-      return modString + '+' + shortcutString;
+      return `${modString}+${shortcutString}`;
     }
 
     if (!modString) {
@@ -205,33 +205,33 @@ export class Shortcuts {
    * Shortcut Modifiers
    */
   get alt() {
-    this.modMap['alt'] = true;
+    this.modMap.alt = true;
     return this;
   }
 
   get ctrl() {
-    this.modMap['ctrl'] = true;
+    this.modMap.ctrl = true;
     return this;
   }
 
   get meta() {
-    this.modMap['meta'] = true;
+    this.modMap.meta = true;
     return this;
   }
 
   get shift() {
-    this.modMap['shift'] = true;
+    this.modMap.shift = true;
     return this;
   }
 
   get pmodShift() {
-    this.modMap['meta'] = true;
-    this.modMap['shift'] = true;
+    this.modMap.meta = true;
+    this.modMap.shift = true;
     return this;
   }
 
   get repeat() {
-    this.modMap['repeat'] = true;
+    this.modMap.repeat = true;
     return this;
   }
 

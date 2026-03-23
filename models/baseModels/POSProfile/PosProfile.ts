@@ -1,5 +1,5 @@
 import { Doc } from 'fyo/model/doc';
-import { FiltersMap } from 'fyo/model/types';
+import type { FiltersMap } from 'fyo/model/types';
 import { ModelNameEnum } from 'models/types';
 
 export class POSProfile extends Doc {

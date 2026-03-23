@@ -1,9 +1,9 @@
-import { Fyo, t } from 'fyo';
+import { type Fyo, t } from 'fyo';
 
 type Conn = {
   countryCode: string;
   error?: Error;
-  actionSymbol?: typeof dbErrorActionSymbols[keyof typeof dbErrorActionSymbols];
+  actionSymbol?: (typeof dbErrorActionSymbols)[keyof typeof dbErrorActionSymbols];
 };
 
 export const dbErrorActionSymbols = {

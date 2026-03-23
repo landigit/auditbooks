@@ -18,11 +18,11 @@
 
 <script lang="ts">
 import { Doc } from 'fyo/model/doc';
-import { Action } from 'fyo/model/types';
+import type { Action } from 'fyo/model/types';
 import Button from 'src/components/Button.vue';
 import Dropdown from 'src/components/Dropdown.vue';
-import { DropdownItem } from 'src/utils/types';
-import { defineComponent, PropType } from 'vue';
+import type { DropdownItem } from 'src/utils/types';
+import { type PropType, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'DropdownWithActions',

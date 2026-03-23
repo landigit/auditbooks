@@ -23,7 +23,7 @@
 </template>
 <script lang="ts">
 import { PrintTemplate } from 'models/baseModels/PrintTemplate';
-import { OptionField } from 'schemas/types';
+import type { OptionField } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import Select from 'src/components/Controls/Select.vue';
 import FormHeader from 'src/components/FormHeader.vue';

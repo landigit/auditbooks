@@ -9,10 +9,10 @@
 </template>
 
 <script lang="ts">
+import icons8 from './Icons/8';
 import icons12 from './Icons/12';
 import icons18 from './Icons/18';
 import icons24 from './Icons/24';
-import icons8 from './Icons/8';
 
 const components = {
   8: icons8,

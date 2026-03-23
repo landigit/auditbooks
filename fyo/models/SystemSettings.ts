@@ -1,9 +1,9 @@
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import { ListsMap, ValidationMap } from 'fyo/model/types';
+import type { ListsMap, ValidationMap } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
 import { t } from 'fyo/utils/translation';
-import { SelectOption } from 'schemas/types';
+import type { SelectOption } from 'schemas/types';
 import { getCountryInfo } from 'utils/misc';
 
 export default class SystemSettings extends Doc {
@@ -41,7 +41,7 @@ export default class SystemSettings extends Doc {
             ({
               value: countryInfo[c]?.locale,
               label: `${c} (${countryInfo[c]?.locale ?? t`Not Found`})`,
-            } as SelectOption)
+            }) as SelectOption
         );
     },
     currency() {

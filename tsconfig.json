@@ -6,7 +6,7 @@
     "allowJs": true,
     "jsx": "preserve",
     "importHelpers": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -24,7 +24,9 @@
       "reports/*": ["reports/*"],
       "models/*": ["models/*"],
       "utils/*": ["utils/*"],
-      "dummy/*": ["dummy/*"]
+      "dummy/*": ["dummy/*"],
+      "fyo": ["fyo/index.ts"],
+      "fyo/*": ["fyo/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },

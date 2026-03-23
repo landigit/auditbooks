@@ -85,13 +85,15 @@
   </div>
 </template>
 <script lang="ts">
-import { Field } from 'schemas/types';
+import type { Field } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import ExportWizard from 'src/components/ExportWizard.vue';
 import FilterDropdown from 'src/components/FilterDropdown.vue';
 import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import {
@@ -100,11 +102,9 @@ import {
 } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
 import { getFormRoute, routeTo } from 'src/utils/ui';
-import { QueryFilter } from 'utils/db/types';
+import type { QueryFilter } from 'utils/db/types';
 import { defineComponent, inject, ref } from 'vue';
 import List from './List.vue';
-import { Money } from 'pesa';
-import { ModelNameEnum } from 'models/types';
 
 export default defineComponent({
   name: 'ListView',
@@ -149,7 +149,7 @@ export default defineComponent({
   },
   computed: {
     context(): string {
-      return 'ListView-' + this.schemaName;
+      return `ListView-${this.schemaName}`;
     },
     title(): string {
       if (this.pageTitle) {

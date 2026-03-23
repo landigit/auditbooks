@@ -1,6 +1,6 @@
-import { SchemaStub } from 'schemas/types';
-import IndianSchemas from './in';
+import type { SchemaStub } from 'schemas/types';
 import SwissSchemas from './ch';
+import IndianSchemas from './in';
 
 /**
  * Regional Schemas are exported by country code.

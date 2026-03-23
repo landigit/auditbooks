@@ -51,8 +51,7 @@ export interface SelectFileReturn {
   canceled: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type PropertyEnum<T extends Record<string, any>> = {
+export type PropertyEnum<T extends Record<string, unknown>> = {
   [key in keyof Required<T>]: key;
 };
 
@@ -89,7 +88,7 @@ export const searchGroups = [
   'Recent',
 ] as const;
 
-export type SearchGroup = typeof searchGroups[number];
+export type SearchGroup = (typeof searchGroups)[number];
 
 export interface SearchItem {
   label: string;

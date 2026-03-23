@@ -1,5 +1,5 @@
-import { Fyo, t } from 'fyo';
-import {
+import { type Fyo, t } from 'fyo';
+import type {
   Action,
   DefaultMap,
   FiltersMap,
@@ -7,12 +7,12 @@ import {
   ListViewSettings,
 } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
-import { LedgerPosting } from 'models/Transactional/LedgerPosting';
+import type { LedgerPosting } from 'models/Transactional/LedgerPosting';
 import { getDocStatusListColumn, getLedgerLinkAction } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { SerialNumber } from './SerialNumber';
-import { StockMovementItem } from './StockMovementItem';
+import type { StockMovementItem } from './StockMovementItem';
 import { Transfer } from './Transfer';
 import {
   canValidateSerialNumber,
@@ -23,7 +23,7 @@ import {
   validateBatch,
   validateSerialNumber,
 } from './helpers';
-import { MovementType, MovementTypeEnum } from './types';
+import { type MovementType, MovementTypeEnum } from './types';
 
 export class StockMovement extends Transfer {
   name?: string;

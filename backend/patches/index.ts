@@ -1,13 +1,13 @@
-import { Patch } from '../database/types';
+import type { Patch } from '../database/types';
 import addUOMs from './addUOMs';
 import createInventoryNumberSeries from './createInventoryNumberSeries';
+import createPaymentMethods from './createPaymentMethods';
+import fixItemHSNField from './fixItemHSNField';
 import fixRoundOffAccount from './fixRoundOffAccount';
+import setPaymentReferenceType from './setPaymentReferenceType';
 import testPatch from './testPatch';
 import updateSchemas from './updateSchemas';
-import setPaymentReferenceType from './setPaymentReferenceType';
 import fixLedgerDateTime from './v0_21_0/fixLedgerDateTime';
-import fixItemHSNField from './fixItemHSNField';
-import createPaymentMethods from './createPaymentMethods';
 
 export default [
   { name: 'testPatch', version: '0.5.0-beta.0', patch: testPatch },

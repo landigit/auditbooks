@@ -120,8 +120,8 @@
 <script lang="ts">
 import Base from './Base.vue';
 
+import type { SelectOption } from 'schemas/types';
 import { defineComponent } from 'vue';
-import { SelectOption } from 'schemas/types';
 export default defineComponent({
   name: 'Select',
   extends: Base,

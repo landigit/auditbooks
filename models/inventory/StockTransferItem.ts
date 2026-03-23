@@ -1,19 +1,19 @@
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import {
+import type { DocValue } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type {
   FiltersMap,
   FormulaMap,
   HiddenMap,
   ValidationMap,
 } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
+import type { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { safeParseFloat } from 'utils/index';
-import { StockTransfer } from './StockTransfer';
+import type { StockTransfer } from './StockTransfer';
 import { TransferItem } from './TransferItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
 import {
   generateSerialNumbersForItem,
   getExistingActiveSerialNumbersForItem,
@@ -53,7 +53,7 @@ export class StockTransferItem extends TransferItem {
 
   async getItemDiscountAmount(): Promise<Money | undefined> {
     const docData = (await this.fyo.doc.getDoc(
-      this.parentSchemaName == ModelNameEnum.Shipment
+      this.parentSchemaName === ModelNameEnum.Shipment
         ? ModelNameEnum.SalesInvoice
         : ModelNameEnum.PurchaseInvoice,
       this.parentdoc?.backReference
@@ -68,7 +68,7 @@ export class StockTransferItem extends TransferItem {
 
   async getItemDiscountPercent() {
     const docData = (await this.fyo.doc.getDoc(
-      this.parentSchemaName == ModelNameEnum.Shipment
+      this.parentSchemaName === ModelNameEnum.Shipment
         ? ModelNameEnum.SalesInvoice
         : ModelNameEnum.PurchaseInvoice,
       this.parentdoc?.backReference

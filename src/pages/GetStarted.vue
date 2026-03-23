@@ -80,14 +80,14 @@
 </template>
 
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import Button from 'src/components/Button.vue';
 import Icon from 'src/components/Icon.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
 import { getGetStartedConfig } from 'src/utils/getStartedConfig';
-import { GetStartedConfigItem } from 'src/utils/types';
-import { Component, defineComponent, h } from 'vue';
+import type { GetStartedConfigItem } from 'src/utils/types';
+import { type Component, defineComponent, h } from 'vue';
 
 type ListItem = GetStartedConfigItem['items'][number];
 
@@ -168,7 +168,7 @@ export default defineComponent({
       return onboardingComplete;
     },
     async checkForCompletedTasks() {
-      let toUpdate: Record<string, DocValue> = {};
+      const toUpdate: Record<string, DocValue> = {};
       if (await this.checkIsOnboardingComplete()) {
         return;
       }
@@ -218,9 +218,9 @@ export default defineComponent({
       return fyo.singles.GetStarted?.get(item.fieldname) || false;
     },
     getIconComponent(item: ListItem) {
-      let completed = fyo.singles.GetStarted?.[item.fieldname] || false;
-      let name = completed ? 'green-check' : item.icon;
-      let size = completed ? '24' : '18';
+      const completed = fyo.singles.GetStarted?.[item.fieldname] || false;
+      const name = completed ? 'green-check' : item.icon;
+      const size = completed ? '24' : '18';
       return {
         name,
         render() {

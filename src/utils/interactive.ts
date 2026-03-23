@@ -1,9 +1,14 @@
 import { t } from 'fyo';
 import Dialog from 'src/components/Dialog.vue';
 import Toast from 'src/components/Toast.vue';
-import { App, createApp, h } from 'vue';
+import { type App, createApp, h } from 'vue';
 import { getColorClass } from './colors';
-import { DialogButton, DialogOptions, ToastOptions, ToastType } from './types';
+import type {
+  DialogButton,
+  DialogOptions,
+  ToastOptions,
+  ToastType,
+} from './types';
 
 export async function showDialog<DO extends DialogOptions>(options: DO) {
   const preWrappedButtons: DialogButton[] = options.buttons ?? [

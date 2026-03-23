@@ -1,6 +1,7 @@
 import { t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import {
+import type { DocValue } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type {
   ChangeArg,
   FiltersMap,
   FormulaMap,
@@ -11,13 +12,12 @@ import {
 } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { safeParseFloat } from 'utils/index';
-import { generateSerialNumbersForItem, getSuggestedBatchName } from './helpers';
-import { StockMovement } from './StockMovement';
+import type { StockMovement } from './StockMovement';
 import { TransferItem } from './TransferItem';
+import { generateSerialNumbersForItem, getSuggestedBatchName } from './helpers';
 import { MovementTypeEnum } from './types';
-import { Doc } from 'fyo/model/doc';
 
 export class StockMovementItem extends TransferItem {
   name?: string;
@@ -155,7 +155,7 @@ export class StockMovementItem extends TransferItem {
       dependsOn: ['item'],
     },
     amount: {
-      formula: () => this.rate!.mul(this.quantity!),
+      formula: () => this.rate?.mul(this.quantity!),
       dependsOn: ['item', 'rate', 'quantity'],
     },
     fromLocation: {

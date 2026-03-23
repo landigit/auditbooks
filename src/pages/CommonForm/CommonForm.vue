@@ -173,13 +173,13 @@
   </FormContainer>
 </template>
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import { DEFAULT_CURRENCY } from 'fyo/utils/consts';
 import { ValidationError } from 'fyo/utils/errors';
 import { getDocStatus } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
-import { Field, Schema } from 'schemas/types';
+import type { Field, Schema } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import Barcode from 'src/components/Controls/Barcode.vue';
 import ExchangeRate from 'src/components/Controls/ExchangeRate.vue';
@@ -191,7 +191,7 @@ import { getErrorMessage } from 'src/utils';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
-import { ActionGroup, DocRef, UIGroupedFields } from 'src/utils/types';
+import type { ActionGroup, DocRef, UIGroupedFields } from 'src/utils/types';
 import {
   commonDocSubmit,
   commonDocSync,

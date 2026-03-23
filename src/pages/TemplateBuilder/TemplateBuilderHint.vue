@@ -75,8 +75,8 @@
   </div>
 </template>
 <script lang="ts">
-import { PrintTemplateHint } from 'src/utils/printTemplates';
-import { PropType } from 'vue';
+import type { PrintTemplateHint } from 'src/utils/printTemplates';
+import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
 type HintRow = {
   key: string;

@@ -1,10 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { app } from 'electron';
-import fs from 'fs';
-import fetch from 'node-fetch';
-import path from 'path';
-import { Creds } from 'utils/types';
-import { rendererLog } from './helpers';
 import type { Main } from 'main';
+import fetch from 'node-fetch';
+import type { Creds } from 'utils/types';
+import { rendererLog } from './helpers';
 
 export function getUrlAndTokenString(): Creds {
   const inProduction = app.isPackaged;
@@ -23,7 +23,10 @@ export function getUrlAndTokenString(): Creds {
     return empty;
   }
 
-  let apiKey, apiSecret, errorLogUrl, telemetryUrl;
+  let apiKey;
+  let apiSecret;
+  let errorLogUrl;
+  let telemetryUrl;
   try {
     [apiKey, apiSecret, errorLogUrl, telemetryUrl] = fs
       .readFileSync(errLogCredsPath, 'utf-8')

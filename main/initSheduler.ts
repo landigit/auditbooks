@@ -1,5 +1,5 @@
+import path from 'node:path';
 import Bree from 'bree';
-import path from 'path';
 import main from 'main';
 
 let bree: Bree;

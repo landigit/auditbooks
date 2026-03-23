@@ -1,7 +1,7 @@
 import { Doc } from 'fyo/model/doc';
-import { ListViewSettings } from 'fyo/model/types';
+import type { ListViewSettings } from 'fyo/model/types';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 
 export class AccountingLedgerEntry extends Doc {
   date?: string | Date;

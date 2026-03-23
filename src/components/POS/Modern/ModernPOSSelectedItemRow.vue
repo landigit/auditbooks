@@ -237,18 +237,18 @@
 </template>
 
 <script lang="ts">
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import type { Money } from 'pesa';
 import Currency from 'src/components/Controls/Currency.vue';
 import Data from 'src/components/Controls/Data.vue';
 import Float from 'src/components/Controls/Float.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Link from 'src/components/Controls/Link.vue';
 import Text from 'src/components/Controls/Text.vue';
-import { inject } from 'vue';
 import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { Money } from 'pesa';
 import { validateSerialNumberCount } from 'src/utils/pos';
+import { inject } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'ModernPOSSelectedItemRow',
@@ -309,7 +309,7 @@ export default defineComponent({
       return !!fyo.singles.InventorySettings?.enableUomConversions;
     },
     hasSerialNumber(): boolean {
-      return !!(this.row.links?.item && this.row.links?.item.hasSerialNumber);
+      return !!this.row.links?.item?.hasSerialNumber;
     },
     isReadOnly() {
       return this.row.isFreeItem;

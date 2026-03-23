@@ -1,5 +1,5 @@
-import { Doc } from 'fyo/model/doc';
-import { Money } from 'pesa';
+import type { Doc } from 'fyo/model/doc';
+import type { Money } from 'pesa';
 
 export interface LedgerPostingOptions {
   reference: Doc;

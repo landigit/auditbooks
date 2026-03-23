@@ -1,17 +1,17 @@
-import { Fyo, t } from 'fyo';
-import { RawValueMap } from 'fyo/core/types';
+import { type Fyo, t } from 'fyo';
+import type { RawValueMap } from 'fyo/core/types';
 import { groupBy } from 'lodash';
 import { ModelNameEnum } from 'models/types';
 import { reports } from 'reports';
-import { OptionField } from 'schemas/types';
+import type { OptionField } from 'schemas/types';
 import { createFilters, routeFilters } from 'src/utils/filters';
-import { GetAllOptions } from 'utils/db/types';
+import type { GetAllOptions } from 'utils/db/types';
 import { safeParseFloat } from 'utils/index';
-import { RouteLocationRaw } from 'vue-router';
+import type { RouteLocationRaw } from 'vue-router';
 import { fuzzyMatch } from '.';
-import { getFormRoute, routeTo } from './ui';
 import { searchGroups } from '../../utils/types';
 import type { SearchGroup, SearchItem } from '../../utils/types';
+import { getFormRoute, routeTo } from './ui';
 
 export { searchGroups };
 export type { SearchGroup, SearchItem };
@@ -104,7 +104,7 @@ function getCreateList(fyo: Fyo): SearchItem[] {
         group: 'Create',
         action: getCreateAction(fyo, schemaName),
         schemaName,
-      } as SearchItem)
+      }) as SearchItem
   );
 
   const filteredCreateList = [
@@ -236,10 +236,10 @@ function getListViewList(fyo: Fyo): SearchItem[] {
     .map(
       (s) =>
         ({
-          label: s!.label,
-          route: `/list/${s!.name}`,
+          label: s?.label,
+          route: `/list/${s?.name}`,
           group: 'List',
-        } as SearchItem)
+        }) as SearchItem
     );
 
   const filteredLists = [
@@ -657,9 +657,8 @@ export class Search {
      */
     if (useSuggestions) {
       return this._searchSuggestions(input!);
-    } else {
-      this._setIntermediate([]);
     }
+    this._setIntermediate([]);
 
     /**
      * Create the suggestion list.
@@ -931,7 +930,7 @@ export class Search {
       const keyword: Keyword = { values: [], meta: {}, priority: 0 };
       this._setKeywordValues(map, searchable, keyword);
       this._setMeta(map, searchable, keyword);
-      this.keywords[searchable.schemaName]!.push(keyword);
+      this.keywords[searchable.schemaName]?.push(keyword);
     }
 
     this._setPriority(searchable);

@@ -3,7 +3,7 @@ import Account from '../app/Account.json';
 import JournalEntry from '../app/JournalEntry.json';
 import JournalEntryAccount from '../app/JournalEntryAccount.json';
 import PartyRegional from '../regional/in/Party.json';
-import { Schema, SchemaStub, SchemaStubMap } from '../types';
+import type { Schema, SchemaStub, SchemaStubMap } from '../types';
 import Customer from './Customer.json';
 import Party from './Party.json';
 

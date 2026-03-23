@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
 import { getShortcutKeyMap } from 'src/utils/ui';
-import { defineComponent, PropType } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 export default defineComponent({
   props: {
     keys: { type: Array as PropType<string[]>, required: true },

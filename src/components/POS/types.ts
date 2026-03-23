@@ -1,4 +1,4 @@
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 
 export type ItemQtyMap = {
   [item: string]: { availableQty: number; [batch: string]: number };
@@ -10,7 +10,10 @@ export type ItemGroupMap = Record<string, string>;
 
 export type DiscountType = 'percent' | 'amount';
 
-export type ItemVisibility = 'Inventory Items' | 'Non-Inventory Items' | 'ERP Sync Items'
+export type ItemVisibility =
+  | 'Inventory Items'
+  | 'Non-Inventory Items'
+  | 'ERP Sync Items';
 
 export const modalNames = [
   'Keyboard',
@@ -26,7 +29,7 @@ export const modalNames = [
   'BatchSelection',
 ] as const;
 
-export type ModalName = typeof modalNames[number];
+export type ModalName = (typeof modalNames)[number];
 
 export type PosEmits =
   | 'addItem'
@@ -48,7 +51,7 @@ export type PosEmits =
   | 'saveAndContinue'
   | 'handlePaymentAction'
   | 'setTransferClearanceDate'
-  | 'batchSelected'; 
+  | 'batchSelected';
 
 export interface POSItem {
   id?: number;

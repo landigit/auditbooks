@@ -1,7 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { assertDoesNotThrow } from 'backend/database/tests/helpers';
-import { readFileSync } from 'fs';
 import { ModelNameEnum } from 'models/types';
-import { join } from 'path';
 import { Importer } from 'src/importer';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from './helpers';

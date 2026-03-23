@@ -1,6 +1,6 @@
 <script lang="ts">
-import Base from './Base.vue';
 import { defineComponent } from 'vue';
+import Base from './Base.vue';
 
 export default defineComponent({
   name: 'Data',

@@ -1,11 +1,11 @@
-import { Fyo, t } from 'fyo';
-import { Doc } from 'fyo/model/doc';
+import { type Fyo, t } from 'fyo';
+import type { Doc } from 'fyo/model/doc';
 import { range, sample } from 'lodash';
 import { DateTime } from 'luxon';
-import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import type { Invoice } from 'models/baseModels/Invoice/Invoice';
+import type { Payment } from 'models/baseModels/Payment/Payment';
+import type { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { ModelNameEnum } from 'models/types';
 import setupInstance from 'src/setup/setupInstance';
 import { getMapFromList, safeParseInt } from 'utils';
@@ -39,8 +39,8 @@ export async function setupDummyInstance(
     email: 'lin@flosclothes.com',
     bankName: 'Supreme Bank',
     currency: 'INR',
-    fiscalYearStart: getFiscalYear('04-01', true)!.toISOString(),
-    fiscalYearEnd: getFiscalYear('04-01', false)!.toISOString(),
+    fiscalYearStart: getFiscalYear('04-01', true)?.toISOString(),
+    fiscalYearEnd: getFiscalYear('04-01', false)?.toISOString(),
     chartOfAccounts: 'India - Chart of Accounts',
   };
   await setupInstance(dbPath, options, fyo);
@@ -120,13 +120,12 @@ async function generateDynamicEntries(
 async function getJournalEntries(fyo: Fyo, salesInvoices: SalesInvoice[]) {
   const entries = [];
   const amount = salesInvoices
-    .map((i) => i.items!)
-    .flat()
+    .flatMap((i) => i.items!)
     .reduce((a, b) => a.add(b.amount!), fyo.pesa(0))
     .percent(75)
     .clip(0);
-  const lastInv = salesInvoices.sort((a, b) => +a.date! - +b.date!).at(-1)!
-    .date!;
+  const lastInv = salesInvoices.sort((a, b) => +a.date! - +b.date!).at(-1)
+    ?.date!;
   const date = DateTime.fromJSDate(lastInv).minus({ months: 6 }).toJSDate();
 
   // Bank Entry
@@ -211,7 +210,7 @@ async function getPayments(fyo: Fyo, invoices: Invoice[]) {
       amount: invoice.outstandingAmount,
     });
 
-    if (doc.amount!.isZero()) {
+    if (doc.amount?.isZero()) {
       continue;
     }
 
@@ -269,7 +268,7 @@ async function getSalesInvoices(
       false
     ) as SalesInvoice;
 
-    await doc.set('party', customer!.name);
+    await doc.set('party', customer?.name);
     if (!doc.account) {
       doc.account = 'Debtors';
     }
@@ -288,9 +287,9 @@ async function getSalesInvoices(
       /**
        * Increase quantity depending on the rate.
        */
-      if (item!.rate < 100 && Math.random() < 0.4) {
+      if (item?.rate < 100 && Math.random() < 0.4) {
         quantity = Math.ceil(Math.random() * 10);
-      } else if (item!.rate < 1000 && Math.random() < 0.2) {
+      } else if (item?.rate < 1000 && Math.random() < 0.2) {
         quantity = Math.ceil(Math.random() * 4);
       } else if (Math.random() < 0.01) {
         quantity = Math.ceil(Math.random() * 3);
@@ -300,17 +299,17 @@ async function getSalesInvoices(
       if (baseCount < 500) {
         fc += 1;
       }
-      const rate = fyo.pesa(item!.rate * (fc + 1)).clip(0);
+      const rate = fyo.pesa(item?.rate * (fc + 1)).clip(0);
       await doc.append('items', {});
-      await doc.items!.at(-1)!.set({
-        item: item!.name,
+      await doc.items?.at(-1)?.set({
+        item: item?.name,
         rate,
         quantity,
-        account: item!.incomeAccount,
+        account: item?.incomeAccount,
         amount: rate.mul(quantity),
-        tax: item!.tax,
-        description: item!.description,
-        hsnCode: item!.hsnCode,
+        tax: item?.tax,
+        description: item?.description,
+        hsnCode: item?.hsnCode,
       });
     }
 
@@ -345,11 +344,14 @@ async function getSalesPurchaseInvoices(
       const key = `${date.year}-${String(date.month).padStart(2, '0')}`;
       return { key, si };
     })
-    .reduce((acc, item) => {
-      acc[item.key] ??= [];
-      acc[item.key].push(item.si);
-      return acc;
-    }, {} as Record<string, SalesInvoice[]>);
+    .reduce(
+      (acc, item) => {
+        acc[item.key] ??= [];
+        acc[item.key].push(item.si);
+        return acc;
+      },
+      {} as Record<string, SalesInvoice[]>
+    );
 
   /**
    * Sort the YYYY-MM keys in ascending order.
@@ -366,18 +368,21 @@ async function getSalesPurchaseInvoices(
     /**
      * Group items by name to get the total quantity used in a month.
      */
-    const itemGrouped = dateGrouped[key].reduce((acc, si) => {
-      for (const item of si.items!) {
-        if (item.item === 'Dry-Cleaning') {
-          continue;
+    const itemGrouped = dateGrouped[key].reduce(
+      (acc, si) => {
+        for (const item of si.items!) {
+          if (item.item === 'Dry-Cleaning') {
+            continue;
+          }
+
+          acc[item.item as string] ??= 0;
+          acc[item.item as string] += item.quantity as number;
         }
 
-        acc[item.item as string] ??= 0;
-        acc[item.item as string] += item.quantity as number;
-      }
-
-      return acc;
-    }, {} as Record<string, number>);
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     /**
      * Set order quantity for the first of the month.
@@ -394,13 +399,16 @@ async function getSalesPurchaseInvoices(
       purchaseQty[name] = Math.ceil(prevQty / 10) * 10;
     });
 
-    const supplierGrouped = Object.keys(itemGrouped).reduce((acc, item) => {
-      const supplier = purchaseItemPartyMap[item];
-      acc[supplier] ??= [];
-      acc[supplier].push(item);
+    const supplierGrouped = Object.keys(itemGrouped).reduce(
+      (acc, item) => {
+        const supplier = purchaseItemPartyMap[item];
+        acc[supplier] ??= [];
+        acc[supplier].push(item);
 
-      return acc;
-    }, {} as Record<string, string[]>);
+        return acc;
+      },
+      {} as Record<string, string[]>
+    );
 
     /**
      * For each supplier create a Purchase Invoice
@@ -425,7 +433,7 @@ async function getSalesPurchaseInvoices(
       for (const item of supplierGrouped[supplier]) {
         await doc.append('items', {});
         const quantity = purchaseQty[item];
-        await doc.items!.at(-1)!.set({ item, quantity });
+        await doc.items?.at(-1)?.set({ item, quantity });
       }
 
       invoices.push(doc);
@@ -476,7 +484,7 @@ async function getNonSalesPurchaseInvoices(
         doc.account = 'Creditors';
       }
       await doc.append('items', {});
-      const row = doc.items!.at(-1)!;
+      const row = doc.items?.at(-1)!;
       const item = itemMap[name];
 
       let quantity = 1;

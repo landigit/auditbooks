@@ -1,12 +1,12 @@
 import { t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import { FiltersMap, FormulaMap, ValidationMap } from 'fyo/model/types';
+import type { FiltersMap, FormulaMap, ValidationMap } from 'fyo/model/types';
 import { NotFoundError } from 'fyo/utils/errors';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { PartyRoleEnum } from '../Party/types';
-import { Payment } from '../Payment/Payment';
+import type { Payment } from '../Payment/Payment';
 
 export class PaymentFor extends Doc {
   parentdoc?: Payment | undefined;
@@ -76,9 +76,7 @@ export class PaymentFor extends Doc {
 
   static filters: FiltersMap = {
     referenceName: (doc) => {
-      const zero =
-        '0.' +
-        '0'.repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11);
+      const zero = `0.${'0'.repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11)}`;
 
       const baseFilters = {
         outstandingAmount: ['!=', zero],

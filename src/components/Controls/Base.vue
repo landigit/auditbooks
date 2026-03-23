@@ -30,11 +30,11 @@
 </template>
 <script lang="ts">
 import { Doc } from 'fyo/model/doc';
-import { Field } from 'schemas/types';
+import type { Field } from 'schemas/types';
 import { isNumeric } from 'src/utils';
 import { evaluateReadOnly, evaluateRequired } from 'src/utils/doc';
 import { getIsNullOrUndef } from 'utils/index';
-import { defineComponent, PropType } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Base',
@@ -155,7 +155,7 @@ export default defineComponent({
         background = 'bg-gray-50 dark:bg-gray-850';
       }
 
-      return border + ' ' + background;
+      return `${border} ${background}`;
     },
     inputPlaceholder(): string {
       return this.placeholder || this.df.placeholder || this.df.label;

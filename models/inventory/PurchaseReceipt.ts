@@ -1,12 +1,12 @@
-import { Action, ListViewSettings } from 'fyo/model/types';
+import type { Fyo } from 'fyo';
+import type { Action, ListViewSettings } from 'fyo/model/types';
 import {
   getStockTransferActions,
   getTransactionStatusColumn,
 } from 'models/helpers';
-import { PurchaseReceiptItem } from './PurchaseReceiptItem';
-import { StockTransfer } from './StockTransfer';
-import { Fyo } from 'fyo';
 import { ModelNameEnum } from 'models/types';
+import type { PurchaseReceiptItem } from './PurchaseReceiptItem';
+import { StockTransfer } from './StockTransfer';
 
 export class PurchaseReceipt extends StockTransfer {
   items?: PurchaseReceiptItem[];

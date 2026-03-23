@@ -1,7 +1,7 @@
-import { ipcMain, Menu, shell } from 'electron';
-import { Main } from '../main';
-import { IPC_MESSAGES } from '../utils/messages';
 import { emitMainProcessError } from 'backend/helpers';
+import { Menu, ipcMain, shell } from 'electron';
+import type { Main } from '../main';
+import { IPC_MESSAGES } from '../utils/messages';
 
 export default function registerIpcMainMessageListeners(main: Main) {
   ipcMain.on(IPC_MESSAGES.OPEN_MENU, (event) => {
@@ -18,17 +18,17 @@ export default function registerIpcMainMessageListeners(main: Main) {
   });
 
   ipcMain.on(IPC_MESSAGES.RELOAD_MAIN_WINDOW, () => {
-    main.mainWindow!.reload();
+    main.mainWindow?.reload();
   });
 
   ipcMain.on(IPC_MESSAGES.MINIMIZE_MAIN_WINDOW, () => {
-    main.mainWindow!.minimize();
+    main.mainWindow?.minimize();
   });
 
   ipcMain.on(IPC_MESSAGES.MAXIMIZE_MAIN_WINDOW, () => {
-    main.mainWindow!.isMaximized()
-      ? main.mainWindow!.unmaximize()
-      : main.mainWindow!.maximize();
+    main.mainWindow?.isMaximized()
+      ? main.mainWindow?.unmaximize()
+      : main.mainWindow?.maximize();
   });
 
   ipcMain.on(IPC_MESSAGES.ISMAXIMIZED_MAIN_WINDOW, (event) => {
@@ -42,7 +42,7 @@ export default function registerIpcMainMessageListeners(main: Main) {
   });
 
   ipcMain.on(IPC_MESSAGES.CLOSE_MAIN_WINDOW, () => {
-    main.mainWindow!.close();
+    main.mainWindow?.close();
   });
 
   ipcMain.on(IPC_MESSAGES.OPEN_EXTERNAL, (_, link: string) => {

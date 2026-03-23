@@ -347,13 +347,13 @@
 </template>
 
 <script lang="ts">
-import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { ItemSerialNumbers } from 'src/components/POS/types';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
+import type { Payment } from 'models/baseModels/Payment/Payment';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import type { ItemSerialNumbers } from 'src/components/POS/types';
+import { fyo } from 'src/initFyo';
+import { showToast } from 'src/utils/interactive';
+import { type PropType, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'POSQuickActions',

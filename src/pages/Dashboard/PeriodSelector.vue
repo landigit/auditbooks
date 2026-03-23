@@ -44,8 +44,8 @@
 <script lang="ts">
 import { t } from 'fyo';
 import Dropdown from 'src/components/Dropdown.vue';
-import { PeriodKey } from 'src/utils/types';
-import { PropType } from 'vue';
+import type { PeriodKey } from 'src/utils/types';
+import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -77,7 +77,7 @@ export default defineComponent({
     };
 
     this.periodOptions = this.options.map((option) => {
-      let label = this.periodSelectorMap[option] ?? option;
+      const label = this.periodSelectorMap[option] ?? option;
 
       return {
         label,

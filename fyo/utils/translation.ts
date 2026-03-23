@@ -1,4 +1,4 @@
-import { LanguageMap, UnknownMap } from 'utils/types';
+import type { LanguageMap, UnknownMap } from 'utils/types';
 import {
   getIndexFormat,
   getIndexList,
@@ -39,16 +39,16 @@ export class TranslationString {
     indexFormat = getWhitespaceSanitized(indexFormat);
 
     const translatedIndexFormat =
-      this.languageMap![indexFormat]?.translation ?? indexFormat;
+      this.languageMap?.[indexFormat]?.translation ?? indexFormat;
 
     this.argList = getIndexList(translatedIndexFormat).map(
-      (i) => this.argList![i]
+      (i) => this.argList?.[i]
     );
     this.strList = getSnippets(translatedIndexFormat);
   }
 
   #stitch() {
-    if (!((this.args[0] as unknown) instanceof Array)) {
+    if (!Array.isArray(this.args[0] as unknown)) {
       throw new ValueError(
         `invalid args passed to TranslationString ${String(
           this.args
@@ -64,7 +64,7 @@ export class TranslationString {
     }
 
     return this.strList
-      .map((s, i) => s + this.#formatArg(this.argList![i]))
+      .map((s, i) => s + this.#formatArg(this.argList?.[i]))
       .join('')
       .replace(/\s+/g, ' ')
       .trim();

@@ -2,17 +2,17 @@ import { t } from 'fyo';
 import { ValueError } from 'fyo/utils/errors';
 import { DateTime } from 'luxon';
 import {
-  AccountRootType,
+  type AccountRootType,
   AccountRootTypeEnum,
 } from 'models/baseModels/Account/types';
 import {
-  AccountReport,
   ACC_BAL_WIDTH,
   ACC_NAME_WIDTH,
+  AccountReport,
   convertAccountRootNodesToAccountList,
   getFiscalEndpoints,
 } from 'reports/AccountReport';
-import {
+import type {
   Account,
   AccountListNode,
   AccountNameValueMapMap,
@@ -26,8 +26,8 @@ import {
   RootTypeRow,
   ValueMap,
 } from 'reports/types';
-import { Field } from 'schemas/types';
-import { QueryFilter } from 'utils/db/types';
+import type { Field } from 'schemas/types';
+import type { QueryFilter } from 'utils/db/types';
 
 export class TrialBalance extends AccountReport {
   static title = t`Trial Balance`;
@@ -73,7 +73,7 @@ export class TrialBalance extends AccountReport {
           rows: this.getReportRowsFromAccountList(rootList),
         };
       })
-      .filter((row) => !!(row.rootNodes && row.rootNodes.length));
+      .filter((row) => !!row.rootNodes?.length);
 
     this.reportData = await this.getReportDataFromRows(rootTypeRows);
     this.loading = false;
@@ -161,7 +161,7 @@ export class TrialBalance extends AccountReport {
       indent: al.level ?? 0,
     } as ReportCell;
 
-    const balanceCells = this._dateRanges!.map((k) => {
+    const balanceCells = this._dateRanges?.map((k) => {
       const map = al.valueMap?.get(k);
       const hide = this.hideGroupAmounts && al.isGroup;
 

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 /**
  * Common ESBuild config used for building main process source
@@ -45,8 +45,7 @@ export const excludeVendorFromSourceMap = {
 
       return {
         contents:
-          fs.readFileSync(args.path, 'utf8') +
-          '\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==',
+          `${fs.readFileSync(args.path, 'utf8')}\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==`,
         loader: 'default',
       };
     });

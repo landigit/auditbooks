@@ -30,7 +30,7 @@
 </template>
 <script lang="ts">
 import { isFalsy } from 'fyo/utils';
-import { Field } from 'schemas/types';
+import type { Field } from 'schemas/types';
 import { defineComponent } from 'vue';
 
 export default defineComponent({

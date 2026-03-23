@@ -201,7 +201,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Doc } from 'fyo/model/doc';
+import type { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
@@ -209,7 +209,7 @@ import { getBgTextColorClass } from 'src/utils/colors';
 import { getLinkedEntries } from 'src/utils/doc';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { getFormRoute, routeTo } from 'src/utils/ui';
-import { PropType, defineComponent, inject } from 'vue';
+import { type PropType, defineComponent, inject } from 'vue';
 
 const COMPONENT_NAME = 'LinkedEntries';
 

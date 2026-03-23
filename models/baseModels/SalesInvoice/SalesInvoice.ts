@@ -1,7 +1,11 @@
-import { Fyo, t } from 'fyo';
-import { Action, ListViewSettings, ValidationMap } from 'fyo/model/types';
+import { type Fyo, t } from 'fyo';
+import type { DocValue } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type { Action, ListViewSettings, ValidationMap } from 'fyo/model/types';
+import { ValidationError } from 'fyo/utils/errors';
 import { LedgerPosting } from 'models/Transactional/LedgerPosting';
 import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
 import {
   getAddedLPWithGrandTotal,
   getInvoiceActions,
@@ -9,13 +13,9 @@ import {
   getTransactionStatusColumn,
 } from '../../helpers';
 import { Invoice } from '../Invoice/Invoice';
-import { SalesInvoiceItem } from '../SalesInvoiceItem/SalesInvoiceItem';
-import { LoyaltyProgram } from '../LoyaltyProgram/LoyaltyProgram';
-import { DocValue } from 'fyo/core/types';
-import { Party } from '../Party/Party';
-import { ValidationError } from 'fyo/utils/errors';
-import { Money } from 'pesa';
-import { Doc } from 'fyo/model/doc';
+import type { LoyaltyProgram } from '../LoyaltyProgram/LoyaltyProgram';
+import type { Party } from '../Party/Party';
+import type { SalesInvoiceItem } from '../SalesInvoiceItem/SalesInvoiceItem';
 
 export class SalesInvoice extends Invoice {
   items?: SalesInvoiceItem[];
@@ -31,10 +31,10 @@ export class SalesInvoice extends Invoice {
 
     for (const item of this.items!) {
       if (this.isReturn) {
-        await posting.debit(item.account!, item.amount!.mul(exchangeRate));
+        await posting.debit(item.account!, item.amount?.mul(exchangeRate));
         continue;
       }
-      await posting.credit(item.account!, item.amount!.mul(exchangeRate));
+      await posting.credit(item.account!, item.amount?.mul(exchangeRate));
     }
 
     if (this.redeemLoyaltyPoints) {
@@ -64,10 +64,10 @@ export class SalesInvoice extends Invoice {
     if (this.taxes) {
       for (const tax of this.taxes) {
         if (this.isReturn) {
-          await posting.debit(tax.account!, tax.amount!.mul(exchangeRate));
+          await posting.debit(tax.account!, tax.amount?.mul(exchangeRate));
           continue;
         }
-        await posting.credit(tax.account!, tax.amount!.mul(exchangeRate));
+        await posting.credit(tax.account!, tax.amount?.mul(exchangeRate));
       }
     }
 
@@ -133,7 +133,7 @@ export class SalesInvoice extends Invoice {
         const totalDiscount = this.getTotalDiscount();
         let baseGrandTotal;
 
-        if (!this.taxes!.length) {
+        if (!this.taxes?.length) {
           baseGrandTotal = (this.netTotal as Money).sub(totalDiscount);
         } else {
           baseGrandTotal = ((this.taxes ?? []) as Doc[])

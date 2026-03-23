@@ -70,14 +70,14 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
 import { t } from 'fyo';
-import { showToast } from 'src/utils/interactive';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { ModelNameEnum } from 'models/types';
+import Button from 'src/components/Button.vue';
 import Int from 'src/components/Controls/Int.vue';
+import Modal from 'src/components/Modal.vue';
+import { showToast } from 'src/utils/interactive';
+import { defineComponent, inject } from 'vue';
 
 export default defineComponent({
   name: 'LoyaltyProgramModal',

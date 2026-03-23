@@ -1,7 +1,7 @@
 import { DatabaseError, NotImplemented } from 'fyo/utils/errors';
-import { SchemaMap } from 'schemas/types';
-import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
-import { BackendResponse } from 'utils/ipc/types';
+import type { SchemaMap } from 'schemas/types';
+import { DatabaseDemuxBase, type DatabaseMethod } from 'utils/db/types';
+import type { BackendResponse } from 'utils/ipc/types';
 
 export class DatabaseDemux extends DatabaseDemuxBase {
   #isElectron = false;

@@ -1,12 +1,17 @@
-import fs from 'fs/promises';
-import { RawValueMap } from 'fyo/core/types';
-import { Knex } from 'knex';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import type { RawValueMap } from 'fyo/core/types';
+import type { Knex } from 'knex';
+import knex from 'knex';
 import { changeKeys, deleteKeys, getIsNullOrUndef, invertMap } from 'utils';
 import { getCountryCodeFromCountry } from 'utils/misc';
 import { Version } from 'utils/version';
 import { ModelNameEnum } from '../../models/types';
-import { FieldTypeEnum, Schema, SchemaMap } from '../../schemas/types';
+import {
+  FieldTypeEnum,
+  type Schema,
+  type SchemaMap,
+} from '../../schemas/types';
 import { DatabaseManager } from '../database/manager';
 
 const ignoreColumns = ['keywords'];
@@ -29,7 +34,7 @@ async function execute(dm: DatabaseManager) {
     return;
   }
 
-  const sourceKnex = dm.db!.knex!;
+  const sourceKnex = dm.db?.knex!;
   const version = (
     (await sourceKnex('SingleValue')
       .select('value')
@@ -49,7 +54,7 @@ async function execute(dm: DatabaseManager) {
    * data into.
    */
   const countryCode = await getCountryCode(sourceKnex);
-  const destDm = await getDestinationDM(dm.db!.dbPath, countryCode);
+  const destDm = await getDestinationDM(dm.db?.dbPath, countryCode);
 
   /**
    * Copy data from all the relevant tables
@@ -58,8 +63,8 @@ async function execute(dm: DatabaseManager) {
   try {
     await copyData(sourceKnex, destDm);
   } catch (err) {
-    const destPath = destDm.db!.dbPath;
-    await destDm.db!.close();
+    const destPath = destDm.db?.dbPath;
+    await destDm.db?.close();
     await fs.unlink(destPath);
     throw err;
   }
@@ -68,7 +73,7 @@ async function execute(dm: DatabaseManager) {
    * Version will update when migration completes, this
    * is set to prevent this patch from running again.
    */
-  await destDm.db!.update(ModelNameEnum.SystemSettings, {
+  await destDm.db?.update(ModelNameEnum.SystemSettings, {
     version: '0.5.0-beta.0',
   });
 
@@ -82,18 +87,18 @@ async function replaceDatabaseCore(
   dm: DatabaseManager,
   destDm: DatabaseManager
 ) {
-  const newDbPath = destDm.db!.dbPath; // new db with new schema
-  const oldDbPath = dm.db!.dbPath; // old db to be replaced
+  const newDbPath = destDm.db?.dbPath; // new db with new schema
+  const oldDbPath = dm.db?.dbPath; // old db to be replaced
 
-  await dm.db!.close();
-  await destDm.db!.close();
+  await dm.db?.close();
+  await destDm.db?.close();
   await fs.unlink(oldDbPath);
   await fs.rename(newDbPath, oldDbPath);
   await dm._connect(oldDbPath);
 }
 
 async function copyData(sourceKnex: Knex, destDm: DatabaseManager) {
-  const destKnex = destDm.db!.knex!;
+  const destKnex = destDm.db?.knex!;
   const schemaMap = destDm.getSchemaMap();
   await destKnex.raw('PRAGMA foreign_keys=OFF');
   await copySingleValues(sourceKnex, destKnex, schemaMap);
@@ -134,7 +139,7 @@ async function copyNumberSeries(
     const name = value.name as string;
     const referenceType = refMap[name];
     if (!referenceType) {
-      delete value.name;
+      value.name = undefined;
       continue;
     }
 
@@ -350,8 +355,8 @@ async function getDestinationDM(sourceDbPath: string, countryCode: string) {
   const dbPath = path.join(dir, '__update_schemas_temp.db');
   const dm = new DatabaseManager();
   await dm._connect(dbPath, countryCode);
-  await dm.db!.migrate();
-  await dm.db!.truncate();
+  await dm.db?.migrate();
+  await dm.db?.truncate();
   return dm;
 }
 

@@ -69,8 +69,8 @@ export default {
   },
   mounted() {
     this.listener = (e) => {
-      let $els = [this.$refs.reference, this.$refs.popover];
-      let insideClick = $els.some(
+      const $els = [this.$refs.reference, this.$refs.popover];
+      const insideClick = $els.some(
         ($el) => $el && (e.target === $el || $el.contains(e.target))
       );
       if (insideClick) {
@@ -84,10 +84,10 @@ export default {
     }
   },
   beforeUnmount() {
-    this.popper && this.popper.destroy();
+    this.popper?.destroy();
     if (this.listener) {
       document.removeEventListener('click', this.listener);
-      delete this.listener;
+      this.listener = undefined;
     }
   },
   methods: {

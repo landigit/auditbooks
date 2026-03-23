@@ -1,6 +1,6 @@
 import { t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import {
+import type {
   EmptyMessageMap,
   FormulaMap,
   ListViewSettings,

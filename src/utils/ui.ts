@@ -4,32 +4,32 @@
  */
 import { t } from 'fyo';
 import type { Doc } from 'fyo/model/doc';
-import { Action } from 'fyo/model/types';
+import type { Action } from 'fyo/model/types';
 import { getActions } from 'fyo/utils';
 import {
   BaseError,
-  getDbError,
   LinkValidationError,
   ValueError,
+  getDbError,
 } from 'fyo/utils/errors';
+import { Transactional } from 'models/Transactional/Transactional';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
 import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { getLedgerLink } from 'models/helpers';
 import { Transfer } from 'models/inventory/Transfer';
-import { Transactional } from 'models/Transactional/Transactional';
 import { ModelNameEnum } from 'models/types';
-import { Schema } from 'schemas/types';
+import type { Schema } from 'schemas/types';
 import { handleErrorWithDialog } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import router from 'src/router';
 import { assertIsType } from 'utils/index';
-import { SelectFileOptions } from 'utils/types';
-import { RouteLocationRaw } from 'vue-router';
+import type { SelectFileOptions } from 'utils/types';
+import type { RouteLocationRaw } from 'vue-router';
 import { evaluateHidden } from './doc';
 import { showDialog, showToast } from './interactive';
 import { showSidebar } from './refs';
-import {
+import type {
   ActionGroup,
   QuickEditOptions,
   SettingsTab,
@@ -40,7 +40,7 @@ import {
 export const toastDurationMap = {
   short: 2_500,
   long: 5_000,
-  very_long: Infinity,
+  very_long: Number.POSITIVE_INFINITY,
 } as const;
 
 export async function openQuickEdit({
@@ -83,7 +83,7 @@ export async function routeTo(route: RouteLocationRaw) {
 }
 
 export async function deleteDocWithPrompt(doc: Doc) {
-  const schemaLabel = fyo.schemaMap[doc.schemaName]!.label;
+  const schemaLabel = fyo.schemaMap[doc.schemaName]?.label;
   let detail = t`This action is permanent.`;
   if (doc.isTransactional && doc.isSubmitted) {
     detail = t`This action is permanent and will delete associated ledger entries.`;
@@ -220,21 +220,24 @@ export function getActionsForDoc(doc?: Doc): Action[] {
 
 export function getGroupedActionsForDoc(doc?: Doc): ActionGroup[] {
   const actions = getActionsForDoc(doc);
-  const actionsMap = actions.reduce((acc, ac) => {
-    if (!ac.group) {
-      ac.group = '';
-    }
+  const actionsMap = actions.reduce(
+    (acc, ac) => {
+      if (!ac.group) {
+        ac.group = '';
+      }
 
-    acc[ac.group] ??= {
-      group: ac.group,
-      label: ac.label ?? '',
-      type: ac.type ?? 'secondary',
-      actions: [],
-    };
+      acc[ac.group] ??= {
+        group: ac.group,
+        label: ac.label ?? '',
+        type: ac.type ?? 'secondary',
+        actions: [],
+      };
 
-    acc[ac.group].actions.push(ac);
-    return acc;
-  }, {} as Record<string, ActionGroup>);
+      acc[ac.group].actions.push(ac);
+      return acc;
+    },
+    {} as Record<string, ActionGroup>
+  );
 
   const grouped = Object.keys(actionsMap)
     .filter(Boolean)
@@ -361,7 +364,7 @@ export function getFieldsGroupedByTabAndSection(
       continue;
     }
 
-    tabbed.get(section)!.push(field);
+    tabbed.get(section)?.push(field);
   }
 
   // Delete empty tabs and sections
@@ -484,9 +487,8 @@ export async function selectTextFile(filters?: SelectFileOptions['filters']) {
     title: t`Select File`,
     filters,
   };
-  const { success, canceled, filePath, data, name } = await ipc.selectFile(
-    options
-  );
+  const { success, canceled, filePath, data, name } =
+    await ipc.selectFile(options);
 
   if (canceled || !success) {
     showToast({
@@ -639,7 +641,7 @@ async function showInsufficientInventoryDialog(doc: SalesInvoice) {
         item,
         undefined,
         undefined,
-        doc.date!.toISOString(),
+        doc.date?.toISOString(),
         batch
       )) ?? 0;
 
@@ -887,7 +889,7 @@ export const printSizes = [
 ] as const;
 
 export const paperSizeMap: Record<
-  typeof printSizes[number],
+  (typeof printSizes)[number],
   { width: number; height: number }
 > = {
   A0: {

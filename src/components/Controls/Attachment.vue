@@ -58,10 +58,10 @@
 </template>
 <script lang="ts">
 import { t } from 'fyo';
-import { Attachment } from 'fyo/core/types';
-import { Field } from 'schemas/types';
+import type { Attachment } from 'fyo/core/types';
+import type { Field } from 'schemas/types';
 import { convertFileToDataURL } from 'src/utils/misc';
-import { defineComponent, PropType } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 import FeatherIcon from '../FeatherIcon.vue';
 import Base from './Base.vue';
 
@@ -85,7 +85,8 @@ export default defineComponent({
     inputReadOnlyClasses() {
       if (!this.value) {
         return 'text-gray-600';
-      } else if (this.isReadOnly) {
+      }
+      if (this.isReadOnly) {
         return 'text-gray-800 cursor-default';
       }
 

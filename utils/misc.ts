@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import countryInfo from '../fixtures/countryInfo.json';
 import { CUSTOM_EVENTS } from './messages';
-import { CountryInfoMap, UnexpectedLogObject } from './types';
+import type { CountryInfoMap, UnexpectedLogObject } from './types';
 
 export function getCountryInfo(): CountryInfoMap {
   // @ts-ignore

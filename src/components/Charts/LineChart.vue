@@ -256,7 +256,7 @@ export default {
       return Math.min(this.yMin ?? this.min, 0);
     },
     hMax() {
-      let hMax = Math.max(this.yMax ?? this.max, 0);
+      const hMax = Math.max(this.yMax ?? this.max, 0);
       if (hMax === this.hMin) {
         return hMax + 1000;
       }
@@ -289,17 +289,17 @@ export default {
       return d;
     },
     getGradLine(i) {
-      let bo = this.viewBoxHeight - this.padding - this.bottom;
+      const bo = this.viewBoxHeight - this.padding - this.bottom;
       let d = `M ${this.padding + this.left} ${bo}`;
       this.xy.forEach(([x, y]) => {
         d += `L ${x} ${y[i]} `;
       });
-      return d + ` V ${bo} Z`;
+      return `${d} V ${bo} Z`;
     },
     getRandomColor() {
       const rgb = Array(3)
         .fill()
-        .map(() => parseInt(Math.random() * 255))
+        .map(() => Number.parseInt(Math.random() * 255))
         .join(',');
       return `rgb(${rgb})`;
     },

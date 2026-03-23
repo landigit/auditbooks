@@ -86,9 +86,9 @@
 </template>
 <script lang="ts">
 import { getIconConfig } from 'src/utils/interactive';
-import { ToastDuration, ToastType } from 'src/utils/types';
+import type { ToastDuration, ToastType } from 'src/utils/types';
 import { toastDurationMap } from 'src/utils/ui';
-import { PropType, defineComponent, nextTick } from 'vue';
+import { type PropType, defineComponent, nextTick } from 'vue';
 import FeatherIcon from './FeatherIcon.vue';
 
 export default defineComponent({
@@ -118,7 +118,7 @@ export default defineComponent({
   async mounted() {
     const duration = toastDurationMap[this.duration];
     await nextTick(() => (this.open = true));
-    if (duration !== Infinity) {
+    if (duration !== Number.POSITIVE_INFINITY) {
       setTimeout(this.closeToast, duration);
     }
   },

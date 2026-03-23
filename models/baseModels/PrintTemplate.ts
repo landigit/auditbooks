@@ -1,8 +1,8 @@
+import type { Fyo } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import { SchemaMap } from 'schemas/types';
-import { ListsMap, ListViewSettings, ReadOnlyMap } from 'fyo/model/types';
+import type { ListViewSettings, ListsMap, ReadOnlyMap } from 'fyo/model/types';
 import { ModelNameEnum } from 'models/types';
-import { Fyo } from 'fyo';
+import type { SchemaMap } from 'schemas/types';
 
 export class PrintTemplate extends Doc {
   name?: string;

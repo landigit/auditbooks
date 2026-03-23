@@ -1,13 +1,13 @@
 import { t } from 'fyo';
 import {
-  AccountRootType,
+  type AccountRootType,
   AccountRootTypeEnum,
 } from 'models/baseModels/Account/types';
 import {
   AccountReport,
   convertAccountRootNodesToAccountList,
 } from 'reports/AccountReport';
-import {
+import type {
   AccountListNode,
   AccountTreeNode,
   ReportData,
@@ -77,12 +77,7 @@ export class ProfitAndLoss extends AccountReport {
     incomeRoots: AccountTreeNode[] | undefined,
     expenseRoots: AccountTreeNode[] | undefined
   ): ReportData {
-    if (
-      incomeRoots &&
-      incomeRoots.length &&
-      !expenseRoots &&
-      !expenseRoots.length
-    ) {
+    if (incomeRoots?.length && !expenseRoots && !expenseRoots.length) {
       return this.getIncomeOrExpenseRows(
         incomeRoots,
         incomeRows,
@@ -90,11 +85,7 @@ export class ProfitAndLoss extends AccountReport {
       );
     }
 
-    if (
-      expenseRoots &&
-      expenseRoots.length &&
-      (!incomeRoots || !incomeRoots.length)
-    ) {
+    if (expenseRoots?.length && (!incomeRoots || !incomeRoots.length)) {
       return this.getIncomeOrExpenseRows(
         expenseRoots,
         expenseRows,
@@ -149,9 +140,9 @@ export class ProfitAndLoss extends AccountReport {
     const totalExpenseRow = this.getRowFromAccountListNode(totalExpense);
 
     const totalValueMap: ValueMap = new Map();
-    for (const key of totalIncome.valueMap!.keys()) {
-      const income = totalIncome.valueMap!.get(key)?.balance ?? 0;
-      const expense = totalExpense.valueMap!.get(key)?.balance ?? 0;
+    for (const key of totalIncome.valueMap?.keys()) {
+      const income = totalIncome.valueMap?.get(key)?.balance ?? 0;
+      const expense = totalExpense.valueMap?.get(key)?.balance ?? 0;
       totalValueMap.set(key, { balance: income - expense });
     }
 

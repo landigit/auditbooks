@@ -7,10 +7,10 @@
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import { Party } from 'models/baseModels/Party/Party';
 import { LoyaltyProgram } from 'models/baseModels/LoyaltyProgram/LoyaltyProgram';
+import { Party } from 'models/baseModels/Party/Party';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { getBgTextColorClass } from 'src/utils/colors';
 import { defineComponent } from 'vue';
 

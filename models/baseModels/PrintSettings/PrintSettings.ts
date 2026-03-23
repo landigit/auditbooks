@@ -1,6 +1,6 @@
-import { Attachment } from 'fyo/core/types';
+import type { Attachment } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import { HiddenMap } from 'fyo/model/types';
+import type { HiddenMap } from 'fyo/model/types';
 
 export class PrintSettings extends Doc {
   logo?: Attachment;

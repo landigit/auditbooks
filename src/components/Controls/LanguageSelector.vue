@@ -9,7 +9,7 @@
 </template>
 <script lang="ts">
 import { DEFAULT_LANGUAGE } from 'fyo/utils/consts';
-import { OptionField } from 'schemas/types';
+import type { OptionField } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { languageCodeMap, setLanguageMap } from 'src/utils/language';
 import { defineComponent } from 'vue';

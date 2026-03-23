@@ -11,9 +11,9 @@ async function verify() {
 
     // 2. Insert test record
     console.log('Inserting test record...');
-    const record = await fyo.db.insert('User', { 
+    const record = await fyo.db.insert('User', {
       name: 'deno_test_user',
-      email: 'deno@example.com' 
+      email: 'deno@example.com',
     });
     console.log('Inserted:', record);
 
@@ -24,7 +24,10 @@ async function verify() {
 
     // 4. Update record
     console.log('Updating record...');
-    await fyo.db.update('User', { name: 'deno_test_user', email: 'updated@example.com' });
+    await fyo.db.update('User', {
+      name: 'deno_test_user',
+      email: 'updated@example.com',
+    });
     const updated = await fyo.db.get('User', 'deno_test_user');
     console.log('Updated:', updated);
 

@@ -52,11 +52,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import DropdownWithActions from 'src/components/DropdownWithActions.vue';
-import Button from 'src/components/Button.vue';
-import PageHeader from 'src/components/PageHeader.vue';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import { ModelNameEnum } from 'models/types';
+import Button from 'src/components/Button.vue';
+import AutoComplete from 'src/components/Controls/AutoComplete.vue';
+import DropdownWithActions from 'src/components/DropdownWithActions.vue';
+import PageHeader from 'src/components/PageHeader.vue';
 
 export default defineComponent({
   components: { PageHeader, Button, DropdownWithActions, AutoComplete },

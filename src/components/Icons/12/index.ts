@@ -9,8 +9,8 @@ import Sidebar from './sidebar.vue';
 export default {
   'arrow-left-right': ArrowLeftRight,
   'drag-handle': DragHandle,
-  'filter': Filter,
-  'list': List,
-  'select': Select,
-  'sidebar': Sidebar,
+  filter: Filter,
+  list: List,
+  select: Select,
+  sidebar: Sidebar,
 };

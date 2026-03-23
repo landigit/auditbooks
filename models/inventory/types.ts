@@ -1,15 +1,15 @@
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 
 export enum ValuationMethod {
-  'FIFO' = 'FIFO',
-  'MovingAverage' = 'MovingAverage',
+  FIFO = 'FIFO',
+  MovingAverage = 'MovingAverage',
 }
 
 export enum MovementTypeEnum {
-  'MaterialIssue' = 'MaterialIssue',
-  'MaterialReceipt' = 'MaterialReceipt',
-  'MaterialTransfer' = 'MaterialTransfer',
-  'Manufacture' = 'Manufacture',
+  MaterialIssue = 'MaterialIssue',
+  MaterialReceipt = 'MaterialReceipt',
+  MaterialTransfer = 'MaterialTransfer',
+  Manufacture = 'Manufacture',
 }
 
 export type MovementType =
@@ -18,10 +18,7 @@ export type MovementType =
   | 'MaterialTransfer'
   | 'Manufacture';
 
-export type SerialNumberStatus =
-  | 'Inactive'
-  | 'Active'
-  | 'Delivered';
+export type SerialNumberStatus = 'Inactive' | 'Active' | 'Delivered';
 
 export interface SMDetails {
   date: Date;
@@ -56,7 +53,9 @@ export interface DocItem {
 
 export interface ReturnDocItem {
   quantity: number;
-  batches?: Record<string, { quantity: number, serialNumbers?: string[] }> | undefined;
+  batches?:
+    | Record<string, { quantity: number; serialNumbers?: string[] }>
+    | undefined;
   serialNumbers?: string[] | undefined;
 }
 

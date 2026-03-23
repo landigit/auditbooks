@@ -1,6 +1,6 @@
 import { CUSTOM_EVENTS } from 'utils/messages';
 import { UnexpectedLogObject } from 'utils/types';
-import { App as VueApp, createApp } from 'vue';
+import { type App as VueApp, createApp } from 'vue';
 import App from './App.vue';
 import Badge from './components/Badge.vue';
 import FeatherIcon from './components/FeatherIcon.vue';
@@ -15,19 +15,27 @@ import { setLanguageMap } from './utils/language';
 // --- Portless Unified Bridge (Vercel Style) ---
 const isWeb = typeof (window as any).ipc === 'undefined';
 // Smart origin detection: if on Vite dev port 6969, point to Deno backend on 8080
-const API_URL = isWeb 
-  ? (window.location.port === '6969' ? 'http://localhost:8080' : window.location.origin)
+const API_URL = isWeb
+  ? window.location.port === '6969'
+    ? 'http://localhost:8080'
+    : window.location.origin
   : 'http://localhost:8080';
 
 if (isWeb) {
   console.log('🚀 AuditBooks: Running in Unified Portless Mode...');
   (window as any).ipc = {
-    getEnv: () => Promise.resolve({ isDevelopment: false, platform: 'linux', version: '0.36.1' }),
+    getEnv: () =>
+      Promise.resolve({
+        isDevelopment: false,
+        platform: 'linux',
+        version: '0.36.1',
+      }),
     checkForUpdates: () => Promise.resolve(),
     checkDbAccess: () => Promise.resolve(true),
     getDbDefaultPath: () => Promise.resolve(':memory:'),
     initScheduler: () => Promise.resolve(),
-    sendAPIRequest: (endpoint: string, options: any) => fetch(endpoint, options),
+    sendAPIRequest: (endpoint: string, options: any) =>
+      fetch(endpoint, options),
 
     call: async (method: string, ...args: any[]) => {
       const [namespace, cmd] = method.split('.');
@@ -36,17 +44,22 @@ if (isWeb) {
         const token = localStorage.getItem('token');
         const headers = {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         };
 
         try {
           if (cmd === 'get') {
             const name = args[1];
-            const res = await fetch(`${API_URL}/data/records/${schemaName}/${name}`, { headers });
+            const res = await fetch(
+              `${API_URL}/data/records/${schemaName}/${name}`,
+              { headers }
+            );
             return await res.json();
           }
           if (cmd === 'getAll') {
-            const res = await fetch(`${API_URL}/data/records/${schemaName}`, { headers });
+            const res = await fetch(`${API_URL}/data/records/${schemaName}`, {
+              headers,
+            });
             return await res.json();
           }
           if (cmd === 'insert' || cmd === 'update') {
@@ -54,7 +67,7 @@ if (isWeb) {
             const res = await fetch(`${API_URL}/data/records/${schemaName}`, {
               method: 'POST',
               headers,
-              body: JSON.stringify(data)
+              body: JSON.stringify(data),
             });
             const result = await res.json();
             return result.record || result;
@@ -63,17 +76,17 @@ if (isWeb) {
             const name = args[1];
             await fetch(`${API_URL}/data/records/${schemaName}/${name}`, {
               method: 'DELETE',
-              headers
+              headers,
             });
             return true;
           }
         } catch (e) {
-          console.error(`Unified DB Error:`, e);
+          console.error('Unified DB Error:', e);
           return null;
         }
       }
       return null;
-    }
+    },
   };
 }
 
@@ -111,8 +124,12 @@ const ipc = (window as any).ipc;
   app.directive('on-outside-click', outsideClickDirective);
   app.mixin({
     computed: {
-      fyo() { return fyo; },
-      platform() { return platformName; },
+      fyo() {
+        return fyo;
+      },
+      platform() {
+        return platformName;
+      },
     },
     methods: {
       t: fyo.t,

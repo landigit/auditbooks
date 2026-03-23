@@ -1,5 +1,5 @@
 import { Doc } from 'fyo/model/doc';
-import { ListViewSettings } from 'fyo/model/types';
+import type { ListViewSettings } from 'fyo/model/types';
 
 export class ItemEnquiry extends Doc {
   item?: string;

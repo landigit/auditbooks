@@ -141,7 +141,7 @@
   </div>
 </template>
 <script lang="ts">
-import { ListViewSettings, RenderData } from 'fyo/model/types';
+import type { ListViewSettings, RenderData } from 'fyo/model/types';
 import { cloneDeep } from 'lodash';
 import Button from 'src/components/Button.vue';
 import Check from 'src/components/Controls/Check.vue';
@@ -149,8 +149,8 @@ import Paginator from 'src/components/Paginator.vue';
 import Row from 'src/components/Row.vue';
 import { fyo } from 'src/initFyo';
 import { isNumeric } from 'src/utils';
-import { QueryFilter } from 'utils/db/types';
-import { PropType, defineComponent, toRaw } from 'vue';
+import type { QueryFilter } from 'utils/db/types';
+import { type PropType, defineComponent, toRaw } from 'vue';
 import ListCell from './ListCell.vue';
 
 export default defineComponent({
@@ -263,17 +263,17 @@ export default defineComponent({
       let statusFilter: [string, string] | undefined;
 
       if ('status' in filters) {
-        statusFilter = filters['status'] as [string, string];
+        statusFilter = filters.status as [string, string];
       }
 
       const isStatusFilter =
         Array.isArray(statusFilter) && statusFilter[0] === 'like';
       if (isStatusFilter) {
-        delete filters['status'];
+        filters.status = undefined;
       }
 
       const orderBy = ['created'];
-      if (fyo.db.fieldMap[this.schemaName]['date']) {
+      if (fyo.db.fieldMap[this.schemaName].date) {
         orderBy.unshift('date');
       }
 

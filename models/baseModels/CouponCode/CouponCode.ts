@@ -1,17 +1,17 @@
-import { DocValue } from 'fyo/core/types';
+import { t } from 'fyo';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import {
+import type {
   FiltersMap,
   FormulaMap,
   ListViewSettings,
   ValidationMap,
 } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
-import { t } from 'fyo';
-import { Money } from 'pesa';
 import { ModelNameEnum } from 'models/types';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
-import { ApplicableCouponCodes } from '../Invoice/types';
+import type { Money } from 'pesa';
+import type { ApplicableCouponCodes } from '../Invoice/types';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 export class CouponCode extends Doc {
   name?: string;
@@ -31,7 +31,7 @@ export class CouponCode extends Doc {
       return;
     }
 
-    sinvDoc.coupons = sinvDoc.coupons!.filter((coupon) => {
+    sinvDoc.coupons = sinvDoc.coupons?.filter((coupon) => {
       return coupons.find((c: ApplicableCouponCodes) =>
         coupon?.coupons?.includes(c?.coupon)
       );

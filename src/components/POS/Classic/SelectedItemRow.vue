@@ -278,26 +278,26 @@
 </template>
 
 <script lang="ts">
+import type { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { getItemVisibility, validateQty } from 'models/helpers';
+import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
+import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import Currency from 'src/components/Controls/Currency.vue';
 import Data from 'src/components/Controls/Data.vue';
 import Float from 'src/components/Controls/Float.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Link from 'src/components/Controls/Link.vue';
 import Text from 'src/components/Controls/Text.vue';
-import { inject } from 'vue';
 import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { Money } from 'pesa';
-import { DiscountType } from '../types';
-import { validateSerialNumberCount } from 'src/utils/pos';
-import { getItemVisibility, validateQty } from 'models/helpers';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { showToast } from 'src/utils/interactive';
-import { ModelNameEnum } from 'models/types';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
-import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
+import { validateSerialNumberCount } from 'src/utils/pos';
+import { inject } from 'vue';
+import { type PropType, defineComponent } from 'vue';
+import type { DiscountType } from '../types';
 
 export default defineComponent({
   name: 'SelectedItemRow',
@@ -431,17 +431,13 @@ export default defineComponent({
       return !!fyo.singles.InventorySettings?.enableUomConversions;
     },
     hasSerialNumber(): boolean {
-      return !!(this.row.links?.item && this.row.links?.item.hasSerialNumber);
+      return !!this.row.links?.item?.hasSerialNumber;
     },
     isReadOnly() {
       return this.row.isFreeItem;
     },
     showAvlQuantityInBatch() {
-      return (
-        this.row.links?.item &&
-        this.row.links?.item.hasBatch &&
-        this.itemVisibility
-      );
+      return this.row.links?.item?.hasBatch && this.itemVisibility;
     },
   },
 
@@ -498,8 +494,8 @@ export default defineComponent({
       this.$emit('selectedRow', this.row);
     },
     adjustQuantity(change: number) {
-      let currentQuantity = this.row.quantity ?? 1;
-      let newQuantity = currentQuantity + change;
+      const currentQuantity = this.row.quantity ?? 1;
+      const newQuantity = currentQuantity + change;
 
       if (newQuantity === 0) {
         return;
@@ -621,7 +617,6 @@ export default defineComponent({
 
         if (existingCount === quantity) {
           return;
-        } else {
         }
       }
 

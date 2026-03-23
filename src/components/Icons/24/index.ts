@@ -7,10 +7,10 @@ import System from './system.vue';
 
 // prettier-ignore
 export default {
-  'general': General,
+  general: General,
   'green-check': GreenCheck,
-  'invoice': Invoice,
-  'mail': Mail,
-  'privacy': Privacy,
-  'system': System, 
-}
+  invoice: Invoice,
+  mail: Mail,
+  privacy: Privacy,
+  system: System,
+};

@@ -68,10 +68,10 @@
   </div>
 </template>
 <script lang="ts">
-import { Field } from 'schemas/types';
+import type { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { getDataURL } from 'src/utils/misc';
-import { defineComponent, PropType } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 import FeatherIcon from '../FeatherIcon.vue';
 import Base from './Base.vue';
 

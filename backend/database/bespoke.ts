@@ -1,15 +1,15 @@
-import {
+import type { DocItem, ReturnDocItem } from 'models/inventory/types';
+import type {
   Cashflow,
   IncomeExpense,
   TopExpenses,
   TotalCreditAndDebit,
   TotalOutstanding,
 } from 'utils/db/types';
-import { ModelNameEnum } from '../../models/types';
-import DatabaseCore from './core';
-import { BespokeFunction } from './types';
-import { DocItem, ReturnDocItem } from 'models/inventory/types';
 import { safeParseFloat } from 'utils/index';
+import { ModelNameEnum } from '../../models/types';
+import type DatabaseCore from './core';
+import type { BespokeFunction } from './types';
 
 export class BespokeQueries {
   [key: string]: BespokeFunction;
@@ -18,7 +18,7 @@ export class BespokeQueries {
     db: DatabaseCore,
     schemaName: string
   ): Promise<number> {
-    const lastInserted = (await db.knex!.raw(
+    const lastInserted = (await db.knex?.raw(
       'select cast(name as int) as num from ?? order by num desc limit 1',
       [schemaName]
     )) as { num: number }[];
@@ -35,14 +35,17 @@ export class BespokeQueries {
     fromDate: string,
     toDate: string
   ) {
-    const expenseAccounts = db
-      .knex!.select('name')
+    if (!db.knex) return [];
+
+    const knex = db.knex;
+    const expenseAccounts = knex
+      .select('name')
       .from('Account')
       .where('rootType', 'Expense');
 
-    const topExpenses = await db
-      .knex!.select({
-        total: db.knex!.raw('sum(cast(debit as real) - cast(credit as real))'),
+    const topExpenses = await knex
+      .select({
+        total: knex.raw('sum(cast(debit as real) - cast(credit as real))'),
       })
       .select('account')
       .from('AccountingLedgerEntry')
@@ -61,7 +64,10 @@ export class BespokeQueries {
     fromDate: string,
     toDate: string
   ) {
-    return (await db.knex!(schemaName)
+    if (!db.knex) return { total: 0, outstanding: 0 };
+
+    return (await db
+      .knex(schemaName)
       .sum({ total: 'baseGrandTotal' })
       .sum({ outstanding: 'outstandingAmount' })
       .where('submitted', true)
@@ -71,12 +77,15 @@ export class BespokeQueries {
   }
 
   static async getCashflow(db: DatabaseCore, fromDate: string, toDate: string) {
-    const cashAndBankAccounts = db.knex!('Account')
+    if (!db.knex) return [];
+
+    const knex = db.knex;
+    const cashAndBankAccounts = knex('Account')
       .select('name')
       .where('accountType', 'in', ['Cash', 'Bank'])
       .andWhere('isGroup', false);
-    const dateAsMonthYear = db.knex!.raw(`strftime('%Y-%m', ??)`, 'date');
-    return (await db.knex!('AccountingLedgerEntry')
+    const dateAsMonthYear = knex.raw(`strftime('%Y-%m', ??)`, 'date');
+    return (await knex('AccountingLedgerEntry')
       .where('reverted', false)
       .sum({
         inflow: 'debit',
@@ -95,7 +104,7 @@ export class BespokeQueries {
     fromDate: string,
     toDate: string
   ) {
-    const income = (await db.knex!.raw(
+    const income = (await db.knex?.raw(
       `
       select sum(cast(credit as real) - cast(debit as real)) as balance, strftime('%Y-%m', date) as yearmonth
       from AccountingLedgerEntry
@@ -111,7 +120,7 @@ export class BespokeQueries {
       [fromDate, toDate]
     )) as IncomeExpense['income'];
 
-    const expense = (await db.knex!.raw(
+    const expense = (await db.knex?.raw(
       `
       select sum(cast(debit as real) - cast(credit as real)) as balance, strftime('%Y-%m', date) as yearmonth
       from AccountingLedgerEntry
@@ -131,7 +140,7 @@ export class BespokeQueries {
   }
 
   static async getTotalCreditAndDebit(db: DatabaseCore) {
-    return (await db.knex!.raw(`
+    return (await db.knex?.raw(`
     select 
 	    account, 
       sum(cast(credit as real)) as totalCredit, 
@@ -151,7 +160,9 @@ export class BespokeQueries {
     serialNumbers?: string[]
   ): Promise<number | null> {
     /* eslint-disable @typescript-eslint/no-floating-promises */
-    const query = db.knex!(ModelNameEnum.StockLedgerEntry)
+    if (!db.knex) return null;
+    const knex = db.knex;
+    const query = knex(ModelNameEnum.StockLedgerEntry)
       .sum('quantity')
       .where('item', item);
 
@@ -188,8 +199,10 @@ export class BespokeQueries {
     schemaName: ModelNameEnum,
     docName: string
   ): Promise<Record<string, ReturnDocItem> | undefined> {
+    if (!db.knex) return undefined;
+    const _knex = db.knex;
     const returnDocNames = (
-      await db.knex!(schemaName)
+      await _knex(schemaName)
         .select('name')
         .where('returnAgainst', docName)
         .andWhere('submitted', true)
@@ -200,11 +213,14 @@ export class BespokeQueries {
       return;
     }
 
-    const returnedItemsQuery = db.knex!(`${schemaName}Item`)
+    if (!db.knex) return;
+    const knex = db.knex;
+
+    const returnedItemsQuery = knex(`${schemaName}Item`)
       .sum({ quantity: 'quantity' })
       .whereIn('parent', returnDocNames);
 
-    const docItemsQuery = db.knex!(`${schemaName}Item`)
+    const docItemsQuery = knex(`${schemaName}Item`)
       .where('parent', docName)
       .sum({ quantity: 'quantity' });
 
@@ -256,21 +272,19 @@ export class BespokeQueries {
       | undefined = {};
 
     for (const item of docItems) {
-      if (!!docItemsMap[item.item]) {
+      if (docItemsMap[item.item]) {
         if (item.batch) {
           let serialNumbers: string[] | undefined;
 
-          if (!docItemsMap[item.item].batches![item.batch]) {
+          if (!docItemsMap[item.item].batches?.[item.batch]) {
             docItemsMap[item.item].batches![item.batch] = {
               quantity: item.quantity,
               serialNumbers,
             };
           } else {
-            docItemsMap[item.item].batches![item.batch] = {
-              quantity: (docItemsMap[item.item].batches![item.batch].quantity +=
-                item.quantity),
-              serialNumbers,
-            };
+            const batch = docItemsMap[item.item].batches![item.batch];
+            batch.quantity += item.quantity;
+            batch.serialNumbers = serialNumbers;
           }
         } else {
           docItemsMap[item.item].quantity += item.quantity;
@@ -366,7 +380,7 @@ export class BespokeQueries {
           if (docItemSerialNumbers && itemSerialNumbers) {
             balanceSerialNumbers = docItemSerialNumbers.filter(
               (serialNumber: string) =>
-                itemSerialNumbers.indexOf(serialNumber) == -1
+                itemSerialNumbers.indexOf(serialNumber) === -1
             );
           }
 
@@ -415,7 +429,9 @@ export class BespokeQueries {
     toDate: Date,
     lastShiftClosingDate?: Date
   ): Promise<Record<string, number> | undefined> {
-    const invoicesQuery = db.knex!(ModelNameEnum.SalesInvoice)
+    if (!db.knex) return undefined;
+    const knex = db.knex;
+    const invoicesQuery = knex(ModelNameEnum.SalesInvoice)
       .select('name', 'returnAgainst')
       .where('isPOS', true)
       .andWhereBetween('date', [fromDate.toISOString(), toDate.toISOString()]);
@@ -446,8 +462,10 @@ export class BespokeQueries {
       {}
     );
 
+    if (!db.knex) return undefined;
+    const _knex = db.knex;
     const paymentEntryNames: string[] = (
-      await db.knex!(ModelNameEnum.PaymentFor)
+      await _knex(ModelNameEnum.PaymentFor)
         .select('parent', 'referenceName')
         .whereIn('referenceName', sinvNames)
     ).map((doc: { parent: string }) => doc.parent);
@@ -456,7 +474,8 @@ export class BespokeQueries {
       return;
     }
 
-    const groupedAmounts = (await db.knex!(ModelNameEnum.Payment)
+    const groupedAmounts = (await db
+      .knex?.(ModelNameEnum.Payment)
       .select('paymentMethod', 'name')
       .whereIn('name', paymentEntryNames)
       .groupBy('paymentMethod', 'name')
@@ -469,7 +488,8 @@ export class BespokeQueries {
     const transactedAmounts: Record<string, number> = {};
 
     for (const row of groupedAmounts) {
-      const paymentRefs = (await db.knex!(ModelNameEnum.PaymentFor)
+      const paymentRefs = (await db
+        .knex?.(ModelNameEnum.PaymentFor)
         .select('referenceName')
         .where('parent', row.name)) as { referenceName: string }[];
 

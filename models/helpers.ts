@@ -1,57 +1,61 @@
-import {
-  AccountRootType,
-  AccountRootTypeEnum,
-} from './baseModels/Account/types';
-import {
+import { type Fyo, t } from 'fyo';
+import type {
   Action,
   ColumnConfig,
   DocStatus,
   LeadStatus,
   RenderData,
 } from 'fyo/model/types';
-import { Fyo, t } from 'fyo';
-import { InvoiceStatus, ModelNameEnum } from './types';
-
 import {
-  ApplicableCouponCodes,
-  ApplicablePricingRules,
-} from './baseModels/Invoice/types';
-import { AppliedCouponCodes } from './baseModels/AppliedCouponCodes/AppliedCouponCodes';
-import { CollectionRulesItems } from './baseModels/CollectionRulesItems/CollectionRulesItems';
-import { CouponCode } from './baseModels/CouponCode/CouponCode';
-import { DateTime } from 'luxon';
-import { Doc } from 'fyo/model/doc';
-import { Invoice } from './baseModels/Invoice/Invoice';
-import { Lead } from './baseModels/Lead/Lead';
-import { LoyaltyProgram } from './baseModels/LoyaltyProgram/LoyaltyProgram';
-import { Money } from 'pesa';
-import { Party } from './baseModels/Party/Party';
-import { PricingRule } from './baseModels/PricingRule/PricingRule';
-import { Router } from 'vue-router';
-import { Item } from 'models/baseModels/Item/Item';
-import { SalesInvoice } from './baseModels/SalesInvoice/SalesInvoice';
-import { SalesQuote } from './baseModels/SalesQuote/SalesQuote';
-import { StockMovement } from './inventory/StockMovement';
-import { StockTransfer } from './inventory/StockTransfer';
-import { ValidationError } from 'fyo/utils/errors';
+  type AccountRootType,
+  AccountRootTypeEnum,
+} from './baseModels/Account/types';
+import { type InvoiceStatus, ModelNameEnum } from './types';
+
+import type { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
-import { numberSeriesDefaultsMap } from './baseModels/Defaults/Defaults';
-import { safeParseFloat } from 'utils/index';
-import { PriceList } from './baseModels/PriceList/PriceList';
-import { InvoiceItem } from './baseModels/InvoiceItem/InvoiceItem';
-import { SalesInvoiceItem } from './baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { ItemQtyMap, ItemVisibility, POSItem } from 'src/components/POS/types';
-import { ValuationMethod } from './inventory/types';
+import { ValidationError } from 'fyo/utils/errors';
+import { DateTime } from 'luxon';
+import type { Item } from 'models/baseModels/Item/Item';
+import { Money } from 'pesa';
 import {
   getRawStockLedgerEntries,
   getStockBalanceEntries,
   getStockLedgerEntries,
 } from 'reports/inventory/helpers';
-import { LoyaltyPointEntry } from './baseModels/LoyaltyPointEntry/LoyaltyPointEntry';
+import type {
+  ItemQtyMap,
+  ItemVisibility,
+  POSItem,
+} from 'src/components/POS/types';
+import { safeParseFloat } from 'utils/index';
+import type { Router } from 'vue-router';
+import type { AppliedCouponCodes } from './baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import type { CollectionRulesItems } from './baseModels/CollectionRulesItems/CollectionRulesItems';
+import type { CouponCode } from './baseModels/CouponCode/CouponCode';
+import { numberSeriesDefaultsMap } from './baseModels/Defaults/Defaults';
+import { Invoice } from './baseModels/Invoice/Invoice';
+import type {
+  ApplicableCouponCodes,
+  ApplicablePricingRules,
+} from './baseModels/Invoice/types';
+import type { InvoiceItem } from './baseModels/InvoiceItem/InvoiceItem';
+import type { Lead } from './baseModels/Lead/Lead';
+import type { LoyaltyPointEntry } from './baseModels/LoyaltyPointEntry/LoyaltyPointEntry';
+import type { LoyaltyProgram } from './baseModels/LoyaltyProgram/LoyaltyProgram';
+import type { Party } from './baseModels/Party/Party';
+import { PriceList } from './baseModels/PriceList/PriceList';
+import type { PricingRule } from './baseModels/PricingRule/PricingRule';
+import type { SalesInvoice } from './baseModels/SalesInvoice/SalesInvoice';
+import { SalesInvoiceItem } from './baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import type { SalesQuote } from './baseModels/SalesQuote/SalesQuote';
+import type { StockMovement } from './inventory/StockMovement';
+import { StockTransfer } from './inventory/StockTransfer';
 import {
-  generateSerialNumbersForItem,
   generateBatchForItem,
+  generateSerialNumbersForItem,
 } from './inventory/helpers';
+import { ValuationMethod } from './inventory/types';
 
 export function getQuoteActions(
   fyo: Fyo,
@@ -192,9 +196,8 @@ export function getMakeInvoiceAction(
     condition: (doc: Doc) => {
       if (schemaName === ModelNameEnum.SalesQuote) {
         return doc.isSubmitted;
-      } else {
-        return doc.isSubmitted && !doc.backReference;
       }
+      return doc.isSubmitted && !doc.backReference;
     },
     action: async (doc: Doc) => {
       const invoice = await (doc as SalesQuote | StockTransfer).getInvoice();
@@ -922,7 +925,7 @@ export async function getReturnQtyTotal(
           batches?: Record<string, number>;
         };
         entry.quantity += qty;
-        entry.batches![batch] = (entry.batches![batch] || 0) + qty;
+        entry.batches![batch] = (entry.batches?.[batch] || 0) + qty;
       }
     } else {
       quantitySum[itemName] = ((quantitySum[itemName] as number) || 0) + qty;
@@ -1210,7 +1213,7 @@ export async function getPricingRulesOfCoupons(
   }
 
   const filteredPricingRuleNames = appliedCoupons.filter(
-    (val) => val.pricingRule === pricingRuleDocNames![0]
+    (val) => val.pricingRule === pricingRuleDocNames?.[0]
   );
 
   if (!filteredPricingRuleNames.length) {
@@ -1363,7 +1366,8 @@ export async function getItemRateFromPriceList(
 
     if (transferUnit && pli.unit !== transferUnit) {
       return false;
-    } else if (unit && pli.unit !== unit) {
+    }
+    if (unit && pli.unit !== unit) {
       return false;
     }
 
@@ -1675,7 +1679,7 @@ export function removeFreeItems(sinvDoc: SalesInvoice) {
     return;
   }
 
-  if (!!sinvDoc.isPricingRuleApplied) {
+  if (sinvDoc.isPricingRuleApplied) {
     return;
   }
 

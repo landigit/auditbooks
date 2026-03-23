@@ -67,20 +67,20 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Table from 'src/components/Controls/Table.vue';
-import { AccountTypeEnum } from 'models/baseModels/Account/types';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { computed } from 'vue';
-import { defineComponent } from 'vue';
-import { fyo } from 'src/initFyo';
-import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
 import { ValidationError } from 'fyo/utils/errors';
+import { AccountTypeEnum } from 'models/baseModels/Account/types';
+import type { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
+import Button from 'src/components/Button.vue';
+import Table from 'src/components/Controls/Table.vue';
+import Modal from 'src/components/Modal.vue';
+import { fyo } from 'src/initFyo';
+import { showToast } from 'src/utils/interactive';
 import { getPOSOpeningShiftDoc } from 'src/utils/pos';
+import { computed } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'OpenPOSShift',
@@ -152,7 +152,7 @@ export default defineComponent({
       await this.posShiftDoc.set('openingAmounts', paymentMethods);
     },
     async seedDefaults() {
-      if (!!this.posShiftDoc?.isShiftOpen) {
+      if (this.posShiftDoc?.isShiftOpen) {
         return;
       }
 

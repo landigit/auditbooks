@@ -1,7 +1,7 @@
-import { ModelNameEnum } from 'models/types';
-import { DatabaseManager } from '../database/manager';
-import { AccountTypeEnum } from 'models/baseModels/Account/types';
 import { getDefaultMetaFieldValueMap } from 'backend/helpers';
+import { AccountTypeEnum } from 'models/baseModels/Account/types';
+import { ModelNameEnum } from 'models/types';
+import type { DatabaseManager } from '../database/manager';
 
 type AccountTypeMap = Record<AccountTypeEnum, string[] | undefined>;
 
@@ -23,7 +23,7 @@ async function execute(dm: DatabaseManager) {
 
   const accountsMap = accounts.reduce((acc, ac) => {
     acc[ac.accountType] ??= [];
-    acc[ac.accountType]!.push(ac.name);
+    acc[ac.accountType]?.push(ac.name);
     return acc;
   }, {} as AccountTypeMap);
 

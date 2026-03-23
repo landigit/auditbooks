@@ -1,11 +1,11 @@
-import { Fyo, t } from 'fyo';
+import { type Fyo, t } from 'fyo';
 import { cloneDeep } from 'lodash';
 import { DateTime } from 'luxon';
-import { AccountRootType } from 'models/baseModels/Account/types';
+import type { AccountRootType } from 'models/baseModels/Account/types';
 import { isCredit } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
 import { LedgerReport } from 'reports/LedgerReport';
-import {
+import type {
   Account,
   AccountList,
   AccountListNode,
@@ -25,9 +25,9 @@ import {
   TreeNode,
   ValueMap,
 } from 'reports/types';
-import { Field } from 'schemas/types';
+import type { Field } from 'schemas/types';
 import { getMapFromList } from 'utils';
-import { QueryFilter } from 'utils/db/types';
+import type { QueryFilter } from 'utils/db/types';
 
 export const ACC_NAME_WIDTH = 2;
 export const ACC_BAL_WIDTH = 1.25;
@@ -83,7 +83,7 @@ export abstract class AccountReport extends LedgerReport {
             rawValue: '',
             width: c.width,
             align: 'left',
-          } as ReportCell)
+          }) as ReportCell
       ),
     };
   }
@@ -124,7 +124,7 @@ export abstract class AccountReport extends LedgerReport {
       indent: al.level ?? 0,
     } as ReportCell;
 
-    const balanceCells = this._dateRanges!.map((k) => {
+    const balanceCells = this._dateRanges?.map((k) => {
       const rawValue = al.valueMap?.get(k)?.balance ?? 0;
       let value = this.fyo.format(rawValue, 'Currency');
       if (this.hideGroupAmounts && al.isGroup) {
@@ -174,7 +174,7 @@ export abstract class AccountReport extends LedgerReport {
 
         const totalBalance = valueMap.get(key)?.balance ?? 0;
         const balance = (entry.debit ?? 0) - (entry.credit ?? 0);
-        const rootType = this.accountMap![entry.account]?.rootType;
+        const rootType = this.accountMap?.[entry.account]?.rootType;
 
         if (isCredit(rootType)) {
           valueMap.set(key, { balance: totalBalance - balance });
@@ -224,7 +224,7 @@ export abstract class AccountReport extends LedgerReport {
 
   _getRangeMapKey(entry: LedgerEntry): DateRange | null {
     const entryDate = DateTime.fromISO(
-      entry.date!.toISOString().split('T')[0]
+      entry.date?.toISOString().split('T')[0]
     ).toMillis();
 
     for (const dr of this._dateRanges!) {
@@ -243,11 +243,10 @@ export abstract class AccountReport extends LedgerReport {
   // reference date was the last day in month, ensure that the resulting date is
   // also the last day.
   _fixMonthsJump(refDate: DateTime, date: DateTime): DateTime {
-    if (refDate.day == refDate.daysInMonth && date.day != date.daysInMonth) {
+    if (refDate.day === refDate.daysInMonth && date.day !== date.daysInMonth) {
       return date.set({ day: date.daysInMonth });
-    } else {
-      return date;
     }
+    return date;
   }
 
   async _getDateRanges(): Promise<DateRange[]> {
@@ -354,7 +353,7 @@ export abstract class AccountReport extends LedgerReport {
         label: t`Periodicity`,
         fieldname: 'periodicity',
       },
-      ,
+      undefined,
     ] as Field[];
 
     let dateFilters = [
@@ -423,20 +422,20 @@ export abstract class AccountReport extends LedgerReport {
       },
     ] as ColumnField[];
 
-    const dateColumns = this._dateRanges!.sort(
-      (a, b) => b.toDate.toMillis() - a.toDate.toMillis()
-    ).map((d) => {
-      const toDate = d.toDate.minus({ days: 1 });
-      const label = this.fyo.format(toDate.toJSDate(), 'Date');
+    const dateColumns = this._dateRanges
+      ?.sort((a, b) => b.toDate.toMillis() - a.toDate.toMillis())
+      .map((d) => {
+        const toDate = d.toDate.minus({ days: 1 });
+        const label = this.fyo.format(toDate.toJSDate(), 'Date');
 
-      return {
-        label,
-        fieldtype: 'Data',
-        fieldname: 'toDate',
-        align: 'right',
-        width: ACC_BAL_WIDTH,
-      } as ColumnField;
-    });
+        return {
+          label,
+          fieldtype: 'Data',
+          fieldname: 'toDate',
+          align: 'right',
+          width: ACC_BAL_WIDTH,
+        } as ColumnField;
+      });
 
     return [columns, dateColumns].flat();
   }
@@ -553,7 +552,7 @@ function setChildrenOnAccountTreeNodes(accountTree: AccountTree) {
     }
 
     accountTree[ac.parentAccount].children ??= [];
-    accountTree[ac.parentAccount].children!.push(ac);
+    accountTree[ac.parentAccount].children?.push(ac);
 
     parentNodes.add(ac.parentAccount);
   }
@@ -597,7 +596,7 @@ function getPrunedChildren(children: AccountTreeNode[]): AccountTreeNode[] {
 export function convertAccountRootNodesToAccountList(
   rootNodes: AccountTreeNode[]
 ): AccountList {
-  if (!rootNodes || rootNodes.length == 0) {
+  if (!rootNodes || rootNodes.length === 0) {
     return [];
   }
 

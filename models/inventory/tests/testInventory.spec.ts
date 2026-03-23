@@ -3,9 +3,9 @@ import {
   assertThrows,
 } from 'backend/database/tests/helpers';
 import { ModelNameEnum } from 'models/types';
-import { default as tape, default as test } from 'tape';
+import { type default as tape, default as test } from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { StockMovement } from '../StockMovement';
+import type { StockMovement } from '../StockMovement';
 import { MovementTypeEnum } from '../types';
 import { getItem, getSLEs, getStockMovement } from './helpers';
 
@@ -82,9 +82,9 @@ test('create stock movement, material receipt', async (t) => {
 
   const sle = sles[0];
   t.notEqual(new Date(sle.date).toString(), 'Invalid Date');
-  t.equal(parseInt(sle.name), 1);
+  t.equal(Number.parseInt(sle.name), 1);
   t.equal(sle.item, itemMap.Ink.name);
-  t.equal(parseFloat(sle.rate), rate);
+  t.equal(Number.parseFloat(sle.rate), rate);
   t.equal(sle.quantity, quantity);
   t.equal(sle.location, locationMap.LocationOne);
   t.equal(await fyo.db.getStockQuantity(itemMap.Ink.name), quantity);
@@ -118,7 +118,7 @@ test('create stock movement, material transfer', async (t) => {
   for (const sle of sles) {
     t.notEqual(new Date(sle.date).toString(), 'Invalid Date');
     t.equal(sle.item, itemMap.Ink.name);
-    t.equal(parseFloat(sle.rate), rate);
+    t.equal(Number.parseFloat(sle.rate), rate);
 
     if (sle.location === locationMap.LocationOne) {
       t.equal(sle.quantity, -quantity);
@@ -163,7 +163,7 @@ test('create stock movement, material issue', async (t) => {
   const sle = sles[0];
   t.notEqual(new Date(sle.date).toString(), 'Invalid Date');
   t.equal(sle.item, itemMap.Ink.name);
-  t.equal(parseFloat(sle.rate), rate);
+  t.equal(Number.parseFloat(sle.rate), rate);
   t.equal(sle.quantity, -quantity);
   t.equal(sle.location, locationMap.LocationTwo);
   t.equal(await fyo.db.getStockQuantity(itemMap.Ink.name), 0);

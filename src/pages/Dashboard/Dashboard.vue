@@ -73,12 +73,12 @@
 
 <script>
 import PageHeader from 'src/components/PageHeader.vue';
-import UnpaidInvoices from './UnpaidInvoices.vue';
+import { docsPathRef } from 'src/utils/refs';
 import Cashflow from './Cashflow.vue';
 import Expenses from './Expenses.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import ProfitAndLoss from './ProfitAndLoss.vue';
-import { docsPathRef } from 'src/utils/refs';
+import UnpaidInvoices from './UnpaidInvoices.vue';
 
 export default {
   name: 'Dashboard',

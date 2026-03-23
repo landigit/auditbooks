@@ -1,5 +1,5 @@
-import { Fyo } from 'fyo';
-import {
+import type { Fyo } from 'fyo';
+import type {
   AccountRootType,
   COAChildAccount,
   COARootAccount,

@@ -1,7 +1,7 @@
 <script lang="ts">
+import { DateTime } from 'luxon';
 import { defineComponent } from 'vue';
 import DateVue from './Date.vue';
-import { DateTime } from 'luxon';
 
 export default defineComponent({
   extends: DateVue,

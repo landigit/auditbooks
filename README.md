@@ -21,7 +21,7 @@
 <div align="center">
 	<a href="https://www.landigit.com/auditbooks">Website</a>
 	-
-	<a href="https://docs.landigit.com/auditbooks">Documentation</a>
+	<a href="https://www.landigit.com/auditbooks/docs">Documentation</a>
 </div>
 
 ## AuditBooks
@@ -41,7 +41,7 @@ AuditBooks is an open-source accounting software aimed at simplifying financial 
 
 ### Motivation
 
-AuditBooks is an evolution of Frappe Books, transformed into a premium standalone web application. It combines high-performance cloud persistence with a stunning, modern UI designed for professional accounting.
+AuditBooks is an evolution of Auditbooks, transformed into a premium standalone web application. It combines high-performance cloud persistence with a stunning, modern UI designed for professional accounting.
 
 ### Key Features
 
@@ -95,7 +95,7 @@ setup AuditBooks for development and building:
 
 ```bash
 # clone the repository
-git clone https://github.com/frappe/books.git
+git clone https://github.com/landigit/auditbooks.git
 
 # change directory
 cd books
@@ -180,4 +180,4 @@ If you want to contribute code then you can fork this repo, make changes and rai
 
 - [Telegram Group](https://t.me/frappebooks): Used for discussions and decisions regarding everything AuditBooks.
 - [GitHub Discussions](https://github.com/frappe/books/discussions): Used for discussions around a specific topic.
-- [Documentation](https://docs.www.landigit.com/auditbooks): Official documentation for more details.
+- [Documentation](https://www.landigit.com/auditbooks/docs): Official documentation for more details.

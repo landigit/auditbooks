@@ -1,9 +1,9 @@
-import { constants } from 'fs';
-import fs from 'fs/promises';
-import { ConfigFile } from 'fyo/core/types';
-import { Main } from 'main';
+import { constants } from 'node:fs';
+import fs from 'node:fs/promises';
+import type { ConfigFile } from 'fyo/core/types';
+import type { Main } from 'main';
 import config from 'utils/config';
-import { BackendResponse } from 'utils/ipc/types';
+import type { BackendResponse } from 'utils/ipc/types';
 import { IPC_CHANNELS } from 'utils/messages';
 import type { ConfigFilesWithModified } from 'utils/types';
 

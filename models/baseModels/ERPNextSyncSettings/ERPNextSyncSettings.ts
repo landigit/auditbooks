@@ -1,7 +1,7 @@
 import { Doc } from 'fyo/model/doc';
-import { ChangeArg, HiddenMap } from 'fyo/model/types';
-import { initERPNSync, syncDocumentsToERPNext } from 'src/utils/erpnextSync';
+import type { ChangeArg, HiddenMap } from 'fyo/model/types';
 import { ErrorLogEnum } from 'fyo/telemetry/types';
+import { initERPNSync, syncDocumentsToERPNext } from 'src/utils/erpnextSync';
 
 export class ERPNextSyncSettings extends Doc {
   deviceID?: string;
@@ -63,21 +63,16 @@ export class ERPNextSyncSettings extends Doc {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-
-        try {
-          await this.fyo.doc
-            .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
-              error: errorMessage,
-              data: JSON.stringify({
-                instance: this.deviceID,
-                operation: 'sync_data_from_server',
-                trigger: 'change_event',
-              }),
-            })
-            .sync();
-        } catch (logError) {
-          throw logError;
-        }
+        await this.fyo.doc
+          .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
+            error: errorMessage,
+            data: JSON.stringify({
+              instance: this.deviceID,
+              operation: 'sync_data_from_server',
+              trigger: 'change_event',
+            }),
+          })
+          .sync();
       }
     } else if (ch.changed === 'syncDataToServer') {
       try {
@@ -86,21 +81,16 @@ export class ERPNextSyncSettings extends Doc {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-
-        try {
-          await this.fyo.doc
-            .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
-              error: errorMessage,
-              data: JSON.stringify({
-                instance: this.deviceID,
-                operation: 'sync_data_to_server',
-                trigger: 'change_event',
-              }),
-            })
-            .sync();
-        } catch (logError) {
-          throw logError;
-        }
+        await this.fyo.doc
+          .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
+            error: errorMessage,
+            data: JSON.stringify({
+              instance: this.deviceID,
+              operation: 'sync_data_to_server',
+              trigger: 'change_event',
+            }),
+          })
+          .sync();
       }
     }
   }

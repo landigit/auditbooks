@@ -89,12 +89,12 @@
   </FormContainer>
 </template>
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import { Verb } from 'fyo/telemetry/types';
 import { TranslationString } from 'fyo/utils/translation';
 import { ModelNameEnum } from 'models/types';
-import { Field } from 'schemas/types';
+import type { Field } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
@@ -139,7 +139,7 @@ export default defineComponent({
         return this.docOrNull;
       }
 
-      throw new Error(`Doc is null`);
+      throw new Error('Doc is null');
     },
     areAllValuesFilled(): boolean {
       if (!this.hasDoc) {

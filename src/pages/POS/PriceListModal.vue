@@ -63,12 +63,12 @@
 
 <script lang="ts">
 import { t } from 'fyo';
-import Modal from 'src/components/Modal.vue';
-import { defineComponent, inject } from 'vue';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import Button from 'src/components/Button.vue';
-import { showToast } from 'src/utils/interactive';
 import Link from 'src/components/Controls/Link.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import Modal from 'src/components/Modal.vue';
+import { showToast } from 'src/utils/interactive';
+import { defineComponent, inject } from 'vue';
 
 export default defineComponent({
   name: 'PriceListModal',
@@ -89,7 +89,7 @@ export default defineComponent({
     },
     async applyPriceList(value?: string) {
       try {
-        if (!value || value == this.sinvDoc.priceList) {
+        if (!value || value === this.sinvDoc.priceList) {
           return;
         }
 

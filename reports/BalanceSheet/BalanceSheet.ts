@@ -1,13 +1,13 @@
 import { t } from 'fyo';
 import {
-  AccountRootType,
+  type AccountRootType,
   AccountRootTypeEnum,
 } from 'models/baseModels/Account/types';
 import {
   AccountReport,
   convertAccountRootNodesToAccountList,
 } from 'reports/AccountReport';
-import { ReportData, RootTypeRow } from 'reports/types';
+import type { ReportData, RootTypeRow } from 'reports/types';
 import { getMapFromList } from 'utils';
 
 export class BalanceSheet extends AccountReport {

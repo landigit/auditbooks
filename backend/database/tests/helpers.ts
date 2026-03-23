@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { cloneDeep } from 'lodash';
 import {
   addMetaFields,
@@ -6,7 +6,11 @@ import {
   getAbstractCombinedSchemas,
 } from '../../../schemas';
 import SingleValue from '../../../schemas/core/SingleValue.json';
-import { SchemaMap, SchemaStub, SchemaStubMap } from '../../../schemas/types';
+import type {
+  SchemaMap,
+  SchemaStub,
+  SchemaStubMap,
+} from '../../../schemas/types';
 
 const Customer = {
   name: 'Customer',

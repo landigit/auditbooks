@@ -1,6 +1,6 @@
 import { Doc } from 'fyo/model/doc';
-import { ListViewSettings } from 'fyo/model/types';
-import { Money } from 'pesa';
+import type { ListViewSettings } from 'fyo/model/types';
+import type { Money } from 'pesa';
 
 export class StockLedgerEntry extends Doc {
   date?: Date;

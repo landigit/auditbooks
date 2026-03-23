@@ -94,16 +94,16 @@
 </template>
 <script lang="ts">
 import { t } from 'fyo';
-import { DateTime } from 'luxon';
+import type { DateTime } from 'luxon';
 import { ModelNameEnum } from 'models/types';
 import MouseFollower from 'src/components/MouseFollower.vue';
 import { fyo } from 'src/initFyo';
 import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
-import { PeriodKey } from 'src/utils/types';
+import type { PeriodKey } from 'src/utils/types';
 import { routeTo } from 'src/utils/ui';
 import { safeParseFloat } from 'utils/index';
-import { PropType, defineComponent } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 import BaseDashboardChart from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';

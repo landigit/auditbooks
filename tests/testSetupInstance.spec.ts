@@ -1,7 +1,7 @@
 import { assertDoesNotThrow } from 'backend/database/tests/helpers';
 import { DateTime } from 'luxon';
 import setupInstance from 'src/setup/setupInstance';
-import { SetupWizardOptions } from 'src/setup/types';
+import type { SetupWizardOptions } from 'src/setup/types';
 import test from 'tape';
 import { getValueMapFromList } from 'utils';
 import {

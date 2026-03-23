@@ -137,51 +137,51 @@
 
 <script lang="ts">
 import { t } from 'fyo';
-import { Money } from 'pesa';
-import { fyo } from 'src/initFyo';
-import ModernPOS from './ModernPOS.vue';
-import ClassicPOS from './ClassicPOS.vue';
-import { ModelNameEnum } from 'models/types';
-import Button from 'src/components/Button.vue';
-import { showToast } from 'src/utils/interactive';
-import { Item } from 'models/baseModels/Item/Item';
-import { Shipment } from 'models/inventory/Shipment';
-import { routeTo, toggleSidebar } from 'src/utils/ui';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import PageHeader from 'src/components/PageHeader.vue';
-import { computed, defineComponent, inject } from 'vue';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { ModalName, modalNames } from 'src/components/POS/types';
-import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import { ValidationError } from 'fyo/utils/errors';
+import type { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import type { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import type { Item } from 'models/baseModels/Item/Item';
+import type { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
+import type { Payment } from 'models/baseModels/Payment/Payment';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import type { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import {
-  validateSinv,
+  getItemQtyMap,
+  getItemRateFromPriceList,
+  getItemVisibility,
+  getPricingRule,
+  isLoyaltyProgramExpiredAndMaxed,
+  removeFreeItems,
+  validateQty,
+} from 'models/helpers';
+import type { Shipment } from 'models/inventory/Shipment';
+import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
+import Button from 'src/components/Button.vue';
+import { type ModalName, modalNames } from 'src/components/POS/types';
+import type { ItemVisibility } from 'src/components/POS/types';
+import type {
+  ItemQtyMap,
+  ItemSerialNumbers,
+  POSItem,
+} from 'src/components/POS/types';
+import PageHeader from 'src/components/PageHeader.vue';
+import { fyo } from 'src/initFyo';
+import { shortcutsKey } from 'src/utils/injectionKeys';
+import { showToast } from 'src/utils/interactive';
+import {
   getItemDiscounts,
-  validateShipment,
   getTotalQuantity,
   getTotalTaxedAmount,
   validateIsPosSettingsSet,
+  validateShipment,
+  validateSinv,
 } from 'src/utils/pos';
-import {
-  validateQty,
-  getItemQtyMap,
-  getPricingRule,
-  removeFreeItems,
-  getItemRateFromPriceList,
-  getItemVisibility,
-  isLoyaltyProgramExpiredAndMaxed,
-} from 'models/helpers';
-import { ItemVisibility } from 'src/components/POS/types';
-import {
-  POSItem,
-  ItemQtyMap,
-  ItemSerialNumbers,
-} from 'src/components/POS/types';
-import { ValidationError } from 'fyo/utils/errors';
-import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
+import { routeTo, toggleSidebar } from 'src/utils/ui';
+import { computed, defineComponent, inject } from 'vue';
+import ClassicPOS from './ClassicPOS.vue';
+import ModernPOS from './ModernPOS.vue';
 
 const COMPONENT_NAME = 'POS';
 
@@ -475,7 +475,7 @@ export default defineComponent({
 
         const existingItems = (this.sinvDoc.items || []).filter(
           (invoiceItem) =>
-            (invoiceItem as InvoiceItem).item === row!.item &&
+            (invoiceItem as InvoiceItem).item === row?.item &&
             !(invoiceItem as InvoiceItem).isFreeItem
         ) as InvoiceItem[];
 
@@ -576,7 +576,7 @@ export default defineComponent({
           checkDigits.toString().length + itemCodeDigits
         );
 
-        if (!isNaN(Number(weightData))) {
+        if (!Number.isNaN(Number(weightData))) {
           isWeightBarcode = true;
           itemCode = extractedItemCode;
           weightPart = weightData;
@@ -604,7 +604,7 @@ export default defineComponent({
       if (!matchedItem) return;
 
       if (isWeightBarcode && weightPart) {
-        const weightValue = parseInt(weightPart, 10);
+        const weightValue = Number.parseInt(weightPart, 10);
         if ((matchedItem.unit as string)?.toLowerCase() === 'kg') {
           quantity = weightValue / 1000;
         } else {
@@ -746,7 +746,7 @@ export default defineComponent({
       for (const item of items) {
         let availableQty = 0;
 
-        if (!!this.itemQtyMap[item.name as string]) {
+        if (this.itemQtyMap[item.name as string]) {
           availableQty = this.itemQtyMap[item.name as string].availableQty;
         }
 
@@ -774,7 +774,7 @@ export default defineComponent({
         invoiceName
       )) as SalesInvoice;
 
-      let returnDoc = (await salesInvoiceDoc.getReturnDoc()) as SalesInvoice;
+      const returnDoc = (await salesInvoiceDoc.getReturnDoc()) as SalesInvoice;
 
       if (!returnDoc || !returnDoc.name) {
         return;
@@ -935,7 +935,7 @@ export default defineComponent({
           const addQty = quantity ?? 1;
 
           if (existingItems.length > 0) {
-            for (let existingItem of existingItems) {
+            for (const existingItem of existingItems) {
               const availableQty = await this.fyo.db.getStockQuantity(
                 existingItem.item as string,
                 undefined,
@@ -1060,7 +1060,7 @@ export default defineComponent({
 
         if (this.sinvDoc.priceList) {
           const itemData = this.sinvDoc.items?.filter(
-            (val) => val.item == itemName
+            (val) => val.item === itemName
           ) as SalesInvoiceItem[];
 
           if (itemData.length > 0) {
@@ -1220,9 +1220,8 @@ export default defineComponent({
       await this.paymentDoc.set('amount', this.fyo.pesa(this.paidAmount.float));
       await this.paymentDoc.set('referenceType', ModelNameEnum.SalesInvoice);
 
-      const paymentMethodDoc = await this.paymentDoc.loadAndGetLink(
-        'paymentMethod'
-      );
+      const paymentMethodDoc =
+        await this.paymentDoc.loadAndGetLink('paymentMethod');
 
       if (paymentMethodDoc?.type !== 'Cash') {
         await this.paymentDoc.setMultiple({
@@ -1401,7 +1400,8 @@ export default defineComponent({
 
         if (freeItemQty <= 0) {
           this.sinvDoc.items = this.sinvDoc.items?.filter(
-            (val) => !(val.isFreeItem && val.item == pRule.pricingRule.freeItem)
+            (val) =>
+              !(val.isFreeItem && val.item === pRule.pricingRule.freeItem)
           );
 
           outOfStockFreeItems.push(pRule.pricingRule.freeItem as string);

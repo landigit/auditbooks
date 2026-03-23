@@ -108,17 +108,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { t } from 'fyo';
-import { showToast } from 'src/utils/interactive';
-import Modal from 'src/components/Modal.vue';
+import type { DocValueMap } from 'fyo/core/types';
+import type { ItemEnquiry } from 'models/baseModels/ItemEnquiry/ItemEnquiry';
+import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
+import Data from 'src/components/Controls/Data.vue';
 import Link from 'src/components/Controls/Link.vue';
 import Text from 'src/components/Controls/Text.vue';
-import Data from 'src/components/Controls/Data.vue';
-import { ItemEnquiry } from 'models/baseModels/ItemEnquiry/ItemEnquiry';
-import { ModelNameEnum } from 'models/types';
-import { DocValueMap } from 'fyo/core/types';
+import Modal from 'src/components/Modal.vue';
+import { showToast } from 'src/utils/interactive';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'ItemEnquiryModal',

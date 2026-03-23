@@ -113,8 +113,8 @@ import Dropdown from 'src/components/Dropdown.vue';
 import { fuzzyMatch } from 'src/utils';
 import { getFormRoute, routeTo } from 'src/utils/ui';
 import Popover from '../Popover.vue';
-import Base from './Base.vue';
 import QuickView from '../QuickView.vue';
+import Base from './Base.vue';
 
 export default {
   name: 'AutoComplete',

@@ -96,7 +96,7 @@ export default defineComponent({
         return background;
       }
 
-      return border + ' ' + background;
+      return `${border} ${background}`;
     },
   },
   methods: {

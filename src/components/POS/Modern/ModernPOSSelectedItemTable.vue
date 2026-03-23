@@ -55,18 +55,18 @@
 </template>
 
 <script lang="ts">
-import FormContainer from 'src/components/FormContainer.vue';
+import { t } from 'fyo';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import type { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Link from 'src/components/Controls/Link.vue';
+import FormContainer from 'src/components/FormContainer.vue';
 import Row from 'src/components/Row.vue';
 import RowEditForm from 'src/pages/CommonForm/RowEditForm.vue';
-import ModernPOSSelectedItemRow from './ModernPOSSelectedItemRow.vue';
 import { isNumeric } from 'src/utils';
-import { t } from 'fyo';
-import { inject, defineComponent, PropType } from 'vue';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { Field } from 'schemas/types';
+import { type PropType, defineComponent, inject } from 'vue';
+import ModernPOSSelectedItemRow from './ModernPOSSelectedItemRow.vue';
 
 export default defineComponent({
   name: 'ModernPOSSelectedItemTable',

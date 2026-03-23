@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { TemplateFile } from 'utils/types';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import type { TemplateFile } from 'utils/types';
 
 export async function getTemplates(posTemplateWidth?: number) {
   const paths = await getPrintTemplatePaths();
@@ -14,7 +14,9 @@ export async function getTemplates(posTemplateWidth?: number) {
     const template = await fs.readFile(filePath, 'utf-8');
     const { mtime } = await fs.stat(filePath);
     const width =
-      file?.split('-')[1]?.split('.')[0] === 'POS' ? posTemplateWidth ?? 0 : 0;
+      file?.split('-')[1]?.split('.')[0] === 'POS'
+        ? (posTemplateWidth ?? 0)
+        : 0;
     const height = file?.split('-')[1]?.split('.')[0] === 'POS' ? 22 : 0;
 
     templates.push({
@@ -33,13 +35,13 @@ async function getPrintTemplatePaths(): Promise<{
   files: string[];
   root: string;
 } | null> {
-  let root = path.join(process.resourcesPath, `../templates`);
+  let root = path.join(process.resourcesPath, '../templates');
 
   try {
     const files = await fs.readdir(root);
     return { files, root };
   } catch {
-    root = path.join(__dirname, '..', '..', `templates`);
+    root = path.join(__dirname, '..', '..', 'templates');
   }
 
   try {

@@ -441,9 +441,7 @@
         "schemaName": "Currency"
       }
     ],
-    "quickEditFields": [
-      "symbol"
-    ],
+    "quickEditFields": ["symbol"],
     "titleField": "name"
   },
   "Defaults": {
@@ -1165,11 +1163,7 @@
         "schemaName": "NumberSeries"
       }
     ],
-    "quickEditFields": [
-      "referenceType",
-      "start",
-      "padZeros"
-    ],
+    "quickEditFields": ["referenceType", "start", "padZeros"],
     "titleField": "name"
   },
   "SerialNumberSeries": {
@@ -1248,10 +1242,7 @@
         "schemaName": "SerialNumberSeries"
       }
     ],
-    "quickEditFields": [
-      "start",
-      "padZeros"
-    ],
+    "quickEditFields": ["start", "padZeros"],
     "titleField": "name"
   },
   "BatchSeries": {
@@ -1330,10 +1321,7 @@
         "schemaName": "BatchSeries"
       }
     ],
-    "quickEditFields": [
-      "start",
-      "padZeros"
-    ],
+    "quickEditFields": ["start", "padZeros"],
     "titleField": "name"
   },
   "PrintSettings": {
@@ -1704,12 +1692,7 @@
         "schemaName": "Account"
       }
     ],
-    "quickEditFields": [
-      "rootType",
-      "parentAccount",
-      "accountType",
-      "isGroup"
-    ],
+    "quickEditFields": ["rootType", "parentAccount", "accountType", "isGroup"],
     "titleField": "name"
   },
   "AccountingSettings": {
@@ -2255,11 +2238,7 @@
       "role",
       "taxId"
     ],
-    "keywordFields": [
-      "name",
-      "email",
-      "role"
-    ],
+    "keywordFields": ["name", "email", "role"],
     "titleField": "name"
   },
   "Lead": {
@@ -2377,11 +2356,7 @@
         "schemaName": "Lead"
       }
     ],
-    "keywordFields": [
-      "name",
-      "email",
-      "mobile"
-    ],
+    "keywordFields": ["name", "email", "mobile"],
     "titleField": "name"
   },
   "Address": {
@@ -2597,13 +2572,8 @@
         "schemaName": "ItemGroup"
       }
     ],
-    "quickEditFields": [
-      "tax",
-      "hsnCode"
-    ],
-    "keywordFields": [
-      "name"
-    ],
+    "quickEditFields": ["tax", "hsnCode"],
+    "keywordFields": ["name"],
     "titleField": "name"
   },
   "Item": {
@@ -2867,11 +2837,7 @@
       "trackItem",
       "uom"
     ],
-    "keywordFields": [
-      "name",
-      "itemType",
-      "for"
-    ],
+    "keywordFields": ["name", "itemType", "for"],
     "titleField": "name"
   },
   "UOM": {
@@ -2932,9 +2898,7 @@
         "schemaName": "UOM"
       }
     ],
-    "quickEditFields": [
-      "isWhole"
-    ],
+    "quickEditFields": ["isWhole"],
     "titleField": "name"
   },
   "UOMConversionItem": {
@@ -2996,10 +2960,7 @@
         "schemaName": "UOMConversionItem"
       }
     ],
-    "tableFields": [
-      "uom",
-      "conversionFactor"
-    ],
+    "tableFields": ["uom", "conversionFactor"],
     "titleField": "name"
   },
   "LoyaltyProgram": {
@@ -3134,9 +3095,7 @@
       "maximumUse",
       "used"
     ],
-    "keywordFields": [
-      "name"
-    ],
+    "keywordFields": ["name"],
     "titleField": "name"
   },
   "LoyaltyPointEntry": {
@@ -3316,11 +3275,7 @@
         "schemaName": "CollectionRulesItems"
       }
     ],
-    "tableFields": [
-      "tierName",
-      "collectionFactor",
-      "minimumTotalSpent"
-    ],
+    "tableFields": ["tierName", "collectionFactor", "minimumTotalSpent"],
     "titleField": "name"
   },
   "Payment": {
@@ -3584,11 +3539,7 @@
       "attachment",
       "for"
     ],
-    "keywordFields": [
-      "name",
-      "party",
-      "paymentType"
-    ],
+    "keywordFields": ["name", "party", "paymentType"],
     "titleField": "name"
   },
   "PaymentMethod": {
@@ -3667,11 +3618,7 @@
         "schemaName": "PaymentMethod"
       }
     ],
-    "quickEditFields": [
-      "name",
-      "type",
-      "account"
-    ],
+    "quickEditFields": ["name", "type", "account"],
     "titleField": "name"
   },
   "PaymentFor": {
@@ -3751,15 +3698,8 @@
         "schemaName": "PaymentFor"
       }
     ],
-    "tableFields": [
-      "referenceType",
-      "referenceName",
-      "amount"
-    ],
-    "keywordFields": [
-      "referenceName",
-      "referenceType"
-    ],
+    "tableFields": ["referenceType", "referenceName", "amount"],
+    "keywordFields": ["referenceName", "referenceType"],
     "titleField": "name"
   },
   "JournalEntry": {
@@ -3945,10 +3885,7 @@
         "schemaName": "JournalEntry"
       }
     ],
-    "keywordFields": [
-      "name",
-      "entryType"
-    ],
+    "keywordFields": ["name", "entryType"],
     "titleField": "name"
   },
   "JournalEntryAccount": {
@@ -4015,14 +3952,8 @@
         "schemaName": "JournalEntryAccount"
       }
     ],
-    "tableFields": [
-      "account",
-      "debit",
-      "credit"
-    ],
-    "keywordFields": [
-      "account"
-    ],
+    "tableFields": ["account", "debit", "credit"],
+    "keywordFields": ["account"],
     "titleField": "name"
   },
   "ItemEnquiry": {
@@ -4248,9 +4179,7 @@
       "maximumUse",
       "used"
     ],
-    "keywordFields": [
-      "name"
-    ],
+    "keywordFields": ["name"],
     "titleField": "name"
   },
   "AppliedCouponCodes": {
@@ -4302,12 +4231,8 @@
         "schemaName": "AppliedCouponCodes"
       }
     ],
-    "tableFields": [
-      "coupons"
-    ],
-    "quickEditFields": [
-      "coupons"
-    ],
+    "tableFields": ["coupons"],
+    "quickEditFields": ["coupons"],
     "titleField": "name"
   },
   "PriceList": {
@@ -4458,11 +4383,7 @@
         "schemaName": "PriceListItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "unit",
-      "rate"
-    ],
+    "tableFields": ["item", "unit", "rate"],
     "titleField": "name"
   },
   "PricingRule": {
@@ -4821,9 +4742,7 @@
         "schemaName": "PricingRule"
       }
     ],
-    "keywordFields": [
-      "name"
-    ],
+    "keywordFields": ["name"],
     "titleField": "name"
   },
   "PricingRuleItem": {
@@ -4886,14 +4805,8 @@
         "schemaName": "PricingRuleItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "unit"
-    ],
-    "quickEditFields": [
-      "item",
-      "unit"
-    ],
+    "tableFields": ["item", "unit"],
+    "quickEditFields": ["item", "unit"],
     "titleField": "name"
   },
   "PricingRuleDetail": {
@@ -4955,10 +4868,7 @@
         "schemaName": "PricingRuleDetail"
       }
     ],
-    "tableFields": [
-      "referenceName",
-      "referenceItem"
-    ],
+    "tableFields": ["referenceName", "referenceItem"],
     "titleField": "name"
   },
   "Tax": {
@@ -5020,12 +4930,8 @@
         "schemaName": "Tax"
       }
     ],
-    "keywordFields": [
-      "name"
-    ],
-    "quickEditFields": [
-      "details"
-    ],
+    "keywordFields": ["name"],
+    "quickEditFields": ["details"],
     "titleField": "name"
   },
   "TaxDetail": {
@@ -5097,11 +5003,7 @@
         "schemaName": "TaxDetail"
       }
     ],
-    "tableFields": [
-      "account",
-      "payment_account",
-      "rate"
-    ],
+    "tableFields": ["account", "payment_account", "rate"],
     "titleField": "name"
   },
   "TaxSummary": {
@@ -5179,11 +5081,7 @@
         "schemaName": "TaxSummary"
       }
     ],
-    "tableFields": [
-      "account",
-      "rate",
-      "amount"
-    ],
+    "tableFields": ["account", "rate", "amount"],
     "titleField": "name"
   },
   "InventorySettings": {
@@ -5323,10 +5221,7 @@
         "schemaName": "Location"
       }
     ],
-    "quickEditFields": [
-      "item",
-      "address"
-    ],
+    "quickEditFields": ["item", "address"],
     "titleField": "name"
   },
   "StockLedgerEntry": {
@@ -5604,10 +5499,7 @@
       "amount",
       "items"
     ],
-    "keywordFields": [
-      "name",
-      "movementType"
-    ],
+    "keywordFields": ["name", "movementType"],
     "titleField": "name"
   },
   "StockMovementItem": {
@@ -5749,16 +5641,8 @@
         "schemaName": "StockMovementItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "fromLocation",
-      "toLocation",
-      "quantity",
-      "rate"
-    ],
-    "keywordFields": [
-      "item"
-    ],
+    "tableFields": ["item", "fromLocation", "toLocation", "quantity", "rate"],
+    "keywordFields": ["item"],
     "quickEditFields": [
       "item",
       "fromLocation",
@@ -5846,14 +5730,8 @@
         "schemaName": "Batch"
       }
     ],
-    "quickEditFields": [
-      "item",
-      "expiryDate",
-      "manufactureDate"
-    ],
-    "keywordFields": [
-      "name"
-    ],
+    "quickEditFields": ["item", "expiryDate", "manufactureDate"],
+    "keywordFields": ["name"],
     "titleField": "name"
   },
   "SerialNumber": {
@@ -5944,13 +5822,8 @@
         "schemaName": "SerialNumber"
       }
     ],
-    "quickEditFields": [
-      "item",
-      "description"
-    ],
-    "keywordFields": [
-      "name"
-    ],
+    "quickEditFields": ["item", "description"],
+    "keywordFields": ["name"],
     "titleField": "name"
   },
   "CustomForm": {
@@ -6189,12 +6062,7 @@
         "schemaName": "CustomField"
       }
     ],
-    "tableFields": [
-      "label",
-      "fieldname",
-      "fieldtype",
-      "isRequired"
-    ],
+    "tableFields": ["label", "fieldname", "fieldtype", "isRequired"],
     "quickEditFields": [
       "label",
       "fieldname",
@@ -7501,9 +7369,7 @@
         "schemaName": "IntegrationErrorLog"
       }
     ],
-    "keywordFields": [
-      "name"
-    ],
+    "keywordFields": ["name"],
     "titleField": "name"
   },
   "SalesInvoice": {
@@ -7895,10 +7761,7 @@
         "schemaName": "SalesInvoice"
       }
     ],
-    "keywordFields": [
-      "name",
-      "party"
-    ],
+    "keywordFields": ["name", "party"],
     "naming": "numberSeries",
     "showTitle": true,
     "titleField": "name"
@@ -8219,10 +8082,7 @@
         "schemaName": "PurchaseInvoice"
       }
     ],
-    "keywordFields": [
-      "name",
-      "party"
-    ],
+    "keywordFields": ["name", "party"],
     "naming": "numberSeries",
     "showTitle": true,
     "titleField": "name"
@@ -8513,10 +8373,7 @@
         "schemaName": "SalesQuote"
       }
     ],
-    "keywordFields": [
-      "name",
-      "party"
-    ],
+    "keywordFields": ["name", "party"],
     "naming": "numberSeries",
     "showTitle": true,
     "titleField": "name"
@@ -8739,17 +8596,8 @@
         "schemaName": "SalesInvoiceItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "tax",
-      "qty",
-      "rate",
-      "amount"
-    ],
-    "keywordFields": [
-      "item",
-      "tax"
-    ],
+    "tableFields": ["item", "tax", "qty", "rate", "amount"],
+    "keywordFields": ["item", "tax"],
     "quickEditFields": [
       "item",
       "account",
@@ -8977,17 +8825,8 @@
         "schemaName": "PurchaseInvoiceItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "tax",
-      "qty",
-      "rate",
-      "amount"
-    ],
-    "keywordFields": [
-      "item",
-      "tax"
-    ],
+    "tableFields": ["item", "tax", "qty", "rate", "amount"],
+    "keywordFields": ["item", "tax"],
     "quickEditFields": [
       "item",
       "account",
@@ -9215,17 +9054,8 @@
         "schemaName": "SalesQuoteItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "tax",
-      "qty",
-      "rate",
-      "amount"
-    ],
-    "keywordFields": [
-      "item",
-      "tax"
-    ],
+    "tableFields": ["item", "tax", "qty", "rate", "amount"],
+    "keywordFields": ["item", "tax"],
     "quickEditFields": [
       "item",
       "account",
@@ -9405,10 +9235,7 @@
         "schemaName": "Shipment"
       }
     ],
-    "keywordFields": [
-      "name",
-      "party"
-    ],
+    "keywordFields": ["name", "party"],
     "naming": "numberSeries",
     "showTitle": true,
     "titleField": "name"
@@ -9570,13 +9397,7 @@
         "schemaName": "ShipmentItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "location",
-      "quantity",
-      "rate",
-      "amount"
-    ],
+    "tableFields": ["item", "location", "quantity", "rate", "amount"],
     "quickEditFields": [
       "item",
       "transferQuantity",
@@ -9752,10 +9573,7 @@
         "schemaName": "PurchaseReceipt"
       }
     ],
-    "keywordFields": [
-      "name",
-      "party"
-    ],
+    "keywordFields": ["name", "party"],
     "naming": "numberSeries",
     "showTitle": true,
     "titleField": "name"
@@ -9917,13 +9735,7 @@
         "schemaName": "PurchaseReceiptItem"
       }
     ],
-    "tableFields": [
-      "item",
-      "location",
-      "quantity",
-      "rate",
-      "amount"
-    ],
+    "tableFields": ["item", "location", "quantity", "rate", "amount"],
     "quickEditFields": [
       "item",
       "transferQuantity",
@@ -10106,10 +9918,7 @@
       }
     ],
     "isChild": true,
-    "tableFields": [
-      "denomination",
-      "count"
-    ],
+    "tableFields": ["denomination", "count"],
     "titleField": "name"
   },
   "DefaultCashDenominations": {
@@ -10162,9 +9971,7 @@
       }
     ],
     "isChild": true,
-    "tableFields": [
-      "denomination"
-    ],
+    "tableFields": ["denomination"],
     "titleField": "name"
   },
   "OpeningAmounts": {
@@ -10238,10 +10045,7 @@
         "schemaName": "OpeningAmounts"
       }
     ],
-    "tableFields": [
-      "paymentMethod",
-      "amount"
-    ],
+    "tableFields": ["paymentMethod", "amount"],
     "titleField": "name"
   },
   "OpeningCash": {
@@ -10303,10 +10107,7 @@
       }
     ],
     "isChild": true,
-    "tableFields": [
-      "denomination",
-      "count"
-    ],
+    "tableFields": ["denomination", "count"],
     "titleField": "name"
   },
   "PatchRun": {

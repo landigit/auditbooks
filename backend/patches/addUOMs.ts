@@ -1,30 +1,30 @@
 import { ModelNameEnum } from '../../models/types';
-import { DatabaseManager } from '../database/manager';
+import type { DatabaseManager } from '../database/manager';
 import { getDefaultMetaFieldValueMap } from '../helpers';
 
 const defaultUOMs = [
   {
-    name: `Unit`,
+    name: 'Unit',
     isWhole: true,
   },
   {
-    name: `Kg`,
+    name: 'Kg',
     isWhole: false,
   },
   {
-    name: `Gram`,
+    name: 'Gram',
     isWhole: false,
   },
   {
-    name: `Meter`,
+    name: 'Meter',
     isWhole: false,
   },
   {
-    name: `Hour`,
+    name: 'Hour',
     isWhole: false,
   },
   {
-    name: `Day`,
+    name: 'Day',
     isWhole: false,
   },
 ];

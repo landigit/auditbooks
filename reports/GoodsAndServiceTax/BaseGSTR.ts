@@ -1,16 +1,21 @@
 import { t } from 'fyo';
-import { Action } from 'fyo/model/types';
+import type { Action } from 'fyo/model/types';
 import { DateTime } from 'luxon';
-import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import { Party } from 'models/regionalModels/in/Party';
+import type { Invoice } from 'models/baseModels/Invoice/Invoice';
+import type { Party } from 'models/regionalModels/in/Party';
 import { ModelNameEnum } from 'models/types';
 import { codeStateMap } from 'regional/in';
 import { Report } from 'reports/Report';
-import { ColumnField, ReportData, ReportRow } from 'reports/types';
-import { Field, OptionField } from 'schemas/types';
+import type { ColumnField, ReportData, ReportRow } from 'reports/types';
+import type { Field, OptionField } from 'schemas/types';
 import { isNumeric } from 'src/utils';
 import getGSTRExportActions from './gstExporter';
-import { GSTRRow, GSTRType, TransferType, TransferTypeEnum } from './types';
+import {
+  type GSTRRow,
+  type GSTRType,
+  type TransferType,
+  TransferTypeEnum,
+} from './types';
 
 export abstract class BaseGSTR extends Report {
   place?: string;
@@ -195,7 +200,7 @@ export abstract class BaseGSTR extends Report {
     for (const tax of entry.taxes ?? []) {
       const rate = tax.rate ?? 0;
       gstrRow.rate += rate;
-      const taxAmt = entry.netTotal!.percent(rate).float;
+      const taxAmt = entry.netTotal?.percent(rate).float;
 
       switch (tax.account) {
         case 'IGST': {

@@ -1,8 +1,8 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { AuthDemux } from 'fyo/demux/auth';
-import { AuthDemuxBase } from 'utils/auth/types';
-import { Creds } from 'utils/types';
-import { AuthDemuxConstructor } from './types';
+import type { AuthDemuxBase } from 'utils/auth/types';
+import type { Creds } from 'utils/types';
+import type { AuthDemuxConstructor } from './types';
 
 interface AuthConfig {
   serverURL: string;

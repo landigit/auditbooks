@@ -1,12 +1,12 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { DuplicateEntryError, NotFoundError } from 'fyo/utils/errors';
 import {
-  DynamicLinkField,
-  Field,
+  type DynamicLinkField,
+  type Field,
   FieldTypeEnum,
-  TargetField,
+  type TargetField,
 } from 'schemas/types';
-import { Doc } from './doc';
+import type { Doc } from './doc';
 
 type NotFoundDetails = { label: string; value: string };
 

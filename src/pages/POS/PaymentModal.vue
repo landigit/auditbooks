@@ -213,18 +213,18 @@
 </template>
 
 <script lang="ts">
+import { isPesa } from 'fyo/utils';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
 import Button from 'src/components/Button.vue';
 import Currency from 'src/components/Controls/Currency.vue';
 import Data from 'src/components/Controls/Data.vue';
 import Date from 'src/components/Controls/Date.vue';
 import Modal from 'src/components/Modal.vue';
-import { Money } from 'pesa';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
 import { fyo } from 'src/initFyo';
-import { isPesa } from 'fyo/utils';
-import { ModelNameEnum } from 'models/types';
 import { showToast } from 'src/utils/interactive';
+import { defineComponent, inject } from 'vue';
 
 export default defineComponent({
   name: 'PaymentModal',

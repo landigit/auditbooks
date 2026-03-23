@@ -1,6 +1,6 @@
 import { Doc } from 'fyo/model/doc';
-import { FiltersMap, FormulaMap } from 'fyo/model/types';
-import { Money } from 'pesa';
+import type { FiltersMap, FormulaMap } from 'fyo/model/types';
+import type { Money } from 'pesa';
 
 export class JournalEntryAccount extends Doc {
   getAutoDebitCredit(type: 'debit' | 'credit') {
@@ -15,8 +15,8 @@ export class JournalEntryAccount extends Doc {
       return this.fyo.pesa(0);
     }
 
-    const totalType = this.parentdoc!.getSum('accounts', type, false) as Money;
-    const totalOtherType = this.parentdoc!.getSum(
+    const totalType = this.parentdoc?.getSum('accounts', type, false) as Money;
+    const totalOtherType = this.parentdoc?.getSum(
       'accounts',
       otherType,
       false

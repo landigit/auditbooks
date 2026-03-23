@@ -89,7 +89,7 @@
 <script lang="ts">
 import { t } from 'fyo';
 import { Verb } from 'fyo/telemetry/types';
-import { Field, FieldTypeEnum } from 'schemas/types';
+import { type Field, FieldTypeEnum } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import {
   getCsvExportData,
@@ -97,10 +97,14 @@ import {
   getExportTableFields,
   getJsonExportData,
 } from 'src/utils/export';
-import { ExportField, ExportFormat, ExportTableField } from 'src/utils/types';
+import type {
+  ExportField,
+  ExportFormat,
+  ExportTableField,
+} from 'src/utils/types';
 import { getSavePath, showExportInFolder } from 'src/utils/ui';
-import { QueryFilter } from 'utils/db/types';
-import { PropType, defineComponent } from 'vue';
+import type { QueryFilter } from 'utils/db/types';
+import { type PropType, defineComponent } from 'vue';
 import Button from './Button.vue';
 import Check from './Controls/Check.vue';
 import Int from './Controls/Int.vue';

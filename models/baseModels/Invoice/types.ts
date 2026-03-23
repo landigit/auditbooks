@@ -1,4 +1,4 @@
-import { PricingRule } from '../PricingRule/PricingRule';
+import type { PricingRule } from '../PricingRule/PricingRule';
 
 export interface ApplicablePricingRules {
   applyOnItem: string;

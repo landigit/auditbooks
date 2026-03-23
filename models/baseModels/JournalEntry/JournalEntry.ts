@@ -1,12 +1,13 @@
-import { Fyo, t } from 'fyo';
-import { Doc } from 'fyo/model/doc';
-import {
+import { type Fyo, t } from 'fyo';
+import type { Doc } from 'fyo/model/doc';
+import type {
   Action,
   DefaultMap,
   FiltersMap,
   HiddenMap,
   ListViewSettings,
 } from 'fyo/model/types';
+import { Transactional } from 'models/Transactional/Transactional';
 import {
   getDocStatus,
   getLedgerLinkAction,
@@ -14,8 +15,7 @@ import {
   getStatusText,
   statusColor,
 } from 'models/helpers';
-import { Transactional } from 'models/Transactional/Transactional';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
 import { LedgerPosting } from '../../Transactional/LedgerPosting';
 
 export class JournalEntry extends Transactional {

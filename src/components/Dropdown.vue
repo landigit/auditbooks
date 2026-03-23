@@ -99,11 +99,11 @@
   </Popover>
 </template>
 <script lang="ts">
-import { Doc } from 'fyo/model/doc';
-import { Field } from 'schemas/types';
+import type { Doc } from 'fyo/model/doc';
+import type { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
-import { DropdownItem } from 'src/utils/types';
-import { defineComponent, PropType } from 'vue';
+import type { DropdownItem } from 'src/utils/types';
+import { type PropType, defineComponent } from 'vue';
 import Popover from './Popover.vue';
 
 export default defineComponent({
@@ -145,7 +145,7 @@ export default defineComponent({
       const groupNames = Object.keys(groupedItems).filter(Boolean).sort();
 
       const items: DropdownItem[] = groupedItems[''] ?? [];
-      for (let group of groupNames) {
+      for (const group of groupNames) {
         items.push({
           label: group,
           isGroup: true,
@@ -253,7 +253,7 @@ function getGroupedItems(
   items: DropdownItem[]
 ): Record<string, DropdownItem[]> {
   const groupedItems: Record<string, DropdownItem[]> = {};
-  for (let item of items) {
+  for (const item of items) {
     const group = item.group ?? '';
 
     groupedItems[group] ??= [];

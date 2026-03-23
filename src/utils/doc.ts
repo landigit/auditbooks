@@ -1,6 +1,6 @@
-import { Doc } from 'fyo/model/doc';
-import { DynamicLinkField, Field, TargetField } from 'schemas/types';
-import { GetAllOptions } from 'utils/db/types';
+import type { Doc } from 'fyo/model/doc';
+import type { DynamicLinkField, Field, TargetField } from 'schemas/types';
+import type { GetAllOptions } from 'utils/db/types';
 
 export function evaluateReadOnly(field: Field, doc?: Doc) {
   if (doc?.inserted && field.fieldname === 'numberSeries') {
@@ -74,16 +74,14 @@ export async function getLinkedEntries(
 
   const linkingFields = Object.values(fyo.schemaMap)
     .filter((sch) => !sch?.isSingle)
-    .map((sch) => sch?.fields)
-    .flat()
+    .flatMap((sch) => sch?.fields)
     .filter(
       (f) => f?.fieldtype === 'Link' && f.target === target
     ) as TargetField[];
 
   const dynamicLinkingFields = Object.values(fyo.schemaMap)
     .filter((sch) => !sch?.isSingle)
-    .map((sch) => sch?.fields)
-    .flat()
+    .flatMap((sch) => sch?.fields)
     .filter((f) => f?.fieldtype === 'DynamicLink') as DynamicLinkField[];
 
   type Detail = { name: string; created: string };
@@ -111,7 +109,7 @@ export async function getLinkedEntries(
 
     const schema = fyo.schemaMap[field.schemaName];
     if (schema?.isChild) {
-      options.fields!.push('parent', 'parentSchemaName');
+      options.fields?.push('parent', 'parentSchemaName');
     } else {
       options.fields?.push('created');
     }
@@ -131,7 +129,7 @@ export async function getLinkedEntries(
     for (const d of details) {
       if ('parent' in d) {
         childEntries[field.schemaName] ??= [];
-        childEntries[field.schemaName]!.push(d);
+        childEntries[field.schemaName]?.push(d);
       } else {
         entries[field.schemaName] ??= [];
         entries[field.schemaName].push(d);

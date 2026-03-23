@@ -1,5 +1,5 @@
-import { App } from 'electron';
-import path from 'path';
+import path from 'node:path';
+import type { App } from 'electron';
 import fs from 'fs-extra';
 import { getInitializedPrintWindow } from './saveHtmlAsPdf';
 
@@ -10,7 +10,7 @@ export async function printHtmlDocument(
   height: number
 ): Promise<boolean> {
   const tempRoot = app.getPath('temp');
-  const tempFile = path.join(tempRoot, `temp-print.html`);
+  const tempFile = path.join(tempRoot, 'temp-print.html');
   await fs.writeFile(tempFile, html, { encoding: 'utf-8' });
 
   const printWindow = await getInitializedPrintWindow(tempFile, width, height);

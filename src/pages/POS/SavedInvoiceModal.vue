@@ -117,15 +117,15 @@
 </template>
 
 <script lang="ts">
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
+import type { Field } from 'schemas/types';
 import Button from 'src/components/Button.vue';
+import FormControl from 'src/components/Controls/FormControl.vue';
 import Modal from 'src/components/Modal.vue';
 import Row from 'src/components/Row.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { defineComponent, inject } from 'vue';
-import { ModelNameEnum } from 'models/types';
-import { Field } from 'schemas/types';
-import { Money } from 'pesa';
 
 export default defineComponent({
   name: 'SavedInvoiceModal',
@@ -236,7 +236,7 @@ export default defineComponent({
       );
     },
     async selectedInvoice(row: SalesInvoice) {
-      let selectedInvoiceDoc = (await this.fyo.doc.getDoc(
+      const selectedInvoiceDoc = (await this.fyo.doc.getDoc(
         ModelNameEnum.SalesInvoice,
         row.name
       )) as SalesInvoice;

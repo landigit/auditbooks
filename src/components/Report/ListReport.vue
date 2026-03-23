@@ -111,9 +111,9 @@ import { Report } from 'reports/Report';
 import { isNumeric } from 'src/utils';
 import { languageDirectionKey } from 'src/utils/injectionKeys';
 import { defineComponent } from 'vue';
+import { inject } from 'vue';
 import Paginator from '../Paginator.vue';
 import WithScroll from '../WithScroll.vue';
-import { inject } from 'vue';
 
 export default defineComponent({
   components: { Paginator, WithScroll },
@@ -175,7 +175,7 @@ export default defineComponent({
         align = this.languageDirection === 'rtl' ? 'right' : 'left';
       }
 
-      styles['width'] = `${width * this.wconst}rem`;
+      styles.width = `${width * this.wconst}rem`;
       styles['text-align'] = align;
 
       if (cell.bold) {
@@ -219,7 +219,8 @@ export default defineComponent({
     getCellColorClass(cell) {
       if (cell.color === 'red') {
         return 'text-red-600';
-      } else if (cell.color === 'green') {
+      }
+      if (cell.color === 'green') {
         return 'text-green-600';
       }
 

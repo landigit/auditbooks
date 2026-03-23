@@ -1,15 +1,20 @@
-import { Fyo } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import { Action } from 'fyo/model/types';
+import type { Fyo } from 'fyo';
+import type { DocValue } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type { Action } from 'fyo/model/types';
 import { Money } from 'pesa';
-import { Field, FieldType, OptionField, SelectOption } from 'schemas/types';
+import type {
+  Field,
+  FieldType,
+  OptionField,
+  SelectOption,
+} from 'schemas/types';
 import { getIsNullOrUndef, safeParseInt } from 'utils';
 
 export function slug(str: string) {
   return str
     .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => {
-      return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
+      return index === 0 ? letter.toLowerCase() : letter.toUpperCase();
     })
     .replace(/\s+/g, '');
 }
@@ -154,9 +159,6 @@ export function getEmptyValuesByFieldTypes(
     case 'Data':
     case 'Color':
       return null;
-    case 'Table':
-    case 'Attachment':
-    case 'AttachImage':
     default:
       return null;
   }

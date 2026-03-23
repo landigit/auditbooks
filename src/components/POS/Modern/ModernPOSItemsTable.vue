@@ -122,13 +122,13 @@
 </template>
 
 <script lang="ts">
+import { t } from 'fyo';
+import type { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Row from 'src/components/Row.vue';
 import { isNumeric } from 'src/utils';
-import { t } from 'fyo';
 import { defineComponent } from 'vue';
-import { Field } from 'schemas/types';
-import { POSItem } from '../types';
+import type { POSItem } from '../types';
 
 export default defineComponent({
   name: 'ModernPOSItemsTable',

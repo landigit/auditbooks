@@ -1,34 +1,35 @@
+import { constants } from 'node:fs';
+import path from 'node:path';
 import {
-  MessageBoxOptions,
-  OpenDialogOptions,
-  SaveDialogOptions,
+  type MessageBoxOptions,
+  type OpenDialogOptions,
+  type SaveDialogOptions,
   app,
   dialog,
   ipcMain,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import { constants } from 'fs';
 import fs from 'fs-extra';
-import path from 'path';
-import { SelectFileOptions, SelectFileReturn } from 'utils/types';
+import type { RequestInit } from 'node-fetch';
+import type { SelectFileOptions, SelectFileReturn } from 'utils/types';
 import databaseManager from '../backend/database/manager';
 import { emitMainProcessError } from '../backend/helpers';
-import { Main } from '../main';
-import { DatabaseMethod } from '../utils/db/types';
+import type { Main } from '../main';
+import type { DatabaseMethod } from '../utils/db/types';
 import { IPC_ACTIONS } from '../utils/messages';
+import { sendAPIRequest } from './api';
 import { getUrlAndTokenString, sendError } from './contactMothership';
 import { getLanguageMap } from './getLanguageMap';
 import { getTemplates } from './getPrintTemplates';
-import { printHtmlDocument } from './printHtmlDocument';
 import {
   getConfigFilesWithModified,
   getErrorHandledReponse,
   isNetworkError,
   setAndGetCleanedConfigFiles,
 } from './helpers';
-import { saveHtmlAsPdf } from './saveHtmlAsPdf';
-import { sendAPIRequest } from './api';
 import { initScheduler } from './initSheduler';
+import { printHtmlDocument } from './printHtmlDocument';
+import { saveHtmlAsPdf } from './saveHtmlAsPdf';
 
 export default function registerIpcMainActionListeners(main: Main) {
   ipcMain.handle(IPC_ACTIONS.CHECK_DB_ACCESS, async (_, filePath: string) => {
@@ -65,7 +66,8 @@ export default function registerIpcMainActionListeners(main: Main) {
         const option = await dialog.showMessageBox({
           type: 'question',
           title: 'File Exists',
-          message: `Filename already exists. Do you want to overwrite the existing file or create a new one?`,
+          message:
+            'Filename already exists. Do you want to overwrite the existing file or create a new one?',
           buttons: ['Overwrite', 'New'],
         });
 
@@ -91,14 +93,20 @@ export default function registerIpcMainActionListeners(main: Main) {
   ipcMain.handle(
     IPC_ACTIONS.GET_OPEN_FILEPATH,
     async (_, options: OpenDialogOptions) => {
-      return await dialog.showOpenDialog(main.mainWindow!, options);
+      if (!main.mainWindow) {
+        return { canceled: true, filePaths: [] };
+      }
+      return await dialog.showOpenDialog(main.mainWindow, options);
     }
   );
 
   ipcMain.handle(
     IPC_ACTIONS.GET_SAVE_FILEPATH,
     async (_, options: SaveDialogOptions) => {
-      return await dialog.showSaveDialog(main.mainWindow!, options);
+      if (!main.mainWindow) {
+        return { canceled: true, filePath: '' };
+      }
+      return await dialog.showSaveDialog(main.mainWindow, options);
     }
   );
 
@@ -109,7 +117,11 @@ export default function registerIpcMainActionListeners(main: Main) {
         Object.assign(options, { icon: main.icon });
       }
 
-      return await dialog.showMessageBox(main.mainWindow!, options);
+      if (!main.mainWindow) {
+        return { response: 0, checkboxChecked: false };
+      }
+
+      return await dialog.showMessageBox(main.mainWindow, options);
     }
   );
 
@@ -190,8 +202,12 @@ export default function registerIpcMainActionListeners(main: Main) {
         data: Buffer.from('', 'utf-8'),
         canceled: false,
       };
+      if (!main.mainWindow) {
+        return response;
+      }
+
       const { filePaths, canceled } = await dialog.showOpenDialog(
-        main.mainWindow!,
+        main.mainWindow,
         { ...options, properties: ['openFile'] }
       );
 

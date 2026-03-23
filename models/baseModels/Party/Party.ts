@@ -1,6 +1,6 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import {
+import type {
   Action,
   FiltersMap,
   FormulaMap,
@@ -11,10 +11,10 @@ import {
   validateEmail,
   validatePhoneNumber,
 } from 'fyo/model/validationFunction';
-import { Money } from 'pesa';
-import { PartyRole } from './types';
-import { ModelNameEnum } from 'models/types';
 import { isLoyaltyProgramExpiredAndMaxed } from 'models/helpers';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
+import type { PartyRole } from './types';
 
 export class Party extends Doc {
   role?: PartyRole;
@@ -33,23 +33,20 @@ export class Party extends Doc {
     let outstandingAmount = this.fyo.pesa(0);
 
     if (role === 'Customer' || role === 'Both') {
-      const outstandingReceive = await this._getTotalOutstandingAmount(
-        'SalesInvoice'
-      );
+      const outstandingReceive =
+        await this._getTotalOutstandingAmount('SalesInvoice');
       outstandingAmount = outstandingAmount.add(outstandingReceive);
     }
 
     if (role === 'Supplier') {
-      const outstandingPay = await this._getTotalOutstandingAmount(
-        'PurchaseInvoice'
-      );
+      const outstandingPay =
+        await this._getTotalOutstandingAmount('PurchaseInvoice');
       outstandingAmount = outstandingAmount.add(outstandingPay);
     }
 
     if (role === 'Both') {
-      const outstandingPay = await this._getTotalOutstandingAmount(
-        'PurchaseInvoice'
-      );
+      const outstandingPay =
+        await this._getTotalOutstandingAmount('PurchaseInvoice');
       outstandingAmount = outstandingAmount.sub(outstandingPay);
     }
 
@@ -141,7 +138,7 @@ export class Party extends Doc {
     currency: {
       formula: () => {
         if (!this.currency) {
-          return this.fyo.singles.SystemSettings!.currency as string;
+          return this.fyo.singles.SystemSettings?.currency as string;
         }
       },
     },

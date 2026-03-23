@@ -1,4 +1,4 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 
 export function getDefaultUOMs(fyo: Fyo) {
   return [

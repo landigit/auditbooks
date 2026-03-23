@@ -1,8 +1,8 @@
-import { Fyo } from 'fyo';
-import { ConfigFile } from 'fyo/core/types';
+import type { Fyo } from 'fyo';
+import type { ConfigFile } from 'fyo/core/types';
 import { getRegionalModels, models } from 'models/index';
 import { ModelNameEnum } from 'models/types';
-import { TargetField } from 'schemas/types';
+import type { TargetField } from 'schemas/types';
 import {
   getMapFromList,
   getRandomString,
@@ -64,8 +64,7 @@ async function checkSingleLinks(fyo: Fyo) {
 
   const linkFields = Object.values(fyo.db.schemaMap)
     .filter((schema) => schema?.isSingle)
-    .map((schema) => schema!.fields)
-    .flat()
+    .flatMap((schema) => schema?.fields)
     .filter((field) => field.fieldtype === 'Link' && field.target)
     .map((field) => ({
       fieldKey: `${field.schemaName!}.${field.fieldname}`,

@@ -1,7 +1,9 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
+import type { StockTransfer } from 'models/inventory/StockTransfer';
 import { StockQueue } from 'models/inventory/stockQueue';
 import { ValuationMethod } from 'models/inventory/types';
 import { ModelNameEnum } from 'models/types';
+import type { QueryFilter } from 'utils/db/types';
 import { safeParseFloat, safeParseInt } from 'utils/index';
 import type {
   ComputedStockLedgerEntry,
@@ -9,8 +11,6 @@ import type {
   SerialNumberStatus,
   StockBalanceEntry,
 } from './types';
-import type { QueryFilter } from 'utils/db/types';
-import type { StockTransfer } from 'models/inventory/StockTransfer';
 
 type Item = string;
 type Location = string;

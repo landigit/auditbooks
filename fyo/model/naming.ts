@@ -1,9 +1,9 @@
-import { Fyo } from 'fyo';
-import NumberSeries from 'fyo/models/NumberSeries';
+import type { Fyo } from 'fyo';
+import type NumberSeries from 'fyo/models/NumberSeries';
 import { DEFAULT_SERIES_START } from 'fyo/utils/consts';
-import { BaseError } from 'fyo/utils/errors';
+import type { BaseError } from 'fyo/utils/errors';
 import { getRandomString } from 'utils';
-import { Doc } from './doc';
+import type { Doc } from './doc';
 
 export function isNameAutoSet(schemaName: string, fyo: Fyo): boolean {
   const schema = fyo.schemaMap[schemaName]!;

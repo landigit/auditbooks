@@ -58,11 +58,11 @@ import { fyo } from 'src/initFyo';
 import { formatXLabels, getYMax } from 'src/utils/chart';
 import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
+import type { PeriodKey } from 'src/utils/types';
+import { getMapFromList } from 'utils/index';
+import { defineComponent } from 'vue';
 import DashboardChartBase from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
-import { defineComponent } from 'vue';
-import { getMapFromList } from 'utils/index';
-import { PeriodKey } from 'src/utils/types';
 
 // Linting broken in this file cause of `extends: ...`
 /* 

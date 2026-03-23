@@ -1,12 +1,12 @@
 import { t } from 'fyo';
-import { RawValueMap } from 'fyo/core/types';
-import { Action } from 'fyo/model/types';
+import type { RawValueMap } from 'fyo/core/types';
+import type { Action } from 'fyo/model/types';
 import getCommonExportActions from 'reports/commonExporter';
-import { ColumnField, ReportData } from 'reports/types';
-import { Field } from 'schemas/types';
-import { getStockBalanceEntries } from './helpers';
+import type { ColumnField, ReportData } from 'reports/types';
+import type { Field } from 'schemas/types';
 import { StockLedger } from './StockLedger';
-import { ReferenceType, SerialNumberStatus } from './types';
+import { getStockBalanceEntries } from './helpers';
+import type { ReferenceType, SerialNumberStatus } from './types';
 
 export class StockBalance extends StockLedger {
   static title = t`Stock Balance`;

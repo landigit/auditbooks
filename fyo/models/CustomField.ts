@@ -1,4 +1,4 @@
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import type {
   FormulaMap,
@@ -74,8 +74,8 @@ export class CustomField extends Doc {
       const field = this.parentFields?.[value];
       if (field && !field.isCustom) {
         throw new ValueError(
-          this.fyo.t`Fieldname ${value} already exists for ${this.parentdoc!
-            .name!}`
+          this.fyo
+            .t`Fieldname ${value} already exists for ${this.parentdoc?.name!}`
         );
       }
 

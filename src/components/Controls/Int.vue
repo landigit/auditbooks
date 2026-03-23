@@ -1,7 +1,7 @@
 <script lang="ts">
-import Data from './Data.vue';
-import { defineComponent } from 'vue';
 import { safeParseInt } from 'utils/index';
+import { defineComponent } from 'vue';
+import Data from './Data.vue';
 
 export default defineComponent({
   name: 'Int',

@@ -80,11 +80,11 @@
   </FormContainer>
 </template>
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
+import type { DocValue } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
 import { ValidationError } from 'fyo/utils/errors';
 import { ModelNameEnum } from 'models/types';
-import { Field, Schema } from 'schemas/types';
+import type { Field, Schema } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
@@ -95,7 +95,7 @@ import { shortcutsKey } from 'src/utils/injectionKeys';
 import { showDialog } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
-import { UIGroupedFields } from 'src/utils/types';
+import type { UIGroupedFields } from 'src/utils/types';
 import { computed, defineComponent, inject } from 'vue';
 import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 
@@ -301,7 +301,7 @@ export default defineComponent({
     },
     updateGroupedFields(): void {
       const grouped: UIGroupedFields = new Map();
-      const fields: Field[] = this.schemas.map((s) => s.fields).flat();
+      const fields: Field[] = this.schemas.flatMap((s) => s.fields);
 
       for (const field of fields) {
         const schemaName = field.schemaName!;
@@ -324,7 +324,7 @@ export default defineComponent({
           continue;
         }
 
-        tabbed.get(section)!.push(field);
+        tabbed.get(section)?.push(field);
       }
 
       this.groupedFields = grouped;

@@ -1,14 +1,14 @@
 import { t } from 'fyo';
 import type { Doc } from 'fyo/model/doc';
-import { BaseError } from 'fyo/utils/errors';
-import { ErrorLog } from 'fyo/utils/types';
+import type { BaseError } from 'fyo/utils/errors';
+import type { ErrorLog } from 'fyo/utils/types';
 import { truncate } from 'lodash';
+import { ModelNameEnum } from 'models/types';
 import { showDialog } from 'src/utils/interactive';
 import { fyo } from './initFyo';
 import router from './router';
 import { getErrorMessage, stringifyCircular } from './utils';
 import type { DialogOptions, ToastOptions } from './utils/types';
-import { ModelNameEnum } from 'models/types';
 
 function shouldNotStore(error: Error) {
   const shouldLog = (error as BaseError).shouldStore ?? true;
@@ -197,20 +197,23 @@ function getFeatureFlags(): string[] {
   const getBooleanFields = (docName: string) => {
     const doc = fyo.singles[docName];
 
-    return Object.entries(doc as Doc).reduce((acc, [key, value]) => {
-      const fieldsArray = fyo.schemaMap[docName]?.fields ?? [];
-      const fieldsMap = new Map(fieldsArray.map((f) => [f.fieldname, f]));
+    return Object.entries(doc as Doc).reduce(
+      (acc, [key, value]) => {
+        const fieldsArray = fyo.schemaMap[docName]?.fields ?? [];
+        const fieldsMap = new Map(fieldsArray.map((f) => [f.fieldname, f]));
 
-      const field = fieldsMap.get(key);
-      if (
-        typeof value === 'boolean' &&
-        !field?.hidden &&
-        !key.startsWith('_')
-      ) {
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as Record<string, boolean>);
+        const field = fieldsMap.get(key);
+        if (
+          typeof value === 'boolean' &&
+          !field?.hidden &&
+          !key.startsWith('_')
+        ) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
   };
 
   const sections = [
@@ -246,7 +249,8 @@ function getFeatureFlags(): string[] {
 }
 
 function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
-  const baseUrl = 'https://github.com/landigit/auditbooks/issues/new?labels=bug';
+  const baseUrl =
+    'https://github.com/landigit/auditbooks/issues/new?labels=bug';
 
   const body = [
     '<h2>Description</h2>',

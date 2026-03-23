@@ -1,11 +1,11 @@
+import path from 'node:path';
 import { DatabaseManager } from 'backend/database/manager';
 import { config } from 'dotenv';
 import { Fyo } from 'fyo';
 import { DummyAuthDemux } from 'fyo/tests/helpers';
 import { DateTime } from 'luxon';
-import path from 'path';
 import setupInstance from 'src/setup/setupInstance';
-import { SetupWizardOptions } from 'src/setup/types';
+import type { SetupWizardOptions } from 'src/setup/types';
 import test from 'tape';
 import { getFiscalYear } from 'utils/misc';
 

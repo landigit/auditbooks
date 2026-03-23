@@ -86,7 +86,7 @@ export default {
         .filter(Boolean));
     },
     async getSuggestions(keyword = '') {
-      let filters = this.filtersDisabled ? null : await this.getFilters();
+      const filters = this.filtersDisabled ? null : await this.getFilters();
       let options = await this.getOptions(filters || {});
 
       if (keyword) {
@@ -179,7 +179,7 @@ export default {
       const { schemaName, fieldname } = this.df;
       const getCreateFilters =
         fyo.models[schemaName]?.createFilters?.[fieldname];
-      let createFilters = await getCreateFilters?.(this.doc);
+      const createFilters = await getCreateFilters?.(this.doc);
 
       if (createFilters !== undefined) {
         return createFilters;

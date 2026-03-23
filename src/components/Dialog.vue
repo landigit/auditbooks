@@ -58,8 +58,8 @@
 </template>
 <script lang="ts">
 import { getIconConfig } from 'src/utils/interactive';
-import { DialogButton, ToastType } from 'src/utils/types';
-import { defineComponent, nextTick, PropType, ref } from 'vue';
+import type { DialogButton, ToastType } from 'src/utils/types';
+import { type PropType, defineComponent, nextTick, ref } from 'vue';
 import Button from './Button.vue';
 import FeatherIcon from './FeatherIcon.vue';
 

@@ -1,20 +1,20 @@
-import { Fyo, t } from 'fyo';
+import { type Fyo, t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
+import type { Payment } from 'models/baseModels/Payment/Payment';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { ModelNameEnum } from 'models/types';
-import { FieldTypeEnum, Schema, TargetField } from 'schemas/types';
+import type { Money } from 'pesa';
+import { FieldTypeEnum, type Schema, type TargetField } from 'schemas/types';
 import { getValueMapFromList } from 'utils/index';
-import { TemplateFile } from 'utils/types';
+import type { TemplateFile } from 'utils/types';
 import { showToast } from './interactive';
-import { PrintValues } from './types';
+import type { PrintValues } from './types';
 import {
   getDocFromNameIfExistsElseNew,
   getSavePath,
   showExportInFolder,
 } from './ui';
-import { Money } from 'pesa';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { Payment } from 'models/baseModels/Payment/Payment';
 
 export type PrintTemplateHint = {
   [key: string]: string | PrintTemplateHint | PrintTemplateHint[];
@@ -59,14 +59,14 @@ export async function getPrintTemplatePropValues(
   ) {
     paymentId = await (doc as SalesInvoice).getPaymentIds();
 
-    if (paymentId && paymentId.length) {
+    if (paymentId?.length) {
       const paymentDetails = await getPaymentDetails(doc, paymentId);
       (values.doc as PrintTemplateData).paymentDetails = paymentDetails;
     }
   }
 
-  if (doc.referenceType == ModelNameEnum.SalesInvoice) {
-    const referenceName = (doc as Payment)?.for![0]?.referenceName;
+  if (doc.referenceType === ModelNameEnum.SalesInvoice) {
+    const referenceName = (doc as Payment)?.for?.[0]?.referenceName;
 
     if (referenceName) {
       sinvDoc = await fyo.doc.getDoc(ModelNameEnum.SalesInvoice, referenceName);
@@ -83,7 +83,7 @@ export async function getPrintTemplatePropValues(
     totalTax = await ((sinvDoc as Invoice) ?? (doc as Payment))?.getTotalTax();
   }
 
-  if (doc.schema.name == ModelNameEnum.Payment) {
+  if (doc.schema.name === ModelNameEnum.Payment) {
     (values.doc as PrintTemplateData).amountPaidInWords = getGrandTotalInWords(
       (doc.amountPaid as Money)?.float
     );
@@ -255,7 +255,7 @@ function getGrandTotalInWords(total: number) {
     const remainder = num % 100;
 
     if (hundredDigit > 0) {
-      result += ones[hundredDigit] + ` ${t`Hundred`}`;
+      result += `${ones[hundredDigit]} Hundred`;
     }
 
     if (remainder > 0) {
@@ -272,7 +272,7 @@ function getGrandTotalInWords(total: number) {
         const onesDigit = remainder % 10;
         result += tens[tensDigit];
         if (onesDigit > 0) {
-          result += ' ' + ones[onesDigit];
+          result += ` ${ones[onesDigit]}`;
         }
       }
     }
@@ -285,24 +285,22 @@ function getGrandTotalInWords(total: number) {
   const groupCount = integerGroups.length;
 
   integerGroups.forEach((group, index) => {
-    const groupValue = parseInt(group);
+    const groupValue = Number.parseInt(group);
 
     if (groupValue > 0) {
       const groupText = convertThreeDigitNumber(groupValue);
       const groupSuffix = scales[groupCount - index - 1];
-      spelledOutInteger +=
-        groupText + (groupSuffix ? ' ' + groupSuffix : '') + ' ';
+      spelledOutInteger += `${groupText + (groupSuffix ? ` ${groupSuffix}` : '')} `;
     }
   });
 
   spelledOutInteger = spelledOutInteger.trim() || t`Zero`;
 
   let spelledOutDecimal = '';
-  const decimalCents = parseInt(decimalPart);
+  const decimalCents = Number.parseInt(decimalPart);
 
   if (decimalCents !== 0) {
-    spelledOutDecimal =
-      ` ${t`and`} ` + convertThreeDigitNumber(decimalCents) + ` ${t`Paisa`}`;
+    spelledOutDecimal = ` and ${convertThreeDigitNumber(decimalCents)} Paisa`;
   }
 
   return `${spelledOutInteger}${spelledOutDecimal} ${t`only`}`;

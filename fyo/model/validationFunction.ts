@@ -1,10 +1,10 @@
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { getOptionList } from 'fyo/utils';
 import { ValidationError, ValueError } from 'fyo/utils/errors';
 import { t } from 'fyo/utils/translation';
-import { Field, OptionField } from 'schemas/types';
+import type { Field, OptionField } from 'schemas/types';
 import { getIsNullOrUndef } from 'utils';
-import { Doc } from './doc';
+import type { Doc } from './doc';
 
 export function validateEmail(value: DocValue) {
   if (typeof value !== 'string') {
@@ -61,7 +61,7 @@ export function validateRequired(field: Field, value: DocValue, doc: Doc) {
   }
 
   const requiredFunction = doc.required[field.fieldname];
-  if (requiredFunction && requiredFunction()) {
+  if (requiredFunction?.()) {
     throw new ValidationError(`${field.label} is required`);
   }
 }

@@ -140,7 +140,7 @@ export default defineComponent({
     },
 
     parseBarcode(barcode: string, unitType: string, sliceDigit: number) {
-      const weightRaw = parseInt(barcode.slice(sliceDigit));
+      const weightRaw = Number.parseInt(barcode.slice(sliceDigit));
 
       let itemQuantity = 0;
 

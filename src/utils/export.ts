@@ -1,16 +1,16 @@
-import { Fyo } from 'fyo';
-import { RawValueMap } from 'fyo/core/types';
+import type { Fyo } from 'fyo';
+import type { RawValueMap } from 'fyo/core/types';
 import {
-  Field,
-  FieldType,
+  type Field,
+  type FieldType,
   FieldTypeEnum,
-  RawValue,
-  TargetField,
+  type RawValue,
+  type TargetField,
 } from 'schemas/types';
 import { generateCSV } from 'utils/csvParser';
-import { GetAllOptions, QueryFilter } from 'utils/db/types';
+import type { GetAllOptions, QueryFilter } from 'utils/db/types';
 import { getMapFromList, safeParseFloat } from 'utils/index';
-import { ExportField, ExportTableField } from './types';
+import type { ExportField, ExportTableField } from './types';
 
 const excludedFieldTypes: FieldType[] = [
   FieldTypeEnum.AttachImage,
@@ -251,8 +251,8 @@ function convertParentDataToJsonExport(
 
       nameMap[parent][fieldname] ??= [];
 
-      delete row.parent;
-      delete row.name;
+      row.parent = undefined;
+      row.name = undefined;
 
       (nameMap[parent][fieldname] as RawValueMap[]).push(row);
     }
@@ -267,7 +267,7 @@ async function getParentData(
   fyo: Fyo
 ) {
   const orderBy = ['created'];
-  if (fyo.db.fieldMap[schemaName]['date']) {
+  if (fyo.db.fieldMap[schemaName].date) {
     orderBy.unshift('date');
   }
 

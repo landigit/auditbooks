@@ -1,6 +1,6 @@
 import { app } from 'electron';
 import { CUSTOM_EVENTS, IPC_CHANNELS } from 'utils/messages';
-import { Main } from '../main';
+import type { Main } from '../main';
 
 export default function registerProcessListeners(main: Main) {
   if (main.isDevelopment) {
@@ -18,7 +18,7 @@ export default function registerProcessListeners(main: Main) {
   }
 
   process.on(CUSTOM_EVENTS.MAIN_PROCESS_ERROR, (error, more) => {
-    main.mainWindow!.webContents.send(
+    main.mainWindow?.webContents.send(
       IPC_CHANNELS.LOG_MAIN_PROCESS_ERROR,
       error,
       more
@@ -26,14 +26,14 @@ export default function registerProcessListeners(main: Main) {
   });
 
   process.on('unhandledRejection', (error) => {
-    main.mainWindow!.webContents.send(
+    main.mainWindow?.webContents.send(
       IPC_CHANNELS.LOG_MAIN_PROCESS_ERROR,
       error
     );
   });
 
   process.on('uncaughtException', (error) => {
-    main.mainWindow!.webContents.send(
+    main.mainWindow?.webContents.send(
       IPC_CHANNELS.LOG_MAIN_PROCESS_ERROR,
       error
     );

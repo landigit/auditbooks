@@ -10,17 +10,20 @@ export const partyPurchaseItemMap: Record<string, string[]> = {
   'Only Fulls': ['Full Sleeve - BLK', 'Full Sleeve - COL'],
   'Just Epaulettes': ['Epaulettes - 4POR'],
   'Le Socials': ['Social Ads'],
-  'Maxwell': ['Marketing - Video'],
+  Maxwell: ['Marketing - Video'],
 };
 
 export const purchaseItemPartyMap: Record<string, string> = Object.keys(
   partyPurchaseItemMap
-).reduce((acc, party) => {
-  for (const item of partyPurchaseItemMap[party]) {
-    acc[item] = party;
-  }
-  return acc;
-}, {} as Record<string, string>);
+).reduce(
+  (acc, party) => {
+    for (const item of partyPurchaseItemMap[party]) {
+      acc[item] = party;
+    }
+    return acc;
+  },
+  {} as Record<string, string>
+);
 
 export const flow = [
   0.35, // Jan

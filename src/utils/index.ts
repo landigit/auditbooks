@@ -5,11 +5,16 @@ import { t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import {
-  BaseError,
+  type BaseError,
   DuplicateEntryError,
   LinkValidationError,
 } from 'fyo/utils/errors';
-import { Field, FieldType, FieldTypeEnum, NumberField } from 'schemas/types';
+import {
+  type Field,
+  type FieldType,
+  FieldTypeEnum,
+  type NumberField,
+} from 'schemas/types';
 import { fyo } from 'src/initFyo';
 
 export function stringifyCircular(
@@ -104,7 +109,8 @@ export function getErrorMessage(e: Error, doc?: Doc): string {
   const label = fyo.db.schemaMap[schemaName]?.label ?? schemaName;
   if (e instanceof LinkValidationError) {
     return t`${label} ${name} is linked with existing records.`;
-  } else if (e instanceof DuplicateEntryError) {
+  }
+  if (e instanceof DuplicateEntryError) {
     return t`${label} ${name} already exists.`;
   }
 

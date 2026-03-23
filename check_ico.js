@@ -1,9 +1,14 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 function getIcoDimensions(filePath) {
   try {
     const buffer = fs.readFileSync(filePath);
-    if (buffer[0] !== 0 || buffer[1] !== 0 || buffer[2] !== 1 || buffer[3] !== 0) {
+    if (
+      buffer[0] !== 0 ||
+      buffer[1] !== 0 ||
+      buffer[2] !== 1 ||
+      buffer[3] !== 0
+    ) {
       console.log(`${filePath}: Not a valid ICO file`);
       return;
     }

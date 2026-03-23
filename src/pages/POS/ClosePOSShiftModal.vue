@@ -59,25 +59,25 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Table from 'src/components/Controls/Table.vue';
+import { t } from 'fyo';
+import { ForbiddenError } from 'fyo/utils/errors';
+import type { OpeningAmounts } from 'models/inventory/Point of Sale/OpeningAmounts';
+import type { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
+import type { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { OpeningAmounts } from 'models/inventory/Point of Sale/OpeningAmounts';
-import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { computed } from 'vue';
-import { defineComponent } from 'vue';
+import type { Money } from 'pesa';
+import Button from 'src/components/Button.vue';
+import Table from 'src/components/Controls/Table.vue';
+import Modal from 'src/components/Modal.vue';
 import { fyo } from 'src/initFyo';
 import { showToast } from 'src/utils/interactive';
-import { t } from 'fyo';
 import {
-  validateClosingAmounts,
-  transferPOSCashAndWriteOff,
   getPOSOpeningShiftDoc,
+  transferPOSCashAndWriteOff,
+  validateClosingAmounts,
 } from 'src/utils/pos';
-import { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
-import { ForbiddenError } from 'fyo/utils/errors';
+import { computed } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'ClosePOSShiftModal',

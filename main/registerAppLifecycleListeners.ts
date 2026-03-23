@@ -1,8 +1,8 @@
+import { emitMainProcessError } from 'backend/helpers';
 import { app } from 'electron';
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
-import { Main } from '../main';
+import type { Main } from '../main';
 import { rendererLog } from './helpers';
-import { emitMainProcessError } from 'backend/helpers';
 
 export default function registerAppLifecycleListeners(main: Main) {
   app.on('window-all-closed', () => {

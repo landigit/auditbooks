@@ -1,15 +1,15 @@
-import { Action } from 'fyo/model/types';
+import type { Action } from 'fyo/model/types';
 import { Verb } from 'fyo/telemetry/types';
 import { DateTime } from 'luxon';
 import { ModelNameEnum } from 'models/types';
 import { codeStateMap } from 'regional/in';
-import { ExportExtention } from 'reports/types';
+import type { ExportExtention } from 'reports/types';
 import { showDialog } from 'src/utils/interactive';
+import { getSavePath } from 'src/utils/ui';
 import { invertMap } from 'utils';
 import { getCsvData, saveExportData } from '../commonExporter';
-import { BaseGSTR } from './BaseGSTR';
+import type { BaseGSTR } from './BaseGSTR';
 import { TransferTypeEnum } from './types';
-import { getSavePath } from 'src/utils/ui';
 
 const GST = {
   'GST-0': 0,
@@ -126,7 +126,7 @@ export default function getGSTRExportActions(report: BaseGSTR): Action[] {
   const exportExtention = ['csv', 'json'] as ExportExtention[];
 
   return exportExtention.map((ext) => ({
-    group: `Export`,
+    group: 'Export',
     label: ext.toUpperCase(),
     type: 'primary',
     action: async () => {
@@ -229,7 +229,7 @@ async function generateB2bData(report: BaseGSTR): Promise<B2BCustomer[]> {
       inum: row.invNo,
       idt: DateTime.fromJSDate(row.invDate).toFormat('dd-MM-yyyy'),
       val: row.invAmt,
-      pos: row.gstin && row.gstin.substring(0, 2),
+      pos: row.gstin?.substring(0, 2),
       rchrg: row.reverseCharge,
       inv_typ: 'R',
       itms: [],
@@ -384,8 +384,8 @@ function generateB2csData(report: BaseGSTR): B2CSInvRecord[] {
       txval: row.taxVal,
       rt: row.rate,
       iamt: !row.inState ? (row.taxVal * row.rate) / 100 : 0,
-      camt: row.inState ? row.cgstAmt ?? 0 : 0,
-      samt: row.inState ? row.sgstAmt ?? 0 : 0,
+      camt: row.inState ? (row.cgstAmt ?? 0) : 0,
+      samt: row.inState ? (row.sgstAmt ?? 0) : 0,
       csamt: 0,
     };
 

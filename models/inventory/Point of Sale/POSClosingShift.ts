@@ -1,7 +1,7 @@
-import { ListViewSettings } from 'fyo/model/types';
-import { ClosingAmounts } from './ClosingAmounts';
-import { ClosingCash } from './ClosingCash';
 import { Doc } from 'fyo/model/doc';
+import type { ListViewSettings } from 'fyo/model/types';
+import type { ClosingAmounts } from './ClosingAmounts';
+import type { ClosingCash } from './ClosingCash';
 
 export class POSClosingShift extends Doc {
   closingAmounts?: ClosingAmounts[];

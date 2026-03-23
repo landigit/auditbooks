@@ -89,8 +89,7 @@ test('create dummy items, locations, party & serialNumbers', async (t) => {
 
 test('serialNumber enabled item, create stock movement, material receipt', async (t) => {
   const { rate } = itemMap.Pen;
-  const serialNumber =
-    serialNumberMap.serialOne.name + '\n' + serialNumberMap.serialTwo.name;
+  const serialNumber = `${serialNumberMap.serialOne.name}\n${serialNumberMap.serialTwo.name}`;
   const stockMovement = await getStockMovement(
     MovementTypeEnum.MaterialReceipt,
     new Date('2022-11-03T09:57:04.528'),
@@ -165,7 +164,7 @@ test('serialNumber enabled item, create stock movement, material receipt', async
     serialNumberMap.serialOne.name,
     'status'
   );
-  t.equal(statusOne, 'Active', `serialNumber one is Active`);
+  t.equal(statusOne, 'Active', 'serialNumber one is Active');
 
   const statusTwo = await fyo.getValue(
     ModelNameEnum.SerialNumber,
@@ -330,7 +329,7 @@ test('serialNumber enabled item, create invalid stock movements', async (t) => {
 });
 
 test('Material Receipt, auto creation of Serial Number', async (t) => {
-  const serialNumber = `001\n002\n003`;
+  const serialNumber = '001\n002\n003';
   const serialNumbers = getSerialNumbers(serialNumber);
   for (const sn of serialNumbers) {
     t.equal(
@@ -378,7 +377,7 @@ test('Material Receipt, auto creation of Serial Number', async (t) => {
 });
 
 test('Material Issue, status change of Serial Number', async (t) => {
-  const serialNumber = `001\n002\n003`;
+  const serialNumber = '001\n002\n003';
   const serialNumbers = getSerialNumbers(serialNumber);
   for (const sn of serialNumbers) {
     t.equal(
@@ -434,7 +433,7 @@ test('Material Issue, status change of Serial Number', async (t) => {
 });
 
 test('Material Receipt cancellation, Serial Number status update', async (t) => {
-  const serialNumber = `004\n005\n006`;
+  const serialNumber = '004\n005\n006';
   const serialNumbers = getSerialNumbers(serialNumber);
   const doc = await getStockMovement(
     MovementTypeEnum.MaterialReceipt,

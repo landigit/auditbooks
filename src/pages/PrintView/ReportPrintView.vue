@@ -161,9 +161,9 @@
 </template>
 <script lang="ts">
 import { Verb } from 'fyo/telemetry/types';
-import { Report } from 'reports/Report';
+import type { Report } from 'reports/Report';
 import { reports } from 'reports/index';
-import { OptionField } from 'schemas/types';
+import type { OptionField } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Int from 'src/components/Controls/Int.vue';
@@ -173,7 +173,7 @@ import { getReport } from 'src/utils/misc';
 import { getPathAndMakePDF } from 'src/utils/printTemplates';
 import { showSidebar } from 'src/utils/refs';
 import { paperSizeMap, printSizes } from 'src/utils/ui';
-import { PropType, defineComponent } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 import ScaledContainer from '../TemplateBuilder/ScaledContainer.vue';
 
 export default defineComponent({
@@ -188,7 +188,7 @@ export default defineComponent({
     return {
       start: 1,
       limit: 0,
-      printSize: 'A4' as typeof printSizes[number],
+      printSize: 'A4' as (typeof printSizes)[number],
       isLandscape: false,
       scale: 0.65,
       report: null as null | Report,
@@ -288,7 +288,7 @@ export default defineComponent({
         return;
       }
 
-      const name = this.title + ' - ' + this.fyo.format(new Date(), 'Date');
+      const name = `${this.title} - ${this.fyo.format(new Date(), 'Date')}`;
       await getPathAndMakePDF(
         name,
         innerHTML,
@@ -297,7 +297,7 @@ export default defineComponent({
         shouldPrint
       );
 
-      this.fyo.telemetry.log(Verb.Printed, this.report!.reportName);
+      this.fyo.telemetry.log(Verb.Printed, this.report?.reportName);
     },
     cellClasses(cIdx: number, rIdx: number): string[] {
       const classes: string[] = [];

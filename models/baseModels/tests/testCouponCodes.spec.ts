@@ -1,11 +1,11 @@
+import { assertThrows } from 'backend/database/tests/helpers';
+import { getItem, getStockMovement } from 'models/inventory/tests/helpers';
+import { MovementTypeEnum } from 'models/inventory/types';
+import { ModelNameEnum } from 'models/types';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { ModelNameEnum } from 'models/types';
-import { getItem, getStockMovement } from 'models/inventory/tests/helpers';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
-import { PricingRule } from '../PricingRule/PricingRule';
-import { assertThrows } from 'backend/database/tests/helpers';
-import { MovementTypeEnum } from 'models/inventory/types';
+import type { PricingRule } from '../PricingRule/PricingRule';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);
@@ -310,7 +310,7 @@ test('apply coupon code', async (t) => {
   t.equal(sinv.pricingRuleDetail?.length, 1);
 
   t.equal(
-    sinv.pricingRuleDetail![0].referenceName,
+    sinv.pricingRuleDetail?.[0].referenceName,
     pricingRuleMap[0].name,
     'Pricing Rule is applied'
   );

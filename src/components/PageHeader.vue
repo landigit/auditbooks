@@ -59,7 +59,7 @@
 <script lang="ts">
 import { languageDirectionKey } from 'src/utils/injectionKeys';
 import { showSidebar } from 'src/utils/refs';
-import { defineComponent, inject, Transition } from 'vue';
+import { Transition, defineComponent, inject } from 'vue';
 import PageHeaderNavGroup from './PageHeaderNavGroup.vue';
 
 export default defineComponent({

@@ -1,6 +1,6 @@
 import { emitMainProcessError, getDefaultMetaFieldValueMap } from '../helpers';
-import { DatabaseManager } from './manager';
-import { FieldValueMap, Patch } from './types';
+import type { DatabaseManager } from './manager';
+import type { FieldValueMap, Patch } from './types';
 
 export async function runPatches(
   patches: Patch[],
@@ -48,7 +48,7 @@ async function makeEntry(
   defaultFieldValueMap.version = version;
 
   try {
-    await dm.db!.insert('PatchRun', defaultFieldValueMap);
+    await dm.db?.insert('PatchRun', defaultFieldValueMap);
   } catch {
     /**
      * Error is thrown if PatchRun table hasn't been migrated.

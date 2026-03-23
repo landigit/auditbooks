@@ -1,6 +1,6 @@
 import { Doc } from 'fyo/model/doc';
-import type { Transfer } from './Transfer';
 import type { Money } from 'pesa';
+import type { Transfer } from './Transfer';
 
 export class TransferItem extends Doc {
   item?: string;

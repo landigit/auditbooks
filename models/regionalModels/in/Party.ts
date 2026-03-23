@@ -1,7 +1,7 @@
-import { HiddenMap } from 'fyo/model/types';
+import type { HiddenMap } from 'fyo/model/types';
 import { Party as BaseParty } from 'models/baseModels/Party/Party';
-import { GSTType } from './types';
-import { PartyRole } from 'models/baseModels/Party/types';
+import type { PartyRole } from 'models/baseModels/Party/types';
+import type { GSTType } from './types';
 
 export class Party extends BaseParty {
   gstin?: string;

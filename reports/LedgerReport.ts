@@ -1,9 +1,9 @@
-import { Fyo, t } from 'fyo';
-import { Action } from 'fyo/model/types';
+import { type Fyo, t } from 'fyo';
+import type { Action } from 'fyo/model/types';
 import { ModelNameEnum } from 'models/types';
 import { Report } from 'reports/Report';
-import { GroupedMap, LedgerEntry, RawLedgerEntry } from 'reports/types';
-import { QueryFilter } from 'utils/db/types';
+import type { GroupedMap, LedgerEntry, RawLedgerEntry } from 'reports/types';
+import type { QueryFilter } from 'utils/db/types';
 import { safeParseFloat, safeParseInt } from 'utils/index';
 import getCommonExportActions from './commonExporter';
 
@@ -69,7 +69,7 @@ export abstract class LedgerReport extends Report {
         map.set(groupingKey, []);
       }
 
-      map.get(groupingKey)!.push(entry);
+      map.get(groupingKey)?.push(entry);
     }
 
     return map;

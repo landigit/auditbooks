@@ -377,36 +377,36 @@
 </template>
 
 <script lang="ts">
+import type { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import type { Item } from 'models/baseModels/Item/Item';
+import type { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { Money } from 'pesa';
-import { fyo } from 'src/initFyo';
-import { getItem } from 'src/utils/pos';
-import AlertModal from './AlertModal.vue';
-import PaymentModal from './PaymentModal.vue';
 import Button from 'src/components/Button.vue';
-import { defineComponent, PropType } from 'vue';
-import PriceListModal from './PriceListModal.vue';
-import ItemEnquiryModal from './ItemEnquiryModal.vue';
-import { Item } from 'models/baseModels/Item/Item';
-import CouponCodeModal from './CouponCodeModal.vue';
-import POSQuickActions from './POSQuickActions.vue';
-import { PosEmits } from 'src/components/POS/types';
 import Link from 'src/components/Controls/Link.vue';
-import SavedInvoiceModal from './SavedInvoiceModal.vue';
-import OpenPOSShiftModal from './OpenPOSShiftModal.vue';
-import ClosePOSShiftModal from './ClosePOSShiftModal.vue';
-import LoyaltyProgramModal from './LoyaltyProgramModal.vue';
-import { POSItem, ItemQtyMap } from 'src/components/POS/types';
+import MultiLabelLink from 'src/components/Controls/MultiLabelLink.vue';
 import ItemsGrid from 'src/components/POS/Classic/ItemsGrid.vue';
 import ItemsTable from 'src/components/POS/Classic/ItemsTable.vue';
-import ReturnSalesInvoiceModal from './ReturnSalesInvoiceModal.vue';
-import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
-import MultiLabelLink from 'src/components/Controls/MultiLabelLink.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import SelectedItemTable from 'src/components/POS/Classic/SelectedItemTable.vue';
-import FloatingLabelFloatInput from 'src/components/POS/FloatingLabelFloatInput.vue';
 import FloatingLabelCurrencyInput from 'src/components/POS/FloatingLabelCurrencyInput.vue';
-import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import FloatingLabelFloatInput from 'src/components/POS/FloatingLabelFloatInput.vue';
+import type { PosEmits } from 'src/components/POS/types';
+import type { ItemQtyMap, POSItem } from 'src/components/POS/types';
+import { fyo } from 'src/initFyo';
 import BatchSelectionModal from 'src/pages/POS/BatchSelectionModal.vue';
+import { getItem } from 'src/utils/pos';
+import { type PropType, defineComponent } from 'vue';
+import AlertModal from './AlertModal.vue';
+import ClosePOSShiftModal from './ClosePOSShiftModal.vue';
+import CouponCodeModal from './CouponCodeModal.vue';
+import ItemEnquiryModal from './ItemEnquiryModal.vue';
+import LoyaltyProgramModal from './LoyaltyProgramModal.vue';
+import OpenPOSShiftModal from './OpenPOSShiftModal.vue';
+import POSQuickActions from './POSQuickActions.vue';
+import PaymentModal from './PaymentModal.vue';
+import PriceListModal from './PriceListModal.vue';
+import ReturnSalesInvoiceModal from './ReturnSalesInvoiceModal.vue';
+import SavedInvoiceModal from './SavedInvoiceModal.vue';
 
 export default defineComponent({
   name: 'ClassicPOS',

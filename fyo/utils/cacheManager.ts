@@ -35,7 +35,7 @@ export default class CacheManager {
       this._hashCache.set(hashName, new Map());
     }
 
-    this._hashCache.get(hashName)!.set(key, value);
+    this._hashCache.get(hashName)?.set(key, value);
   }
 
   hclear(hashName: string, key?: string) {

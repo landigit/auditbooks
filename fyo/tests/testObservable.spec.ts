@@ -1,4 +1,4 @@
-import { strictEqual } from 'assert';
+import { strictEqual } from 'node:assert';
 import { assertThrows } from 'backend/database/tests/helpers';
 import Observable from 'fyo/utils/observable';
 import test from 'tape';

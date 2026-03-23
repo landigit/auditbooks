@@ -1,11 +1,11 @@
-import { Fyo } from 'fyo';
+import type { Fyo } from 'fyo';
 import { Converter } from 'fyo/core/converter';
-import { DocValue } from 'fyo/core/types';
-import { Action } from 'fyo/model/types';
+import type { DocValue } from 'fyo/core/types';
+import type { Action } from 'fyo/model/types';
 import Observable from 'fyo/utils/observable';
-import { Field, RawValue } from 'schemas/types';
+import type { Field, RawValue } from 'schemas/types';
 import { getIsNullOrUndef } from 'utils';
-import { ColumnField, ReportData } from './types';
+import type { ColumnField, ReportData } from './types';
 
 export abstract class Report extends Observable<RawValue> {
   static title: string;

@@ -1,13 +1,13 @@
-import { Fyo } from 'fyo';
-import { DocValueMap } from 'fyo/core/types';
-import { Action, FiltersMap, ListViewSettings } from 'fyo/model/types';
+import type { Fyo } from 'fyo';
+import type { DocValueMap } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type { Action, FiltersMap, ListViewSettings } from 'fyo/model/types';
 import { ModelNameEnum } from 'models/types';
 import { getQuoteActions, getTransactionStatusColumn } from '../../helpers';
+import type { Defaults } from '../Defaults/Defaults';
 import { Invoice } from '../Invoice/Invoice';
-import { SalesQuoteItem } from '../SalesQuoteItem/SalesQuoteItem';
-import { Defaults } from '../Defaults/Defaults';
-import { Doc } from 'fyo/model/doc';
-import { Party } from '../Party/Party';
+import type { Party } from '../Party/Party';
+import type { SalesQuoteItem } from '../SalesQuoteItem/SalesQuoteItem';
 
 export class SalesQuote extends Invoice {
   items?: SalesQuoteItem[];
@@ -64,7 +64,7 @@ export class SalesQuote extends Invoice {
   async afterSubmit(): Promise<void> {
     await super.afterSubmit();
 
-    if (this.referenceType == ModelNameEnum.Lead) {
+    if (this.referenceType === ModelNameEnum.Lead) {
       const partyDoc = (await this.loadAndGetLink('party')) as Party;
 
       await partyDoc.setAndSync('status', 'Quotation');

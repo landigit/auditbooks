@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { _electron } from 'playwright';
-import { fileURLToPath } from 'url';
 import test from 'tape';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

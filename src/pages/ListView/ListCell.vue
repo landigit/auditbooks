@@ -5,11 +5,11 @@
   </div>
 </template>
 <script lang="ts">
-import { ColumnConfig, RenderData } from 'fyo/model/types';
-import { Field } from 'schemas/types';
+import type { ColumnConfig, RenderData } from 'fyo/model/types';
+import type { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { isNumeric } from 'src/utils';
-import { defineComponent, PropType } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 
 type Column = ColumnConfig | Field;
 

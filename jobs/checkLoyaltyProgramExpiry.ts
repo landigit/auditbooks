@@ -18,7 +18,8 @@ export async function checkLoyaltyProgramExpiry() {
     if (loyaltyPrograms) {
       for (const program of loyaltyPrograms) {
         if (program.toDate && new Date(String(program.toDate)) <= currentDate) {
-          await dm.db?.knex!(ModelNameEnum.LoyaltyProgram)
+          await dm.db
+            ?.knex?.(ModelNameEnum.LoyaltyProgram)
             .where({ name: program.name })
             .update({
               status: 'Expired',
@@ -33,8 +34,6 @@ export async function checkLoyaltyProgramExpiry() {
     };
 
     return result;
-  } catch (error) {
-    throw error;
   } finally {
     await dm.call('close');
   }

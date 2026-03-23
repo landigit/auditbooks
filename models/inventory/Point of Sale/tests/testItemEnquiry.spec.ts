@@ -1,7 +1,7 @@
+import type { ItemEnquiry } from 'models/baseModels/ItemEnquiry/ItemEnquiry';
+import { ModelNameEnum } from 'models/types';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { ItemEnquiry } from 'models/baseModels/ItemEnquiry/ItemEnquiry';
-import { ModelNameEnum } from 'models/types';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);

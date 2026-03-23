@@ -1,19 +1,23 @@
 import ChartOfAccounts from 'src/pages/ChartOfAccounts.vue';
 import CommonForm from 'src/pages/CommonForm/CommonForm.vue';
+import CustomizeForm from 'src/pages/CustomizeForm/CustomizeForm.vue';
 import Dashboard from 'src/pages/Dashboard/Dashboard.vue';
 import GetStarted from 'src/pages/GetStarted.vue';
 import ImportWizard from 'src/pages/ImportWizard.vue';
 import ListView from 'src/pages/ListView/ListView.vue';
+import POS from 'src/pages/POS/POS.vue';
 import PrintView from 'src/pages/PrintView/PrintView.vue';
 import ReportPrintView from 'src/pages/PrintView/ReportPrintView.vue';
 import QuickEditForm from 'src/pages/QuickEditForm.vue';
 import Report from 'src/pages/Report.vue';
 import Settings from 'src/pages/Settings/Settings.vue';
 import TemplateBuilder from 'src/pages/TemplateBuilder/TemplateBuilder.vue';
-import CustomizeForm from 'src/pages/CustomizeForm/CustomizeForm.vue';
-import POS from 'src/pages/POS/POS.vue';
 import type { HistoryState } from 'vue-router';
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import {
+  type RouteRecordRaw,
+  createRouter,
+  createWebHistory,
+} from 'vue-router';
 import { historyState } from './utils/refs';
 
 const routes: RouteRecordRaw[] = [
@@ -26,8 +30,8 @@ const routes: RouteRecordRaw[] = [
     component: GetStarted,
   },
   {
-    path: `/edit/:schemaName/:name`,
-    name: `CommonForm`,
+    path: '/edit/:schemaName/:name',
+    name: 'CommonForm',
     components: {
       default: CommonForm,
       edit: QuickEditForm,

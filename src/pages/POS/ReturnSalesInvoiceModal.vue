@@ -108,16 +108,16 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Row from 'src/components/Row.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { ModelNameEnum } from 'models/types';
-import { Field } from 'schemas/types';
-import { Money } from 'pesa';
+import type { Money } from 'pesa';
+import type { Field } from 'schemas/types';
+import Button from 'src/components/Button.vue';
+import FormControl from 'src/components/Controls/FormControl.vue';
+import Modal from 'src/components/Modal.vue';
 import Paginator from 'src/components/Paginator.vue';
+import Row from 'src/components/Row.vue';
+import { defineComponent, inject } from 'vue';
 
 export default defineComponent({
   name: 'ReturnSalesInvoice',

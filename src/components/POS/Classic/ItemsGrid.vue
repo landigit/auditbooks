@@ -100,7 +100,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { POSItem } from '../types';
+import type { POSItem } from '../types';
 
 export default defineComponent({
   name: 'ItemsGrid',

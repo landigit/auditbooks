@@ -48,7 +48,7 @@
 import { RTL_LANGUAGES } from 'fyo/utils/consts';
 import { ModelNameEnum } from 'models/types';
 import { systemLanguageRef } from 'src/utils/refs';
-import { defineComponent, provide, ref, Ref } from 'vue';
+import { type Ref, defineComponent, provide, ref } from 'vue';
 import WindowsTitleBar from './components/WindowsTitleBar.vue';
 import { handleErrorWithDialog } from './errorHandling';
 import { fyo } from './initFyo';
@@ -56,9 +56,16 @@ import DatabaseSelector from './pages/DatabaseSelector.vue';
 import Desk from './pages/Desk.vue';
 import SetupWizard from './pages/SetupWizard/SetupWizard.vue';
 import setupInstance from './setup/setupInstance';
-import { SetupWizardOptions } from './setup/types';
+import type { SetupWizardOptions } from './setup/types';
 import './styles/index.css';
+import { ErrorLogEnum } from 'fyo/telemetry/types';
+import type { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
+import { setDarkMode } from 'src/utils/theme';
 import { connectToDatabase, dbErrorActionSymbols } from './utils/db';
+import {
+  registerInstanceToERPNext,
+  updateERPNSyncSettings,
+} from './utils/erpnextSync';
 import { initializeInstance } from './utils/initialization';
 import * as injectionKeys from './utils/injectionKeys';
 import { showDialog, showToast } from './utils/interactive';
@@ -69,13 +76,6 @@ import { Search } from './utils/search';
 import { Shortcuts } from './utils/shortcuts';
 import { routeTo } from './utils/ui';
 import { useKeys } from './utils/vueUtils';
-import { setDarkMode } from 'src/utils/theme';
-import {
-  registerInstanceToERPNext,
-  updateERPNSyncSettings,
-} from './utils/erpnextSync';
-import { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
-import { ErrorLogEnum } from 'fyo/telemetry/types';
 
 enum Screen {
   Desk = 'Desk',
@@ -250,33 +250,28 @@ export default defineComponent({
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);
-
-          try {
-            const existing = await fyo.db.getAll(
-              ErrorLogEnum.IntegrationErrorLog,
-              {
-                filters: {
-                  error: errorMessage,
-                },
-                limit: 1,
-              }
-            );
-
-            if (!existing.length) {
-              await fyo.doc
-                .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
-                  error: errorMessage,
-                  data: JSON.stringify({
-                    instance: fyo.singles.ERPNextSyncSettings?.deviceID,
-                    operation: 'register_instance',
-                    trigger: 'showSetupWizardOrDesk',
-                    baseURL: baseURL,
-                  }),
-                })
-                .sync();
+          const existing = await fyo.db.getAll(
+            ErrorLogEnum.IntegrationErrorLog,
+            {
+              filters: {
+                error: errorMessage,
+              },
+              limit: 1,
             }
-          } catch (logError) {
-            throw logError;
+          );
+
+          if (!existing.length) {
+            await fyo.doc
+              .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
+                error: errorMessage,
+                data: JSON.stringify({
+                  instance: fyo.singles.ERPNextSyncSettings?.deviceID,
+                  operation: 'register_instance',
+                  trigger: 'showSetupWizardOrDesk',
+                  baseURL: baseURL,
+                }),
+              })
+              .sync();
           }
           showToast({ message: 'Connection Failed', type: 'error' });
         }

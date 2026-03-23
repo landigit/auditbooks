@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('node:fs');
 const colors = JSON.parse(
   fs.readFileSync('colors.json', { encoding: 'utf-8' })
 );

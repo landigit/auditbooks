@@ -1,20 +1,20 @@
 import type { Fyo } from 'fyo';
 import type { DocValue, DocValueMap } from 'fyo/core/types';
 import type SystemSettings from 'fyo/models/SystemSettings';
+import type { AccountingSettings } from 'models/baseModels/AccountingSettings/AccountingSettings';
+import type { Defaults } from 'models/baseModels/Defaults/Defaults';
+import type { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
+import type { Misc } from 'models/baseModels/Misc';
+import type { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
+import type { PrintSettings } from 'models/baseModels/PrintSettings/PrintSettings';
+import type { InventorySettings } from 'models/inventory/InventorySettings';
+import type { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
+import type { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
+import type { POSSettings } from 'models/inventory/Point of Sale/POSSettings';
 import type { FieldType, Schema, SelectOption } from 'schemas/types';
 import type { QueryFilter } from 'utils/db/types';
 import type { RouteLocationRaw, Router } from 'vue-router';
 import type { Doc } from './doc';
-import type { AccountingSettings } from 'models/baseModels/AccountingSettings/AccountingSettings';
-import type { Defaults } from 'models/baseModels/Defaults/Defaults';
-import type { PrintSettings } from 'models/baseModels/PrintSettings/PrintSettings';
-import type { InventorySettings } from 'models/inventory/InventorySettings';
-import type { Misc } from 'models/baseModels/Misc';
-import type { POSSettings } from 'models/inventory/Point of Sale/POSSettings';
-import type { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import type { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
-import { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
-import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
 
 /**
  * The functions below are used for dynamic evaluation

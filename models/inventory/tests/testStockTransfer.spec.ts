@@ -2,17 +2,17 @@ import {
   assertDoesNotThrow,
   assertThrows,
 } from 'backend/database/tests/helpers';
-import { Invoice } from 'models/baseModels/Invoice/Invoice';
+import type { Invoice } from 'models/baseModels/Invoice/Invoice';
 import { ModelNameEnum } from 'models/types';
-import { RawValue } from 'schemas/types';
+import type { RawValue } from 'schemas/types';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { InventorySettings } from '../InventorySettings';
-import { Shipment } from '../Shipment';
-import { StockTransfer } from '../StockTransfer';
+import type { InventorySettings } from '../InventorySettings';
+import type { PurchaseReceipt } from '../PurchaseReceipt';
+import type { Shipment } from '../Shipment';
+import type { StockTransfer } from '../StockTransfer';
 import { MovementTypeEnum, ValuationMethod } from '../types';
 import { getALEs, getItem, getSLEs, getStockTransfer } from './helpers';
-import { PurchaseReceipt } from '../PurchaseReceipt';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);
@@ -56,7 +56,7 @@ test('inventory settings', async (t) => {
 
 test('PurchaseReceipt, create inward stock movement', async (t) => {
   const date = new Date('2022-01-01');
-  const rate = (testDocs['Item'][item].rate as number) ?? 0;
+  const rate = (testDocs.Item[item].rate as number) ?? 0;
   const quantity = 10;
   const doc = await getStockTransfer(
     ModelNameEnum.PurchaseReceipt,
@@ -100,18 +100,18 @@ test('PurchaseReceipt, create inward stock movement', async (t) => {
   for (const ale of ales) {
     t.equal(ale.party, party, 'party matches');
     if (ale.account === 'Stock Received But Not Billed') {
-      t.equal(parseFloat(ale.debit), 0);
-      t.equal(parseFloat(ale.credit), grandTotal);
+      t.equal(Number.parseFloat(ale.debit), 0);
+      t.equal(Number.parseFloat(ale.credit), grandTotal);
     } else {
-      t.equal(parseFloat(ale.credit), 0);
-      t.equal(parseFloat(ale.debit), grandTotal);
+      t.equal(Number.parseFloat(ale.credit), 0);
+      t.equal(Number.parseFloat(ale.debit), grandTotal);
     }
   }
 });
 
 test('Shipment, create outward stock movement', async (t) => {
   const date = new Date('2022-01-02');
-  const rate = (testDocs['Item'][item].rate as number) ?? 0;
+  const rate = (testDocs.Item[item].rate as number) ?? 0;
   const quantity = 5;
   const doc = await getStockTransfer(
     ModelNameEnum.Shipment,
@@ -155,18 +155,18 @@ test('Shipment, create outward stock movement', async (t) => {
   for (const ale of ales) {
     t.equal(ale.party, party, 'party matches');
     if (ale.account === 'Cost of Goods Sold') {
-      t.equal(parseFloat(ale.debit), grandTotal);
-      t.equal(parseFloat(ale.credit), 0);
+      t.equal(Number.parseFloat(ale.debit), grandTotal);
+      t.equal(Number.parseFloat(ale.credit), 0);
     } else {
-      t.equal(parseFloat(ale.debit), 0);
-      t.equal(parseFloat(ale.credit), grandTotal);
+      t.equal(Number.parseFloat(ale.debit), 0);
+      t.equal(Number.parseFloat(ale.credit), grandTotal);
     }
   }
 });
 
 test('Shipment, invalid', async (t) => {
   const date = new Date('2022-01-03');
-  const rate = (testDocs['Item'][item].rate as number) ?? 0;
+  const rate = (testDocs.Item[item].rate as number) ?? 0;
   const quantity = 10;
   const doc = await getStockTransfer(
     ModelNameEnum.Shipment,
@@ -235,7 +235,7 @@ test('Shipment, cancel and delete', async (t) => {
   const doc = await fyo.doc.getDoc(ModelNameEnum.Shipment, name);
   t.ok(doc.isSubmitted, `doc ${name} is submitted`);
   await assertDoesNotThrow(async () => await doc.cancel());
-  t.ok(doc.isCancelled), `doc is cancelled`;
+  t.ok(doc.isCancelled), 'doc is cancelled';
 
   t.equal(await fyo.db.getStockQuantity(item, location), 10, 'stock changed');
   t.equal((await getSLEs(name, doc.schemaName, fyo)).length, 0, 'sle deleted');
@@ -269,7 +269,7 @@ test('Purchase Receipt, cancel and delete', async (t) => {
   const doc = await fyo.doc.getDoc(ModelNameEnum.PurchaseReceipt, name);
   t.ok(doc.isSubmitted, `doc ${name} is submitted`);
   await assertDoesNotThrow(async () => await doc.cancel());
-  t.ok(doc.isCancelled), `doc is cancelled`;
+  t.ok(doc.isCancelled), 'doc is cancelled';
 
   t.equal(await fyo.db.getStockQuantity(item, location), null, 'stock changed');
   t.equal((await getSLEs(name, doc.schemaName, fyo)).length, 0, 'sle deleted');
@@ -538,7 +538,7 @@ test('Cancel and Delete Sales Invoice with cancelled Shipments', async (t) => {
 });
 
 test('Create Shipment from manually set Back Ref', async (t) => {
-  const rate = (testDocs['Item'][item].rate as number) ?? 0;
+  const rate = (testDocs.Item[item].rate as number) ?? 0;
   const totalQuantity = 10;
   const prec = await getStockTransfer(
     ModelNameEnum.PurchaseReceipt,
@@ -715,7 +715,7 @@ test('Create Shipment return of batched item', async (t) => {
   await shipmentDoc.sync();
   await shipmentDoc.submit();
 
-  t.equal(shipmentDoc.name, 'SHPM-1008', `Shipment created`);
+  t.equal(shipmentDoc.name, 'SHPM-1008', 'Shipment created');
 
   const shpmReturnDoc = fyo.doc.getNewDoc(ModelNameEnum.Shipment) as Shipment;
 
@@ -736,9 +736,9 @@ test('Create Shipment return of batched item', async (t) => {
   const secondReturnDoc = (await shipmentDoc.getReturnDoc()) as Shipment;
 
   for (const item of secondReturnDoc.items!) {
-    if (item.batch == batches[0].name) {
-      const docItemQty = shipmentDoc.items![0].quantity as number;
-      const retItemQty = shpmReturnDoc.items![0].quantity as number;
+    if (item.batch === batches[0].name) {
+      const docItemQty = shipmentDoc.items?.[0].quantity as number;
+      const retItemQty = shpmReturnDoc.items?.[0].quantity as number;
       const balanceQty = retItemQty - docItemQty;
 
       t.equal(
@@ -748,9 +748,9 @@ test('Create Shipment return of batched item', async (t) => {
       );
     }
 
-    if (item.batch == batches[1].name) {
-      const docItemQty = shipmentDoc.items![1].quantity as number;
-      const retItemQty = shpmReturnDoc.items![1].quantity as number;
+    if (item.batch === batches[1].name) {
+      const docItemQty = shipmentDoc.items?.[1].quantity as number;
+      const retItemQty = shpmReturnDoc.items?.[1].quantity as number;
       const balanceQty = retItemQty - docItemQty;
 
       t.equal(
@@ -898,15 +898,15 @@ test('Create Purchase Reciept return of serialized item', async (t) => {
   );
 
   const secondPrecReturnDoc = (await precDoc.getReturnDoc()) as PurchaseReceipt;
-  const returnBalSerialNumbers = secondPrecReturnDoc.items
-    ?.map((item) => item.serialNumber?.split('\n'))
-    .flat();
+  const returnBalSerialNumbers = secondPrecReturnDoc.items?.flatMap((item) =>
+    item.serialNumber?.split('\n')
+  );
 
   t.ok(returnBalSerialNumbers?.length === 2);
 
   const returnedSerialNumbers = [
-    returnPrecDoc.items![0].serialNumber,
-    returnPrecDoc.items![1].serialNumber,
+    returnPrecDoc.items?.[0].serialNumber,
+    returnPrecDoc.items?.[1].serialNumber,
   ];
 
   for (const serialNumber of returnedSerialNumbers) {

@@ -1,7 +1,7 @@
-import { Fyo, t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import {
+import { type Fyo, t } from 'fyo';
+import type { DocValue } from 'fyo/core/types';
+import type { Doc } from 'fyo/model/doc';
+import type {
   Action,
   ChangeArg,
   DefaultMap,
@@ -12,24 +12,24 @@ import {
   ValidationMap,
 } from 'fyo/model/types';
 import { NotFoundError, ValidationError } from 'fyo/utils/errors';
+import { LedgerPosting } from 'models/Transactional/LedgerPosting';
+import { Transactional } from 'models/Transactional/Transactional';
 import {
   getDocStatusListColumn,
   getLedgerLinkAction,
   getNumberSeries,
 } from 'models/helpers';
-import { LedgerPosting } from 'models/Transactional/LedgerPosting';
-import { Transactional } from 'models/Transactional/Transactional';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { QueryFilter } from 'utils/db/types';
+import type { Money } from 'pesa';
+import type { QueryFilter } from 'utils/db/types';
 import { AccountTypeEnum } from '../Account/types';
-import { Invoice } from '../Invoice/Invoice';
-import { Party } from '../Party/Party';
-import { PaymentFor } from '../PaymentFor/PaymentFor';
-import { PaymentType, PaymentTypeEnum } from './types';
+import type { Invoice } from '../Invoice/Invoice';
+import type { Party } from '../Party/Party';
 import { PartyRoleEnum } from '../Party/types';
-import { TaxSummary } from '../TaxSummary/TaxSummary';
-import { PaymentMethod } from '../PaymentMethod/PaymentMethod';
+import type { PaymentFor } from '../PaymentFor/PaymentFor';
+import type { PaymentMethod } from '../PaymentMethod/PaymentMethod';
+import type { TaxSummary } from '../TaxSummary/TaxSummary';
+import { type PaymentType, PaymentTypeEnum } from './types';
 
 type AccountTypeMap = Record<AccountTypeEnum, string[] | undefined>;
 
@@ -204,8 +204,8 @@ export class Payment extends Transactional {
       return;
     }
 
-    const writeOffAccount = this.fyo.singles.AccountingSettings!
-      .writeOffAccount as string | null | undefined;
+    const writeOffAccount = this.fyo.singles.AccountingSettings
+      ?.writeOffAccount as string | null | undefined;
 
     if (!writeOffAccount) {
       throw new NotFoundError(
@@ -306,7 +306,7 @@ export class Payment extends Transactional {
       }
     }
 
-    type Summary = typeof taxes[string][string] & { idx: number };
+    type Summary = (typeof taxes)[string][string] & { idx: number };
     const taxArr: Summary[] = [];
     let idx = 0;
     for (const payment_account in taxes) {
@@ -376,8 +376,8 @@ export class Payment extends Transactional {
 
     const account = this.account as string;
     const paymentAccount = this.paymentAccount as string;
-    const writeOffAccount = this.fyo.singles.AccountingSettings!
-      .writeOffAccount as string;
+    const writeOffAccount = this.fyo.singles.AccountingSettings
+      ?.writeOffAccount as string;
 
     if (this.paymentType === 'Pay') {
       await posting.credit(paymentAccount, writeoff);
@@ -466,7 +466,7 @@ export class Payment extends Transactional {
       let outstandingAmount: Money;
 
       if (isReturnInvoice) {
-        const paymentAmount = row.amount!.abs();
+        const paymentAmount = row.amount?.abs();
         const previous = previousOutstandingAmount.abs();
 
         outstandingAmount = previous.sub(paymentAmount);
@@ -567,7 +567,7 @@ export class Payment extends Transactional {
 
     return (this._accountsMap = accounts.reduce((acc, ac) => {
       acc[ac.accountType] ??= [];
-      acc[ac.accountType]!.push(ac.name);
+      acc[ac.accountType]?.push(ac.name);
       return acc;
     }, {} as AccountTypeMap));
   }
@@ -676,21 +676,20 @@ export class Payment extends Transactional {
         if (partyDoc.role === PartyRoleEnum.Supplier) {
           if (refDoc?.isReturn) {
             return PaymentTypeEnum.Receive;
-          } else {
-            return PaymentTypeEnum.Pay;
           }
-        } else if (partyDoc.role === PartyRoleEnum.Customer) {
+          return PaymentTypeEnum.Pay;
+        }
+        if (partyDoc.role === PartyRoleEnum.Customer) {
           if (refDoc?.isSales && refDoc.isReturn) {
             return PaymentTypeEnum.Pay;
-          } else {
-            return PaymentTypeEnum.Receive;
           }
-        } else if (partyDoc.role === PartyRoleEnum.Both) {
+          return PaymentTypeEnum.Receive;
+        }
+        if (partyDoc.role === PartyRoleEnum.Both) {
           if (refDoc?.isSales && refDoc.isReturn) {
             return PaymentTypeEnum.Pay;
-          } else {
-            return PaymentTypeEnum.Receive;
           }
+          return PaymentTypeEnum.Receive;
         }
 
         if (outstanding?.isZero() ?? true) {
@@ -708,7 +707,7 @@ export class Payment extends Transactional {
       dependsOn: ['for'],
     },
     amountPaid: {
-      formula: () => this.amount!.sub(this.writeoff!),
+      formula: () => this.amount?.sub(this.writeoff!),
       dependsOn: ['amount', 'writeoff', 'for'],
     },
     referenceType: {
@@ -751,7 +750,8 @@ export class Payment extends Transactional {
             'Currency'
           )}.`
         );
-      } else if ((value as Money).isZero()) {
+      }
+      if ((value as Money).isZero()) {
         throw new ValidationError(
           this.fyo.t`Payment amount cannot be ${this.fyo.format(
             value as Money,
@@ -796,9 +796,8 @@ export class Payment extends Transactional {
 
       if (paymentMethod.name === 'Cash') {
         return { accountType: 'Cash', isGroup: false };
-      } else {
-        return { accountType: ['in', ['Bank', 'Cash']], isGroup: false };
       }
+      return { accountType: ['in', ['Bank', 'Cash']], isGroup: false };
     },
     paymentAccount: (doc: Doc) => {
       const paymentType = doc.paymentType as PaymentType;
@@ -810,9 +809,8 @@ export class Payment extends Transactional {
 
       if (paymentMethod.name === 'Cash') {
         return { accountType: 'Cash', isGroup: false };
-      } else {
-        return { accountType: ['in', ['Bank', 'Cash']], isGroup: false };
       }
+      return { accountType: ['in', ['Bank', 'Cash']], isGroup: false };
     },
   };
 

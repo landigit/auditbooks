@@ -1,13 +1,13 @@
-import { ModelNameEnum } from 'models/types';
-import test from 'tape';
-import { getItem } from './helpers';
-import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { MovementTypeEnum } from '../types';
 import {
   assertDoesNotThrow,
   assertThrows,
 } from 'backend/database/tests/helpers';
-import { StockMovement } from '../StockMovement';
+import { ModelNameEnum } from 'models/types';
+import test from 'tape';
+import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
+import type { StockMovement } from '../StockMovement';
+import { MovementTypeEnum } from '../types';
+import { getItem } from './helpers';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);

@@ -1,9 +1,9 @@
+import type { Payment } from 'models/baseModels/Payment/Payment';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { ModelNameEnum } from 'models/types';
+import type { Money } from 'pesa';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { Money } from 'pesa';
-import { ModelNameEnum } from 'models/types';
 
 const fyo = getTestFyo();
 

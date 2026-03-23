@@ -6,7 +6,7 @@
  * match on both ends i.e. DatabaseCore and DatabaseHandler.
  */
 
-import { SchemaMap } from 'schemas/types';
+import type { SchemaMap } from 'schemas/types';
 
 type UnknownMap = Record<string, unknown>;
 export abstract class DatabaseBase {
@@ -43,8 +43,8 @@ export abstract class DatabaseBase {
 
   // Delete
   abstract delete(schemaName: string, name: string): Promise<void>;
-  
-  abstract deleteAll(schemaName:string, filters:QueryFilter): Promise<number>;
+
+  abstract deleteAll(schemaName: string, filters: QueryFilter): Promise<number>;
 
   // Other
   abstract close(): Promise<void>;

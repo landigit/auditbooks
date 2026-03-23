@@ -1,4 +1,4 @@
-import { ModelNameEnum } from "models/types";
+import type { ModelNameEnum } from 'models/types';
 
 export interface RawStockLedgerEntry {
   name: string;
@@ -14,13 +14,12 @@ export interface RawStockLedgerEntry {
   [key: string]: unknown;
 }
 
-
-export interface ComputedStockLedgerEntry{
+export interface ComputedStockLedgerEntry {
   name: number;
   date: Date;
 
   item: string;
-  location:string;
+  location: string;
   batch: string;
   serialNumber: string;
 
@@ -28,21 +27,20 @@ export interface ComputedStockLedgerEntry{
   balanceQuantity: number;
 
   incomingRate: number;
-  valuationRate:number;
+  valuationRate: number;
 
-  balanceValue:number;
-  valueChange:number;
-  
+  balanceValue: number;
+  valueChange: number;
+
   referenceName: string;
   referenceType: string;
 }
 
-
-export interface StockBalanceEntry{
+export interface StockBalanceEntry {
   name: number;
 
   item: string;
-  location:string;
+  location: string;
   batch: string;
   serialNumber: string;
 
@@ -50,15 +48,15 @@ export interface StockBalanceEntry{
   balanceValue: number;
 
   openingQuantity: number;
-  openingValue:number;
+  openingValue: number;
 
-  incomingQuantity:number;
-  incomingValue:number;
+  incomingQuantity: number;
+  incomingValue: number;
 
-  outgoingQuantity:number;
-  outgoingValue:number;
+  outgoingQuantity: number;
+  outgoingValue: number;
 
-  valuationRate:number;
+  valuationRate: number;
 }
 
 export type ReferenceType =
@@ -68,4 +66,3 @@ export type ReferenceType =
   | 'All';
 
 export type SerialNumberStatus = 'All' | 'In stock' | 'Out stock';
-

@@ -1,8 +1,8 @@
+import { getItem } from 'models/inventory/tests/helpers';
+import { ModelNameEnum } from 'models/types';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { ModelNameEnum } from 'models/types';
-import { getItem } from 'models/inventory/tests/helpers';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);
@@ -76,7 +76,7 @@ test('Check if InvoiceItem rate fetched from PriceList', async (t) => {
   t.equal(
     sinv.items?.[0].rate?.float,
     priceListMap.PL_SELL.priceListItem[0].rate,
-    `sales invoice rate fetched from price list`
+    'sales invoice rate fetched from price list'
   );
 });
 

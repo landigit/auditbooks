@@ -1,10 +1,10 @@
 import { Doc } from 'fyo/model/doc';
-import { HiddenMap, ListsMap } from 'fyo/model/types';
+import type { HiddenMap, ListsMap } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
 import { ModelNameEnum } from 'models/types';
-import { Field } from 'schemas/types';
+import type { Field } from 'schemas/types';
 import { getMapFromList } from 'utils/index';
-import { CustomField } from './CustomField';
+import type { CustomField } from './CustomField';
 
 export class CustomForm extends Doc {
   name?: string;
@@ -44,8 +44,8 @@ export class CustomForm extends Doc {
           ].includes(s.name as ModelNameEnum);
         })
         .map((s) => ({
-          value: s!.name,
-          label: s!.label,
+          value: s?.name,
+          label: s?.label,
         })),
   };
 
@@ -72,7 +72,7 @@ export class CustomForm extends Doc {
     }
 
     throw new ValidationError(
-      `At least two options need to be set for the selected fieldtype`
+      'At least two options need to be set for the selected fieldtype'
     );
   }
 }

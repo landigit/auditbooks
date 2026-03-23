@@ -1,6 +1,6 @@
-import { Fyo } from 'fyo';
-import { Noun, Telemetry, Verb } from './types';
+import type { Fyo } from 'fyo';
 import { ModelNameEnum } from 'models/types';
+import { type Noun, type Telemetry, Verb } from './types';
 
 /**
  * # Telemetry

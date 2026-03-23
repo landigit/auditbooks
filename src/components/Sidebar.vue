@@ -219,7 +219,7 @@ import { fyo } from 'src/initFyo';
 import { languageDirectionKey, shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathRef } from 'src/utils/refs';
 import { getSidebarConfig } from 'src/utils/sidebarConfig';
-import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
+import type { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
 import { routeTo, toggleSidebar } from 'src/utils/ui';
 import { defineComponent, inject } from 'vue';
 import router from '../router';
@@ -292,7 +292,7 @@ export default defineComponent({
     reportIssue,
     toggleSidebar,
     openDocumentation() {
-      ipc.openLink('https://docs.www.landigit.com/' + docsPathRef.value);
+      ipc.openLink(`https://docs.www.landigit.com/${docsPathRef.value}`);
     },
     setActiveGroup() {
       const { fullPath } = this.$router.currentRoute.value;
@@ -308,7 +308,7 @@ export default defineComponent({
           }
 
           if (g.items) {
-            let activeItem = g.items.filter(
+            const activeItem = g.items.filter(
               ({ route }) => route === fullPath || fullPath.startsWith(route)
             );
 

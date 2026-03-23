@@ -153,7 +153,7 @@ export default class Observable<T> {
     }
 
     if (this._isHot.get(event)) {
-      this._eventQueue.get(event)!.push(params);
+      this._eventQueue.get(event)?.push(params);
       return true;
     }
 

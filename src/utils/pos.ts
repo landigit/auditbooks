@@ -1,17 +1,17 @@
-import { Fyo, t } from 'fyo';
+import { type Fyo, t } from 'fyo';
 import { ValidationError } from 'fyo/utils/errors';
 import { AccountTypeEnum } from 'models/baseModels/Account/types';
-import { Item } from 'models/baseModels/Item/Item';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
+import type { Item } from 'models/baseModels/Item/Item';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import type { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import type { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
+import type { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { ItemQtyMap, ItemSerialNumbers } from 'src/components/POS/types';
+import type { Money } from 'pesa';
+import type { ItemQtyMap, ItemSerialNumbers } from 'src/components/POS/types';
 import { fyo } from 'src/initFyo';
 import { safeParseFloat } from 'utils/index';
 import { showToast } from './interactive';
-import { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
 
 export async function getPOSOpeningShiftDoc(
   fyo: Fyo
@@ -202,7 +202,7 @@ export function validateClosingAmounts(posShiftDoc: POSClosingShift) {
   try {
     if (!posShiftDoc) {
       throw new ValidationError(
-        `POS Shift Document not loaded. Please reload.`
+        'POS Shift Document not loaded. Please reload.'
       );
     }
 

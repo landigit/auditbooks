@@ -1,11 +1,11 @@
-import { Fyo } from 'fyo';
-import { Action, ListViewSettings } from 'fyo/model/types';
+import type { Fyo } from 'fyo';
+import type { Action, ListViewSettings } from 'fyo/model/types';
 import {
   getStockTransferActions,
   getTransactionStatusColumn,
 } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
-import { ShipmentItem } from './ShipmentItem';
+import type { ShipmentItem } from './ShipmentItem';
 import { StockTransfer } from './StockTransfer';
 
 export class Shipment extends StockTransfer {

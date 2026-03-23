@@ -410,12 +410,12 @@
   </div>
 </template>
 <script lang="ts">
-import { DocValue } from 'fyo/core/types';
-import { Action } from 'fyo/model/types';
+import type { DocValue } from 'fyo/core/types';
+import type { Action } from 'fyo/model/types';
 import { Verb } from 'fyo/telemetry/types';
 import { ValidationError } from 'fyo/utils/errors';
 import { ModelNameEnum } from 'models/types';
-import { OptionField, RawValue, SelectOption } from 'schemas/types';
+import type { OptionField, RawValue, SelectOption } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import Check from 'src/components/Controls/Check.vue';
@@ -426,7 +426,7 @@ import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
-import { Importer, TemplateField, getColumnLabel } from 'src/importer';
+import { Importer, type TemplateField, getColumnLabel } from 'src/importer';
 import { fyo } from 'src/initFyo';
 import { showDialog } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
@@ -592,7 +592,7 @@ export default defineComponent({
           map.set(label, []);
         }
 
-        map.get(label)!.push(value);
+        map.get(label)?.push(value);
       }
 
       return map;
@@ -677,7 +677,8 @@ export default defineComponent({
     helperMessage(): string {
       if (!this.importType) {
         return this.t`Set an Import Type`;
-      } else if (!this.fileName) {
+      }
+      if (!this.fileName) {
         return '';
       }
 
@@ -828,7 +829,7 @@ export default defineComponent({
     },
     async saveTemplate(): Promise<void> {
       const template = this.importer.getCSVTemplate();
-      const templateName = this.importType + ' ' + this.t`Template`;
+      const templateName = `${this.importType} ${this.t`Template`}`;
       const { canceled, filePath } = await getSavePath(templateName, 'csv');
 
       if (canceled || !filePath) {

@@ -34,10 +34,10 @@
 </template>
 <script lang="ts">
 import { shortcutsKey } from 'src/utils/injectionKeys';
-import { ref, inject } from 'vue';
+import { historyState } from 'src/utils/refs';
+import { inject, ref } from 'vue';
 import { defineComponent } from 'vue';
 import SearchBar from './SearchBar.vue';
-import { historyState } from 'src/utils/refs';
 
 const COMPONENT_NAME = 'PageHeaderNavGroup';
 

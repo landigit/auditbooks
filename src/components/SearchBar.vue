@@ -250,9 +250,9 @@ import { getBgTextColorClass } from 'src/utils/colors';
 import { searcherKey, shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap } from 'src/utils/misc';
 import {
-  SearchGroup,
-  SearchItems,
+  type SearchGroup,
   SearchItem,
+  type SearchItems,
   getGroupLabelMap,
   searchGroups,
 } from 'src/utils/search';
@@ -322,10 +322,13 @@ export default defineComponent({
       };
     },
     groupColorClassMap(): Record<SearchGroup, string> {
-      return searchGroups.reduce((map, g) => {
-        map[g] = getBgTextColorClass(this.groupColorMap[g]);
-        return map;
-      }, {} as Record<SearchGroup, string>);
+      return searchGroups.reduce(
+        (map, g) => {
+          map[g] = getBgTextColorClass(this.groupColorMap[g]);
+          return map;
+        },
+        {} as Record<SearchGroup, string>
+      );
     },
     suggestions(): SearchItems {
       if (!this.searcher) {
@@ -357,7 +360,7 @@ export default defineComponent({
   },
   methods: {
     openDocs() {
-      ipc.openLink('https://docs.www.landigit.com/' + docsPathMap.Search);
+      ipc.openLink(`https://docs.www.landigit.com/${docsPathMap.Search}`);
     },
     getShortcuts() {
       const ifOpen = (cb: Function) => () => this.openModal && cb();
@@ -393,7 +396,7 @@ export default defineComponent({
     },
     setShortcuts() {
       for (const { shortcut, callback } of this.getShortcuts()) {
-        this.shortcuts!.pmod.set(COMPONENT_NAME, [shortcut], callback);
+        this.shortcuts?.pmod.set(COMPONENT_NAME, [shortcut], callback);
       }
     },
     open(): void {

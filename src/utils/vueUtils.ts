@@ -1,4 +1,4 @@
-import { Keys } from 'utils/types';
+import type { Keys } from 'utils/types';
 import {
   onActivated,
   onDeactivated,
@@ -8,8 +8,8 @@ import {
   ref,
 } from 'vue';
 import { getIsMac } from './misc';
-import { Shortcuts } from './shortcuts';
-import { DocRef } from './types';
+import type { Shortcuts } from './shortcuts';
+import type { DocRef } from './types';
 import {
   commonDocCancel,
   commonDocSubmit,
@@ -117,7 +117,7 @@ export function useDocShortcuts(
 ) {
   let context = name;
   if (isMultiple) {
-    context = name + '-' + Math.random().toString(36).slice(2, 6);
+    context = `${name}-${Math.random().toString(36).slice(2, 6)}`;
   }
 
   const syncOrSubmitCallback = async () => {

@@ -1,6 +1,6 @@
 import { t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import { FormulaMap, ListsMap, ValidationMap } from 'fyo/model/types';
+import type { FormulaMap, ListsMap, ValidationMap } from 'fyo/model/types';
 import { validateEmail } from 'fyo/model/validationFunction';
 import { DateTime } from 'luxon';
 import { getCountryInfo, getFiscalYear } from 'utils/misc';

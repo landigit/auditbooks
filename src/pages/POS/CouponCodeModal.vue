@@ -107,20 +107,20 @@
 </template>
 
 <script lang="ts">
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
 import { t } from 'fyo';
-import { showToast } from 'src/utils/interactive';
-import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
-import Link from 'src/components/Controls/Link.vue';
-import { ModelNameEnum } from 'models/types';
+import type { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import type { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import type { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { validateCouponCode } from 'models/helpers';
-import { Field } from 'schemas/types';
+import { ModelNameEnum } from 'models/types';
+import type { Field } from 'schemas/types';
+import Button from 'src/components/Button.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
+import Link from 'src/components/Controls/Link.vue';
+import Modal from 'src/components/Modal.vue';
 import Row from 'src/components/Row.vue';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import { showToast } from 'src/utils/interactive';
+import { defineComponent, inject } from 'vue';
 
 export default defineComponent({
   name: 'CouponCodeModal',

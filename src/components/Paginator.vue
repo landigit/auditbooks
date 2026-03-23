@@ -130,8 +130,8 @@ export default defineComponent({
       return true;
     },
     setPageNo(value) {
-      value = parseInt(value);
-      if (isNaN(value)) {
+      value = Number.parseInt(value);
+      if (Number.isNaN(value)) {
         return;
       }
 

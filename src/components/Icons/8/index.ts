@@ -14,11 +14,11 @@ export default {
   'arrow-right': ArrowRight,
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
-  'circle': Circle,
+  circle: Circle,
   'dot-horizontal': DotHorizontal,
   'dot-vertical': DotVertical,
-  'pencil': Pencil,
-  'plus': Plus,
-  'up': Up,
-  'x': X,
-}
+  pencil: Pencil,
+  plus: Plus,
+  up: Up,
+  x: X,
+};

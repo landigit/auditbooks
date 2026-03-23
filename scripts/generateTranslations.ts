@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { UnknownMap } from 'utils/types';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import type { UnknownMap } from 'utils/types';
 import { generateCSV, parseCSV } from '../utils/csvParser';
 import {
   getIndexFormat,
@@ -100,7 +100,7 @@ function tStringsToArray(
 ): string[] {
   const tSet: Set<string> = new Set();
   for (const k of tMap.keys()) {
-    tMap.get(k)!.forEach((s) => tSet.add(s));
+    tMap.get(k)?.forEach((s) => tSet.add(s));
   }
 
   for (const ts of tStrings) {
@@ -114,27 +114,27 @@ function printHelp() {
   const shouldPrint = process.argv.findIndex((i) => i === '-h') !== -1;
   if (shouldPrint) {
     console.log(
-      `Usage: ` +
-        `\tyarn script:translate\n` +
-        `\tyarn script:translate -h\n` +
-        `\tyarn script:translate -l [language_code]\n` +
-        `\n` +
-        `Example: $ yarn script:translate -l de\n` +
-        `\n` +
-        `Description:\n` +
+      'Usage: ' +
+        '\tyarn script:translate\n' +
+        '\tyarn script:translate -h\n' +
+        '\tyarn script:translate -l [language_code]\n' +
+        '\n' +
+        'Example: $ yarn script:translate -l de\n' +
+        '\n' +
+        'Description:\n' +
         `\tPassing a language code will create a '.csv' file in\n` +
         `\tthe 'translations' subdirectory. Translated strings are to\n` +
-        `\tbe added to this file.\n\n` +
-        `\tCalling the script without args will update the translation csv\n` +
+        '\tbe added to this file.\n\n' +
+        '\tCalling the script without args will update the translation csv\n' +
         `\tfile with new strings if any. Existing translations won't\n` +
-        `\tbe removed.\n` +
-        `\n` +
-        `Parameters:\n` +
-        `\tlanguage_code : An ISO 693-1 code or a locale identifier.\n` +
-        `\n` +
-        `Reference:\n` +
-        `\tISO 693-1 codes: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes\n` +
-        `\tLocale identifier: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locale_identification_and_negotiation`
+        '\tbe removed.\n' +
+        '\n' +
+        'Parameters:\n' +
+        '\tlanguage_code : An ISO 693-1 code or a locale identifier.\n' +
+        '\n' +
+        'Reference:\n' +
+        '\tISO 693-1 codes: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes\n' +
+        '\tLocale identifier: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locale_identification_and_negotiation'
     );
   }
   return shouldPrint;
@@ -185,7 +185,7 @@ async function regenerateTranslations(languageCode: string, tArray: string[]) {
   }
 
   // regenerate all translation files
-  console.log(`Language code not passed, regenerating all translations.`);
+  console.log('Language code not passed, regenerating all translations.');
   for (const filePath of await fs.readdir(translationsFolder)) {
     if (!filePath.endsWith('.csv')) {
       continue;
@@ -204,8 +204,7 @@ async function writeTranslations(languageCode: string, tArray: string[]) {
     }
 
     console.log(
-      `Existing file found for '${languageCode}': ${path}\n` +
-        `regenerating it's translations.`
+      `Existing file found for '${languageCode}': ${path}\nregenerating it's translations.`
     );
     regenerateTranslations(languageCode, tArray);
   } catch (err) {

@@ -1,9 +1,9 @@
-import { DocValue } from 'fyo/core/types';
+import type { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
-import { ListViewSettings, ValidationMap } from 'fyo/model/types';
+import type { ListViewSettings, ValidationMap } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
-import { CollectionRulesItems } from '../CollectionRulesItems/CollectionRulesItems';
 import { getLoyaltyProgramStatusColumn } from '../../helpers';
+import type { CollectionRulesItems } from '../CollectionRulesItems/CollectionRulesItems';
 
 export class LoyaltyProgram extends Doc {
   collectionRules?: CollectionRulesItems[];

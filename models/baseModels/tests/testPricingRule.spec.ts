@@ -1,10 +1,10 @@
+import { getItem, getStockMovement } from 'models/inventory/tests/helpers';
+import { MovementTypeEnum } from 'models/inventory/types';
+import { ModelNameEnum } from 'models/types';
 import test from 'tape';
 import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
-import { ModelNameEnum } from 'models/types';
-import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
-import { getItem, getStockMovement } from 'models/inventory/tests/helpers';
-import { PricingRule } from '../PricingRule/PricingRule';
-import { MovementTypeEnum } from 'models/inventory/types';
+import type { PricingRule } from '../PricingRule/PricingRule';
+import type { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 const fyo = getTestFyo();
 setupTestFyo(fyo, __filename);
@@ -167,13 +167,13 @@ test('pricing rule is applied when filtered by min and max qty', async (t) => {
   await sinv.runFormulas();
 
   t.equal(
-    sinv.pricingRuleDetail![0].referenceName,
+    sinv.pricingRuleDetail?.[0].referenceName,
     pricingRuleMap[0].name,
     'Pricing Rule is added to Pricing Rule Detail'
   );
 
   t.equal(
-    sinv.items![0].rate!.float,
+    sinv.items?.[0].rate?.float,
     pricingRuleMap[0].discountRate,
     'item rate fetched from Pricing Rule'
   );
@@ -217,13 +217,13 @@ test('pricing rule is applied when filtered by min and max amount', async (t) =>
   await sinv.runFormulas();
 
   t.equal(
-    sinv.pricingRuleDetail![0].referenceName,
+    sinv.pricingRuleDetail?.[0].referenceName,
     pricingRuleMap[0].name,
     'Pricing Rule is added to Pricing Rule Detail'
   );
 
   t.equal(
-    sinv.items![0].rate!.float,
+    sinv.items?.[0].rate?.float,
     pricingRuleMap[0].discountRate,
     'item rate fetched from Pricing Rule'
   );
@@ -323,7 +323,7 @@ test('Pricing Rule is applied when filtered by qty, amount and dates', async (t)
   await sinv.runFormulas();
 
   t.equal(
-    sinv.pricingRuleDetail![0].referenceName,
+    sinv.pricingRuleDetail?.[0].referenceName,
     pricingRuleMap[1].name,
     'Pricing Rule is applied'
   );
@@ -343,7 +343,7 @@ test('Pricing Rule is applied when filtered by qty, amount and dates', async (t)
   await sinv.runFormulas();
 
   t.equal(
-    sinv.pricingRuleDetail![0].referenceName,
+    sinv.pricingRuleDetail?.[0].referenceName,
     pricingRuleMap[1].name,
     'Pricing Rule is applied'
   );
@@ -432,7 +432,7 @@ test('create two pricing rules, Highest priority pricing rule is applied', async
   await sinv.runFormulas();
 
   t.equal(
-    sinv.pricingRuleDetail![0].referenceName,
+    sinv.pricingRuleDetail?.[0].referenceName,
     'PRLE-1003',
     'Pricing Rule with highest priority is applied'
   );
@@ -475,7 +475,7 @@ test('create a price discount of type rate, discounted rate should apply', async
   });
   await sinv.runFormulas();
 
-  t.equal(sinv.items![0].rate?.float, pricingRuleMap[0].discountRate);
+  t.equal(sinv.items?.[0].rate?.float, pricingRuleMap[0].discountRate);
 });
 
 test('create a price discount of type percent, discount percent should apply', async (t) => {
@@ -503,7 +503,7 @@ test('create a price discount of type percent, discount percent should apply', a
   });
   await sinv.runFormulas();
 
-  t.equal(sinv.items![0].itemDiscountPercent, 69);
+  t.equal(sinv.items?.[0].itemDiscountPercent, 69);
 });
 
 test('create a price discount of type amount, discount amount should apply', async (t) => {
@@ -531,7 +531,7 @@ test('create a price discount of type amount, discount amount should apply', asy
   });
   await sinv.runFormulas();
 
-  t.equal(sinv.items![0].itemDiscountAmount!.float, 500);
+  t.equal(sinv.items?.[0].itemDiscountAmount?.float, 500);
 });
 
 test('create a product discount giving 1 free item', async (t) => {
@@ -557,9 +557,9 @@ test('create a product discount giving 1 free item', async (t) => {
   await sinv.runFormulas();
   await sinv.sync();
 
-  t.equal(sinv.items![1].isFreeItem, true);
-  t.equal(sinv.items![1].rate!.float, pricingRuleMap[1].freeItemRate);
-  t.equal(sinv.items![1].quantity, pricingRuleMap[1].freeItemQuantity);
+  t.equal(sinv.items?.[1].isFreeItem, true);
+  t.equal(sinv.items?.[1].rate?.float, pricingRuleMap[1].freeItemRate);
+  t.equal(sinv.items?.[1].quantity, pricingRuleMap[1].freeItemQuantity);
 });
 
 test('create a product discount, recurse 2', async (t) => {
@@ -586,9 +586,9 @@ test('create a product discount, recurse 2', async (t) => {
   await sinv.runFormulas();
   await sinv.sync();
 
-  t.equal(sinv.items![1].isFreeItem, true);
-  t.equal(sinv.items![1].rate!.float, pricingRuleMap[1].freeItemRate);
-  t.equal(sinv.items![1].quantity, pricingRuleMap[1].freeItemQuantity);
+  t.equal(sinv.items?.[1].isFreeItem, true);
+  t.equal(sinv.items?.[1].rate?.float, pricingRuleMap[1].freeItemRate);
+  t.equal(sinv.items?.[1].quantity, pricingRuleMap[1].freeItemQuantity);
 });
 
 closeTestFyo(fyo, __filename);

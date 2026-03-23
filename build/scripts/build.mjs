@@ -1,14 +1,14 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import vue from '@vitejs/plugin-vue';
 import builder from 'electron-builder';
 import esbuild from 'esbuild';
 import fs from 'fs-extra';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import * as vite from 'vite';
-import { getMainProcessCommonConfig } from './helpers.mjs';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import frappeBooksConfig from '../../electron-builder-config.mjs';
+import { getMainProcessCommonConfig } from './helpers.mjs';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(dirname, '..', '..');
@@ -29,7 +29,7 @@ const rawArgs = yargs(hideBin(process.argv))
 
 const argv = rawArgs.argv;
 if (argv.nosign) {
-  process.env['CSC_IDENTITY_AUTO_DISCOVERY'] = false;
+  process.env.CSC_IDENTITY_AUTO_DISCOVERY = false;
 }
 
 updatePaths();
@@ -163,7 +163,7 @@ async function packageApp() {
     }
   }
 
-  let buildOptions = {
+  const buildOptions = {
     config: frappeBooksConfig,
     ...builderArgs,
   };
@@ -188,6 +188,6 @@ function removeBaseLeadingSlash(dir, base) {
     }
 
     const contents = fs.readFileSync(filePath).toString('utf-8');
-    fs.writeFileSync(filePath, contents.replaceAll('/' + base, base));
+    fs.writeFileSync(filePath, contents.replaceAll(`/${base}`, base));
   }
 }

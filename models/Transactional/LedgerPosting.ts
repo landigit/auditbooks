@@ -1,10 +1,10 @@
-import { Fyo, t } from 'fyo';
+import { type Fyo, t } from 'fyo';
 import { NotFoundError, ValidationError } from 'fyo/utils/errors';
-import { AccountingLedgerEntry } from 'models/baseModels/AccountingLedgerEntry/AccountingLedgerEntry';
+import type { AccountingLedgerEntry } from 'models/baseModels/AccountingLedgerEntry/AccountingLedgerEntry';
 import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { Transactional } from './Transactional';
-import { TransactionType } from './types';
+import type { Money } from 'pesa';
+import type { Transactional } from './Transactional';
+import type { TransactionType } from './types';
 
 /**
  * # LedgerPosting
@@ -39,12 +39,12 @@ export class LedgerPosting {
 
   async debit(account: string, amount: Money) {
     const ledgerEntry = this._getLedgerEntry(account, 'debit');
-    await ledgerEntry.set('debit', ledgerEntry.debit!.add(amount));
+    await ledgerEntry.set('debit', ledgerEntry.debit?.add(amount));
   }
 
   async credit(account: string, amount: Money) {
     const ledgerEntry = this._getLedgerEntry(account, 'credit');
-    await ledgerEntry.set('credit', ledgerEntry.credit!.add(amount));
+    await ledgerEntry.set('credit', ledgerEntry.credit?.add(amount));
   }
 
   async post() {

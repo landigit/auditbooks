@@ -61,12 +61,12 @@
 <script lang="ts">
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import { Field } from 'schemas/types';
+import type { Doc } from 'fyo/model/doc';
+import type { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Table from 'src/components/Controls/Table.vue';
 import { focusOrSelectFormControl } from 'src/utils/ui';
-import { defineComponent, PropType } from 'vue';
+import { type PropType, defineComponent } from 'vue';
 
 export default defineComponent({
   components: { FormControl, Table },

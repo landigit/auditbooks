@@ -11,12 +11,12 @@
  * takes place only if a new update has been pushed.
  */
 
-import { constants } from 'fs';
-import fs from 'fs/promises';
-import path from 'path';
-import { parseCSV } from 'utils/csvParser';
-import { LanguageMap } from 'utils/types';
+import { constants } from 'node:fs';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import fetch from 'node-fetch';
+import { parseCSV } from 'utils/csvParser';
+import type { LanguageMap } from 'utils/types';
 
 const VALENTINES_DAY = 1644796800000;
 
@@ -85,7 +85,7 @@ async function fetchAndStoreFile(code: string, date?: Date) {
   }
 
   if (contents) {
-    contents = [date!.toISOString(), contents].join('\n');
+    contents = [date?.toISOString(), contents].join('\n');
     await storeFile(code, contents);
   }
 

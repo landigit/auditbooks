@@ -1,21 +1,23 @@
-// eslint-disable-next-line
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+
 require('source-map-support').install({
   handleUncaughtException: false,
   environment: 'node',
 });
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { emitMainProcessError } from 'backend/helpers';
 import {
-  app,
   BrowserWindow,
-  BrowserWindowConstructorOptions,
+  type BrowserWindowConstructorOptions,
+  type ProtocolRequest,
+  type ProtocolResponse,
+  app,
   protocol,
-  ProtocolRequest,
-  ProtocolResponse,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import fs from 'fs';
-import path from 'path';
 import registerAppLifecycleListeners from './main/registerAppLifecycleListeners';
 import registerAutoUpdaterListeners from './main/registerAutoUpdaterListeners';
 import registerIpcMainActionListeners from './main/registerIpcMainActionListeners';
@@ -163,9 +165,9 @@ export class Main {
     });
 
     this.mainWindow.webContents.on('did-fail-load', () => {
-      this.mainWindow!.loadURL(this.winURL).catch((err) =>
-        emitMainProcessError(err)
-      );
+      this.mainWindow
+        ?.loadURL(this.winURL)
+        .catch((err) => emitMainProcessError(err));
     });
   }
 }

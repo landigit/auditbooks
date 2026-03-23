@@ -1,7 +1,7 @@
-import { Fyo } from 'fyo';
-import { Doc } from 'fyo/model/doc';
+import type { Fyo } from 'fyo';
+import type { Doc } from 'fyo/model/doc';
 import { DateTime } from 'luxon';
-import { Field, FieldType, FieldTypeEnum } from 'schemas/types';
+import { type Field, type FieldType, FieldTypeEnum } from 'schemas/types';
 import { getIsNullOrUndef, safeParseFloat, titleCase } from 'utils';
 import { isPesa } from '.';
 import {
@@ -57,9 +57,11 @@ export function format(
 function toDatetime(value: unknown): DateTime | null {
   if (typeof value === 'string') {
     return DateTime.fromISO(value);
-  } else if (value instanceof Date) {
+  }
+  if (value instanceof Date) {
     return DateTime.fromJSDate(value);
-  } else if (typeof value === 'number') {
+  }
+  if (typeof value === 'number') {
     return DateTime.fromSeconds(value);
   }
 
@@ -128,7 +130,7 @@ function formatCurrency(
 
   const currencySymbol = fyo.currencySymbols[currency];
   if (currencySymbol !== undefined) {
-    return currencySymbol + ' ' + valueString;
+    return `${currencySymbol} ${valueString}`;
   }
 
   return valueString;

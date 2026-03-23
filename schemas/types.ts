@@ -1,4 +1,4 @@
-import { PropertyEnum } from "utils/types";
+import type { PropertyEnum } from 'utils/types';
 
 export type FieldType =
   | 'Data'
@@ -51,30 +51,30 @@ type BaseFieldType = Exclude<
 export type RawValue = string | number | boolean | null;
 
 export interface BaseField {
-  fieldname: string;             // Column name in the db
-  fieldtype: BaseFieldType;      // UI Descriptive field types that map to column types
-  label: string;                 // Translateable UI facing name
-  schemaName?: string;           // Convenient access to schemaName incase just the field is passed
-  required?: boolean;            // Implies Not Null
-  hidden?: boolean;              // UI Facing config, whether field is shown in a form
-  invisible?: boolean;           // UI Facing config, whether field is invisible but occupies space
-  readOnly?: boolean;            // UI Facing config, whether field is editable
-  description?: string;          // UI Facing, translateable, used for inline documentation
-  default?: RawValue;            // Default value of a field, should match the db type
-  placeholder?: string;          // UI Facing config, form field placeholder
-  groupBy?: string;              // UI Facing used in dropdowns fields
-  meta?: boolean;                // Field is a meta field, i.e. only for the db, not UI
-  filter?: boolean;              // UI Facing config, whether to be used to filter the List.
-  computed?: boolean;            // Computed values are not stored in the database.
-  section?: string;              // UI Facing config, for grouping by sections
-  tab?: string;                  // UI Facing config, for grouping by tabs
-  abstract?: string;             // Used to mark the location of a field in an Abstract schema
-  isCustom?: boolean;            // Whether the field is a custom field
-  bold?: boolean;                // UI Facing config, whether to make the label bold
+  fieldname: string; // Column name in the db
+  fieldtype: BaseFieldType; // UI Descriptive field types that map to column types
+  label: string; // Translateable UI facing name
+  schemaName?: string; // Convenient access to schemaName incase just the field is passed
+  required?: boolean; // Implies Not Null
+  hidden?: boolean; // UI Facing config, whether field is shown in a form
+  invisible?: boolean; // UI Facing config, whether field is invisible but occupies space
+  readOnly?: boolean; // UI Facing config, whether field is editable
+  description?: string; // UI Facing, translateable, used for inline documentation
+  default?: RawValue; // Default value of a field, should match the db type
+  placeholder?: string; // UI Facing config, form field placeholder
+  groupBy?: string; // UI Facing used in dropdowns fields
+  meta?: boolean; // Field is a meta field, i.e. only for the db, not UI
+  filter?: boolean; // UI Facing config, whether to be used to filter the List.
+  computed?: boolean; // Computed values are not stored in the database.
+  section?: string; // UI Facing config, for grouping by sections
+  tab?: string; // UI Facing config, for grouping by tabs
+  abstract?: string; // Used to mark the location of a field in an Abstract schema
+  isCustom?: boolean; // Whether the field is a custom field
+  bold?: boolean; // UI Facing config, whether to make the label bold
   sub_label?: string;
   filters?: Record<string, string>;
   getOptions?: () => Promise<{ label: string; value: string }[]>;
-  rows?: number;                 // UI Facing config, number of rows for Text field (default 3)
+  rows?: number; // UI Facing config, number of rows for Text field (default 3)
 }
 
 export type SelectOption = { value: string; label: string };
@@ -86,20 +86,20 @@ export interface OptionField extends Omit<BaseField, 'fieldtype'> {
 
 export interface TargetField extends Omit<BaseField, 'fieldtype'> {
   fieldtype: TargetFieldType;
-  target: string;                // Name of the table or group of tables to fetch values
-  create?: boolean;              // Whether to show Create in the dropdown
-  edit?: boolean;                // Whether the Table has quick editable columns
+  target: string; // Name of the table or group of tables to fetch values
+  create?: boolean; // Whether to show Create in the dropdown
+  edit?: boolean; // Whether the Table has quick editable columns
 }
 
 export interface DynamicLinkField extends Omit<BaseField, 'fieldtype'> {
   fieldtype: DynamicLinkFieldType;
-  references: string;            // Reference to an option field that links to schema
+  references: string; // Reference to an option field that links to schema
 }
 
 export interface NumberField extends Omit<BaseField, 'fieldtype'> {
   fieldtype: NumberFieldType;
-  minvalue?: number;             // UI Facing used to restrict lower bound
-  maxvalue?: number;             // UI Facing used to restrict upper bound
+  minvalue?: number; // UI Facing used to restrict lower bound
+  maxvalue?: number; // UI Facing used to restrict upper bound
 }
 
 export type Field =
@@ -112,23 +112,23 @@ export type Field =
 export type Naming = 'autoincrement' | 'random' | 'numberSeries' | 'manual';
 
 export interface Schema {
-  name: string;                  // Table name
-  label: string;                 // Translateable UI facing name
-  fields: Field[];               // Maps to database columns
-  isTree?: boolean;              // Used for nested set, eg for Chart of Accounts
-  extends?: string;              // Value points to an Abstract schema. Indicates Subclass schema
-  isChild?: boolean;             // Indicates a child table, i.e table with "parent" FK column
-  isSingle?: boolean;            // Fields will be values in SingleValue, i.e. an Entity Attr. Value
-  isAbstract?: boolean;          // Not entered into db, used to extend a Subclass schema
-  tableFields?: string[]         // Used for displaying childTableFields
-  isSubmittable?: boolean;       // For transactional types, values considered only after submit
-  keywordFields?: string[];      // Used to get fields that are to be used for search.
-  quickEditFields?: string[];    // Used to get fields for the quickEditForm
-  linkDisplayField?:string;      // Display field if inline editable
-  create?: boolean               // Whether the user can create an entry from the ListView
-  naming?: Naming;               // Used for assigning name, default is 'random' else 'numberSeries' if present
-  titleField?: string;           // Main display field
-  removeFields?: string[];       // Used by the builder to remove fields.
+  name: string; // Table name
+  label: string; // Translateable UI facing name
+  fields: Field[]; // Maps to database columns
+  isTree?: boolean; // Used for nested set, eg for Chart of Accounts
+  extends?: string; // Value points to an Abstract schema. Indicates Subclass schema
+  isChild?: boolean; // Indicates a child table, i.e table with "parent" FK column
+  isSingle?: boolean; // Fields will be values in SingleValue, i.e. an Entity Attr. Value
+  isAbstract?: boolean; // Not entered into db, used to extend a Subclass schema
+  tableFields?: string[]; // Used for displaying childTableFields
+  isSubmittable?: boolean; // For transactional types, values considered only after submit
+  keywordFields?: string[]; // Used to get fields that are to be used for search.
+  quickEditFields?: string[]; // Used to get fields for the quickEditForm
+  linkDisplayField?: string; // Display field if inline editable
+  create?: boolean; // Whether the user can create an entry from the ListView
+  naming?: Naming; // Used for assigning name, default is 'random' else 'numberSeries' if present
+  titleField?: string; // Main display field
+  removeFields?: string[]; // Used by the builder to remove fields.
 }
 
 export interface SchemaStub extends Partial<Schema> {

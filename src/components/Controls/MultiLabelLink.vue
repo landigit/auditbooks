@@ -177,7 +177,7 @@ export default {
 
       const getCreateFilters =
         fyo.models[schemaName]?.createFilters?.[fieldname];
-      let createFilters = await getCreateFilters?.(this.doc);
+      const createFilters = await getCreateFilters?.(this.doc);
 
       if (createFilters !== undefined) {
         return createFilters;

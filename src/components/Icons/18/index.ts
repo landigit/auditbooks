@@ -9,9 +9,9 @@ import Inventory from './inventory.vue';
 import Invoice from './invoice.vue';
 import Item from './item.vue';
 import Mail from './mail.vue';
-import POS from './pos.vue';
 import OpeningAc from './opening-ac.vue';
 import Percentage from './percentage.vue';
+import POS from './pos.vue';
 import Property from './property.vue';
 import PurchaseInvoice from './purchase-invoice.vue';
 import Purchase from './purchase.vue';
@@ -26,29 +26,29 @@ import System from './system.vue';
 
 // prettier-ignore
 export default {
-  'check': Check,
+  check: Check,
   'common-entries': CommonEntries,
-  'customer': Customer,
-  'dashboard': Dashboard,
-  'fb': Fb,
-  'general': General,
-  'gst': Gst,
-  'inventory': Inventory,
-  'invoice': Invoice,
-  'item': Item,
-  'mail': Mail,
-  'pos': POS,
+  customer: Customer,
+  dashboard: Dashboard,
+  fb: Fb,
+  general: General,
+  gst: Gst,
+  inventory: Inventory,
+  invoice: Invoice,
+  item: Item,
+  mail: Mail,
+  pos: POS,
   'opening-ac': OpeningAc,
-  'percentage': Percentage,
-  'property': Property,
+  percentage: Percentage,
+  property: Property,
   'purchase-invoice': PurchaseInvoice,
-  'purchase': Purchase,
-  'reports': Reports,
+  purchase: Purchase,
+  reports: Reports,
   'review-ac': ReviewAc,
   'sales-invoice': SalesInvoice,
-  'sales': Sales,
-  'settings': Settings,
-  'start': Start,
-  'supplier': Supplier,
-  'system': System,
-}
+  sales: Sales,
+  settings: Settings,
+  start: Start,
+  supplier: Supplier,
+  system: System,
+};
