@@ -56,7 +56,7 @@ export default function registerIpcMainActionListeners(main: Main) {
         root = 'dbs';
       }
 
-      const dbsPath = path.join(root, 'AuditBooks');
+      const dbsPath = path.join(root, 'Auditbooks');
       const backupPath = path.join(dbsPath, 'backups');
       await fs.ensureDir(backupPath);
 
@@ -160,6 +160,9 @@ export default function registerIpcMainActionListeners(main: Main) {
   );
 
   ipcMain.handle(IPC_ACTIONS.SEND_ERROR, async (_, bodyJson: string) => {
+    console.error('--- RENDERER ERROR RECEIVED ---');
+    console.error(bodyJson);
+    console.error('------------------------------');
     await sendError(bodyJson, main);
   });
 
@@ -243,17 +246,20 @@ export default function registerIpcMainActionListeners(main: Main) {
   });
 
   ipcMain.handle(IPC_ACTIONS.GET_ENV, async () => {
+    console.log('--- MAIN PROCESS: HANDLING GET_ENV ---');
     let version = app.getVersion();
     if (main.isDevelopment) {
       const packageJson = await fs.readFile('package.json', 'utf-8');
       version = (JSON.parse(packageJson) as { version: string }).version;
     }
 
-    return {
+    const env = {
       isDevelopment: main.isDevelopment,
       platform: process.platform,
       version,
     };
+    console.log('--- MAIN PROCESS: RETURNING ENV:', JSON.stringify(env), '---');
+    return env;
   });
 
   ipcMain.handle(

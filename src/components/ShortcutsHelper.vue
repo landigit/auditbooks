@@ -70,7 +70,7 @@ export default defineComponent({
     this.groups = [
       {
         label: t`Global`,
-        description: t`Applicable anywhere in AuditBooks`,
+        description: t`Applicable anywhere in Auditbooks`,
         collapsed: false,
         shortcuts: [
           {

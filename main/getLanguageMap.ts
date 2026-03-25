@@ -14,6 +14,10 @@
 import { constants } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import fetch from 'node-fetch';
 import { parseCSV } from 'utils/csvParser';
 import type { LanguageMap } from 'utils/types';
@@ -80,12 +84,13 @@ async function fetchAndStoreFile(code: string, date?: Date) {
     contents = await fetchContentsFromRaw(code);
   }
 
-  if (!date && contents) {
-    date = await getLastUpdated(code);
+  let lastUpdated = date;
+  if (!lastUpdated && contents) {
+    lastUpdated = await getLastUpdated(code);
   }
 
   if (contents) {
-    contents = [date?.toISOString(), contents].join('\n');
+    contents = [lastUpdated?.toISOString(), contents].join('\n');
     await storeFile(code, contents);
   }
 

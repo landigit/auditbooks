@@ -16,7 +16,7 @@
           :key="d.account"
           class="flex items-center text-sm"
           @mouseover="active = i"
-          @mouseleave="active = null"
+          @mouseleave="active = undefined"
         >
           <div class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
           <p class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28">
@@ -82,7 +82,7 @@ export default defineComponent({
     darkMode: { type: Boolean, default: false },
   },
   data: () => ({
-    active: null as null | number,
+    active: undefined as undefined | number,
     expenses: [] as {
       account: string;
       total: number;
@@ -91,8 +91,8 @@ export default defineComponent({
     }[],
   }),
   computed: {
-    totalExpense(): number {
-      return this.expenses.reduce((sum, expense) => sum + expense.total, 0);
+    totalExpenses(): number {
+      return this.expenses.reduce((acc, exp) => acc + (exp.total ?? 0), 0);
     },
     hasData(): boolean {
       return this.expenses.length > 0;

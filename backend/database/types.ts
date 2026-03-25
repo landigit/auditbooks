@@ -53,7 +53,7 @@ export interface Patch {
 export type KnexColumnType =
   | 'text'
   | 'integer'
-  | 'float'
+  | 'real'
   | 'boolean'
   | 'date'
   | 'datetime'

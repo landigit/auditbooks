@@ -18,6 +18,7 @@ export default function registerProcessListeners(main: Main) {
   }
 
   process.on(CUSTOM_EVENTS.MAIN_PROCESS_ERROR, (error, more) => {
+    console.error('Main Process Error:', error, more);
     main.mainWindow?.webContents.send(
       IPC_CHANNELS.LOG_MAIN_PROCESS_ERROR,
       error,
@@ -26,6 +27,7 @@ export default function registerProcessListeners(main: Main) {
   });
 
   process.on('unhandledRejection', (error) => {
+    console.error('Unhandled Rejection:', error);
     main.mainWindow?.webContents.send(
       IPC_CHANNELS.LOG_MAIN_PROCESS_ERROR,
       error
@@ -33,6 +35,7 @@ export default function registerProcessListeners(main: Main) {
   });
 
   process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
     main.mainWindow?.webContents.send(
       IPC_CHANNELS.LOG_MAIN_PROCESS_ERROR,
       error

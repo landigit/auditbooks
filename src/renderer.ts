@@ -13,6 +13,7 @@ import { stringifyCircular } from './utils';
 import { setLanguageMap } from './utils/language';
 
 // --- Portless Unified Bridge (Vercel Style) ---
+// biome-ignore lint/suspicious/noExplicitAny: Legacy IPC bridge
 const isWeb = typeof (window as any).ipc === 'undefined';
 // Smart origin detection: if on Vite dev port 6969, point to Deno backend on 8080
 const API_URL = isWeb
@@ -22,25 +23,35 @@ const API_URL = isWeb
   : 'http://localhost:8080';
 
 if (isWeb) {
-  console.log('🚀 AuditBooks: Running in Unified Portless Mode...');
+  console.log('🚀 Auditbooks: Running in Unified Portless Mode... (window.ipc is undefined)');
+  // biome-ignore lint/suspicious/noExplicitAny: Legacy IPC bridge
   (window as any).ipc = {
     getEnv: () =>
       Promise.resolve({
         isDevelopment: false,
-        platform: 'linux',
+        platform: 'win32',
         version: '0.36.1',
       }),
     checkForUpdates: () => Promise.resolve(),
     checkDbAccess: () => Promise.resolve(true),
-    getDbDefaultPath: () => Promise.resolve(':memory:'),
     initScheduler: () => Promise.resolve(),
-    sendAPIRequest: (endpoint: string, options: any) =>
+    getDbList: () => Promise.resolve([]),
+    getDbDefaultPath: () => Promise.resolve(':memory:'),
+    isMaximized: () => Promise.resolve(false),
+    isFullscreen: () => Promise.resolve(false),
+    getLanguageMap: () => Promise.resolve({ success: true, languageMap: {} }),
+    minimizeWindow: () => Promise.resolve(),
+    toggleMaximize: () => Promise.resolve(),
+    closeWindow: () => Promise.resolve(),
+    getOpenFilePath: () => Promise.resolve({ canceled: true, filePaths: [] }),
+    getSaveFilePath: () => Promise.resolve({ canceled: true, filePath: '' }),
+    sendAPIRequest: (endpoint: string, options: RequestInit) =>
       fetch(endpoint, options),
 
-    call: async (method: string, ...args: any[]) => {
+    call: async (method: string, ...args: unknown[]) => {
       const [namespace, cmd] = method.split('.');
       if (namespace === 'db') {
-        const schemaName = args[0];
+        const schemaName = args[0] as string;
         const token = localStorage.getItem('token');
         const headers = {
           'Content-Type': 'application/json',
@@ -49,7 +60,7 @@ if (isWeb) {
 
         try {
           if (cmd === 'get') {
-            const name = args[1];
+            const name = args[1] as string;
             const res = await fetch(
               `${API_URL}/data/records/${schemaName}/${name}`,
               { headers }
@@ -63,7 +74,7 @@ if (isWeb) {
             return await res.json();
           }
           if (cmd === 'insert' || cmd === 'update') {
-            const data = args[1];
+            const data = args[1] as Record<string, unknown>;
             const res = await fetch(`${API_URL}/data/records/${schemaName}`, {
               method: 'POST',
               headers,
@@ -73,7 +84,7 @@ if (isWeb) {
             return result.record || result;
           }
           if (cmd === 'delete') {
-            const name = args[1];
+            const name = args[1] as string;
             await fetch(`${API_URL}/data/records/${schemaName}/${name}`, {
               method: 'DELETE',
               headers,
@@ -90,59 +101,73 @@ if (isWeb) {
   };
 }
 
-// @ts-ignore
+// biome-ignore lint/suspicious/noExplicitAny: Legacy IPC bridge
 const ipc = (window as any).ipc;
 
 (async () => {
-  const language = fyo.config.get('language') as string;
-  if (language) {
-    await setLanguageMap(language);
-  }
-  fyo.store.language = language || 'English';
+  try {
+    const language = fyo.config.get('language') as string;
+    if (language) {
+      await setLanguageMap(language);
+    }
+    fyo.store.language = language || 'English';
 
-  if (!isWeb && ipc.registerListener) {
-    registerIpcRendererListeners();
-  }
+    if (!isWeb && ipc.registerListener) {
+      registerIpcRendererListeners();
+    }
 
-  const { isDevelopment, platform, version } = await ipc.getEnv();
+    console.log('--- CALLING ipc.getEnv() ---');
+    const env = await ipc.getEnv();
+    console.log('--- getEnv() RESPONSE:', JSON.stringify(env), '---');
+    const { isDevelopment, platform, version } = env;
 
-  fyo.store.isDevelopment = isDevelopment;
-  fyo.store.appVersion = version;
-  fyo.store.platform = platform;
-  const platformName = platform === 'win32' ? 'Windows' : 'Linux';
+    fyo.store.isDevelopment = isDevelopment;
+    fyo.store.appVersion = version;
+    fyo.store.platform = platform;
+    const platformName = platform === 'win32' ? 'Windows' : 'Linux';
 
-  const app = createApp({
-    template: '<App/>',
-  });
-  app.config.unwrapInjectedRef = true;
-  setErrorHandlers(app);
+    const app = createApp({
+      template: '<App/>',
+    });
+    setErrorHandlers(app);
 
-  app.use(router);
-  app.component('App', App);
-  app.component('FeatherIcon', FeatherIcon);
-  app.component('Badge', Badge);
-  app.directive('on-outside-click', outsideClickDirective);
-  app.mixin({
-    computed: {
-      fyo() {
-        return fyo;
+    app.use(router);
+    app.component('App', App);
+    app.component('FeatherIcon', FeatherIcon);
+    app.component('Badge', Badge);
+    app.directive('on-outside-click', outsideClickDirective);
+    app.mixin({
+      computed: {
+        fyo() {
+          return fyo;
+        },
+        platform() {
+          return platformName;
+        },
       },
-      platform() {
-        return platformName;
+      methods: {
+        t: fyo.t,
+        T: fyo.T,
       },
-    },
-    methods: {
-      t: fyo.t,
-      T: fyo.T,
-    },
-  });
-
-  await fyo.telemetry.logOpened();
-  app.mount('body');
+    });
+    await fyo.telemetry.logOpened();
+    app.mount('body');
+  } catch (err) {
+    console.error('CRITICAL RENDERER ERROR:', err);
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy IPC bridge
+    if ((window as any).ipc) {
+      (window as any).ipc.sendError(JSON.stringify({
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        url: window.location.href,
+        isDevelopment: true
+      }));
+    }
+  }
 })();
 
 function setErrorHandlers(app: VueApp) {
-  app.config.errorHandler = (err, vm, info) => {
+  app.config.errorHandler = (err, _vm, info) => {
     console.error('Unified App Error:', err, info);
   };
 }

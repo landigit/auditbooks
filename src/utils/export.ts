@@ -251,10 +251,13 @@ function convertParentDataToJsonExport(
 
       nameMap[parent][fieldname] ??= [];
 
-      row.parent = undefined;
-      row.name = undefined;
+      const cleanRow = {
+        ...row,
+        parent: null,
+        name: null,
+      };
 
-      (nameMap[parent][fieldname] as RawValueMap[]).push(row);
+      (nameMap[parent][fieldname] as RawValueMap[]).push(cleanRow);
     }
   }
 }

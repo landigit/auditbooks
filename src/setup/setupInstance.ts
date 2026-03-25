@@ -36,30 +36,44 @@ export default async function setupInstance(
   const { companyName, country, bankName, chartOfAccounts } =
     setupWizardOptions;
 
+  console.time('setupInstance');
   fyo.store.skipTelemetryLogging = true;
+  console.log('Initializing database...');
   await initializeDatabase(dbPath, country, fyo);
+  console.log('Updating system settings...');
   await updateSystemSettings(setupWizardOptions, fyo);
+  console.log('Updating accounting settings...');
   await updateAccountingSettings(setupWizardOptions, fyo);
+  console.log('Updating print settings...');
   await updatePrintSettings(setupWizardOptions, fyo);
-
+  console.log('Creating currency records...');
   await createCurrencyRecords(fyo);
+  console.log('Creating account records...');
   await createAccountRecords(bankName, country, chartOfAccounts, fyo);
+  console.log('Creating regional records...');
   await createRegionalRecords(country, fyo);
+  console.log('Creating default entries...');
   await createDefaultEntries(fyo);
+  console.log('Creating default number series...');
   await createDefaultNumberSeries(fyo);
+  console.log('Updating inventory settings...');
   await updateInventorySettings(fyo);
 
   if (fyo.isElectron) {
+    console.log('Updating print templates...');
     const { updatePrintTemplates } = await import('src/utils/printTemplates');
     await updatePrintTemplates(fyo);
   }
 
+  console.log('Completing setup...');
   await completeSetup(companyName, fyo);
   if (!Object.keys(fyo.currencySymbols).length) {
+    console.log('Setting currency symbols...');
     await setCurrencySymbols(fyo);
   }
 
   fyo.store.skipTelemetryLogging = false;
+  console.timeEnd('setupInstance');
 }
 
 async function createDefaultEntries(fyo: Fyo) {
@@ -370,7 +384,10 @@ async function updateInventorySettings(fyo: Fyo) {
       continue;
     }
 
-    const settingName = accountTypeDefaultMap[accountType]!;
+    const settingName = accountTypeDefaultMap[accountType];
+    if (!settingName) {
+      continue;
+    }
     await inventorySettings.set(settingName, accounts[0].name);
   }
 

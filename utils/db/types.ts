@@ -55,7 +55,7 @@ export abstract class DatabaseBase {
 export type DatabaseMethod = keyof DatabaseBase;
 
 export interface GetAllOptions {
-  fields?: string[];
+  fields?: string[] | '*';
   filters?: QueryFilter;
   offset?: number;
   limit?: number;

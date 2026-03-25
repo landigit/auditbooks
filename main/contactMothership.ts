@@ -1,5 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { app } from 'electron';
 import type { Main } from 'main';
 import fetch from 'node-fetch';
@@ -23,10 +27,10 @@ export function getUrlAndTokenString(): Creds {
     return empty;
   }
 
-  let apiKey;
-  let apiSecret;
-  let errorLogUrl;
-  let telemetryUrl;
+  let apiKey: any;
+  let apiSecret: any;
+  let errorLogUrl: any;
+  let telemetryUrl: any;
   try {
     [apiKey, apiSecret, errorLogUrl, telemetryUrl] = fs
       .readFileSync(errLogCredsPath, 'utf-8')

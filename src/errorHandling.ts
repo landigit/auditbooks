@@ -151,12 +151,14 @@ export async function handleErrorWithDialog(
 
 export async function showErrorDialog(title?: string, content?: string) {
   // To be used for  show stopper errors
-  title ??= t`Error`;
-  content ??= t`Something has gone terribly wrong. Please check the console and raise an issue.`;
-  await ipc.showError(title, content);
+  const dialogTitle = title ?? t`Error`;
+  const dialogContent =
+    content ??
+    t`Something has gone terribly wrong. Please check the console and raise an issue.`;
+  await ipc.showError(dialogTitle, dialogContent);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: library wrapper
 export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(
   func: T
 ) {
@@ -175,7 +177,7 @@ export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: library wrapper
 export function getErrorHandledSync<T extends (...args: any[]) => any>(
   func: T
 ) {
@@ -239,12 +241,12 @@ function getFeatureFlags(): string[] {
 
   return sections.length
     ? [
-        '<details>',
-        '<summary><strong>Feature Flags</strong></summary>',
-        '',
-        ...sections,
-        '</details>',
-      ]
+      '<details>',
+      '<summary><strong>Feature Flags</strong></summary>',
+      '',
+      ...sections,
+      '</details>',
+    ]
     : [];
 }
 

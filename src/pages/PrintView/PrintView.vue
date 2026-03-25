@@ -141,8 +141,10 @@ export default defineComponent({
               type: this.schemaName,
             });
 
-            const route = getFormRoute(doc.schemaName, doc.name!);
-            await routeTo(route);
+            if (doc.name) {
+              const route = getFormRoute(doc.schemaName, doc.name);
+              await routeTo(route);
+            }
           },
         },
       ];
@@ -170,8 +172,10 @@ export default defineComponent({
               template: this.templateDoc?.template,
             });
 
-            const route = getFormRoute(doc.schemaName, doc.name!);
-            await routeTo(route);
+            if (doc.name) {
+              const route = getFormRoute(doc.schemaName, doc.name);
+              await routeTo(route);
+            }
           },
         });
       }
@@ -258,19 +262,25 @@ export default defineComponent({
         return;
       }
 
-      await printContainer.savePDF(this.doc?.name, shouldPrint);
+      const docName = this.doc?.name;
+      if (docName) {
+        await printContainer.savePDF(docName, shouldPrint);
+      }
     },
     async setTemplateFromDefault() {
+      if (!this.doc) {
+        return;
+      }
       const defaultName =
         this.schemaName[0].toLowerCase() +
         this.schemaName.slice(1) +
         ModelNameEnum.PrintTemplate;
 
-      let templateName;
+      let templateName: string | null | undefined;
 
       if (
         this.schemaName === ModelNameEnum.SalesInvoice &&
-        (this.doc as Doc).isPOS
+        (this.doc as Doc)?.isPOS
       ) {
         templateName = this.fyo.singles.Defaults?.posPrintTemplate;
 
@@ -283,12 +293,12 @@ export default defineComponent({
             posProfileName
           );
 
-          if (posProfile.posPrintTemplate) {
-            templateName = posProfile.posPrintTemplate;
+          if (posProfile?.posPrintTemplate) {
+            templateName = posProfile.posPrintTemplate as string;
           }
         }
       } else {
-        templateName = this.fyo.singles.Defaults?.get(defaultName);
+        templateName = (this.fyo.singles.Defaults?.get(defaultName) as string | undefined) ?? null;
       }
 
       if (typeof templateName !== 'string') {

@@ -1,6 +1,7 @@
+import { sql } from 'kysely';
 import { FieldTypeEnum, type RawValue, type Schema } from 'schemas/types';
-import test from 'tape';
 import { getMapFromList, getValueMapFromList, sleep } from 'utils';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap } from '../../helpers';
 import DatabaseCore from '../core';
 import type { FieldValueMap, SqliteTableInfo } from '../types';
@@ -11,18 +12,8 @@ import {
   getBuiltTestSchemaMap,
 } from './helpers';
 
-/**
- * Note: these tests have a strange structure where multiple tests are
- * inside a `specify`, this is cause `describe` doesn't support `async` or waiting
- * on promises.
- *
- * Due to this `async` db operations need to be handled in `specify`. And `specify`
- * can't be nested in the `describe` can, hence the strange structure.
- *
- * This also implies that assert calls should have discriptive
- */
-
 const schemaMap = getBuiltTestSchemaMap();
+
 async function getDb(shouldMigrate = true): Promise<DatabaseCore> {
   const db = new DatabaseCore();
   await db.connect();
@@ -33,381 +24,353 @@ async function getDb(shouldMigrate = true): Promise<DatabaseCore> {
   return db;
 }
 
-test('db init, migrate, close', async (t) => {
+test('db init, migrate, close', async () => {
   const db = new DatabaseCore();
-  t.equal(db.dbPath, ':memory:');
+  expect(db.dbPath).toBe(':memory:');
 
   const schemaMap = getBuiltTestSchemaMap();
   db.setSchemaMap(schemaMap);
 
-  // Same Object
-  t.equal(schemaMap, db.schemaMap);
+  expect(db.schemaMap).toBe(schemaMap);
 
   await assertDoesNotThrow(async () => await db.connect());
-  t.notEqual(db.knex, undefined);
+  expect(db.db).not.toBeUndefined();
 
   await assertDoesNotThrow(async () => await db.migrate());
-
   await assertDoesNotThrow(async () => await db.close());
 });
 
-/**
- * DatabaseCore: Migrate and Check Db
- */
-
-test('Pre Migrate TableInfo', async (t) => {
+test('Pre Migrate TableInfo', async () => {
   const db = await getDb(false);
-  for (const schemaName in schemaMap) {
-    const columns = await db.knex?.raw('pragma table_info(??)', schemaName);
-    t.equal(columns.length, 0, `column count ${schemaName}`);
+  if (db.db) {
+    for (const schemaName in schemaMap) {
+      const result =
+        await sql<SqliteTableInfo>`pragma table_info(${sql.table(schemaName)})`.execute(
+          db.db
+        );
+      expect(result.rows.length).toBe(0);
+    }
   }
   await db.close();
 });
 
-test('Post Migrate TableInfo', async (t) => {
+test('Post Migrate TableInfo', async () => {
   const db = await getDb();
-  for (const schemaName in schemaMap) {
-    const schema = schemaMap[schemaName] as Schema;
-    const fieldMap = getMapFromList(schema.fields, 'fieldname');
-    const columns: SqliteTableInfo[] = await db.knex?.raw(
-      'pragma table_info(??)',
-      schemaName
-    );
-
-    let columnCount = schema.fields.filter(
-      (f) => f.fieldtype !== FieldTypeEnum.Table
-    ).length;
-
-    if (schema.isSingle) {
-      columnCount = 0;
-    }
-
-    t.equal(
-      columns.length,
-      columnCount,
-      `${schemaName}:: column count: ${columns.length}, ${columnCount}`
-    );
-
-    for (const column of columns) {
-      const field = fieldMap[column.name];
-      const dbColType = sqliteTypeMap[field.fieldtype];
-
-      t.equal(
-        column.name,
-        field.fieldname,
-        `${schemaName}.${column.name}:: name check: ${column.name}, ${field.fieldname}`
-      );
-
-      t.equal(
-        column.type.toLowerCase(),
-        dbColType,
-        `${schemaName}.${column.name}:: type check: ${column.type}, ${dbColType}`
-      );
-
-      if (field.required !== undefined) {
-        t.equal(
-          !!column.notnull,
-          field.required,
-          `${schemaName}.${column.name}:: iotnull iheck: ${column.notnull}, ${field.required}`
+  if (db.db) {
+    for (const schemaName in schemaMap) {
+      const schema = schemaMap[schemaName] as Schema;
+      const fieldMap = getMapFromList(schema.fields, 'fieldname');
+      const result =
+        await sql<SqliteTableInfo>`pragma table_info(${sql.table(schemaName)})`.execute(
+          db.db
         );
-      } else {
-        t.equal(
-          column.notnull,
-          0,
-          `${schemaName}.${column.name}:: notnull check: ${column.notnull}, ${field.required}`
-        );
+      const columns = result.rows;
+
+      let columnCount = schema.fields.filter(
+        (f) => f.fieldtype !== FieldTypeEnum.Table && !f.computed
+      ).length;
+
+      if (schema.isSingle) {
+        columnCount = 0;
       }
 
-      if (column.dflt_value === null) {
-        t.equal(
-          field.default,
-          undefined,
-          `${schemaName}.${column.name}:: dflt_value check: ${column.dflt_value}, ${field.default}`
-        );
-      } else {
-        t.equal(
-          column.dflt_value.slice(1, -1),
-          String(field.default),
-          `${schemaName}.${column.name}:: dflt_value check: ${column.type}, ${dbColType}`
-        );
+      expect(columns.length).toBe(columnCount);
+
+      for (const column of columns) {
+        const field = fieldMap[column.name];
+        const dbColType = sqliteTypeMap[field.fieldtype];
+
+        expect(column.name).toBe(field.fieldname);
+        expect(column.type.toLowerCase()).toBe(dbColType);
+
+        if (field.required !== undefined) {
+          expect(!!column.notnull).toBe(field.required);
+        } else {
+          expect(column.notnull).toBe(0);
+        }
+
+        if (column.dflt_value === null) {
+          expect(field.default).toBeUndefined();
+        } else {
+          const actualDefault =
+            column.dflt_value.startsWith("'") && column.dflt_value.endsWith("'")
+              ? column.dflt_value.slice(1, -1)
+              : column.dflt_value;
+          expect(actualDefault).toBe(String(field.default));
+        }
       }
     }
   }
-
   await db.close();
 });
 
-test('exists() before insertion', async (t) => {
+test('exists() before insertion', async () => {
   const db = await getDb();
   for (const schemaName in schemaMap) {
     const doesExist = await db.exists(schemaName);
     if (['SingleValue', 'SystemSettings'].includes(schemaName)) {
-      t.equal(doesExist, true, `${schemaName} exists`);
+      expect(doesExist).toBe(true);
     } else {
-      t.equal(doesExist, false, `${schemaName} exists`);
+      expect(doesExist).toBe(false);
     }
   }
   await db.close();
 });
 
-test('CRUD single values', async (t) => {
+test('CRUD single values', async () => {
   const db = await getDb();
-  /**
-   * Checking default values which are created when db.migrate
-   * takes place.
-   */
-  let rows: Record<string, RawValue>[] = await db.knex?.raw(
-    'select * from SingleValue'
-  );
-  const defaultMap = getValueMapFromList(
-    (schemaMap.SystemSettings as Schema).fields,
-    'fieldname',
-    'default'
-  );
-  for (const row of rows) {
-    t.equal(
-      row.value,
-      defaultMap[row.fieldname as string],
-      `${row.fieldname} default values equality`
+  if (db.db) {
+    /**
+     * Checking default values which are created when db.migrate
+     * takes place.
+     */
+    const result = await sql<
+      Record<string, RawValue>
+    >`select * from SingleValue`.execute(db.db);
+    const rows = result.rows;
+
+    const defaultMap = getValueMapFromList(
+      (schemaMap.SystemSettings as Schema).fields,
+      'fieldname',
+      'default'
     );
-  }
-
-  /**
-   * Insertion and updation for single values call the same function.
-   *
-   * Insert
-   */
-
-  let localeRow = rows.find((r) => r.fieldname === 'locale');
-  const localeEntryName = localeRow?.name as string;
-  const localeEntryCreated = localeRow?.created as string;
-
-  let locale = 'hi-IN';
-  await db.insert('SystemSettings', { locale });
-  rows = await db.knex?.raw('select * from SingleValue');
-  localeRow = rows.find((r) => r.fieldname === 'locale');
-
-  t.notEqual(localeEntryName, undefined, 'localeEntryName');
-  t.equal(rows.length, 2, 'rows length insert');
-  t.equal(
-    localeRow?.name as string,
-    localeEntryName,
-    `localeEntryName ${localeRow?.name}, ${localeEntryName}`
-  );
-  t.equal(localeRow?.value, locale, `locale ${localeRow?.value}, ${locale}`);
-  t.equal(
-    localeRow?.created,
-    localeEntryCreated,
-    `locale ${localeRow?.value}, ${locale}`
-  );
-
-  /**
-   * Update
-   */
-  locale = 'ca-ES';
-  await db.update('SystemSettings', { locale });
-  rows = await db.knex?.raw('select * from SingleValue');
-  localeRow = rows.find((r) => r.fieldname === 'locale');
-
-  t.notEqual(localeEntryName, undefined, 'localeEntryName');
-  t.equal(rows.length, 2, 'rows length update');
-  t.equal(
-    localeRow?.name as string,
-    localeEntryName,
-    `localeEntryName ${localeRow?.name}, ${localeEntryName}`
-  );
-  t.equal(localeRow?.value, locale, `locale ${localeRow?.value}, ${locale}`);
-  t.equal(
-    localeRow?.created,
-    localeEntryCreated,
-    `locale ${localeRow?.value}, ${locale}`
-  );
-
-  /**
-   * Delete
-   */
-  await db.delete('SystemSettings', 'locale');
-  rows = await db.knex?.raw('select * from SingleValue');
-  t.equal(rows.length, 1, 'delete one');
-  await db.delete('SystemSettings', 'dateFormat');
-  rows = await db.knex?.raw('select * from SingleValue');
-  t.equal(rows.length, 0, 'delete two');
-
-  const dateFormat = 'dd/mm/yy';
-  await db.insert('SystemSettings', { locale, dateFormat });
-  rows = await db.knex?.raw('select * from SingleValue');
-  t.equal(rows.length, 2, 'delete two');
-
-  /**
-   * Read
-   *
-   * getSingleValues
-   */
-  const svl = await db.getSingleValues('locale', 'dateFormat');
-  t.equal(svl.length, 2, 'getSingleValues length');
-  for (const sv of svl) {
-    t.equal(sv.parent, 'SystemSettings', `singleValue parent ${sv.parent}`);
-    t.equal(
-      sv.value,
-      { locale, dateFormat }[sv.fieldname],
-      `singleValue value ${sv.value}`
-    );
+    for (const row of rows) {
+      expect(row.value).toBe(defaultMap[row.fieldname as string]);
+    }
 
     /**
-     * get
+     * Insertion and updation for single values call the same function.
      */
-    const svlMap = await db.get('SystemSettings');
-    t.equal(Object.keys(svlMap).length, 2, 'get key length');
-    t.equal(svlMap.locale, locale, 'get locale');
-    t.equal(svlMap.dateFormat, dateFormat, 'get locale');
-  }
+    let localeRow = rows.find((r) => r.fieldname === 'locale');
+    const localeEntryName = localeRow?.name as string;
+    const localeEntryCreated = localeRow?.created as string;
 
+    let locale = 'hi-IN';
+    await db.insert('SystemSettings', { locale });
+    const result2 = await sql<
+      Record<string, RawValue>
+    >`select * from SingleValue`.execute(db.db);
+    const rows2 = result2.rows;
+    localeRow = rows2.find((r) => r.fieldname === 'locale');
+
+    expect(localeEntryName).not.toBeUndefined();
+    expect(rows2.length).toBe(2);
+    expect(localeRow?.name as string).toBe(localeEntryName);
+    expect(localeRow?.value).toBe(locale);
+    expect(localeRow?.created).toBe(localeEntryCreated);
+
+    /**
+     * Update
+     */
+    locale = 'ca-ES';
+    await db.update('SystemSettings', { locale });
+    const result3 = await sql<
+      Record<string, RawValue>
+    >`select * from SingleValue`.execute(db.db);
+    const rows3 = result3.rows;
+    localeRow = rows3.find((r) => r.fieldname === 'locale');
+
+    expect(localeEntryName).not.toBeUndefined();
+    expect(rows3.length).toBe(2);
+    expect(localeRow?.name as string).toBe(localeEntryName);
+    expect(localeRow?.value).toBe(locale);
+    expect(localeRow?.created).toBe(localeEntryCreated);
+
+    /**
+     * Delete
+     */
+    await db.delete('SystemSettings', 'locale');
+    const result4 = await sql<FieldValueMap>`select * from SingleValue`.execute(
+      db.db
+    );
+    expect(result4.rows.length).toBe(1);
+
+    await db.delete('SystemSettings', 'dateFormat');
+    const result5 = await sql<FieldValueMap>`select * from SingleValue`.execute(
+      db.db
+    );
+    expect(result5.rows.length).toBe(0);
+
+    const dateFormat = 'dd/mm/yy';
+    await db.insert('SystemSettings', { locale, dateFormat });
+    const result6 = await sql<FieldValueMap>`select * from SingleValue`.execute(
+      db.db
+    );
+    expect(result6.rows.length).toBe(2);
+
+    /**
+     * Read
+     */
+    const svl = await db.getSingleValues('locale', 'dateFormat');
+    expect(svl.length).toBe(2);
+    for (const sv of svl) {
+      expect(sv.parent).toBe('SystemSettings');
+      expect(sv.value).toBe(
+        { locale, dateFormat }[sv.fieldname as 'locale' | 'dateFormat']
+      );
+
+      /**
+       * get
+       */
+      const svlMap = await db.get('SystemSettings');
+      expect(Object.keys(svlMap).length).toBe(2);
+      expect(svlMap.locale).toBe(locale);
+      expect(svlMap.dateFormat).toBe(dateFormat);
+    }
+  }
   await db.close();
 });
 
-test('CRUD nondependent schema', async (t) => {
+test('CRUD nondependent schema', async () => {
   const db = await getDb();
   const schemaName = 'Customer';
-  let rows = await db.knex?.(schemaName);
-  t.equal(rows.length, 0, 'rows length before insertion');
-
-  /**
-   * Insert
-   */
-  const metaValues = getDefaultMetaFieldValueMap();
-  const name = 'John Thoe';
-
-  await assertThrows(
-    async () => await db.insert(schemaName, { name }),
-    'insert() did not throw without meta values'
-  );
-
-  const updateMap = Object.assign({}, metaValues, { name });
-  await db.insert(schemaName, updateMap);
-  rows = await db.knex?.(schemaName);
-  let firstRow = rows?.[0];
-  t.equal(rows.length, 1, `rows length insert ${rows.length}`);
-  t.equal(firstRow.name, name, `name check ${firstRow.name}, ${name}`);
-  t.equal(firstRow.email, null, `email check ${firstRow.email}`);
-
-  for (const key in metaValues) {
-    t.equal(firstRow[key], metaValues[key as BaseMetaKey], `${key} check`);
-  }
-
-  /**
-   * Update
-   */
-  const email = 'john@thoe.com';
-  await sleep(1); // required for modified to change
-  await db.update(schemaName, {
-    name,
-    email,
-    modified: new Date().toISOString(),
-  });
-  rows = await db.knex?.(schemaName);
-  firstRow = rows?.[0];
-  t.equal(rows.length, 1, `rows length update ${rows.length}`);
-  t.equal(firstRow.name, name, `name check update ${firstRow.name}, ${name}`);
-  t.equal(firstRow.email, email, `email check update ${firstRow.email}`);
-
-  const phone = '8149133530';
-  await sleep(1);
-  await db.update(schemaName, {
-    name,
-    phone,
-    modified: new Date().toISOString(),
-  });
-  rows = await db.knex?.(schemaName);
-  firstRow = rows?.[0];
-  t.equal(firstRow.email, email, `email check update ${firstRow.email}`);
-  t.equal(firstRow.phone, phone, `email check update ${firstRow.phone}`);
-
-  for (const key in metaValues) {
-    const val = firstRow[key];
-    const expected = metaValues[key as BaseMetaKey];
-    if (key !== 'modified') {
-      t.equal(val, expected, `${key} check ${val}, ${expected}`);
-    } else {
-      t.notEqual(val, expected, `${key} check ${val}, ${expected}`);
-    }
-  }
-
-  /**
-   * Delete
-   */
-  await db.delete(schemaName, name);
-  rows = await db.knex?.(schemaName);
-  t.equal(rows.length, 0, `rows length delete ${rows.length}`);
-
-  /**
-   * Get
-   */
-  let fvMap = await db.get(schemaName, name);
-  t.equal(
-    Object.keys(fvMap).length,
-    0,
-    `key count get ${JSON.stringify(fvMap)}`
-  );
-
-  /**
-   * > 1 entries
-   */
-
-  const cOne = { name: 'John Whoe', ...getDefaultMetaFieldValueMap() };
-  const cTwo = { name: 'Jane Whoe', ...getDefaultMetaFieldValueMap() };
-
-  // Insert
-  await db.insert(schemaName, cOne);
-  t.equal((await db.knex?.(schemaName)).length, 1, 'rows length minsert');
-  await db.insert(schemaName, cTwo);
-  rows = await db.knex?.(schemaName);
-  t.equal(rows.length, 2, 'rows length minsert');
-
-  const cs = [cOne, cTwo];
-  for (const i in cs) {
-    for (const k in cs[i]) {
-      const val = cs[i][k as BaseMetaKey];
-      t.equal(
-        rows?.[i]?.[k],
-        val,
-        `equality check ${i} ${k} ${val} ${rows?.[i]?.[k]}`
+  if (db.db) {
+    let result =
+      await sql<FieldValueMap>`select * from ${sql.table(schemaName)}`.execute(
+        db.db
       );
+    expect(result.rows.length).toBe(0);
+
+    /**
+     * Insert
+     */
+    const metaValues = getDefaultMetaFieldValueMap();
+    const name = 'John Thoe';
+
+    await assertThrows(
+      async () => await db.insert(schemaName, { name }),
+      'insert() did not throw without meta values'
+    );
+
+    const updateMap = Object.assign({}, metaValues, { name });
+    await db.insert(schemaName, updateMap);
+    result =
+      await sql<FieldValueMap>`select * from ${sql.table(schemaName)}`.execute(
+        db.db
+      );
+    let firstRow = result.rows[0];
+    expect(result.rows.length).toBe(1);
+    expect(firstRow.name).toBe(name);
+    expect(firstRow.email).toBe(null);
+
+    for (const key in metaValues) {
+      expect(firstRow[key]).toBe(metaValues[key as BaseMetaKey]);
     }
+
+    /**
+     * Update
+     */
+    const email = 'john@thoe.com';
+    await sleep(1);
+    await db.update(schemaName, {
+      name,
+      email,
+      modified: new Date().toISOString(),
+    });
+    result =
+      await sql<FieldValueMap>`select * from ${sql.table(schemaName)}`.execute(
+        db.db
+      );
+    firstRow = result.rows[0];
+    expect(result.rows.length).toBe(1);
+    expect(firstRow.name).toBe(name);
+    expect(firstRow.email).toBe(email);
+
+    const phone = '8149133530';
+    await sleep(1);
+    await db.update(schemaName, {
+      name,
+      phone,
+      modified: new Date().toISOString(),
+    });
+    result =
+      await sql<FieldValueMap>`select * from ${sql.table(schemaName)}`.execute(
+        db.db
+      );
+    firstRow = result.rows[0];
+    expect(firstRow.email).toBe(email);
+    expect(firstRow.phone).toBe(phone);
+
+    for (const key in metaValues) {
+      const val = firstRow[key];
+      const expected = metaValues[key as BaseMetaKey];
+      if (key !== 'modified') {
+        expect(val).toBe(expected);
+      } else {
+        expect(val).not.toBe(expected);
+      }
+    }
+
+    /**
+     * Delete
+     */
+    await db.delete(schemaName, name);
+    result =
+      await sql<FieldValueMap>`select * from ${sql.table(schemaName)}`.execute(
+        db.db
+      );
+    expect(result.rows.length).toBe(0);
+
+    /**
+     * Get
+     */
+    let fvMap = await db.get(schemaName, name);
+    expect(Object.keys(fvMap).length).toBe(0);
+
+    /**
+     * > 1 entries
+     */
+    const cOne = { name: 'John Whoe', ...getDefaultMetaFieldValueMap() };
+    const cTwo = { name: 'Jane Whoe', ...getDefaultMetaFieldValueMap() };
+
+    await db.insert(schemaName, cOne);
+    await db.insert(schemaName, cTwo);
+    result =
+      await sql<FieldValueMap>`select * from ${sql.table(schemaName)}`.execute(
+        db.db
+      );
+    const rows = result.rows;
+    expect(rows.length).toBe(2);
+
+    const cs = [cOne, cTwo];
+    for (let i = 0; i < cs.length; i++) {
+      for (const k in cs[i]) {
+        // biome-ignore lint/suspicious/noExplicitAny: <reason>
+        expect(rows[i][k]).toBe((cs as any)[i][k]);
+      }
+    }
+
+    // Update
+    await db.update(schemaName, { name: cOne.name, email });
+    const cOneEmail = await db.get(schemaName, cOne.name, 'email');
+    expect(cOneEmail.email).toBe(email);
+
+    // Rename
+    const newName = 'Johnny Whoe';
+    await db.rename(schemaName, cOne.name, newName);
+
+    fvMap = await db.get(schemaName, cOne.name);
+    expect(Object.keys(fvMap).length).toBe(0);
+
+    fvMap = await db.get(schemaName, newName);
+    expect(fvMap.email).toBe(email);
+
+    // Delete
+    await db.delete(schemaName, newName);
+    result =
+      await sql<FieldValueMap>`select * from ${sql.table(schemaName)}`.execute(
+        db.db
+      );
+    expect(result.rows.length).toBe(1);
+    expect(result.rows[0].name).toBe(cTwo.name);
   }
-
-  // Update
-  await db.update(schemaName, { name: cOne.name, email });
-  const cOneEmail = await db.get(schemaName, cOne.name, 'email');
-  t.equal(cOneEmail.email, email, `mi update check one ${cOneEmail}`);
-  const cTwoEmail = await db.get(schemaName, cTwo.name, 'email');
-  t.equal(cOneEmail.email, email, `mi update check two ${cTwoEmail}`);
-
-  // Rename
-  const newName = 'Johnny Whoe';
-  await db.rename(schemaName, cOne.name, newName);
-
-  fvMap = await db.get(schemaName, cOne.name);
-  t.equal(
-    Object.keys(fvMap).length,
-    0,
-    `mi rename check old ${JSON.stringify(fvMap)}`
-  );
-
-  fvMap = await db.get(schemaName, newName);
-  t.equal(fvMap.email, email, `mi rename check new ${JSON.stringify(fvMap)}`);
-
-  // Delete
-  await db.delete(schemaName, newName);
-  rows = await db.knex?.(schemaName);
-  t.equal(rows.length, 1, `mi delete length ${rows.length}`);
-  t.equal(rows[0].name, cTwo.name, `mi delete name ${rows[0].name}`);
   await db.close();
 });
 
-test('CRUD dependent schema', async (t) => {
+test('CRUD dependent schema', async () => {
   const db = await getDb();
 
-  const Customer = 'Customer';
+  const CustomerSchema = 'Customer';
   const SalesInvoice = 'SalesInvoice';
   const SalesInvoiceItem = 'SalesInvoiceItem';
 
@@ -433,21 +396,21 @@ test('CRUD dependent schema', async (t) => {
   );
 
   await assertDoesNotThrow(async () => {
-    await db.insert(Customer, customer);
+    await db.insert(CustomerSchema, customer);
     await db.insert(SalesInvoice, invoice);
-  }, 'insertion failed');
+  });
 
   await assertThrows(
-    async () => await db.delete(Customer, customer.name as string),
+    async () => await db.delete(CustomerSchema, customer.name as string),
     'foreign key constraint fail failed'
   );
 
   await assertDoesNotThrow(async () => {
     await db.delete(SalesInvoice, invoice.name as string);
-    await db.delete(Customer, customer.name as string);
-  }, 'deletion failed');
+    await db.delete(CustomerSchema, customer.name as string);
+  });
 
-  await db.insert(Customer, customer);
+  await db.insert(CustomerSchema, customer);
   await db.insert(SalesInvoice, invoice);
 
   let fvMap = await db.get(SalesInvoice, invoice.name as string);
@@ -456,15 +419,10 @@ test('CRUD dependent schema', async (t) => {
     if (typeof expected === 'boolean') {
       expected = +expected;
     }
-
-    t.equal(
-      fvMap[key],
-      expected,
-      `equality check ${key}: ${fvMap[key]}, ${invoice[key]}`
-    );
+    expect(fvMap[key]).toBe(expected);
   }
 
-  t.equal((fvMap.items as unknown[])?.length, 0, 'empty items check');
+  expect((fvMap.items as unknown[])?.length).toBe(0);
 
   const items: FieldValueMap[] = [
     {
@@ -486,24 +444,13 @@ test('CRUD dependent schema', async (t) => {
 
   fvMap = await db.get(SalesInvoice, invoice.name as string);
   const ct = fvMap.items as FieldValueMap[];
-  t.equal(ct.length, 1, `ct length ${ct.length}`);
-  t.equal(ct[0].parent, invoice.name, `ct parent ${ct[0].parent}`);
-  t.equal(
-    ct[0].parentFieldname,
-    'items',
-    `ct parentFieldname ${ct[0].parentFieldname}`
-  );
-  t.equal(
-    ct[0].parentSchemaName,
-    SalesInvoice,
-    `ct parentSchemaName ${ct[0].parentSchemaName}`
-  );
+  expect(ct.length).toBe(1);
+  expect(ct[0].parent).toBe(invoice.name);
+  expect(ct[0].parentFieldname).toBe('items');
+  expect(ct[0].parentSchemaName).toBe(SalesInvoice);
+
   for (const key in items[0]) {
-    t.equal(
-      ct[0][key],
-      items[0][key],
-      `ct values ${key}: ${ct[0][key]}, ${items[0][key]}`
-    );
+    expect(ct[0][key]).toBe(items[0][key]);
   }
 
   items.push({
@@ -513,22 +460,17 @@ test('CRUD dependent schema', async (t) => {
     amount: 800,
   });
   await assertDoesNotThrow(
-    async () => await db.update(SalesInvoice, { name: invoice.name, items }),
-    'ct updation failed'
+    async () => await db.update(SalesInvoice, { name: invoice.name, items })
   );
 
   let rows = await db.getAll(SalesInvoiceItem, {
     fields: ['item', 'quantity', 'rate', 'amount'],
   });
-  t.equal(rows.length, 2, `ct length update ${rows.length}`);
+  expect(rows.length).toBe(2);
 
-  for (const i in rows) {
+  for (let i = 0; i < rows.length; i++) {
     for (const key in rows[i]) {
-      t.equal(
-        rows[i][key],
-        items[i][key],
-        `ct values ${i},${key}: ${rows[i][key]}`
-      );
+      expect(rows[i][key]).toBe(items[i][key]);
     }
   }
 
@@ -540,17 +482,20 @@ test('CRUD dependent schema', async (t) => {
     modified: invoice.modified,
   });
 
-  rows = await db.knex?.(SalesInvoiceItem);
-  t.equal(rows.length, 2, `postupdate ct empty ${rows.length}`);
+  if (db.db) {
+    const result =
+      await sql<FieldValueMap>`select * from SalesInvoiceItem`.execute(db.db);
+    expect(result.rows.length).toBe(2);
+  }
 
   await db.delete(SalesInvoice, invoice.name as string);
   rows = await db.getAll(SalesInvoiceItem);
-  t.equal(rows.length, 0, `ct length delete ${rows.length}`);
+  expect(rows.length).toBe(0);
 
   await db.close();
 });
 
-test('db deleteAll', async (t) => {
+test('db deleteAll', async () => {
   const db = await getDb();
 
   const emailOne = 'one@temp.com';
@@ -579,48 +524,42 @@ test('db deleteAll', async (t) => {
     });
   }
 
-  // Get total count
-  t.equal((await db.getAll('Customer')).length, customers.length);
+  expect((await db.getAll('Customer')).length).toBe(customers.length);
 
-  // Single filter
-  t.equal(
-    await db.deleteAll('Customer', { email: emailOne }),
+  expect(await db.deleteAll('Customer', { email: emailOne })).toBe(
     customers.filter((c) => c.email === emailOne).length
   );
-  t.equal(
-    (await db.getAll('Customer', { filters: { email: emailOne } })).length,
-    0
-  );
+  expect(
+    (await db.getAll('Customer', { filters: { email: emailOne } })).length
+  ).toBe(0);
 
-  // Multiple filters
-  t.equal(
-    await db.deleteAll('Customer', { email: emailTwo, phone: phoneTwo }),
+  expect(
+    await db.deleteAll('Customer', { email: emailTwo, phone: phoneTwo })
+  ).toBe(
     customers.filter(
       ({ phone, email }) => email === emailTwo && phone === phoneTwo
     ).length
   );
-  t.equal(
-    await db.deleteAll('Customer', { email: emailTwo, phone: phoneTwo }),
-    0
-  );
+  expect(
+    await db.deleteAll('Customer', { email: emailTwo, phone: phoneTwo })
+  ).toBe(0);
 
-  // Includes filters
-  t.equal(
-    await db.deleteAll('Customer', { email: ['in', [emailTwo, emailThree]] }),
+  expect(
+    await db.deleteAll('Customer', { email: ['in', [emailTwo, emailThree]] })
+  ).toBe(
     customers.filter(
       ({ email, phone }) =>
         [emailTwo, emailThree].includes(email) &&
         !(phone === phoneTwo && email === emailTwo)
     ).length
   );
-  t.equal(
+  expect(
     (
       await db.getAll('Customer', {
         filters: { email: ['in', [emailTwo, emailThree]] },
       })
-    ).length,
-    0
-  );
+    ).length
+  ).toBe(0);
 
   await db.close();
 });

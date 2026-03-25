@@ -22,19 +22,19 @@ function splitCsvBlock(text: string, splitter = '\r\n'): string[] {
   let line = '';
   let inDq = false;
 
-  for (let i = 0; i <= text.length; i++) {
-    const c = text[i];
+  for (let i = 0; i < targetText.length; i++) {
+    const c = targetText[i];
 
     if (
       c === '"' &&
-      ((c[i + 1] === '"' && c[i + 2] === '"') || c[i + 1] !== '"')
+      ((targetText[i + 1] === '"' && targetText[i + 2] === '"') || targetText[i + 1] !== '"')
     ) {
       inDq = !inDq;
     }
 
     const isEnd = [...splitter]
       .slice(1)
-      .map((s, j) => text[i + j + 1] === s)
+      .map((s, j) => targetText[i + j + 1] === s)
       .every(Boolean);
 
     if (!inDq && c === splitter[0] && isEnd) {
@@ -58,12 +58,12 @@ export function splitCsvLine(line: string): string[] {
   let item = '';
   let inDq = false;
 
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
+  for (let i = 0; i < targetLine.length; i++) {
+    const c = targetLine[i];
 
     if (
       c === '"' &&
-      ((c[i + 1] === '"' && c[i + 2] === '"') || c[i + 1] !== '"')
+      ((targetLine[i + 1] === '"' && targetLine[i + 2] === '"') || targetLine[i + 1] !== '"')
     ) {
       inDq = !inDq;
     }

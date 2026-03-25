@@ -1,12 +1,13 @@
+import { contextBridge, ipcRenderer } from 'electron';
+import type { ConfigMap } from 'fyo/core/types';
+import config from 'utils/config';
+
 import type {
   OpenDialogOptions,
   OpenDialogReturnValue,
   SaveDialogOptions,
   SaveDialogReturnValue,
 } from 'electron';
-import { contextBridge, ipcRenderer } from 'electron';
-import type { ConfigMap } from 'fyo/core/types';
-import config from 'utils/config';
 import type { DatabaseMethod } from 'utils/db/types';
 import type { BackendResponse } from 'utils/ipc/types';
 import { IPC_ACTIONS, IPC_CHANNELS, IPC_MESSAGES } from 'utils/messages';
@@ -278,4 +279,5 @@ const ipc = {
 } as const;
 
 contextBridge.exposeInMainWorld('ipc', ipc);
+
 export type IPC = typeof ipc;

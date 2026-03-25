@@ -46,10 +46,10 @@ export async function setupDummyInstance(
   await setupInstance(dbPath, options, fyo);
   fyo.store.skipTelemetryLogging = true;
 
-  years = Math.floor(years);
+  const effectiveYears = Math.floor(years);
   notifier?.(fyo.t`Creating Items and Parties`, -1);
   await generateStaticEntries(fyo);
-  await generateDynamicEntries(fyo, years, baseCount, notifier);
+  await generateDynamicEntries(fyo, effectiveYears, baseCount, notifier);
   await setOtherSettings(fyo);
 
   const instanceId = (await fyo.getValue(
@@ -120,12 +120,17 @@ async function generateDynamicEntries(
 async function getJournalEntries(fyo: Fyo, salesInvoices: SalesInvoice[]) {
   const entries = [];
   const amount = salesInvoices
-    .flatMap((i) => i.items!)
-    .reduce((a, b) => a.add(b.amount!), fyo.pesa(0))
+    .flatMap((i) => i.items ?? [])
+    .reduce((a, b) => a.add(b.amount ?? fyo.pesa(0)), fyo.pesa(0))
     .percent(75)
     .clip(0);
-  const lastInv = salesInvoices.sort((a, b) => +a.date! - +b.date!).at(-1)
-    ?.date!;
+  const sortedInvoices = [...salesInvoices].sort(
+    (a, b) => +(a.date ?? 0) - +(b.date ?? 0)
+  );
+  const lastInv = sortedInvoices.at(-1)?.date;
+  if (!lastInv) {
+    return entries;
+  }
   const date = DateTime.fromJSDate(lastInv).minus({ months: 6 }).toJSDate();
 
   // Bank Entry
@@ -370,7 +375,7 @@ async function getSalesPurchaseInvoices(
      */
     const itemGrouped = dateGrouped[key].reduce(
       (acc, si) => {
-        for (const item of si.items!) {
+        for (const item of si.items ?? []) {
           if (item.item === 'Dry-Cleaning') {
             continue;
           }
@@ -484,7 +489,10 @@ async function getNonSalesPurchaseInvoices(
         doc.account = 'Creditors';
       }
       await doc.append('items', {});
-      const row = doc.items?.at(-1)!;
+      const row = doc.items?.at(-1);
+      if (!row) {
+        continue;
+      }
       const item = itemMap[name];
 
       let quantity = 1;

@@ -8,6 +8,10 @@ require('source-map-support').install({
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { emitMainProcessError } from 'backend/helpers';
 import {
   BrowserWindow,
@@ -25,7 +29,7 @@ import registerIpcMainMessageListeners from './main/registerIpcMainMessageListen
 import registerProcessListeners from './main/registerProcessListeners';
 
 export class Main {
-  title = 'AuditBooks';
+  title = 'Auditbooks';
   icon: string;
 
   winURL = '';
@@ -86,7 +90,8 @@ export class Main {
   }
 
   getOptions(): BrowserWindowConstructorOptions {
-    const preload = path.join(__dirname, 'main', 'preload.js');
+    const preload = path.resolve(__dirname, 'main', 'preload.cjs');
+    console.log('--- ATTEMPTING TO LOAD PRELOAD FROM:', preload, '---');
     const options: BrowserWindowConstructorOptions = {
       width: this.WIDTH,
       height: this.HEIGHT,
@@ -133,11 +138,26 @@ export class Main {
     }
 
     this.setMainWindowListeners();
+
+    this.mainWindow.webContents.session.webRequest.onHeadersReceived(
+      (details, callback) => {
+        const csp = this.isDevelopment
+          ? "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: http://localhost:* ws://localhost:*"
+          : "default-src 'self' 'unsafe-inline' data: app:; script-src 'self' 'unsafe-inline' app:; style-src 'self' 'unsafe-inline' app:; img-src 'self' data: app:; connect-src 'self' app:;";
+
+        callback({
+          responseHeaders: {
+            ...details.responseHeaders,
+            'Content-Security-Policy': [csp],
+          },
+        });
+      }
+    );
   }
 
   setViteServerURL() {
     let port = 6969;
-    let host = '0.0.0.0';
+    let host = 'localhost';
 
     if (process.env.VITE_PORT && process.env.VITE_HOST) {
       port = Number(process.env.VITE_PORT);
@@ -181,6 +201,7 @@ function bufferProtocolCallback(
   request: ProtocolRequest,
   callback: (response: ProtocolResponse) => void
 ) {
+  console.log('--- APP PROTOCOL REQUEST:', request.url, '---');
   const { pathname, host } = new URL(request.url);
   const filePath = path.join(
     __dirname,

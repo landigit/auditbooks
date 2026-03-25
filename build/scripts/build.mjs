@@ -12,8 +12,8 @@ import { getMainProcessCommonConfig } from './helpers.mjs';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(dirname, '..', '..');
-const buildDirPath = path.join(root, 'dist_electron', 'build');
-const packageDirPath = path.join(root, 'dist_electron', 'bundled');
+const buildDirPath = path.join(root, 'dist-electron', 'build');
+const packageDirPath = path.join(root, 'dist-electron', 'bundled');
 const mainFileName = 'main.js';
 const commonConfig = getMainProcessCommonConfig(root);
 
@@ -42,9 +42,18 @@ if (!argv.nopackage) {
 }
 
 function updatePaths() {
-  fs.removeSync(buildDirPath);
+  try {
+    fs.removeSync(buildDirPath);
+  } catch (err) {
+    console.warn('Could not remove buildDirPath, continuing...', err.message);
+  }
   fs.ensureDirSync(buildDirPath);
-  fs.removeSync(packageDirPath);
+
+  try {
+    fs.removeSync(packageDirPath);
+  } catch (err) {
+    console.warn('Could not remove packageDirPath, continuing...', err.message);
+  }
   fs.ensureDirSync(packageDirPath);
   fs.ensureDirSync(path.join(buildDirPath, 'node_modules'));
 }

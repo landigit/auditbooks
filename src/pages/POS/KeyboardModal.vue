@@ -5,12 +5,13 @@
       <hr class="dark:border-gray-800" />
       <div class="mx-6 my-3">
         <component
-          :is="selectedItemRow?.fieldMap[selectedItemField!].fieldtype"
+          v-if="selectedItemRow?.fieldMap[selectedItemField]"
+          :is="selectedItemRow.fieldMap[selectedItemField].fieldtype"
           ref="dynamicInput"
           :df="{
-            fieldname: selectedItemRow?.fieldMap[selectedItemField!].fieldname as string,
-            fieldtype: selectedItemRow?.fieldMap[selectedItemField!].fieldtype,
-            label: selectedItemRow?.fieldMap[selectedItemField!].label as string,
+            fieldname: selectedItemRow.fieldMap[selectedItemField].fieldname,
+            fieldtype: selectedItemRow.fieldMap[selectedItemField].fieldtype,
+            label: selectedItemRow.fieldMap[selectedItemField].label,
           }"
           class="mb-3"
           :border="true"
@@ -391,13 +392,17 @@ export default defineComponent({
     updateSelectedValue() {
       this.selectedValue = '';
 
+      if (!this.selectedItemRow || !this.selectedItemField) {
+        return;
+      }
+
       if (
-        this.selectedItemRow?.fieldMap[this.selectedItemField].fieldtype !==
+        this.selectedItemRow.fieldMap[this.selectedItemField].fieldtype !==
         ModelNameEnum.Currency
       ) {
-        this.selectedValue = this.selectedItemRow?.[
+        this.selectedValue = String(this.selectedItemRow?.[
           this.selectedItemField
-        ] as string;
+        ] ?? '');
       }
     },
     handleInput(value: string) {
@@ -448,9 +453,11 @@ export default defineComponent({
             );
           }
         } else {
-          this.selectedItemRow![this.selectedItemField] = Number(
-            this.selectedValue
-          );
+          if (this.selectedItemRow) {
+            this.selectedItemRow[this.selectedItemField] = Number(
+              this.selectedValue
+            );
+          }
 
           if (this.selectedItemField === 'itemDiscountPercent') {
             if (Number(this.selectedValue) > 100) {

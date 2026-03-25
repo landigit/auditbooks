@@ -21,7 +21,7 @@
         }"
       >
         <div
-          v-for="(col, c) in report.columns"
+          v-for="(col, c) in report.columns.filter((c) => !!c)"
           :key="c + '-col'"
           :style="getCellStyle(col, c)"
           class="
@@ -61,7 +61,7 @@
           >
             <!-- Report Cell -->
             <div
-              v-for="(cell, c) in row.cells"
+              v-for="(cell, c) in row.cells.filter((c) => !!c)"
               :key="`${c}-${r}-cell`"
               :style="getCellStyle(cell, c)"
               class="

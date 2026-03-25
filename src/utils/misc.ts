@@ -39,11 +39,14 @@ export function getDatesAndPeriodList(period: PeriodKey): {
    */
   const periodList: DateTime[] = [toDate];
   while (true) {
-    const nextDate = periodList.at(0)?.minus({ months: 1 });
+    const lastDate = periodList.at(0);
+    if (!lastDate) {
+      break;
+    }
+    const nextDate = lastDate.minus({ months: 1 });
     if (nextDate.toMillis() < fromDate.toMillis()) {
       if (period === 'YTD') {
         periodList.unshift(nextDate);
-        break;
       }
       break;
     }
@@ -80,10 +83,11 @@ export function getSetupWizardDoc(languageMap?: LanguageMap) {
 export function updateConfigFiles(fyo: Fyo): ConfigFile {
   const configFiles = fyo.config.get('files', []) as ConfigFile[];
 
-  const companyName = fyo.singles.AccountingSettings?.companyName as string;
-  const id = fyo.singles.SystemSettings?.instanceId as string;
-  const dbPath = fyo.db.dbPath!;
-  const openCount = fyo.singles.Misc?.openCount as number;
+  const companyName =
+    (fyo.singles.AccountingSettings?.companyName as string) ?? '';
+  const id = (fyo.singles.SystemSettings?.instanceId as string) ?? '';
+  const dbPath = fyo.db.dbPath ?? '';
+  const openCount = (fyo.singles.Misc?.openCount as number) ?? 0;
 
   const fileIndex = configFiles.findIndex((f) => f.id === id);
   let newFile = { id, companyName, dbPath, openCount } as ConfigFile;
@@ -140,7 +144,7 @@ export const docsPathMap: Record<string, string | undefined> = {
 };
 
 export async function getDataURL(type: string, data: Uint8Array) {
-  const blob = new Blob([data], { type });
+  const blob = new Blob([data as unknown as BlobPart], { type });
 
   return new Promise<string>((resolve) => {
     const fr = new FileReader();

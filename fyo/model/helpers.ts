@@ -1,7 +1,8 @@
 import type { Fyo } from 'fyo';
 import type { DocValue } from 'fyo/core/types';
 import { isPesa } from 'fyo/utils';
-import { cloneDeep, isEqual } from 'lodash';
+import pkg from 'lodash';
+const { cloneDeep, isEqual } = pkg;
 import { type Field, type FieldType, FieldTypeEnum } from 'schemas/types';
 import { getIsNullOrUndef } from 'utils';
 import type { Doc } from './doc';
@@ -179,9 +180,9 @@ function sequenceDependencies(
     const deps = depMap[k] ?? [];
     deps.push(k);
 
-    while (deps.length) {
-      const d = deps.shift()!;
-      if (keyset.has(d)) {
+    while (deps.length > 0) {
+      const d = deps.shift();
+      if (d === undefined || keyset.has(d)) {
         continue;
       }
 

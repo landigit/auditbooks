@@ -45,7 +45,12 @@ export class Account extends Doc {
      * added to the schema it will cause NOT NULL errors
      */
 
-    parentAccount: () => !!this.fyo.singles?.AccountingSettings?.setupComplete,
+    parentAccount: () => {
+      if (this.schema.isTree && !this.parentAccount && this.rootType) {
+        return false;
+      }
+      return !!this.fyo.singles?.AccountingSettings?.setupComplete;
+    },
   };
 
   static defaults: DefaultMap = {

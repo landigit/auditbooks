@@ -2,66 +2,61 @@ import { assertDoesNotThrow } from 'backend/database/tests/helpers';
 import { DateTime } from 'luxon';
 import setupInstance from 'src/setup/setupInstance';
 import type { SetupWizardOptions } from 'src/setup/types';
-import test from 'tape';
+import { describe, it, expect } from 'vitest';
 import { getValueMapFromList } from 'utils';
 import {
   getTestDbPath,
   getTestFyo,
   getTestSetupWizardOptions,
+  setupTestFyo,
+  closeTestFyo,
 } from './helpers';
 
 const dbPath = getTestDbPath();
 const setupOptions = getTestSetupWizardOptions();
 const fyo = getTestFyo();
 
-test('setupInstance', async () => {
-  await assertDoesNotThrow(async () => {
-    await setupInstance(dbPath, setupOptions, fyo);
-  }, 'setup instance failed');
-});
+describe('setupInstance', () => {
+  setupTestFyo(fyo);
+  closeTestFyo(fyo);
 
-test('check setup Singles', async (t) => {
-  const setupFields = [
-    'companyName',
-    'country',
-    'fullname',
-    'email',
-    'bankName',
-    'fiscalYearStart',
-    'fiscalYearEnd',
-    'currency',
-  ];
+  it('setupInstance', async () => {
+    await assertDoesNotThrow(async () => {
+      await setupInstance(dbPath, setupOptions, fyo);
+    }, 'setup instance failed');
+  });
 
-  const setupSingles = await fyo.db.getSingleValues(...setupFields);
-  const singlesMap = getValueMapFromList(setupSingles, 'fieldname', 'value');
+  it('check setup Singles', async () => {
+    const setupFields = [
+      'companyName',
+      'country',
+      'fullname',
+      'email',
+      'bankName',
+      'fiscalYearStart',
+      'fiscalYearEnd',
+      'currency',
+    ];
 
-  for (const field of setupFields) {
-    let dbValue = singlesMap[field];
-    const optionsValue = setupOptions[field as keyof SetupWizardOptions];
+    const setupSingles = await fyo.db.getSingleValues(...setupFields);
+    const singlesMap = getValueMapFromList(setupSingles, 'fieldname', 'value');
 
-    if (dbValue instanceof Date) {
-      dbValue = DateTime.fromJSDate(dbValue).toISODate();
+    for (const field of setupFields) {
+      let dbValue = singlesMap[field];
+      const optionsValue = setupOptions[field as keyof SetupWizardOptions];
+
+      if (dbValue instanceof Date) {
+        dbValue = DateTime.fromJSDate(dbValue).toISODate();
+      }
+
+      expect(dbValue as string).toBe(optionsValue);
     }
+  });
 
-    t.equal(
-      dbValue as string,
-      optionsValue,
-      `${field}: (${dbValue}, ${optionsValue})`
-    );
-  }
-});
+  it('check null singles', async () => {
+    const nullFields = ['gstin', 'logo', 'phone', 'address'];
+    const nullSingles = await fyo.db.getSingleValues(...nullFields);
 
-test('check null singles', async (t) => {
-  const nullFields = ['gstin', 'logo', 'phone', 'address'];
-  const nullSingles = await fyo.db.getSingleValues(...nullFields);
-
-  t.equal(
-    nullSingles.length,
-    0,
-    `null singles: ${JSON.stringify(nullSingles)}`
-  );
-});
-
-test.onFinish(async () => {
-  await fyo.close();
+    expect(nullSingles.length).toBe(0);
+  });
 });

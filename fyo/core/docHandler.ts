@@ -55,24 +55,25 @@ export class DocHandler {
     name?: string,
     options = { skipDocumentCache: false }
   ) {
-    if (name === undefined) {
-      name = schemaName;
-    }
+    const effectiveName = name ?? schemaName;
 
-    if (name === schemaName && !this.fyo.schemaMap[schemaName]?.isSingle) {
+    if (
+      effectiveName === schemaName &&
+      !this.fyo.schemaMap[schemaName]?.isSingle
+    ) {
       throw new ValueError(`${schemaName} is not a Single Schema`);
     }
 
     let doc: Doc | undefined;
     if (!options?.skipDocumentCache) {
-      doc = this.#getFromCache(schemaName, name);
+      doc = this.#getFromCache(schemaName, effectiveName);
     }
 
     if (doc) {
       return doc;
     }
 
-    doc = this.getNewDoc(schemaName, { name }, false);
+    doc = this.getNewDoc(schemaName, { name: effectiveName }, false);
     await doc.load();
     this.#addToCache(doc);
 
@@ -87,19 +88,21 @@ export class DocHandler {
     Model?: typeof Doc,
     isRawValueMap = true
   ): Doc {
-    if (!this.models[schemaName] && Model) {
-      this.models[schemaName] = Model;
-    }
+    const EffectiveModel = Model ?? this.models[schemaName];
+    const EffectiveSchema = schema ?? this.fyo.schemaMap[schemaName];
 
-    Model ??= this.models[schemaName];
-    schema ??= this.fyo.schemaMap[schemaName];
-
-    if (schema === undefined) {
+    if (EffectiveSchema === undefined) {
       throw new NotFoundError(`Schema not found for ${schemaName}`);
     }
 
-    const doc = new Model!(schema, data, this.fyo, isRawValueMap);
-    doc.name ??= this.getTemporaryName(schema);
+    // biome-ignore lint/style/noNonNullAssertion: Model is guaranteed by registerModels or parameter
+    const doc = new EffectiveModel!(
+      EffectiveSchema,
+      data,
+      this.fyo,
+      isRawValueMap
+    );
+    doc.name ??= this.getTemporaryName(EffectiveSchema);
     if (cacheDoc) {
       this.#addToCache(doc);
     }
@@ -139,12 +142,15 @@ export class DocHandler {
     const name = doc.name;
     const schemaName = doc.schemaName;
 
-    if (!this.docs[schemaName]) {
+    if (!this.docs.get(schemaName)) {
       this.docs.set(schemaName, {});
       this.#setCacheUpdationListeners(schemaName);
     }
 
-    this.docs.get(schemaName)![name] = doc;
+    const docMap = this.docs.get(schemaName);
+    if (docMap) {
+      docMap[name] = doc;
+    }
 
     // singles available as first level objects too
     if (schemaName === doc.name) {

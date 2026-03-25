@@ -29,7 +29,7 @@ export async function saveHtmlAsPdf(
   };
 
   const data = await printWindow.webContents.printToPDF(printOptions);
-  await fs.writeFile(savePath, data);
+  await fs.writeFile(savePath, data as any);
   printWindow.close();
   await fs.unlink(htmlPath);
   return true;

@@ -5,7 +5,10 @@ const colors = JSON.parse(
 
 module.exports = {
   darkMode: 'class',
-  purge: false,
+  content: [
+    "./src/index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
   theme: {
     fontFamily: {
       sans: ['Inter', 'sans-serif'],

@@ -85,7 +85,7 @@ export function getDbError(err: Error) {
     return DatabaseError;
   }
 
-  if (err.message.includes('SQLITE_ERROR: no such table')) {
+  if (err.message.includes('no such table')) {
     return NotFoundError;
   }
 

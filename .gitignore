@@ -9,6 +9,8 @@ node_modules
 .env.publish
 .env.local
 .env.*.local
+.yarn/install-state.gz
+.agent
 
 # Log files
 npm-debug.log*
@@ -26,11 +28,9 @@ yarn-error.log*
 *.code-workspace
 
 # Electron-builder output
-/dist_electron
 /dist-electron
 /src/dist-electron
 /build
 /out
 /dist
 log_creds.txt
-.yarn/install-state.gz

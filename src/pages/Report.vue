@@ -27,7 +27,7 @@
       class="grid grid-cols-5 gap-4 p-4 border-b dark:border-gray-800"
     >
       <FormControl
-        v-for="field in report.filters"
+        v-for="field in report.filters.filter((f) => !!f)"
         :key="field.fieldname + '-filter'"
         :border="true"
         size="small"
@@ -36,7 +36,7 @@
         :df="field"
         :value="report.get(field.fieldname)"
         :read-only="loading"
-        @change="async (value) => await report?.set(field.fieldname, value)"
+        @change="async (value: any) => report && (await report.set(field.fieldname, value))"
       />
     </div>
 

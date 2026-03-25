@@ -8,8 +8,8 @@ export const sqliteTypeMap: Record<string, KnexColumnType> = {
   AutoComplete: 'text',
   Currency: 'text',
   Int: 'integer',
-  Float: 'float',
-  Percent: 'float',
+  Float: 'real',
+  Percent: 'real',
   Check: 'boolean',
   Code: 'text',
   Date: 'date',
@@ -66,9 +66,9 @@ export function emitMainProcessError(
 }
 
 export async function checkFileAccess(filePath: string, mode?: number) {
-  mode ??= constants.W_OK;
+  const effectiveMode = mode ?? constants.W_OK;
   return await fs
-    .access(filePath, mode)
+    .access(filePath, effectiveMode)
     .then(() => true)
     .catch(() => false);
 }

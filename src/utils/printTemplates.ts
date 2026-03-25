@@ -47,8 +47,8 @@ export async function getPrintTemplatePropValues(
   doc: Doc
 ): Promise<PrintValues> {
   const fyo = doc.fyo;
-  let paymentId;
-  let sinvDoc;
+  let paymentId: string[] | undefined;
+  let sinvDoc: Doc | undefined;
 
   const values: PrintValues = { doc: {}, print: {} };
   values.doc = await getPrintTemplateDocValues(doc);
@@ -77,10 +77,13 @@ export async function getPrintTemplatePropValues(
     }
   }
 
-  let totalTax;
+  let totalTax: number | undefined;
 
   if (values.doc.entryType !== ModelNameEnum.Shipment) {
-    totalTax = await ((sinvDoc as Invoice) ?? (doc as Payment))?.getTotalTax();
+    const totalTaxRes = await (
+      (sinvDoc as Invoice) ?? (doc as Payment)
+    )?.getTotalTax();
+    totalTax = totalTaxRes?.float;
   }
 
   if (doc.schema.name === ModelNameEnum.Payment) {
@@ -175,19 +178,24 @@ function getTime(dateString: string): string {
 
 export function getPrintTemplatePropHints(schemaName: string, fyo: Fyo) {
   const hints: PrintTemplateHint = {};
-  const schema = fyo.schemaMap[schemaName]!;
+  const schema = fyo.schemaMap[schemaName];
+  if (!schema) return hints;
   hints.doc = getPrintTemplateDocHints(schema, fyo);
 
-  const printSettingsHints = getPrintTemplateDocHints(
-    fyo.schemaMap[ModelNameEnum.PrintSettings]!,
-    fyo,
-    printSettingsFields
-  );
-  const accountingSettingsHints = getPrintTemplateDocHints(
-    fyo.schemaMap[ModelNameEnum.AccountingSettings]!,
-    fyo,
-    accountingSettingsFields
-  );
+  const printSettingsSchema = fyo.schemaMap[ModelNameEnum.PrintSettings];
+  const printSettingsHints = printSettingsSchema
+    ? getPrintTemplateDocHints(printSettingsSchema, fyo, printSettingsFields)
+    : {};
+
+  const accountingSettingsSchema =
+    fyo.schemaMap[ModelNameEnum.AccountingSettings];
+  const accountingSettingsHints = accountingSettingsSchema
+    ? getPrintTemplateDocHints(
+        accountingSettingsSchema,
+        fyo,
+        accountingSettingsFields
+      )
+    : {};
 
   hints.print = {
     ...printSettingsHints,
@@ -341,7 +349,7 @@ function getPrintTemplateDocHints(
   fieldnames?: string[],
   linkLevel?: number
 ): PrintTemplateHint {
-  linkLevel ??= 0;
+  const effectiveLinkLevel = linkLevel ?? 0;
   const hints: PrintTemplateHint = {};
   const links: PrintTemplateHint = {};
 
@@ -359,12 +367,16 @@ function getPrintTemplateDocHints(
     hints[fieldname] = label ?? fieldname;
     const { target } = field as TargetField;
     const targetSchema = fyo.schemaMap[target];
-    if (fieldtype === FieldTypeEnum.Link && targetSchema && linkLevel < 2) {
+    if (
+      fieldtype === FieldTypeEnum.Link &&
+      targetSchema &&
+      effectiveLinkLevel < 2
+    ) {
       links[fieldname] = getPrintTemplateDocHints(
         targetSchema,
         fyo,
         undefined,
-        linkLevel + 1
+        effectiveLinkLevel + 1
       );
     }
 

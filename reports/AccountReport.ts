@@ -96,7 +96,8 @@ export abstract class AccountReport extends LedgerReport {
     const leafNodes = getListOfLeafNodes(accountTree) as AccountTreeNode[];
 
     const totalMap = leafNodes.reduce((acc, node) => {
-      for (const key of this._dateRanges!) {
+      const ranges = this._dateRanges ?? [];
+      for (const key of ranges) {
         const bal = acc.get(key)?.balance ?? 0;
         const val = node.valueMap?.get(key)?.balance ?? 0;
         acc.set(key, { balance: bal + val });
@@ -162,7 +163,8 @@ export abstract class AccountReport extends LedgerReport {
       /**
        * Set Balance for every DateRange key
        */
-      for (const entry of map.get(account)!) {
+      const rows = map.get(account) ?? [];
+      for (const entry of rows) {
         const key = this._getRangeMapKey(entry);
         if (key === null) {
           continue;
@@ -176,7 +178,7 @@ export abstract class AccountReport extends LedgerReport {
         const balance = (entry.debit ?? 0) - (entry.credit ?? 0);
         const rootType = this.accountMap?.[entry.account]?.rootType;
 
-        if (isCredit(rootType)) {
+        if (rootType && isCredit(rootType)) {
           valueMap.set(key, { balance: totalBalance - balance });
         } else {
           valueMap.set(key, { balance: totalBalance + balance });
@@ -223,11 +225,12 @@ export abstract class AccountReport extends LedgerReport {
   }
 
   _getRangeMapKey(entry: LedgerEntry): DateRange | null {
-    const entryDate = DateTime.fromISO(
-      entry.date?.toISOString().split('T')[0]
-    ).toMillis();
+    const entryDate = entry.date
+      ? DateTime.fromJSDate(entry.date).toMillis()
+      : 0;
 
-    for (const dr of this._dateRanges!) {
+    const ranges = this._dateRanges ?? [];
+    for (const dr of ranges) {
       const toDate = dr.toDate.toMillis();
       const fromDate = dr.fromDate.toMillis();
 
@@ -272,12 +275,15 @@ export abstract class AccountReport extends LedgerReport {
     ];
 
     let count = this.count ?? 1;
-    if (this.basedOn === 'Fiscal Year') {
-      count = Math.ceil(((this.toYear! - this.fromYear!) * 12) / months);
+    if (this.basedOn === 'Fiscal Year' && this.toYear !== undefined && this.fromYear !== undefined) {
+      count = Math.ceil(((this.toYear - this.fromYear) * 12) / months);
     }
 
     for (let i = 1; i < count; i++) {
-      const lastRange = dateRanges.at(-1)!;
+      const lastRange = dateRanges.at(-1);
+      if (!lastRange) {
+        break;
+      }
       dateRanges.push({
         toDate: lastRange.fromDate,
         fromDate: this._fixMonthsJump(
@@ -295,15 +301,20 @@ export abstract class AccountReport extends LedgerReport {
     let fromDate: string;
 
     if (this.basedOn === 'Until Date') {
-      toDate = DateTime.fromISO(this.toDate!).plus({ days: 1 }).toISODate();
+      const td = this.toDate;
+      if (td === undefined) {
+        return { fromDate: '', toDate: '' };
+      }
+      toDate = DateTime.fromISO(td).plus({ days: 1 }).toISODate() ?? '';
       const months = monthsMap[this.periodicity] * Math.max(this.count ?? 1, 1);
-      fromDate = DateTime.fromISO(this.toDate!).minus({ months }).toISODate();
+      fromDate = DateTime.fromISO(td).minus({ months }).toISODate() ?? '';
     } else {
-      const fy = await getFiscalEndpoints(
-        this.toYear!,
-        this.fromYear!,
-        this.fyo
-      );
+      const ty = this.toYear;
+      const fy_yr = this.fromYear;
+      if (ty === undefined || fy_yr === undefined) {
+        return { fromDate: '', toDate: '' };
+      }
+      const fy = await getFiscalEndpoints(ty, fy_yr, this.fyo);
       toDate = DateTime.fromISO(fy.toDate).plus({ days: 1 }).toISODate();
       fromDate = fy.fromDate;
     }
@@ -353,7 +364,6 @@ export abstract class AccountReport extends LedgerReport {
         label: t`Periodicity`,
         fieldname: 'periodicity',
       },
-      undefined,
     ] as Field[];
 
     let dateFilters = [
@@ -437,7 +447,7 @@ export abstract class AccountReport extends LedgerReport {
         } as ColumnField;
       });
 
-    return [columns, dateColumns].flat();
+    return [columns, dateColumns ?? []].flat().filter(Boolean) as ColumnField[];
   }
 
   metaFilters: string[] = ['basedOn'];
@@ -499,7 +509,10 @@ function setValueMapOnAccountTreeNodes(
       continue;
     }
 
-    const valueMap = rangeGroupedMap.get(name)!;
+    const valueMap = rangeGroupedMap.get(name);
+    if (!valueMap) {
+      continue;
+    }
     accountTree[name].valueMap = valueMap;
     accountTree[name].prune = false;
 
@@ -507,7 +520,7 @@ function setValueMapOnAccountTreeNodes(
      * Set the update the parent account values recursively
      * also prevent pruning of the parent accounts.
      */
-    let parentAccountName: string | null = accountTree[name].parentAccount;
+    let parentAccountName: string | null = accountTree[name].parentAccount ?? null;
 
     while (parentAccountName !== null) {
       parentAccountName = updateParentAccountWithChildValues(
@@ -523,8 +536,12 @@ function updateParentAccountWithChildValues(
   accountTree: AccountTree,
   parentAccountName: string,
   valueMap: ValueMap
-): string {
+): string | null {
   const parentAccount = accountTree[parentAccountName];
+  if (!parentAccount) {
+    return null;
+  }
+
   parentAccount.prune = false;
   parentAccount.valueMap ??= new Map();
 
@@ -533,13 +550,17 @@ function updateParentAccountWithChildValues(
     const childValue = valueMap.get(key);
     const map: Record<string, number> = {};
 
-    for (const key of Object.keys(childValue!)) {
+    if (!childValue) {
+      continue;
+    }
+
+    for (const key of Object.keys(childValue)) {
       map[key] = (value?.[key] ?? 0) + (childValue?.[key] ?? 0);
     }
     parentAccount.valueMap.set(key, map);
   }
 
-  return parentAccount.parentAccount!;
+  return parentAccount.parentAccount;
 }
 
 function setChildrenOnAccountTreeNodes(accountTree: AccountTree) {
@@ -639,8 +660,11 @@ function getListOfLeafNodes(tree: Tree): TreeNode[] {
     const groupChildren = node.children ?? [];
 
     while (groupChildren.length) {
-      const child = groupChildren.shift()!;
-      if (!child?.children?.length) {
+      const child = groupChildren.shift();
+      if (!child) {
+        continue;
+      }
+      if (!child.children?.length) {
         nonGroupChildren.push(child);
         continue;
       }

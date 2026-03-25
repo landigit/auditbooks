@@ -18,7 +18,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
   rawCustomFields: RawCustomField[] = [];
 
   get #isInitialized(): boolean {
-    return this.db !== undefined && this.db.knex !== undefined;
+    return this.db !== undefined;
   }
 
   getSchemaMap() {
@@ -53,10 +53,15 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async setRawCustomFields() {
     try {
-      this.rawCustomFields = (await this.db?.knex?.(
-        'CustomField'
-      )) as RawCustomField[];
-    } catch {}
+      if (this.db) {
+        this.rawCustomFields = (await this.db.getAll(
+          'CustomField',
+          {}
+        )) as RawCustomField[];
+      }
+    } catch {
+      this.rawCustomFields = [];
+    }
   }
 
   async #migrate(): Promise<void> {
@@ -101,7 +106,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return { pre: [], post: [] };
     }
 
-    const query = (await this.db.knex?.('PatchRun').select()) as {
+    const query = (await this.db.getAll('PatchRun')) as {
       name: string;
       version?: string;
       failed?: boolean;
@@ -144,8 +149,8 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return;
     }
 
-    // @ts-ignore
-    const response = await this.db[method](...args);
+    // biome-ignore lint/suspicious/noExplicitAny: library method demuxing
+    const response = await (this.db as any)[method](...args);
     if (method === 'close') {
       this.db = undefined;
     }
@@ -158,26 +163,25 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return;
     }
 
-    if (!BespokeQueries.hasOwnProperty(method)) {
+    if (!Object.hasOwn(BespokeQueries, method)) {
       throw new DatabaseError(`invalid bespoke db function ${method}`);
     }
 
-    const queryFunction: BespokeFunction =
-      BespokeQueries[method as keyof BespokeFunction];
-    return await queryFunction(this.db!, ...args);
+    const queryFunction = BespokeQueries[
+      method as keyof typeof BespokeQueries
+    ] as (db: DatabaseCore, ...args: unknown[]) => Promise<unknown>;
+    if (!this.db) {
+      throw new Error('Database not connected');
+    }
+    return await queryFunction(this.db, ...args);
   }
 
   async #getIsFirstRun(): Promise<boolean> {
-    const knex = this.db?.knex;
-    if (!knex) {
+    if (!this.db) {
       return true;
     }
 
-    const query = await knex('sqlite_master').where({
-      type: 'table',
-      name: 'PatchRun',
-    });
-    return !query.length;
+    return !(await this.db.exists('PatchRun'));
   }
 
   async #createBackup() {
@@ -215,14 +219,14 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async #getAppVersion(): Promise<string> {
-    const knex = this.db?.knex;
-    if (!knex) {
+    if (!this.db) {
       return '0.0.0';
     }
 
-    const query = await knex('SingleValue')
-      .select('value')
-      .where({ fieldname: 'version', parent: 'SystemSettings' });
+    const query = await this.db.getSingleValues({
+      fieldname: 'version',
+      parent: 'SystemSettings',
+    });
     const value = (query[0] as undefined | { value: string })?.value;
     return value || '0.0.0';
   }

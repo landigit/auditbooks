@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { RawValueMap } from 'fyo/core/types';
-import type { Knex } from 'knex';
-import knex from 'knex';
+import { sql } from 'kysely';
+import type { DB } from 'src/types/db';
 import { changeKeys, deleteKeys, getIsNullOrUndef, invertMap } from 'utils';
 import { getCountryCodeFromCountry } from 'utils/misc';
 import { Version } from 'utils/version';
@@ -34,17 +34,19 @@ async function execute(dm: DatabaseManager) {
     return;
   }
 
-  const sourceKnex = dm.db?.knex!;
+  if (!dm.db || !dm.db.db) {
+    throw new Error('Database not connected');
+  }
+
   const version = (
-    (await sourceKnex('SingleValue')
-      .select('value')
-      .where({ fieldname: 'version' })) as { value: string }[]
-  )?.[0]?.value;
+    await dm.db.getSingleValues({
+      fieldname: 'version',
+    })
+  )?.[0]?.value as string | undefined;
 
   /**
    * Versions after this should have the new schemas
    */
-
   if (version && Version.gt(version, '0.4.3-beta.0')) {
     return;
   }
@@ -53,19 +55,21 @@ async function execute(dm: DatabaseManager) {
    * Initialize a different db to copy all the updated
    * data into.
    */
-  const countryCode = await getCountryCode(sourceKnex);
-  const destDm = await getDestinationDM(dm.db?.dbPath, countryCode);
+  const countryCode = await getCountryCode(dm);
+  const destDm = await getDestinationDM(dm.db.dbPath, countryCode);
 
   /**
    * Copy data from all the relevant tables
    * the other tables will be empty cause unused.
    */
   try {
-    await copyData(sourceKnex, destDm);
+    await copyData(dm, destDm);
   } catch (err) {
     const destPath = destDm.db?.dbPath;
-    await destDm.db?.close();
-    await fs.unlink(destPath);
+    if (destPath) {
+      await destDm.db?.close();
+      await fs.unlink(destPath);
+    }
     throw err;
   }
 
@@ -87,8 +91,10 @@ async function replaceDatabaseCore(
   dm: DatabaseManager,
   destDm: DatabaseManager
 ) {
-  const newDbPath = destDm.db?.dbPath; // new db with new schema
-  const oldDbPath = dm.db?.dbPath; // old db to be replaced
+  const newDbPath = destDm.db?.dbPath;
+  const oldDbPath = dm.db?.dbPath;
+
+  if (!newDbPath || !oldDbPath) return;
 
   await dm.db?.close();
   await destDm.db?.close();
@@ -97,37 +103,49 @@ async function replaceDatabaseCore(
   await dm._connect(oldDbPath);
 }
 
-async function copyData(sourceKnex: Knex, destDm: DatabaseManager) {
-  const destKnex = destDm.db?.knex!;
+async function copyData(sourceDm: DatabaseManager, destDm: DatabaseManager) {
+  if (!sourceDm.db?.db || !destDm.db?.db) {
+    throw new Error('Databases not connected');
+  }
+
   const schemaMap = destDm.getSchemaMap();
-  await destKnex.raw('PRAGMA foreign_keys=OFF');
-  await copySingleValues(sourceKnex, destKnex, schemaMap);
-  await copyParty(sourceKnex, destKnex, schemaMap[ModelNameEnum.Party]!);
-  await copyItem(sourceKnex, destKnex, schemaMap[ModelNameEnum.Item]!);
-  await copyChildTables(sourceKnex, destKnex, schemaMap);
-  await copyOtherTables(sourceKnex, destKnex, schemaMap);
-  await copyTransactionalTables(sourceKnex, destKnex, schemaMap);
-  await copyLedgerEntries(
-    sourceKnex,
-    destKnex,
-    schemaMap[ModelNameEnum.AccountingLedgerEntry]!
-  );
-  await copyNumberSeries(
-    sourceKnex,
-    destKnex,
-    schemaMap[ModelNameEnum.NumberSeries]!
-  );
-  await destKnex.raw('PRAGMA foreign_keys=ON');
+  await sql`PRAGMA foreign_keys=OFF`.execute(destDm.db.db);
+
+  await copySingleValues(sourceDm, destDm, schemaMap);
+  if (schemaMap[ModelNameEnum.Party]) {
+    await copyParty(sourceDm, destDm, schemaMap[ModelNameEnum.Party]);
+  }
+  if (schemaMap[ModelNameEnum.Item]) {
+    await copyItem(sourceDm, destDm, schemaMap[ModelNameEnum.Item]);
+  }
+  await copyChildTables(sourceDm, destDm, schemaMap);
+  await copyOtherTables(sourceDm, destDm, schemaMap);
+  await copyTransactionalTables(sourceDm, destDm, schemaMap);
+  if (schemaMap[ModelNameEnum.AccountingLedgerEntry]) {
+    await copyLedgerEntries(
+      sourceDm,
+      destDm,
+      schemaMap[ModelNameEnum.AccountingLedgerEntry]
+    );
+  }
+  if (schemaMap[ModelNameEnum.NumberSeries]) {
+    await copyNumberSeries(
+      sourceDm,
+      destDm,
+      schemaMap[ModelNameEnum.NumberSeries]
+    );
+  }
+  await sql`PRAGMA foreign_keys=ON`.execute(destDm.db.db);
 }
 
 async function copyNumberSeries(
-  sourceKnex: Knex,
-  destKnex: Knex,
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
   schema: Schema
 ) {
-  const values = (await sourceKnex(
-    ModelNameEnum.NumberSeries
-  )) as RawValueMap[];
+  const values = sourceDm.db
+    ? ((await sourceDm.db.getAll(ModelNameEnum.NumberSeries)) as RawValueMap[])
+    : [];
 
   const refMap = invertMap(defaultNumberSeriesMap);
 
@@ -139,18 +157,20 @@ async function copyNumberSeries(
     const name = value.name as string;
     const referenceType = refMap[name];
     if (!referenceType) {
-      value.name = undefined;
+      value.name = '';
       continue;
     }
 
-    const indices = (await sourceKnex.raw(
-      `
-      select cast(substr(name, ??) as int) as idx
-      from ?? 
+    const sourceDb = sourceDm.db?.db;
+    if (!sourceDb) continue;
+
+    const result = await sql<{ idx: number }>`
+      select cast(substr(name, ${name.length + 1}) as int) as idx
+      from ${sql.table(referenceType)} 
       order by idx desc 
-      limit 1`,
-      [name.length + 1, referenceType]
-    )) as { idx: number }[];
+      limit 1`.execute(sourceDb);
+
+    const indices = result.rows || [];
 
     value.start = 1001;
     value.current = indices[0]?.idx ?? value.current ?? value.start;
@@ -158,7 +178,7 @@ async function copyNumberSeries(
   }
 
   await copyValues(
-    destKnex,
+    destDm,
     ModelNameEnum.NumberSeries,
     values.filter((v) => v.name),
     [],
@@ -168,15 +188,16 @@ async function copyNumberSeries(
 }
 
 async function copyLedgerEntries(
-  sourceKnex: Knex,
-  destKnex: Knex,
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
   schema: Schema
 ) {
-  const values = (await sourceKnex(
+  if (!sourceDm.db) return;
+  const values = (await sourceDm.db.getAll(
     ModelNameEnum.AccountingLedgerEntry
   )) as RawValueMap[];
   await copyValues(
-    destKnex,
+    destDm,
     ModelNameEnum.AccountingLedgerEntry,
     values,
     ['description', 'againstAccount', 'balance'],
@@ -186,8 +207,8 @@ async function copyLedgerEntries(
 }
 
 async function copyOtherTables(
-  sourceKnex: Knex,
-  destKnex: Knex,
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
   schemaMap: SchemaMap
 ) {
   const schemaNames = [
@@ -199,15 +220,16 @@ async function copyOtherTables(
     ModelNameEnum.PatchRun,
   ];
 
+  if (!sourceDm.db) return;
   for (const sn of schemaNames) {
-    const values = (await sourceKnex(sn)) as RawValueMap[];
-    await copyValues(destKnex, sn, values, [], {}, schemaMap[sn]);
+    const values = (await sourceDm.db.getAll(sn)) as RawValueMap[];
+    await copyValues(destDm, sn, values, [], {}, schemaMap[sn]);
   }
 }
 
 async function copyTransactionalTables(
-  sourceKnex: Knex,
-  destKnex: Knex,
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
   schemaMap: SchemaMap
 ) {
   const schemaNames = [
@@ -218,31 +240,22 @@ async function copyTransactionalTables(
     ModelNameEnum.SalesQuote,
   ];
 
+  if (!sourceDm.db) return;
   for (const sn of schemaNames) {
-    const values = (await sourceKnex(sn)) as RawValueMap[];
-    values.forEach((v) => {
-      if (!v.submitted) {
-        v.submitted = 0;
-      }
-
-      if (!v.cancelled) {
-        v.cancelled = 0;
-      }
+    const values = (await sourceDm.db.getAll(sn)) as RawValueMap[];
+    for (const v of values) {
+      if (getIsNullOrUndef(v.submitted)) v.submitted = 0;
+      if (getIsNullOrUndef(v.cancelled)) v.cancelled = 0;
 
       if (!v.numberSeries) {
         v.numberSeries = defaultNumberSeriesMap[sn];
       }
 
-      if (v.customer) {
-        v.party = v.customer;
-      }
-
-      if (v.supplier) {
-        v.party = v.supplier;
-      }
-    });
+      if (v.customer) v.party = v.customer;
+      if (v.supplier) v.party = v.supplier;
+    }
     await copyValues(
-      destKnex,
+      destDm,
       sn,
       values,
       [],
@@ -253,18 +266,19 @@ async function copyTransactionalTables(
 }
 
 async function copyChildTables(
-  sourceKnex: Knex,
-  destKnex: Knex,
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
   schemaMap: SchemaMap
 ) {
   const childSchemaNames = Object.keys(schemaMap).filter(
     (sn) => schemaMap[sn]?.isChild
   );
 
+  if (!sourceDm.db) return;
   for (const sn of childSchemaNames) {
-    const values = (await sourceKnex(sn)) as RawValueMap[];
+    const values = (await sourceDm.db.getAll(sn)) as RawValueMap[];
     await copyValues(
-      destKnex,
+      destDm,
       sn,
       values,
       [],
@@ -274,28 +288,41 @@ async function copyChildTables(
   }
 }
 
-async function copyItem(sourceKnex: Knex, destKnex: Knex, schema: Schema) {
-  const values = (await sourceKnex(ModelNameEnum.Item)) as RawValueMap[];
-  values.forEach((value) => {
+async function copyItem(
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
+  schema: Schema
+) {
+  if (!sourceDm.db) return;
+  const values = (await sourceDm.db.getAll(
+    ModelNameEnum.Item
+  )) as RawValueMap[];
+  for (const value of values) {
     value.for = 'Both';
-  });
+  }
 
-  await copyValues(destKnex, ModelNameEnum.Item, values, [], {}, schema);
+  await copyValues(destDm, ModelNameEnum.Item, values, [], {}, schema);
 }
 
-async function copyParty(sourceKnex: Knex, destKnex: Knex, schema: Schema) {
-  const values = (await sourceKnex(ModelNameEnum.Party)) as RawValueMap[];
-  values.forEach((value) => {
-    // customer will be mapped onto role
+async function copyParty(
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
+  schema: Schema
+) {
+  if (!sourceDm.db) return;
+  const values = (await sourceDm.db.getAll(
+    ModelNameEnum.Party
+  )) as RawValueMap[];
+  for (const value of values) {
     if (Number(value.supplier) === 1) {
       value.customer = 'Supplier';
     } else {
       value.customer = 'Customer';
     }
-  });
+  }
 
   await copyValues(
-    destKnex,
+    destDm,
     ModelNameEnum.Party,
     values,
     ['supplier', 'addressDisplay'],
@@ -305,52 +332,70 @@ async function copyParty(sourceKnex: Knex, destKnex: Knex, schema: Schema) {
 }
 
 async function copySingleValues(
-  sourceKnex: Knex,
-  destKnex: Knex,
+  sourceDm: DatabaseManager,
+  destDm: DatabaseManager,
   schemaMap: SchemaMap
 ) {
   const singleSchemaNames = Object.keys(schemaMap).filter(
     (k) => schemaMap[k]?.isSingle
   );
-  const singleValues = (await sourceKnex(ModelNameEnum.SingleValue).whereIn(
-    'parent',
-    singleSchemaNames
-  )) as RawValueMap[];
-  await copyValues(destKnex, ModelNameEnum.SingleValue, singleValues);
+
+  if (!sourceDm.db?.db) return;
+
+  const results = await sourceDm.db.db
+    .selectFrom('SingleValue')
+    .selectAll()
+    .where('parent', 'in', singleSchemaNames)
+    .execute();
+
+  await copyValues(
+    destDm,
+    ModelNameEnum.SingleValue,
+    results as unknown as RawValueMap[]
+  );
 }
 
 async function copyValues(
-  destKnex: Knex,
+  destDm: DatabaseManager,
   destTableName: string,
   values: RawValueMap[],
   keysToDelete: string[] = [],
   keyMap: Record<string, string> = {},
   schema?: Schema
 ) {
-  keysToDelete = [...keysToDelete, ...ignoreColumns];
-  keyMap = { ...keyMap, ...columnMap };
+  const targetKeysToDelete = [...keysToDelete, ...ignoreColumns];
+  const targetKeyMap = { ...keyMap, ...columnMap };
 
-  values = values.map((sv) => deleteKeys(sv, keysToDelete));
-  values = values.map((sv) => changeKeys(sv, keyMap));
+  const targetValues = values
+    .map((sv) => deleteKeys(sv, targetKeysToDelete))
+    .map((sv) => changeKeys(sv, targetKeyMap));
 
   if (schema) {
-    values.forEach((v) => notNullify(v, schema));
+    for (const v of targetValues) {
+      notNullify(v, schema);
+    }
   }
 
   if (schema) {
-    const newKeys = schema?.fields.map((f) => f.fieldname);
-    values.forEach((v) => deleteOldKeys(v, newKeys));
+    const newKeys = schema.fields.map((f) => f.fieldname);
+    for (const v of targetValues) {
+      deleteOldKeys(v, newKeys);
+    }
   }
 
-  await destKnex.batchInsert(destTableName, values, 100);
+  if (targetValues.length > 0 && destDm.db?.db) {
+    const batchSize = 100;
+    for (let i = 0; i < targetValues.length; i += batchSize) {
+      const batch = targetValues.slice(i, i + batchSize);
+      await destDm.db.db
+        .insertInto(destTableName as Extract<keyof DB, string>)
+        .values(batch as any)
+        .execute();
+    }
+  }
 }
 
 async function getDestinationDM(sourceDbPath: string, countryCode: string) {
-  /**
-   * This is where all the stuff from the old db will be copied.
-   * That won't be altered cause schema update will cause data loss.
-   */
-
   const dir = path.parse(sourceDbPath).dir;
   const dbPath = path.join(dir, '__update_schemas_temp.db');
   const dm = new DatabaseManager();
@@ -360,15 +405,10 @@ async function getDestinationDM(sourceDbPath: string, countryCode: string) {
   return dm;
 }
 
-async function getCountryCode(knex: Knex) {
-  /**
-   * Need to account for schema changes, in 0.4.3-beta.0
-   */
-  const country = (
-    (await knex('SingleValue')
-      .select('value')
-      .where({ fieldname: 'country' })) as { value: string }[]
-  )?.[0]?.value;
+async function getCountryCode(dm: DatabaseManager) {
+  if (!dm.db?.db) return '';
+  const result = await dm.db.getSingleValues({ fieldname: 'country' });
+  const country = (result?.[0] as { value?: string })?.value;
 
   if (!country) {
     return '';

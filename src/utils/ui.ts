@@ -103,7 +103,9 @@ export async function deleteDocWithPrompt(doc: Doc) {
             if (getDbError(err as Error) === LinkValidationError) {
               await showDialog({
                 title: t`Delete Failed`,
-                detail: t`Cannot delete ${schemaLabel} "${doc.name!}" because of linked entries.`,
+                detail: t`Cannot delete ${schemaLabel || ''} "${
+                  doc.name || ''
+                }" because of linked entries.`,
                 type: 'error',
               });
             } else {
@@ -142,7 +144,7 @@ export async function cancelDocWithPrompt(doc: Doc) {
       await fyo.db.getAll('PaymentFor', {
         fields: ['parent'],
         filters: {
-          referenceName: doc.name!,
+          referenceName: doc.name ?? '',
         },
       })
     ).filter(({ parent }) => payments.includes(parent));
@@ -351,7 +353,10 @@ export function getFieldsGroupedByTabAndSection(
       grouped.set(tab, new Map());
     }
 
-    const tabbed = grouped.get(tab)!;
+    const tabbed = grouped.get(tab);
+    if (!tabbed) {
+      continue;
+    }
     if (!tabbed.has(section)) {
       tabbed.set(section, []);
     }
@@ -754,16 +759,16 @@ function getDocSubmitMessage(doc: Doc): string {
   const details = [t`Mark ${doc.schema.label} as submitted?`];
 
   if (doc instanceof SalesInvoice && doc.makeAutoPayment) {
-    const toAccount = doc.autoPaymentAccount!;
-    const fromAccount = doc.account!;
+    const toAccount = doc.autoPaymentAccount ?? '';
+    const fromAccount = doc.account ?? '';
     const amount = fyo.format(doc.outstandingAmount, 'Currency');
 
     details.push(
       t`Payment of ${amount} will be made from account "${fromAccount}" to account "${toAccount}" on Submit.`
     );
   } else if (doc instanceof PurchaseInvoice && doc.makeAutoPayment) {
-    const fromAccount = doc.autoPaymentAccount!;
-    const toAccount = doc.account!;
+    const fromAccount = doc.autoPaymentAccount ?? '';
+    const toAccount = doc.account ?? '';
     const amount = fyo.format(doc.outstandingAmount, 'Currency');
 
     details.push(

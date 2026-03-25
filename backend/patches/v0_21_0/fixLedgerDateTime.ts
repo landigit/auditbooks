@@ -1,6 +1,6 @@
+import type { DB } from 'src/types/db';
 import type { DatabaseManager } from '../../database/manager';
 
-/* eslint-disable */
 async function execute(dm: DatabaseManager) {
   const sourceTables = [
     'PurchaseInvoice',
@@ -9,31 +9,38 @@ async function execute(dm: DatabaseManager) {
     'Payment',
     'StockMovement',
     'StockTransfer',
-  ];
+  ] as (keyof DB & string)[];
 
-  await dm.db
-    ?.knex?.('AccountingLedgerEntry')
-    .select('name', 'date', 'referenceName')
-    .then((trx: Array<{ name: string; date: Date; referenceName: string }>) => {
-      trx.forEach(async (entry) => {
-        sourceTables.forEach(async (table) => {
-          await dm.db?.knex
-            ?.select('name', 'date')
-            .from(table)
-            .where({ name: entry.referenceName })
-            .then(async (resp: Array<{ name: string; date: Date }>) => {
-              if (resp.length !== 0) {
-                const dateTimeValue = new Date(resp[0].date);
-                await dm.db
-                  ?.knex?.('AccountingLedgerEntry')
-                  .where({ name: entry.name })
-                  .update({ date: dateTimeValue.toISOString() });
-              }
-            });
-        });
-      });
-    });
+  if (!dm.db?.db) return;
+
+  const entries = await dm.db.db
+    .selectFrom('AccountingLedgerEntry')
+    .select(['name', 'date', 'referenceName'])
+    .execute();
+
+  for (const entry of entries) {
+    if (!entry.referenceName) continue;
+
+    for (const table of sourceTables) {
+      const resp = await dm.db.db
+        .selectFrom(table)
+        .select(['name', 'date'])
+        .where('name', '=', entry.referenceName as string)
+        .executeTakeFirst();
+
+      if (resp) {
+        const dateTimeValue = new Date(resp.date as string);
+        await dm.db.db
+          .updateTable('AccountingLedgerEntry')
+          .set({ date: dateTimeValue.toISOString() })
+          .where('name', '=', entry.name as string)
+          .execute();
+
+        // Break once found in one of the source tables
+        break;
+      }
+    }
+  }
 }
 
 export default { execute, beforeMigrate: true };
-/* eslint-enable */

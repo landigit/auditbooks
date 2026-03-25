@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import { assert } from 'vitest';
 import { cloneDeep } from 'lodash';
 import {
   addMetaFields,
@@ -191,9 +191,7 @@ export async function assertThrows(
   } catch {
   } finally {
     if (!threw) {
-      throw new assert.AssertionError({
-        message: `Missing expected exception${message ? `: ${message}` : ''}`,
-      });
+      assert.fail(`Missing expected exception${message ? `: ${message}` : ''}`);
     }
   }
 }
@@ -205,11 +203,9 @@ export async function assertDoesNotThrow(
   try {
     await func();
   } catch (err) {
-    throw new assert.AssertionError({
-      message: `Got unwanted exception${
-        message ? `: ${message}` : ''
-      }\nError: ${(err as Error).message}\n${(err as Error).stack ?? ''}`,
-    });
+    assert.fail(`Got unwanted exception${
+      message ? `: ${message}` : ''
+    }\nError: ${(err as Error).message}\n${(err as Error).stack ?? ''}`);
   }
 }
 

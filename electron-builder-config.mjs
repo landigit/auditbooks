@@ -11,11 +11,11 @@ import { fileURLToPath } from 'node:url';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 // const root = path.join(dirname, '..', '..');
 const root = dirname; // redundant, but is meant to keep with the previous line
-const buildDirPath = path.join(root, 'dist_electron', 'build');
-const packageDirPath = path.join(root, 'dist_electron', 'bundled');
+const buildDirPath = path.join(root, 'dist-electron', 'build');
+const packageDirPath = path.join(root, 'dist-electron', 'bundled');
 
 const auditbooksConfig = {
-  productName: 'AuditBooks',
+  productName: 'Auditbooks',
   appId: 'com.landigit.auditbooks',
   artifactName: '${productName}-v${version}-${os}-${arch}.${ext}',
   asarUnpack: '**/*.node',
@@ -54,11 +54,11 @@ const auditbooksConfig = {
     target: [
       {
         target: 'nsis',
-        arch: ['x64', 'ia32'],
+        arch: ['x64'],
       },
       {
         target: 'portable',
-        arch: ['x64', 'ia32'],
+        arch: ['x64'],
       },
     ],
   },

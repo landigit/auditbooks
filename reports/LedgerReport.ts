@@ -22,7 +22,9 @@ export abstract class LedgerReport extends Report {
   }
 
   _setObservers() {
-    const listener = () => (this.shouldRefresh = true);
+    const listener = () => {
+      this.shouldRefresh = true;
+    };
 
     this.fyo.doc.observer.on(
       `sync:${ModelNameEnum.AccountingLedgerEntry}`,
@@ -43,18 +45,20 @@ export abstract class LedgerReport extends Report {
     return groupBy;
   }
 
-  _getGroupedMap(sort: boolean, groupBy?: GroupByKey): GroupedMap {
-    groupBy ??= this._getGroupByKey();
+  _getGroupedMap(sort: boolean, groupByArg?: GroupByKey): GroupedMap {
+    const groupBy = groupByArg ?? this._getGroupByKey();
     /**
      * Sort rows by ascending or descending
      */
     if (sort) {
       this._rawData.sort((a, b) => {
+        const aDate = a.date?.getTime() ?? 0;
+        const bDate = b.date?.getTime() ?? 0;
         if (this.ascending) {
-          return +a.date! - +b.date!;
+          return aDate - bDate;
         }
 
-        return +b.date! - +a.date!;
+        return bDate - aDate;
       });
     }
 
@@ -64,7 +68,7 @@ export abstract class LedgerReport extends Report {
      */
     const map: GroupedMap = new Map();
     for (const entry of this._rawData) {
-      const groupingKey = entry[groupBy];
+      const groupingKey = entry[groupBy] as string;
       if (!map.has(groupingKey)) {
         map.set(groupingKey, []);
       }

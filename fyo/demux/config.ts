@@ -6,7 +6,8 @@ export class Config {
   constructor(isElectron: boolean) {
     this.config = new Map();
     if (isElectron) {
-      this.config = ipc.store;
+      // biome-ignore lint/suspicious/noExplicitAny: window.ipc is injected by Electron
+      this.config = (window as any).ipc.store;
     }
   }
 

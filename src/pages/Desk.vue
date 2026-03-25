@@ -45,7 +45,7 @@ import { toggleSidebar } from 'src/utils/ui';
           <div v-if="route?.query?.edit">
             <component
               :is="Component"
-              :key="route.query.schemaName + route.query.name"
+              :key="(route.query.schemaName as string) + (route.query.name as string)"
               :dark-mode="darkMode"
             />
           </div>

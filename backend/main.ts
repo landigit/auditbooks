@@ -37,6 +37,7 @@ app.post('/auth/login', async (c) => {
   try {
     const { email, password } = await c.req.json();
     const userResult = await kv.get(['users', email]);
+    // biome-ignore lint/suspicious/noExplicitAny: Deno KV values are not typed by default
     const user = userResult.value as any;
     if (!user || user.password !== password)
       return c.json({ error: 'Invalid credentials' }, 401);
@@ -47,8 +48,9 @@ app.post('/auth/login', async (c) => {
       token,
       user: { email: user.email, name: user.name, username: user.username },
     });
-  } catch (err: any) {
-    return c.json({ error: err.message }, 500);
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return c.json({ error: errorMsg }, 500);
   }
 });
 
@@ -153,8 +155,9 @@ app.post('/data/db/call', async (c) => {
     }
 
     return c.json({ data, success: true });
-  } catch (err: any) {
-    return c.json({ error: { name: 'DatabaseError', message: err.message } });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return c.json({ error: { name: 'DatabaseError', message: errorMsg } });
   }
 });
 
@@ -182,12 +185,14 @@ app.post('/data/records/:schemaName', async (c) => {
     await kv.set(['records', schemaName, name], record);
     await logActivity('system', `Saved ${schemaName}: ${name}`);
     return c.json({ success: true, record });
-  } catch (err) {
-    return c.json({ error: err.message }, 500);
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return c.json({ error: errorMsg }, 500);
   }
 });
 
-app.delete('/data/records/:schemaName/:name', async (c) => {
+// biome-ignore lint/suspicious/noExplicitAny: Hono context in Deno mode needs any for simplicity sometimes
+app.delete('/data/records/:schemaName/:name', async (c: any) => {
   const { schemaName, name } = c.req.param();
   await kv.delete(['records', schemaName, name]);
   return c.json({ success: true });

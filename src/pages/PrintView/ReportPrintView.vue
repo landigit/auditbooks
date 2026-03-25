@@ -297,7 +297,10 @@ export default defineComponent({
         shouldPrint
       );
 
-      this.fyo.telemetry.log(Verb.Printed, this.report?.reportName);
+      this.fyo.telemetry.log(
+        Verb.Printed,
+        this.report?.reportName ?? 'Unknown'
+      );
     },
     cellClasses(cIdx: number, rIdx: number): string[] {
       const classes: string[] = [];

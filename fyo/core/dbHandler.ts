@@ -66,21 +66,27 @@ export class DatabaseHandler extends DatabaseBase {
   }
 
   async createNewDatabase(dbPath: string, countryCode: string) {
-    countryCode = await this.#demux.createNewDatabase(dbPath, countryCode);
+    const effectiveCountryCode = await this.#demux.createNewDatabase(
+      dbPath,
+      countryCode
+    );
     await this.init();
     this.dbPath = dbPath;
-    return countryCode;
+    return effectiveCountryCode;
   }
 
   async connectToDatabase(dbPath: string, countryCode?: string) {
-    countryCode = await this.#demux.connectToDatabase(dbPath, countryCode);
+    const effectiveCountryCode = await this.#demux.connectToDatabase(
+      dbPath,
+      countryCode
+    );
     await this.init();
     this.dbPath = dbPath;
-    return countryCode;
+    return effectiveCountryCode;
   }
 
   async init() {
-    this.#schemaMap = await this.#demux.getSchemaMap();
+    this.#schemaMap = (await this.#demux.getSchemaMap()) ?? {};
     this.#setFieldMap();
     this.observer = new Observable();
   }
@@ -160,10 +166,10 @@ export class DatabaseHandler extends DatabaseBase {
   async getSingleValues(
     ...fieldnames: ({ fieldname: string; parent?: string } | string)[]
   ): Promise<SingleValue<DocValue>> {
-    const rawSingleValue = (await this.#demux.call(
+    const rawSingleValue = ((await this.#demux.call(
       'getSingleValues',
       ...fieldnames
-    )) as SingleValue<RawValue>;
+    )) as SingleValue<RawValue>) ?? [];
 
     const docSingleValue: SingleValue<DocValue> = [];
     for (const sv of rawSingleValue) {
@@ -363,11 +369,11 @@ export class DatabaseHandler extends DatabaseBase {
     schemaName: string,
     options: GetAllOptions = {}
   ): Promise<RawValueMap[]> {
-    return (await this.#demux.call(
+    return ((await this.#demux.call(
       'getAll',
       schemaName,
       options
-    )) as RawValueMap[];
+    )) as RawValueMap[]) ?? [];
   }
 
   #setFieldMap() {

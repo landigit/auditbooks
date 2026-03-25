@@ -98,24 +98,29 @@ export async function getLinkedEntries(
       continue;
     }
 
+    const fields = ['name'];
     const options: GetAllOptions = {
-      filters: { [field.fieldname]: doc.name! },
-      fields: ['name'],
+      filters: { [field.fieldname]: doc.name ?? '' },
+      fields,
     };
 
     if (field.fieldtype === 'DynamicLink') {
-      options.filters![field.references] = doc.schemaName!;
+      const filters = options.filters ?? {};
+      filters[field.references] = doc.schemaName ?? '';
+      options.filters = filters;
     }
 
     const schema = fyo.schemaMap[field.schemaName];
     if (schema?.isChild) {
-      options.fields?.push('parent', 'parentSchemaName');
+      fields.push('parent', 'parentSchemaName');
     } else {
-      options.fields?.push('created');
+      fields.push('created');
     }
 
     if (schema?.isSubmittable) {
-      options.filters!.cancelled = false;
+      const filters = options.filters ?? {};
+      filters.cancelled = false;
+      options.filters = filters;
     }
 
     const details = (await fyo.db.getAllRaw(field.schemaName, options)) as

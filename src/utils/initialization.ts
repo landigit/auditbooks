@@ -2,7 +2,7 @@ import type { Fyo } from 'fyo';
 import type { ConfigFile } from 'fyo/core/types';
 import { getRegionalModels, models } from 'models/index';
 import { ModelNameEnum } from 'models/types';
-import type { TargetField } from 'schemas/types';
+import { FieldTypeEnum, type TargetField } from 'schemas/types';
 import {
   getMapFromList,
   getRandomString,
@@ -15,14 +15,18 @@ export async function initializeInstance(
   countryCode: string,
   fyo: Fyo
 ) {
+  let effectiveCountryCode = countryCode;
   if (isNew) {
     await closeDbIfConnected(fyo);
-    countryCode = await fyo.db.createNewDatabase(dbPath, countryCode);
+    effectiveCountryCode = await fyo.db.createNewDatabase(
+      dbPath,
+      effectiveCountryCode
+    );
   } else if (!fyo.db.isConnected) {
-    countryCode = await fyo.db.connectToDatabase(dbPath);
+    effectiveCountryCode = await fyo.db.connectToDatabase(dbPath);
   }
 
-  const regionalModels = await getRegionalModels(countryCode);
+  const regionalModels = await getRegionalModels(effectiveCountryCode);
   await fyo.initializeAndRegister(models, regionalModels);
 
   await checkSingleLinks(fyo);
@@ -64,10 +68,15 @@ async function checkSingleLinks(fyo: Fyo) {
 
   const linkFields = Object.values(fyo.db.schemaMap)
     .filter((schema) => schema?.isSingle)
-    .flatMap((schema) => schema?.fields)
-    .filter((field) => field.fieldtype === 'Link' && field.target)
+    .flatMap((schema) =>
+      (schema?.fields ?? []).map((f) => ({
+        ...f,
+        schemaName: schema?.name,
+      }))
+    )
+    .filter((field) => field.fieldtype === FieldTypeEnum.Link && field.target)
     .map((field) => ({
-      fieldKey: `${field.schemaName!}.${field.fieldname}`,
+      fieldKey: `${field.schemaName ?? ''}.${field.fieldname}`,
       target: (field as TargetField).target,
     }));
   const linkFieldsMap = getMapFromList(linkFields, 'fieldKey');

@@ -21,6 +21,12 @@ export function getMainProcessCommonConfig(root) {
     target: 'node20',
     external: ['knex', 'electron', 'better-sqlite3', 'electron-store'],
     plugins: [excludeVendorFromSourceMap],
+    banner: {
+      js: 'var import_meta_url = require("url").pathToFileURL(__filename).href;',
+    },
+    define: {
+      'import.meta.url': 'import_meta_url',
+    },
     write: true,
   };
 }

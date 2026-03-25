@@ -57,7 +57,7 @@
                       name="x"
                       class="w-4 h-4 cursor-pointer"
                       :button="true"
-                      @click="removeFilter(i)"
+                      @click="removeFilter(filter)"
                     />
                   </span>
                   <span class="group-hover:hidden">
@@ -78,7 +78,7 @@
                   :value="filter.fieldname"
                   @mousedown.stop
                   @click.stop
-                  @change="(v: string) => updateNewFilters(i, 'fieldname', v)"
+                  @change="(v: string) => updateNewFilters(filter, 'fieldname', v)"
                   @keydown.enter="applyFilters"
                 />
 
@@ -97,7 +97,7 @@
                   :close-drop-down="false"
                   @mousedown.stop
                   @click.stop
-                  @change="(v: Condition) => updateNewFilters(i, 'condition', v)"
+                  @change="(v: Condition) => updateNewFilters(filter, 'condition', v)"
                   @keydown.enter="applyFilters"
                 />
 
@@ -115,7 +115,7 @@
                   :close-drop-down="false"
                   @mousedown.stop
                   @click.stop
-                  @change="(v: string) => updateNewFilters(i, 'value', v)"
+                  @change="(v: string) => updateNewFilters(filter, 'value', v)"
                   @keydown.enter="applyFilters"
                 />
               </div>
@@ -195,6 +195,16 @@
   </Popover>
 </template>
 
+<script lang="ts">
+import Popover from './Popover.vue';
+
+export default {
+  components: {
+    Popover,
+  },
+};
+</script>
+
 <script setup lang="ts">
 import { t } from 'fyo';
 import { type Field, FieldTypeEnum } from 'schemas/types';
@@ -206,7 +216,6 @@ import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
 import Icon from './Icon.vue';
-import type Popover from './Popover.vue';
 
 const props = defineProps<{
   schemaName: string;
@@ -345,9 +354,15 @@ function applyFilters() {
   emitFilterChange();
 }
 
-function removeFilter(index: number): void {
-  filters.value.splice(index, 1);
-  newFilters.value.splice(index, 1);
+function removeFilter(filter: Filter): void {
+  const index = filters.value.indexOf(filter);
+  if (index !== -1) {
+    filters.value.splice(index, 1);
+  }
+  const newIndex = newFilters.value.indexOf(filter);
+  if (newIndex !== -1) {
+    newFilters.value.splice(newIndex, 1);
+  }
 }
 
 function clearAllFilters(): void {
@@ -357,17 +372,15 @@ function clearAllFilters(): void {
 }
 
 function updateNewFilters<K extends keyof Filter>(
-  index: number,
+  filter: Filter,
   key: K,
   value: Filter[K]
 ) {
   if (key === 'condition') {
     const displayCondition = getConditionLabel(value as string);
-    newFilters.value[index][key] = displayCondition as Filter[K];
-    filters.value[index][key] = displayCondition as Filter[K];
+    filter[key] = displayCondition as Filter[K];
   } else {
-    newFilters.value[index][key] = value;
-    filters.value[index][key] = value;
+    filter[key] = value;
   }
 }
 
@@ -381,11 +394,11 @@ function setFilter(queryFilters: QueryFilter, implicit?: boolean): void {
     let value: Filter['value'];
 
     if (Array.isArray(parts)) {
-      condition = parts[0];
-      value = parts[1];
+      condition = String(parts[0]);
+      value = parts[1] as Filter['value'];
     } else {
       condition = '=';
-      value = parts;
+      value = parts as Filter['value'];
     }
 
     addFilter(fieldname, condition, value, implicit);
@@ -405,9 +418,9 @@ function emitFilterChange(): void {
     const sqlCondition = getConditionValue(condition);
 
     if (fieldname === 'numberSeries') {
-      queryFilters.name = [sqlCondition, value];
+      queryFilters.name = [sqlCondition, value as any];
     } else {
-      queryFilters[fieldname] = [sqlCondition, value];
+      queryFilters[fieldname] = [sqlCondition, value as any];
     }
   }
 
@@ -424,7 +437,7 @@ function emitFilterChange(): void {
   filters.value = Array.from(
     new Map(
       filters.value.map((filter) => [
-        `${filter.condition}-${filter.value}-${filter.fieldname}`,
+         `${filter.condition}-${filter.value}-${filter.fieldname}`,
         filter,
       ])
     ).values()

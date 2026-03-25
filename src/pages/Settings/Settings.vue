@@ -184,7 +184,8 @@ export default defineComponent({
 
           return true;
         })
-        .map((s) => this.fyo.schemaMap[s]!);
+        .map((s) => this.fyo.schemaMap[s])
+        .filter((s): s is Schema => !!s);
     },
     activeGroup(): Map<string, Field[]> {
       if (!this.groupedFields) {
@@ -255,7 +256,7 @@ export default defineComponent({
 
       this.update();
       await showDialog({
-        title: this.t`Reload AuditBooks?`,
+        title: this.t`Reload Auditbooks?`,
         detail: this.t`Changes made to settings will be visible on reload.`,
         type: 'info',
         buttons: [
@@ -304,12 +305,18 @@ export default defineComponent({
       const fields: Field[] = this.schemas.flatMap((s) => s.fields);
 
       for (const field of fields) {
-        const schemaName = field.schemaName!;
+        const schemaName = field.schemaName;
+        if (!schemaName) {
+          continue;
+        }
         if (!grouped.has(schemaName)) {
           grouped.set(schemaName, new Map());
         }
 
-        const tabbed = grouped.get(schemaName)!;
+        const tabbed = grouped.get(schemaName);
+        if (!tabbed) {
+          continue;
+        }
         const section = field.section ?? this.t`Miscellaneous`;
         if (!tabbed.has(section)) {
           tabbed.set(section, []);

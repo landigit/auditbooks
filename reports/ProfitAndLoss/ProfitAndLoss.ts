@@ -48,7 +48,7 @@ export class ProfitAndLoss extends AccountReport {
     const incomeRoots = this.getRootNodes(
       AccountRootTypeEnum.Income,
       accountTree
-    )!;
+    ) ?? [];
     const incomeList = convertAccountRootNodesToAccountList(incomeRoots);
     const incomeRows = this.getReportRowsFromAccountList(incomeList);
 
@@ -58,7 +58,7 @@ export class ProfitAndLoss extends AccountReport {
     const expenseRoots = this.getRootNodes(
       AccountRootTypeEnum.Expense,
       accountTree
-    )!;
+    ) ?? [];
     const expenseList = convertAccountRootNodesToAccountList(expenseRoots);
     const expenseRows = this.getReportRowsFromAccountList(expenseList);
 
@@ -77,7 +77,7 @@ export class ProfitAndLoss extends AccountReport {
     incomeRoots: AccountTreeNode[] | undefined,
     expenseRoots: AccountTreeNode[] | undefined
   ): ReportData {
-    if (incomeRoots?.length && !expenseRoots && !expenseRoots.length) {
+    if (incomeRoots?.length && (!expenseRoots || !expenseRoots.length)) {
       return this.getIncomeOrExpenseRows(
         incomeRoots,
         incomeRows,
@@ -140,10 +140,14 @@ export class ProfitAndLoss extends AccountReport {
     const totalExpenseRow = this.getRowFromAccountListNode(totalExpense);
 
     const totalValueMap: ValueMap = new Map();
-    for (const key of totalIncome.valueMap?.keys()) {
-      const income = totalIncome.valueMap?.get(key)?.balance ?? 0;
-      const expense = totalExpense.valueMap?.get(key)?.balance ?? 0;
-      totalValueMap.set(key, { balance: income - expense });
+    const incomeMap = totalIncome.valueMap;
+    const expenseMap = totalExpense.valueMap;
+    if (incomeMap) {
+      for (const key of incomeMap.keys()) {
+        const income = incomeMap.get(key)?.balance ?? 0;
+        const expense = expenseMap?.get(key)?.balance ?? 0;
+        totalValueMap.set(key, { balance: income - expense });
+      }
     }
 
     const totalProfit = {
@@ -153,10 +157,10 @@ export class ProfitAndLoss extends AccountReport {
     } as AccountListNode;
 
     const totalProfitRow = this.getRowFromAccountListNode(totalProfit);
-    totalProfitRow.cells.forEach((c) => {
+    for (const c of totalProfitRow.cells) {
       c.bold = true;
       if (typeof c.rawValue !== 'number') {
-        return;
+        continue;
       }
 
       if (c.rawValue > 0) {
@@ -164,7 +168,7 @@ export class ProfitAndLoss extends AccountReport {
       } else if (c.rawValue < 0) {
         c.color = 'red';
       }
-    });
+    }
 
     const emptyRow = this.getEmptyRow();
 
