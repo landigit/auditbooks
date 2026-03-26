@@ -1,4 +1,0 @@
-The number of diagnostics exceeds the number allowed by Biome.
-Diagnostics not shown: 486.
-Checked 589 files in 552ms. No fixes applied.
-Found 495 errors.

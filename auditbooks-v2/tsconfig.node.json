@@ -1,0 +1,37 @@
+{
+	"extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+	"include": [
+		"electron.vite.config.*",
+		"src/main/**/*",
+		"src/preload/**/*",
+		"fyo/**/*",
+		"models/**/*",
+		"schemas/**/*",
+		"backend/**/*",
+		"utils/**/*",
+		"regional/**/*",
+		"reports/**/*",
+		"dummy/**/*",
+		"fixtures/**/*",
+		"jobs/**/*"
+	],
+	"compilerOptions": {
+		"composite": true,
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"types": ["electron-vite/node"],
+		"baseUrl": ".",
+		"paths": {
+			"fyo/*": ["fyo/*"],
+			"models/*": ["models/*"],
+			"schemas/*": ["schemas/*"],
+			"backend/*": ["backend/*"],
+			"utils/*": ["utils/*"],
+			"regional/*": ["regional/*"],
+			"reports/*": ["reports/*"],
+			"dummy/*": ["dummy/*"],
+			"fixtures/*": ["fixtures/*"]
+		}
+	}
+}

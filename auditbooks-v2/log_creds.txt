@@ -1,0 +1,4 @@
+dummy_api_key
+dummy_api_secret
+http://localhost:6971/api/method/log_error
+http://localhost:6971/api/method/log_telemetry

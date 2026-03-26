@@ -1,0 +1,35 @@
+{
+	"extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+	"include": [
+		"src/renderer/src/env.d.ts",
+		"src/renderer/src/**/*",
+		"src/renderer/src/**/*.vue",
+		"src/preload/*.d.ts",
+		"fyo/**/*",
+		"models/**/*",
+		"schemas/**/*",
+		"backend/**/*",
+		"utils/**/*",
+		"regional/**/*",
+		"reports/**/*",
+		"dummy/**/*",
+		"fixtures/**/*"
+	],
+	"compilerOptions": {
+		"composite": true,
+		"baseUrl": ".",
+		"paths": {
+			"@renderer/*": ["src/renderer/src/*"],
+			"src/*": ["src/renderer/src/*"],
+			"fyo/*": ["fyo/*"],
+			"models/*": ["models/*"],
+			"schemas/*": ["schemas/*"],
+			"backend/*": ["backend/*"],
+			"utils/*": ["utils/*"],
+			"regional/*": ["regional/*"],
+			"reports/*": ["reports/*"],
+			"dummy/*": ["dummy/*"],
+			"fixtures/*": ["fixtures/*"]
+		}
+	}
+}

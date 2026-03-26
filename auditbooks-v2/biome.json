@@ -1,0 +1,71 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noImplicitAnyLet": "off",
+				"noAssignInExpressions": "off",
+				"noFallthroughSwitchClause": "off"
+			},
+			"style": {
+				"noParameterAssign": "off",
+				"noVar": "warn",
+				"noNonNullAssertion": "off",
+				"noCommaOperator": "off",
+				"useImportType": "off"
+			},
+			"complexity": {
+				"noForEach": "off",
+				"noBannedTypes": "off"
+			},
+			"correctness": {
+				"noUnreachable": "off"
+			}
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
+	"overrides": [
+		{
+			"include": ["**/*.css"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnknownFunction": "off"
+					}
+				}
+			}
+		},
+		{
+			"include": ["**/*.vue"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noShadowRestrictedNames": "off"
+					}
+				}
+			}
+		}
+	],
+	"files": {
+		"ignore": [
+			"**/out/**",
+			"**/node_modules/**",
+			"**/legacy/**",
+			"**/build/**",
+			"**/dist/**",
+			"**/*.mjs",
+			"**/*.cjs"
+		],
+		"maxSize": 5242880
+	}
+}

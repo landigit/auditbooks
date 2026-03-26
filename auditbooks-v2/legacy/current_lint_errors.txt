@@ -1,0 +1,7 @@
+yarn run v1.22.22
+$ biome lint .
+The number of diagnostics exceeds the number allowed by Biome.
+Diagnostics not shown: 316.
+Checked 588 files in 402ms. No fixes applied.
+Found 329 errors.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

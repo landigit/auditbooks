@@ -1,0 +1,1548 @@
+$ vitest --run
+[?25l
+[1m[7m[36m RUN [39m[27m[22m [36mv3.0.0 [39m[90mE:/Repository/auditbooks-v1/src[39m
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb init, migrate, close
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb init, migrate, close
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb init, migrate, close
+[22m[39mCreating table: Customer
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb init, migrate, close
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb init, migrate, close
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb init, migrate, close
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb init, migrate, close
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mPost Migrate TableInfo
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mPost Migrate TableInfo
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mPost Migrate TableInfo
+[22m[39mCreating table: Customer
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mPost Migrate TableInfo
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mPost Migrate TableInfo
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mPost Migrate TableInfo
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mPost Migrate TableInfo
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mexists() before insertion
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mexists() before insertion
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mexists() before insertion
+[22m[39mCreating table: Customer
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mexists() before insertion
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mexists() before insertion
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mexists() before insertion
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mexists() before insertion
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD single values
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD single values
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD single values
+[22m[39mCreating table: Customer
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD single values
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD single values
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD single values
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD single values
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD nondependent schema
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD nondependent schema
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD nondependent schema
+[22m[39mCreating table: Customer
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD nondependent schema
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD nondependent schema
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD nondependent schema
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD nondependent schema
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD dependent schema
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD dependent schema
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD dependent schema
+[22m[39mCreating table: Customer
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD dependent schema
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD dependent schema
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD dependent schema
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mCRUD dependent schema
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb deleteAll
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb deleteAll
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb deleteAll
+[22m[39mCreating table: Customer
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb deleteAll
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb deleteAll
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb deleteAll
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../backend/database/tests/testCore.spec.ts[2m > [22m[2mdb deleteAll
+[22m[39mMigration complete.
+
+ [32mΓ£ô[39m ../backend/database/tests/testCore.spec.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 214[2mms[22m[39m
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mInitializing database...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PrintTemplate
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Color
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Currency
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: NumberSeries
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SerialNumberSeries
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: BatchSeries
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Account
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: AccountingLedgerEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Party
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Lead
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Address
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ItemGroup
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Item
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: UOM
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: UOMConversionItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: LoyaltyProgram
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: LoyaltyPointEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CollectionRulesItems
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Payment
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PaymentMethod
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PaymentFor
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: JournalEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: JournalEntryAccount
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ItemEnquiry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CouponCode
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: AppliedCouponCodes
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PriceList
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PriceListItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PricingRule
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PricingRuleItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PricingRuleDetail
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Tax
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: TaxDetail
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: TaxSummary
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Location
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: StockLedgerEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: StockMovement
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: StockMovementItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Batch
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SerialNumber
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CustomForm
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CustomField
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: POSProfile
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: POSOpeningShift
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: POSClosingShift
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ERPNextSyncQueue
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: FetchFromERPNextQueue
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: IntegrationErrorLog
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseInvoice
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesQuote
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseInvoiceItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesQuoteItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Shipment
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ShipmentItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseReceipt
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseReceiptItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ClosingAmounts
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ClosingCash
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: DefaultCashDenominations
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: OpeningAmounts
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: OpeningCash
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PatchRun
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PrintTemplate
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Color
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Currency
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: NumberSeries
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SerialNumberSeries
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: BatchSeries
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Account
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: AccountingLedgerEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Party
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Lead
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Address
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ItemGroup
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Item
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: UOM
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: UOMConversionItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: LoyaltyProgram
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: LoyaltyPointEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CollectionRulesItems
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Payment
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PaymentMethod
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PaymentFor
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: JournalEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: JournalEntryAccount
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ItemEnquiry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CouponCode
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: AppliedCouponCodes
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PriceList
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PriceListItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PricingRule
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PricingRuleItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PricingRuleDetail
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Tax
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: TaxDetail
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: TaxSummary
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Location
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: StockLedgerEntry
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: StockMovement
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: StockMovementItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Batch
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SerialNumber
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CustomForm
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: CustomField
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: POSProfile
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: POSOpeningShift
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: POSClosingShift
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ERPNextSyncQueue
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: FetchFromERPNextQueue
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: IntegrationErrorLog
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseInvoice
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesQuote
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseInvoiceItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SalesQuoteItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: Shipment
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ShipmentItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseReceipt
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PurchaseReceiptItem
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ClosingAmounts
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: ClosingCash
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: DefaultCashDenominations
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: OpeningAmounts
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: OpeningCash
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: PatchRun
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mAltering table: Party
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mAltering table: Address
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mUpdating system settings...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mUpdating accounting settings...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mUpdating print settings...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating currency records...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating account records...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating regional records...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating default entries...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCreating default number series...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mUpdating inventory settings...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mCompleting setup...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39mSetting currency symbols...
+
+[90mstdout[2m | ../tests/testImporter.spec.ts[2m > [22m[2mimporter
+[22m[39msetupInstance: 11.557s
+
+ [32mΓ£ô[39m ../tests/testImporter.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 12053[2mms[22m[39m
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mInitializing database...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PrintTemplate
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Color
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Currency
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: NumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: BatchSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Account
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: AccountingLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Party
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Lead
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Address
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemGroup
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Item
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOM
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOMConversionItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyProgram
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyPointEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CollectionRulesItems
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Payment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentMethod
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentFor
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntryAccount
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemEnquiry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CouponCode
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: AppliedCouponCodes
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceList
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceListItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRule
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Tax
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxSummary
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Location
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovement
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovementItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Batch
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumber
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomForm
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomField
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSProfile
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSOpeningShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSClosingShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ERPNextSyncQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: FetchFromERPNextQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: IntegrationErrorLog
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuote
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuoteItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Shipment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ShipmentItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceipt
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceiptItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: DefaultCashDenominations
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PatchRun
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PrintTemplate
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Color
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Currency
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: NumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: BatchSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Account
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: AccountingLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Party
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Lead
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Address
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemGroup
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Item
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOM
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOMConversionItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyProgram
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyPointEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CollectionRulesItems
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Payment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentMethod
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentFor
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntryAccount
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemEnquiry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CouponCode
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: AppliedCouponCodes
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceList
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceListItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRule
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Tax
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxSummary
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Location
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovement
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovementItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Batch
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumber
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomForm
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomField
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSProfile
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSOpeningShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSClosingShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ERPNextSyncQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: FetchFromERPNextQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: IntegrationErrorLog
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuote
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuoteItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: Shipment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ShipmentItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceipt
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceiptItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: DefaultCashDenominations
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: PatchRun
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mAltering table: Party
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mAltering table: Address
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mUpdating system settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mUpdating accounting settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mUpdating print settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating currency records...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating account records...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating regional records...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating default entries...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCreating default number series...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mUpdating inventory settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mCompleting setup...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39mSetting currency symbols...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance
+[22m[39msetupInstance: 9.830s
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mInitializing database...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PrintTemplate
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Color
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Currency
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: NumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: BatchSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Account
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: AccountingLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Party
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Lead
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Address
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemGroup
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Item
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOM
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOMConversionItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyProgram
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyPointEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CollectionRulesItems
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Payment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentMethod
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentFor
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntryAccount
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemEnquiry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CouponCode
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: AppliedCouponCodes
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceList
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceListItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRule
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Tax
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxSummary
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Location
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovement
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovementItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Batch
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumber
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomForm
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomField
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSProfile
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSOpeningShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSClosingShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ERPNextSyncQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: FetchFromERPNextQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: IntegrationErrorLog
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuote
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuoteItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Shipment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ShipmentItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceipt
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceiptItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: DefaultCashDenominations
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PatchRun
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PrintTemplate
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Color
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Currency
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: NumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumberSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: BatchSeries
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Account
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: AccountingLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Party
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Lead
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Address
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemGroup
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Item
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOM
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: UOMConversionItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyProgram
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: LoyaltyPointEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CollectionRulesItems
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Payment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentMethod
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PaymentFor
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: JournalEntryAccount
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ItemEnquiry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CouponCode
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: AppliedCouponCodes
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceList
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PriceListItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRule
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PricingRuleDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Tax
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxDetail
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: TaxSummary
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Location
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockLedgerEntry
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovement
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: StockMovementItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Batch
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SerialNumber
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomForm
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: CustomField
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSProfile
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSOpeningShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: POSClosingShift
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ERPNextSyncQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: FetchFromERPNextQueue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: IntegrationErrorLog
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoice
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuote
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseInvoiceItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SalesQuoteItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: Shipment
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ShipmentItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceipt
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PurchaseReceiptItem
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: ClosingCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: DefaultCashDenominations
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningAmounts
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: OpeningCash
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: PatchRun
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating table: SingleValue
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mStarting migration...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mAltering table: Party
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mAltering table: Address
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mInitializing singles...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mMigration complete.
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mUpdating system settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mUpdating accounting settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mUpdating print settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating currency records...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating account records...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating regional records...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating default entries...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCreating default number series...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mUpdating inventory settings...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mCompleting setup...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39mSetting currency symbols...
+
+[90mstdout[2m | ../tests/testSetupInstance.spec.ts[2m > [22m[2msetupInstance[2m > [22m[2msetupInstance
+[22m[39msetupInstance: 8.115s
+
+ [32mΓ£ô[39m ../tests/testSetupInstance.spec.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 17958[2mms[22m[39m
+   [33m[2mΓ£ô[22m[39m setupInstance[2m > [22msetupInstance [33m8117[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m15 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 22:02:26
+[2m   Duration [22m 42.46s[2m (transform 2.29s, setup 0ms, collect 3.98s, tests 30.23s, environment 6.63s, prepare 930ms)[22m
+
+[?25h
