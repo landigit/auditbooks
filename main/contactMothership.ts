@@ -40,9 +40,9 @@ export function getUrlAndTokenString(): Creds {
   }
 
   return {
-    errorLogUrl: encodeURI(errorLogUrl),
-    telemetryUrl: encodeURI(telemetryUrl),
-    tokenString: `token ${apiKey}:${apiSecret}`,
+    errorLogUrl: errorLogUrl ? encodeURI(errorLogUrl) : '',
+    telemetryUrl: telemetryUrl ? encodeURI(telemetryUrl) : '',
+    tokenString: apiKey && apiSecret ? `token ${apiKey}:${apiSecret}` : '',
   };
 }
 

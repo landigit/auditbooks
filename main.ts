@@ -98,7 +98,7 @@ export class Main {
         preload,
       },
       autoHideMenuBar: true,
-      frame: !this.isMac,
+      frame: false,
       resizable: true,
     };
 
@@ -131,11 +131,23 @@ export class Main {
     }
 
     this.setMainWindowListeners();
+
+    if (this.isDevelopment) {
+      this.mainWindow.webContents.on(
+        'console-message',
+        (event, level, message, line, sourceId) => {
+          const levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
+          console.log(
+            `[Renderer ${levels[level] || 'LOG'}] ${message} (${sourceId}:${line})`
+          );
+        }
+      );
+    }
   }
 
   setViteServerURL() {
     let port = 6969;
-    let host = '0.0.0.0';
+    let host = '127.0.0.1';
 
     if (process.env.VITE_PORT && process.env.VITE_HOST) {
       port = Number(process.env.VITE_PORT);

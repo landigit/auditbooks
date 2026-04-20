@@ -5,7 +5,11 @@ const colors = JSON.parse(
 
 module.exports = {
   darkMode: 'class',
-  purge: false,
+  content: [
+    './src/**/*.{vue,ts,html}',
+    './main/**/*.{vue,ts}',
+    './templates/**/*.html',
+  ],
   theme: {
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
@@ -53,31 +57,17 @@ module.exports = {
         button: '0 0.5px 0 0 rgba(0, 0, 0, 0.08)',
       },
       borderRadius: {
-        sm: '0.25rem', // 4px
-        DEFAULT: '0.313rem', // 5px
-        md: '0.375rem', // 6px
-        lg: '0.5rem', // 8px
-        xl: '0.75rem', // 12px
+        sm: '0.25rem',
+        DEFAULT: '0.313rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
       },
       gridColumn: {
         'span-full': '1 / -1',
       },
       colors,
     },
-  },
-  variants: {
-    margin: ['responsive', 'first', 'last', 'hover', 'focus'],
-    backgroundColor: [
-      'responsive',
-      'first',
-      'hover',
-      'focus',
-      'focus-within',
-      'dark',
-    ],
-    display: ['group-hover'],
-    borderWidth: ['last'],
-    fontWeight: ['dark'],
   },
   plugins: [require('tailwindcss-rtl')],
 };

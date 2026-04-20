@@ -1,21 +1,26 @@
-import test from 'tape';
-import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
+import { describe, expect, test } from 'vitest';
+import {
+  closeTestFyoAfterAll,
+  getTestFyo,
+  setupTestFyoBeforeAll,
+} from 'tests/helpers';
 import { ItemEnquiry } from 'models/baseModels/ItemEnquiry/ItemEnquiry';
 import { ModelNameEnum } from 'models/types';
 
 const fyo = getTestFyo();
-setupTestFyo(fyo, __filename);
 
-test('ItemEnquiry lifecycle with similarProduct', async (t) => {
-  const initialData = {
-    item: 'Test Pen',
-    customer: 'CustomerOne',
-    contact: '1234567890',
-    description: 'Need details about bulk purchase',
-    similarProduct: 'Ink',
-  };
+describe('Item Enquiry', () => {
+  setupTestFyoBeforeAll(fyo);
 
-  try {
+  test('ItemEnquiry lifecycle with similarProduct', async () => {
+    const initialData = {
+      item: 'Test Pen',
+      customer: 'CustomerOne',
+      contact: '1234567890',
+      description: 'Need details about bulk purchase',
+      similarProduct: 'Ink',
+    };
+
     const newEnquiry = fyo.doc.getNewDoc(
       ModelNameEnum.ItemEnquiry,
       initialData
@@ -27,13 +32,9 @@ test('ItemEnquiry lifecycle with similarProduct', async (t) => {
       newEnquiry.name as string
     )) as ItemEnquiry;
 
-    t.ok(createdEnquiry, 'ItemEnquiry was created and fetched from DB');
-    t.equal(createdEnquiry.item, initialData.item, 'Item matches after save');
-    t.equal(
-      createdEnquiry.similarProduct,
-      initialData.similarProduct,
-      'Similar product saved correctly'
-    );
+    expect(createdEnquiry).toBeDefined();
+    expect(createdEnquiry.item).toBe(initialData.item);
+    expect(createdEnquiry.similarProduct).toBe(initialData.similarProduct);
 
     const updatedData = {
       description: 'Updated enquiry details',
@@ -49,19 +50,9 @@ test('ItemEnquiry lifecycle with similarProduct', async (t) => {
       newEnquiry.name as string
     )) as ItemEnquiry;
 
-    t.equal(
-      updatedEnquiry.description,
-      updatedData.description,
-      'Description updated successfully'
-    );
-    t.equal(
-      updatedEnquiry.similarProduct,
-      updatedData.similarProduct,
-      'Similar product updated successfully'
-    );
-  } catch (err) {
-    t.fail(err as string);
-  }
-});
+    expect(updatedEnquiry.description).toBe(updatedData.description);
+    expect(updatedEnquiry.similarProduct).toBe(updatedData.similarProduct);
+  });
 
-closeTestFyo(fyo, __filename);
+  closeTestFyoAfterAll(fyo);
+});

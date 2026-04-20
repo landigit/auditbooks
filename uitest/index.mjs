@@ -69,9 +69,14 @@ const appSourcePath = path.join(root, 'dist_electron', 'build', 'main.js');
   });
 
   test('create new instance', async (t) => {
+    console.log('# clicking submit');
     await window.getByTestId('submit-button').click();
+    console.log('# submit clicked, waiting for company-name');
+    const companyName = window.getByTestId('company-name');
+    await companyName.waitFor();
+    console.log('# company-name found');
     t.equal(
-      await window.getByTestId('company-name').innerText(),
+      await companyName.innerText(),
       'Test Company',
       'new instance created, company name found in sidebar'
     );

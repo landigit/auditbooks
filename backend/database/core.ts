@@ -617,7 +617,7 @@ export default class DatabaseCore extends DatabaseBase {
       column.primary();
     }
 
-    // iefault value
+    // default value
     if (field.default !== undefined) {
       column.defaultTo(field.default);
     }

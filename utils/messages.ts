@@ -32,7 +32,7 @@ export enum IPC_ACTIONS {
   GET_CREDS = 'get-creds',
   GET_DB_LIST = 'get-db-list',
   GET_TEMPLATES = 'get-templates',
-  INIT_SHEDULER = 'init-scheduler',
+  INIT_SCHEDULER = 'init-scheduler',
   DELETE_FILE = 'delete-file',
   GET_DB_DEFAULT_PATH = 'get-db-default-path',
   SEND_API_REQUEST = 'send-api-request',

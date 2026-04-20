@@ -83,7 +83,7 @@ const ipc = {
   },
 
   async initScheduler(time: string) {
-    await ipcRenderer.invoke(IPC_ACTIONS.INIT_SHEDULER, time);
+    await ipcRenderer.invoke(IPC_ACTIONS.INIT_SCHEDULER, time);
   },
 
   async selectFile(options: SelectFileOptions): Promise<SelectFileReturn> {

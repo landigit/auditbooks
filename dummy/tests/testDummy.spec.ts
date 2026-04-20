@@ -1,27 +1,29 @@
 import { assertDoesNotThrow } from 'backend/database/tests/helpers';
 import { purchaseItemPartyMap } from 'dummy/helpers';
-import test from 'tape';
+import { describe, expect, test, afterAll } from 'vitest';
 import { getTestDbPath, getTestFyo } from 'tests/helpers';
 import { setupDummyInstance } from '..';
 
-const dbPath = getTestDbPath();
-const fyo = getTestFyo();
+describe('Dummy Data Tests', () => {
+  const dbPath = getTestDbPath();
+  const fyo = getTestFyo();
 
-test('setupDummyInstance', async () => {
-  await assertDoesNotThrow(async () => {
-    await setupDummyInstance(dbPath, fyo, 1, 25);
-  }, 'setup instance failed');
-});
+  test('setupDummyInstance', async () => {
+    await assertDoesNotThrow(async () => {
+      await setupDummyInstance(dbPath, fyo, 1, 25);
+    }, 'setup instance failed');
+  });
 
-test('purchaseItemParty Existance', async (t) => {
-  for (const item in purchaseItemPartyMap) {
-    t.ok(await fyo.db.exists('Item', item), `item exists: ${item}`);
+  test('purchaseItemParty Existence', async () => {
+    for (const item in purchaseItemPartyMap) {
+      expect(await fyo.db.exists('Item', item)).toBe(true);
 
-    const party = purchaseItemPartyMap[item];
-    t.ok(await fyo.db.exists('Party', party), `party exists: ${party}`);
-  }
-});
+      const party = purchaseItemPartyMap[item];
+      expect(await fyo.db.exists('Party', party)).toBe(true);
+    }
+  });
 
-test.onFinish(async () => {
-  await fyo.close();
+  afterAll(async () => {
+    await fyo.close();
+  });
 });

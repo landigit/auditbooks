@@ -1,99 +1,94 @@
-import { strictEqual } from 'assert';
 import { assertThrows } from 'backend/database/tests/helpers';
 import Observable from 'fyo/utils/observable';
-import test from 'tape';
+import { describe, expect, test } from 'vitest';
 
 enum ObsEvent {
   A = 'event-a',
   B = 'event-b',
 }
 
-const obs = new Observable();
-let counter = 0;
-const params = { aOne: 18, aTwo: 21, b: 42 };
-
-const listenerAOnce = (value: number) => {
-  strictEqual(params.aOne, value, 'listenerAOnce');
-};
-
-const listenerAEvery = (value: number) => {
-  if (counter === 0) {
-    strictEqual(params.aOne, value, 'listenerAEvery 0');
-  } else if (counter === 1) {
-    strictEqual(params.aTwo, value, 'listenerAEvery 1');
-  } else {
-    throw new Error("this shouldn't run");
-  }
-  counter += 1;
-};
-
-const listenerBOnce = (value: number) => {
-  strictEqual(params.b, value, 'listenerBOnce');
-};
-
-test('set A One', (t) => {
-  t.equal(obs.hasListener(ObsEvent.A), false, 'pre');
-
-  obs.once(ObsEvent.A, listenerAOnce);
-  t.equal(obs.hasListener(ObsEvent.A), true, 'non specific');
-  t.equal(obs.hasListener(ObsEvent.A, listenerAOnce), true, 'specific once');
-  t.equal(obs.hasListener(ObsEvent.A, listenerAEvery), false, 'specific every');
-  t.end();
-});
-
-test('set A Two', (t) => {
-  obs.on(ObsEvent.A, listenerAEvery);
-  t.equal(obs.hasListener(ObsEvent.A), true, 'non specific');
-  t.equal(obs.hasListener(ObsEvent.A, listenerAOnce), true, 'specific once');
-  t.equal(obs.hasListener(ObsEvent.A, listenerAEvery), true, 'specific every');
-  t.end();
-});
-
-test('set B', (t) => {
-  t.equal(obs.hasListener(ObsEvent.B), false, 'pre');
-
-  obs.once(ObsEvent.B, listenerBOnce);
-  t.equal(obs.hasListener(ObsEvent.A, listenerBOnce), false, 'specific false');
-  t.equal(obs.hasListener(ObsEvent.B, listenerBOnce), true, 'specific true');
-  t.end();
-});
-
-test('trigger A 0', async (t) => {
-  await obs.trigger(ObsEvent.A, params.aOne);
-  t.equal(obs.hasListener(ObsEvent.A), true, 'non specific');
-  t.equal(obs.hasListener(ObsEvent.A, listenerAOnce), false, 'specific');
-});
-
-test('trigger A 1', async (t) => {
-  t.equal(obs.hasListener(ObsEvent.A, listenerAEvery), true, 'specific pre');
-  await obs.trigger(ObsEvent.A, params.aTwo);
-  t.equal(obs.hasListener(ObsEvent.A, listenerAEvery), true, 'specific post');
-});
-
-test('trigger B', async (t) => {
-  t.equal(obs.hasListener(ObsEvent.B, listenerBOnce), true, 'specific pre');
-  await obs.trigger(ObsEvent.B, params.b);
-  t.equal(obs.hasListener(ObsEvent.B, listenerBOnce), false, 'specific post');
-});
-
-test('remove A', async (t) => {
-  obs.off(ObsEvent.A, listenerAEvery);
-  t.equal(obs.hasListener(ObsEvent.A, listenerAEvery), false, 'specific pre');
-
-  t.equal(counter, 2, 'incorrect counter');
-  await obs.trigger(ObsEvent.A, 777);
-});
-
-test('observable trigger error propagation', async (t) => {
+describe('Observable Tests', () => {
   const obs = new Observable();
-  obs.on('testOne', () => {
-    throw new Error('stuff');
+  let counter = 0;
+  const params = { aOne: 18, aTwo: 21, b: 42 };
+
+  const listenerAOnce = (value: number) => {
+    expect(value).toBe(params.aOne);
+  };
+
+  const listenerAEvery = (value: number) => {
+    if (counter === 0) {
+      expect(value).toBe(params.aOne);
+    } else if (counter === 1) {
+      expect(value).toBe(params.aTwo);
+    } else {
+      throw new Error("this shouldn't run");
+    }
+    counter += 1;
+  };
+
+  const listenerBOnce = (value: number) => {
+    expect(value).toBe(params.b);
+  };
+
+  test('set A One', () => {
+    expect(obs.hasListener(ObsEvent.A)).toBe(false);
+
+    obs.once(ObsEvent.A, listenerAOnce);
+    expect(obs.hasListener(ObsEvent.A)).toBe(true);
+    expect(obs.hasListener(ObsEvent.A, listenerAOnce)).toBe(true);
+    expect(obs.hasListener(ObsEvent.A, listenerAEvery)).toBe(false);
   });
 
-  await assertThrows(async () => {
-    await obs.trigger('testOne');
-    t.ok(false, 'trigger should throw error');
+  test('set A Two', () => {
+    obs.on(ObsEvent.A, listenerAEvery);
+    expect(obs.hasListener(ObsEvent.A)).toBe(true);
+    expect(obs.hasListener(ObsEvent.A, listenerAOnce)).toBe(true);
+    expect(obs.hasListener(ObsEvent.A, listenerAEvery)).toBe(true);
   });
 
-  t.ok(true, 'assert throws success');
+  test('set B', () => {
+    expect(obs.hasListener(ObsEvent.B)).toBe(false);
+
+    obs.once(ObsEvent.B, listenerBOnce);
+    expect(obs.hasListener(ObsEvent.A, listenerBOnce)).toBe(false);
+    expect(obs.hasListener(ObsEvent.B, listenerBOnce)).toBe(true);
+  });
+
+  test('trigger A 0', async () => {
+    await obs.trigger(ObsEvent.A, params.aOne);
+    expect(obs.hasListener(ObsEvent.A)).toBe(true);
+    expect(obs.hasListener(ObsEvent.A, listenerAOnce)).toBe(false);
+  });
+
+  test('trigger A 1', async () => {
+    expect(obs.hasListener(ObsEvent.A, listenerAEvery)).toBe(true);
+    await obs.trigger(ObsEvent.A, params.aTwo);
+    expect(obs.hasListener(ObsEvent.A, listenerAEvery)).toBe(true);
+  });
+
+  test('trigger B', async () => {
+    expect(obs.hasListener(ObsEvent.B, listenerBOnce)).toBe(true);
+    await obs.trigger(ObsEvent.B, params.b);
+    expect(obs.hasListener(ObsEvent.B, listenerBOnce)).toBe(false);
+  });
+
+  test('remove A', async () => {
+    obs.off(ObsEvent.A, listenerAEvery);
+    expect(obs.hasListener(ObsEvent.A, listenerAEvery)).toBe(false);
+
+    expect(counter).toBe(2);
+    await obs.trigger(ObsEvent.A, 777);
+  });
+
+  test('observable trigger error propagation', async () => {
+    const obs = new Observable();
+    obs.on('testOne', () => {
+      throw new Error('stuff');
+    });
+
+    await assertThrows(async () => {
+      await obs.trigger('testOne');
+    });
+  });
 });

@@ -1,83 +1,80 @@
-import test from 'tape';
-import { closeTestFyo, getTestFyo, setupTestFyo } from 'tests/helpers';
 import { ModelNameEnum } from 'models/types';
+import { describe, expect, test } from 'vitest';
+import {
+  closeTestFyoAfterAll,
+  getTestFyo,
+  setupTestFyoBeforeAll,
+} from 'tests/helpers';
 import { getItem } from 'models/inventory/tests/helpers';
 import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 
 const fyo = getTestFyo();
-setupTestFyo(fyo, __filename);
 
-const itemMap = {
-  Pen: {
-    name: 'Pen',
-    rate: 100,
-    unit: 'Unit',
-  },
-};
+describe('Price List', () => {
+  setupTestFyoBeforeAll(fyo);
 
-const partyMap = {
-  partyOne: {
-    name: 'John Whoe',
-    email: 'john@whoe.com',
-  },
-};
+  const itemMap = {
+    Pen: {
+      name: 'Pen',
+      rate: 100,
+      unit: 'Unit',
+    },
+  };
 
-const priceListMap = {
-  PL_SELL: {
-    name: 'PL_SELL',
-    isSales: true,
-    priceListItem: [
-      {
-        item: itemMap.Pen.name,
-        rate: 101,
-      },
-    ],
-  },
-};
+  const partyMap = {
+    partyOne: {
+      name: 'John Whoe',
+      email: 'john@whoe.com',
+    },
+  };
 
-test('Price List: create dummy item, party, price lists', async (t) => {
-  // Create Items
-  for (const { name, rate } of Object.values(itemMap)) {
-    const item = getItem(name, rate, false);
-    await fyo.doc.getNewDoc(ModelNameEnum.Item, item).sync();
-    t.ok(await fyo.db.exists(ModelNameEnum.Item, name), `Item: ${name} exists`);
-  }
+  const priceListMap = {
+    PL_SELL: {
+      name: 'PL_SELL',
+      isSales: true,
+      priceListItem: [
+        {
+          item: itemMap.Pen.name,
+          rate: 101,
+        },
+      ],
+    },
+  };
 
-  // Create Parties
-  for (const { name, email } of Object.values(partyMap)) {
-    await fyo.doc.getNewDoc(ModelNameEnum.Party, { name, email }).sync();
-    t.ok(
-      await fyo.db.exists(ModelNameEnum.Party, name),
-      `Party: ${name} exists`
-    );
-  }
+  test('Price List: create dummy item, party, price lists', async () => {
+    // Create Items
+    for (const { name, rate } of Object.values(itemMap)) {
+      const item = getItem(name, rate, false);
+      await fyo.doc.getNewDoc(ModelNameEnum.Item, item).sync();
+      expect(await fyo.db.exists(ModelNameEnum.Item, name)).toBe(true);
+    }
 
-  for (const priceListItem of Object.values(priceListMap)) {
-    await fyo.doc.getNewDoc(ModelNameEnum.PriceList, priceListItem).sync();
-    t.ok(
-      await fyo.db.exists(ModelNameEnum.PriceList, priceListItem.name),
-      `Price List: ${priceListItem.name} exists`
-    );
-  }
+    // Create Parties
+    for (const { name, email } of Object.values(partyMap)) {
+      await fyo.doc.getNewDoc(ModelNameEnum.Party, { name, email }).sync();
+      expect(await fyo.db.exists(ModelNameEnum.Party, name)).toBe(true);
+    }
 
-  await fyo.singles.AccountingSettings?.set('enablePriceList', true);
+    for (const priceList of Object.values(priceListMap)) {
+      await fyo.doc.getNewDoc(ModelNameEnum.PriceList, priceList).sync();
+      expect(await fyo.db.exists(ModelNameEnum.PriceList, priceList.name)).toBe(true);
+    }
+
+    await fyo.singles.AccountingSettings?.setAndSync('enablePriceList', true);
+  });
+
+  test('Check if InvoiceItem rate fetched from PriceList', async () => {
+    const sinv = fyo.doc.getNewDoc(ModelNameEnum.SalesInvoice, {
+      date: new Date('2023-01-01'),
+      party: partyMap.partyOne.name,
+    }) as SalesInvoice;
+
+    await sinv.set('priceList', priceListMap.PL_SELL.name);
+    await sinv.append('items', {});
+    await sinv.items?.[0].set('item', itemMap.Pen.name);
+
+    expect(sinv.items?.[0].rate?.float).toBe(priceListMap.PL_SELL.priceListItem[0].rate);
+  });
+
+  closeTestFyoAfterAll(fyo);
 });
-
-test('Check if InvoiceItem rate fetched from PriceList', async (t) => {
-  const sinv = fyo.doc.getNewDoc(ModelNameEnum.SalesInvoice, {
-    date: new Date('2023-01-01'),
-    party: partyMap.partyOne.name,
-  }) as SalesInvoice;
-
-  await sinv.set('priceList', priceListMap.PL_SELL.name);
-  await sinv.append('items', {});
-  await sinv.items?.[0].set('item', itemMap.Pen.name);
-
-  t.equal(
-    sinv.items?.[0].rate?.float,
-    priceListMap.PL_SELL.priceListItem[0].rate,
-    `sales invoice rate fetched from price list`
-  );
-});
-
-closeTestFyo(fyo, __filename);

@@ -12,16 +12,37 @@ import { defineConfig } from 'vite';
  */
 export default () => {
   let port = 6969;
-  let host = '0.0.0.0';
+  let host = '127.0.0.1'; // Changed from 0.0.0.0 — don't expose to LAN
   if (process.env.VITE_PORT && process.env.VITE_HOST) {
     port = Number(process.env.VITE_PORT);
     host = process.env.VITE_HOST;
   }
 
   return defineConfig({
-    server: { host, port, strictPort: true },
+    server: {
+      host,
+      port,
+      strictPort: true,
+      watch: {
+        ignored: ['**/node_modules/**', '**/dist_electron/**'],
+      },
+    },
+    build: {
+      target: 'esnext',
+      sourcemap: true,
+    },
+    optimizeDeps: {
+      exclude: ['electron'],
+    },
     root: path.resolve(__dirname, './src'),
-    plugins: [vue()],
+    plugins: [
+      vue({
+        script: {
+          defineModel: true,
+          propsDestructure: true,
+        },
+      }),
+    ],
     resolve: {
       alias: {
         vue: 'vue/dist/vue.esm-bundler.js',

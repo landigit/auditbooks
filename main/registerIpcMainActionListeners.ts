@@ -28,7 +28,7 @@ import {
 } from './helpers';
 import { saveHtmlAsPdf } from './saveHtmlAsPdf';
 import { sendAPIRequest } from './api';
-import { initScheduler } from './initSheduler';
+import { initScheduler } from './initScheduler';
 
 export default function registerIpcMainActionListeners(main: Main) {
   ipcMain.handle(IPC_ACTIONS.CHECK_DB_ACCESS, async (_, filePath: string) => {
@@ -247,7 +247,7 @@ export default function registerIpcMainActionListeners(main: Main) {
     }
   );
 
-  ipcMain.handle(IPC_ACTIONS.INIT_SHEDULER, async (_, interval: string) => {
+  ipcMain.handle(IPC_ACTIONS.INIT_SCHEDULER, async (_, interval: string) => {
     return initScheduler(interval);
   });
 
