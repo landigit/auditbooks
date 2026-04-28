@@ -178,7 +178,9 @@ function removeBaseLeadingSlash(dir, base) {
       continue;
     }
 
+    if (!filePath.match(/\.(js|css|html)$/i)) continue;
     const contents = fs.readFileSync(filePath).toString('utf-8');
     fs.writeFileSync(filePath, contents.replaceAll('/' + base, base));
   }
 }
+

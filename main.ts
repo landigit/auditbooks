@@ -199,7 +199,15 @@ function bufferProtocolCallback(
     decodeURI(pathname)
   );
 
-  fs.readFile(filePath, (_, data) => {
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      const indexPath = path.join(__dirname, 'src', 'index.html');
+      fs.readFile(indexPath, (_, indexData) => {
+        callback({ mimeType: 'text/html', data: indexData });
+      });
+      return;
+    }
+
     const extension = path.extname(filePath).toLowerCase();
     const mimeType =
       {
@@ -208,6 +216,10 @@ function bufferProtocolCallback(
         '.html': 'text/html',
         '.svg': 'image/svg+xml',
         '.json': 'application/json',
+        '.woff2': 'font/woff2',
+        '.woff': 'font/woff',
+        '.ttf': 'font/ttf',
+        '.png': 'image/png',
       }[extension] ?? '';
 
     callback({ mimeType, data });
@@ -215,3 +227,4 @@ function bufferProtocolCallback(
 }
 
 export default new Main();
+

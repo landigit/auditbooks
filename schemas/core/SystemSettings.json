@@ -143,6 +143,28 @@
       "section": "Theme"
     },
     {
+      "fieldname": "font",
+      "label": "Font",
+      "fieldtype": "AutoComplete",
+      "options": [
+        {
+          "label": "Inter",
+          "value": "Inter"
+        },
+        {
+          "label": "Google Sans Flex",
+          "value": "GoogleSansFlex"
+        },
+        {
+          "label": "Red Hat Text",
+          "value": "RedHatText"
+        }
+      ],
+      "default": "GoogleSansFlex",
+      "description": "Sets the app-wide font.",
+      "section": "Theme"
+    },
+    {
       "fieldname": "displayTermsAndConditions",
       "label": "Display Terms and Conditions",
       "fieldtype": "Check",

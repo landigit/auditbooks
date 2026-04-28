@@ -10,9 +10,19 @@ module.exports = {
     './main/**/*.{vue,ts}',
     './templates/**/*.html',
   ],
+  safelist: [
+    {
+      pattern:
+        /bg-(gray|orange|green|red|yellow|blue|indigo|pink|purple|teal)-(200|800)/,
+    },
+    {
+      pattern:
+        /text-(gray|orange|green|red|yellow|blue|indigo|pink|purple|teal)-(200|700)/,
+    },
+  ],
   theme: {
     fontFamily: {
-      sans: ['Inter', 'sans-serif'],
+      sans: ['var(--app-font)', 'sans-serif'],
     },
     screens: {
       sm: '640px',

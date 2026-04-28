@@ -3,6 +3,10 @@ node_modules
 /dbs
 /dist
 /notebook
+.yarnrc.yml
+yarn.lock
+.yarn
+
 
 # local env files
 .env

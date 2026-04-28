@@ -69,7 +69,7 @@ import { Search } from './utils/search';
 import { Shortcuts } from './utils/shortcuts';
 import { routeTo } from './utils/ui';
 import { useKeys } from './utils/vueUtils';
-import { setDarkMode } from 'src/utils/theme';
+import { setDarkMode, setFont } from 'src/utils/theme';
 import {
   registerInstanceToERPNext,
   updateERPNSyncSettings,
@@ -142,7 +142,9 @@ export default defineComponent({
   async mounted() {
     await this.setInitialScreen();
     const darkMode = !!fyo.singles.SystemSettings?.darkMode;
+    const font = fyo.singles.SystemSettings?.font;
     setDarkMode(darkMode);
+    setFont(font as string);
     this.darkMode = darkMode;
   },
   methods: {
@@ -187,7 +189,7 @@ export default defineComponent({
           title: this.t`Cannot open file`,
           type: 'error',
           detail: this
-            .t`Frappe Books does not have access to the selected file: ${filePath}`,
+            .t`Auditbooks does not have access to the selected file: ${filePath}`,
         });
 
         fyo.config.set('lastSelectedFilePath', null);
@@ -326,3 +328,4 @@ function getLanguageDirection(language: string): 'rtl' | 'ltr' {
   return RTL_LANGUAGES.includes(language) ? 'rtl' : 'ltr';
 }
 </script>
+
