@@ -1,6 +1,5 @@
 import { app } from 'electron';
 import fs from 'fs';
-import fetch from 'node-fetch';
 import path from 'path';
 import { Creds } from 'utils/types';
 import { rendererLog } from './helpers';

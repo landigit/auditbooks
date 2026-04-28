@@ -221,18 +221,18 @@ graph TD
 
 ## Path Aliases (Defined in vite.config.ts + vitest.config.ts + tsconfig.json)
 
-| Alias | Resolves To |
-|-------|------------|
-| `src` | `./src` |
-| `fyo` | `./fyo` |
-| `schemas` | `./schemas` |
-| `backend` | `./backend` |
-| `models` | `./models` |
-| `utils` | `./utils` |
-| `regional` | `./regional` |
-| `reports` | `./reports` |
-| `dummy` | `./dummy` |
-| `fixtures` | `./fixtures` |
-| `tests` | `./tests` *(vitest only)* |
+| Alias      | Resolves To               |
+| ---------- | ------------------------- |
+| `src`      | `./src`                   |
+| `fyo`      | `./fyo`                   |
+| `schemas`  | `./schemas`               |
+| `backend`  | `./backend`               |
+| `models`   | `./models`                |
+| `utils`    | `./utils`                 |
+| `regional` | `./regional`              |
+| `reports`  | `./reports`               |
+| `dummy`    | `./dummy`                 |
+| `fixtures` | `./fixtures`              |
+| `tests`    | `./tests` _(vitest only)_ |
 
 > ⚠️ **`fyo` alias is missing from `tsconfig.json` paths** — TypeScript will not resolve `fyo/*` imports at type-check time.

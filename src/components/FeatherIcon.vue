@@ -1,34 +1,47 @@
 <script>
-import feather from 'feather-icons';
+import * as icons from 'lucide-vue-next';
 import { h } from 'vue';
 
-const validIcons = Object.keys(feather.icons);
+const toPascalCase = (str) =>
+  str
+    .replace(/(^\w|-\w)/g, (match) => match.replace(/-/, '').toUpperCase());
 
 export default {
   props: {
     name: {
       type: String,
       required: true,
-      validator: (value) => validIcons.includes(value),
+    },
+    size: {
+      type: [String, Number],
+      default: 16,
+    },
+    strokeWidth: {
+      type: [String, Number],
+      default: 2,
     },
   },
   render() {
-    const icon = feather.icons[this.name];
-    const svg = h('svg', {
-      ...Object.assign({}, icon.attrs, {
-        fill: 'none',
-        stroke: 'currentColor',
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        'stroke-width': 1.5,
-        width: null,
-        height: null,
-      }),
-      class: [icon.attrs.class],
-      innerHTML: icon.contents,
-    });
+    const iconName = toPascalCase(this.name);
+    const Icon = icons[iconName];
 
-    return svg;
+    if (!Icon) {
+      console.warn(`[Lucide] Icon "${this.name}" (mapped to "${iconName}") not found.`);
+      return null;
+    }
+
+    return h(Icon, {
+      size: this.size,
+      'stroke-width': this.strokeWidth,
+      class: 'lucide-icon',
+    });
   },
 };
 </script>
+
+<style scoped>
+.lucide-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+</style>

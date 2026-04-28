@@ -10,8 +10,6 @@ import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
   protocol,
-  ProtocolRequest,
-  ProtocolResponse,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import fs from 'fs';
@@ -159,7 +157,40 @@ export class Main {
   }
 
   registerAppProtocol() {
-    protocol.registerBufferProtocol('app', bufferProtocolCallback);
+    protocol.handle('app', async (request) => {
+      const { pathname, host } = new URL(request.url);
+      const filePath = path.join(
+        __dirname,
+        'src',
+        decodeURI(host),
+        decodeURI(pathname)
+      );
+
+      try {
+        const data = await fs.promises.readFile(filePath);
+        const extension = path.extname(filePath).toLowerCase();
+        const mimeMap: Record<string, string> = {
+          '.js': 'text/javascript',
+          '.css': 'text/css',
+          '.html': 'text/html',
+          '.svg': 'image/svg+xml',
+          '.json': 'application/json',
+          '.woff2': 'font/woff2',
+          '.woff': 'font/woff',
+          '.ttf': 'font/ttf',
+          '.png': 'image/png',
+        };
+        return new Response(data, {
+          headers: { 'content-type': mimeMap[extension] || '' },
+        });
+      } catch (err) {
+        const indexPath = path.join(__dirname, 'src', 'index.html');
+        const indexData = await fs.promises.readFile(indexPath);
+        return new Response(indexData, {
+          headers: { 'content-type': 'text/html' },
+        });
+      }
+    });
 
     // Use the registered protocol url to load the files.
     this.winURL = 'app://./index.html';
@@ -182,49 +213,4 @@ export class Main {
   }
 }
 
-/**
- * Callback used to register the custom app protocol,
- * during prod, files are read and served by using this
- * protocol.
- */
-function bufferProtocolCallback(
-  request: ProtocolRequest,
-  callback: (response: ProtocolResponse) => void
-) {
-  const { pathname, host } = new URL(request.url);
-  const filePath = path.join(
-    __dirname,
-    'src',
-    decodeURI(host),
-    decodeURI(pathname)
-  );
-
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      const indexPath = path.join(__dirname, 'src', 'index.html');
-      fs.readFile(indexPath, (_, indexData) => {
-        callback({ mimeType: 'text/html', data: indexData });
-      });
-      return;
-    }
-
-    const extension = path.extname(filePath).toLowerCase();
-    const mimeType =
-      {
-        '.js': 'text/javascript',
-        '.css': 'text/css',
-        '.html': 'text/html',
-        '.svg': 'image/svg+xml',
-        '.json': 'application/json',
-        '.woff2': 'font/woff2',
-        '.woff': 'font/woff',
-        '.ttf': 'font/ttf',
-        '.png': 'image/png',
-      }[extension] ?? '';
-
-    callback({ mimeType, data });
-  });
-}
-
 export default new Main();
-

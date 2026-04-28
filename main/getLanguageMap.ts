@@ -16,7 +16,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { parseCSV } from 'utils/csvParser';
 import { LanguageMap } from 'utils/types';
-import fetch from 'node-fetch';
 
 const VALENTINES_DAY = 1644796800000;
 
