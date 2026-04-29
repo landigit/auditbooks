@@ -6,8 +6,8 @@ import { DateTime } from 'luxon';
 import path from 'path';
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
-import test from 'tape';
 import { getFiscalYear } from 'utils/misc';
+import { beforeAll, afterAll } from 'vitest';
 
 export function getTestSetupWizardOptions(): SetupWizardOptions {
   return {
@@ -62,9 +62,7 @@ const ext = '.spec.ts';
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
 export function setupTestFyo(fyo: Fyo, filename: string) {
-  const testName = path.basename(filename, ext);
-
-  return test(`setup: ${testName}`, async () => {
+  beforeAll(async () => {
     const options = getTestSetupWizardOptions();
     const dbPath = getTestDbPath();
     await setupInstance(dbPath, options, fyo);
@@ -72,9 +70,22 @@ export function setupTestFyo(fyo: Fyo, filename: string) {
 }
 
 export function closeTestFyo(fyo: Fyo, filename: string) {
-  const testName = path.basename(filename, ext);
-
-  return test(`cleanup: ${testName}`, async () => {
+  afterAll(async () => {
     await fyo.close();
   });
 }
+
+export function setupTestFyoBeforeAll(fyo: Fyo) {
+  beforeAll(async () => {
+    const options = getTestSetupWizardOptions();
+    const dbPath = getTestDbPath();
+    await setupInstance(dbPath, options, fyo);
+  });
+}
+
+export function closeTestFyoAfterAll(fyo: Fyo) {
+  afterAll(async () => {
+    await fyo.close();
+  });
+}
+

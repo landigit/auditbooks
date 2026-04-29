@@ -92,7 +92,7 @@ async function fetchAndStoreFile(code: string, date?: Date) {
 }
 
 async function fetchContentsFromApi(code: string) {
-  const url = `https://api.github.com/repos/frappe/books/contents/translations/${code}.csv`;
+  const url = `https://api.github.com/repos/landigit/auditbooks/contents/translations/${code}.csv`;
   const res = await errorHandledFetch(url);
   if (res === null || res.status !== 200) {
     return null;
@@ -103,7 +103,7 @@ async function fetchContentsFromApi(code: string) {
 }
 
 async function fetchContentsFromRaw(code: string) {
-  const url = `https://raw.githubusercontent.com/frappe/books/master/translations/${code}.csv`;
+  const url = `https://raw.githubusercontent.com/landigit/auditbooks/master/translations/${code}.csv`;
   const res = await errorHandledFetch(url);
   if (res === null || res.status !== 200) {
     return null;
@@ -130,7 +130,7 @@ async function shouldUpdateFile(code: string, contents: string) {
 }
 
 async function getLastUpdated(code: string): Promise<Date> {
-  const url = `https://api.github.com/repos/frappe/books/commits?path=translations%2F${code}.csv&page=1&per_page=1`;
+  const url = `https://api.github.com/repos/landigit/auditbooks/commits?path=translations%2F${code}.csv&page=1&per_page=1`;
   const res = await errorHandledFetch(url);
   if (res === null || res.status !== 200) {
     return new Date(VALENTINES_DAY);

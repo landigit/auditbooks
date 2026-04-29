@@ -1,6 +1,6 @@
 # 🔧 Build Stabilization — Issues & Fixes
 
-### Frappe Books · Electron 22 + Vue 3 + Vite 5 + TypeScript 5 + Vitest 2
+### Auditbooks · Electron 22 + Vue 3 + Vite 5 + TypeScript 5 + Vitest 2
 
 ---
 

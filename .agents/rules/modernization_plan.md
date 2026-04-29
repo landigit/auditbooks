@@ -1,4 +1,4 @@
-# Frappe Books — Full Modernization Roadmap
+# Auditbooks — Full Modernization Roadmap
 
 > A complete plan to bring this app from "Vue 2 style code running on Vue 3" to a genuinely modern Vite + Vue 3 stack.
 

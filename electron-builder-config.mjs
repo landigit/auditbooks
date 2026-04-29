@@ -14,8 +14,8 @@ const root = dirname; // redundant, but is meant to keep with the previous line
 const buildDirPath = path.join(root, 'dist_electron', 'build');
 const packageDirPath = path.join(root, 'dist_electron', 'bundled');
 
-const frappeBooksConfig = {
-  productName: 'Frappe Books',
+const auditBooksConfig = {
+  productName: 'Auditbooks',
   appId: 'io.frappe.books',
   artifactName: '${productName}-v${version}-${os}-${arch}.${ext}',
   asarUnpack: '**/*.node',
@@ -46,7 +46,7 @@ const frappeBooksConfig = {
     publish: ['github'],
   },
   win: {
-    publisherName: 'Frappe Technologies Pvt. Ltd.',
+    publisherName: 'Landigit Agency',
     artifactName: '${productName}-v${version}-windows-${arch}.${ext}',
     signDlls: true,
     icon: 'build/icon.ico',
@@ -69,6 +69,11 @@ const frappeBooksConfig = {
     installerIcon: 'build/installericon.ico',
     uninstallerIcon: 'build/uninstallericon.ico',
     publish: ['github'],
+    artifactName: '${productName}-v${version}-Setup-${arch}.${ext}',
+    shortcutName: 'Auditbooks',
+  },
+  portable: {
+    artifactName: '${productName}-v${version}-Portable-${arch}.${ext}',
   },
   linux: {
     icon: 'build/icons',
@@ -92,4 +97,4 @@ const frappeBooksConfig = {
   },
 };
 
-export default frappeBooksConfig;
+export default auditBooksConfig;

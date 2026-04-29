@@ -1,4 +1,4 @@
-# 📁 Frappe Books — Project Structure Map
+# 📁 Auditbooks — Project Structure Map
 
 > **Stack**: Electron 22 · Vue 3 · Vite 5 · TypeScript 5 · TailwindCSS 3 · better-sqlite3 · Pinia · Vitest 2
 

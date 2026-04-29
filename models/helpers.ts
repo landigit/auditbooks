@@ -1205,7 +1205,7 @@ export async function getPricingRulesOfCoupons(
   if (couponsToFetch?.length) {
     appliedCoupons = (await doc.fyo.db.getAll(ModelNameEnum.CouponCode, {
       fields: ['*'],
-      filters: { name: ['in', couponsToFetch] },
+      filters: { name: ['in', couponsToFetch], isEnabled: true },
     })) as CouponCode[];
   }
 

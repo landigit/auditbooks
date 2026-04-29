@@ -2020,6 +2020,7 @@ export abstract class Invoice extends Transactional {
                 fields: ['pricingRule'],
                 filters: {
                   name: val?.coupons,
+                  isEnabled: true,
                 },
               })
             ).map((doc) => doc.pricingRule);
