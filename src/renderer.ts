@@ -30,14 +30,14 @@ import { setLanguageMap } from './utils/language';
 
   setOnWindow(isDevelopment);
 
-  const app = createApp({
-    template: '<App/>',
-  });
+  fyo.store.reports = {};
+  fyo.store.skipTelemetryLogging = false;
+
+  const app = createApp(App);
   app.config.unwrapInjectedRef = true;
   setErrorHandlers(app);
 
   app.use(router);
-  app.component('App', App);
   app.component('FeatherIcon', FeatherIcon);
   app.component('Badge', Badge);
   app.directive('on-outside-click', outsideClickDirective);
@@ -57,7 +57,7 @@ import { setLanguageMap } from './utils/language';
   });
 
   await fyo.telemetry.logOpened();
-  app.mount('body');
+  app.mount('#app');
 })();
 
 function setErrorHandlers(app: VueApp) {

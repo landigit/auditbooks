@@ -339,8 +339,8 @@ export default defineComponent({
       this.$emit('file-selected', filePath);
     },
     async setFiles() {
-      const dbList = await ipc.getDbList();
-      this.files = dbList?.sort(
+      const dbList = (await ipc.getDbList()) || [];
+      this.files = dbList.sort(
         (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
       );
     },
