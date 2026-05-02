@@ -270,7 +270,7 @@ async function getSalesInvoices(
       false
     ) as SalesInvoice;
 
-    await doc.set('party', customer!.name);
+    await doc.set('party', customer.name);
     if (!doc.account) {
       doc.account = 'Debtors';
     }
@@ -289,9 +289,9 @@ async function getSalesInvoices(
       /**
        * Increase quantity depending on the rate.
        */
-      if (item!.rate < 100 && Math.random() < 0.4) {
+      if (item.rate < 100 && Math.random() < 0.4) {
         quantity = Math.ceil(Math.random() * 10);
-      } else if (item!.rate < 1000 && Math.random() < 0.2) {
+      } else if (item.rate < 1000 && Math.random() < 0.2) {
         quantity = Math.ceil(Math.random() * 4);
       } else if (Math.random() < 0.01) {
         quantity = Math.ceil(Math.random() * 3);
@@ -301,17 +301,17 @@ async function getSalesInvoices(
       if (baseCount < 500) {
         fc += 1;
       }
-      const rate = fyo.pesa(item!.rate * (fc + 1)).clip(0);
+      const rate = fyo.pesa(item.rate * (fc + 1)).clip(0);
       await doc.append('items', {});
       await doc.items!.at(-1)!.set({
-        item: item!.name,
+        item: item.name,
         rate,
         quantity,
-        account: item!.incomeAccount,
+        account: item.incomeAccount,
         amount: rate.mul(quantity),
-        tax: item!.tax,
-        description: item!.description,
-        hsnCode: item!.hsnCode,
+        tax: item.tax,
+        description: item.description,
+        hsnCode: item.hsnCode,
       });
     }
 

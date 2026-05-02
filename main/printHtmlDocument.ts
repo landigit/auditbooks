@@ -1,6 +1,6 @@
 import { App } from 'electron';
 import path from 'path';
-import fs from 'fs-extra';
+import fs from 'fs/promises';
 import { getInitializedPrintWindow } from './saveHtmlAsPdf';
 
 export async function printHtmlDocument(

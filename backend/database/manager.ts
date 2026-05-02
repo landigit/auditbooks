@@ -1,5 +1,5 @@
 import BetterSQLite3 from 'better-sqlite3';
-import fs from 'fs-extra';
+import fs from 'fs';
 import { DatabaseError } from 'fyo/utils/errors';
 import path from 'path';
 import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
@@ -209,7 +209,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     const date = new Date().toISOString().split('T')[0];
     const version = await this.#getAppVersion();
     const backupFile = `${fileName}_${version}_${date}.books.db`;
-    fs.ensureDirSync(backupFolder);
+    fs.mkdirSync(backupFolder, { recursive: true });
     return path.join(backupFolder, backupFile);
   }
 

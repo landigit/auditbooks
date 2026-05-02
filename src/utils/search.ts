@@ -157,7 +157,7 @@ function getCreateList(fyo: Fyo): SearchItem[] {
     };
   });
 
-  return ([formEditCreateList, filteredCreateList].flat() as SearchItem[]);
+  return [formEditCreateList, filteredCreateList].flat();
 }
 
 function getReportList(fyo: Fyo): SearchItem[] {
@@ -286,7 +286,7 @@ function getListViewList(fyo: Fyo): SearchItem[] {
     return { label, route, group: 'List' as const };
   });
 
-  return ([standardLists, filteredLists].flat() as SearchItem[]);
+  return [standardLists, filteredLists].flat();
 }
 
 function getSetupList(): SearchItem[] {
@@ -869,7 +869,7 @@ export class Search {
 
     return Object.groupBy(
       keywords.flat(),
-      (k) => k.priority
+      (k: Keyword) => k.priority
     ) as unknown as Record<string, Keyword[]>;
   }
 

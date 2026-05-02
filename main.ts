@@ -1,9 +1,3 @@
-// eslint-disable-next-line
-require('source-map-support').install({
-  handleUncaughtException: false,
-  environment: 'node',
-});
-
 import { emitMainProcessError } from 'backend/helpers';
 import {
   app,

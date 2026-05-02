@@ -8,7 +8,7 @@ import {
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import { constants } from 'fs';
-import fs from 'fs-extra';
+import fs from 'fs/promises';
 import path from 'path';
 import { SelectFileOptions, SelectFileReturn } from 'utils/types';
 import databaseManager from '../backend/database/manager';
@@ -57,11 +57,16 @@ export default function registerIpcMainActionListeners(main: Main) {
 
       const dbsPath = path.join(root, 'Auditbooks');
       const backupPath = path.join(dbsPath, 'backups');
-      await fs.ensureDir(backupPath);
+      await fs.mkdir(backupPath, { recursive: true });
 
       let dbFilePath = path.join(dbsPath, `${companyName}.books.db`);
 
-      if (await fs.pathExists(dbFilePath)) {
+      if (
+        await fs
+          .access(dbFilePath)
+          .then(() => true)
+          .catch(() => false)
+      ) {
         const option = await dialog.showMessageBox({
           type: 'question',
           title: 'File Exists',

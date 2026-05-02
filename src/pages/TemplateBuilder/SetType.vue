@@ -38,13 +38,16 @@ export default defineComponent({
   },
   computed: {
     df(): OptionField {
-      const options = PrintTemplate.lists.type(this.doc);
+      const options = PrintTemplate.lists.type!(this.doc) as {
+        value: string;
+        label: string;
+      }[];
       return {
-        ...fyo.getField('PrintTemplate', 'type'),
+        ...this.fyo.getField('PrintTemplate', 'type'),
         options,
         fieldtype: 'Select',
         default: options[0].value,
-      } as OptionField;
+      };
     },
   },
   mounted() {

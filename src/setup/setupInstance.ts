@@ -246,7 +246,7 @@ async function setDefaultAccount(key: string, accountName: string, fyo: Fyo) {
   return true;
 }
 
-async function completeSetup(companyName: string, fyo: Fyo) {
+async function completeSetup(_companyName: string, fyo: Fyo) {
   await fyo.singles.AccountingSettings!.setAndSync('setupComplete', true);
 }
 

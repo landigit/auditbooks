@@ -63,7 +63,7 @@ export default defineComponent({
     level: { type: Number, default: 0 },
   },
   data() {
-    return { rows: [] };
+    return { rows: [] as HintRow[] };
   },
   mounted() {
     this.rows = Object.entries(this.hints)

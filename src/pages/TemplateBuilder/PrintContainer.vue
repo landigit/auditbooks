@@ -75,7 +75,9 @@ export default defineComponent({
     },
   },
   data() {
-    return { error: null };
+    return {
+      error: null as { name: string; message: string; detail?: string } | null,
+    };
   },
   computed: {
     templateComponent() {

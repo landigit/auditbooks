@@ -1,7 +1,7 @@
 import vue from '@vitejs/plugin-vue';
 import builder from 'electron-builder';
 import esbuild from 'esbuild';
-import fs from 'fs-extra';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import * as vite from 'vite';
@@ -42,11 +42,11 @@ if (!argv.nopackage) {
 }
 
 function updatePaths() {
-  fs.removeSync(buildDirPath);
-  fs.ensureDirSync(buildDirPath);
-  fs.removeSync(packageDirPath);
-  fs.ensureDirSync(packageDirPath);
-  fs.ensureDirSync(path.join(buildDirPath, 'node_modules'));
+  fs.rmSync(buildDirPath, { recursive: true, force: true });
+  fs.mkdirSync(buildDirPath, { recursive: true });
+  fs.rmSync(packageDirPath, { recursive: true, force: true });
+  fs.mkdirSync(packageDirPath, { recursive: true });
+  fs.mkdirSync(path.join(buildDirPath, 'node_modules'), { recursive: true });
 }
 
 async function buildMainProcessSource() {

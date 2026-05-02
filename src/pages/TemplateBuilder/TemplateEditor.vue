@@ -14,6 +14,7 @@ import {
 } from '@codemirror/language';
 import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView, ViewUpdate } from '@codemirror/view';
+// @ts-ignore
 import { tags } from '@lezer/highlight';
 import { basicSetup } from 'codemirror';
 import { uicolors } from 'src/utils/colors';
@@ -27,7 +28,11 @@ export default defineComponent({
   },
   emits: ['input', 'blur'],
   data() {
-    return { state: null, view: null, compartments: {} };
+    return {
+      state: null as EditorState | null,
+      view: null as EditorView | null,
+      compartments: {},
+    };
   },
   computed: {
     container() {

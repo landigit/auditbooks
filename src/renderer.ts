@@ -30,11 +30,10 @@ import { setLanguageMap } from './utils/language';
 
   setOnWindow(isDevelopment);
 
-  fyo.store.reports = {};
+  fyo.store.reports = {} as any;
   fyo.store.skipTelemetryLogging = false;
 
   const app = createApp(App);
-  app.config.unwrapInjectedRef = true;
   setErrorHandlers(app);
 
   app.use(router);

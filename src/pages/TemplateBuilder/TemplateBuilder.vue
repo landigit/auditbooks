@@ -287,9 +287,9 @@ export default defineComponent({
     return {
       editMode: false,
       showHints: false,
-      hints: undefined,
-      values: null,
-      displayDoc: null,
+      hints: undefined as PrintTemplateHint | undefined,
+      values: null as PrintValues | null,
+      displayDoc: null as Doc | null,
       scale: 0.6,
       panelWidth: 22 /** rem */ * 16 /** px */,
       templateChanged: false,

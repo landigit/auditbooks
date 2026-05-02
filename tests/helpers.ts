@@ -20,10 +20,10 @@ export function getTestSetupWizardOptions(): SetupWizardOptions {
     currency: 'INR',
     fiscalYearStart: DateTime.fromJSDate(
       getFiscalYear('04-01', true)!
-    ).toISODate(),
+    ).toISODate()!,
     fiscalYearEnd: DateTime.fromJSDate(
       getFiscalYear('04-01', false)!
-    ).toISODate(),
+    ).toISODate()!,
     chartOfAccounts: 'India - Chart of Accounts',
   };
 }
@@ -56,8 +56,6 @@ export function getTestFyo(): Fyo {
     isElectron: false,
   });
 }
-
-
 
 export function setupTestFyo(fyo: Fyo, _filename: string) {
   beforeAll(async () => {
