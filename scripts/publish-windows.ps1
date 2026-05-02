@@ -64,6 +64,7 @@ $creds | Out-File -FilePath "log_creds.txt" -Encoding ascii
 
 # Install Dependencies
 Write-Host "Installing dependencies..."
+yarn config set nodeLinker node-modules
 yarn install
 
 # Build and Publish
