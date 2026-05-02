@@ -1,5 +1,4 @@
 import { Fyo, t } from 'fyo';
-import { cloneDeep } from 'lodash';
 import { DateTime } from 'luxon';
 import { AccountRootType } from 'models/baseModels/Account/types';
 import { isCredit } from 'models/helpers';
@@ -186,7 +185,7 @@ export abstract class AccountReport extends LedgerReport {
   }
 
   async _getAccountTree(rangeGroupedMap: AccountNameValueMapMap) {
-    const accountTree = cloneDeep(
+    const accountTree = structuredClone(
       await this._setAndReturnAccountMap()
     ) as AccountTree;
 

@@ -1,6 +1,6 @@
 import { Fyo, t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import { range, sample } from 'lodash';
+
 import { DateTime } from 'luxon';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
 import { Payment } from 'models/baseModels/Payment/Payment';
@@ -224,7 +224,7 @@ async function getPayments(fyo: Fyo, invoices: Invoice[]) {
 
 function getSalesInvoiceDates(years: number, baseCount: number): Date[] {
   const dates: Date[] = [];
-  for (const months of range(0, years * 12)) {
+  for (let months = 0; months < years * 12; months++) {
     const flow = getFlowConstant(months);
     const count = Math.ceil(flow * baseCount * (Math.random() * 0.25 + 0.75));
     dates.push(...getRandomDates(count, months));
@@ -260,7 +260,7 @@ async function getSalesInvoices(
       `Creating Sales Invoices, ${d} out of ${dates.length}`,
       safeParseInt(d) / dates.length
     );
-    const customer = sample(customers);
+    const customer = customers[Math.floor(Math.random() * customers.length)];
 
     const doc = fyo.doc.getNewDoc(
       ModelNameEnum.SalesInvoice,
@@ -279,7 +279,7 @@ async function getSalesInvoices(
      */
     const numItems = Math.ceil(Math.random() * 5);
     for (let i = 0; i < numItems; i++) {
-      const item = sample(salesItems);
+      const item = salesItems[Math.floor(Math.random() * salesItems.length)];
       if ((doc.items ?? []).find((i) => i.item === item)) {
         continue;
       }
@@ -460,7 +460,7 @@ async function getNonSalesPurchaseInvoices(
   };
   const invoices: SalesInvoice[] = [];
 
-  for (const months of range(0, years * 12)) {
+  for (let months = 0; months < years * 12; months++) {
     /**
      * All purchases on the first of the month.
      */

@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import { Fyo } from 'fyo';
 import { DummyAuthDemux } from 'fyo/tests/helpers';
 import { DateTime } from 'luxon';
-import path from 'path';
+
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
 import { getFiscalYear } from 'utils/misc';
@@ -57,9 +57,9 @@ export function getTestFyo(): Fyo {
   });
 }
 
-const ext = '.spec.ts';
 
-export function setupTestFyo(fyo: Fyo, filename: string) {
+
+export function setupTestFyo(fyo: Fyo, _filename: string) {
   beforeAll(async () => {
     const options = getTestSetupWizardOptions();
     const dbPath = getTestDbPath();
@@ -67,7 +67,7 @@ export function setupTestFyo(fyo: Fyo, filename: string) {
   });
 }
 
-export function closeTestFyo(fyo: Fyo, filename: string) {
+export function closeTestFyo(fyo: Fyo, _filename: string) {
   afterAll(async () => {
     await fyo.close();
   });

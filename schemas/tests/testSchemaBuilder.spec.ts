@@ -1,4 +1,4 @@
-import { cloneDeep, isEqual } from 'lodash';
+
 import { describe, expect, test } from 'vitest';
 import { getMapFromList } from 'utils';
 import {
@@ -54,20 +54,13 @@ describe('Schema Builder Tests', () => {
   });
 
   test('Schema Equality with App Schemas', () => {
-    expect(isEqual(regionalCombined.Account, appSchemaMap.Account)).toBe(true);
-    expect(
-      isEqual(regionalCombined.JournalEntry, appSchemaMap.JournalEntry)
-    ).toBe(true);
-    expect(
-      isEqual(
-        regionalCombined.JournalEntryAccount,
-        appSchemaMap.JournalEntryAccount
-      )
-    ).toBe(true);
-    expect(isEqual(regionalCombined.Customer, appSchemaMap.Customer)).toBe(
-      true
+    expect(regionalCombined.Account).toEqual(appSchemaMap.Account);
+    expect(regionalCombined.JournalEntry).toEqual(appSchemaMap.JournalEntry);
+    expect(regionalCombined.JournalEntryAccount).toEqual(
+      appSchemaMap.JournalEntryAccount
     );
-    expect(isEqual(regionalCombined.Party, appSchemaMap.Party)).toBe(false);
+    expect(regionalCombined.Customer).toEqual(appSchemaMap.Customer);
+    expect(regionalCombined.Party).not.toEqual(appSchemaMap.Party);
   });
 
   const abstractCombined = cleanSchemas(
@@ -91,19 +84,12 @@ describe('Schema Builder Tests', () => {
   });
 
   test('Schema Equality with App Schemas Abstract', () => {
-    expect(isEqual(abstractCombined.Account, appSchemaMap.Account)).toBe(true);
-    expect(
-      isEqual(abstractCombined.JournalEntry, appSchemaMap.JournalEntry)
-    ).toBe(true);
-    expect(
-      isEqual(
-        abstractCombined.JournalEntryAccount,
-        appSchemaMap.JournalEntryAccount
-      )
-    ).toBe(true);
-    expect(isEqual(abstractCombined.Customer, appSchemaMap.Customer)).toBe(
-      false
+    expect(abstractCombined.Account).toEqual(appSchemaMap.Account);
+    expect(abstractCombined.JournalEntry).toEqual(appSchemaMap.JournalEntry);
+    expect(abstractCombined.JournalEntryAccount).toEqual(
+      appSchemaMap.JournalEntryAccount
     );
+    expect(abstractCombined.Customer).not.toEqual(appSchemaMap.Customer);
   });
 
   test('Schema Field Existence', () => {
@@ -115,7 +101,7 @@ describe('Schema Builder Tests', () => {
     ).toBe(true);
   });
 
-  const almostFinalSchemas = cloneDeep(abstractCombined);
+  const almostFinalSchemas = structuredClone(abstractCombined);
   const withMeta = addMetaFields(almostFinalSchemas);
   const finalSchemas = setSchemaNameOnFields(withMeta);
   const metaSchemaMap = getMapFromList(metaSchemas, 'name');

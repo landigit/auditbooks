@@ -1,5 +1,4 @@
 import { RawCustomField } from 'backend/database/types';
-import { cloneDeep } from 'lodash';
 import { getListFromMap, getMapFromList } from 'utils';
 import regionalSchemas from './regional';
 import { appSchemas, coreSchemas, metaSchemas } from './schemas';
@@ -92,7 +91,7 @@ function deepFreeze(schemaMap: SchemaMap) {
 }
 
 export function addMetaFields(schemaMap: SchemaMap): SchemaMap {
-  const metaSchemaMap = getMapFromList(cloneDeep(metaSchemas), 'name');
+  const metaSchemaMap = getMapFromList(structuredClone(metaSchemas), 'name');
 
   const base = metaSchemaMap.base;
   const tree = getCombined(metaSchemaMap.tree, base);
@@ -147,13 +146,13 @@ function addNameField(schemaMap: SchemaMap) {
 }
 
 function getCoreSchemas(): SchemaMap {
-  const rawSchemaMap = getMapFromList(cloneDeep(coreSchemas), 'name');
+  const rawSchemaMap = getMapFromList(structuredClone(coreSchemas), 'name');
   const coreSchemaMap = getAbstractCombinedSchemas(rawSchemaMap);
   return cleanSchemas(coreSchemaMap);
 }
 
 function getAppSchemas(countryCode: string): SchemaMap {
-  const appSchemaMap = getMapFromList(cloneDeep(appSchemas), 'name');
+  const appSchemaMap = getMapFromList(structuredClone(appSchemas), 'name');
   const regionalSchemaMap = getRegionalSchemaMap(countryCode);
   const combinedSchemas = getRegionalCombinedSchemas(
     appSchemaMap,
@@ -182,8 +181,8 @@ function getCombined(
   extendingSchema: SchemaStub,
   abstractSchema: SchemaStub
 ): SchemaStub {
-  abstractSchema = cloneDeep(abstractSchema);
-  extendingSchema = cloneDeep(extendingSchema);
+  abstractSchema = structuredClone(abstractSchema);
+  extendingSchema = structuredClone(extendingSchema);
 
   const abstractFields = getMapFromList(
     abstractSchema.fields ?? [],
@@ -257,7 +256,7 @@ export function getRegionalCombinedSchemas(
 }
 
 function getRegionalSchemaMap(countryCode: string): SchemaStubMap {
-  const countrySchemas = cloneDeep(regionalSchemas[countryCode]) as
+  const countrySchemas = structuredClone(regionalSchemas[countryCode]) as
     | SchemaStub[]
     | undefined;
   if (countrySchemas === undefined) {

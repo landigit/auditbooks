@@ -1,7 +1,6 @@
 import { Fyo, t } from 'fyo';
 import { RawValueMap } from 'fyo/core/types';
 import { Action } from 'fyo/model/types';
-import { cloneDeep } from 'lodash';
 import { DateTime } from 'luxon';
 import { InventorySettings } from 'models/inventory/InventorySettings';
 import { ValuationMethod } from 'models/inventory/types';
@@ -70,7 +69,7 @@ export class StockLedger extends Report {
       await this._setRawData();
     }
 
-    const rawData = cloneDeep(this._rawData);
+    const rawData = structuredClone(this._rawData);
     if (!rawData) {
       return [];
     }

@@ -1,7 +1,6 @@
 import { Fyo } from 'fyo';
 import { ConfigFile } from 'fyo/core/types';
 import { translateSchema } from 'fyo/utils/translation';
-import { cloneDeep } from 'lodash';
 import { DateTime } from 'luxon';
 import { SetupWizard } from 'models/baseModels/SetupWizard/SetupWizard';
 import { ModelNameEnum } from 'models/types';
@@ -64,7 +63,7 @@ export function getSetupWizardDoc(languageMap?: LanguageMap) {
    * This is used cause when setup wizard is running
    * the database isn't yet initialized.
    */
-  const schema = cloneDeep(SetupWizardSchema);
+  const schema = structuredClone(SetupWizardSchema);
   if (languageMap) {
     translateSchema(schema, languageMap, schemaTranslateables);
   }
@@ -140,7 +139,7 @@ export const docsPathMap: Record<string, string | undefined> = {
 };
 
 export async function getDataURL(type: string, data: Uint8Array) {
-  const blob = new Blob([data], { type });
+  const blob = new Blob([data as any], { type });
 
   return new Promise<string>((resolve) => {
     const fr = new FileReader();

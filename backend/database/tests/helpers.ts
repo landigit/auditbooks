@@ -1,5 +1,4 @@
 import assert from 'assert';
-import { cloneDeep } from 'lodash';
 import {
   addMetaFields,
   cleanSchemas,
@@ -161,7 +160,7 @@ export function getBuiltTestSchemaMap(): SchemaMap {
     SystemSettings: SystemSettings as SchemaStub,
   };
 
-  const schemaMapClone = cloneDeep(testSchemaMap);
+  const schemaMapClone = structuredClone(testSchemaMap);
   const abstractCombined = getAbstractCombinedSchemas(schemaMapClone);
   const cleanedSchemas = cleanSchemas(abstractCombined);
   return addMetaFields(cleanedSchemas);

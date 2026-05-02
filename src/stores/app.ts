@@ -1,35 +1,36 @@
 import { fyo } from 'src/initFyo';
 
 export function useAppStore() {
+  const store = fyo.store as any;
   return {
     get platform() {
-      return fyo.store.platform === 'win32'
+      return store.platform === 'win32'
         ? 'Windows'
-        : fyo.store.platform === 'darwin'
+        : store.platform === 'darwin'
           ? 'Mac'
           : 'Linux';
     },
     get showSidebar() {
-      return fyo.store.showSidebar ?? true;
+      return store.showSidebar ?? true;
     },
     get darkMode() {
-      return fyo.store.darkMode ?? false;
+      return store.darkMode ?? false;
     },
     get language() {
       // If language is empty string or null, return 'English'
-      return fyo.store.language || 'English';
+      return store.language || 'English';
     },
     get languageDirection() {
-      return fyo.store.languageDirection ?? 'ltr';
+      return store.languageDirection ?? 'ltr';
     },
     setPlatform(platform: string) {
-      fyo.store.platform = platform;
+      store.platform = platform;
     },
     toggleSidebar() {
-      fyo.store.showSidebar = !this.showSidebar;
+      store.showSidebar = !this.showSidebar;
     },
     setDarkMode(value: boolean) {
-      fyo.store.darkMode = value;
+      store.darkMode = value;
     },
   };
 }

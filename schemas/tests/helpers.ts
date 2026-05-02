@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import Account from '../app/Account.json';
 import JournalEntry from '../app/JournalEntry.json';
 import JournalEntryAccount from '../app/JournalEntryAccount.json';
@@ -23,16 +22,19 @@ export function getTestSchemaMap(): {
   appSchemaMap: AppSchemaMap;
   regionalSchemaMap: RegionalSchemaMap;
 } {
-  const appSchemaMap = {
+  const appSchemaMap: AppSchemaMap = {
     Account,
     JournalEntry,
     JournalEntryAccount,
     Party,
     Customer,
-  } as AppSchemaMap;
-  const regionalSchemaMap = { Party: PartyRegional } as RegionalSchemaMap;
+  };
 
-  return cloneDeep({
+  const regionalSchemaMap: RegionalSchemaMap = {
+    Party: PartyRegional,
+  };
+
+  return structuredClone({
     appSchemaMap,
     regionalSchemaMap,
   });

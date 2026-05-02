@@ -8,7 +8,7 @@ import type {
   ValidationMap,
 } from 'fyo/model/types';
 import { ValueError } from 'fyo/utils/errors';
-import { camelCase } from 'lodash';
+import { camelCase } from 'utils';
 import { ModelNameEnum } from 'models/types';
 import type { FieldType } from 'schemas/types';
 import { FieldTypeEnum } from 'schemas/types';

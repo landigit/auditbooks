@@ -1,9 +1,8 @@
 import { Fyo } from 'fyo';
 import { DocValue } from 'fyo/core/types';
 import { isPesa } from 'fyo/utils';
-import { cloneDeep, isEqual } from 'lodash';
+import { deepEqual, getIsNullOrUndef } from 'utils';
 import { Field, FieldType, FieldTypeEnum } from 'schemas/types';
-import { getIsNullOrUndef } from 'utils';
 import { Doc } from './doc';
 import { FormulaMap } from './types';
 
@@ -23,7 +22,7 @@ export function areDocValuesEqual(
     }
   }
 
-  return isEqual(dvOne, dvTwo);
+  return deepEqual(dvOne, dvTwo);
 }
 
 export function getPreDefaultValues(
@@ -153,12 +152,12 @@ export function setChildDocIdx(childDocs: Doc[]) {
 export function getFormulaSequence(formulas: FormulaMap) {
   const depMap = Object.keys(formulas).reduce(
     (acc, k) => {
-      acc[k] = formulas[k]?.dependsOn;
+      acc[k] = [...(formulas[k]?.dependsOn ?? [])];
       return acc;
     },
     {} as Record<string, string[] | undefined>
   );
-  return sequenceDependencies(cloneDeep(depMap));
+  return sequenceDependencies(depMap);
 }
 
 function sequenceDependencies(

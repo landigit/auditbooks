@@ -1,6 +1,5 @@
 import { Fyo, t } from 'fyo';
 import { RawValueMap } from 'fyo/core/types';
-import { groupBy } from 'lodash';
 import { ModelNameEnum } from 'models/types';
 import { reports } from 'reports';
 import { OptionField } from 'schemas/types';
@@ -151,14 +150,14 @@ function getCreateList(fyo: Fyo): SearchItem[] {
   ].map(({ label, create, schemaName }) => {
     return {
       label,
-      group: 'Create',
+      group: 'Create' as const,
       action: getCreateAction(fyo, schemaName, create),
       schemaName,
       initData: create,
     };
   });
 
-  return [formEditCreateList, filteredCreateList].flat();
+  return ([formEditCreateList, filteredCreateList].flat() as SearchItem[]);
 }
 
 function getReportList(fyo: Fyo): SearchItem[] {
@@ -182,7 +181,7 @@ function getReportList(fyo: Fyo): SearchItem[] {
       return {
         label: report.title,
         route: `/report/${r}`,
-        group: 'Report',
+        group: 'Report' as const,
       };
     });
 }
@@ -236,7 +235,7 @@ function getListViewList(fyo: Fyo): SearchItem[] {
     .map((s) => ({
       label: s!.label,
       route: `/list/${s!.name}`,
-      group: 'List',
+      group: 'List' as const,
     }));
 
   const filteredLists = [
@@ -284,10 +283,10 @@ function getListViewList(fyo: Fyo): SearchItem[] {
     const label = i.label;
     const route = encodeURI(`${i.route}?filters=${JSON.stringify(i.filters)}`);
 
-    return { label, route, group: 'List' };
+    return { label, route, group: 'List' as const };
   });
 
-  return [standardLists, filteredLists].flat();
+  return ([standardLists, filteredLists].flat() as SearchItem[]);
 }
 
 function getSetupList(): SearchItem[] {
@@ -295,7 +294,7 @@ function getSetupList(): SearchItem[] {
     {
       label: t`Dashboard`,
       route: '/',
-      group: 'Page',
+      group: 'Page' as const,
     },
     {
       label: t`Chart of Accounts`,
@@ -868,7 +867,10 @@ export class Search {
       keywords.push(...this.keywords[sn]);
     }
 
-    return groupBy(keywords.flat(), 'priority');
+    return Object.groupBy(
+      keywords.flat(),
+      (k) => k.priority
+    ) as unknown as Record<string, Keyword[]>;
   }
 
   _setSearchables() {

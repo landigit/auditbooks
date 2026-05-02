@@ -130,3 +130,14 @@ export function isNumeric(
 
   return numericTypes.includes(fieldtype);
 }
+
+export function truncate(
+  str: string,
+  options: { length: number; omission?: string }
+): string {
+  const { length, omission = '...' } = options;
+  if (str.length <= length) {
+    return str;
+  }
+  return str.slice(0, length - omission.length) + omission;
+}

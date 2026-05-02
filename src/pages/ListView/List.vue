@@ -125,7 +125,6 @@
 </template>
 <script lang="ts">
 import { ListViewSettings, RenderData } from 'fyo/model/types';
-import { cloneDeep } from 'lodash';
 import Button from 'src/components/Button.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Paginator from 'src/components/Paginator.vue';
@@ -240,8 +239,8 @@ export default defineComponent({
       fyo.doc.observer.on(`rename:${this.schemaName}`, listener);
     },
     async updateData(filters?: Record<string, unknown>) {
-      const baseFilters = cloneDeep(toRaw(this.filters));
-      filters = cloneDeep({ ...baseFilters, ...filters });
+      const baseFilters = structuredClone(toRaw(this.filters));
+      filters = structuredClone({ ...baseFilters, ...filters });
 
       let statusFilter: [string, string] | undefined;
 

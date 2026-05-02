@@ -53,6 +53,10 @@ export async function sendError(body: string, main: Main) {
     'Content-Type': 'application/json',
   };
 
+  if (!errorLogUrl) {
+    return;
+  }
+
   await fetch(errorLogUrl, { method: 'POST', headers, body }).catch((err) => {
     rendererLog(main, err);
   });

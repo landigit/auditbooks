@@ -106,6 +106,19 @@ export function titleCase(phrase: string): string {
     .join(' ');
 }
 
+export function camelCase(str: string): string {
+  return str
+    .replace(/[^a-z0-9]/gi, ' ')
+    .trim()
+    .split(/\s+/)
+    .map((word, index) =>
+      index === 0
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join('');
+}
+
 export function invertMap(map: Record<string, string>): Record<string, string> {
   const keys = Object.keys(map);
   const inverted: Record<string, string> = {};
@@ -115,6 +128,31 @@ export function invertMap(map: Record<string, string>): Record<string, string> {
   }
 
   return inverted;
+}
+
+export function deepEqual(a: any, b: any): boolean {
+  if (a === b) return true;
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
+    if (a.constructor !== b.constructor) return false;
+    let length, i, keys;
+    if (Array.isArray(a)) {
+      length = a.length;
+      if (length !== b.length) return false;
+      for (i = length; i-- !== 0; ) if (!deepEqual(a[i], b[i])) return false;
+      return true;
+    }
+    keys = Object.keys(a);
+    length = keys.length;
+    if (length !== Object.keys(b).length) return false;
+    for (i = length; i-- !== 0; )
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
+    for (i = length; i-- !== 0; ) {
+      const key = keys[i];
+      if (!deepEqual(a[key], b[key])) return false;
+    }
+    return true;
+  }
+  return a !== a && b !== b;
 }
 
 export function time<K, T>(func: (...args: K[]) => T, ...args: K[]): T {
@@ -261,4 +299,4 @@ export function removeAtIndex<T>(array: T[], index: number): T[] {
 /**
  * Asserts that `value` is of type T. Use with care.
  */
-export const assertIsType = <T>(value: unknown): value is T => true;
+export const assertIsType = <T>(_value: unknown): _value is T => true;

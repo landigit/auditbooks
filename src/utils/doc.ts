@@ -1,5 +1,5 @@
 import { Doc } from 'fyo/model/doc';
-import { DynamicLinkField, Field, TargetField } from 'schemas/types';
+import { Field, TargetField } from 'schemas/types';
 import { GetAllOptions } from 'utils/db/types';
 
 export function evaluateReadOnly(field: Field, doc?: Doc) {

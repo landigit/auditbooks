@@ -54,8 +54,8 @@
 </template>
 
 <script lang="ts">
-import { truncate } from 'lodash';
 import { fyo } from 'src/initFyo';
+import { truncate } from 'src/utils';
 import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { defineComponent } from 'vue';
