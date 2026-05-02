@@ -12,7 +12,7 @@ export class AppliedCouponCodes extends InvoiceItem {
         return;
       }
 
-      await validateCouponCode(this as AppliedCouponCodes, value as string);
+      await validateCouponCode(this, value as string);
     },
   };
 }

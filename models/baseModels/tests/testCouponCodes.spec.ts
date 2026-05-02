@@ -117,16 +117,22 @@ describe('Coupon Codes', () => {
 
     // Create Party
     await fyo.doc.getNewDoc(ModelNameEnum.Party, partyMap.partyOne).sync();
-    expect(await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name)).toBe(true);
+    expect(
+      await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name)
+    ).toBe(true);
 
     // Create Pricing Rules
     for (const pricingRule of Object.values(pricingRuleMap)) {
       const prule: any = { ...pricingRule };
-      if (typeof prule.minAmount === 'number') prule.minAmount = fyo.pesa(prule.minAmount);
-      if (typeof prule.maxAmount === 'number') prule.maxAmount = fyo.pesa(prule.maxAmount);
-      
+      if (typeof prule.minAmount === 'number')
+        prule.minAmount = fyo.pesa(prule.minAmount);
+      if (typeof prule.maxAmount === 'number')
+        prule.maxAmount = fyo.pesa(prule.maxAmount);
+
       await fyo.doc.getNewDoc(ModelNameEnum.PricingRule, prule).sync();
-      expect(await fyo.db.exists(ModelNameEnum.PricingRule, pricingRule.name)).toBe(true);
+      expect(
+        await fyo.db.exists(ModelNameEnum.PricingRule, pricingRule.name)
+      ).toBe(true);
     }
 
     await fyo.singles.AccountingSettings?.setAndSync('enablePricingRule', true);
@@ -165,11 +171,15 @@ describe('Coupon Codes', () => {
     // Create Coupon Codes
     for (const couponCode of Object.values(couponCodesMap)) {
       const ccode: any = { ...couponCode };
-      if (typeof ccode.minAmount === 'number') ccode.minAmount = fyo.pesa(ccode.minAmount);
-      if (typeof ccode.maxAmount === 'number') ccode.maxAmount = fyo.pesa(ccode.maxAmount);
-      
+      if (typeof ccode.minAmount === 'number')
+        ccode.minAmount = fyo.pesa(ccode.minAmount);
+      if (typeof ccode.maxAmount === 'number')
+        ccode.maxAmount = fyo.pesa(ccode.maxAmount);
+
       await fyo.doc.getNewDoc(ModelNameEnum.CouponCode, ccode).sync();
-      expect(await fyo.db.exists(ModelNameEnum.CouponCode, couponCode.name)).toBe(true);
+      expect(
+        await fyo.db.exists(ModelNameEnum.CouponCode, couponCode.name)
+      ).toBe(true);
     }
 
     await fyo.singles.AccountingSettings?.setAndSync('enableCouponCode', true);
@@ -178,7 +188,10 @@ describe('Coupon Codes', () => {
 
   test('disabled coupon codes is not applied', async () => {
     // First disable the coupon
-    const ccode = await fyo.doc.getDoc(ModelNameEnum.CouponCode, couponCodesMap[0].name);
+    const ccode = await fyo.doc.getDoc(
+      ModelNameEnum.CouponCode,
+      couponCodesMap[0].name
+    );
     await ccode.setAndSync('isEnabled', false);
 
     const sinv = fyo.doc.getNewDoc(ModelNameEnum.SalesInvoice, {
@@ -200,7 +213,7 @@ describe('Coupon Codes', () => {
     await sinv.runFormulas();
 
     expect(sinv.pricingRuleDetail?.length || 0).toBe(0);
-    
+
     // Re-enable for subsequent tests
     await ccode.setAndSync('isEnabled', true);
   });
@@ -209,18 +222,14 @@ describe('Coupon Codes', () => {
     const data = { ...couponCodesMap[0], minAmount: fyo.pesa(7000) };
     const ccodeDoc = fyo.doc.getNewDoc(ModelNameEnum.CouponCode, data);
 
-    await assertThrows(
-      async () => await ccodeDoc.sync()
-    );
+    await assertThrows(async () => await ccodeDoc.sync());
   });
 
   test('Coupon code not created: pricing rules max amount is lower than the coupons min.', async () => {
     const data = { ...couponCodesMap[0], minAmount: fyo.pesa(3000) };
     const ccodeDoc = fyo.doc.getNewDoc(ModelNameEnum.CouponCode, data);
 
-    await assertThrows(
-      async () => await ccodeDoc.sync()
-    );
+    await assertThrows(async () => await ccodeDoc.sync());
   });
 
   test('apply coupon code', async () => {
@@ -239,7 +248,9 @@ describe('Coupon Codes', () => {
     await sinv.runFormulas();
 
     expect(sinv.pricingRuleDetail?.length).toBe(1);
-    expect(sinv.pricingRuleDetail![0].referenceName).toBe(pricingRuleMap[0].name);
+    expect(sinv.pricingRuleDetail![0].referenceName).toBe(
+      pricingRuleMap[0].name
+    );
   });
 
   test('Coupon not applied: incorrect items added.', async () => {

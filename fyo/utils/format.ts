@@ -145,7 +145,7 @@ function formatNumber(value: unknown, fyo: Fyo): string {
     return numberFormatter.format(floatValue);
   }
 
-  const floatValue = safeParseFloat(value as string);
+  const floatValue = safeParseFloat(value);
   const formattedNumber = numberFormatter.format(floatValue);
 
   if (formattedNumber === 'NaN') {

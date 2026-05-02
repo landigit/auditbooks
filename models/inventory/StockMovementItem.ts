@@ -192,11 +192,7 @@ export class StockMovementItem extends TransferItem {
     },
     unit: {
       formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string,
+        await this.fyo.getValue('Item', this.item as string, 'unit'),
       dependsOn: ['item'],
     },
     transferUnit: {
@@ -205,11 +201,7 @@ export class StockMovementItem extends TransferItem {
           return this.unit;
         }
 
-        return (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string;
+        return await this.fyo.getValue('Item', this.item as string, 'unit');
       },
       dependsOn: ['item', 'unit'],
     },
@@ -226,7 +218,7 @@ export class StockMovementItem extends TransferItem {
     quantity: {
       formula: async (fieldname) => {
         if (!this.item) {
-          return this.quantity as number;
+          return this.quantity;
         }
 
         const itemDoc = await this.fyo.doc.getDoc(

@@ -71,18 +71,7 @@
 
         <!-- Bottom Bar -->
         <div
-          class="
-            w-full
-            sticky
-            bottom-0
-            flex
-            bg-white
-            dark:bg-gray-890
-            border-t
-            dark:border-gray-800
-            mt-auto
-            flex-shrink-0
-          "
+          class="w-full sticky bottom-0 flex bg-white dark:bg-gray-890 border-t dark:border-gray-800 mt-auto flex-shrink-0"
         >
           <!-- Entry Type -->
           <FormControl
@@ -116,14 +105,7 @@
             </p>
             <input
               type="number"
-              class="
-                my-auto
-                w-10
-                text-base text-end
-                bg-transparent
-                text-gray-800
-                focus:text-gray-900
-              "
+              class="my-auto w-10 text-base text-end bg-transparent text-gray-800 focus:text-gray-900"
               :value="scale"
               min="0.1"
               max="10"
@@ -141,18 +123,12 @@
         :min-x="22 * 16"
         :max-x="maxWidth"
         style="z-index: 5"
-        @resize="(x: number) => panelWidth = x"
+        @resize="(x: number) => (panelWidth = x)"
       />
 
       <!-- Template Panel -->
       <div
-        class="
-          border-l
-          dark:border-gray-800
-          bg-white
-          dark:bg-gray-890
-          flex flex-col
-        "
+        class="border-l dark:border-gray-800 bg-white dark:bg-gray-890 flex flex-col"
         :style="templateDisplayStyles"
       >
         <!-- Template Editor -->
@@ -170,17 +146,7 @@
         </div>
         <div
           v-if="templateChanged"
-          class="
-            flex
-            gap-2
-            p-2
-            text-sm text-gray-600
-            dark:text-gray-400
-            items-center
-            mt-auto
-            border-t
-            dark:border-gray-800
-          "
+          class="flex gap-2 p-2 text-sm text-gray-600 dark:text-gray-400 items-center mt-auto border-t dark:border-gray-800"
         >
           <ShortcutKeys :keys="applyChangesShortcut" :simple="true" />
           {{ t` to apply changes` }}
@@ -194,14 +160,7 @@
         >
           <!-- Value Key Toggle -->
           <div
-            class="
-              flex
-              justify-between
-              items-center
-              cursor-pointer
-              select-none
-              p-2
-            "
+            class="flex justify-between items-center cursor-pointer select-none p-2"
             @click="toggleShowHints"
           >
             <h2
@@ -219,13 +178,7 @@
           <Transition name="hints">
             <div
               v-if="showHints"
-              class="
-                overflow-auto
-                custom-scroll custom-scroll-thumb1
-                p-2
-                border-t
-                dark:border-gray-800
-              "
+              class="overflow-auto custom-scroll custom-scroll-thumb1 p-2 border-t dark:border-gray-800"
               style="max-height: 30vh"
             >
               <TemplateBuilderHint :hints="hints" />
@@ -347,22 +300,6 @@ export default defineComponent({
         showSidebar: true,
         panelWidth: 22 * 16,
       },
-    } as {
-      editMode: boolean;
-      showHints: boolean;
-      hints?: PrintTemplateHint;
-      values: null | PrintValues;
-      displayDoc: PrintTemplate | null;
-      showTypeModal: boolean;
-      showSizeModal: boolean;
-      scale: number;
-      panelWidth: number;
-      templateChanged: boolean;
-      preEditMode: {
-        scale: number;
-        showSidebar: boolean;
-        panelWidth: number;
-      };
     };
   },
   computed: {
@@ -397,7 +334,7 @@ export default defineComponent({
         return [];
       }
 
-      const actions = getActionsForDoc(this.doc as Doc);
+      const actions = getActionsForDoc(this.doc);
       actions.push({
         label: this.t`Print Settings`,
         group: this.t`View`,
@@ -687,7 +624,7 @@ export default defineComponent({
       try {
         await doc.sync();
       } catch (error) {
-        await handleErrorWithDialog(error, doc as Doc);
+        await handleErrorWithDialog(error, doc);
       }
     },
     async setDoc() {
@@ -695,10 +632,10 @@ export default defineComponent({
         return;
       }
 
-      this.doc = (await getDocFromNameIfExistsElseNew(
+      this.doc = await getDocFromNameIfExistsElseNew(
         ModelNameEnum.PrintTemplate,
         this.name
-      )) as PrintTemplate;
+      );
     },
     async setType(value: unknown) {
       if (typeof value !== 'string') {

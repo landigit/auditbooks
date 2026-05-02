@@ -156,20 +156,12 @@ export abstract class InvoiceItem extends Doc {
   formulas: FormulaMap = {
     description: {
       formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'description'
-        )) as string,
+        await this.fyo.getValue('Item', this.item as string, 'description'),
       dependsOn: ['item'],
     },
     itemCode: {
       formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'itemCode'
-        )) as string,
+        await this.fyo.getValue('Item', this.item as string, 'itemCode'),
       dependsOn: ['item'],
     },
     rate: {
@@ -227,11 +219,7 @@ export abstract class InvoiceItem extends Doc {
     },
     unit: {
       formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string,
+        await this.fyo.getValue('Item', this.item as string, 'unit'),
       dependsOn: ['item'],
     },
     transferUnit: {
@@ -292,7 +280,7 @@ export abstract class InvoiceItem extends Doc {
     quantity: {
       formula: async (fieldname) => {
         if (!this.item) {
-          return this.quantity as number;
+          return this.quantity;
         }
 
         const itemDoc = await this.fyo.doc.getDoc(

@@ -226,7 +226,7 @@ export class Importer {
         const { target, fieldname } = f as TargetField;
         acc[target] = fieldname;
         return acc;
-      }, {} as Record<string, string>);
+      }, {});
 
     for (const [name, data] of dataMap.entries()) {
       const doc = this.fyo.doc.getNewDoc(this.schemaName, data, false);
@@ -263,15 +263,18 @@ export class Importer {
     const nameIndices = this.assignedTemplateFields
       .map((key, index) => ({ key, index }))
       .filter((f) => f.key?.endsWith('.name'))
-      .reduce((acc, f) => {
-        if (f.key == null) {
-          return acc;
-        }
+      .reduce(
+        (acc, f) => {
+          if (f.key == null) {
+            return acc;
+          }
 
-        const schemaName = f.key.split('.')[0];
-        acc[schemaName] = f.index;
-        return acc;
-      }, {} as Record<string, number>);
+          const schemaName = f.key.split('.')[0];
+          acc[schemaName] = f.index;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
     const nameIndex = nameIndices?.[this.schemaName];
     if (nameIndex < 0) {
@@ -578,7 +581,7 @@ function getTemplateFields(
 
       acc[f.fieldname] = f;
       return acc;
-    }, {} as Record<string, Field>) ?? {};
+    }, {}) ?? {};
 
   while (schemas.length) {
     const { schema, parentSchemaChildField } = schemas.pop() ?? {};

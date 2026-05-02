@@ -306,7 +306,7 @@ export class Payment extends Transactional {
       }
     }
 
-    type Summary = typeof taxes[string][string] & { idx: number };
+    type Summary = (typeof taxes)[string][string] & { idx: number };
     const taxArr: Summary[] = [];
     let idx = 0;
     for (const payment_account in taxes) {
@@ -417,7 +417,7 @@ export class Payment extends Transactional {
     for (const row of this.for ?? []) {
       const referenceDoc = (await this.fyo.doc.getDoc(
         row.referenceType as string,
-        row.referenceName as string
+        row.referenceName
       )) as Invoice;
 
       outstandingAmount = outstandingAmount.add(
@@ -736,7 +736,7 @@ export class Payment extends Transactional {
         for (const row of this.for ?? []) {
           const referenceDoc = (await this.fyo.doc.getDoc(
             row.referenceType as string,
-            row.referenceName as string
+            row.referenceName
           )) as Invoice;
 
           this.totalAmount = referenceDoc.outstandingAmount?.abs();
@@ -754,7 +754,7 @@ export class Payment extends Transactional {
       } else if ((value as Money).isZero()) {
         throw new ValidationError(
           this.fyo.t`Payment amount cannot be ${this.fyo.format(
-            value as Money,
+            value,
             'Currency'
           )}.`
         );
@@ -774,11 +774,11 @@ export class Payment extends Transactional {
     party: (doc: Doc) => {
       const paymentType = (doc as Payment).paymentType;
       if (paymentType === 'Pay') {
-        return { role: ['in', ['Supplier', 'Both']] } as QueryFilter;
+        return { role: ['in', ['Supplier', 'Both']] };
       }
 
       if (paymentType === 'Receive') {
-        return { role: ['in', ['Customer', 'Both']] } as QueryFilter;
+        return { role: ['in', ['Customer', 'Both']] };
       }
 
       return {};

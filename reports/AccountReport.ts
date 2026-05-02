@@ -76,15 +76,12 @@ export abstract class AccountReport extends LedgerReport {
     const columns = this.getColumns();
     return {
       isEmpty: true,
-      cells: columns.map(
-        (c) =>
-          ({
-            value: '',
-            rawValue: '',
-            width: c.width,
-            align: 'left',
-          } as ReportCell)
-      ),
+      cells: columns.map((c) => ({
+        value: '',
+        rawValue: '',
+        width: c.width,
+        align: 'left',
+      })),
     };
   }
 
@@ -136,7 +133,7 @@ export abstract class AccountReport extends LedgerReport {
         value,
         align: 'right',
         width: ACC_BAL_WIDTH,
-      } as ReportCell;
+      };
     });
 
     return {
@@ -435,7 +432,7 @@ export abstract class AccountReport extends LedgerReport {
         fieldname: 'toDate',
         align: 'right',
         width: ACC_BAL_WIDTH,
-      } as ColumnField;
+      };
     });
 
     return [columns, dateColumns].flat();

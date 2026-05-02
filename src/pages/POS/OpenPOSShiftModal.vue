@@ -152,7 +152,7 @@ export default defineComponent({
       await this.posShiftDoc.set('openingAmounts', paymentMethods);
     },
     async seedDefaults() {
-      if (!!this.posShiftDoc?.isShiftOpen) {
+      if (this.posShiftDoc?.isShiftOpen) {
         return;
       }
 
@@ -169,7 +169,7 @@ export default defineComponent({
 
       this.posShiftDoc.openingAmounts.map((row) => {
         if (row.paymentMethod === 'Cash') {
-          row.amount = this.posShiftDoc?.openingCashAmount as Money;
+          row.amount = this.posShiftDoc?.openingCashAmount;
         }
       });
     },

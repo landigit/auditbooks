@@ -224,136 +224,130 @@ describe('Inventory', () => {
   test('create stock movements, invalid entries, in sequence', async () => {
     const { name: item, rate } = itemMap.Pen;
     const quantity = 10;
-    await runEntries(
-      item,
-      [
-        {
-          type: MovementTypeEnum.MaterialReceipt,
-          date: new Date('2022-11-03T09:58:04.528'),
-          valid: true,
-          postQuantity: quantity,
-          items: [
-            {
-              item,
-              to: locationMap.LocationOne,
-              quantity,
-              rate,
-            },
-          ],
-        },
-        {
-          type: MovementTypeEnum.MaterialTransfer,
-          date: new Date('2022-11-03T09:58:05.528'),
-          valid: false,
-          postQuantity: quantity,
-          items: [
-            {
-              item,
-              from: locationMap.LocationOne,
-              to: locationMap.LocationTwo,
-              quantity: quantity + 1,
-              rate,
-            },
-          ],
-        },
-        {
-          type: MovementTypeEnum.MaterialIssue,
-          date: new Date('2022-11-03T09:58:06.528'),
-          valid: false,
-          postQuantity: quantity,
-          items: [
-            {
-              item,
-              from: locationMap.LocationOne,
-              quantity: quantity + 1,
-              rate,
-            },
-          ],
-        },
-        {
-          type: MovementTypeEnum.MaterialTransfer,
-          date: new Date('2022-11-03T09:58:07.528'),
-          valid: true,
-          postQuantity: quantity,
-          items: [
-            {
-              item,
-              from: locationMap.LocationOne,
-              to: locationMap.LocationTwo,
-              quantity,
-              rate,
-            },
-          ],
-        },
-        {
-          type: MovementTypeEnum.MaterialIssue,
-          date: new Date('2022-11-03T09:58:08.528'),
-          valid: true,
-          postQuantity: 0,
-          items: [
-            {
-              item,
-              from: locationMap.LocationTwo,
-              quantity,
-              rate,
-            },
-          ],
-        },
-      ]
-    );
+    await runEntries(item, [
+      {
+        type: MovementTypeEnum.MaterialReceipt,
+        date: new Date('2022-11-03T09:58:04.528'),
+        valid: true,
+        postQuantity: quantity,
+        items: [
+          {
+            item,
+            to: locationMap.LocationOne,
+            quantity,
+            rate,
+          },
+        ],
+      },
+      {
+        type: MovementTypeEnum.MaterialTransfer,
+        date: new Date('2022-11-03T09:58:05.528'),
+        valid: false,
+        postQuantity: quantity,
+        items: [
+          {
+            item,
+            from: locationMap.LocationOne,
+            to: locationMap.LocationTwo,
+            quantity: quantity + 1,
+            rate,
+          },
+        ],
+      },
+      {
+        type: MovementTypeEnum.MaterialIssue,
+        date: new Date('2022-11-03T09:58:06.528'),
+        valid: false,
+        postQuantity: quantity,
+        items: [
+          {
+            item,
+            from: locationMap.LocationOne,
+            quantity: quantity + 1,
+            rate,
+          },
+        ],
+      },
+      {
+        type: MovementTypeEnum.MaterialTransfer,
+        date: new Date('2022-11-03T09:58:07.528'),
+        valid: true,
+        postQuantity: quantity,
+        items: [
+          {
+            item,
+            from: locationMap.LocationOne,
+            to: locationMap.LocationTwo,
+            quantity,
+            rate,
+          },
+        ],
+      },
+      {
+        type: MovementTypeEnum.MaterialIssue,
+        date: new Date('2022-11-03T09:58:08.528'),
+        valid: true,
+        postQuantity: 0,
+        items: [
+          {
+            item,
+            from: locationMap.LocationTwo,
+            quantity,
+            rate,
+          },
+        ],
+      },
+    ]);
   });
 
   test('create stock movements, invalid entries, out of sequence', async () => {
     const { name: item, rate } = itemMap.Ink;
     const quantity = 10;
-    await runEntries(
-      item,
-      [
-        {
-          type: MovementTypeEnum.MaterialReceipt,
-          date: new Date('2022-11-15'),
-          valid: true,
-          postQuantity: quantity,
-          items: [
-            {
-              item,
-              to: locationMap.LocationOne,
-              quantity,
-              rate,
-            },
-          ],
-        },
-        {
-          type: MovementTypeEnum.MaterialIssue,
-          date: new Date('2022-11-17'),
-          valid: true,
-          postQuantity: quantity - 5,
-          items: [
-            {
-              item,
-              from: locationMap.LocationOne,
-              quantity: quantity - 5,
-              rate,
-            },
-          ],
-        },
-        {
-          type: MovementTypeEnum.MaterialTransfer,
-          date: new Date('2022-11-16'),
-          valid: false,
-          postQuantity: quantity - 5,
-          items: [
-            {
-              item,
-              from: locationMap.LocationOne,
-              to: locationMap.LocationTwo,
-              quantity,
-              rate,
-            },
-          ],
-        },
-      ]
-    );
+    await runEntries(item, [
+      {
+        type: MovementTypeEnum.MaterialReceipt,
+        date: new Date('2022-11-15'),
+        valid: true,
+        postQuantity: quantity,
+        items: [
+          {
+            item,
+            to: locationMap.LocationOne,
+            quantity,
+            rate,
+          },
+        ],
+      },
+      {
+        type: MovementTypeEnum.MaterialIssue,
+        date: new Date('2022-11-17'),
+        valid: true,
+        postQuantity: quantity - 5,
+        items: [
+          {
+            item,
+            from: locationMap.LocationOne,
+            quantity: quantity - 5,
+            rate,
+          },
+        ],
+      },
+      {
+        type: MovementTypeEnum.MaterialTransfer,
+        date: new Date('2022-11-16'),
+        valid: false,
+        postQuantity: quantity - 5,
+        items: [
+          {
+            item,
+            from: locationMap.LocationOne,
+            to: locationMap.LocationTwo,
+            quantity,
+            rate,
+          },
+        ],
+      },
+    ]);
   });
 
   closeTestFyoAfterAll(fyo);

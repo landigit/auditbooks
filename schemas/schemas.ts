@@ -144,8 +144,8 @@ export const appSchemas: Schema[] | SchemaStub[] = [
 
   InvoiceItem as Schema,
   SalesInvoiceItem as SchemaStub,
-  PurchaseInvoiceItem as SchemaStub,
-  SalesQuoteItem as SchemaStub,
+  PurchaseInvoiceItem,
+  SalesQuoteItem,
   CouponCode as Schema,
   AppliedCouponCodes as Schema,
 
@@ -182,7 +182,7 @@ export const appSchemas: Schema[] | SchemaStub[] = [
   CashDenominations as Schema,
   ClosingAmounts as Schema,
   ClosingCash as Schema,
-  DefaultCashDenominations as Schema,
+  DefaultCashDenominations,
   OpeningAmounts as Schema,
   OpeningCash as Schema,
   POSSettings as Schema,

@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "jsx": "preserve",
     "importHelpers": true,

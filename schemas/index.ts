@@ -315,7 +315,7 @@ function getFieldMapFromRawCustomFields(
         ?.split('\n')
         .map((o) => {
           const value = o.trim();
-          return { value, label: value } as SelectOption;
+          return { value, label: value };
         })
         .filter((o) => o.label && o.value);
 

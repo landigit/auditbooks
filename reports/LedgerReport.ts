@@ -113,7 +113,7 @@ export abstract class LedgerReport extends Report {
         party: entry.party,
         reverted: Boolean(entry.reverted),
         reverts: entry.reverts,
-      } as LedgerEntry;
+      };
     });
   }
 

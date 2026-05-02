@@ -112,7 +112,7 @@ export async function getItemQtyMap(doc: SalesInvoice): Promise<ItemQtyMap> {
       itemQtyMap[row.item][row.batch] = row.balanceQuantity;
     }
 
-    itemQtyMap[row.item]!.availableQty += row.balanceQuantity;
+    itemQtyMap[row.item].availableQty += row.balanceQuantity;
   }
   return itemQtyMap;
 }
@@ -667,7 +667,7 @@ export async function getExchangeRate({
 
   let exchangeRate = 0;
   if (localStorage) {
-    exchangeRate = safeParseFloat(localStorage.getItem(cacheKey) as string);
+    exchangeRate = safeParseFloat(localStorage.getItem(cacheKey));
   }
 
   if (exchangeRate && exchangeRate !== 1) {
@@ -1049,7 +1049,7 @@ export function getLoyaltyProgramTier(
       if (isPesa(row.minimumTotalSpent)) {
         minimumSpent = row.minimumTotalSpent;
       } else {
-        minimumSpent = new Money(row.minimumTotalSpent as number);
+        minimumSpent = new Money(row.minimumTotalSpent);
       }
 
       if (minimumSpent.lte(grandTotal)) {
@@ -1675,7 +1675,7 @@ export function removeFreeItems(sinvDoc: SalesInvoice) {
     return;
   }
 
-  if (!!sinvDoc.isPricingRuleApplied) {
+  if (sinvDoc.isPricingRuleApplied) {
     return;
   }
 

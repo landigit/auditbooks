@@ -250,14 +250,6 @@ export default defineComponent({
       creatingDemo: false,
       loadingDatabase: false,
       files: [],
-    } as {
-      openModal: boolean;
-      baseCount: number;
-      creationMessage: string;
-      creationPercent: number;
-      creatingDemo: boolean;
-      loadingDatabase: boolean;
-      files: ConfigFilesWithModified[];
     };
   },
   async mounted() {

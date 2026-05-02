@@ -217,11 +217,11 @@ export class Doc extends Observable<DocValue | Doc[]> {
       return false;
     }
 
-    if (!!this.submitted) {
+    if (this.submitted) {
       return false;
     }
 
-    if (!!this.cancelled) {
+    if (this.cancelled) {
       return false;
     }
 
@@ -241,7 +241,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       return false;
     }
 
-    if (!!this.cancelled) {
+    if (this.cancelled) {
       return false;
     }
 
@@ -351,10 +351,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
   async setMultiple(docValueMap: DocValueMap): Promise<boolean> {
     let hasSet = false;
     for (const fieldname in docValueMap) {
-      const isSet = await this.set(
-        fieldname,
-        docValueMap[fieldname] as DocValue | Doc[]
-      );
+      const isSet = await this.set(fieldname, docValueMap[fieldname]);
       hasSet ||= isSet;
     }
 
@@ -382,7 +379,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       return true;
     }
 
-    return !areDocValuesEqual(currentValue as DocValue, value as DocValue);
+    return !areDocValuesEqual(currentValue, value as DocValue);
   }
 
   async _applyChange(
@@ -1127,7 +1124,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
    * This may cause the lifecycle function to execute incorrectly.
    */
 
-  /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   async change(ch: ChangeArg) {}
   async validate() {}
   async beforeSync() {}

@@ -57,7 +57,9 @@ describe('Price List', () => {
 
     for (const priceList of Object.values(priceListMap)) {
       await fyo.doc.getNewDoc(ModelNameEnum.PriceList, priceList).sync();
-      expect(await fyo.db.exists(ModelNameEnum.PriceList, priceList.name)).toBe(true);
+      expect(await fyo.db.exists(ModelNameEnum.PriceList, priceList.name)).toBe(
+        true
+      );
     }
 
     await fyo.singles.AccountingSettings?.setAndSync('enablePriceList', true);
@@ -73,7 +75,9 @@ describe('Price List', () => {
     await sinv.append('items', {});
     await sinv.items?.[0].set('item', itemMap.Pen.name);
 
-    expect(sinv.items?.[0].rate?.float).toBe(priceListMap.PL_SELL.priceListItem[0].rate);
+    expect(sinv.items?.[0].rate?.float).toBe(
+      priceListMap.PL_SELL.priceListItem[0].rate
+    );
   });
 
   closeTestFyoAfterAll(fyo);

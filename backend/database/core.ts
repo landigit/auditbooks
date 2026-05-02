@@ -180,7 +180,6 @@ export default class DatabaseCore extends DatabaseBase {
     try {
       const qb = this.knex!(schemaName);
       if (name !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         qb.where({ name });
       }
       row = await qb.limit(1);
@@ -242,7 +241,7 @@ export default class DatabaseCore extends DatabaseBase {
     const allTableFields: TargetField[] = this.#getTableFields(schemaName);
     const allTableFieldNames: string[] = allTableFields.map((f) => f.fieldname);
     const tableFields: TargetField[] = allTableFields.filter((f) =>
-      fields!.includes(f.fieldname)
+      fields.includes(f.fieldname)
     );
     const nonTableFieldNames: string[] = fields.filter(
       (f) => !allTableFieldNames.includes(f)
@@ -428,10 +427,10 @@ export default class DatabaseCore extends DatabaseBase {
 
   async truncate(tableNames?: string[]) {
     if (tableNames === undefined) {
-      const q = (await this.knex!.raw(`
+      const q = await this.knex!.raw(`
         select name from sqlite_schema
         where type='table'
-        and name not like 'sqlite_%'`)) as { name: string }[];
+        and name not like 'sqlite_%'`);
       tableNames = q.map((i) => i.name);
     }
 
@@ -608,9 +607,7 @@ export default class DatabaseCore extends DatabaseBase {
       return;
     }
 
-    const column = table[columnType](
-      field.fieldname
-    ) as Knex.SqlLiteColumnBuilder;
+    const column = table[columnType](field.fieldname);
 
     // primary key
     if (field.fieldname === 'name') {
@@ -678,9 +675,9 @@ export default class DatabaseCore extends DatabaseBase {
 
   async #getNonExtantSingleValues(singleSchemaName: string) {
     const existingFields = (
-      (await this.knex!('SingleValue')
+      await this.knex!('SingleValue')
         .where({ parent: singleSchemaName })
-        .select('fieldname')) as { fieldname: string }[]
+        .select('fieldname')
     ).map(({ fieldname }) => fieldname);
 
     const nonExtant: NonExtantConfig['nonExtant'] = [];

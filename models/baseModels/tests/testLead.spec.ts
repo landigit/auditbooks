@@ -44,7 +44,9 @@ describe('Lead', () => {
     await newCustomer.sync();
 
     expect(leadDoc.status).toBe('Converted');
-    expect(await fyo.db.exists(ModelNameEnum.Party, newCustomer.name)).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.Party, newCustomer.name)).toBe(
+      true
+    );
   });
 
   test('create SalesQuote', async () => {
@@ -64,7 +66,9 @@ describe('Lead', () => {
     await newSalesQuote.submit();
 
     expect(leadDoc.status).toBe('Quotation');
-    expect(await fyo.db.exists(ModelNameEnum.SalesQuote, newSalesQuote.name)).toBe(true);
+    expect(
+      await fyo.db.exists(ModelNameEnum.SalesQuote, newSalesQuote.name)
+    ).toBe(true);
   });
 
   test('delete Customer then lead status changes to Interested', async () => {

@@ -35,7 +35,7 @@ export class TranslationString {
   }
 
   #translate() {
-    let indexFormat = getIndexFormat(this.args[0] as string);
+    let indexFormat = getIndexFormat(this.args[0]);
     indexFormat = getWhitespaceSanitized(indexFormat);
 
     const translatedIndexFormat =

@@ -244,9 +244,7 @@ describe('Batches', () => {
       fyo
     );
 
-    await assertThrows(
-      async () => (await stockMovement.sync()).submit()
-    );
+    await assertThrows(async () => (await stockMovement.sync()).submit());
 
     stockMovement = await getStockMovement(
       MovementTypeEnum.MaterialIssue,
@@ -262,9 +260,7 @@ describe('Batches', () => {
       fyo
     );
 
-    await assertThrows(
-      async () => (await stockMovement.sync()).submit()
-    );
+    await assertThrows(async () => (await stockMovement.sync()).submit());
     expect(await fyo.db.getStockQuantity(name)).toBe(1);
   });
 

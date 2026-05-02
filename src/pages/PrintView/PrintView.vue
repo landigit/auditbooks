@@ -87,13 +87,6 @@ export default defineComponent({
       templateDoc: null,
       templateName: null,
       templateList: [],
-    } as {
-      doc: null | Doc;
-      scale: number;
-      values: null | PrintValues;
-      templateDoc: null | PrintTemplate;
-      templateName: null | string;
-      templateList: string[];
     };
   },
   computed: {
@@ -205,7 +198,7 @@ export default defineComponent({
       }
 
       if (this.doc) {
-        this.values = await getPrintTemplatePropValues(this.doc as Doc);
+        this.values = await getPrintTemplatePropValues(this.doc);
       }
     },
     setScale() {
@@ -233,10 +226,10 @@ export default defineComponent({
 
       this.templateName = value;
       try {
-        this.templateDoc = (await this.fyo.doc.getDoc(
+        this.templateDoc = await this.fyo.doc.getDoc(
           ModelNameEnum.PrintTemplate,
           this.templateName
-        )) as PrintTemplate;
+        );
       } catch (error) {
         await handleErrorWithDialog(error);
       }

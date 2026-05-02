@@ -59,10 +59,7 @@ export class StockLedger extends Report {
     }
   }
 
-  async setReportData(
-    filter?: string | undefined,
-    force?: boolean | undefined
-  ): Promise<void> {
+  async setReportData(filter?: string, force?: boolean): Promise<void> {
     this.loading = true;
     this.reportData = await this._getReportData(force);
     this.loading = false;

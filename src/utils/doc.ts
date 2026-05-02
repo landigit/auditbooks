@@ -84,7 +84,7 @@ export async function getLinkedEntries(
     .filter((sch) => !sch?.isSingle)
     .map((sch) => sch?.fields)
     .flat()
-    .filter((f) => f?.fieldtype === 'DynamicLink') as DynamicLinkField[];
+    .filter((f) => f?.fieldtype === 'DynamicLink');
 
   type Detail = { name: string; created: string };
   type ChildEntryDetail = {
@@ -131,7 +131,7 @@ export async function getLinkedEntries(
     for (const d of details) {
       if ('parent' in d) {
         childEntries[field.schemaName] ??= [];
-        childEntries[field.schemaName]!.push(d);
+        childEntries[field.schemaName].push(d);
       } else {
         entries[field.schemaName] ??= [];
         entries[field.schemaName].push(d);

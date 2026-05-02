@@ -1,14 +1,7 @@
 <template>
   <div
     id="app"
-    class="
-      dark:bg-gray-900
-      h-screen
-      flex flex-col
-      font-sans
-      overflow-hidden
-      antialiased
-    "
+    class="dark:bg-gray-900 h-screen flex flex-col font-sans overflow-hidden antialiased"
     :dir="languageDirection"
     :language="language"
   >
@@ -122,11 +115,6 @@ export default defineComponent({
       dbPath: '',
       companyName: '',
       darkMode: false,
-    } as {
-      activeScreen: null | Screen;
-      dbPath: string;
-      companyName: string;
-      darkMode: boolean | undefined;
     };
   },
   computed: {
@@ -328,4 +316,3 @@ function getLanguageDirection(language: string): 'rtl' | 'ltr' {
   return RTL_LANGUAGES.includes(language) ? 'rtl' : 'ltr';
 }
 </script>
-

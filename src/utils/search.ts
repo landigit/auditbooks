@@ -104,7 +104,7 @@ function getCreateList(fyo: Fyo): SearchItem[] {
         group: 'Create',
         action: getCreateAction(fyo, schemaName),
         schemaName,
-      } as SearchItem)
+      }) as SearchItem
   );
 
   const filteredCreateList = [
@@ -155,7 +155,7 @@ function getCreateList(fyo: Fyo): SearchItem[] {
       action: getCreateAction(fyo, schemaName, create),
       schemaName,
       initData: create,
-    } as SearchItem;
+    };
   });
 
   return [formEditCreateList, filteredCreateList].flat();
@@ -233,14 +233,11 @@ function getListViewList(fyo: Fyo): SearchItem[] {
   const standardLists = schemaNames
     .map((s) => fyo.schemaMap[s])
     .filter((s) => s && !s.isChild && !s.isSingle)
-    .map(
-      (s) =>
-        ({
-          label: s!.label,
-          route: `/list/${s!.name}`,
-          group: 'List',
-        } as SearchItem)
-    );
+    .map((s) => ({
+      label: s!.label,
+      route: `/list/${s!.name}`,
+      group: 'List',
+    }));
 
   const filteredLists = [
     {
@@ -287,7 +284,7 @@ function getListViewList(fyo: Fyo): SearchItem[] {
     const label = i.label;
     const route = encodeURI(`${i.route}?filters=${JSON.stringify(i.filters)}`);
 
-    return { label, route, group: 'List' } as SearchItem;
+    return { label, route, group: 'List' };
   });
 
   return [standardLists, filteredLists].flat();
@@ -931,7 +928,7 @@ export class Search {
       const keyword: Keyword = { values: [], meta: {}, priority: 0 };
       this._setKeywordValues(map, searchable, keyword);
       this._setMeta(map, searchable, keyword);
-      this.keywords[searchable.schemaName]!.push(keyword);
+      this.keywords[searchable.schemaName].push(keyword);
     }
 
     this._setPriority(searchable);

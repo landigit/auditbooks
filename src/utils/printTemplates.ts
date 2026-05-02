@@ -534,7 +534,7 @@ function getAllCSSAsStyleElem() {
 
 export async function updatePrintTemplates(fyo: Fyo) {
   const templateFiles = await ipc.getTemplates(
-    fyo.singles.PrintSettings?.posPrintWidth as number
+    fyo.singles.PrintSettings?.posPrintWidth
   );
   const existingTemplates = (await fyo.db.getAll(ModelNameEnum.PrintTemplate, {
     fields: ['name', 'modified'],

@@ -84,20 +84,12 @@ export class StockTransferItem extends TransferItem {
   formulas: FormulaMap = {
     description: {
       formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'description'
-        )) as string,
+        await this.fyo.getValue('Item', this.item as string, 'description'),
       dependsOn: ['item'],
     },
     unit: {
       formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string,
+        await this.fyo.getValue('Item', this.item as string, 'unit'),
       dependsOn: ['item'],
     },
     transferUnit: {
@@ -106,11 +98,7 @@ export class StockTransferItem extends TransferItem {
           return this.unit;
         }
 
-        return (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'unit'
-        )) as string;
+        return await this.fyo.getValue('Item', this.item as string, 'unit');
       },
       dependsOn: ['item', 'unit'],
     },
@@ -127,7 +115,7 @@ export class StockTransferItem extends TransferItem {
     quantity: {
       formula: async (fieldname) => {
         if (!this.item) {
-          return this.quantity as number;
+          return this.quantity;
         }
 
         const itemDoc = await this.fyo.doc.getDoc(
@@ -184,11 +172,7 @@ export class StockTransferItem extends TransferItem {
     },
     hsnCode: {
       formula: async () =>
-        (await this.fyo.getValue(
-          'Item',
-          this.item as string,
-          'hsnCode'
-        )) as string,
+        await this.fyo.getValue('Item', this.item as string, 'hsnCode'),
       dependsOn: ['item'],
     },
     amount: {

@@ -18,10 +18,10 @@ export class BespokeQueries {
     db: DatabaseCore,
     schemaName: string
   ): Promise<number> {
-    const lastInserted = (await db.knex!.raw(
+    const lastInserted = await db.knex!.raw(
       'select cast(name as int) as num from ?? order by num desc limit 1',
       [schemaName]
-    )) as { num: number }[];
+    );
 
     const num = lastInserted?.[0]?.num;
     if (num === undefined) {
@@ -95,7 +95,7 @@ export class BespokeQueries {
     fromDate: string,
     toDate: string
   ) {
-    const income = (await db.knex!.raw(
+    const income = await db.knex!.raw(
       `
       select sum(cast(credit as real) - cast(debit as real)) as balance, strftime('%Y-%m', date) as yearmonth
       from AccountingLedgerEntry
@@ -109,9 +109,9 @@ export class BespokeQueries {
         )
       group by yearmonth`,
       [fromDate, toDate]
-    )) as IncomeExpense['income'];
+    );
 
-    const expense = (await db.knex!.raw(
+    const expense = await db.knex!.raw(
       `
       select sum(cast(debit as real) - cast(credit as real)) as balance, strftime('%Y-%m', date) as yearmonth
       from AccountingLedgerEntry
@@ -125,7 +125,7 @@ export class BespokeQueries {
         )
       group by yearmonth`,
       [fromDate, toDate]
-    )) as IncomeExpense['expense'];
+    );
 
     return { income, expense };
   }
@@ -150,7 +150,6 @@ export class BespokeQueries {
     batch?: string,
     serialNumbers?: string[]
   ): Promise<number | null> {
-    /* eslint-disable @typescript-eslint/no-floating-promises */
     const query = db.knex!(ModelNameEnum.StockLedgerEntry)
       .sum('quantity')
       .where('item', item);
@@ -256,7 +255,7 @@ export class BespokeQueries {
       | undefined = {};
 
     for (const item of docItems) {
-      if (!!docItemsMap[item.item]) {
+      if (docItemsMap[item.item]) {
         if (item.batch) {
           let serialNumbers: string[] | undefined;
 
@@ -456,15 +455,11 @@ export class BespokeQueries {
       return;
     }
 
-    const groupedAmounts = (await db.knex!(ModelNameEnum.Payment)
+    const groupedAmounts = await db.knex!(ModelNameEnum.Payment)
       .select('paymentMethod', 'name')
       .whereIn('name', paymentEntryNames)
       .groupBy('paymentMethod', 'name')
-      .sum({ amount: 'amount' })) as {
-      paymentMethod: string;
-      name: string;
-      amount: number;
-    }[];
+      .sum({ amount: 'amount' });
 
     const transactedAmounts: Record<string, number> = {};
 

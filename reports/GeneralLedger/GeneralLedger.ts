@@ -253,7 +253,7 @@ export class GeneralLedger extends LedgerReport {
     }
 
     if (this.referenceType !== 'All') {
-      filters.referenceType = this.referenceType as string;
+      filters.referenceType = this.referenceType;
     }
 
     if (this.toDate) {

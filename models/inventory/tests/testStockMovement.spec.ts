@@ -7,7 +7,10 @@ import {
   setupTestFyoBeforeAll,
 } from 'tests/helpers';
 import { MovementTypeEnum } from '../types';
-import { assertDoesNotThrow, assertThrows } from 'backend/database/tests/helpers';
+import {
+  assertDoesNotThrow,
+  assertThrows,
+} from 'backend/database/tests/helpers';
 import { StockMovement } from '../StockMovement';
 
 const fyo = getTestFyo();

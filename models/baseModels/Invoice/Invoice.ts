@@ -298,7 +298,7 @@ export abstract class Invoice extends Transactional {
 
     // update outstanding amounts
     await this.fyo.db.update(this.schemaName, {
-      name: this.name as string,
+      name: this.name,
       outstandingAmount: lpAddedBaseGrandTotal! || this.baseGrandTotal!,
     });
 
@@ -482,7 +482,7 @@ export abstract class Invoice extends Transactional {
       taxes[account].amount = taxes[account].amount.add(taxAmount);
     }
 
-    type Summary = typeof taxes[string] & { idx: number };
+    type Summary = (typeof taxes)[string] & { idx: number };
     const taxArr: Summary[] = [];
     let idx = 0;
     for (const account in taxes) {
@@ -546,13 +546,16 @@ export abstract class Invoice extends Transactional {
 
     const grandTotal = ((this.taxes ?? []) as Doc[])
       .map((doc) => doc.amount as Money)
-      .reduce((a, b) => {
-        if (this.isReturn) {
-          return a.abs().add(b.abs()).neg();
-        }
+      .reduce(
+        (a, b) => {
+          if (this.isReturn) {
+            return a.abs().add(b.abs()).neg();
+          }
 
-        return a.add(b.abs());
-      }, (this.netTotal as Money).abs())
+          return a.add(b.abs());
+        },
+        (this.netTotal as Money).abs()
+      )
       .sub(totalDiscount);
 
     if (this.redeemLoyaltyPoints) {
@@ -1122,11 +1125,7 @@ export abstract class Invoice extends Transactional {
   formulas: FormulaMap = {
     account: {
       formula: async () => {
-        return (await this.fyo.getValue(
-          'Party',
-          this.party!,
-          'defaultAccount'
-        )) as string;
+        return await this.fyo.getValue('Party', this.party!, 'defaultAccount');
       },
       dependsOn: ['party'],
     },
@@ -1183,7 +1182,7 @@ export abstract class Invoice extends Transactional {
         if (!getIsNullOrUndef(currency)) {
           return currency;
         }
-        return this.fyo.singles.SystemSettings!.currency as string;
+        return this.fyo.singles.SystemSettings!.currency;
       },
       dependsOn: ['party'],
     },
@@ -1544,7 +1543,7 @@ export abstract class Invoice extends Transactional {
       terms,
       numberSeries,
       backReference: this.name,
-      returnAgainst: linkedEntries ? linkedEntries.Shipment![0] : '',
+      returnAgainst: linkedEntries ? linkedEntries.Shipment[0] : '',
     };
 
     let location = this.autoStockTransferLocation;

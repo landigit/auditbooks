@@ -16,7 +16,7 @@
         (!posProfile?.posUI && fyo.singles.POSSettings?.posUI === 'Classic')
       "
       :table-view="tableView"
-      :profile="(posProfile as POSProfile)"
+      :profile="posProfile as POSProfile"
       :total-quantity="totalQuantity"
       :item-quantity-qap="itemQtyMap"
       :loyalty-points="loyaltyPoints"
@@ -26,13 +26,13 @@
       :item-search-term="itemSearchTerm"
       :selected-item-group="selectedItemGroup"
       :is-pos-shift-open="isPosShiftOpen"
-      :items="(items as [] as POSItem[])"
+      :items="items as [] as POSItem[]"
       :item-visibility="itemVisibility"
-      :sinv-doc="(sinvDoc as SalesInvoice)"
+      :sinv-doc="sinvDoc as SalesInvoice"
       :disable-pay-button="disablePayButton"
       :open-payment-modal="openPaymentModal"
-      :item-discounts="(itemDiscounts as Money)"
-      :coupons="(coupons as AppliedCouponCodes)"
+      :item-discounts="itemDiscounts as Money"
+      :coupons="coupons as AppliedCouponCodes"
       :open-price-list-modal="openPriceListModal"
       :open-item-enquiry-modal="openItemEnquiryModal"
       :applied-coupons-count="appliedCouponsCount"
@@ -75,7 +75,7 @@
     <ModernPOS
       v-else
       :table-view="tableView"
-      :profile="(posProfile as POSProfile)"
+      :profile="posProfile as POSProfile"
       :total-quantity="totalQuantity"
       :item-quantity-qap="itemQtyMap"
       :loyalty-points="loyaltyPoints"
@@ -85,14 +85,14 @@
       :item-search-term="itemSearchTerm"
       :selected-item-group="selectedItemGroup"
       :is-pos-shift-open="isPosShiftOpen"
-      :items="(items as [] as POSItem[])"
+      :items="items as [] as POSItem[]"
       :item-visibility="itemVisibility"
-      :sinv-doc="(sinvDoc as SalesInvoice)"
+      :sinv-doc="sinvDoc as SalesInvoice"
       :disable-pay-button="disablePayButton"
       :open-payment-modal="openPaymentModal"
       :open-keyboard-modal="openKeyboardModal"
-      :item-discounts="(itemDiscounts as Money)"
-      :coupons="(coupons as AppliedCouponCodes)"
+      :item-discounts="itemDiscounts as Money"
+      :coupons="coupons as AppliedCouponCodes"
       :open-price-list-modal="openPriceListModal"
       :open-item-enquiry-modal="openItemEnquiryModal"
       :applied-coupons-count="appliedCouponsCount"
@@ -245,7 +245,7 @@ export default defineComponent({
 
       loyaltyPoints: 0,
       appliedLoyaltyPoints: 0,
-      loyaltyProgram: '' as string,
+      loyaltyProgram: '',
 
       appliedCouponsCount: 0,
       appliedCoupons: [] as AppliedCouponCodes[],
@@ -260,18 +260,18 @@ export default defineComponent({
       paymentDoc: {} as Payment,
       sinvDoc: {} as SalesInvoice,
       posProfile: {} as POSProfile,
-      itemQtyMap: {} as ItemQtyMap,
+      itemQtyMap: {},
       coupons: {} as AppliedCouponCodes,
-      itemSerialNumbers: {} as ItemSerialNumbers,
+      itemSerialNumbers: {},
       quickQtyActive: false,
-      quickQtyBuffer: '' as string,
+      quickQtyBuffer: '',
       quickQtyRow: null as SalesInvoiceItem | null,
       quickQtyKeyDownHandler: null as ((e: KeyboardEvent) => void) | null,
       quickQtyKeyUpHandler: null as ((e: KeyboardEvent) => void) | null,
-      selectedItemForBatch: '' as string,
+      selectedItemForBatch: '',
       pendingBatchItem: null as { item: POSItem; quantity: number } | null,
       expandedBatchId: undefined as string | null | undefined,
-      itemVisibilityValue: 'Inventory Items' as ItemVisibility,
+      itemVisibilityValue: 'Inventory Items',
     };
   },
   computed: {
@@ -475,15 +475,11 @@ export default defineComponent({
 
         const existingItems = (this.sinvDoc.items || []).filter(
           (invoiceItem) =>
-            (invoiceItem as InvoiceItem).item === row!.item &&
+            (invoiceItem as InvoiceItem).item === row.item &&
             !(invoiceItem as InvoiceItem).isFreeItem
         ) as InvoiceItem[];
 
-        await validateQty(
-          this.sinvDoc as SalesInvoice,
-          row,
-          existingItems as unknown as InvoiceItem[]
-        );
+        await validateQty(this.sinvDoc as SalesInvoice, row, existingItems);
       } catch (error) {
         await row.set('quantity', prevQty);
         showToast({
@@ -537,10 +533,10 @@ export default defineComponent({
         return;
       }
 
-      this.posProfile = (await fyo.doc.getDoc(
+      this.posProfile = await fyo.doc.getDoc(
         ModelNameEnum.POSProfile,
         posProfileName as string
-      )) as POSProfile;
+      );
     },
 
     async handleItemSearch(searchTerm: string, addItem?: boolean) {
@@ -746,7 +742,7 @@ export default defineComponent({
       for (const item of items) {
         let availableQty = 0;
 
-        if (!!this.itemQtyMap[item.name as string]) {
+        if (this.itemQtyMap[item.name as string]) {
           availableQty = this.itemQtyMap[item.name as string].availableQty;
         }
 
@@ -1194,7 +1190,6 @@ export default defineComponent({
 
         if (shouldPrint) {
           await routeTo(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `/print/${this.sinvDoc.schemaName}/${this.sinvDoc.name}`
           );
         }
@@ -1220,9 +1215,8 @@ export default defineComponent({
       await this.paymentDoc.set('amount', this.fyo.pesa(this.paidAmount.float));
       await this.paymentDoc.set('referenceType', ModelNameEnum.SalesInvoice);
 
-      const paymentMethodDoc = await this.paymentDoc.loadAndGetLink(
-        'paymentMethod'
-      );
+      const paymentMethodDoc =
+        await this.paymentDoc.loadAndGetLink('paymentMethod');
 
       if (paymentMethodDoc?.type !== 'Cash') {
         await this.paymentDoc.setMultiple({
@@ -1251,7 +1245,6 @@ export default defineComponent({
 
         if (shouldPrint) {
           await routeTo(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `/print/${this.sinvDoc.schemaName}/${this.sinvDoc.name}`
           );
         }

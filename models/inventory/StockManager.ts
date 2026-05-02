@@ -162,7 +162,7 @@ export class StockManager {
       quantityBefore += details.quantity;
     }
 
-    const batchMessage = !!batch ? t` in Batch ${batch}` : '';
+    const batchMessage = batch ? t` in Batch ${batch}` : '';
 
     if (!details.isReturn && quantityBefore < details.quantity) {
       throw new ValidationError(
@@ -337,7 +337,7 @@ class StockManagerItem {
       location,
       referenceName: this.referenceName,
       referenceType: this.referenceType,
-    }) as StockLedgerEntry;
+    });
   }
 
   #clear() {

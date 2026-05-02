@@ -91,7 +91,7 @@ export async function validateSinv(
   await validateSinvItems(
     sinvDoc.items as SalesInvoiceItem[],
     itemQtyMap,
-    sinvDoc.returnAgainst as string
+    sinvDoc.returnAgainst
   );
 }
 

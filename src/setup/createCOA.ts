@@ -93,7 +93,6 @@ async function getCOA(chartOfAccounts: string): Promise<COATree> {
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const countryCoa = (await import(`../../fixtures/verified/${conCode}.json`))
       .default as { tree: COATree };
     return countryCoa.tree;

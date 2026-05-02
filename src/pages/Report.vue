@@ -100,26 +100,29 @@ export default defineComponent({
     },
     groupedActions() {
       const actions = this.report?.getActions() ?? [];
-      const actionsMap = actions.reduce((acc, ac) => {
-        if (!ac.group) {
-          ac.group = 'none';
-        }
+      const actionsMap = actions.reduce(
+        (acc, ac) => {
+          if (!ac.group) {
+            ac.group = 'none';
+          }
 
-        acc[ac.group] ??= {
-          group: ac.group,
-          label: ac.label ?? '',
-          type: ac.type ?? 'secondary',
-          actions: [],
-        };
+          acc[ac.group] ??= {
+            group: ac.group,
+            label: ac.label ?? '',
+            type: ac.type ?? 'secondary',
+            actions: [],
+          };
 
-        acc[ac.group].actions.push(ac);
-        return acc;
-      }, {} as Record<string, ActionGroup>);
+          acc[ac.group].actions.push(ac);
+          return acc;
+        },
+        {} as Record<string, ActionGroup>
+      );
 
       return Object.values(actionsMap);
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
   async activated() {
     docsPathRef.value =
       docsPathMap[this.reportClassName] ?? docsPathMap.Reports!;

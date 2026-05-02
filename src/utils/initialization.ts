@@ -152,11 +152,7 @@ export async function setCurrencySymbols(fyo: Fyo) {
     fields: ['name', 'symbol'],
   })) as { name: string; symbol: string }[];
 
-  fyo.currencySymbols = getValueMapFromList(
-    currencies,
-    'name',
-    'symbol'
-  ) as Record<string, string | undefined>;
+  fyo.currencySymbols = getValueMapFromList(currencies, 'name', 'symbol');
 }
 
 async function setOpenCount(fyo: Fyo) {

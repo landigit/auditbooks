@@ -244,7 +244,7 @@ export abstract class BaseGSTR extends Report {
         placeholder: t`Transfer Type`,
         fieldname: 'transferType',
         options,
-      } as OptionField,
+      },
       {
         fieldtype: 'AutoComplete',
         label: t`Place`,
@@ -256,7 +256,7 @@ export abstract class BaseGSTR extends Report {
             label: codeStateMap[code],
           };
         }),
-      } as OptionField,
+      },
       {
         fieldtype: 'Date',
         label: t`From Date`,

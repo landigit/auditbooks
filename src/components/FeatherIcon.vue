@@ -3,8 +3,7 @@ import * as icons from 'lucide-vue-next';
 import { h } from 'vue';
 
 const toPascalCase = (str) =>
-  str
-    .replace(/(^\w|-\w)/g, (match) => match.replace(/-/, '').toUpperCase());
+  str.replace(/(^\w|-\w)/g, (match) => match.replace(/-/, '').toUpperCase());
 
 export default {
   props: {
@@ -26,7 +25,9 @@ export default {
     const Icon = icons[iconName];
 
     if (!Icon) {
-      console.warn(`[Lucide] Icon "${this.name}" (mapped to "${iconName}") not found.`);
+      console.warn(
+        `[Lucide] Icon "${this.name}" (mapped to "${iconName}") not found.`
+      );
       return null;
     }
 

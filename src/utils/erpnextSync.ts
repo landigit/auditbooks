@@ -846,7 +846,8 @@ async function getDocsFromERPNext(
     fyo.singles.ERPNextSyncSettings?.fetchFromERPNextQueue;
 
   return (await sendAPIRequest(
-    `${baseURL}/api/method/books_integration.api.${fetchFromERPNextQueue as string
+    `${baseURL}/api/method/books_integration.api.${
+      fetchFromERPNextQueue as string
     }?instance=${deviceID}`,
     {
       headers: {
@@ -989,8 +990,7 @@ function isValidSyncableDocName(doctype: string): boolean {
 }
 
 function getDocTypeName(doc: DocValueMap | Doc): string {
-  const doctype =
-    doc.schemaName ?? doc.referenceType ?? (doc.doctype as string);
+  const doctype = doc.schemaName ?? doc.referenceType ?? doc.doctype;
 
   if (['Supplier', 'Customer'].includes(doctype as string)) {
     return ModelNameEnum.Party;

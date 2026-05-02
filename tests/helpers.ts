@@ -59,8 +59,6 @@ export function getTestFyo(): Fyo {
 
 const ext = '.spec.ts';
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
 export function setupTestFyo(fyo: Fyo, filename: string) {
   beforeAll(async () => {
     const options = getTestSetupWizardOptions();
@@ -88,4 +86,3 @@ export function closeTestFyoAfterAll(fyo: Fyo) {
     await fyo.close();
   });
 }
-

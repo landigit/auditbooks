@@ -27,11 +27,7 @@ export default defineComponent({
   },
   emits: ['input', 'blur'],
   data() {
-    return { state: null, view: null, compartments: {} } as {
-      state: EditorState | null;
-      view: EditorView | null;
-      compartments: Record<string, Compartment>;
-    };
+    return { state: null, view: null, compartments: {} };
   },
   computed: {
     container() {

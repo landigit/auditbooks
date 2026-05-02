@@ -3,8 +3,11 @@ import { fyo } from 'src/initFyo';
 export function useAppStore() {
   return {
     get platform() {
-      return fyo.store.platform === 'win32' ? 'Windows' : 
-             fyo.store.platform === 'darwin' ? 'Mac' : 'Linux';
+      return fyo.store.platform === 'win32'
+        ? 'Windows'
+        : fyo.store.platform === 'darwin'
+          ? 'Mac'
+          : 'Linux';
     },
     get showSidebar() {
       return fyo.store.showSidebar ?? true;
@@ -27,6 +30,6 @@ export function useAppStore() {
     },
     setDarkMode(value: boolean) {
       fyo.store.darkMode = value;
-    }
+    },
   };
 }

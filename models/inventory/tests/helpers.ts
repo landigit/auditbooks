@@ -57,7 +57,7 @@ export function getBatch(
     batch,
     expiryDate,
     manufactureDate,
-  }) as Batch;
+  });
   return doc;
 }
 

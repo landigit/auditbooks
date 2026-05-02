@@ -177,7 +177,7 @@ export class TrialBalance extends AccountReport {
           value: hide ? '' : this.fyo.format(map?.credit ?? 0, 'Currency'),
           align: 'right',
           width: ACC_BAL_WIDTH,
-        } as ReportCell,
+        },
       ];
     });
 
@@ -231,7 +231,7 @@ export class TrialBalance extends AccountReport {
         fieldtype: 'Check',
         label: t`Hide Group Amounts`,
         fieldname: 'hideGroupAmounts',
-      } as Field,
+      },
     ] as Field[];
   }
 

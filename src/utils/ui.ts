@@ -107,7 +107,7 @@ export async function deleteDocWithPrompt(doc: Doc) {
                 type: 'error',
               });
             } else {
-              await handleErrorWithDialog(err as Error, doc);
+              await handleErrorWithDialog(err, doc);
             }
 
             return false;
@@ -171,7 +171,7 @@ export async function cancelDocWithPrompt(doc: Doc) {
           try {
             await doc.cancel();
           } catch (err) {
-            await handleErrorWithDialog(err as Error, doc);
+            await handleErrorWithDialog(err, doc);
             return false;
           }
 
@@ -318,7 +318,7 @@ function getDuplicateAction(doc: Doc): Action {
         const dupe = doc.duplicate();
         await openEdit(dupe);
       } catch (err) {
-        await handleErrorWithDialog(err as Error, doc);
+        await handleErrorWithDialog(err, doc);
       }
     },
   };
@@ -333,7 +333,7 @@ function getNewAction(doc: Doc): Action {
         const newDoc = fyo.doc.getNewDoc(doc.schemaName);
         await openEdit(newDoc);
       } catch (err) {
-        await handleErrorWithDialog(err as Error, doc);
+        await handleErrorWithDialog(err, doc);
       }
     },
   };

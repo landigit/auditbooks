@@ -96,10 +96,6 @@ export default defineComponent({
       errors: {},
       activeTab: ModelNameEnum.AccountingSettings,
       groupedFields: null,
-    } as {
-      errors: Record<string, string>;
-      activeTab: string;
-      groupedFields: null | UIGroupedFields;
     };
   },
   computed: {

@@ -120,9 +120,7 @@ async function copyNumberSeries(
   destKnex: Knex,
   schema: Schema
 ) {
-  const values = (await sourceKnex(
-    ModelNameEnum.NumberSeries
-  )) as RawValueMap[];
+  const values = await sourceKnex(ModelNameEnum.NumberSeries);
 
   const refMap = invertMap(defaultNumberSeriesMap);
 
@@ -138,14 +136,14 @@ async function copyNumberSeries(
       continue;
     }
 
-    const indices = (await sourceKnex.raw(
+    const indices = await sourceKnex.raw(
       `
       select cast(substr(name, ??) as int) as idx
       from ?? 
       order by idx desc 
       limit 1`,
       [name.length + 1, referenceType]
-    )) as { idx: number }[];
+    );
 
     value.start = 1001;
     value.current = indices[0]?.idx ?? value.current ?? value.start;
@@ -167,9 +165,7 @@ async function copyLedgerEntries(
   destKnex: Knex,
   schema: Schema
 ) {
-  const values = (await sourceKnex(
-    ModelNameEnum.AccountingLedgerEntry
-  )) as RawValueMap[];
+  const values = await sourceKnex(ModelNameEnum.AccountingLedgerEntry);
   await copyValues(
     destKnex,
     ModelNameEnum.AccountingLedgerEntry,
@@ -195,7 +191,7 @@ async function copyOtherTables(
   ];
 
   for (const sn of schemaNames) {
-    const values = (await sourceKnex(sn)) as RawValueMap[];
+    const values = await sourceKnex(sn);
     await copyValues(destKnex, sn, values, [], {}, schemaMap[sn]);
   }
 }
@@ -214,7 +210,7 @@ async function copyTransactionalTables(
   ];
 
   for (const sn of schemaNames) {
-    const values = (await sourceKnex(sn)) as RawValueMap[];
+    const values = await sourceKnex(sn);
     values.forEach((v) => {
       if (!v.submitted) {
         v.submitted = 0;
@@ -257,7 +253,7 @@ async function copyChildTables(
   );
 
   for (const sn of childSchemaNames) {
-    const values = (await sourceKnex(sn)) as RawValueMap[];
+    const values = await sourceKnex(sn);
     await copyValues(
       destKnex,
       sn,
@@ -270,7 +266,7 @@ async function copyChildTables(
 }
 
 async function copyItem(sourceKnex: Knex, destKnex: Knex, schema: Schema) {
-  const values = (await sourceKnex(ModelNameEnum.Item)) as RawValueMap[];
+  const values = await sourceKnex(ModelNameEnum.Item);
   values.forEach((value) => {
     value.for = 'Both';
   });
@@ -279,7 +275,7 @@ async function copyItem(sourceKnex: Knex, destKnex: Knex, schema: Schema) {
 }
 
 async function copyParty(sourceKnex: Knex, destKnex: Knex, schema: Schema) {
-  const values = (await sourceKnex(ModelNameEnum.Party)) as RawValueMap[];
+  const values = await sourceKnex(ModelNameEnum.Party);
   values.forEach((value) => {
     // customer will be mapped onto role
     if (Number(value.supplier) === 1) {

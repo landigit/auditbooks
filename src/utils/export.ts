@@ -32,7 +32,7 @@ export function getExportFields(
     .filter((f) => !f.computed && f.label && !exclude.includes(f.fieldname))
     .map((field) => {
       const { fieldname, label } = field;
-      const fieldtype = field.fieldtype as FieldType;
+      const fieldtype = field.fieldtype;
       return {
         fieldname,
         fieldtype,
@@ -336,7 +336,7 @@ function convertRawPesaToFloat(data: RawValueMap[], fields: ExportField[]) {
 
   for (const row of data) {
     for (const { fieldname } of currencyFields) {
-      row[fieldname] = safeParseFloat((row[fieldname] ?? '0') as string);
+      row[fieldname] = safeParseFloat(row[fieldname] ?? '0');
     }
   }
 }

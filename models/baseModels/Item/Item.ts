@@ -50,8 +50,7 @@ export class Item extends Doc {
     expenseAccount: {
       formula: async () => {
         if (this.trackItem) {
-          return this.fyo.singles.InventorySettings
-            ?.stockReceivedButNotBilled as string;
+          return this.fyo.singles.InventorySettings?.stockReceivedButNotBilled;
         }
 
         const cogs = await this.fyo.db.getAllRaw('Account', {
@@ -63,7 +62,7 @@ export class Item extends Doc {
         if (cogs.length === 0) {
           return '';
         } else {
-          return cogs[0].name as string;
+          return cogs[0].name;
         }
       },
       dependsOn: ['itemType', 'trackItem'],
