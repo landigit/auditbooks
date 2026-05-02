@@ -1,10 +1,10 @@
 <template>
   <div
-    class="border-s dark:border-gray-800 h-full overflow-auto w-quick-edit bg-white dark:bg-gray-890 custom-scroll custom-scroll-thumb2"
+    class="border-s border-border h-full overflow-auto w-quick-edit bg-surface custom-scroll custom-scroll-thumb2"
   >
     <!-- Row Edit Tool bar -->
     <div
-      class="sticky top-0 border-b dark:border-gray-800 bg-white dark:bg-gray-890"
+      class="sticky top-0 border-b border-border bg-surface"
       style="z-index: 1"
     >
       <div class="flex items-center justify-between px-4 h-row-largest">
@@ -28,7 +28,7 @@
         </div>
       </div>
       <FormHeader
-        class="border-t dark:border-gray-800"
+        class="border-t border-border"
         :form-title="t`Row ${index + 1}`"
         :form-sub-title="fieldlabel"
       />

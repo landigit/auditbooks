@@ -1,17 +1,17 @@
 <template>
   <div
-    class="px-2 w-36 flex items-center border rounded bg-gray-50 dark:text-gray-200 dark:border-gray-800 dark:bg-gray-890 dark:focus-within:bg-gray-900 focus-within:bg-gray-100"
+    class="px-2 w-36 flex items-center border rounded border-border bg-canvas-muted text-main focus-within:bg-surface-hover"
   >
     <input
       ref="scanner"
       type="text"
-      class="text-base placeholder-gray-600 w-full bg-transparent outline-none"
+      class="text-base placeholder:text-description w-full bg-transparent outline-none"
       :placeholder="t`Enter barcode`"
       @change="handleChange"
     />
     <feather-icon
       name="maximize"
-      class="w-3 h-3 text-gray-600 dark:text-gray-400 cursor-text"
+      class="w-3 h-3 text-description cursor-text"
       @click="() => ($refs.scanner as HTMLInputElement).focus()"
     />
   </div>

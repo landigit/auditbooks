@@ -17,7 +17,10 @@
         >
           {{ formattedValue }}
         </p>
-        <p v-else-if="inputPlaceholder" class="text-base text-gray-500 w-full">
+        <p
+          v-else-if="inputPlaceholder"
+          class="text-base text-description w-full"
+        >
           {{ inputPlaceholder }}
         </p>
 
@@ -25,7 +28,9 @@
           <FeatherIcon
             name="calendar"
             class="w-4 h-4"
-            :class="showMandatory ? 'text-red-600' : 'text-gray-600'"
+            :class="
+              showMandatory ? 'text-indicator-red-text' : 'text-description'
+            "
           />
         </button>
       </div>

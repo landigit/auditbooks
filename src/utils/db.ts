@@ -22,7 +22,7 @@ export async function connectToDatabase(
   countryCode?: string
 ): Promise<Conn> {
   try {
-    return { countryCode: await fyo.db.connectToDatabase(dbPath, countryCode) };
+    return { countryCode: (await fyo.db.connectToDatabase(dbPath, countryCode)) ?? '' };
   } catch (error) {
     if (!(error instanceof Error)) {
       throw error;

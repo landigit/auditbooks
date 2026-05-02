@@ -2,30 +2,27 @@
   <div>
     <!-- Datetime header -->
     <div class="flex justify-between items-center text-sm px-4 pt-4">
-      <div
-        v-if="viewMonth !== month || viewYear !== year"
-        class="text-gray-900"
-      >
+      <div v-if="viewMonth !== month || viewYear !== year" class="text-main">
         {{ `${months[viewMonth]}, ${viewYear}` }}
       </div>
-      <div v-else class="text-blue-500">
+      <div v-else class="text-indicator-blue-text">
         {{ datetimeString }}
       </div>
 
       <!-- Next and Previous Month Buttons -->
       <div class="flex items-center">
         <button
-          class="font-mono text-gray-600 cursor-pointer"
+          class="font-mono text-description cursor-pointer"
           @click="prevClicked"
         >
           <FeatherIcon name="chevron-left" class="w-4 h-4" />
         </button>
         <button
-          class="font-mono cursor-pointer w-2 h-2 rounded-full border-gray-400 border-2"
+          class="font-mono cursor-pointer w-2 h-2 rounded-full border-border border-2"
           @click="selectToday"
         />
         <button
-          class="font-mono text-gray-600 cursor-pointer"
+          class="font-mono text-description cursor-pointer"
           @click="nextClicked"
         >
           <FeatherIcon name="chevron-right" class="w-4 h-4" />
@@ -41,7 +38,7 @@
           <div
             v-for="day of weekdays"
             :key="day"
-            class="w-7 h-7 flex items-center justify-center text-xs text-gray-600"
+            class="w-7 h-7 flex items-center justify-center text-xs text-description"
           >
             {{ day }}
           </div>
@@ -52,7 +49,7 @@
           <div
             v-for="item of weekdayList"
             :key="`${item.year}-${item.month}-${item.day}`"
-            class="w-7 h-7 flex items-center justify-center text-xs rounded-full cursor-pointer hover:bg-gray-100"
+            class="w-7 h-7 flex items-center justify-center text-xs rounded-full cursor-pointer hover:bg-surface-hover"
             :class="getDayClass(item)"
             @click="select(item)"
           >
@@ -145,7 +142,7 @@
     <!-- Footer -->
     <div class="flex p-4 w-full justify-between">
       <button
-        class="text-xs text-gray-600 hover:text-gray-600"
+        class="text-xs text-description hover:text-description"
         @click="selectMonthYear = !selectMonthYear"
       >
         {{ selectMonthYear ? t`Hide Month/Year` : t`Show Month/Year` }}
@@ -153,7 +150,7 @@
 
       <button
         v-if="showClear"
-        class="text-xs text-gray-600 hover:text-gray-600 ms-auto"
+        class="text-xs text-description hover:text-description ms-auto"
         @click="clearClicked"
       >
         {{ t`Clear` }}
@@ -322,15 +319,15 @@ export default defineComponent({
       const isToday = item.day === todayDay && item.month === todayMonth;
       const isSelected = item.day === this.day && item.month === this.month;
       if (item.month !== this.viewMonth && !isToday) {
-        dclass.push('text-gray-600');
+        dclass.push('text-description');
       }
       if (isSelected) {
         dclass.push('font-semibold');
       }
       if (isSelected && this.modelValue != null) {
-        dclass.push('bg-gray-100', 'text-blue-500');
+        dclass.push('bg-surface-hover', 'text-indicator-blue-text');
       } else if (isToday && !isSelected) {
-        dclass.push('text-blue-500');
+        dclass.push('text-indicator-blue-text');
       }
       return dclass;
     },
@@ -340,7 +337,7 @@ export default defineComponent({
         dclass.push('font-semibold');
       }
       if (this.modelValue != null && item === this.month) {
-        dclass.push('text-blue-500');
+        dclass.push('text-indicator-blue-text');
       }
       return dclass;
     },
@@ -508,12 +505,13 @@ function getWeekdayList(startYear: number, startMonth: number): WeekListItem[] {
 </script>
 
 <style scoped>
+@reference "../../styles/index.css";
 .date-selector-label {
-  @apply text-xs text-gray-600 block mb-0.5;
+  @apply text-xs text-description block mb-0.5;
 }
 
 .date-selector-input {
-  @apply text-sm text-gray-900 p-1 border rounded w-full;
+  @apply text-sm text-main p-1 border border-border bg-surface rounded w-full;
 }
 
 input[type='number']::-webkit-inner-spin-button {

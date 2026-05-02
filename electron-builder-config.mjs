@@ -16,7 +16,7 @@ const packageDirPath = path.join(root, 'dist_electron', 'bundled');
 
 const auditBooksConfig = {
   productName: 'Auditbooks',
-  appId: 'io.frappe.books',
+  appId: 'com.landigit.auditbooks',
   artifactName: '${productName}-v${version}-${os}-${arch}.${ext}',
   asarUnpack: '**/*.node',
   extraResources: [

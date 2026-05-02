@@ -1,4 +1,5 @@
 import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
 import builder from 'electron-builder';
 import esbuild from 'esbuild';
 import fs from 'fs';
@@ -69,7 +70,7 @@ async function buildRendererProcessSource() {
     base: `/${base}`,
     root: path.join(root, 'src'),
     build: { outDir, sourcemap: true },
-    plugins: [vue()],
+    plugins: [tailwindcss(), vue()],
     resolve: {
       alias: {
         vue: 'vue/dist/vue.esm-bundler.js',

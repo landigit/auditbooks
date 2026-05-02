@@ -2,7 +2,7 @@
   <div>
     <feather-icon
       :name="isExapanded ? 'chevron-up' : 'chevron-down'"
-      class="w-4 h-4 inline-flex dark:text-white"
+      class="w-4 h-4 inline-flex text-main"
       @click="toggleExpand"
     />
   </div>
@@ -22,7 +22,7 @@
     />
     <p
       v-if="row.isFreeItem"
-      class="absolute flex top-0 font-medium text-xs ml-2 text-green-800"
+      class="absolute flex top-0 font-medium text-xs ml-2 text-indicator-green-text"
       style="font-size: 0.6rem"
     >
       {{ row.pricingRule }}
@@ -68,7 +68,7 @@
   <div class="flex justify-center">
     <feather-icon
       name="trash"
-      class="w-4 text-xl text-red-500"
+      class="w-4 text-xl text-error"
       @click="removeAddedItem(row)"
     />
   </div>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative window-drag flex items-center border-b dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-100 dark:border-gray-800"
+    class="relative window-drag flex items-center border-b bg-canvas text-main border-border"
     style="height: 28px"
   >
     <Fb class="ms-2" />
@@ -12,13 +12,13 @@
       class="absolute window-no-drag flex h-full items-center right-0"
     >
       <div
-        class="flex items-center px-4 h-full hover:bg-gray-300 dark:hover:bg-gray-875"
+        class="flex items-center px-4 h-full hover:bg-surface-hover"
         @click="minimizeWindow"
       >
         <feather-icon name="minus" class="h-4 w-4 flex-shrink-0" />
       </div>
       <div
-        class="flex items-center px-4 h-full hover:bg-gray-300 dark:hover:bg-gray-875"
+        class="flex items-center px-4 h-full hover:bg-surface-hover"
         @click="toggleMaximize"
       >
         <feather-icon
@@ -29,7 +29,7 @@
         <feather-icon v-else name="square" class="h-3 w-3 flex-shrink-0" />
       </div>
       <div
-        class="flex items-center px-4 h-full hover:bg-red-600 hover:text-white"
+        class="flex items-center px-4 h-full hover:bg-error hover:text-white"
         @click="closeWindow"
       >
         <feather-icon name="x" class="h-4 w-4 flex-shrink-0" />

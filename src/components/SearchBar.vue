@@ -2,14 +2,11 @@
   <div>
     <!-- Search Bar Button -->
     <Button
-      class="px-3 py-2 rounded-r-none dark:bg-gray-900"
+      class="px-3 py-2 rounded-r-none bg-canvas-muted"
       :padding="false"
       @click="open"
     >
-      <feather-icon
-        name="search"
-        class="w-4 h-4 text-gray-700 dark:text-gray-300"
-      />
+      <feather-icon name="search" class="w-4 h-4 text-main" />
     </Button>
   </div>
 
@@ -29,14 +26,14 @@
           autocomplete="off"
           spellcheck="false"
           :placeholder="t`Type to search...`"
-          class="bg-gray-100 dark:bg-gray-800 text-2xl focus:outline-none w-full placeholder-gray-500 text-gray-900 dark:text-gray-100 rounded-md p-3"
+          class="bg-canvas-muted text-2xl focus:outline-none w-full placeholder-description text-main rounded-md p-3"
           @keydown.up="up"
           @keydown.down="down"
           @keydown.enter="() => select()"
           @keydown.esc="close"
         />
       </div>
-      <hr v-if="suggestions.length" class="dark:border-gray-800" />
+      <hr class="border-border" />
 
       <!-- Search List -->
       <div
@@ -47,12 +44,8 @@
           v-for="(si, i) in suggestions"
           :key="`${i}-${si.label}`"
           :data-index="`search-suggestion-${i}`"
-          class="hover:bg-gray-50 dark:hover:bg-gray-875 cursor-pointer"
-          :class="
-            idx === i
-              ? 'border-gray-700 dark:border-gray-200 bg-gray-50 dark:bg-gray-875 border-s-4'
-              : ''
-          "
+          class="hover:bg-surface-hover cursor-pointer"
+          :class="idx === i ? 'border-main bg-surface-hover border-s-4' : ''"
           @click="select(i)"
         >
           <!-- Search List Item -->
@@ -62,25 +55,21 @@
           >
             <div class="flex items-center">
               <p
-                :class="
-                  idx === i
-                    ? 'text-gray-900 dark:text-gray-100'
-                    : 'text-gray-700 dark:text-gray-400'
-                "
+                :class="idx === i ? 'text-main' : 'text-description'"
                 :style="idx === i ? 'margin-left: -4px' : ''"
               >
                 {{ si.label }}
               </p>
               <p
                 v-if="si.group === 'Docs'"
-                class="text-gray-600 dark:text-gray-400 text-sm ms-3"
+                class="text-description text-sm ms-3"
               >
                 {{ si.more.filter(Boolean).join(', ') }}
               </p>
             </div>
             <p
               class="text-sm text-end justify-self-end"
-              :class="`text-${groupColorMap[si.group]}-500`"
+              :class="`text-indicator-${groupColorMap[si.group]}-text`"
             >
               {{
                 si.group === 'Docs' ? si.schemaLabel : groupLabelMap[si.group]
@@ -88,15 +77,12 @@
             </p>
           </div>
 
-          <hr
-            v-if="i !== suggestions.length - 1"
-            class="dark:border-gray-800"
-          />
+          <hr class="border-border" />
         </div>
       </div>
 
       <!-- Footer -->
-      <hr class="dark:border-gray-800" />
+      <hr class="border-border" />
       <div class="m-1 flex justify-between flex-col gap-2 text-sm select-none">
         <!-- Group Filters -->
         <div class="flex justify-between">
@@ -104,7 +90,7 @@
             <button
               v-for="g in searchGroups"
               :key="g"
-              class="border dark:border-gray-800 px-1 py-0.5 rounded-lg"
+              class="border border-border px-1 py-0.5 rounded-lg"
               :class="getGroupFilterButtonClass(g)"
               @click="searcher!.set(g, !searcher!.filters.groupFilters[g])"
             >
@@ -112,7 +98,7 @@
             </button>
           </div>
           <button
-            class="hover:text-gray-900 dark:hover:text-gray-25 py-0.5 rounded text-gray-700 dark:text-gray-300"
+            class="hover:text-main py-0.5 rounded text-description"
             @click="showMore = !showMore"
           >
             {{ showMore ? t`Less Filters` : t`More Filters` }}
@@ -122,12 +108,12 @@
         <!-- Additional Filters -->
         <div v-if="showMore" class="-mt-1">
           <!-- Group Skip Filters -->
-          <div class="flex gap-1 text-gray-800 dark:text-gray-200">
+          <div class="flex gap-1 text-main">
             <button
               v-for="s in ['skipTables', 'skipTransactions'] as const"
               :key="s"
-              class="border dark:border-gray-800 px-1 py-0.5 rounded-lg"
-              :class="{ 'bg-gray-200': searcher?.filters[s] }"
+              class="border border-border px-1 py-0.5 rounded-lg"
+              :class="{ 'bg-surface-hover': searcher?.filters[s] }"
               @click="searcher?.set(s, !searcher?.filters[s])"
             >
               {{
@@ -137,15 +123,13 @@
           </div>
 
           <!-- Schema Name Filters -->
-          <div
-            class="flex mt-1 gap-1 text-blue-500 dark:text-blue-100 flex-wrap"
-          >
+          <div class="flex mt-1 gap-1 text-indicator-blue-text flex-wrap">
             <button
               v-for="sf in schemaFilters"
               :key="sf.value"
-              class="border px-1 py-0.5 rounded-lg border-blue-100 dark:border-blue-800 whitespace-nowrap"
+              class="border px-1 py-0.5 rounded-lg border-indicator-blue-bg whitespace-nowrap"
               :class="{
-                'bg-blue-100 dark:bg-blue-800':
+                'bg-indicator-blue-bg':
                   searcher?.filters.schemaFilters[sf.value],
               }"
               @click="
@@ -161,15 +145,14 @@
         </div>
 
         <!-- Keybindings Help -->
-        <div class="flex text-sm text-gray-500 justify-between items-baseline">
+        <div
+          class="flex text-sm text-description justify-between items-baseline"
+        >
           <div class="flex gap-4">
             <p>↑↓ {{ t`Navigate` }}</p>
             <p>↩ {{ t`Select` }}</p>
             <p><span class="tracking-tighter">esc</span> {{ t`Close` }}</p>
-            <button
-              class="flex items-center hover:text-gray-800 dark:hover:text-gray-300"
-              @click="openDocs"
-            >
+            <button class="flex items-center hover:text-main" @click="openDocs">
               <feather-icon name="help-circle" class="w-4 h-4 me-1" />
               {{ t`Help` }}
             </button>
@@ -181,7 +164,7 @@
 
           <div
             v-if="(searcher?.numSearches ?? 0) > 50"
-            class="border border-gray-100 dark:border-gray-875 rounded flex justify-self-end ms-2"
+            class="border border-border rounded flex justify-self-end ms-2"
           >
             <template
               v-for="c in allowedLimits.filter(
@@ -191,9 +174,7 @@
             >
               <button
                 class="w-9"
-                :class="
-                  limit === c ? 'bg-gray-100 dark:bg-gray-875 rounded' : ''
-                "
+                :class="limit === c ? 'bg-surface-hover rounded' : ''"
                 @click="limit = Number(c)"
               >
                 {{ c === -1 ? t`All` : c }}
@@ -411,12 +392,10 @@ export default defineComponent({
       const isOn = this.searcher.filters.groupFilters[g];
       const color = this.groupColorMap[g];
       if (isOn) {
-        return `${getBgTextColorClass(
-          color
-        )} border-${color}-100 dark:border-${color}-800`;
+        return `${getBgTextColorClass(color)} border-indicator-${color}-bg`;
       }
 
-      return `text-${color}-600 dark:text-${color}-400 border-${color}-100 dark:border-${color}-800`;
+      return `text-indicator-${color}-text border-indicator-${color}-bg`;
     },
   },
 });

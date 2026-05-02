@@ -27,7 +27,9 @@
           (hasNonZeroValues && active === thetasAndStarts[0][0] ? 4 : 0)
         "
         :stroke="
-          hasNonZeroValues ? sectors[thetasAndStarts[0][0]].color : '#f4f4f6'
+          hasNonZeroValues
+            ? sectors[thetasAndStarts[0][0]].color
+            : 'var(--color-chart-empty)'
         "
         :class="hasNonZeroValues ? 'sector' : ''"
         :style="{ transformOrigin: `${cx}px ${cy}px` }"
@@ -60,7 +62,7 @@
         :style="{
           fontSize: '6px',
           fontWeight: 'bold',
-          fill: darkMode ? '#FFFFFF' : '#415668',
+          fill: 'currentColor',
         }"
       >
         {{
@@ -76,7 +78,8 @@
         :x="cx"
         :y="cy + 8"
         text-anchor="middle"
-        style="font-size: 5px; fill: #a1abb4"
+        style="font-size: 5px; fill: currentColor"
+        class="text-description"
       >
         {{
           active !== null && sectors.length !== 0
@@ -105,7 +108,6 @@ export default {
     offsetY: { default: 0, type: Number },
     textOffsetX: { default: 0, type: Number },
     textOffsetY: { default: 0, type: Number },
-    darkMode: { type: Boolean, default: false },
   },
   emits: ['change'],
   computed: {
@@ -156,11 +158,7 @@ export default {
       return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
     },
     getSectorColor(index) {
-      if (this.darkMode) {
-        return this.sectors[index].color.darkColor;
-      } else {
-        return this.sectors[index].color.color;
-      }
+      return this.sectors[index].color;
     },
   },
 };

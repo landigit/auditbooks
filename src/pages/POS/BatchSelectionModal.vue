@@ -1,6 +1,6 @@
 <template>
   <Modal class="h-auto w-96" :set-close-listener="false">
-    <p class="text-center font-semibold py-3 text-gray-800 dark:text-gray-200">
+    <p class="text-center font-semibold py-3 text-main">
       {{ t`Select the Batch` }}
     </p>
 
@@ -23,22 +23,22 @@
 
       <div class="mt-8 mb-6 grid grid-cols-2 gap-4">
         <Button
-          class="w-full bg-green-500 dark:bg-green-700"
+          class="w-full bg-indicator-green-bg"
           style="padding: 1.35rem"
           :disabled="!selectedBatch"
           @click="submitSelection"
         >
-          <p class="uppercase text-lg text-white font-semibold">
+          <p class="uppercase text-lg text-indicator-green-text font-semibold">
             {{ t`Select` }}
           </p>
         </Button>
 
         <Button
-          class="w-full bg-red-500 dark:bg-red-700"
+          class="w-full bg-indicator-red-bg"
           style="padding: 1.35rem"
           @click="closeModal"
         >
-          <p class="uppercase text-lg text-white font-semibold">
+          <p class="uppercase text-lg text-indicator-red-text font-semibold">
             {{ t`Cancel` }}
           </p>
         </Button>

@@ -24,7 +24,7 @@
       />
       <p
         v-if="schema.label && !(canShowBarcode || canShowExchangeRate)"
-        class="text-xl font-semibold items-center text-gray-600"
+        class="text-xl font-semibold items-center text-description"
       >
         {{ schema.label }}
       </p>
@@ -78,7 +78,7 @@
     <template #body>
       <FormHeader
         :form-title="title"
-        class="sticky top-0 bg-white dark:bg-gray-890 border-b dark:border-gray-800"
+        class="sticky top-0 bg-surface border-b border-border"
       >
         <StatusPill v-if="hasDoc" :doc="doc" />
       </FormHeader>
@@ -94,9 +94,7 @@
           ref="section"
           class="p-4"
           :class="
-            idx !== 0 && activeGroup.size > 1
-              ? 'border-t dark:border-gray-800'
-              : ''
+            idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''
           "
           :show-title="activeGroup.size > 1 && n !== t`Default`"
           :title="n"
@@ -112,7 +110,7 @@
       <!-- Tab Bar -->
       <div
         v-if="groupedFields && groupedFields.size > 1"
-        class="mt-auto px-4 pb-4 flex gap-8 border-t dark:border-gray-800 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-875"
+        class="mt-auto px-4 pb-4 flex gap-8 border-t border-border flex-shrink-0 sticky bottom-0 bg-surface"
       >
         <div
           v-for="key of groupedFields.keys()"
@@ -120,8 +118,8 @@
           class="text-sm cursor-pointer"
           :class="
             key === activeTab
-              ? 'text-gray-900 dark:text-gray-25 font-semibold border-t-2 border-gray-800 dark:border-gray-100'
-              : 'text-gray-700 dark:text-gray-200 '
+              ? 'text-main font-semibold border-t-2 border-main'
+              : 'text-description'
           "
           :style="{
             paddingTop: key === activeTab ? 'calc(1rem - 2px)' : '1rem',

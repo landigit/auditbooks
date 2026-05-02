@@ -1,6 +1,6 @@
 <template>
   <div
-    class="py-2 h-full flex justify-between flex-col bg-gray-25 dark:bg-gray-900 relative"
+    class="py-2 h-full flex justify-between flex-col bg-sidebar relative"
     :class="{
       'window-drag': platform !== 'Windows',
     }"
@@ -15,7 +15,7 @@
       >
         <h6
           data-testid="company-name"
-          class="font-semibold dark:text-gray-200 whitespace-nowrap overflow-auto no-scrollbar select-none"
+          class="font-semibold text-main whitespace-nowrap overflow-auto no-scrollbar select-none"
         >
           {{ companyName }}
         </h6>
@@ -24,11 +24,11 @@
       <!-- Sidebar Items -->
       <div v-for="group in groups" :key="group.label">
         <div
-          class="px-4 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-875 h-10"
+          class="px-4 flex items-center cursor-pointer hover:bg-surface-hover h-10"
           :class="
             isGroupActive(group) && !group.items
-              ? 'bg-gray-100 dark:bg-gray-875 border-s-4 border-gray-800 dark:border-gray-100'
-              : ''
+              ? 'bg-sidebar-active-bg text-sidebar-active-text border-s-2 border-sidebar-active-border'
+              : 'text-muted'
           "
           @click="routeToSidebarItem(group)"
         >
@@ -38,15 +38,12 @@
             :size="group.iconSize || '18'"
             :height="group.iconHeight ?? 0"
             :active="!!isGroupActive(group)"
-            :darkMode="darkMode"
             :class="isGroupActive(group) && !group.items ? '-ms-1' : ''"
           />
           <div
-            class="ms-2 text-lg text-gray-700"
+            class="ms-2 text-lg"
             :class="
-              isGroupActive(group) && !group.items
-                ? 'text-gray-900 dark:text-gray-25'
-                : 'dark:text-gray-300'
+              isGroupActive(group) && !group.items ? 'text-main' : 'text-muted'
             "
           >
             {{ group.label }}
@@ -58,11 +55,11 @@
           <div
             v-for="item in group.items"
             :key="item.label"
-            class="text-base h-10 ps-10 cursor-pointer flex items-center hover:bg-gray-100 dark:hover:bg-gray-875"
+            class="text-base h-10 ps-10 cursor-pointer flex items-center hover:bg-surface-hover"
             :class="
               isItemActive(item)
-                ? 'bg-gray-100 dark:bg-gray-875 text-gray-900 dark:text-gray-100 border-s-4 border-gray-800 dark:border-gray-100'
-                : 'text-gray-700 dark:text-gray-400'
+                ? 'bg-sidebar-active-bg text-sidebar-active-text border-s-2 border-sidebar-active-border'
+                : 'text-muted'
             "
             @click="routeToSidebarItem(item)"
           >
@@ -77,7 +74,7 @@
     <!-- Report Issue and DB Switcher -->
     <div class="window-no-drag flex flex-col gap-2 py-2 px-4">
       <button
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
+        class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="openDocumentation"
       >
         <feather-icon name="help-circle" class="h-4 w-4 flex-shrink-0" />
@@ -87,7 +84,7 @@
       </button>
 
       <button
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
+        class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="viewShortcuts = true"
       >
         <feather-icon name="command" class="h-4 w-4 flex-shrink-0" />
@@ -96,7 +93,7 @@
 
       <button
         data-testid="change-db"
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
+        class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="$emit('change-db-file')"
       >
         <feather-icon name="database" class="h-4 w-4 flex-shrink-0" />
@@ -104,7 +101,20 @@
       </button>
 
       <button
-        class="flex text-sm text-gray-600 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-400 gap-1 items-center"
+        class="flex text-sm text-description hover:text-main gap-1 items-center"
+        @click="$emit('toggle-darkmode')"
+      >
+        <template v-if="!darkMode">
+          <feather-icon name="moon" class="h-4 w-4 flex-shrink-0" />
+          <p>{{ t`Dark Mode` }}</p>
+        </template>
+        <template v-else>
+          <feather-icon name="sun" class="h-4 w-4 flex-shrink-0" />
+          <p>{{ t`Light Mode` }}</p>
+        </template>
+      </button>
+      <button
+        class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="() => reportIssue()"
       >
         <feather-icon name="flag" class="h-4 w-4 flex-shrink-0" />
@@ -115,7 +125,7 @@
 
       <p
         v-if="showDevMode"
-        class="text-xs text-gray-500 select-none cursor-pointer"
+        class="text-xs text-description select-none cursor-pointer"
         @click="showDevMode = false"
         title="Open dev tools with Ctrl+Shift+I"
       >
@@ -125,7 +135,7 @@
 
     <!-- Hide Sidebar Button -->
     <button
-      class="absolute bottom-0 end-0 text-gray-600 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-875 rounded p-1 m-4 rtl-rotate-180"
+      class="absolute bottom-0 end-0 text-description hover:bg-surface-hover rounded p-1 m-4 rtl-rotate-180"
       @click="() => toggleSidebar()"
     >
       <feather-icon name="chevrons-left" class="w-4 h-4" />
@@ -159,7 +169,10 @@ export default defineComponent({
     ShortcutsHelper,
   },
   props: {
-    darkMode: { type: Boolean, default: false },
+    darkMode: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['change-db-file', 'toggle-darkmode'],
   setup() {
@@ -204,6 +217,9 @@ export default defineComponent({
       }
     });
     this.shortcuts?.set(COMPONENT_NAME, ['F1'], () => this.openDocumentation());
+    this.shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyD'], () =>
+      this.$emit('toggle-darkmode')
+    );
 
     this.showDevMode = this.fyo.store.isDevelopment;
   },

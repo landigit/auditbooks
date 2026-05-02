@@ -2,8 +2,8 @@
   <Modal class="h-auto w-96" :set-close-listener="false">
     <p class="text-center font-semibold py-3">Apply Coupon Code</p>
     <div class="px-10">
-      <hr class="dark:border-gray-800" />
-      <p v-if="appliedCoupons.length" class="text-xs m-2 text-gray-500">
+      <hr class="border-border" />
+      <p v-if="appliedCoupons.length" class="text-xs m-2 text-description">
         {{ t`Applied Coupon Codes` }}
       </p>
       <div
@@ -16,7 +16,7 @@
           :key="index"
           :ratio="ratio"
           :border="true"
-          class="border-b border-l border-r dark:border-gray-800 relative group h-coupon-mid hover:bg-gray-25 dark:bg-gray-890 items-center justify-center"
+          class="border-b border-l border-r border-border relative group h-coupon-mid hover:bg-surface-hover bg-surface items-center justify-center"
         >
           <div class="flex flex-row w-full items-center">
             <div class="flex flex-row">
@@ -34,7 +34,7 @@
           <div class="absolute right-3">
             <feather-icon
               name="trash"
-              class="w-4 text-xl text-red-500 cursor-pointer"
+              class="w-4 text-xl text-error cursor-pointer"
               @click="removeAppliedCoupon(coupon)"
             />
           </div>
@@ -63,13 +63,15 @@
       <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2">
         <div class="col-span-2">
           <Button
-            class="w-full bg-green-500 dark:bg-green-700"
+            class="w-full bg-indicator-green-bg"
             style="padding: 1.35rem"
             :disabled="validationError"
             @click="setCouponCode()"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-indicator-green-text font-semibold"
+              >
                 {{ t`Save` }}
               </p>
             </slot>
@@ -80,12 +82,14 @@
       <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-8">
         <div class="col-span-2">
           <Button
-            class="w-full bg-red-500 dark:bg-red-700"
+            class="w-full bg-indicator-red-bg"
             style="padding: 1.35rem"
             @click="cancelApplyCouponCode()"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-indicator-red-text font-semibold"
+              >
                 {{ t`Cancel` }}
               </p>
             </slot>

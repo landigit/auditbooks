@@ -1,13 +1,13 @@
 <template>
   <div class="relative group">
-    <div class="bg-gray-100 p-1.5 rounded-md" @click="toggleItemsView">
+    <div class="bg-surface p-1.5 rounded-md" @click="toggleItemsView">
       <FeatherIcon
         :name="tableView ? 'grid' : 'list'"
-        class="w-5 h-5 text-black"
+        class="w-5 h-5 text-main"
       />
     </div>
     <span
-      class="p-2 mb-2 w-20 absolute bottom-full left-1/2 transform -translate-x-1/2 text-center opacity-0 bg-gray-100 text-black text-xs rounded-md transition-opacity duration-300 group-hover:opacity-100 dark:bg-gray-800 dark:text-white"
+      class="p-2 mb-2 w-20 absolute bottom-full left-1/2 transform -translate-x-1/2 text-center opacity-0 bg-surface text-main text-xs rounded-md transition-opacity duration-300 group-hover:opacity-100"
     >
       {{ tableView ? t`Grid View` : t`List View` }}
     </span>
@@ -15,7 +15,7 @@
 
   <div class="relative group">
     <div
-      class="px-1.5 py-1 rounded-md bg-gray-100"
+      class="px-1.5 py-1 rounded-md bg-canvas-muted"
       @click="() => $emit('emitRouteToSinvList')"
     >
       <svg
@@ -23,7 +23,8 @@
         height="24"
         viewBox="0 -960 960 960"
         width="21"
-        fill="#000"
+        fill="currentColor"
+        class="text-main"
       >
         <path
           d="M240-100q-41.92 0-70.96-29.04Q140-158.08 140-199.82V-300h120v-552.31l55.39 47.7 56.15-47.7 56.15 47.7 56.16-47.7 56.15 47.7 56.15-47.7 56.16 47.7 56.15-47.7 56.15 47.7 55.39-47.7V-200q0 41.92-29.04 70.96Q761.92-100 720-100H240Zm480-60q17 0 28.5-11.5T760-200v-560H320v460h360v100q0 17 11.5 28.5T720-160ZM367.69-610v-60h226.92v60H367.69Zm0 120v-60h226.92v60H367.69Zm310-114.62q-14.69 0-25.04-10.34-10.34-10.35-10.34-25.04t10.34-25.04q10.35-10.34 25.04-10.34t25.04 10.34q10.35 10.35 10.35 25.04t-10.35 25.04q-10.35 10.34-25.04 10.34Zm0 120q-14.69 0-25.04-10.34-10.34-10.35-10.34-25.04t10.34-25.04q10.35-10.34 25.04-10.34t25.04 10.34q10.35 10.35 10.35 25.04t-10.35 25.04q-10.35 10.34-25.04 10.34ZM240-160h380v-80H200v40q0 17 11.5 28.5T240-160Zm-40 0v-80 80Z"
@@ -32,7 +33,7 @@
     </div>
 
     <span
-      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 rounded-md opacity-0 bg-gray-100 text-black text-xs text-center transition-opacity duration-300 group-hover:opacity-100 dark:bg-gray-800 dark:text-white"
+      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 rounded-md opacity-0 bg-surface text-main text-xs text-center transition-opacity duration-300 group-hover:opacity-100"
     >
       {{ t`Sales Invoice List` }}
     </span>
@@ -47,10 +48,10 @@
     }"
   >
     <div
-      class="p-1 rounded-md bg-gray-100"
+      class="p-1 rounded-md bg-canvas-muted"
       :class="{
-        'bg-gray-100': loyaltyPoints,
-        'dark:bg-gray-600 cursor-not-allowed':
+        'bg-canvas-muted': loyaltyPoints,
+        'opacity-50 cursor-not-allowed':
           !loyaltyPoints || !sinvDoc?.party || !sinvDoc?.items?.length,
       }"
       @click="openLoyaltyModal"
@@ -60,7 +61,8 @@
         height="23px"
         viewBox="0 -960 960 960"
         width="25px"
-        fill="#000"
+        fill="currentColor"
+        class="text-main"
       >
         <path
           d="M100-180v-600h760v600H100Zm50.26-50.26h659.48v-499.48H150.26v499.48Zm0 0v-499.48 499.48Zm181.64-56.77h50.25v-42.56h48.67q14.37 0 23.6-10.38 9.22-10.38 9.22-24.25v-106.93q0-14.71-9.22-24.88-9.23-10.17-23.6-10.17H298.77v-73.95h164.87v-50.26h-81.49v-42.56H331.9v42.56h-48.41q-14.63 0-24.8 10.38-10.18 10.38-10.18 25v106.27q0 14.62 10.18 23.71 10.17 9.1 24.8 9.1h129.9v76.1H248.51v50.26h83.39v42.56Zm312.97-27.94L705.9-376H583.85l61.02 61.03ZM583.85-574H705.9l-61.03-61.03L583.85-574Z"
@@ -69,7 +71,7 @@
     </div>
 
     <span
-      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-100 text-black text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-gray-800 dark:text-white"
+      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-surface text-main text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
     >
       {{ t`Loyalty Program` }}
     </span>
@@ -82,15 +84,16 @@
     }"
   >
     <div
-      class="p-0.5 rounded-md bg-gray-100"
+      class="p-0.5 rounded-md bg-canvas-muted"
       :class="{
-        'dark:bg-gray-600 cursor-not-allowed':
+        'opacity-50 cursor-not-allowed':
           !sinvDoc?.party || !sinvDoc?.items?.length,
       }"
       @click="openCouponModal"
     >
       <svg
-        fill="#000000"
+        fill="currentColor"
+        class="text-main"
         width="28px"
         height="28px"
         viewBox="0 0 512.00 512.00"
@@ -99,7 +102,7 @@
         xml:space="preserve"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
-        stroke="#000000"
+        stroke="currentColor"
         stroke-width="3.312000000000001"
         transform="matrix(1, 0, 0, 1, 0, 0)rotate(0)"
       >
@@ -108,7 +111,7 @@
           id="SVGRepo_tracerCarrier"
           stroke-linecap="round"
           stroke-linejoin="round"
-          stroke="#CCCCCC"
+          stroke="var(--color-border)"
           stroke-width="19.456"
         ></g>
         <g id="SVGRepo_iconCarrier">
@@ -145,13 +148,13 @@
       </svg>
     </div>
     <span
-      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-100 text-black text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-gray-800 dark:text-white"
+      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-surface text-main text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
     >
       Coupon Code
     </span>
     <div
       v-if="appliedCouponsCount !== 0"
-      class="h-4 w-4 p-2 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-green-400 text-green-900 border-red-500 rounded-full flex items-center justify-center text-xs cursor-pointer"
+      class="h-4 w-4 p-2 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-indicator-green-bg text-indicator-green-text rounded-full flex items-center justify-center text-xs cursor-pointer"
     >
       {{ appliedCouponsCount }}
     </div>
@@ -164,7 +167,7 @@
     }"
   >
     <div
-      class="p-1 rounded-md bg-gray-100"
+      class="p-1 rounded-md bg-canvas-muted"
       @click="$emit('toggleModal', 'PriceList')"
     >
       <svg
@@ -172,7 +175,8 @@
         height="23px"
         viewBox="0 -960 960 960"
         width="24px"
-        fill="#000"
+        fill="currentColor"
+        class="text-main"
       >
         <path
           d="M180.31-164q-27.01 0-45.66-18.65Q116-201.3 116-228.31v-503.38q0-27.01 18.65-45.66Q153.3-796 180.31-796h599.38q27.01 0 45.66 18.65Q844-758.7 844-731.69v503.38q0 27.01-18.65 45.66Q806.7-164 779.69-164H180.31Zm0-52h599.38q4.62 0 8.46-3.85 3.85-3.84 3.85-8.46v-503.38q0-4.62-3.85-8.46-3.84-3.85-8.46-3.85H180.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v503.38q0 4.62 3.85 8.46 3.84 3.85 8.46 3.85ZM221-297h172v-52H221v52Zm361-77.23L737.77-530 701-566.77l-119 119-51-51L494.23-462 582-374.23ZM221-454h172v-52H221v52Zm0-156h172v-52H221v52Zm-53 394v-528 528Z"
@@ -181,7 +185,7 @@
     </div>
 
     <span
-      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-100 dark:bg-gray-800 dark:text-white text-black text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-surface text-main text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     >
       Price List
     </span>
@@ -193,7 +197,7 @@
     }"
   >
     <div
-      class="p-1 rounded-md bg-gray-100"
+      class="p-1 rounded-md bg-surface"
       @click="$emit('toggleModal', 'ItemEnquiry')"
     >
       <svg
@@ -202,7 +206,7 @@
         viewBox="0 0 24 24"
         stroke="currentColor"
         stroke-width="1.5"
-        class="w-6 h-6 text-black"
+        class="w-6 h-6 text-main"
       >
         <path
           stroke-linecap="round"
@@ -213,7 +217,7 @@
     </div>
 
     <span
-      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-100 dark:bg-gray-800 dark:text-white text-black text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-surface text-main text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     >
       Item Enquiry
     </span>
@@ -224,7 +228,6 @@
 import { fyo } from 'src/initFyo';
 import { defineComponent, PropType } from 'vue';
 import { Payment } from 'models/baseModels/Payment/Payment';
-import { ItemSerialNumbers } from 'src/components/POS/types';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';

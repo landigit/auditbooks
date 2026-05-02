@@ -1,14 +1,14 @@
 <template>
   <div v-if="tableFields?.length">
-    <div v-if="showLabel" class="text-gray-600 dark:text-gray-400 text-sm mb-1">
+    <div v-if="showLabel" class="text-description text-sm mb-1">
       {{ df.label }}
     </div>
 
-    <div :class="border ? 'border dark:border-gray-800 rounded-md' : ''">
+    <div :class="border ? 'border border-border rounded-md' : ''">
       <!-- Title Row -->
       <Row
         :ratio="ratio"
-        class="border-b dark:border-gray-800 px-2 text-gray-600 dark:text-gray-400 w-full flex items-center"
+        class="border-b border-border px-2 text-description w-full flex items-center"
       >
         <div class="flex items-center ps-2">#</div>
         <div
@@ -40,7 +40,7 @@
           v-for="(row, idx) of value"
           ref="table-row"
           :key="row.name"
-          :class="idx < value.length - 1 ? 'border-b dark:border-gray-800' : ''"
+          :class="idx < value.length - 1 ? 'border-b border-border' : ''"
           v-bind="{ row, tableFields, size, ratio, isNumeric }"
           :read-only="isReadOnly"
           :can-edit-row="canEditRow"
@@ -53,14 +53,14 @@
       <Row
         v-if="!isReadOnly"
         :ratio="ratio"
-        class="text-gray-500 cursor-pointer px-2 w-full h-row-mid flex items-center focus:outline-none focus:ring-1 focus:ring-blue-500"
-        :class="value.length > 0 ? 'border-t dark:border-gray-800' : ''"
+        class="text-description cursor-pointer px-2 w-full h-row-mid flex items-center focus:outline-none focus:ring-1 focus:ring-main"
+        :class="value.length > 0 ? 'border-t border-border' : ''"
         tabindex="0"
         @click="addRow"
         @keydown.enter="addRow"
       >
         <div class="flex items-center ps-1">
-          <feather-icon name="plus" class="w-4 h-4 text-gray-500" />
+          <feather-icon name="plus" class="w-4 h-4 text-description" />
         </div>
         <div
           class="flex justify-between px-2"

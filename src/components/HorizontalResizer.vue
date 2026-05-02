@@ -1,7 +1,7 @@
 <template>
   <div
     ref="hr"
-    class="h-full bg-gray-300 dark:bg-gray-700 transition-opacity hover:opacity-100"
+    class="h-full bg-border transition-opacity hover:opacity-100"
     :class="resizing ? 'opacity-100' : 'opacity-0'"
     style="width: 3px; cursor: col-resize; margin-left: -3px"
     @mousedown="onMouseDown"
@@ -9,7 +9,7 @@
     <MouseFollower
       :show="resizing"
       placement="left"
-      class="px-1 py-0.5 border dark:border-gray-800 rounded-md shadow text-sm text-center bg-gray-900 text-gray-100"
+      class="px-1 py-0.5 border border-border rounded-md shadow text-sm text-center bg-main text-surface"
       style="min-width: 2rem"
     >
       {{ value }}

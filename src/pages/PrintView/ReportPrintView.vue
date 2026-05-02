@@ -14,24 +14,24 @@
     >
       <!-- Report Print Display Area -->
       <div
-        class="p-4 bg-gray-25 dark:bg-gray-890 overflow-auto flex justify-center custom-scroll custom-scroll-thumb1"
+        class="p-4 bg-canvas-muted overflow-auto flex justify-center custom-scroll custom-scroll-thumb1"
       >
         <!-- Report Print Display Container -->
         <ScaledContainer
           ref="scaledContainer"
-          class="shadow-lg border bg-white"
+          class="shadow-lg border border-border bg-surface"
           :scale="scale"
           :width="size.width"
           :height="size.height"
           :show-overflow="true"
         >
-          <div class="bg-white mx-auto">
+          <div class="bg-surface mx-auto">
             <div class="p-2">
               <div class="font-semibold text-xl w-full flex justify-between">
                 <h1>
                   {{ `${fyo.singles.PrintSettings?.companyName}` }}
                 </h1>
-                <p class="text-gray-600">
+                <p class="text-description">
                   {{ title }}
                 </p>
               </div>
@@ -62,8 +62,8 @@
       </div>
 
       <!-- Report Print Settings -->
-      <div v-if="report" class="border-l dark:border-gray-800 flex flex-col">
-        <p class="p-4 text-sm text-gray-600 dark:text-gray-400">
+      <div v-if="report" class="border-l border-border flex flex-col">
+        <p class="p-4 text-sm text-description">
           {{
             [
               t`Hidden values will be visible on Print on.`,
@@ -72,7 +72,7 @@
           }}
         </p>
         <!-- Row Selection -->
-        <div class="p-4 border-t dark:border-gray-800">
+        <div class="p-4 border-t border-border">
           <Int
             :show-label="true"
             :border="true"
@@ -103,7 +103,7 @@
         </div>
 
         <!-- Size Selection -->
-        <div class="border-t dark:border-gray-800 p-4">
+        <div class="border-t border-border p-4">
           <Select
             :show-label="true"
             :border="true"
@@ -126,13 +126,11 @@
         </div>
 
         <!-- Pick Columns -->
-        <div class="border-t dark:border-gray-800 p-4">
-          <h2 class="text-sm text-gray-600 dark:text-gray-400">
+        <div class="border-t border-border p-4">
+          <h2 class="text-sm text-description">
             {{ t`Pick Columns` }}
           </h2>
-          <div
-            class="border dark:border-gray-800 rounded grid grid-cols-2 mt-1"
-          >
+          <div class="border border-border rounded grid grid-cols-2 mt-1">
             <Check
               v-for="(col, i) of report?.columns"
               :key="col.fieldname"
@@ -152,6 +150,8 @@
   </div>
 </template>
 <script lang="ts">
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import { Verb } from 'fyo/telemetry/types';
 import { Report } from 'reports/Report';
 import { reports } from 'reports/index';
@@ -189,7 +189,7 @@ export default defineComponent({
   },
   computed: {
     title(): string {
-      return reports[this.reportName]?.title ?? this.t`Report`;
+      return reports[this.reportName]?.title ?? t`Report`;
     },
     printSizeDf(): OptionField {
       return {
@@ -238,7 +238,7 @@ export default defineComponent({
       return style;
     },
     size(): { width: number; height: number } {
-      const size = paperSizeMap[this.printSize];
+      const size = paperSizeMap[this.printSize as keyof typeof paperSizeMap];
       const long = size.width > size.height ? size.width : size.height;
       const short = size.width <= size.height ? size.width : size.height;
 
@@ -280,7 +280,7 @@ export default defineComponent({
         return;
       }
 
-      const name = this.title + ' - ' + this.fyo.format(new Date(), 'Date');
+      const name = this.title + ' - ' + fyo.format(new Date(), 'Date');
       await getPathAndMakePDF(
         name,
         innerHTML,
@@ -307,9 +307,9 @@ export default defineComponent({
         classes.push('font-semibold');
       }
 
-      classes.push('border-t');
+      classes.push('border-t border-border');
       if (!isFirst) {
-        classes.push('border-l');
+        classes.push('border-l border-border');
       }
 
       return classes;
@@ -318,6 +318,7 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+@reference "../../styles/index.css";
 .outer-container {
   display: grid;
   grid-template-columns: auto var(--w-quick-edit);

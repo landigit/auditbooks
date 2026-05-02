@@ -7,7 +7,7 @@
     <template #body>
       <FormHeader
         :form-title="t`Set up your organization`"
-        class="sticky top-0 bg-white dark:bg-gray-890 border-b dark:border-gray-800"
+        class="sticky top-0 bg-surface border-b border-border"
       >
       </FormHeader>
 
@@ -22,9 +22,7 @@
           ref="section"
           class="p-4"
           :class="
-            idx !== 0 && activeGroup.size > 1
-              ? 'border-t dark:border-gray-800'
-              : ''
+            idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''
           "
           :show-title="activeGroup.size > 1 && name !== t`Default`"
           :title="name"
@@ -38,20 +36,20 @@
 
       <!-- Buttons Bar -->
       <div
-        class="mt-auto p-4 flex items-center justify-between border-t dark:border-gray-800 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-890"
+        class="mt-auto p-4 flex items-center justify-between border-t border-border flex-shrink-0 sticky bottom-0 bg-surface"
       >
-        <p v-if="loading" class="text-base text-gray-600 dark:text-gray-400">
+        <p v-if="loading" class="text-base text-description">
           {{ t`Loading instance...` }}
         </p>
         <Button
           v-if="!loading"
-          class="w-24 border dark:border-gray-800"
+          class="w-24 border border-border"
           @click="cancel"
           >{{ t`Cancel` }}</Button
         >
         <Button
           v-if="fyo.store.isDevelopment && !loading"
-          class="w-24 ml-auto mr-4 border dark:border-gray-800"
+          class="w-24 ml-auto mr-4 border border-border"
           :disabled="loading"
           @click="fill"
           >{{ t`Fill` }}</Button
@@ -101,8 +99,8 @@ export default defineComponent({
   emits: ['setup-complete', 'setup-canceled'],
   data() {
     return {
-      docOrNull: null,
-      errors: {},
+      docOrNull: null as Doc | null,
+      errors: {} as Record<string, string>,
       loading: false,
     };
   },

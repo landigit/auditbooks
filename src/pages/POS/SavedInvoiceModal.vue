@@ -1,17 +1,17 @@
 <template>
   <Modal class="h-auto w-auto p-5" :set-close-listener="false">
-    <p class="text-center font-semibold dark:text-gray-400">
+    <p class="text-center font-semibold text-description">
       {{ t`Invoices` }}
     </p>
 
-    <hr class="mt-2 dark:border-gray-800" />
+    <hr class="mt-2 border-border" />
 
     <div class="mt-4">
       <input
         v-model="invoiceSearchTerm"
         type="text"
         placeholder="Search by Invoice Name"
-        class="w-full p-2 border rounded-md dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-0"
+        class="w-full p-2 border rounded-md bg-surface text-main focus:outline-none focus:ring-0"
         @keyup.enter="handleEnterKey"
       />
     </div>
@@ -20,7 +20,7 @@
       <Button
         :background="false"
         class="w-full h-full p-2 mt-2"
-        :class="{ 'dark:bg-gray-890 underline': savedInvoiceList }"
+        :class="{ 'bg-surface-hover underline': savedInvoiceList }"
         @click="savedInvoiceList = true"
         >Saved</Button
       >
@@ -28,7 +28,7 @@
       <Button
         :background="false"
         class="w-full h-full p-2 mt-2"
-        :class="{ 'dark:bg-gray-890 underline': !savedInvoiceList }"
+        :class="{ 'bg-surface-hover underline': !savedInvoiceList }"
         @click="savedInvoiceList = false"
         >Submitted</Button
       >
@@ -36,7 +36,7 @@
 
     <Row
       :ratio="ratio"
-      class="border flex items-center mt-2 px-2 w-full rounded-t-md text-gray-600 dark:border-gray-800 dark:text-gray-400"
+      class="border border-border flex items-center mt-2 px-2 w-full rounded-t-md text-description"
     >
       <div
         v-for="df in tableFields"
@@ -57,7 +57,7 @@
         :key="row.name"
         :ratio="ratio"
         :border="true"
-        class="border-b border-l border-r dark:border-gray-800 dark:bg-gray-890 flex group h-row-mid hover:bg-gray-25 items-center justify-center px-2 w-full"
+        class="border-b border-l border-r border-border bg-surface flex group h-row-mid hover:bg-surface-hover items-center justify-center px-2 w-full"
         @click="$emit('selectedInvoiceName', row)"
       >
         <FormControl
@@ -74,11 +74,11 @@
     <div class="row-start-6 grid grid-cols-2 gap-4 mt-4">
       <div class="col-span-2">
         <Button
-          class="w-full p-5 bg-red-500 dark:bg-red-700"
+          class="w-full p-5 bg-indicator-red-bg"
           @click="$emit('toggleModal', 'SavedInvoice')"
         >
           <slot>
-            <p class="uppercase text-lg text-white font-semibold">
+            <p class="uppercase text-lg text-indicator-red-text font-semibold">
               {{ t`Cancel` }}
             </p>
           </slot>

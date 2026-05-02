@@ -3,11 +3,11 @@
     <g fill="none" fill-rule="evenodd">
       <path
         d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12C23.98 5.38 18.62.02 12 0z"
-        fill="#92D336"
+        fill="var(--color-indicator-green-text)"
         fill-rule="nonzero"
       />
       <path
-        stroke="#FFF"
+        stroke="var(--color-icon-contrast)"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"

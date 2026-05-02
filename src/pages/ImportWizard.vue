@@ -48,7 +48,7 @@
     <div class="flex text-base w-full flex-col">
       <!-- Select Import Type -->
       <div
-        class="h-row-largest flex flex-row justify-start items-center w-full gap-2 border-b dark:border-gray-800 p-4"
+        class="h-row-largest flex flex-row justify-start items-center w-full gap-2 border-b border-border p-4"
       >
         <AutoComplete
           :df="{
@@ -67,17 +67,13 @@
           @change="setImportType"
         />
 
-        <p v-if="errorMessage.length > 0" class="text-base ms-2 text-red-500">
+        <p v-if="errorMessage.length > 0" class="text-base ms-2 text-error">
           {{ errorMessage }}
         </p>
         <p
           v-else
           class="text-base ms-2"
-          :class="
-            fileName
-              ? 'text-gray-900 dark:text-gray-25 font-semibold'
-              : 'text-gray-700 dark:text-gray-200'
-          "
+          :class="fileName ? 'text-main font-semibold' : 'text-description'"
         >
           <span v-if="fileName" class="font-normal">{{ t`Selected` }} </span>
           {{ helperMessage }}{{ fileName ? ',' : '' }}
@@ -105,7 +101,7 @@
       >
         <!-- Column Assignment Row -->
         <div
-          class="grid sticky top-0 py-4 pe-4 bg-white dark:bg-gray-875 border-b border-e dark:border-gray-800 gap-4"
+          class="grid sticky top-0 py-4 pe-4 bg-surface border-b border-e border-border gap-4"
           style="z-index: 1; width: fit-content"
           :style="gridTemplateColumn"
         >
@@ -127,7 +123,7 @@
         <!-- Values Grid -->
         <div
           v-if="importer.valueMatrix.length"
-          class="grid py-4 pe-4 bg-white dark:bg-gray-875 gap-4 border-e last:border-b dark:border-gray-800"
+          class="grid py-4 pe-4 bg-surface gap-4 border-e last:border-b border-border"
           style="width: fit-content"
           :style="gridTemplateColumn"
         >
@@ -176,11 +172,7 @@
               <!-- FormControl Field if Column is Assigned -->
               <FormControl
                 v-else
-                :class="
-                  val.error
-                    ? 'border border-red-300 dark:border-red-600 rounded-md'
-                    : ''
-                "
+                :class="val.error ? 'border border-error/30 rounded-md' : ''"
                 :title="getFieldTitle(val)"
                 :df="
                   importer.templateFieldsMap.get(
@@ -205,7 +197,7 @@
 
         <div
           v-else
-          class="ps-4 text-gray-700 dark:text-gray-300 sticky left-0 flex items-center"
+          class="ps-4 text-description sticky left-0 flex items-center"
           style="height: 62.5px"
         >
           {{ t`No rows added. Select a file or add rows.` }}
@@ -229,7 +221,7 @@
       <div class="w-form">
         <!-- Pick Column Header -->
         <FormHeader :form-title="t`Pick Import Columns`" />
-        <hr class="dark:border-gray-800" />
+        <hr class="border-border" />
 
         <!-- Pick Column Checkboxes -->
         <div
@@ -237,12 +229,10 @@
           :key="key"
           class="p-4 max-h-80 overflow-auto custom-scroll custom-scroll-thumb1"
         >
-          <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200">
+          <h2 class="text-sm font-semibold text-main">
             {{ key }}
           </h2>
-          <div
-            class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1"
-          >
+          <div class="grid grid-cols-3 border border-border rounded mt-1">
             <div
               v-for="tf of value"
               :key="tf.fieldKey"
@@ -259,15 +249,15 @@
                 :value="importer.templateFieldsPicked.get(tf.fieldKey)"
                 @change="(value: boolean) => pickColumn(tf.fieldKey, value)"
               />
-              <p v-if="tf.required" class="w-0 text-red-600 -ml-4">*</p>
+              <p v-if="tf.required" class="w-0 text-error -ml-4">*</p>
             </div>
           </div>
         </div>
 
         <!-- Pick Column Footer -->
-        <hr class="dark:border-gray-800" />
+        <hr class="border-border" />
         <div class="p-4 flex justify-between items-center">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
+          <p class="text-sm text-description">
             {{ t`${numColumnsPicked} fields selected` }}
           </p>
           <Button type="primary" @click="showColumnPicker = false">{{
@@ -282,15 +272,15 @@
       <div class="w-form">
         <!-- Import Completed Header -->
         <FormHeader :form-title="t`Import Complete`" />
-        <hr class="dark:border-gray-800" />
+        <hr class="border-border" />
         <!-- Success -->
         <div v-if="success.length > 0">
           <!-- Success Section Header -->
           <div class="flex justify-between px-4 pt-4 pb-1">
-            <p class="text-base font-semibold dark:text-gray-200">
+            <p class="text-base font-semibold text-main">
               {{ t`Success` }}
             </p>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-description">
               {{
                 success.length === 1
                   ? t`${success.length} entry imported`
@@ -299,7 +289,7 @@
             </p>
           </div>
           <!-- Success Body -->
-          <div class="max-h-40 overflow-auto text-gray-900 dark:text-gray-50">
+          <div class="max-h-40 overflow-auto text-main">
             <div
               v-for="(name, i) of success"
               :key="name"
@@ -312,7 +302,7 @@
               </p>
             </div>
           </div>
-          <hr class="dark:border-gray-800" />
+          <hr class="border-border" />
         </div>
 
         <!-- Failed -->
@@ -320,7 +310,7 @@
           <!-- Failed Section Header -->
           <div class="flex justify-between px-4 pt-4 pb-1">
             <p class="text-base font-semibold">{{ t`Failed` }}</p>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
+            <p class="text-sm text-description">
               {{
                 failed.length === 1
                   ? t`${failed.length} entry failed`
@@ -329,7 +319,7 @@
             </p>
           </div>
           <!-- Failed Body -->
-          <div class="max-h-40 overflow-auto text-gray-900 dark:text-gray-50">
+          <div class="max-h-40 overflow-auto text-main">
             <div
               v-for="(f, i) of failed"
               :key="f.name"
@@ -345,13 +335,13 @@
               </p>
             </div>
           </div>
-          <hr />
+          <hr class="border-border" />
         </div>
 
         <!-- Fallback Div -->
         <div
           v-if="failed.length === 0 && success.length === 0"
-          class="p-4 text-base dark:text-gray-200"
+          class="p-4 text-base text-main"
         >
           {{ t`No entries were imported.` }}
         </div>
@@ -428,7 +418,7 @@ export default defineComponent({
     Check,
     Select,
   },
-  data() {
+  data(): ImportWizardData {
     return {
       showColumnPicker: false,
       complete: false,
@@ -624,7 +614,7 @@ export default defineComponent({
       const cancelAction = {
         label: this.t`Cancel`,
         component: {
-          template: '<span class="text-red-700" >{{ t`Cancel` }}</span>',
+          template: '<span class="text-error" >{{ t`Cancel` }}</span>',
         },
         action: this.clear.bind(this),
       };
@@ -969,7 +959,8 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+@reference "../styles/index.css";
 .index-cell {
-  @apply flex pe-4 justify-end items-center border-e last:border-b dark:border-gray-800 bg-white dark:bg-gray-875 sticky left-0 -my-4 text-gray-600 dark:text-gray-400;
+  @apply flex pe-4 justify-end items-center border-e last:border-b border-border bg-surface sticky left-0 -my-4 text-description;
 }
 </style>

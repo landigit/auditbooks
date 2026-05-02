@@ -1,8 +1,5 @@
 <template>
-  <div
-    ref="container"
-    class="bg-white dark:bg-gray-875 text-gray-900 dark:text-gray-100"
-  ></div>
+  <div ref="container" class="bg-surface text-main"></div>
 </template>
 <script lang="ts">
 import { autocompletion, CompletionContext } from '@codemirror/autocomplete';
@@ -17,7 +14,6 @@ import { EditorView, ViewUpdate } from '@codemirror/view';
 // @ts-ignore
 import { tags } from '@lezer/highlight';
 import { basicSetup } from 'codemirror';
-import { uicolors } from 'src/utils/colors';
 import { defineComponent, markRaw } from 'vue';
 
 export default defineComponent({
@@ -31,7 +27,7 @@ export default defineComponent({
     return {
       state: null as EditorState | null,
       view: null as EditorView | null,
-      compartments: {},
+      compartments: {} as Record<string, Compartment>,
     };
   },
   computed: {
@@ -65,14 +61,18 @@ export default defineComponent({
       const editable = new Compartment();
 
       const highlightStyle = HighlightStyle.define([
-        { tag: tags.typeName, color: uicolors.pink[600] },
-        { tag: tags.angleBracket, color: uicolors.pink[600] },
-        { tag: tags.attributeName, color: uicolors.gray[500] },
-        { tag: tags.attributeValue, color: uicolors.blue[500] },
-        { tag: tags.comment, color: uicolors.gray[500], fontStyle: 'italic' },
-        { tag: tags.keyword, color: uicolors.orange[600] },
-        { tag: tags.variableName, color: uicolors.teal[600] },
-        { tag: tags.string, color: uicolors.blue[700] },
+        { tag: tags.typeName, color: 'var(--color-syntax-type)' },
+        { tag: tags.angleBracket, color: 'var(--color-syntax-angle)' },
+        { tag: tags.attributeName, color: 'var(--color-syntax-attr-name)' },
+        { tag: tags.attributeValue, color: 'var(--color-syntax-attr-value)' },
+        {
+          tag: tags.comment,
+          color: 'var(--color-syntax-comment)',
+          fontStyle: 'italic',
+        },
+        { tag: tags.keyword, color: 'var(--color-syntax-keyword)' },
+        { tag: tags.variableName, color: 'var(--color-syntax-variable)' },
+        { tag: tags.string, color: 'var(--color-syntax-string)' },
       ]);
       const completions = getCompletionsFromHints(this.hints ?? {});
 
@@ -205,55 +205,48 @@ function getCompletionOption(
 }
 </script>
 <style>
+@reference "../../styles/index.css";
 .cm-line {
   font-weight: 600;
 }
 
 .cm-gutter {
-  @apply bg-gray-50 dark:bg-gray-850;
+  background-color: var(--color-canvas-muted);
 }
 
 .cm-gutters {
-  border: none black !important;
-  border-right: 1px solid theme('colors.gray.200') !important;
-}
-
-.dark .cm-gutters {
-  border: none white !important;
-  border-right: 1px solid theme('colors.gray.800') !important;
+  border: none !important;
+  border-right: 1px solid var(--color-border) !important;
 }
 
 .cm-activeLine,
 .cm-activeLineGutter {
-  background-color: #72839216 !important;
+  background-color: var(--color-surface-hover) !important;
 }
 
 .cm-tooltip-autocomplete {
-  background-color: white !important;
-  border: 1px solid theme('colors.gray.200') !important;
-  @apply rounded shadow-lg overflow-hidden text-gray-900;
-}
-
-.dark .cm-tooltip-autocomplete {
-  background-color: black !important;
-  border: 1px solid theme('colors.gray.800') !important;
-  @apply rounded shadow-lg overflow-hidden text-gray-100;
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 0.25rem;
+  box-shadow: var(--shadow-autocomplete);
+  overflow: hidden;
+  color: var(--color-main);
 }
 
 .cm-panels {
-  border-top: 1px solid theme('colors.gray.200') !important;
-  background-color: theme('colors.gray.50') !important;
-  color: theme('colors.gray.800') !important;
+  border-top: 1px solid var(--color-border) !important;
+  background-color: var(--color-canvas-muted) !important;
+  color: var(--color-main) !important;
 }
 
 .cm-button {
   background-image: none !important;
-  background-color: theme('colors.gray.200') !important;
-  color: theme('colors.gray.700') !important;
+  background-color: var(--color-surface-hover) !important;
+  color: var(--color-main) !important;
   border: none !important;
 }
 
 .cm-textfield {
-  border: 1px solid theme('colors.gray.200') !important;
+  border: 1px solid var(--color-border) !important;
 }
 </style>

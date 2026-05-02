@@ -9,7 +9,7 @@
       :class="[
         inputClasses,
         containerClasses,
-        dropdownVisible ? 'dark:hover:bg-gray-850' : '',
+        dropdownVisible ? 'hover:bg-surface-hover' : '',
       ]"
     >
       <div class="w-full" @click="toggleDropdown">
@@ -17,12 +17,12 @@
           class="flex items-center justify-between bg-transparent w-full cursor-pointer custom-scroll custom-scroll-thumb2"
           :class="{
             'pointer-events-none': isReadOnly,
-            'text-gray-500': !value,
+            'text-description': !value,
           }"
         >
           <span
             v-if="selectValue || value"
-            class="cursor-text text-black dark:text-white w-full"
+            class="cursor-text text-main w-full"
             >{{ selectValue ? selectValue : value }}</span
           >
           <span v-else>{{ inputPlaceholder }}</span>
@@ -36,11 +36,7 @@
             <path
               d="M1 2.636L2.636 1l1.637 1.636M1 7.364L2.636 9l1.637-1.636"
               class="stroke-current"
-              :class="
-                showMandatory
-                  ? 'text-red-400 dark:text-red-600'
-                  : 'text-gray-400 dark:text-gray-600'
-              "
+              :class="showMandatory ? 'text-error' : 'text-description'"
               fill="none"
               fill-rule="evenodd"
               stroke-linecap="round"
@@ -50,7 +46,7 @@
         </div>
         <div
           v-if="dropdownVisible"
-          class="absolute z-10 mt-4 w-60 bg-white dark:bg-gray-850 border border-gray-300 dark:border-gray-700 cursor-pointer rounded-md shadow-lg"
+          class="absolute z-10 mt-4 w-60 bg-surface border border-border cursor-pointer rounded-md shadow-lg"
         >
           <ul
             class="max-h-40 p-1 overflow-auto custom-scroll custom-scroll-thumb1"
@@ -59,7 +55,7 @@
               v-for="option in options"
               :key="option.value"
               @click="selectOption(option)"
-              class="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-875 flex"
+              class="p-1.5 rounded-md hover:bg-surface-hover flex"
               :class="selectValue !== option.label ? 'pl-6' : 'pl-2'"
             >
               <svg

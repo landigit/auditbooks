@@ -9,7 +9,7 @@
 
     <div v-show="hasData" class="flex relative">
       <!-- Chart Legend -->
-      <div class="w-1/2 flex flex-col gap-4 justify-center dark:text-gray-25">
+      <div class="w-1/2 flex flex-col gap-4 justify-center text-main">
         <!-- Ledgend Item -->
         <div
           v-for="(d, i) in expenses"
@@ -36,7 +36,6 @@
         :text-offset-x="6.5"
         :value-formatter="(value: number) => fyo.format(value, 'Currency')"
         :total-label="t`Total Spending`"
-        :dark-mode="darkMode"
         @change="(value: number) => (active = value)"
       />
     </div>
@@ -46,7 +45,7 @@
       v-if="expenses.length === 0"
       class="flex-1 w-full h-full flex-center my-20"
     >
-      <span class="text-base text-gray-600 dark:text-gray-500">
+      <span class="text-base text-description">
         {{ t`No expenses in this period` }}
       </span>
     </div>
@@ -55,8 +54,8 @@
 
 <script lang="ts">
 import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import { truncate } from 'src/utils';
-import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { defineComponent } from 'vue';
 import DonutChart from '../../components/Charts/DonutChart.vue';
@@ -77,9 +76,7 @@ export default defineComponent({
     SectionHeader,
   },
   extends: DashboardChartBase,
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
+  props: {},
   data: () => ({
     active: null as null | number,
     expenses: [] as {
@@ -119,22 +116,11 @@ export default defineComponent({
         toDate.toISO()
       );
       const shades = [
-        { class: 'bg-pink-500', hex: uicolors.pink['500'] },
-        { class: 'bg-pink-400', hex: uicolors.pink['400'] },
-        { class: 'bg-pink-300', hex: uicolors.pink['300'] },
-        { class: 'bg-pink-200', hex: uicolors.pink['200'] },
-        { class: 'bg-pink-100', hex: uicolors.pink['100'] },
-      ];
-
-      const darkshades = [
-        { class: 'bg-pink-600', hex: uicolors.pink['600'] },
-        { class: 'bg-pink-500', hex: uicolors.pink['500'] },
-        { class: 'bg-pink-400', hex: uicolors.pink['400'] },
-        { class: 'bg-pink-300', hex: uicolors.pink['300'] },
-        {
-          class: 'bg-pink-200 dark:bg-opacity-80',
-          hex: uicolors.pink['200'] + 'CC',
-        },
+        { class: 'bg-chart-pink-1', hex: 'var(--color-chart-pink-1)' },
+        { class: 'bg-chart-pink-2', hex: 'var(--color-chart-pink-2)' },
+        { class: 'bg-chart-pink-3', hex: 'var(--color-chart-pink-3)' },
+        { class: 'bg-chart-pink-4', hex: 'var(--color-chart-pink-4)' },
+        { class: 'bg-chart-pink-5', hex: 'var(--color-chart-pink-5)' },
       ];
 
       this.expenses = topExpenses
@@ -143,8 +129,8 @@ export default defineComponent({
           return {
             account: d.account,
             total: d.total,
-            color: { color: shades[i].hex, darkColor: darkshades[i].hex },
-            class: { class: shades[i].class, darkClass: darkshades[i].class },
+            color: shades[i].hex,
+            class: shades[i].class,
           };
         });
     },

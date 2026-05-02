@@ -15,7 +15,7 @@
       <!-- Template -->
       <component
         :is="templateComponent"
-        class="flex-1 bg-white"
+        class="flex-1 bg-surface"
         :doc="values.doc"
         :print="values.print"
       />
@@ -24,19 +24,15 @@
     <!-- Compilation Error -->
     <div
       v-else
-      class="h-full bg-red-100 dark:bg-red-900 dark:bg-opacity-50 w-full text-2xl text-gray-900 dark:text-gray-25 flex flex-col gap-4"
+      class="h-full bg-indicator-red-bg w-full text-2xl text-main flex flex-col gap-4"
     >
-      <h1
-        class="text-4xl font-bold text-red-500 dark:text-red-200 p-4 border-b border-red-200 dark:border-red-900"
-      >
+      <h1 class="text-4xl font-bold text-error p-4 border-b border-error">
         {{ error.name }}
       </h1>
       <p class="px-4 font-semibold">{{ error.message }}</p>
-      <pre
-        v-if="error.detail"
-        class="px-4 text-xl text-gray-700 dark:text-gray-400"
-        >{{ error.detail }}</pre
-      >
+      <pre v-if="error.detail" class="px-4 text-xl text-description">{{
+        error.detail
+      }}</pre>
     </div>
   </ScaledContainer>
 </template>
@@ -54,8 +50,8 @@ import { PrintValues } from 'src/utils/types';
 import { defineComponent, PropType } from 'vue';
 import ScaledContainer from './ScaledContainer.vue';
 
-export const baseSafeTemplate = `<main class="h-full w-full bg-white">
-  <p class="p-4 text-red-500">
+export const baseSafeTemplate = `<main class="h-full w-full bg-surface">
+  <p class="p-4 text-indicator-red-text">
     <span class="font-bold">ERROR</span>: Template failed to load due to errors.
   </p>
 </main>

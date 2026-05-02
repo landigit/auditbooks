@@ -19,12 +19,12 @@
         <Button class="w-40" @click="toggleDropdown"> Create </Button>
         <div
           v-if="showDropdown"
-          class="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-40"
+          class="absolute top-full mt-1 bg-surface border border-border rounded shadow-lg z-10 w-40"
         >
           <div
             v-for="option in actionOptions"
             :key="option.value"
-            class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+            class="px-4 py-2 hover:bg-surface-hover cursor-pointer text-sm"
             @click="createInvoice(option.value)"
           >
             {{ option.label }}
@@ -122,7 +122,7 @@ export default defineComponent({
   },
   data() {
     return {
-      listConfig: undefined,
+      listConfig: undefined as any,
       openExportModal: false,
       listFilters: {},
       isSelectionMode: false,

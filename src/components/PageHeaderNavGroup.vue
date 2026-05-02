@@ -4,11 +4,9 @@
     <!-- Back Button -->
     <a
       ref="backlink"
-      class="nav-link border-l border-r border-white dark:border-gray-850 dark:bg-gray-900"
+      class="nav-link border-l border-r border-border bg-canvas-muted"
       :class="
-        historyState.back
-          ? 'text-gray-700 dark:text-gray-300 cursor-pointer'
-          : 'text-gray-400 dark:text-gray-700'
+        historyState.back ? 'text-main cursor-pointer' : 'text-description'
       "
       @click="$router.back()"
     >
@@ -16,11 +14,9 @@
     </a>
     <!-- Forward Button -->
     <a
-      class="nav-link rounded-md rounded-l-none dark:bg-gray-900"
+      class="nav-link rounded-md rounded-l-none bg-canvas-muted"
       :class="
-        historyState.forward
-          ? 'text-gray-700 dark:text-gray-400 cursor-pointer'
-          : 'text-gray-400 dark:text-gray-700'
+        historyState.forward ? 'text-main cursor-pointer' : 'text-description'
       "
       @click="$router.forward()"
     >
@@ -68,7 +64,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
+@reference "../styles/index.css";
 .nav-link {
-  @apply flex items-center bg-gray-200 px-3;
+  @apply flex items-center bg-canvas-muted px-3;
 }
 </style>

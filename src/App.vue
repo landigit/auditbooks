@@ -1,7 +1,7 @@
 <template>
   <div
     id="app"
-    class="dark:bg-gray-900 h-screen flex flex-col font-sans overflow-hidden antialiased"
+    class="bg-canvas h-screen flex flex-col font-sans overflow-hidden antialiased"
     :dir="languageDirection"
     :language="language"
   >
@@ -16,6 +16,7 @@
       class="flex-1"
       :dark-mode="darkMode"
       @change-db-file="showDbSelector"
+      @toggle-darkmode="toggleDarkMode"
     />
     <DatabaseSelector
       v-if="activeScreen === 'DatabaseSelector'"
@@ -111,7 +112,7 @@ export default defineComponent({
   },
   data() {
     return {
-      activeScreen: null,
+      activeScreen: null as Screen | null,
       dbPath: '',
       companyName: '',
       darkMode: false,
@@ -308,6 +309,15 @@ export default defineComponent({
       this.dbPath = '';
       this.searcher = null;
       this.companyName = '';
+    },
+    async toggleDarkMode() {
+      this.darkMode = !this.darkMode;
+      setDarkMode(this.darkMode);
+
+      // Persist to database
+      const doc = await fyo.doc.getDoc('SystemSettings');
+      await doc.set('darkMode', this.darkMode);
+      await doc.sync();
     },
   },
 });

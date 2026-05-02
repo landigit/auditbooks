@@ -5,7 +5,6 @@ node_modules
 /notebook
 .yarnrc.yml
 yarn.lock
-.yarn
 
 
 # local env files
@@ -28,6 +27,8 @@ yarn-error.log*
 *.sln
 *.sw?
 *.code-workspace
+*.log
+.eslintcache
 
 #Electron-builder output
 /dist_electron

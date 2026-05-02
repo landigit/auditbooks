@@ -2,11 +2,11 @@
   <Row
     :ratio="ratio"
     class="w-full px-2 group flex items-center justify-center h-row-mid"
-    :class="readOnly ? '' : 'hover:bg-gray-25 dark:hover:bg-gray-900'"
+    :class="readOnly ? '' : 'hover:bg-surface-hover'"
   >
     <!-- Index or Remove button -->
     <div
-      class="flex items-center ps-2 text-gray-600 dark:text-gray-400"
+      class="flex items-center ps-2 text-description"
       @mouseenter="isRowIndexVisible = false"
       @mouseleave="isRowIndexVisible = true"
     >
@@ -14,7 +14,7 @@
         <feather-icon
           v-if="!readOnly && !isRowIndexVisible"
           name="x"
-          class="w-4 h-4 -ms-1 cursor-pointer rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-blue-50 dark:focus:bg-gray-800 transition"
+          class="w-4 h-4 -ms-1 cursor-pointer rounded focus:outline-none focus:ring-2 focus:ring-main transition"
           :button="true"
           tabindex="0"
           role="button"
@@ -24,7 +24,7 @@
         />
         <span
           v-if="!readOnly && isRowIndexVisible"
-          class="absolute left-0 top-0 w-full h-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+          class="absolute left-0 top-0 w-full h-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-main rounded"
           tabindex="0"
           role="button"
           aria-label="Delete row"
@@ -57,16 +57,13 @@
       :background="false"
       @click="openRowQuickEdit"
     >
-      <feather-icon
-        name="edit"
-        class="w-4 h-4 text-gray-600 dark:text-gray-400"
-      />
+      <feather-icon name="edit" class="w-4 h-4 text-description" />
     </Button>
 
     <!-- Error Display -->
     <div
       v-if="hasErrors"
-      class="text-xs text-red-600 ps-2 col-span-full relative"
+      class="text-xs text-error ps-2 col-span-full relative"
       style="bottom: 0.75rem; height: 0px"
     >
       {{ getErrorString() }}

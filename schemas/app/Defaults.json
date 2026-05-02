@@ -213,47 +213,47 @@
       "label": "Save Button Colour",
       "placeholder": "Select Colour",
       "fieldtype": "Color",
-      "default": "#86efac",
+      "default": "var(--color-indicator-green-bg)",
       "options": [
         {
           "label": "Red",
-          "value": "#f98080"
+          "value": "var(--color-indicator-red-bg)"
         },
         {
           "label": "Orange",
-          "value": "#fbbf70"
+          "value": "var(--color-indicator-orange-bg)"
         },
         {
           "label": "Yellow",
-          "value": "#fde047"
+          "value": "var(--color-indicator-yellow-bg)"
         },
         {
           "label": "Green",
-          "value": "#86efac"
+          "value": "var(--color-indicator-green-bg)"
         },
         {
           "label": "Teal",
-          "value": "#5eead4"
+          "value": "var(--color-indicator-teal-bg)"
         },
         {
           "label": "Blue",
-          "value": "#60a5fa"
+          "value": "var(--color-indicator-blue-bg)"
         },
         {
           "label": "Indigo",
-          "value": "#818cf8"
+          "value": "var(--color-indicator-indigo-bg)"
         },
         {
           "label": "Purple",
-          "value": "#a78bfa"
+          "value": "var(--color-indicator-purple-bg)"
         },
         {
           "label": "Pink",
-          "value": "#f472b6"
+          "value": "var(--color-indicator-pink-bg)"
         },
         {
           "label": "Black",
-          "value": "#9ca3af"
+          "value": "var(--color-indicator-gray-bg)"
         }
       ],
       "section": "Point of Sale"
@@ -263,47 +263,47 @@
       "label": "Cancel Button Colour",
       "placeholder": "Select Colour",
       "fieldtype": "Color",
-      "default": "#f98080",
+      "default": "var(--color-indicator-red-bg)",
       "options": [
         {
           "label": "Red",
-          "value": "#f98080"
+          "value": "var(--color-indicator-red-bg)"
         },
         {
           "label": "Orange",
-          "value": "#fbbf70"
+          "value": "var(--color-indicator-orange-bg)"
         },
         {
           "label": "Yellow",
-          "value": "#fde047"
+          "value": "var(--color-indicator-yellow-bg)"
         },
         {
           "label": "Green",
-          "value": "#86efac"
+          "value": "var(--color-indicator-green-bg)"
         },
         {
           "label": "Teal",
-          "value": "#5eead4"
+          "value": "var(--color-indicator-teal-bg)"
         },
         {
           "label": "Blue",
-          "value": "#60a5fa"
+          "value": "var(--color-indicator-blue-bg)"
         },
         {
           "label": "Indigo",
-          "value": "#818cf8"
+          "value": "var(--color-indicator-indigo-bg)"
         },
         {
           "label": "Purple",
-          "value": "#a78bfa"
+          "value": "var(--color-indicator-purple-bg)"
         },
         {
           "label": "Pink",
-          "value": "#f472b6"
+          "value": "var(--color-indicator-pink-bg)"
         },
         {
           "label": "Black",
-          "value": "#9ca3af"
+          "value": "var(--color-indicator-gray-bg)"
         }
       ],
       "section": "Point of Sale"
@@ -313,47 +313,47 @@
       "label": "Submit Button Colour",
       "placeholder": "Select Colour",
       "fieldtype": "Color",
-      "default": "#86efac",
+      "default": "var(--color-indicator-green-bg)",
       "options": [
         {
           "label": "Red",
-          "value": "#f98080"
+          "value": "var(--color-indicator-red-bg)"
         },
         {
           "label": "Orange",
-          "value": "#fbbf70"
+          "value": "var(--color-indicator-orange-bg)"
         },
         {
           "label": "Yellow",
-          "value": "#fde047"
+          "value": "var(--color-indicator-yellow-bg)"
         },
         {
           "label": "Green",
-          "value": "#86efac"
+          "value": "var(--color-indicator-green-bg)"
         },
         {
           "label": "Teal",
-          "value": "#5eead4"
+          "value": "var(--color-indicator-teal-bg)"
         },
         {
           "label": "Blue",
-          "value": "#60a5fa"
+          "value": "var(--color-indicator-blue-bg)"
         },
         {
           "label": "Indigo",
-          "value": "#818cf8"
+          "value": "var(--color-indicator-indigo-bg)"
         },
         {
           "label": "Purple",
-          "value": "#a78bfa"
+          "value": "var(--color-indicator-purple-bg)"
         },
         {
           "label": "Pink",
-          "value": "#f472b6"
+          "value": "var(--color-indicator-pink-bg)"
         },
         {
           "label": "Black",
-          "value": "#9ca3af"
+          "value": "var(--color-indicator-gray-bg)"
         }
       ],
       "section": "Point of Sale"
@@ -363,47 +363,47 @@
       "label": "Held Button Colour",
       "placeholder": "Select Colour",
       "fieldtype": "Color",
-      "default": "#f98080",
+      "default": "var(--color-indicator-red-bg)",
       "options": [
         {
           "label": "Red",
-          "value": "#f98080"
+          "value": "var(--color-indicator-red-bg)"
         },
         {
           "label": "Orange",
-          "value": "#fbbf70"
+          "value": "var(--color-indicator-orange-bg)"
         },
         {
           "label": "Yellow",
-          "value": "#fde047"
+          "value": "var(--color-indicator-yellow-bg)"
         },
         {
           "label": "Green",
-          "value": "#86efac"
+          "value": "var(--color-indicator-green-bg)"
         },
         {
           "label": "Teal",
-          "value": "#5eead4"
+          "value": "var(--color-indicator-teal-bg)"
         },
         {
           "label": "Blue",
-          "value": "#60a5fa"
+          "value": "var(--color-indicator-blue-bg)"
         },
         {
           "label": "Indigo",
-          "value": "#818cf8"
+          "value": "var(--color-indicator-indigo-bg)"
         },
         {
           "label": "Purple",
-          "value": "#a78bfa"
+          "value": "var(--color-indicator-purple-bg)"
         },
         {
           "label": "Pink",
-          "value": "#f472b6"
+          "value": "var(--color-indicator-pink-bg)"
         },
         {
           "label": "Black",
-          "value": "#9ca3af"
+          "value": "var(--color-indicator-gray-bg)"
         }
       ],
       "section": "Point of Sale"
@@ -413,47 +413,47 @@
       "label": "Return Button Colour",
       "placeholder": "Select Colour",
       "fieldtype": "Color",
-      "default": "#f98080",
+      "default": "var(--color-indicator-red-bg)",
       "options": [
         {
           "label": "Red",
-          "value": "#f98080"
+          "value": "var(--color-indicator-red-bg)"
         },
         {
           "label": "Orange",
-          "value": "#fbbf70"
+          "value": "var(--color-indicator-orange-bg)"
         },
         {
           "label": "Yellow",
-          "value": "#fde047"
+          "value": "var(--color-indicator-yellow-bg)"
         },
         {
           "label": "Green",
-          "value": "#86efac"
+          "value": "var(--color-indicator-green-bg)"
         },
         {
           "label": "Teal",
-          "value": "#5eead4"
+          "value": "var(--color-indicator-teal-bg)"
         },
         {
           "label": "Blue",
-          "value": "#60a5fa"
+          "value": "var(--color-indicator-blue-bg)"
         },
         {
           "label": "Indigo",
-          "value": "#818cf8"
+          "value": "var(--color-indicator-indigo-bg)"
         },
         {
           "label": "Purple",
-          "value": "#a78bfa"
+          "value": "var(--color-indicator-purple-bg)"
         },
         {
           "label": "Pink",
-          "value": "#f472b6"
+          "value": "var(--color-indicator-pink-bg)"
         },
         {
           "label": "Black",
-          "value": "#9ca3af"
+          "value": "var(--color-indicator-gray-bg)"
         }
       ],
       "section": "Point of Sale"
@@ -463,47 +463,47 @@
       "label": "Pay Button Colour",
       "placeholder": "Select Colour",
       "fieldtype": "Color",
-      "default": "#86efac",
+      "default": "var(--color-indicator-green-bg)",
       "options": [
         {
           "label": "Red",
-          "value": "#f98080"
+          "value": "var(--color-indicator-red-bg)"
         },
         {
           "label": "Orange",
-          "value": "#fbbf70"
+          "value": "var(--color-indicator-orange-bg)"
         },
         {
           "label": "Yellow",
-          "value": "#fde047"
+          "value": "var(--color-indicator-yellow-bg)"
         },
         {
           "label": "Green",
-          "value": "#86efac"
+          "value": "var(--color-indicator-green-bg)"
         },
         {
           "label": "Teal",
-          "value": "#5eead4"
+          "value": "var(--color-indicator-teal-bg)"
         },
         {
           "label": "Blue",
-          "value": "#60a5fa"
+          "value": "var(--color-indicator-blue-bg)"
         },
         {
           "label": "Indigo",
-          "value": "#818cf8"
+          "value": "var(--color-indicator-indigo-bg)"
         },
         {
           "label": "Purple",
-          "value": "#a78bfa"
+          "value": "var(--color-indicator-purple-bg)"
         },
         {
           "label": "Pink",
-          "value": "#f472b6"
+          "value": "var(--color-indicator-pink-bg)"
         },
         {
           "label": "Black",
-          "value": "#9ca3af"
+          "value": "var(--color-indicator-gray-bg)"
         }
       ],
       "section": "Point of Sale"
@@ -513,47 +513,47 @@
       "label": "Pay And Print Button Colour",
       "placeholder": "Select Colour",
       "fieldtype": "Color",
-      "default": "#86efac",
+      "default": "var(--color-indicator-green-bg)",
       "options": [
         {
           "label": "Red",
-          "value": "#f98080"
+          "value": "var(--color-indicator-red-bg)"
         },
         {
           "label": "Orange",
-          "value": "#fbbf70"
+          "value": "var(--color-indicator-orange-bg)"
         },
         {
           "label": "Yellow",
-          "value": "#fde047"
+          "value": "var(--color-indicator-yellow-bg)"
         },
         {
           "label": "Green",
-          "value": "#86efac"
+          "value": "var(--color-indicator-green-bg)"
         },
         {
           "label": "Teal",
-          "value": "#5eead4"
+          "value": "var(--color-indicator-teal-bg)"
         },
         {
           "label": "Blue",
-          "value": "#60a5fa"
+          "value": "var(--color-indicator-blue-bg)"
         },
         {
           "label": "Indigo",
-          "value": "#818cf8"
+          "value": "var(--color-indicator-indigo-bg)"
         },
         {
           "label": "Purple",
-          "value": "#a78bfa"
+          "value": "var(--color-indicator-purple-bg)"
         },
         {
           "label": "Pink",
-          "value": "#f472b6"
+          "value": "var(--color-indicator-pink-bg)"
         },
         {
           "label": "Black",
-          "value": "#9ca3af"
+          "value": "var(--color-indicator-gray-bg)"
         }
       ],
       "section": "Point of Sale"

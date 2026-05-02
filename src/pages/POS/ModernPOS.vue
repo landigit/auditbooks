@@ -93,11 +93,11 @@
       @apply-pricing-rule="emitEvent('applyPricingRule')"
     />
 
-    <div class="bg-gray-25 dark:bg-gray-875 grid grid-cols-9 gap-3 p-4">
+    <div class="bg-canvas-muted grid grid-cols-9 gap-3 p-4">
       <div class="col-span-3 flex h-auto w-full">
         <div class="grid grid-rows-5 w-full gap-3">
           <div
-            class="p-4 grow h-full row-span-5 bg-white border rounded-md dark:bg-gray-850 dark:border-gray-800"
+            class="p-4 grow h-full row-span-5 bg-surface border rounded-md border-border"
           >
             <!-- Customer Search -->
             <MultiLabelLink
@@ -122,9 +122,7 @@
             />
           </div>
 
-          <div
-            class="h-full p-2 bg-white border rounded-md dark:bg-gray-850 dark:border-gray-800"
-          >
+          <div class="h-full p-2 bg-surface border rounded-md border-border">
             <div class="grid grid-cols-2 gap-2">
               <FloatingLabelFloatInput
                 :df="{
@@ -191,7 +189,9 @@
                   @click="$emit('saveInvoiceAction')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p
+                      class="uppercase text-lg text-button-primary-text font-semibold"
+                    >
                       {{ t`Save` }}
                     </p>
                   </slot>
@@ -207,7 +207,9 @@
                   @click="emitEvent('toggleModal', 'SavedInvoice', true)"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p
+                      class="uppercase text-lg text-button-primary-text font-semibold"
+                    >
                       {{ t`Held` }}
                     </p>
                   </slot>
@@ -225,7 +227,9 @@
                   @click="() => $emit('clearValues')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p
+                      class="uppercase text-lg text-button-primary-text font-semibold"
+                    >
                       {{ t`Cancel` }}
                     </p>
                   </slot>
@@ -241,7 +245,9 @@
                   @click="emitEvent('toggleModal', 'ReturnSalesInvoice', true)"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p
+                      class="uppercase text-lg text-button-primary-text font-semibold"
+                    >
                       {{ t`Return` }}
                     </p>
                   </slot>
@@ -257,7 +263,9 @@
                   @click="emitEvent('handlePaymentAction')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p
+                      class="uppercase text-lg text-button-primary-text font-semibold"
+                    >
                       {{ t`Pay` }}
                     </p>
                   </slot>
@@ -275,7 +283,9 @@
               @click="emitEvent('handlePaymentAction')"
             >
               <slot>
-                <p class="uppercase text-lg text-white font-semibold">
+                <p
+                  class="uppercase text-lg text-button-primary-text font-semibold"
+                >
                   {{ t`Pay` }}
                 </p>
               </slot>
@@ -285,7 +295,7 @@
       </div>
 
       <div
-        class="bg-white border rounded-md col-span-6 flex flex-col dark:bg-gray-850 dark:border-gray-800"
+        class="bg-surface border rounded-md col-span-6 flex flex-col border-border"
         style="height: calc(100vh - 6rem)"
       >
         <div class="rounded-md p-4 col-span-5">

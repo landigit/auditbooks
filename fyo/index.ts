@@ -109,15 +109,15 @@ export class Fyo {
   ) {
     if (this._initialized && !force) return;
 
-    await this.#initializeModules();
-    await this.#initializeMoneyMaker();
+    await this.initializeModules();
+    await this.initializeMoneyMaker();
 
     this.doc.registerModels(models, regionalModels);
     await this.doc.getDoc('SystemSettings');
     this._initialized = true;
   }
 
-  async #initializeModules() {
+  async initializeModules() {
     // temp params while calling routes
     this.temp = {};
 
@@ -126,7 +126,7 @@ export class Fyo {
     await this.db.init();
   }
 
-  async #initializeMoneyMaker() {
+  async initializeMoneyMaker() {
     const values =
       (await this.db?.getSingleValues(
         {

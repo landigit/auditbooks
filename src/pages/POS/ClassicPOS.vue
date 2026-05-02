@@ -84,12 +84,10 @@
     />
 
     <div
-      class="bg-gray-25 dark:bg-gray-875 grid grid-cols-12 gap-2 p-4"
+      class="bg-canvas-muted grid grid-cols-12 gap-2 p-4"
       style="height: calc(100vh - var(--h-row-largest))"
     >
-      <div
-        class="col-span-5 bg-white border rounded-md dark:border-gray-800 dark:bg-gray-850"
-      >
+      <div class="col-span-5 bg-surface border rounded-md border-border">
         <div class="rounded-md p-4 col-span-5">
           <div class="flex gap-x-2">
             <!-- Item Search -->
@@ -166,7 +164,7 @@
       <div class="col-span-7">
         <div class="flex flex-col gap-3" style="height: calc(100vh - 6rem)">
           <div
-            class="p-4 bg-white border rounded-md grow h-full dark:border-gray-800 dark:bg-gray-850"
+            class="p-4 bg-surface border rounded-md grow h-full border-border"
           >
             <!-- Customer Search -->
             <MultiLabelLink
@@ -190,9 +188,7 @@
             />
           </div>
 
-          <div
-            class="p-3 bg-white border rounded-md dark:border-gray-800 dark:bg-gray-850"
-          >
+          <div class="p-3 bg-surface border rounded-md border-border">
             <div class="w-full grid grid-cols-2 gap-y-2 gap-x-3">
               <div class="flex flex-col justify-end">
                 <div class="grid grid-cols-2 gap-2">
@@ -261,7 +257,9 @@
                     @click="$emit('saveInvoiceAction')"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Save` }}
                       </p>
                     </slot>
@@ -277,7 +275,9 @@
                     @click="() => $emit('clearValues')"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Cancel` }}
                       </p>
                     </slot>
@@ -298,7 +298,9 @@
                     @click="emitEvent('toggleModal', 'SavedInvoice', true)"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`held` }}
                       </p>
                     </slot>
@@ -317,7 +319,9 @@
                     "
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Return` }}
                       </p>
                     </slot>
@@ -334,7 +338,9 @@
                     @click="emitEvent('handlePaymentAction')"
                   >
                     <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
+                      <p
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Pay` }}
                       </p>
                     </slot>
@@ -351,7 +357,9 @@
                   @click="emitEvent('handlePaymentAction')"
                 >
                   <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
+                    <p
+                      class="uppercase text-lg text-button-primary-text font-semibold"
+                    >
                       {{ t`Pay` }}
                     </p>
                   </slot>

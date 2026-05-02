@@ -69,9 +69,9 @@ export function getIconConfig(type: ToastType) {
     success: 'green',
   }[type];
 
-  const iconColor = getColorClass(color ?? 'gray', 'text', 400);
-  const containerBackground = getColorClass(color ?? 'gray', 'bg', 100);
-  const containerBorder = getColorClass(color ?? 'gray', 'border', 300);
+  const iconColor = getColorClass(color ?? 'gray', 'text');
+  const containerBackground = getColorClass(color ?? 'gray', 'bg');
+  const containerBorder = getColorClass(color ?? 'gray', 'border');
 
   return { iconName, color, iconColor, containerBorder, containerBackground };
 }

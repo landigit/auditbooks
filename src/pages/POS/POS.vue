@@ -3,10 +3,12 @@
     <PageHeader :title="t`Point of Sale`">
       <slot>
         <Button
-          class="bg-red-500 dark:bg-red-700"
+          class="bg-error hover:bg-error-hover"
           @click="toggleModal('ShiftClose')"
         >
-          <span class="font-medium text-white">{{ t`Close POS Shift ` }}</span>
+          <span class="font-medium text-button-primary-text">{{
+            t`Close POS Shift `
+          }}</span>
         </Button>
       </slot>
     </PageHeader>
@@ -174,7 +176,6 @@ import {
   getItemVisibility,
   isLoyaltyProgramExpiredAndMaxed,
 } from 'models/helpers';
-import { ItemVisibility } from 'src/components/POS/types';
 import {
   POSItem,
   ItemQtyMap,
@@ -260,9 +261,9 @@ export default defineComponent({
       paymentDoc: {} as Payment,
       sinvDoc: {} as SalesInvoice,
       posProfile: {} as POSProfile,
-      itemQtyMap: {},
+      itemQtyMap: {} as ItemQtyMap,
       coupons: {} as AppliedCouponCodes,
-      itemSerialNumbers: {},
+      itemSerialNumbers: {} as ItemSerialNumbers,
       quickQtyActive: false,
       quickQtyBuffer: '',
       quickQtyRow: null as SalesInvoiceItem | null,

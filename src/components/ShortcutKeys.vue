@@ -17,7 +17,6 @@ export default defineComponent({
     keys: { type: Array as PropType<string[]>, required: true },
     simple: { type: Boolean, default: false },
   },
-  method() {},
   computed: {
     keyMap(): Record<string, string> {
       return getShortcutKeyMap(this.platform);
@@ -26,14 +25,15 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+@reference "../styles/index.css";
 .key-common {
   font-family: monospace;
   font-weight: 600;
-  @apply rounded-md px-1.5 py-0.5 bg-gray-200 text-gray-700
+  @apply rounded-md px-1.5 py-0.5 bg-canvas-muted text-muted
     tracking-tighter;
 }
 
 .key-styling {
-  @apply border-b-4 border-gray-400 shadow-md;
+  @apply border-b-4 border-border shadow-md;
 }
 </style>

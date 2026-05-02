@@ -83,7 +83,7 @@ export default defineComponent({
       return 'text';
     },
     labelClasses(): string {
-      return 'text-gray-600 dark:text-gray-500 text-sm mb-1';
+      return 'text-description text-sm mb-1';
     },
     inputClasses(): string[] {
       /**
@@ -107,7 +107,7 @@ export default defineComponent({
         'text-base',
         'focus:outline-none',
         'w-full',
-        'placeholder-gray-500',
+        'placeholder-description',
       ];
     },
     sizeClasses(): string {
@@ -118,10 +118,10 @@ export default defineComponent({
     },
     inputReadOnlyClasses(): string {
       if (this.isReadOnly) {
-        return 'text-gray-800 dark:text-gray-300 cursor-default';
+        return 'text-description cursor-default';
       }
 
-      return 'text-gray-900 dark:text-gray-100';
+      return 'text-main';
     },
     containerClasses(): string[] {
       /**
@@ -139,7 +139,7 @@ export default defineComponent({
     },
     containerReadOnlyClasses(): string {
       if (!this.isReadOnly) {
-        return 'focus-within:bg-gray-100 dark:focus-within:bg-gray-850';
+        return 'focus-within:bg-surface-hover';
       }
 
       return '';
@@ -149,10 +149,10 @@ export default defineComponent({
         return '';
       }
 
-      const border = 'border border-gray-200 dark:border-gray-800';
-      let background = 'bg-gray-25 dark:bg-gray-875';
+      const border = 'border border-border';
+      let background = 'bg-canvas';
       if (this.isReadOnly) {
-        background = 'bg-gray-50 dark:bg-gray-850';
+        background = 'bg-canvas-muted';
       }
 
       return border + ' ' + background;

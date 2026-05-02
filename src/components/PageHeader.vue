@@ -1,8 +1,8 @@
 <template>
   <div
-    class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 dark:bg-gray-875"
+    class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface"
     :class="[
-      border ? 'border-b dark:border-gray-800' : '',
+      border ? 'border-b border-border' : '',
       platform !== 'Windows' ? 'window-drag' : '',
     ]"
   >
@@ -22,7 +22,7 @@
       <PageHeaderNavGroup />
       <h1
         v-if="title"
-        class="text-xl font-semibold select-none whitespace-nowrap dark:text-white"
+        class="text-xl font-semibold select-none whitespace-nowrap text-main"
       >
         {{ title }}
       </h1>
@@ -45,11 +45,15 @@
 <script lang="ts">
 import { languageDirectionKey } from 'src/utils/injectionKeys';
 import { showSidebar } from 'src/utils/refs';
-import { defineComponent, inject, Transition } from 'vue';
-import PageHeaderNavGroup from './PageHeaderNavGroup.vue';
+import { defineComponent, inject, Transition, defineAsyncComponent } from 'vue';
 
 export default defineComponent({
-  components: { Transition, PageHeaderNavGroup },
+  components: {
+    Transition,
+    PageHeaderNavGroup: defineAsyncComponent(
+      () => import('./PageHeaderNavGroup.vue')
+    ),
+  },
   props: {
     title: { type: String, default: '' },
     border: { type: Boolean, default: true },
@@ -68,7 +72,7 @@ export default defineComponent({
       }
 
       if (this.border) {
-        return 'w-tl me-4 border-e';
+        return 'w-tl me-4 border-e border-border';
       }
 
       return 'w-tl me-4';

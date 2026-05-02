@@ -33,9 +33,9 @@ const ignoreList: string[] = [
 ];
 
 export class TelemetryManager {
-  #url = '';
-  #token = '';
-  #started = false;
+  private url = '';
+  private token = '';
+  private _started = false;
   fyo: Fyo;
 
   constructor(fyo: Fyo) {
@@ -43,16 +43,16 @@ export class TelemetryManager {
   }
 
   get hasCreds() {
-    return !!this.#url && !!this.#token;
+    return !!this.url && !!this.token;
   }
 
   get started() {
-    return this.#started;
+    return this._started;
   }
 
   async start(isOpened?: boolean) {
-    this.#started = true;
-    await this.#setCreds();
+    this._started = true;
+    await this.setCreds();
 
     if (isOpened) {
       this.log(Verb.Opened, 'instance');
@@ -62,30 +62,30 @@ export class TelemetryManager {
   }
 
   stop() {
-    if (!this.started) {
+    if (!this._started) {
       return;
     }
 
     this.log(Verb.Closed, 'instance');
-    this.#started = false;
+    this._started = false;
   }
 
   log(verb: Verb, noun: Noun, more?: Record<string, unknown>) {
-    if (!this.#started && this.fyo.db.isConnected) {
+    if (!this._started && this.fyo.db.isConnected) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.start().then(() => this.#sendBeacon(verb, noun, more));
+      this.start().then(() => this.sendBeacon(verb, noun, more));
       return;
     }
 
-    this.#sendBeacon(verb, noun, more);
+    this.sendBeacon(verb, noun, more);
   }
 
   async logOpened() {
-    await this.#setCreds();
-    this.#sendBeacon(Verb.Opened, 'app');
+    await this.setCreds();
+    this.sendBeacon(Verb.Opened, 'app');
   }
 
-  #sendBeacon(verb: Verb, noun: Noun, more?: Record<string, unknown>) {
+  private sendBeacon(verb: Verb, noun: Noun, more?: Record<string, unknown>) {
     if (
       !this.hasCreds ||
       this.fyo.store.skipTelemetryLogging ||
@@ -94,26 +94,26 @@ export class TelemetryManager {
       return;
     }
 
-    const telemetryData: Telemetry = this.#getTelemtryData(verb, noun, more);
+    const telemetryData: Telemetry = this.getTelemtryData(verb, noun, more);
     const data = JSON.stringify({
-      token: this.#token,
+      token: this.token,
       telemetryData,
     });
 
-    navigator.sendBeacon(this.#url, data);
+    navigator.sendBeacon(this.url, data);
   }
 
-  async #setCreds() {
+  private async setCreds() {
     if (this.hasCreds) {
       return;
     }
 
     const { telemetryUrl, tokenString } = await this.fyo.auth.getCreds();
-    this.#url = telemetryUrl;
-    this.#token = tokenString;
+    this.url = telemetryUrl;
+    this.token = tokenString;
   }
 
-  #getTelemtryData(
+  private getTelemtryData(
     verb: Verb,
     noun: Noun,
     more?: Record<string, unknown>

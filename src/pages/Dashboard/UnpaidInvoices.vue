@@ -14,38 +14,32 @@
       <div class="flex justify-between">
         <!-- Paid -->
         <div
-          class="text-sm font-medium dark:text-gray-25"
+          class="text-sm font-medium text-main"
           :class="{
-            'bg-gray-200 dark:bg-gray-700 text-gray-200 dark:text-gray-700 rounded':
-              !count,
+            'bg-canvas-muted text-description rounded': !count,
             'cursor-pointer': paidCount > 0,
           }"
           :title="paidCount > 0 ? t`View Paid Invoices` : ''"
           @click="() => routeToInvoices('paid')"
         >
           {{ fyo.format(paid, 'Currency') }}
-          <span
-            :class="{ 'text-gray-900 dark:text-gray-200 font-normal': count }"
-            >{{ t`Paid` }}</span
-          >
+          <span :class="{ 'text-main font-normal': count }">{{ t`Paid` }}</span>
         </div>
 
         <!-- Unpaid -->
         <div
-          class="text-sm font-medium dark:text-gray-25"
+          class="text-sm font-medium text-main"
           :class="{
-            'bg-gray-200 dark:bg-gray-700 text-gray-200 dark:text-gray-700 rounded':
-              !count,
+            'bg-canvas-muted text-description rounded': !count,
             'cursor-pointer': unpaidCount > 0,
           }"
           :title="unpaidCount > 0 ? t`View Unpaid Invoices` : ''"
           @click="() => routeToInvoices('unpaid')"
         >
           {{ fyo.format(unpaid, 'Currency') }}
-          <span
-            :class="{ 'text-gray-900 dark:text-gray-200 font-normal': count }"
-            >{{ t`Unpaid` }}</span
-          >
+          <span :class="{ 'text-main font-normal': count }">{{
+            t`Unpaid`
+          }}</span>
         </div>
       </div>
 
@@ -68,7 +62,7 @@
       :offset="15"
       :show="show"
       placement="top"
-      class="text-sm shadow-md px-2 py-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-s-4"
+      class="text-sm shadow-md px-2 py-1 bg-surface text-main border-s-4"
       :style="{ borderColor: colors }"
     >
       <div class="flex justify-between gap-4">
@@ -88,7 +82,6 @@ import { DateTime } from 'luxon';
 import { ModelNameEnum } from 'models/types';
 import MouseFollower from 'src/components/MouseFollower.vue';
 import { fyo } from 'src/initFyo';
-import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { PeriodKey } from 'src/utils/types';
 import { routeTo } from 'src/utils/ui';
@@ -113,7 +106,6 @@ export default defineComponent({
   extends: BaseDashboardChart,
   props: {
     schemaName: { type: String as PropType<string>, required: true },
-    darkMode: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -140,21 +132,25 @@ export default defineComponent({
       return 'pink';
     },
     colors(): string {
-      return uicolors[this.color][this.darkMode ? '600' : '500'];
+      return this.color === 'blue'
+        ? 'var(--chart-blue-main)'
+        : 'var(--chart-pink-main)';
     },
     paidColor(): string {
       if (!this.hasData) {
-        return this.darkMode ? 'bg-gray-700' : 'bg-gray-400';
+        return 'bg-canvas-muted';
       }
-
-      return `bg-${this.color}-${this.darkMode ? '600' : '500'}`;
+      return this.color === 'blue'
+        ? 'bg-(--chart-blue-main)'
+        : 'bg-(--chart-pink-main)';
     },
     unpaidColor(): string {
       if (!this.hasData) {
-        return `bg-gray-${this.darkMode ? '800' : '200'}`;
+        return 'bg-canvas-muted';
       }
-
-      return `bg-${this.color}-${this.darkMode ? '700 bg-opacity-20' : '200'}`;
+      return this.color === 'blue'
+        ? 'bg-(--chart-blue-muted)'
+        : 'bg-(--chart-pink-muted)';
     },
   },
   async activated() {

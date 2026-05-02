@@ -10,6 +10,7 @@
         v-if="drawXGrid"
         :d="xGrid"
         :stroke="gridColor"
+        class="text-border"
         :stroke-width="gridThickness"
         stroke-linecap="round"
         fill="transparent"
@@ -40,6 +41,7 @@
           v-for="(i, j) in count"
           :key="j + '-xlabels'"
           :style="fontStyle"
+          class="text-description"
           :y="
             viewBoxHeight -
             axisPadding +
@@ -118,7 +120,7 @@
       ref="tooltip"
       :offset="15"
       placement="top"
-      class="text-sm shadow-md px-2 py-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 border-s-4"
+      class="text-sm shadow-md px-2 py-1 bg-surface text-main border-s-4"
       :style="{ borderColor: activeColor }"
     >
       <div class="flex flex-col justify-center items-center">
@@ -152,9 +154,9 @@ export default {
     pointsPadding: { type: Number, default: 40 },
     xLabelOffset: { type: Number, default: 20 },
     yLabelOffset: { type: Number, default: 0 },
-    gridColor: { type: String, default: 'rgba(0, 0, 0, 0.2)' },
-    zeroLineColor: { type: String, default: 'rgba(0, 0, 0, 0.2)' },
-    axisColor: { type: String, default: 'rgba(0, 0, 0, 0.5)' },
+    gridColor: { type: String, default: 'currentColor' },
+    zeroLineColor: { type: String, default: 'currentColor' },
+    axisColor: { type: String, default: 'currentColor' },
     axisThickness: { type: Number, default: 1 },
     gridThickness: { type: Number, default: 0.5 },
     yMin: { type: Number, default: null },
@@ -163,7 +165,7 @@ export default {
     formatY: { type: Function, default: prefixFormat },
     formatX: { type: Function, default: (v) => v },
     fontSize: { type: Number, default: 22 },
-    fontColor: { type: String, default: '#415668' },
+    fontColor: { type: String, default: 'currentColor' },
     bottom: { type: Number, default: 0 },
     width: { type: Number, default: 28 },
     left: { type: Number, default: 65 },
@@ -173,7 +175,7 @@ export default {
     drawZeroLine: { type: Boolean, default: true },
   },
   data() {
-    return { xi: -1, yi: -1, activeColor: 'rgba(0, 0, 0, 0.2)' };
+    return { xi: -1, yi: -1, activeColor: 'transparent' };
   },
   computed: {
     fontStyle() {

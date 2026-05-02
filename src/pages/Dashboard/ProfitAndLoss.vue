@@ -25,7 +25,7 @@
       :y-min="chartData.yMin"
     />
     <div v-else class="flex-1 w-full h-full flex-center my-20">
-      <span class="text-base text-gray-600 dark:text-gray-500">
+      <span class="text-base text-description">
         {{ t`No transactions yet` }}
       </span>
     </div>
@@ -35,7 +35,6 @@
 import BarChart from 'src/components/Charts/BarChart.vue';
 import { fyo } from 'src/initFyo';
 import { formatXLabels, getYMax, getYMin } from 'src/utils/chart';
-import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { getValueMapFromList } from 'utils';
 import DashboardChartBase from './BaseDashboardChart.vue';
@@ -56,9 +55,6 @@ export default defineComponent({
     BarChart,
   },
   extends: DashboardChartBase,
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
   data: () => ({
     data: [] as { yearmonth: string; balance: number }[],
     hasData: false,
@@ -69,8 +65,8 @@ export default defineComponent({
       const points = [this.data.map((d) => d.balance)];
       const colors = [
         {
-          positive: uicolors.blue[this.darkMode ? '600' : '500'],
-          negative: uicolors.pink[this.darkMode ? '600' : '500'],
+          positive: 'var(--chart-blue-main)',
+          negative: 'var(--chart-pink-main)',
         },
       ];
       const format = (value: number) => fyo.format(value ?? 0, 'Currency');
@@ -84,9 +80,6 @@ export default defineComponent({
         yMax,
         yMin,
         formatX: formatXLabels,
-        gridColor: this.darkMode ? 'rgba(200, 200, 200, 0.2)' : undefined,
-        fontColor: this.darkMode ? uicolors.gray['400'] : undefined,
-        zeroLineColor: this.darkMode ? uicolors.gray['400'] : undefined,
       };
     },
   },

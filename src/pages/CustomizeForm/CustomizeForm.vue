@@ -9,7 +9,7 @@
     <div class="flex text-base w-full flex-col">
       <!-- Select Entry Type -->
       <div
-        class="h-row-largest flex flex-row justify-start items-center w-full gap-2 border-b dark:border-gray-800 p-4"
+        class="h-row-largest flex flex-row justify-start items-center w-full gap-2 border-b border-border p-4"
       >
         <AutoComplete
           :df="{
@@ -18,7 +18,7 @@
             fieldtype: 'AutoComplete',
             options: customizableSchemas,
           }"
-          input-class="bg-transparent text-gray-900 dark:text-gray-100 text-base"
+          input-class="bg-transparent text-main text-base"
           class="w-40"
           :border="true"
           :value="formType"
@@ -26,13 +26,10 @@
           @change="setEntryType"
         />
 
-        <p v-if="errorMessage" class="text-base ms-2 text-red-500">
+        <p v-if="errorMessage" class="text-base ms-2 text-error">
           {{ errorMessage }}
         </p>
-        <p
-          v-else-if="helpMessage"
-          class="text-base ms-2 text-gray-700 dark:text-gray-300"
-        >
+        <p v-else-if="helpMessage" class="text-base ms-2 text-description">
           {{ helpMessage }}
         </p>
       </div>

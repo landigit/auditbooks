@@ -1,54 +1,42 @@
-import colors from '../../colors.json';
-
-export const uicolors = colors;
 export const indicators = {
-  GRAY: 'grey',
-  GREY: 'grey',
-  BLUE: 'blue',
-  RED: 'red',
-  GREEN: 'green',
-  ORANGE: 'orange',
-  PURPLE: 'purple',
-  YELLOW: 'yellow',
-  BLACK: 'black',
+  UNPAID: 'unpaid',
+  SUCCESS: 'success',
+  ERROR: 'error',
+  PAID: 'paid',
+  DRAFT: 'draft',
+  CANCELLED: 'cancelled',
+  SUBMITTED: 'submitted',
 };
 
-const getValidColor = (color: string) => {
-  const isValid = [
-    'gray',
-    'orange',
-    'green',
-    'red',
-    'yellow',
-    'blue',
-    'indigo',
-    'pink',
-    'purple',
-    'teal',
-  ].includes(color);
-  return isValid ? color : 'gray';
+const getStatus = (color: string) => {
+  const statusMap: Record<string, string> = {
+    orange: 'unpaid',
+    green: 'success',
+    red: 'error',
+    blue: 'submitted',
+    gray: 'draft',
+    grey: 'draft',
+  };
+  return statusMap[color.toLowerCase()] || color;
 };
 
 export function getBgColorClass(color: string) {
-  const vcolor = getValidColor(color);
-  return `bg-${vcolor}-200 dark:bg-${vcolor}-800`;
+  const status = getStatus(color);
+  return `bg-indicator-${status}-bg`;
 }
 
-export function getColorClass(
-  color: string,
-  type: 'bg' | 'text' | 'border',
-  value = 300,
-  darkvalue = 600
-) {
-  return `${type}-${getValidColor(color)}-${value} dark:${type}-${getValidColor(
-    color
-  )}-${darkvalue}`;
+export function getColorClass(color: string, type: 'bg' | 'text' | 'border') {
+  const status = getStatus(color);
+  if (type === 'bg') return `bg-indicator-${status}-bg`;
+  if (type === 'text') return `text-indicator-${status}-text`;
+  if (type === 'border') return `border-indicator-${status}-border`;
+
+  return '';
 }
 
 export function getTextColorClass(color: string) {
-  return `text-${getValidColor(color)}-700 dark:text-${getValidColor(
-    color
-  )}-200`;
+  const status = getStatus(color);
+  return `text-indicator-${status}-text`;
 }
 
 export function getBgTextColorClass(color: string) {

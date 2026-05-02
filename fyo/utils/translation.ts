@@ -30,11 +30,11 @@ export class TranslationString {
     return this;
   }
 
-  #formatArg(arg: string | number | boolean) {
+  private formatArg(arg: string | number | boolean) {
     return String(arg ?? '');
   }
 
-  #translate() {
+  private translate() {
     let indexFormat = getIndexFormat(this.args[0]);
     indexFormat = getWhitespaceSanitized(indexFormat);
 
@@ -47,7 +47,7 @@ export class TranslationString {
     this.strList = getSnippets(translatedIndexFormat);
   }
 
-  #stitch() {
+  private stitch() {
     if (!((this.args[0] as unknown) instanceof Array)) {
       throw new ValueError(
         `invalid args passed to TranslationString ${String(
@@ -60,26 +60,26 @@ export class TranslationString {
     this.argList = this.args.slice(1) as TranslationArgs[];
 
     if (this.languageMap) {
-      this.#translate();
+      this.translate();
     }
 
     return this.strList
-      .map((s, i) => s + this.#formatArg(this.argList![i]))
+      .map((s, i) => s + this.formatArg(this.argList![i]))
       .join('')
       .replace(/\s+/g, ' ')
       .trim();
   }
 
   toString() {
-    return this.#stitch();
+    return this.stitch();
   }
 
   toJSON() {
-    return this.#stitch();
+    return this.stitch();
   }
 
   valueOf() {
-    return this.#stitch();
+    return this.stitch();
   }
 }
 

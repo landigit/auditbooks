@@ -3,7 +3,7 @@
     <p class="me-1"><slot></slot></p>
     <FeatherIcon
       v-if="icon"
-      class="h-5 w-5 ms-3 text-blue-400"
+      class="h-5 w-5 ms-3 text-indicator-blue-text"
       name="help-circle"
     />
   </button>

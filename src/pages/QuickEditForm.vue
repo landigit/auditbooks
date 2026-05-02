@@ -1,10 +1,10 @@
 <template>
   <div
-    class="border-s dark:border-gray-800 h-full overflow-auto w-quick-edit bg-white dark:bg-gray-850"
+    class="border-s border-border h-full overflow-auto w-quick-edit bg-surface"
   >
     <!-- Quick edit Tool bar -->
     <div
-      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-white dark:bg-gray-850"
+      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-surface"
       style="z-index: 1"
     >
       <!-- Close Button  -->
@@ -29,7 +29,7 @@
     <!-- Name and image -->
     <div
       v-if="doc && (titleField || imageField)"
-      class="items-center border-b border-t dark:border-gray-800"
+      class="items-center border-b border-t border-border"
       :class="imageField ? 'grid' : 'flex justify-center'"
       :style="{
         height: `calc(var(--h-row-mid) * ${!!imageField ? '2 + 1px' : '1'})`,
@@ -127,8 +127,8 @@ export default defineComponent({
   },
   data() {
     return {
-      titleField: null,
-      imageField: null,
+      titleField: null as Field | null,
+      imageField: null as Field | null,
     };
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="gap-4 py-2 w-full flex flex-col items-center rounded-t-md text-black overflow-y-auto custom-scroll custom-scroll-thumb2"
+    class="gap-4 py-2 w-full flex flex-col items-center rounded-t-md text-main overflow-y-auto custom-scroll custom-scroll-thumb2"
     style="height: 83vh"
   >
     <!-- Items Grid -->
@@ -8,7 +8,7 @@
       class="gap-2 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       <div
-        class="p-1 border border-gray-300 flex flex-col text-sm text-center dark:border-gray-800"
+        class="p-1 border border-border flex flex-col text-sm text-center"
         @click="handleChange(item as POSItem)"
         v-for="item in items as POSItem[]"
         :key="item.name"
@@ -24,9 +24,9 @@
 
             <div
               v-else
-              class="rounded-lg w-full h-full bg-gray-100 flex justify-center items-center dark:bg-gray-850"
+              class="rounded-lg w-full h-full bg-canvas-muted flex justify-center items-center"
             >
-              <p class="text-4xl font-semibold text-gray-400 select-none">
+              <p class="text-4xl font-semibold text-description select-none">
                 {{ getExtractedWords(item.name) }}
               </p>
             </div>
@@ -35,17 +35,17 @@
               class="absolute top-1 right-1 rounded-full w-6 h-6 flex justify-center items-center"
               :class="
                 item.availableQty > 0
-                  ? 'bg-green-100 text-green-900'
-                  : 'bg-red-100 text-red-900'
+                  ? 'bg-indicator-green-bg text-indicator-green-text'
+                  : 'bg-indicator-red-bg text-indicator-red-text'
               "
             >
               {{ item.availableQty }}
             </p>
           </div>
         </div>
-        <h3 class="text-lg font-medium dark:text-white">{{ item.name }}</h3>
+        <h3 class="text-lg font-medium text-main">{{ item.name }}</h3>
 
-        <p class="text-lg font-medium dark:text-white">
+        <p class="text-lg font-medium text-main">
           {{
             item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined
           }}

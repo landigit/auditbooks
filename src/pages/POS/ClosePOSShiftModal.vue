@@ -1,10 +1,10 @@
 <template>
   <Modal :open-modal="openModal" class="w-3/6 p-4">
-    <h1 class="text-xl font-semibold text-center dark:text-gray-100 pb-4">
+    <h1 class="text-xl font-semibold text-center text-main pb-4">
       {{ t`Close POS Shift` }}
     </h1>
 
-    <h2 class="mt-4 mb-2 text-lg font-medium dark:text-gray-100">
+    <h2 class="mt-4 mb-2 text-lg font-medium text-main">
       {{ t`Closing Cash` }}
     </h2>
     <Table
@@ -18,9 +18,7 @@
       @row-change="setClosingCashAmount"
     />
 
-    <h2 class="mt-6 mb-2 text-lg dark:text-gray-100 font-medium">
-      Closing Amounts
-    </h2>
+    <h2 class="mt-6 mb-2 text-lg text-main font-medium">Closing Amounts</h2>
     <Table
       v-if="isValuesSeeded"
       class="text-base"
@@ -34,22 +32,19 @@
 
     <div class="mt-4 grid grid-cols-2 gap-4 items-end">
       <Button
-        class="w-full py-5 bg-red-500 dark:bg-red-700"
+        class="w-full py-5 bg-indicator-red-bg"
         @click="$emit('toggleModal', 'ShiftClose', false)"
       >
         <slot>
-          <p class="uppercase text-lg text-white font-semibold">
+          <p class="uppercase text-lg text-indicator-red-text font-semibold">
             {{ t`Cancel` }}
           </p>
         </slot>
       </Button>
 
-      <Button
-        class="w-full py-5 bg-green-500 dark:bg-green-700"
-        @click="handleSubmit"
-      >
+      <Button class="w-full py-5 bg-indicator-green-bg" @click="handleSubmit">
         <slot>
-          <p class="uppercase text-lg text-white font-semibold">
+          <p class="uppercase text-lg text-indicator-green-text font-semibold">
             {{ t`Submit` }}
           </p>
         </slot>
@@ -100,7 +95,7 @@ export default defineComponent({
 
       posOpeningShiftDoc: undefined as POSOpeningShift | undefined,
       posClosingShiftDoc: undefined as POSClosingShift | undefined,
-      transactedAmount: {},
+      transactedAmount: {} as Record<string, Money>,
     };
   },
   computed: {
@@ -136,10 +131,8 @@ export default defineComponent({
         return;
       }
 
-      this.transactedAmount = await fyo.db.getPOSTransactedAmount(
-        fromDate,
-        new Date()
-      );
+      this.transactedAmount =
+        (await fyo.db.getPOSTransactedAmount(fromDate, new Date())) ?? {};
     },
     seedClosingCash() {
       if (!this.posClosingShiftDoc) {
@@ -163,9 +156,11 @@ export default defineComponent({
       this.posClosingShiftDoc.closingAmounts.map((row) => {
         if (row.paymentMethod === 'Cash') {
           row.closingAmount = this.posClosingShiftDoc?.closingCashAmount;
-          row.differenceAmount = row.closingAmount.sub(
-            row.expectedAmount as Money
-          );
+          if (row.closingAmount) {
+            row.differenceAmount = row.closingAmount.sub(
+              row.expectedAmount as Money
+            );
+          }
         }
       });
     },

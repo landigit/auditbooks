@@ -640,7 +640,7 @@ function getNameAndTypeFromTemplateFile(
   });
 }
 
-export const baseTemplate = `<main class="h-full w-full bg-white">
+export const baseTemplate = `<main class="h-full w-full bg-surface">
 
   <!-- Edit This Code -->
   <header class="p-4 flex justify-between border-b">
@@ -655,7 +655,7 @@ export const baseTemplate = `<main class="h-full w-full bg-white">
     </h2>
   </header>
 
-  <div class="p-4 text-gray-600">
+  <div class="p-4 text-description">
     Edit the code in the Template Editor on the right
     to create your own personalized custom template.
   </div>

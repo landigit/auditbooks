@@ -6,13 +6,10 @@
   >
     <!-- Loading Continer -->
     <div
-      class="border dark:border-gray-800 text-gray-900 dark:text-gray-100 shadow-lg px-3 py-3 items-center w-96 z-10 bg-white dark:bg-gray-900 rounded-lg"
+      class="border border-border text-main shadow-lg px-3 py-3 items-center w-96 z-10 bg-surface rounded-lg"
     >
       <!-- Message -->
-      <p
-        v-if="message?.length"
-        class="text-base text-gray-600 dark:text-gray-400 pb-2"
-      >
+      <p v-if="message?.length" class="text-base text-description pb-2">
         {{ message }}
       </p>
 
@@ -21,16 +18,12 @@
         <!-- Loading Bar BG -->
         <div
           class="w-full h-3 me-2 rounded"
-          :class="
-            percent >= 0
-              ? 'bg-gray-200 dark:bg-gray-800'
-              : 'bg-gray-300 dark:bg-gray-700'
-          "
+          :class="percent >= 0 ? 'bg-canvas-muted' : 'bg-canvas-muted'"
         >
           <!-- Loading Bar -->
           <div
             v-if="percent >= 0"
-            class="h-3 rounded bg-gray-800 dark:bg-gray-200"
+            class="h-3 rounded bg-main"
             :style="{ width: `${percent * 100}%` }"
           ></div>
         </div>
@@ -39,7 +32,7 @@
         <feather-icon
           v-if="showX"
           name="x"
-          class="w-4 h-4 ms-auto text-gray-600 dark:text-gray-400 cursor-pointer hover:text-gray-800 dark:hover:text-gray-200"
+          class="w-4 h-4 ms-auto text-description cursor-pointer hover:text-main"
           @click="closeToast"
         />
       </div>

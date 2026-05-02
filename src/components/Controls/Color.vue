@@ -19,7 +19,7 @@
             <span v-if="value">
               {{ selectedColorLabel }}
             </span>
-            <span v-else class="text-gray-400 dark:text-gray-600">
+            <span v-else class="text-description">
               {{ inputPlaceholder }}
             </span>
           </div>
@@ -78,6 +78,10 @@ export default {
   },
   methods: {
     setColorValue(value) {
+      if (value.startsWith('var(')) {
+        this.triggerChange(value);
+        return;
+      }
       if (!value.startsWith('#')) {
         value = '#' + value;
       }

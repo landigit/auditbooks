@@ -9,7 +9,7 @@
       <FormHeader
         :form-title="tabLabels[activeTab] ?? ''"
         :form-sub-title="t`Settings`"
-        class="sticky top-0 bg-white dark:bg-gray-890 border-b dark:border-gray-800"
+        class="sticky top-0 bg-surface border-b border-border"
       >
       </FormHeader>
 
@@ -21,9 +21,7 @@
           ref="section"
           class="p-4"
           :class="
-            idx !== 0 && activeGroup.size > 1
-              ? 'border-t dark:border-gray-800'
-              : ''
+            idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''
           "
           :show-title="activeGroup.size > 1 && name !== t`Default`"
           :title="name"
@@ -37,7 +35,7 @@
       <!-- Tab Bar -->
       <div
         v-if="groupedFields && groupedFields.size > 1"
-        class="mt-auto px-4 pb-4 flex gap-8 border-t dark:border-gray-800 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-890"
+        class="mt-auto px-4 pb-4 flex gap-8 border-t border-border flex-shrink-0 sticky bottom-0 bg-surface"
       >
         <div
           v-for="key of groupedFields.keys()"
@@ -45,8 +43,8 @@
           class="text-sm cursor-pointer"
           :class="
             key === activeTab
-              ? 'text-gray-900 dark:text-gray-25 font-semibold border-t-2 border-gray-800 dark:border-gray-100'
-              : 'text-gray-700 dark:text-gray-200 '
+              ? 'text-main font-semibold border-t-2 border-main'
+              : 'text-description'
           "
           :style="{
             paddingTop: key === activeTab ? 'calc(1rem - 2px)' : '1rem',
@@ -93,9 +91,9 @@ export default defineComponent({
   },
   data() {
     return {
-      errors: {},
-      activeTab: ModelNameEnum.AccountingSettings,
-      groupedFields: null,
+      errors: {} as Record<string, string>,
+      activeTab: ModelNameEnum.AccountingSettings as string,
+      groupedFields: null as UIGroupedFields | null,
     };
   },
   computed: {

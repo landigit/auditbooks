@@ -1,27 +1,24 @@
 <template>
-  <div :class="level > 0 ? 'ms-2 ps-2 border-l dark:border-gray-800' : ''">
+  <div :class="level > 0 ? 'ms-2 ps-2 border-l border-border' : ''">
     <template v-for="r of rows" :key="r.key">
       <div
-        class="flex gap-2 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap overflow-auto no-scrollbar"
+        class="flex gap-2 text-sm text-description whitespace-nowrap overflow-auto no-scrollbar"
         :class="[typeof r.value === 'object' ? 'cursor-pointer' : '']"
         @click="r.collapsed = !r.collapsed"
       >
         <div class="">{{ getKey(r) }}</div>
-        <div
-          v-if="!r.isCollapsible"
-          class="font-semibold text-gray-800 dark:text-gray-200"
-        >
+        <div v-if="!r.isCollapsible" class="font-semibold text-muted">
           {{ r.value }}
         </div>
         <div
           v-else-if="Array.isArray(r.value)"
-          class="text-blue-600 dark:text-blue-100 bg-blue-100 dark:bg-blue-600 border-white dark:border-blue-600 border tracking-tighter rounded text-xs px-1"
+          class="text-indicator-blue-text bg-indicator-blue-bg border-indicator-blue-text border tracking-tighter rounded text-xs px-1"
         >
           Array
         </div>
         <div
           v-else
-          class="text-pink-600 dark:text-pink-100 bg-pink-100 dark:bg-pink-600 border-white dark:border-pink-600 border tracking-tighter rounded text-xs px-1"
+          class="text-chart-pink-main bg-indicator-orange-bg border-chart-pink-main border tracking-tighter rounded text-xs px-1"
         >
           Object
         </div>

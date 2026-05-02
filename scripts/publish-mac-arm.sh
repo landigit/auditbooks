@@ -4,7 +4,7 @@ set -e
 
 # Check node and yarn versions
 YARN_VERSION=$(yarn --version)
-if [ "$YARN_VERSION" != "1.22.18" ]; then
+if [ "$YARN_VERSION" != "4.14.1" ]; then
   echo "Incorrect yarn version: $YARN_VERSION"
   exit 1
 fi
@@ -19,8 +19,8 @@ mkdir build_publish
 cd build_publish
 
 # Clone and cd into books
-git clone https://github.com/frappe/books --depth 1
-cd books
+git clone https://github.com/landigit/auditbooks --depth 1
+cd auditbooks
 
 # Copy creds to log_creds.txt
 echo $ERR_LOG_KEY > log_creds.txt

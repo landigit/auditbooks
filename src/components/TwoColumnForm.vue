@@ -16,13 +16,13 @@
       <div
         v-else
         :key="`${df.fieldname}-regular`"
-        class="grid items-center border-b dark:border-gray-800"
+        class="grid items-center border-b border-border"
         :style="{
           ...style,
           height: getFieldHeight(df),
         }"
       >
-        <div class="ps-4 flex text-gray-600 dark:text-gray-400">
+        <div class="ps-4 flex text-description">
           {{ df.label }}
         </div>
 
@@ -41,10 +41,7 @@
             :text-end="false"
             @change="async (value) => await onChange(df, value)"
           />
-          <div
-            v-if="errors[df.fieldname]"
-            class="text-sm text-red-600 mt-2 ps-2"
-          >
+          <div v-if="errors[df.fieldname]" class="text-sm text-error mt-2 ps-2">
             {{ errors[df.fieldname] }}
           </div>
         </div>

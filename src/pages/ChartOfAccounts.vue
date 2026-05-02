@@ -16,10 +16,10 @@
       <template v-for="account in allAccounts" :key="account.name">
         <!-- Account List Item -->
         <div
-          class="py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-890 dark:text-gray-25 group flex items-center border-b dark:border-gray-800 flex-shrink-0 pe-4"
+          class="py-2 cursor-pointer hover:bg-surface-hover text-main group flex items-center border-b border-border flex-shrink-0 pe-4"
           :class="[
             account.level !== 0 ? 'text-base' : 'text-lg',
-            isQuickEditOpen(account) ? 'bg-gray-200 dark:bg-gray-900' : '',
+            isQuickEditOpen(account) ? 'bg-canvas-muted' : '',
           ]"
           :style="getItemStyle(account.level)"
           @click="onClick(account)"
@@ -37,20 +37,20 @@
             <div class="ms-6 hidden group-hover:block">
               <button
                 v-if="account.isGroup"
-                class="text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+                class="text-xs text-description hover:text-main focus:outline-none"
                 @click.stop="addAccount(account, 'addingAccount')"
               >
                 {{ t`Add Account` }}
               </button>
               <button
                 v-if="account.isGroup"
-                class="ms-3 text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+                class="ms-3 text-xs text-description hover:text-main focus:outline-none"
                 @click.stop="addAccount(account, 'addingGroupAccount')"
               >
                 {{ t`Add Group` }}
               </button>
               <button
-                class="ms-3 text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+                class="ms-3 text-xs text-description hover:text-main focus:outline-none"
                 @click.stop="deleteAccount(account)"
               >
                 {{ account.isGroup ? t`Delete Group` : t`Delete Account` }}
@@ -59,10 +59,7 @@
           </div>
 
           <!-- Account Balance String -->
-          <p
-            v-if="!account.isGroup"
-            class="ms-auto text-base text-gray-800 dark:text-gray-400"
-          >
+          <p v-if="!account.isGroup" class="ms-auto text-base text-description">
             {{ getBalanceString(account) }}
           </p>
         </div>
@@ -71,7 +68,7 @@
         <div
           v-if="account.addingAccount || account.addingGroupAccount"
           :key="account.name + '-adding-account'"
-          class="px-4 border-b dark:border-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-890 group flex items-center text-base"
+          class="px-4 border-b border-border cursor-pointer hover:bg-surface-hover group flex items-center text-base"
           :style="getGroupStyle(account.level + 1)"
         >
           <component :is="getIconComponent(account.addingGroupAccount)" />
@@ -79,8 +76,8 @@
             <input
               :ref="account.name"
               v-model="newAccountName"
-              class="focus:outline-none bg-transparent dark:placeholder-gray-600 dark:text-gray-400"
-              :class="{ 'text-gray-600 dark:text-gray-400': insertingAccount }"
+              class="focus:outline-none bg-transparent placeholder-description text-main"
+              :class="{ 'text-description': insertingAccount }"
               :placeholder="t`New Account`"
               type="text"
               :disabled="insertingAccount"
@@ -91,7 +88,7 @@
             />
             <button
               v-if="!insertingAccount"
-              class="ms-4 text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+              class="ms-4 text-xs text-description hover:text-main focus:outline-none"
               @click="
                 (e) => createNewAccount(account, account.addingGroupAccount)
               "
@@ -100,7 +97,7 @@
             </button>
             <button
               v-if="!insertingAccount"
-              class="ms-4 text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+              class="ms-4 text-xs text-description hover:text-main focus:outline-none"
               @click="cancelAddingAccount(account)"
             >
               {{ t`Cancel` }}
@@ -130,7 +127,6 @@ import { AccountRootType, AccountType } from 'models/baseModels/Account/types';
 import { TreeViewSettings } from 'fyo/model/types';
 import { Doc } from 'fyo/model/doc';
 import { Component } from 'vue';
-import { uicolors } from 'src/utils/colors';
 import { showDialog } from 'src/utils/interactive';
 
 type AccountItem = {
@@ -490,8 +486,8 @@ export default defineComponent({
       return !!(edit && schemaName === 'Account' && name === account.name);
     },
     getIconComponent(isGroup: boolean, name?: string): Component {
-      let lightColor = this.darkMode ? uicolors.gray[600] : uicolors.gray[400];
-      let darkColor = this.darkMode ? uicolors.gray[400] : uicolors.gray[700];
+      let lightColor = 'var(--color-description)';
+      let darkColor = 'var(--color-main)';
       let icons = {
         'Application of Funds (Assets)': `<svg class="w-4 h-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
             <g fill="none" fill-rule="evenodd">

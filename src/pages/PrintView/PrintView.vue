@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 bg-gray-25 dark:bg-gray-875">
+  <div class="flex flex-col flex-1 bg-canvas">
     <PageHeader :border="true" :title="t`Print View`">
       <AutoComplete
         v-if="templateList.length"
@@ -27,10 +27,7 @@
     <!-- Template Display Area -->
     <div class="overflow-auto custom-scroll custom-scroll-thumb1 p-4">
       <!-- Display Hints -->
-      <div
-        v-if="helperMessage"
-        class="text-sm text-gray-700 dark:text-gray-300"
-      >
+      <div v-if="helperMessage" class="text-sm text-muted">
         {{ helperMessage }}
       </div>
 
@@ -81,12 +78,12 @@ export default defineComponent({
   },
   data() {
     return {
-      doc: null,
+      doc: null as Doc | null,
       scale: 1,
-      values: null,
-      templateDoc: null,
-      templateName: null,
-      templateList: [],
+      values: null as PrintValues | null,
+      templateDoc: null as PrintTemplate | null,
+      templateName: null as string | null,
+      templateList: [] as string[],
     };
   },
   computed: {
@@ -198,7 +195,9 @@ export default defineComponent({
       }
 
       if (this.doc) {
-        this.values = await getPrintTemplatePropValues(this.doc);
+        this.values = await getPrintTemplatePropValues(
+          this.doc as unknown as Doc
+        );
       }
     },
     setScale() {

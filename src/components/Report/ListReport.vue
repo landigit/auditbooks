@@ -5,7 +5,7 @@
       <!--Title Row -->
       <div
         ref="titlerow"
-        class="w-full overflow-x-hidden flex items-center dark:text-gray-25 border-b dark:border-gray-800 px-4"
+        class="w-full overflow-x-hidden flex items-center text-main border-b border-border px-4"
         :style="{
           height: `${hconst}px`,
           paddingRight: 'calc(var(--w-scrollbar) + 1rem)',
@@ -36,10 +36,8 @@
               minWidth: `calc(var(--w-desk) - var(--w-scrollbar))`,
             }"
             :class="[
-              r !== pageEnd - 1 ? 'border-b dark:border-gray-800' : '',
-              row.isGroup
-                ? 'hover:bg-gray-50 dark:hover:bg-gray-890 cursor-pointer'
-                : '',
+              r !== pageEnd - 1 ? 'border-b border-border' : '',
+              row.isGroup ? 'hover:bg-surface-hover cursor-pointer' : '',
             ]"
             @click="() => onRowClick(row, r)"
           >
@@ -58,10 +56,7 @@
       </WithScroll>
       <!-- Report Rows Container -->
     </div>
-    <p
-      v-else
-      class="w-full text-center mt-20 text-gray-800 dark:text-gray-100 text-base"
-    >
+    <p v-else class="w-full text-center mt-20 text-description text-base">
       {{ report.loading ? t`Loading Report...` : t`No Values to be Displayed` }}
     </p>
 
@@ -188,29 +183,29 @@ export default defineComponent({
     },
     getCellColorClass(cell) {
       if (cell.color === 'red') {
-        return 'text-red-600';
+        return 'text-error';
       } else if (cell.color === 'green') {
-        return 'text-green-600';
+        return 'text-indicator-green-text';
       }
 
       if (!cell.rawValue) {
-        return 'text-gray-600 dark:text-gray-400';
+        return 'text-description';
       }
 
       if (typeof cell.rawValue !== 'number') {
-        return 'text-gray-900 dark:text-gray-100';
+        return 'text-main';
       }
 
       if (cell.rawValue === 0) {
-        return 'text-gray-600 dark:text-gray-400';
+        return 'text-description';
       }
 
       const prec = this.fyo?.singles?.displayPrecision ?? 2;
       if (Number(cell.rawValue.toFixed(prec)) === 0) {
-        return 'text-gray-600 dark:text-gray-500';
+        return 'text-description';
       }
 
-      return 'text-gray-900 dark:text-gray-300';
+      return 'text-main';
     },
   },
 });

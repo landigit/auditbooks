@@ -15,11 +15,11 @@
         <Button
           v-for="method in paymentMethods"
           :key="method"
-          class="w-full py-5 bg-teal-500"
+          class="w-full py-5 bg-surface border border-border hover:bg-surface-hover"
           @click="setPaymentMethodAndAmount(method)"
         >
           <slot>
-            <p class="uppercase text-lg text-white font-semibold">
+            <p class="uppercase text-lg text-main font-semibold">
               {{ t`${method}` }}
             </p>
           </slot>
@@ -154,7 +154,9 @@
             @click="submitTransaction"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-button-primary-text font-semibold"
+              >
                 {{ t`Submit` }}
               </p>
             </slot>
@@ -171,7 +173,9 @@
             @click="cancelTransaction"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-button-primary-text font-semibold"
+              >
                 {{ t`Cancel` }}
               </p>
             </slot>
@@ -186,7 +190,9 @@
             @click="payTransaction"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-button-primary-text font-semibold"
+              >
                 {{ t`Pay` }}
               </p>
             </slot>
@@ -203,7 +209,9 @@
             @click="payAndPrintTransaction"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-button-primary-text font-semibold"
+              >
                 {{ t`Pay & Print` }}
               </p>
             </slot>

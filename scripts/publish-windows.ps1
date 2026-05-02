@@ -5,7 +5,7 @@ $ErrorActionPreference = "Stop"
 $yarnVersion = (yarn --version).Trim()
 Write-Host "Current Yarn version: $yarnVersion"
 
-# In the Mac script it was hardcoded to 1.22.18, but the package.json specifies 4.14.1
+# In the Mac script it was hardcoded to 4.14.1, but the package.json specifies 4.14.1
 if ($yarnVersion -notmatch "^1\.22" -and $yarnVersion -notmatch "^4\.") {
     Write-Error "Incorrect yarn version: $yarnVersion. Expected 1.22.x or 4.x (as per package.json)"
     exit 1

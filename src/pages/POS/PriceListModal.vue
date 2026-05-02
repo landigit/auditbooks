@@ -2,7 +2,7 @@
   <Modal class="h-auto w-96" :set-close-listener="false">
     <p class="text-center font-semibold py-3">{{ t`Apply Price List` }}</p>
     <div class="px-10">
-      <hr class="dark:border-gray-800" />
+      <hr class="border-border" />
       <div class="flex justify-center pt-10">
         <div class="flex justify-between w-full mb-20">
           <div class="w-full">
@@ -19,7 +19,7 @@
           <div class="w-10 flex justify-end items-center">
             <feather-icon
               name="trash"
-              class="w-5 text-xl text-red-500"
+              class="w-5 text-xl text-error"
               @click="removePriceList"
             />
           </div>
@@ -29,12 +29,14 @@
       <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2">
         <div class="col-span-2">
           <Button
-            class="w-full bg-green-500 dark:bg-green-700"
+            class="w-full bg-indicator-green-bg"
             style="padding: 1.35rem"
             @click="setPriceList"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-indicator-green-text font-semibold"
+              >
                 {{ t`Save` }}
               </p>
             </slot>
@@ -45,12 +47,14 @@
       <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-8">
         <div class="col-span-2">
           <Button
-            class="w-full bg-red-500 dark:bg-red-700"
+            class="w-full bg-indicator-red-bg"
             style="padding: 1.35rem"
             @click="cancelPriceList"
           >
             <slot>
-              <p class="uppercase text-lg text-white font-semibold">
+              <p
+                class="uppercase text-lg text-indicator-red-text font-semibold"
+              >
                 {{ t`Cancel` }}
               </p>
             </slot>

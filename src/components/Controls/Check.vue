@@ -96,7 +96,7 @@ export default defineComponent({
   data() {
     return {
       offColor: '#0000',
-      color: '#A1ABB4',
+      color: 'var(--color-description)',
     };
   },
   computed: {
@@ -105,7 +105,7 @@ export default defineComponent({
         return this.labelClass;
       }
 
-      return 'text-gray-600 text-base';
+      return 'text-description text-base';
     },
   },
   methods: {

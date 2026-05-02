@@ -19,7 +19,7 @@ export async function initializeInstance(
     await closeDbIfConnected(fyo);
     countryCode = await fyo.db.createNewDatabase(dbPath, countryCode);
   } else if (!fyo.db.isConnected) {
-    countryCode = await fyo.db.connectToDatabase(dbPath);
+    countryCode = (await fyo.db.connectToDatabase(dbPath)) ?? '';
   }
 
   const regionalModels = await getRegionalModels(countryCode);
