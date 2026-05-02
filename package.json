@@ -1,6 +1,6 @@
 {
   "name": "frappe-books",
-  "version": "0.37.4",
+  "version": "0.37.4.1",
   "description": "Simple book-keeping app for everyone",
   "author": {
     "name": "Landigit Agency.",
@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "node build/scripts/dev.mjs",
     "build": "node build/scripts/build.mjs",
-    "release": "scripts/publish-mac-arm.sh",
+    "release:win": "powershell -ExecutionPolicy Bypass -File scripts/publish-windows.ps1",
+    "release:mac-arm": "scripts/publish-mac-arm.sh",
     "postinstall": "electron-rebuild",
     "postuninstall": "electron-rebuild",
     "script:translate": "scripts/runner.sh scripts/generateTranslations.ts",
@@ -72,7 +73,6 @@
     "eslint-plugin-vue": "^9.33.0",
     "execa": "^7.2.0",
     "globals": "^15.15.0",
-    "husky": "^9.1.7",
     "jsdom": "^25.0.1",
     "oxlint": "^1.62.0",
     "playwright": "^1.59.1",

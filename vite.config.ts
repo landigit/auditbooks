@@ -31,6 +31,25 @@ export default () => {
     build: {
       target: 'esnext',
       sourcemap: true,
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('vue') || id.includes('router')) {
+                return 'vendor-vue';
+              }
+              if (id.includes('codemirror') || id.includes('lezer')) {
+                return 'vendor-editor';
+              }
+              if (id.includes('luxon') || id.includes('pesa')) {
+                return 'vendor-utils';
+              }
+              return 'vendor';
+            }
+          },
+        },
+      },
     },
     optimizeDeps: {
       exclude: ['electron'],

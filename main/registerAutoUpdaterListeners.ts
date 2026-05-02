@@ -8,6 +8,9 @@ export default function registerAutoUpdaterListeners(main: Main) {
   autoUpdater.autoDownload = false;
   autoUpdater.allowPrerelease = true;
   autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.forceDevUpdateConfig = true;
+  // @ts-ignore
+  autoUpdater.verifyUpdateCodeSignature = false;
 
   autoUpdater.on('error', (error) => {
     if (!main.checkedForUpdate) {
