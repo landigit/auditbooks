@@ -174,6 +174,7 @@ export default defineComponent({
         innerHTML,
         this.width,
         this.height,
+        this.values.print.font as string,
         shouldPrint
       );
 

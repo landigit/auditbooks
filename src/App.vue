@@ -14,7 +14,7 @@
     <Desk
       v-if="activeScreen === 'Desk'"
       class="flex-1"
-      :dark-mode="darkMode"
+      :theme="theme"
       @change-db-file="showDbSelector"
       @toggle-darkmode="toggleDarkMode"
     />
@@ -63,7 +63,7 @@ import { Search } from './utils/search';
 import { Shortcuts } from './utils/shortcuts';
 import { routeTo } from './utils/ui';
 import { useKeys } from './utils/vueUtils';
-import { setDarkMode, setFont } from 'src/utils/theme';
+import { setTheme, setFont, Theme } from 'src/utils/theme';
 import {
   registerInstanceToERPNext,
   updateERPNSyncSettings,
@@ -115,7 +115,7 @@ export default defineComponent({
       activeScreen: null as Screen | null,
       dbPath: '',
       companyName: '',
-      darkMode: false,
+      theme: 'auto' as Theme,
     };
   },
   computed: {
@@ -130,11 +130,11 @@ export default defineComponent({
   },
   async mounted() {
     await this.setInitialScreen();
-    const darkMode = !!fyo.singles.SystemSettings?.darkMode;
+    const theme = (fyo.singles.SystemSettings?.theme as Theme) || 'auto';
     const font = fyo.singles.SystemSettings?.font;
-    setDarkMode(darkMode);
+    setTheme(theme);
     setFont(font as string);
-    this.darkMode = darkMode;
+    this.theme = theme;
   },
   methods: {
     async setInitialScreen(): Promise<void> {
@@ -311,12 +311,19 @@ export default defineComponent({
       this.companyName = '';
     },
     async toggleDarkMode() {
-      this.darkMode = !this.darkMode;
-      setDarkMode(this.darkMode);
+      // Toggle only between light and dark in the sidebar
+      const isCurrentlyDark =
+        this.theme === 'dark' ||
+        (this.theme === 'auto' &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      this.theme = isCurrentlyDark ? 'light' : 'dark';
+
+      setTheme(this.theme);
 
       // Persist to database
       const doc = await fyo.doc.getDoc('SystemSettings');
-      await doc.set('darkMode', this.darkMode);
+      await doc.set('theme', this.theme);
       await doc.sync();
     },
   },

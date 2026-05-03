@@ -98,6 +98,18 @@
           "label": "Arial"
         },
         {
+          "value": "GoogleSansFlex",
+          "label": "Google Sans Flex"
+        },
+        {
+          "value": "Inter",
+          "label": "Inter"
+        },
+        {
+          "value": "RedHatText",
+          "label": "Red Hat Text"
+        },
+        {
           "value": "Times New Roman",
           "label": "Times New Roman"
         },

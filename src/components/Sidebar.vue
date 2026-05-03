@@ -104,22 +104,23 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="$emit('toggle-darkmode')"
       >
-        <template v-if="!darkMode">
-          <feather-icon name="moon" class="h-4 w-4 flex-shrink-0" />
-          <p>{{ t`Dark Mode` }}</p>
-        </template>
-        <template v-else>
+        <template v-if="resolvedIsDark">
           <feather-icon name="sun" class="h-4 w-4 flex-shrink-0" />
           <p>{{ t`Light Mode` }}</p>
         </template>
+        <template v-else>
+          <feather-icon name="moon" class="h-4 w-4 flex-shrink-0" />
+          <p>{{ t`Dark Mode` }}</p>
+        </template>
       </button>
       <button
+        v-if="false"
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="() => reportIssue()"
       >
         <feather-icon name="flag" class="h-4 w-4 flex-shrink-0" />
         <p>
-          {{ t`Report Issue` }}
+          {{ t`Send Feedback` }}
         </p>
       </button>
 
@@ -154,6 +155,7 @@ import { docsPathRef } from 'src/utils/refs';
 import { getSidebarConfig } from 'src/utils/sidebarConfig';
 import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
 import { routeTo, toggleSidebar } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent, inject } from 'vue';
 import router from '../router';
 import Icon from './Icon.vue';
@@ -169,16 +171,18 @@ export default defineComponent({
     ShortcutsHelper,
   },
   props: {
-    darkMode: {
-      type: Boolean,
-      default: false,
+    theme: {
+      type: String,
+      default: 'auto',
     },
   },
   emits: ['change-db-file', 'toggle-darkmode'],
   setup() {
+    const store = useAppStore();
     return {
       languageDirection: inject(languageDirectionKey),
       shortcuts: inject(shortcutsKey),
+      store,
     };
   },
   data() {
@@ -197,6 +201,12 @@ export default defineComponent({
     };
   },
   computed: {
+    resolvedIsDark(): boolean {
+      return (
+        this.theme === 'dark' ||
+        (this.theme === 'auto' && this.store.isDark)
+      );
+    },
     appVersion() {
       return fyo.store.appVersion;
     },

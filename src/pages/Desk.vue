@@ -9,7 +9,7 @@ import { toggleSidebar } from 'src/utils/ui';
       <Sidebar
         v-show="showSidebar"
         class="flex-shrink-0 border-e border-border whitespace-nowrap w-sidebar"
-        :dark-mode="darkMode"
+        :theme="theme"
         @change-db-file="$emit('change-db-file')"
         @toggle-darkmode="$emit('toggle-darkmode')"
       />
@@ -55,9 +55,9 @@ export default defineComponent({
     Sidebar,
   },
   props: {
-    darkMode: {
-      type: Boolean,
-      default: false,
+    theme: {
+      type: String,
+      default: 'auto',
     },
   },
   emits: ['change-db-file', 'toggle-darkmode'],

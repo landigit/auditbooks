@@ -150,9 +150,6 @@ export default defineComponent({
     Button,
     PageHeader,
   },
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
   setup() {
     return {
       languageDirection: inject(languageDirectionKey),
