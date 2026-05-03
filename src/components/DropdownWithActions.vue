@@ -9,7 +9,7 @@
     <template #default="{ toggleDropdown }">
       <Button :type="type" :icon="icon" @click="toggleDropdown()">
         <slot>
-          <feather-icon name="more-horizontal" class="w-4 h-4" />
+          <lucide-icon name="more-horizontal" class="w-4 h-4" />
         </slot>
       </Button>
     </template>

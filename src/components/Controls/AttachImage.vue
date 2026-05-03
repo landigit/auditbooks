@@ -36,7 +36,7 @@
       style="background: var(--color-backdrop); backdrop-filter: blur(2px)"
     >
       <button class="bg-surface-hover p-0.5 rounded mb-1" @click="handleClick">
-        <FeatherIcon
+        <LucideIcon
           :name="shouldClear ? 'x' : 'upload'"
           class="w-4 h-4 text-description"
         />
@@ -49,7 +49,7 @@ import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { getDataURL } from 'src/utils/misc';
 import { defineComponent, PropType } from 'vue';
-import FeatherIcon from '../FeatherIcon.vue';
+import LucideIcon from '../LucideIcon.vue';
 import Base from './Base.vue';
 
 const mime_types: Record<string, string> = {
@@ -62,7 +62,7 @@ const mime_types: Record<string, string> = {
 
 export default defineComponent({
   name: 'AttachImage',
-  components: { FeatherIcon },
+  components: { LucideIcon },
   extends: Base,
   props: {
     letterPlaceholder: { type: String, default: '' },

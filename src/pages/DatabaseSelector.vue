@@ -34,7 +34,7 @@
         <div
           class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
         >
-          <feather-icon name="plus" class="text-indicator-blue-text w-5 h-5" />
+          <lucide-icon name="plus" class="text-indicator-blue-text w-5 h-5" />
         </div>
 
         <div>
@@ -56,7 +56,7 @@
         <div
           class="w-8 h-8 rounded-full bg-indicator-green-bg relative flex-center"
         >
-          <feather-icon
+          <lucide-icon
             name="upload"
             class="w-4 h-4 text-indicator-green-text"
           />
@@ -81,7 +81,7 @@
         <div
           class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
         >
-          <feather-icon
+          <lucide-icon
             name="monitor"
             class="w-4 h-4 text-indicator-blue-text"
           />
@@ -131,7 +131,7 @@
             class="ms-auto p-2 hover:bg-indicator-red-bg rounded-full w-8 h-8 text-description hover:text-error"
             @click.stop="() => deleteDb(i)"
           >
-            <feather-icon name="x" class="w-4 h-4" />
+            <lucide-icon name="x" class="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -203,7 +203,7 @@ import { Verb } from 'fyo/telemetry/types';
 import { DateTime } from 'luxon';
 import Button from 'src/components/Button.vue';
 import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
-import FeatherIcon from 'src/components/FeatherIcon.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import Loading from 'src/components/Loading.vue';
 import Modal from 'src/components/Modal.vue';
 import { fyo } from 'src/initFyo';
@@ -218,7 +218,7 @@ export default defineComponent({
   components: {
     LanguageSelector,
     Loading,
-    FeatherIcon,
+    LucideIcon,
     Modal,
     Button,
   },

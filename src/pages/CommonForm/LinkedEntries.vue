@@ -9,7 +9,7 @@
     >
       <div class="flex items-center justify-between w-full">
         <Button :icon="true" @click="$emit('close')">
-          <feather-icon name="x" class="w-4 h-4" />
+          <lucide-icon name="x" class="w-4 h-4" />
         </Button>
         <p class="text-xl font-semibold text-description">
           {{ t`Linked Entries` }}
@@ -39,7 +39,7 @@
               ` – ${entries[sn].details.length}`
             }}</span>
           </h2>
-          <feather-icon
+          <lucide-icon
             :name="entries[sn].collapsed ? 'chevron-up' : 'chevron-down'"
             class="w-4 h-4 text-description"
           />

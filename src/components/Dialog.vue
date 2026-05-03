@@ -9,7 +9,7 @@
         >
           <div class="flex justify-between items-center">
             <h1 class="font-semibold">{{ title }}</h1>
-            <FeatherIcon
+            <LucideIcon
               :name="config.iconName"
               class="w-6 h-6"
               :class="config.iconColor"
@@ -47,10 +47,10 @@ import { getIconConfig } from 'src/utils/interactive';
 import { DialogButton, ToastType } from 'src/utils/types';
 import { defineComponent, nextTick, PropType, ref } from 'vue';
 import Button from './Button.vue';
-import FeatherIcon from './FeatherIcon.vue';
+import LucideIcon from './LucideIcon.vue';
 
 export default defineComponent({
-  components: { Button, FeatherIcon },
+  components: { Button, LucideIcon },
   props: {
     type: { type: String as PropType<ToastType>, default: 'info' },
     title: { type: String, required: true },

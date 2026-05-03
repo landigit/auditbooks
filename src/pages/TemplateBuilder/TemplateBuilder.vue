@@ -26,7 +26,7 @@
         :icon="true"
         @click="toggleEditMode"
       >
-        <feather-icon name="edit" class="w-4 h-4" />
+        <lucide-icon name="edit" class="w-4 h-4" />
       </Button>
       <DropdownWithActions v-if="actions.length" :actions="actions" />
       <Button v-if="doc?.canSave" type="primary" @click="sync()">
@@ -163,7 +163,7 @@
             <h2 class="text-base text-main font-semibold">
               {{ t`Key Hints` }}
             </h2>
-            <feather-icon
+            <lucide-icon
               :name="showHints ? 'chevron-up' : 'chevron-down'"
               class="w-4 h-4 text-description resize-none"
             />

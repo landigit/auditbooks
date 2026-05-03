@@ -32,7 +32,7 @@
             </div>
           </div>
           <div class="absolute right-3">
-            <feather-icon
+            <lucide-icon
               name="trash"
               class="w-4 text-xl text-error cursor-pointer"
               @click="removeAppliedCoupon(coupon)"

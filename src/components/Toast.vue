@@ -7,7 +7,7 @@
         :class="[config.containerBorder]"
         style="pointer-events: auto"
       >
-        <feather-icon
+        <lucide-icon
           :name="config.iconName"
           class="w-6 h-6 me-3"
           :class="config.iconColor"
@@ -40,7 +40,7 @@
             />
           </svg>
 
-          <feather-icon
+          <lucide-icon
             v-else
             name="x"
             class="w-4 h-4 ms-auto text-description cursor-pointer hover:text-main"
@@ -56,11 +56,11 @@ import { getIconConfig } from 'src/utils/interactive';
 import { ToastDuration, ToastType } from 'src/utils/types';
 import { toastDurationMap } from 'src/utils/ui';
 import { PropType, defineComponent, nextTick } from 'vue';
-import FeatherIcon from './FeatherIcon.vue';
+import LucideIcon from './LucideIcon.vue';
 
 export default defineComponent({
   components: {
-    FeatherIcon,
+    LucideIcon,
   },
   props: {
     message: { type: String, required: true },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <feather-icon
+    <lucide-icon
       :name="isExapanded ? 'chevron-up' : 'chevron-down'"
       class="w-4 h-4 inline-flex text-main"
       @click="toggleExpand"
@@ -66,7 +66,7 @@
   />
 
   <div class="flex justify-center">
-    <feather-icon
+    <lucide-icon
       name="trash"
       class="w-4 text-xl text-error"
       @click="removeAddedItem(row)"

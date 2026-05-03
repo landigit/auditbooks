@@ -10,7 +10,7 @@
       <div class="flex items-center justify-between px-4 h-row-largest">
         <!-- Close Button -->
         <Button :icon="true" @click="$emit('close')">
-          <feather-icon name="x" class="w-4 h-4" />
+          <lucide-icon name="x" class="w-4 h-4" />
         </Button>
 
         <!-- Actions, Badge and Status Change Buttons -->
@@ -20,10 +20,10 @@
             :icon="true"
             @click="$emit('previous', previous)"
           >
-            <feather-icon name="chevron-left" class="w-4 h-4" />
+            <lucide-icon name="chevron-left" class="w-4 h-4" />
           </Button>
           <Button v-if="next >= 0" :icon="true" @click="$emit('next', next)">
-            <feather-icon name="chevron-right" class="w-4 h-4" />
+            <lucide-icon name="chevron-right" class="w-4 h-4" />
           </Button>
         </div>
       </div>

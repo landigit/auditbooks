@@ -67,7 +67,7 @@
             @click.stop.prevent="clearValue"
             @mousedown.prevent
           >
-            <feather-icon name="x" class="w-3.5 h-3.5" />
+            <lucide-icon name="x" class="w-3.5 h-3.5" />
           </button>
           <button
             class="p-0.5 rounded -me1 bg-transparent"
@@ -81,7 +81,7 @@
               placement="bottom"
             >
               <template #target>
-                <feather-icon
+                <lucide-icon
                   name="chevron-right"
                   class="w-4 h-4 text-description"
                 />

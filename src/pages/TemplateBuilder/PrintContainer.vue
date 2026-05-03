@@ -5,7 +5,7 @@
     :width="width"
     :height="height"
     :show-overflow="true"
-    class="mx-auto shadow-lg border"
+    class="mx-auto shadow-lg"
   >
     <ErrorBoundary
       v-if="!error"

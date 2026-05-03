@@ -29,7 +29,7 @@
         </div>
 
         <!-- Close Icon -->
-        <feather-icon
+        <lucide-icon
           v-if="showX"
           name="x"
           class="w-4 h-4 ms-auto text-description cursor-pointer hover:text-main"

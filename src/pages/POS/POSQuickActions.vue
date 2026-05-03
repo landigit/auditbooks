@@ -1,7 +1,7 @@
 <template>
   <div class="relative group">
     <div class="bg-surface p-1.5 rounded-md" @click="toggleItemsView">
-      <FeatherIcon
+      <LucideIcon
         :name="tableView ? 'grid' : 'list'"
         class="w-5 h-5 text-main"
       />

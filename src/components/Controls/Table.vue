@@ -60,7 +60,7 @@
         @keydown.enter="addRow"
       >
         <div class="flex items-center ps-1">
-          <feather-icon name="plus" class="w-4 h-4 text-description" />
+          <lucide-icon name="plus" class="w-4 h-4 text-description" />
         </div>
         <div
           class="flex justify-between px-2"

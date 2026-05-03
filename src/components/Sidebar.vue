@@ -77,7 +77,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="openDocumentation"
       >
-        <feather-icon name="help-circle" class="h-4 w-4 flex-shrink-0" />
+        <lucide-icon name="help-circle" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Help` }}
         </p>
@@ -87,7 +87,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="viewShortcuts = true"
       >
-        <feather-icon name="command" class="h-4 w-4 flex-shrink-0" />
+        <lucide-icon name="command" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Shortcuts` }}</p>
       </button>
 
@@ -96,7 +96,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="$emit('change-db-file')"
       >
-        <feather-icon name="database" class="h-4 w-4 flex-shrink-0" />
+        <lucide-icon name="database" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Change DB` }}</p>
       </button>
 
@@ -105,11 +105,11 @@
         @click="$emit('toggle-darkmode')"
       >
         <template v-if="resolvedIsDark">
-          <feather-icon name="sun" class="h-4 w-4 flex-shrink-0" />
+          <lucide-icon name="sun" class="h-4 w-4 flex-shrink-0" />
           <p>{{ t`Light Mode` }}</p>
         </template>
         <template v-else>
-          <feather-icon name="moon" class="h-4 w-4 flex-shrink-0" />
+          <lucide-icon name="moon" class="h-4 w-4 flex-shrink-0" />
           <p>{{ t`Dark Mode` }}</p>
         </template>
       </button>
@@ -118,7 +118,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="() => reportIssue()"
       >
-        <feather-icon name="flag" class="h-4 w-4 flex-shrink-0" />
+        <lucide-icon name="flag" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Send Feedback` }}
         </p>
@@ -139,7 +139,7 @@
       class="absolute bottom-0 end-0 text-description hover:bg-surface-hover rounded p-1 m-4 rtl-rotate-180"
       @click="() => toggleSidebar()"
     >
-      <feather-icon name="chevrons-left" class="w-4 h-4" />
+      <lucide-icon name="chevrons-left" class="w-4 h-4" />
     </button>
 
     <Modal :open-modal="viewShortcuts" @closemodal="viewShortcuts = false">

@@ -17,7 +17,7 @@
         :title="t`Open Report Print View`"
         @click="routeTo(`/report-print/${reportClassName}`)"
       >
-        <feather-icon name="printer" class="w-4 h-4"></feather-icon>
+        <lucide-icon name="printer" class="w-4 h-4"></lucide-icon>
       </Button>
     </PageHeader>
 

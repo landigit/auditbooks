@@ -9,7 +9,7 @@
     >
       <!-- Close Button  -->
       <Button :icon="true" @click="routeToPrevious">
-        <feather-icon name="x" class="w-4 h-4" />
+        <lucide-icon name="x" class="w-4 h-4" />
       </Button>
 
       <!-- Save & Submit Buttons -->

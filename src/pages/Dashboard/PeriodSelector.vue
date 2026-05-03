@@ -18,7 +18,7 @@
         @keydown.enter="selectHighlightedItem"
       >
         {{ periodSelectorMap?.[value] ?? value }}
-        <feather-icon name="chevron-down" class="ms-1 w-3 h-3" />
+        <lucide-icon name="chevron-down" class="ms-1 w-3 h-3" />
       </div>
     </template>
   </Dropdown>

@@ -39,7 +39,7 @@
       class="bg-indicator-green-bg text-indicator-green-text px-2 ms-1 -me-0.5 h-full border-s border-border"
       @click="swap"
     >
-      <feather-icon
+      <lucide-icon
         name="refresh-cw"
         class="w-3 h-3 text-indicator-green-text"
       />

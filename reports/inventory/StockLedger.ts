@@ -69,7 +69,7 @@ export class StockLedger extends Report {
       await this._setRawData();
     }
 
-    const rawData = structuredClone(this._rawData);
+    const rawData = this._rawData?.map((item) => ({ ...item }));
     if (!rawData) {
       return [];
     }

@@ -17,7 +17,7 @@
             />
           </div>
           <div class="w-10 flex justify-end items-center">
-            <feather-icon
+            <lucide-icon
               name="trash"
               class="w-5 text-xl text-error"
               @click="removePriceList"

@@ -11,7 +11,7 @@
       @mouseleave="isRowIndexVisible = true"
     >
       <span class="relative w-4 h-4 flex items-center justify-center">
-        <feather-icon
+        <lucide-icon
           v-if="!readOnly && !isRowIndexVisible"
           name="x"
           class="w-4 h-4 -ms-1 cursor-pointer rounded focus:outline-none focus:ring-2 focus:ring-main transition"
@@ -57,7 +57,7 @@
       :background="false"
       @click="openRowQuickEdit"
     >
-      <feather-icon name="edit" class="w-4 h-4 text-description" />
+      <lucide-icon name="edit" class="w-4 h-4 text-description" />
     </Button>
 
     <!-- Error Display -->

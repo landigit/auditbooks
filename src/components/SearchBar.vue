@@ -6,7 +6,7 @@
       :padding="false"
       @click="open"
     >
-      <feather-icon name="search" class="w-4 h-4 text-main" />
+      <lucide-icon name="search" class="w-4 h-4 text-main" />
     </Button>
   </div>
 
@@ -153,7 +153,7 @@
             <p>↩ {{ t`Select` }}</p>
             <p><span class="tracking-tighter">esc</span> {{ t`Close` }}</p>
             <button class="flex items-center hover:text-main" @click="openDocs">
-              <feather-icon name="help-circle" class="w-4 h-4 me-1" />
+              <lucide-icon name="help-circle" class="w-4 h-4 me-1" />
               {{ t`Help` }}
             </button>
           </div>

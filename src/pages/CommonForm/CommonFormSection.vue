@@ -9,7 +9,7 @@
       <h2 class="text-base text-main font-semibold">
         {{ title }}
       </h2>
-      <feather-icon
+      <lucide-icon
         v-if="collapsible"
         :name="collapsed ? 'chevron-up' : 'chevron-down'"
         class="w-4 h-4 text-description"

@@ -3,7 +3,7 @@ import { UnexpectedLogObject } from 'utils/types';
 import { App as VueApp, createApp } from 'vue';
 import App from './App.vue';
 import Badge from './components/Badge.vue';
-import FeatherIcon from './components/FeatherIcon.vue';
+import LucideIcon from './components/LucideIcon.vue';
 import { handleError, sendError } from './errorHandling';
 import { fyo } from './initFyo';
 import { outsideClickDirective } from './renderer/helpers';
@@ -37,7 +37,9 @@ import { setLanguageMap } from './utils/language';
   setErrorHandlers(app);
 
   app.use(router);
-  app.component('FeatherIcon', FeatherIcon);
+  app.component('LucideIcon', LucideIcon);
+  app.component('lucide-icon', LucideIcon);
+  app.component('feather-icon', LucideIcon);
   app.component('Badge', Badge);
   app.directive('on-outside-click', outsideClickDirective);
   app.mixin({

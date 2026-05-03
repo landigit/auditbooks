@@ -36,7 +36,7 @@
                   class="cursor-pointer w-4 h-4 flex items-center justify-center text-description hover:text-main rounded-md group"
                 >
                   <span class="hidden group-hover:inline-block">
-                    <feather-icon
+                    <lucide-icon
                       name="x"
                       class="w-4 h-4 cursor-pointer"
                       :button="true"
@@ -115,7 +115,7 @@
             class="text-base border-t border-border p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
             @click.stop="addNewFilter"
           >
-            <feather-icon name="plus" class="w-4 h-4" />
+            <lucide-icon name="plus" class="w-4 h-4" />
             <span class="ms-2">{{ t`Add a filter` }}</span>
           </div>
 
@@ -125,7 +125,7 @@
               class="text-base p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
               @click="clearAllFilters"
             >
-              <feather-icon name="trash-2" class="w-4 h-4" />
+              <lucide-icon name="trash-2" class="w-4 h-4" />
               <span class="ms-2">{{ t`Clear` }}</span>
             </div>
 
@@ -134,7 +134,7 @@
               @click="applyFilters"
               class="text-base border-t border-border p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
             >
-              <feather-icon name="search" class="w-4 h-4" />
+              <lucide-icon name="search" class="w-4 h-4" />
               <span class="ml-2 text-sm">{{ t`Apply` }}</span>
             </div>
           </div>

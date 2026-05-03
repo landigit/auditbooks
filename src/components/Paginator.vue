@@ -12,7 +12,7 @@
 
     <!-- Pagination Selector -->
     <div class="flex gap-1 items-center justify-self-center">
-      <feather-icon
+      <lucide-icon
         name="chevron-left"
         class="w-4 h-4 rtl-rotate-180"
         :class="
@@ -35,7 +35,7 @@
           {{ maxPages }}
         </p>
       </div>
-      <feather-icon
+      <lucide-icon
         name="chevron-right"
         class="w-4 h-4 rtl-rotate-180"
         :class="

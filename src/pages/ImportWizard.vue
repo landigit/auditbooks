@@ -15,7 +15,7 @@
         :icon="true"
         @click="() => importer.addRow()"
       >
-        <feather-icon name="plus" class="w-4 h-4" />
+        <lucide-icon name="plus" class="w-4 h-4" />
       </Button>
       <Button
         v-if="hasImporter"
@@ -23,7 +23,7 @@
         :icon="true"
         @click="saveTemplate"
       >
-        <feather-icon name="download" class="w-4 h-4" />
+        <lucide-icon name="download" class="w-4 h-4" />
       </Button>
       <Button
         v-if="canImportData"
@@ -133,7 +133,7 @@
               class="index-cell group cursor-pointer"
               @click="importer.removeRow(ridx)"
             >
-              <feather-icon
+              <lucide-icon
                 name="x"
                 class="w-4 h-4 hidden group-hover:inline-block -me-1"
                 :button="true"

@@ -36,7 +36,7 @@
         :title="t`View linked entries`"
         @click="showLinks = true"
       >
-        <feather-icon name="link" class="w-4 h-4"></feather-icon>
+        <lucide-icon name="link" class="w-4 h-4"></lucide-icon>
       </Button>
       <Button
         v-if="canPrint"
@@ -45,17 +45,17 @@
         :title="t`Open Print View`"
         @click="routeTo(`/print/${doc.schemaName}/${doc.name}`)"
       >
-        <feather-icon name="printer" class="w-4 h-4"></feather-icon>
+        <lucide-icon name="printer" class="w-4 h-4"></lucide-icon>
       </Button>
       <Button
         :icon="true"
         :title="t`Toggle between form and full width`"
         @click="toggleWidth"
       >
-        <feather-icon
+        <lucide-icon
           :name="useFullWidth ? 'minimize' : 'maximize'"
           class="w-4 h-4"
-        ></feather-icon>
+        ></lucide-icon>
       </Button>
       <DropdownWithActions
         v-for="group of groupedActions"
@@ -66,7 +66,7 @@
         <p v-if="group.group">
           {{ group.group }}
         </p>
-        <feather-icon v-else name="more-horizontal" class="w-4 h-4" />
+        <lucide-icon v-else name="more-horizontal" class="w-4 h-4" />
       </DropdownWithActions>
       <Button v-if="doc?.canSave" type="primary" @click="sync">
         {{ t`Save` }}

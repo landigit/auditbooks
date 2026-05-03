@@ -10,7 +10,7 @@
       "
       @click="$router.back()"
     >
-      <feather-icon name="chevron-left" class="w-4 h-4" />
+      <lucide-icon name="chevron-left" class="w-4 h-4" />
     </a>
     <!-- Forward Button -->
     <a
@@ -20,7 +20,7 @@
       "
       @click="$router.forward()"
     >
-      <feather-icon name="chevron-right" class="w-4 h-4" />
+      <lucide-icon name="chevron-right" class="w-4 h-4" />
     </a>
   </div>
 </template>

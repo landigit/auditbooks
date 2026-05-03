@@ -1,5 +1,5 @@
 <template>
-  <feather-icon
+  <lucide-icon
     :name="isExapanded ? 'chevron-up' : 'chevron-down'"
     class="w-4 h-4 inline-flex cursor-pointer text-main"
     @click="toggleExpand"
@@ -40,12 +40,12 @@
       :read-only="true"
     />
     <div class="flex flex-col ml-1">
-      <feather-icon
+      <lucide-icon
         name="chevron-up"
         class="w-3 h-3 cursor-pointer hover:text-indicator-blue-text text-main"
         @click="adjustQuantity(1)"
       />
-      <feather-icon
+      <lucide-icon
         name="chevron-down"
         class="w-3 h-3 cursor-pointer hover:text-indicator-blue-text text-main"
         @click="adjustQuantity(-1)"
@@ -91,7 +91,7 @@
   />
 
   <div class="px-4">
-    <feather-icon
+    <lucide-icon
       name="trash"
       class="w-4 text-xl text-indicator-red-text"
       @click="removeAddedItem(row)"

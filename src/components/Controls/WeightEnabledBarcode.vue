@@ -9,7 +9,7 @@
       :placeholder="t`Enter weight barcode`"
       @change="handleChange"
     />
-    <feather-icon
+    <lucide-icon
       name="maximize"
       class="w-3 h-3 text-description cursor-text"
       @click="() => ($refs.scanner as HTMLInputElement).focus()"

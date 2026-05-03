@@ -3,137 +3,62 @@
     <div v-if="showLabel" :class="labelClasses">
       {{ df.label }}
     </div>
-    <input
-      v-show="showInput"
-      ref="input"
-      :class="[inputClasses, containerClasses]"
-      :type="inputType"
-      :value="inputValue"
+    <DatePicker
+      v-if="!isReadOnly"
+      :model-value="dateValue"
       :placeholder="inputPlaceholder"
-      :readonly="isReadOnly"
-      :tabindex="isReadOnly ? '-1' : '0'"
-      @blur="onBlur"
-      @focus="onFocus"
-      @input="(e) => $emit('input', e)"
+      @update:model-value="handleDateChange"
     />
     <div
-      v-show="!showInput"
+      v-else
       class="flex"
       :class="[containerClasses, sizeClasses]"
-      tabindex="0"
-      @click="activateInput"
-      @focus="activateInput"
+      tabindex="-1"
     >
       <p
         v-if="!isEmpty"
         :class="[baseInputClasses]"
-        class="overflow-auto no-scrollbar whitespace-nowrap text-main"
+        class="overflow-auto no-scrollbar whitespace-nowrap text-description"
       >
         {{ formattedValue }}
       </p>
-      <p v-else-if="inputPlaceholder" class="text-base text-description w-full">
+      <p v-else-if="inputPlaceholder" class="text-base text-description w-full opacity-50">
         {{ inputPlaceholder }}
       </p>
-
-      <button v-if="!isReadOnly" class="-me-0.5 ms-1">
-        <FeatherIcon
-          name="calendar"
-          class="w-4 h-4"
-          :class="showMandatory ? 'text-error' : 'text-description'"
-        />
-      </button>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { DateTime } from 'luxon';
 import { fyo } from 'src/initFyo';
-import { defineComponent, nextTick } from 'vue';
+import { defineComponent } from 'vue';
 import Base from './Base.vue';
+import { DatePicker } from 'src/components/ui';
 
 export default defineComponent({
   extends: Base,
-  emits: ['input', 'focus'],
-  data() {
-    return {
-      showInput: false,
-    };
+  components: {
+    DatePicker,
   },
+  emits: ['input', 'focus', 'change'],
   computed: {
-    inputValue(): string {
-      let value = this.value;
-      if (typeof value === 'string') {
-        value = new Date(value);
-      }
-
-      if (value instanceof Date && !Number.isNaN(value.valueOf())) {
-        return DateTime.fromJSDate(value).toISODate();
-      }
-
-      return '';
-    },
-    inputType() {
-      return 'date';
+    dateValue(): Date | null {
+      if (!this.value) return null;
+      const d = new Date(this.value as string);
+      return isNaN(d.getTime()) ? null : d;
     },
     formattedValue() {
       const value = this.parse(this.value);
       return fyo.format(value, this.df, this.doc);
     },
-    borderClasses(): string {
-      if (!this.border) {
-        return '';
-      }
-
-      const border = 'border border-border';
-      let background = 'bg-canvas';
-      if (this.isReadOnly) {
-        background = 'bg-canvas-muted';
-      }
-
-      if (this.showInput) {
-        return background;
-      }
-
-      return border + ' ' + background;
-    },
   },
   methods: {
-    onFocus(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
+    handleDateChange(val: Date | null) {
+      if (!val) {
+        this.triggerChange(null);
         return;
       }
-
-      target.select();
-      this.showInput = true;
-      this.$emit('focus', e);
-    },
-    onBlur(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
-      this.showInput = false;
-
-      let value: Date | null = DateTime.fromISO(target.value).toJSDate();
-      if (Number.isNaN(value.valueOf())) {
-        value = null;
-      }
-
-      this.triggerChange(value);
-    },
-    activateInput() {
-      if (this.isReadOnly) {
-        return;
-      }
-
-      this.showInput = true;
-      nextTick(() => {
-        this.focus();
-
-        // @ts-ignore
-        this.$refs.input.showPicker();
-      });
+      // Store as ISO string which is the standard in this app
+      this.triggerChange(val.toISOString());
     },
   },
 });

@@ -24,12 +24,12 @@
       <div class="me-2 flex gap-1">
         <!-- Upload Button -->
         <button v-if="!value" class="p-0.5 rounded" @click="upload">
-          <FeatherIcon name="upload" class="h-4 w-4 text-description" />
+          <LucideIcon name="upload" class="h-4 w-4 text-description" />
         </button>
 
         <!-- Download Button -->
         <button v-if="value" class="p-0.5 rounded" @click="download">
-          <FeatherIcon name="download" class="h-4 w-4 text-description" />
+          <LucideIcon name="download" class="h-4 w-4 text-description" />
         </button>
 
         <!-- Clear Button -->
@@ -38,7 +38,7 @@
           class="p-0.5 rounded"
           @click="clear"
         >
-          <FeatherIcon name="x" class="h-4 w-4 text-description" />
+          <LucideIcon name="x" class="h-4 w-4 text-description" />
         </button>
       </div>
     </div>
@@ -50,11 +50,11 @@ import { Attachment } from 'fyo/core/types';
 import { Field } from 'schemas/types';
 import { convertFileToDataURL } from 'src/utils/misc';
 import { defineComponent, PropType } from 'vue';
-import FeatherIcon from '../FeatherIcon.vue';
+import LucideIcon from '../LucideIcon.vue';
 import Base from './Base.vue';
 
 export default defineComponent({
-  components: { FeatherIcon },
+  components: { LucideIcon },
   extends: Base,
   props: {
     df: Object as PropType<Field>,

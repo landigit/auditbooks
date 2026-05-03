@@ -23,7 +23,7 @@
           Object
         </div>
 
-        <feather-icon
+        <lucide-icon
           v-if="r.isCollapsible"
           :name="r.collapsed ? 'chevron-up' : 'chevron-down'"
           class="w-4 h-4 ms-auto"

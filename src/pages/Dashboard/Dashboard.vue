@@ -11,6 +11,14 @@
           @change="(value) => (period = value)"
         />
       </div>
+      <!-- <Button
+        variant="outline"
+        class="ms-2"
+        @click="$router.push('/calendar')"
+      >
+        <lucide-icon name="calendar" class="w-4 h-4 me-2" />
+        {{ t`View Calendar` }}
+      </Button> -->
     </PageHeader>
 
     <div
@@ -63,6 +71,7 @@ import Cashflow from './Cashflow.vue';
 import Expenses from './Expenses.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import ProfitAndLoss from './ProfitAndLoss.vue';
+import { Button } from 'src/components/ui';
 import { docsPathRef } from 'src/utils/refs';
 
 export default {
@@ -74,6 +83,7 @@ export default {
     Expenses,
     PeriodSelector,
     UnpaidInvoices,
+    Button,
   },
   props: {},
   data() {

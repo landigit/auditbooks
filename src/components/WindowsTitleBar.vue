@@ -15,24 +15,24 @@
         class="flex items-center px-4 h-full hover:bg-surface-hover"
         @click="minimizeWindow"
       >
-        <feather-icon name="minus" class="h-4 w-4 flex-shrink-0" />
+        <lucide-icon name="minus" class="h-4 w-4 flex-shrink-0" />
       </div>
       <div
         class="flex items-center px-4 h-full hover:bg-surface-hover"
         @click="toggleMaximize"
       >
-        <feather-icon
+        <lucide-icon
           v-if="isMax"
           name="minimize"
           class="h-3 w-3 flex-shrink-0"
         />
-        <feather-icon v-else name="square" class="h-3 w-3 flex-shrink-0" />
+        <lucide-icon v-else name="square" class="h-3 w-3 flex-shrink-0" />
       </div>
       <div
         class="flex items-center px-4 h-full hover:bg-error hover:text-white"
         @click="closeWindow"
       >
-        <feather-icon name="x" class="h-4 w-4 flex-shrink-0" />
+        <lucide-icon name="x" class="h-4 w-4 flex-shrink-0" />
       </div>
     </div>
   </div>
