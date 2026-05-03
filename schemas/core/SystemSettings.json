@@ -135,10 +135,24 @@
       "hidden": true
     },
     {
-      "fieldname": "darkMode",
-      "label": "Dark mode",
-      "fieldtype": "Check",
-      "default": false,
+      "fieldname": "theme",
+      "label": "Theme",
+      "fieldtype": "Select",
+      "options": [
+        {
+          "label": "System Default",
+          "value": "auto"
+        },
+        {
+          "label": "Light",
+          "value": "light"
+        },
+        {
+          "label": "Dark",
+          "value": "dark"
+        }
+      ],
+      "default": "auto",
       "description": "Sets the theme of the app.",
       "section": "Theme"
     },
@@ -174,6 +188,7 @@
   ],
   "quickEditFields": [
     "locale",
+    "theme",
     "dateFormat",
     "currency",
     "displayPrecision",

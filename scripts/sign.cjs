@@ -15,7 +15,7 @@ async function sign(configuration) {
   console.log(`🔐 Signing: ${filePath}`);
 
   const signtoolPath = 'C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\signtool.exe';
-  const certPath = path.resolve(__dirname, '..', 'auditbooks-dev.pfx');
+  const certPath = path.resolve(__dirname, '..', 'certificate.pfx');
   const certPassword = process.env.CSC_KEY_PASSWORD;
 
   if (!certPassword) {

@@ -6,7 +6,7 @@ describe('useAppStore', () => {
     const store = useAppStore();
     expect(store.platform).toBe('Linux');
     expect(store.showSidebar).toBe(true);
-    expect(store.darkMode).toBe(false);
+    expect(store.theme).toBe('auto');
     expect(store.language).toBe('English');
     expect(store.languageDirection).toBe('ltr');
   });
@@ -32,11 +32,13 @@ describe('useAppStore', () => {
     expect(store.showSidebar).toBe(true);
   });
 
-  it('setDarkMode updates darkMode', () => {
+  it('setTheme updates theme', () => {
     const store = useAppStore();
-    store.setDarkMode(true);
-    expect(store.darkMode).toBe(true);
-    store.setDarkMode(false);
-    expect(store.darkMode).toBe(false);
+    store.setTheme('dark');
+    expect(store.theme).toBe('dark');
+    store.setTheme('light');
+    expect(store.theme).toBe('light');
+    store.setTheme('auto');
+    expect(store.theme).toBe('auto');
   });
 });

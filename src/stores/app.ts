@@ -1,4 +1,11 @@
 import { fyo } from 'src/initFyo';
+import { Theme, setTheme } from 'src/utils/theme';
+import { ref } from 'vue';
+
+const isSystemDark = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  isSystemDark.value = e.matches;
+});
 
 export function useAppStore() {
   const store = fyo.store as any;
@@ -13,8 +20,14 @@ export function useAppStore() {
     get showSidebar() {
       return store.showSidebar ?? true;
     },
-    get darkMode() {
-      return store.darkMode ?? false;
+    get theme(): Theme {
+      return store.theme ?? 'auto';
+    },
+    get isDark(): boolean {
+      if (this.theme === 'auto') {
+        return isSystemDark.value;
+      }
+      return this.theme === 'dark';
     },
     get language() {
       // If language is empty string or null, return 'English'
@@ -29,8 +42,8 @@ export function useAppStore() {
     toggleSidebar() {
       store.showSidebar = !this.showSidebar;
     },
-    setDarkMode(value: boolean) {
-      store.darkMode = value;
+    setTheme(value: Theme) {
+      store.theme = value;
     },
   };
 }

@@ -450,6 +450,7 @@ export async function getPathAndMakePDF(
   innerHTML: string,
   width: number,
   height: number,
+  font?: string,
   shouldPrint?: boolean
 ) {
   if (!shouldPrint) {
@@ -458,7 +459,7 @@ export async function getPathAndMakePDF(
       return;
     }
 
-    const html = constructPrintDocument(innerHTML);
+    const html = constructPrintDocument(innerHTML, font);
     const success = await ipc.makePDF(html, savePath, width, height);
     if (success) {
       showExportInFolder(t`Save as PDF Successful`, savePath);
@@ -466,7 +467,7 @@ export async function getPathAndMakePDF(
       showToast({ message: t`Export Failed`, type: 'error' });
     }
   } else {
-    const html = constructPrintDocument(innerHTML);
+    const html = constructPrintDocument(innerHTML, font);
     const success = await ipc.printDocument(html, width, height);
     if (success) {
       showToast({ message: t`Print Successful`, type: 'success' });
@@ -476,7 +477,7 @@ export async function getPathAndMakePDF(
   }
 }
 
-function constructPrintDocument(innerHTML: string) {
+function constructPrintDocument(innerHTML: string, font?: string) {
   const html = document.createElement('html');
   const head = document.createElement('head');
   const body = document.createElement('body');
@@ -489,6 +490,7 @@ function constructPrintDocument(innerHTML: string) {
         margin: 0 !important;
         padding: 0 !important;
         background: white;
+        ${font ? `font-family: ${font}, sans-serif !important;` : ''}
       }
 
       @page {
@@ -500,6 +502,9 @@ function constructPrintDocument(innerHTML: string) {
         margin: 0;
         padding: 0;
       }
+    }
+    body {
+      ${font ? `font-family: ${font}, sans-serif;` : ''}
     }
   `;
 
@@ -640,7 +645,10 @@ function getNameAndTypeFromTemplateFile(
   });
 }
 
-export const baseTemplate = `<main class="h-full w-full bg-surface">
+export const baseTemplate = `<main 
+  class="h-full w-full bg-surface"
+  :style="{ fontFamily: print.font }"
+>
 
   <!-- Edit This Code -->
   <header class="p-4 flex justify-between border-b">
