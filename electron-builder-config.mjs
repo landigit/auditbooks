@@ -47,6 +47,9 @@ const auditBooksConfig = {
   },
   win: {
     publisherName: 'Landigit Agency',
+    certificateSubjectName: 'Landigit Agency',
+    sign: 'scripts/sign.cjs',
+    rfc3161TimeStampServer: 'http://timestamp.digicert.com',
     artifactName: '${productName}-v${version}-windows-${arch}.${ext}',
     signDlls: true,
     icon: 'build/icon.ico',
