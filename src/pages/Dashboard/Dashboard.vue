@@ -72,7 +72,7 @@ import Expenses from './Expenses.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import ProfitAndLoss from './ProfitAndLoss.vue';
 import { Button } from 'src/components/ui';
-import { docsPathRef } from 'src/utils/refs';
+import { useAppStore } from 'src/stores/app';
 
 export default {
   name: 'Dashboard',
@@ -87,13 +87,16 @@ export default {
   },
   props: {},
   data() {
-    return { period: 'This Year' };
+    return {
+      period: 'This Year',
+      store: useAppStore(),
+    };
   },
   activated() {
-    docsPathRef.value = 'books/dashboard';
+    this.store.docsPath = 'dashboard';
   },
   deactivated() {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
   },
   methods: {
     handlePeriodChange(period) {

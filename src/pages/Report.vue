@@ -54,12 +54,11 @@ import FormControl from 'src/components/Controls/FormControl.vue';
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import ListReport from 'src/components/Report/ListReport.vue';
-import { fyo } from 'src/initFyo';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap, getReport } from 'src/utils/misc';
-import { docsPathRef } from 'src/utils/refs';
 import { ActionGroup } from 'src/utils/types';
 import { routeTo } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
 import { PropType, computed, defineComponent, inject } from 'vue';
 
 export default defineComponent({
@@ -86,7 +85,10 @@ export default defineComponent({
     },
   },
   setup() {
-    return { shortcuts: inject(shortcutsKey) };
+    return {
+      shortcuts: inject(shortcutsKey),
+      store: useAppStore(),
+    };
   },
   data() {
     return {
@@ -124,7 +126,7 @@ export default defineComponent({
   },
 
   async activated() {
-    docsPathRef.value =
+    this.store.docsPath =
       docsPathMap[this.reportClassName] ?? docsPathMap.Reports!;
     await this.setReportData();
 
@@ -150,7 +152,7 @@ export default defineComponent({
       await this.report?.updateData();
     }
 
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.rep = this;
     }
@@ -160,7 +162,7 @@ export default defineComponent({
     });
   },
   deactivated() {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
     this.shortcuts?.delete(this.reportClassName);
   },
   methods: {

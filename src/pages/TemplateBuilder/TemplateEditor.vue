@@ -14,6 +14,7 @@ import { EditorView, ViewUpdate } from '@codemirror/view';
 // @ts-ignore
 import { tags } from '@lezer/highlight';
 import { basicSetup } from 'codemirror';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent, markRaw } from 'vue';
 
 export default defineComponent({
@@ -28,6 +29,7 @@ export default defineComponent({
       state: null as EditorState | null,
       view: null as EditorView | null,
       compartments: {} as Record<string, Compartment>,
+      store: useAppStore(),
     };
   },
   computed: {
@@ -50,7 +52,7 @@ export default defineComponent({
       this.init();
     }
 
-    if (this.fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.te = this;
     }

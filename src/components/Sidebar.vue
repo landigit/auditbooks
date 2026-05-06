@@ -2,7 +2,7 @@
   <div
     class="py-2 h-full flex justify-between flex-col bg-sidebar relative"
     :class="{
-      'window-drag': platform !== 'Windows',
+      'window-drag': store.platform !== 'Windows',
     }"
   >
     <div>
@@ -10,7 +10,7 @@
       <div
         class="px-4 flex flex-row items-center justify-between mb-4"
         :class="
-          platform === 'Mac' && languageDirection === 'ltr' ? 'mt-10' : 'mt-2'
+          store.platform === 'Mac' && languageDirection === 'ltr' ? 'mt-10' : 'mt-2'
         "
       >
         <h6
@@ -151,7 +151,6 @@
 import { reportIssue } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import { languageDirectionKey, shortcutsKey } from 'src/utils/injectionKeys';
-import { docsPathRef } from 'src/utils/refs';
 import { getSidebarConfig } from 'src/utils/sidebarConfig';
 import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
 import { routeTo, toggleSidebar } from 'src/utils/ui';
@@ -208,7 +207,7 @@ export default defineComponent({
       );
     },
     appVersion() {
-      return fyo.store.appVersion;
+      return this.store.appVersion;
     },
   },
   async mounted() {
@@ -231,7 +230,7 @@ export default defineComponent({
       this.$emit('toggle-darkmode')
     );
 
-    this.showDevMode = this.fyo.store.isDevelopment;
+    this.showDevMode = this.store.isDevelopment;
   },
   unmounted() {
     this.shortcuts?.delete(COMPONENT_NAME);
@@ -241,7 +240,7 @@ export default defineComponent({
     reportIssue,
     toggleSidebar,
     openDocumentation() {
-      ipc.openLink('https://landigit.com/auditbooks/' + docsPathRef.value);
+      this.$router.push({ name: 'Help', params: { path: this.store.docsPath } });
     },
     setActiveGroup() {
       const { fullPath } = this.$router.currentRoute.value;

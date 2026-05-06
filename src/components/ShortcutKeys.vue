@@ -11,15 +11,20 @@
 </template>
 <script lang="ts">
 import { getShortcutKeyMap } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent, PropType } from 'vue';
+
 export default defineComponent({
   props: {
     keys: { type: Array as PropType<string[]>, required: true },
     simple: { type: Boolean, default: false },
   },
+  setup() {
+    return { store: useAppStore() };
+  },
   computed: {
     keyMap(): Record<string, string> {
-      return getShortcutKeyMap(this.platform);
+      return getShortcutKeyMap(this.store.platform);
     },
   },
 });

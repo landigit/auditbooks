@@ -2,13 +2,10 @@
   <Popover
     ref="filterPopover"
     v-if="fields.length"
-    placement="bottom-end"
-    @close="emitFilterChange"
-    :close-on-click-outside="true"
-    :close-on-click-content="false"
+    @update:open="(val) => !val && emitFilterChange()"
   >
-    <template #target="{ togglePopover }">
-      <Button :icon="true" @click="togglePopover()">
+    <PopoverTrigger as-child>
+      <Button :icon="true">
         <span class="flex items-center">
           <Icon name="filter" size="12" class="stroke-current text-muted" />
           <span class="ms-1">
@@ -21,8 +18,12 @@
           </span>
         </span>
       </Button>
-    </template>
-    <template #content>
+    </PopoverTrigger>
+    <PopoverContent
+      side="bottom"
+      align="end"
+      class="w-auto p-0 overflow-hidden"
+    >
       <div>
         <div class="p-2">
           <template v-if="explicitFilters.length">
@@ -140,7 +141,7 @@
           </div>
         </div>
       </div>
-    </template>
+    </PopoverContent>
   </Popover>
 </template>
 <script lang="ts">
@@ -152,7 +153,7 @@ import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
 import Icon from './Icon.vue';
-import Popover from './Popover.vue';
+import { Popover, PopoverTrigger, PopoverContent } from 'src/components/ui';
 import { QueryFilter } from 'utils/db/types';
 import { t } from 'fyo';
 
@@ -180,6 +181,8 @@ export default defineComponent({
   name: 'FilterDropdown',
   components: {
     Popover,
+    PopoverTrigger,
+    PopoverContent,
     Button,
     Icon,
     Select,

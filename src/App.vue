@@ -6,9 +6,9 @@
     :language="language"
   >
     <WindowsTitleBar
-      v-if="platform === 'Windows'"
-      :db-path="dbPath"
-      :company-name="companyName"
+      v-if="appStore.platform === 'Windows'"
+      :db-path="appStore.dbPath"
+      :company-name="appStore.companyName"
     />
     <!-- Main Contents -->
     <Desk
@@ -41,8 +41,7 @@
 <script lang="ts">
 import { RTL_LANGUAGES } from 'fyo/utils/consts';
 import { ModelNameEnum } from 'models/types';
-import { systemLanguageRef } from 'src/utils/refs';
-import { defineComponent, provide, ref, Ref } from 'vue';
+import { defineComponent, provide, ref, Ref, computed } from 'vue';
 import WindowsTitleBar from './components/WindowsTitleBar.vue';
 import { handleErrorWithDialog } from './errorHandling';
 import { fyo } from './initFyo';
@@ -63,7 +62,8 @@ import { Search } from './utils/search';
 import { Shortcuts } from './utils/shortcuts';
 import { routeTo } from './utils/ui';
 import { useKeys } from './utils/vueUtils';
-import { setTheme, setFont, Theme } from 'src/utils/theme';
+import { useAppStore } from './stores/app';
+import { setTheme, setFont } from 'src/utils/theme';
 import {
   registerInstanceToERPNext,
   updateERPNSyncSettings,
@@ -89,14 +89,12 @@ export default defineComponent({
     const keys = useKeys();
     const searcher: Ref<null | Search> = ref(null);
     const shortcuts = new Shortcuts(keys);
-    const languageDirection = ref(
-      getLanguageDirection(systemLanguageRef.value)
-    );
+    const appStore = useAppStore();
 
     provide(injectionKeys.keysKey, keys);
     provide(injectionKeys.searcherKey, searcher);
     provide(injectionKeys.shortcutsKey, shortcuts);
-    provide(injectionKeys.languageDirectionKey, languageDirection);
+    provide(injectionKeys.languageDirectionKey, computed(() => appStore.languageDirection));
 
     const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
       null
@@ -106,35 +104,34 @@ export default defineComponent({
       keys,
       searcher,
       shortcuts,
-      languageDirection,
+      appStore,
       databaseSelector,
     };
   },
   data() {
     return {
       activeScreen: null as Screen | null,
-      dbPath: '',
-      companyName: '',
-      theme: 'auto' as Theme,
     };
   },
   computed: {
     language(): string {
-      return systemLanguageRef.value;
+      return this.appStore.language;
+    },
+    theme(): string {
+      return this.appStore.theme;
+    },
+    languageDirection(): string {
+      return this.appStore.languageDirection;
     },
   },
-  watch: {
-    language(value: string) {
-      this.languageDirection = getLanguageDirection(value);
-    },
-  },
+  watch: {},
   async mounted() {
     await this.setInitialScreen();
-    const theme = (fyo.singles.SystemSettings?.theme as Theme) || 'auto';
+    const theme = (fyo.singles.SystemSettings?.theme as any) || 'auto';
     const font = fyo.singles.SystemSettings?.font;
     setTheme(theme);
     setFont(font as string);
-    this.theme = theme;
+    this.appStore.theme = theme;
   },
   methods: {
     async setInitialScreen(): Promise<void> {
@@ -160,8 +157,8 @@ export default defineComponent({
       await this.setDeskRoute();
       await fyo.telemetry.start(true);
       await ipc.checkForUpdates();
-      this.dbPath = filePath;
-      this.companyName = (await fyo.getValue(
+      this.appStore.dbPath = filePath;
+      this.appStore.companyName = (await fyo.getValue(
         ModelNameEnum.AccountingSettings,
         'companyName'
       )) as string;
@@ -306,24 +303,21 @@ export default defineComponent({
       fyo.telemetry.stop();
       await fyo.purgeCache();
       this.activeScreen = Screen.DatabaseSelector;
-      this.dbPath = '';
+      this.appStore.dbPath = '';
       this.searcher = null;
-      this.companyName = '';
+      this.appStore.companyName = '';
     },
     async toggleDarkMode() {
       // Toggle only between light and dark in the sidebar
-      const isCurrentlyDark =
-        this.theme === 'dark' ||
-        (this.theme === 'auto' &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const isCurrentlyDark = this.appStore.isDark;
 
-      this.theme = isCurrentlyDark ? 'light' : 'dark';
+      this.appStore.theme = isCurrentlyDark ? 'light' : 'dark';
 
-      setTheme(this.theme);
+      setTheme(this.appStore.theme);
 
       // Persist to database
       const doc = await fyo.doc.getDoc('SystemSettings');
-      await doc.set('theme', this.theme);
+      await doc.set('theme', this.appStore.theme);
       await doc.sync();
     },
   },

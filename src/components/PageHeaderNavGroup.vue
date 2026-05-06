@@ -6,7 +6,7 @@
       ref="backlink"
       class="nav-link border-l border-r border-border bg-canvas-muted"
       :class="
-        historyState.back ? 'text-main cursor-pointer' : 'text-description'
+        store.historyState.back ? 'text-main cursor-pointer' : 'text-description'
       "
       @click="$router.back()"
     >
@@ -16,7 +16,7 @@
     <a
       class="nav-link rounded-md rounded-l-none bg-canvas-muted"
       :class="
-        historyState.forward ? 'text-main cursor-pointer' : 'text-description'
+        store.historyState.forward ? 'text-main cursor-pointer' : 'text-description'
       "
       @click="$router.forward()"
     >
@@ -29,7 +29,7 @@ import { shortcutsKey } from 'src/utils/injectionKeys';
 import { ref, inject } from 'vue';
 import { defineComponent } from 'vue';
 import SearchBar from './SearchBar.vue';
-import { historyState } from 'src/utils/refs';
+import { useAppStore } from 'src/stores/app';
 
 const COMPONENT_NAME = 'PageHeaderNavGroup';
 
@@ -37,7 +37,7 @@ export default defineComponent({
   components: { SearchBar },
   setup() {
     return {
-      historyState,
+      store: useAppStore(),
       backlink: ref<HTMLAnchorElement | null>(null),
       shortcuts: inject(shortcutsKey),
     };

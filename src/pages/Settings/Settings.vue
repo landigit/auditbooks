@@ -72,8 +72,8 @@ import { evaluateHidden } from 'src/utils/doc';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { showDialog } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
-import { docsPathRef } from 'src/utils/refs';
 import { UIGroupedFields } from 'src/utils/types';
+import { useAppStore } from 'src/stores/app';
 import { computed, defineComponent, inject } from 'vue';
 import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 
@@ -87,6 +87,7 @@ export default defineComponent({
   setup() {
     return {
       shortcuts: inject(shortcutsKey),
+      store: useAppStore(),
     };
   },
   data() {
@@ -176,7 +177,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    if (this.fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.settings = this;
     }
@@ -189,7 +190,7 @@ export default defineComponent({
       this.activeTab = tab;
     }
 
-    docsPathRef.value = docsPathMap.Settings ?? '';
+    this.store.docsPath = docsPathMap.Settings ?? '';
     this.shortcuts?.pmod.set(COMPONENT_NAME, ['KeyS'], async () => {
       if (!this.canSave) {
         return;
@@ -199,7 +200,7 @@ export default defineComponent({
     });
   },
   async deactivated(): Promise<void> {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
     this.shortcuts?.delete(COMPONENT_NAME);
     if (!this.canSave) {
       return;

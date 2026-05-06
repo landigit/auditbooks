@@ -385,8 +385,8 @@ import { Importer, TemplateField, getColumnLabel } from 'src/importer';
 import { fyo } from 'src/initFyo';
 import { showDialog } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
-import { docsPathRef } from 'src/utils/refs';
 import { getSavePath, selectTextFile } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent } from 'vue';
 import Loading from '../components/Loading.vue';
 
@@ -417,6 +417,9 @@ export default defineComponent({
     FormHeader,
     Check,
     Select,
+  },
+  setup() {
+    return { store: useAppStore() };
   },
   data(): ImportWizardData {
     return {
@@ -685,16 +688,16 @@ export default defineComponent({
     },
   },
   mounted() {
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.iw = this;
     }
   },
   activated(): void {
-    docsPathRef.value = docsPathMap.ImportWizard ?? '';
+    this.store.docsPath = docsPathMap.ImportWizard ?? '';
   },
   deactivated(): void {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
     if (!this.complete) {
       return;
     }

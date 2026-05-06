@@ -223,7 +223,6 @@ import {
   getPrintTemplatePropHints,
   getPrintTemplatePropValues,
 } from 'src/utils/printTemplates';
-import { docsPathRef, showSidebar } from 'src/utils/refs';
 import { DocRef, PrintValues } from 'src/utils/types';
 import {
   ShortcutKey,
@@ -236,6 +235,7 @@ import {
 } from 'src/utils/ui';
 import { useDocShortcuts } from 'src/utils/vueUtils';
 import { getMapFromList } from 'utils/index';
+import { useAppStore } from 'src/stores/app';
 import { computed, defineComponent, inject, ref } from 'vue';
 import PrintContainer from './PrintContainer.vue';
 import SetPrintSize from './SetPrintSize.vue';
@@ -276,6 +276,7 @@ export default defineComponent({
       doc,
       context,
       shortcuts,
+      store: useAppStore(),
     };
   },
   data() {
@@ -416,25 +417,25 @@ export default defineComponent({
       const styles: Record<string, string> = {};
 
       styles.height = `calc(100vh - var(--h-row-largest) - 1px - ${
-        this.platform == 'Windows' ? 'var(--h-row-smallest)' : '0px'
+        this.store.platform == 'Windows' ? 'var(--h-row-smallest)' : '0px'
       }`;
       return styles;
     },
   },
   async mounted() {
     await this.initialize();
-    if (this.fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.tb = this;
     }
   },
   async activated(): Promise<void> {
     await this.initialize();
-    docsPathRef.value = docsPathMap.PrintTemplate ?? '';
+    this.store.docsPath = docsPathMap.PrintTemplate ?? '';
     this.setShortcuts();
   },
   deactivated(): void {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
     if (this.editMode) {
       this.disableEditMode();
     }
@@ -543,17 +544,17 @@ export default defineComponent({
       this.disableEditMode();
     },
     enableEditMode() {
-      this.preEditMode.showSidebar = showSidebar.value;
+      this.preEditMode.showSidebar = this.store.showSidebar;
       this.preEditMode.panelWidth = this.panelWidth;
       this.preEditMode.scale = this.scale;
 
       this.panelWidth = Math.max(window.innerWidth / 2, this.panelWidth);
-      showSidebar.value = false;
+      this.store.showSidebar = false;
       this.scale = this.getEditModeScale();
       this.view?.focus();
     },
     disableEditMode() {
-      showSidebar.value = this.preEditMode.showSidebar;
+      this.store.showSidebar = this.preEditMode.showSidebar;
       this.panelWidth = this.preEditMode.panelWidth;
       this.scale = this.preEditMode.scale;
     },

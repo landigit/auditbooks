@@ -1,5 +1,11 @@
 <template>
-  <Dropdown :items="suggestions" :is-loading="isLoading" :df="df" :doc="doc">
+  <Dropdown
+    :items="suggestions"
+    :is-loading="isLoading"
+    :df="df"
+    :doc="doc"
+    @update:open="(val) => (isDropdownOpen = val)"
+  >
     <template
       #default="{
         toggleDropdown,
@@ -69,40 +75,46 @@
           >
             <lucide-icon name="x" class="w-3.5 h-3.5" />
           </button>
-          <button
-            class="p-0.5 rounded -me1 bg-transparent"
-            @mouseenter="showQuickView = true"
-            @mouseleave="showQuickView = false"
-            @click="routeToLinkedDoc"
-          >
-            <Popover
-              :show-popup="showQuickView"
-              :entry-delay="300"
-              placement="bottom"
-            >
-              <template #target>
+          <HoverCard :open-delay="500" :close-delay="100">
+            <HoverCardTrigger as-child>
+              <button
+                class="p-0.5 rounded -me1 bg-transparent hover:bg-surface-hover transition-colors"
+                @click="routeToLinkedDoc"
+              >
                 <lucide-icon
                   name="chevron-right"
                   class="w-4 h-4 text-description"
                 />
-              </template>
-              <template #content>
-                <QuickView :schema-name="linkSchemaName" :name="value" />
-              </template>
-            </Popover>
-          </button>
+              </button>
+            </HoverCardTrigger>
+            <HoverCardContent
+              side="bottom"
+              :side-offset="10"
+              class="p-0 overflow-hidden shadow-xl border-border"
+            >
+              <QuickView :schema-name="linkSchemaName" :name="value" />
+            </HoverCardContent>
+          </HoverCard>
         </div>
       </div>
     </template>
   </Dropdown>
 </template>
+
 <script>
 import { getOptionList } from 'fyo/utils';
 import { FieldTypeEnum } from 'schemas/types';
 import Dropdown from 'src/components/Dropdown.vue';
 import { fuzzyMatch } from 'src/utils';
 import { getFormRoute, routeTo } from 'src/utils/ui';
-import Popover from '../Popover.vue';
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from 'src/components/ui';
 import Base from './Base.vue';
 import QuickView from '../QuickView.vue';
 
@@ -111,6 +123,11 @@ export default {
   components: {
     Dropdown,
     Popover,
+    PopoverAnchor,
+    PopoverContent,
+    HoverCard,
+    HoverCardTrigger,
+    HoverCardContent,
     QuickView,
   },
   extends: Base,

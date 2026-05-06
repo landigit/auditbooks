@@ -32,6 +32,7 @@ let isReload = false;
 let electronProcess = null;
 
 console.log(`running Auditbooks in dev mode\nroot: ${root}`);
+
 /**
  * @type {import('execa').ExecaChildProcess<string>}
  */

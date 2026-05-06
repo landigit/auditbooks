@@ -1,11 +1,10 @@
 <template>
   <Popover
-    :show-popup="isShown"
-    :hide-arrow="true"
-    :placement="right ? 'bottom-end' : 'bottom-start'"
+    :open="isShown"
+    @update:open="(val) => { isShown = val; $emit('update:open', val) }"
   >
-    <template #target>
-      <div v-on-outside-click="() => (isShown = false)" class="h-full">
+    <PopoverAnchor as-child>
+      <div class="h-full">
         <slot
           :toggle-dropdown="toggleDropdown"
           :highlight-item-up="highlightItemUp"
@@ -13,8 +12,12 @@
           :select-highlighted-item="selectHighlightedItem"
         ></slot>
       </div>
-    </template>
-    <template #content>
+    </PopoverAnchor>
+    <PopoverContent
+      :side="right ? 'bottom' : 'bottom'"
+      :align="right ? 'end' : 'start'"
+      class="bg-surface text-main rounded w-[var(--reka-popover-trigger-width)] min-w-40 overflow-hidden p-0 border border-border shadow-lg"
+    >
       <div class="bg-surface text-main rounded w-full min-w-40 overflow-hidden">
         <div
           class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm"
@@ -55,7 +58,7 @@
           </template>
         </div>
       </div>
-    </template>
+    </PopoverContent>
   </Popover>
 </template>
 <script lang="ts">
@@ -64,12 +67,15 @@ import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { DropdownItem } from 'src/utils/types';
 import { defineComponent, PropType } from 'vue';
-import Popover from './Popover.vue';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 
 export default defineComponent({
   name: 'Dropdown',
+  emits: ['update:open'],
   components: {
     Popover,
+    PopoverAnchor,
+    PopoverContent,
   },
   props: {
     items: {

@@ -1,10 +1,12 @@
 .DS_Store
 node_modules
+# npm lock file — project uses yarn, this file must not be committed
+package-lock.json
 /dbs
 /dist
 /notebook
-.yarnrc.yml
-yarn.lock
+/.agents/
+*books/
 
 # local env files
 .env

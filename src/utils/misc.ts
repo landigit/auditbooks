@@ -12,6 +12,7 @@ import { QueryFilter } from 'utils/db/types';
 import { schemaTranslateables } from 'utils/translationHelpers';
 import type { LanguageMap } from 'utils/types';
 import { PeriodKey } from './types';
+import { useAppStore } from 'src/stores/app';
 
 export function getDatesAndPeriodList(period: PeriodKey): {
   periodList: DateTime[];
@@ -182,13 +183,14 @@ export function getIsMac() {
 }
 
 export async function getReport(name: keyof typeof reports) {
-  const cachedReport = fyo.store.reports[name];
+  const appStore = useAppStore();
+  const cachedReport = appStore.reports[name];
   if (cachedReport) {
     return cachedReport;
   }
 
   const report = new reports[name](fyo);
   await report.initialize();
-  fyo.store.reports[name] = report;
+  appStore.reports[name] = report;
   return report;
 }

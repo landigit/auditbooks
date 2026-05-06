@@ -88,7 +88,7 @@ export class TelemetryManager {
   private sendBeacon(verb: Verb, noun: Noun, more?: Record<string, unknown>) {
     if (
       !this.hasCreds ||
-      this.fyo.store.skipTelemetryLogging ||
+      this.fyo.skipTelemetryLogging ||
       ignoreList.includes(noun)
     ) {
       return;
@@ -121,14 +121,14 @@ export class TelemetryManager {
     const countryCode = this.fyo.singles.SystemSettings?.countryCode;
     return {
       country: countryCode ?? '',
-      language: this.fyo.store.language,
+      language: this.fyo.language,
       deviceId:
-        this.fyo.store.deviceId || (this.fyo.config.get('deviceId') ?? '-'),
-      instanceId: this.fyo.store.instanceId,
-      version: this.fyo.store.appVersion,
-      openCount: this.fyo.store.openCount,
+        this.fyo.deviceId || (this.fyo.config.get('deviceId') ?? '-'),
+      instanceId: this.fyo.instanceId,
+      version: this.fyo.appVersion,
+      openCount: this.fyo.openCount,
       timestamp: new Date().toISOString().replace('T', ' ').slice(0, -1),
-      platform: this.fyo.store.platform,
+      platform: this.fyo.platform,
       verb,
       noun,
       more,

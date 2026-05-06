@@ -15,7 +15,7 @@ import POS from 'src/pages/POS/POS.vue';
 import Calendar from 'src/pages/Calendar.vue';
 import type { HistoryState } from 'vue-router';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import { historyState } from './utils/refs';
+import { useAppStore } from './stores/app';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -143,14 +143,21 @@ const routes: RouteRecordRaw[] = [
     name: 'Calendar',
     component: Calendar,
   },
+  {
+    path: '/help/:path*',
+    name: 'Help',
+    component: () => import('src/pages/HelpView.vue'),
+    props: true,
+  },
 ];
 
 const router = createRouter({ routes, history: createWebHistory() });
 
 router.afterEach(({ fullPath }) => {
+  const appStore = useAppStore();
   const state = history.state as HistoryState;
-  historyState.forward = !!state.forward;
-  historyState.back = !!state.back;
+  appStore.historyState.forward = !!state.forward;
+  appStore.historyState.back = !!state.back;
 
   if (fullPath.includes('index.html')) {
     return;

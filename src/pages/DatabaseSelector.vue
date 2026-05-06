@@ -3,7 +3,7 @@
     class="flex-1 flex justify-center items-center bg-canvas"
     :class="{
       'pointer-events-none': loadingDatabase,
-      'window-drag': platform !== 'Windows',
+      'window-drag': store.platform !== 'Windows',
     }"
   >
     <div
@@ -211,6 +211,7 @@ import { showDialog } from 'src/utils/interactive';
 import { updateConfigFiles } from 'src/utils/misc';
 import { deleteDb, getSavePath, getSelectedFilePath } from 'src/utils/ui';
 import type { ConfigFilesWithModified } from 'utils/types';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -221,6 +222,10 @@ export default defineComponent({
     LucideIcon,
     Modal,
     Button,
+  },
+  setup() {
+    const store = useAppStore();
+    return { store };
   },
   emits: ['file-selected', 'new-database'],
   data() {
@@ -237,7 +242,7 @@ export default defineComponent({
   async mounted() {
     await this.setFiles();
 
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.ds = this;
     }
@@ -281,7 +286,7 @@ export default defineComponent({
       });
     },
     async createDemo() {
-      if (!fyo.store.isDevelopment) {
+      if (!this.store.isDevelopment) {
         await this.startDummyInstanceSetup();
       } else {
         this.openModal = true;

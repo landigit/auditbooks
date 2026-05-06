@@ -6,3 +6,4 @@ import { Fyo } from 'fyo';
  */
 
 export const fyo = new Fyo({ isTest: false, isElectron: true });
+export const ipc = (window as any).ipc;

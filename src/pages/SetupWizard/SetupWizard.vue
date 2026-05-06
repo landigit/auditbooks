@@ -2,7 +2,7 @@
   <FormContainer
     :show-header="false"
     class="justify-content items-center h-full"
-    :class="{ 'window-drag': platform !== 'Windows' }"
+    :class="{ 'window-drag': store.platform !== 'Windows' }"
   >
     <template #body>
       <FormHeader
@@ -47,8 +47,8 @@
           @click="cancel"
           >{{ t`Cancel` }}</Button
         >
-        <Button
-          v-if="fyo.store.isDevelopment && !loading"
+         <Button
+          v-if="store.isDevelopment && !loading"
           class="w-24 ml-auto mr-4 border border-border"
           :disabled="loading"
           @click="fill"
@@ -80,6 +80,7 @@ import { getErrorMessage } from 'src/utils';
 import { showDialog } from 'src/utils/interactive';
 import { getSetupWizardDoc } from 'src/utils/misc';
 import { getFieldsGroupedByTabAndSection } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
 import { computed, defineComponent } from 'vue';
 import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 
@@ -90,6 +91,10 @@ export default defineComponent({
     FormContainer,
     FormHeader,
     CommonFormSection,
+  },
+  setup() {
+    const store = useAppStore();
+    return { store };
   },
   provide() {
     return {
@@ -146,7 +151,7 @@ export default defineComponent({
       await this.fyo.db.init();
     }
 
-    if (this.fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.sw = this;
     }

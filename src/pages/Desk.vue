@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { showSidebar } from 'src/utils/refs';
-import { toggleSidebar } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
+const appStore = useAppStore();
+const toggleSidebar = () => appStore.toggleSidebar();
 </script>
 <template>
   <div class="flex overflow-hidden">
     <Transition name="sidebar">
       <!-- eslint-disable vue/require-explicit-emits -->
       <Sidebar
-        v-show="showSidebar"
+        v-show="appStore.showSidebar"
         class="flex-shrink-0 border-e border-border whitespace-nowrap w-sidebar"
         :theme="theme"
         @change-db-file="$emit('change-db-file')"
@@ -29,7 +30,7 @@ import { toggleSidebar } from 'src/utils/ui';
           <div v-if="route?.query?.edit">
             <component
               :is="Component"
-              :key="route.query.schemaName + route.query.name"
+              :key="String(route.query.schemaName || '') + String(route.query.name || '')"
             />
           </div>
         </Transition>
@@ -38,7 +39,7 @@ import { toggleSidebar } from 'src/utils/ui';
 
     <!-- Show Sidebar Button -->
     <button
-      v-show="!showSidebar"
+      v-show="!appStore.showSidebar"
       class="absolute bottom-0 start-0 text-description hover:bg-surface-hover rounded rtl-rotate-180 p-1 m-4 opacity-0 hover:opacity-100 hover:shadow-md"
       @click="() => toggleSidebar()"
     >

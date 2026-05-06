@@ -6,6 +6,7 @@ import { getIsNullOrUndef } from 'utils';
 import { generateCSV } from 'utils/csvParser';
 import { Report } from './Report';
 import { ExportExtention, ReportCell } from './types';
+import { useAppStore } from 'src/stores/app';
 
 interface JSONExport {
   columns: { fieldname: string; label: string }[];
@@ -112,10 +113,11 @@ function getJsonData(report: Report): string {
   /**
    * Metadata
    */
+  const appStore = useAppStore();
   exportObject.timestamp = new Date().toISOString();
   exportObject.reportName = report.reportName;
   exportObject.softwareName = 'Auditbooks';
-  exportObject.softwareVersion = report.fyo.store.appVersion;
+  exportObject.softwareVersion = appStore.appVersion;
 
   return JSON.stringify(exportObject);
 }

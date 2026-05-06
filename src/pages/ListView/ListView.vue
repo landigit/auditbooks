@@ -88,9 +88,9 @@ import {
   docsPathMap,
   getCreateFiltersFromListViewFilters,
 } from 'src/utils/misc';
-import { docsPathRef } from 'src/utils/refs';
 import { getFormRoute, routeTo } from 'src/utils/ui';
 import { QueryFilter } from 'utils/db/types';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent, inject, ref } from 'vue';
 import List from './List.vue';
 import { Money } from 'pesa';
@@ -118,6 +118,7 @@ export default defineComponent({
       makeNewDocButton: ref<InstanceType<typeof Button> | null>(null),
       exportButton: ref<InstanceType<typeof Button> | null>(null),
       filterDropdown: ref<InstanceType<typeof FilterDropdown> | null>(null),
+      store: useAppStore(),
     };
   },
   data() {
@@ -157,10 +158,10 @@ export default defineComponent({
   },
   activated() {
     this.listConfig = getListConfig(this.schemaName);
-    docsPathRef.value =
+    this.store.docsPath =
       docsPathMap[this.schemaName] ?? docsPathMap.Entries ?? '';
 
-    if (this.fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.lv = this;
     }
@@ -168,7 +169,7 @@ export default defineComponent({
     this.setShortcuts();
   },
   deactivated() {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
     this.shortcuts?.delete(this.context);
   },
   methods: {

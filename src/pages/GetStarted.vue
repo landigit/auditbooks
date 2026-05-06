@@ -99,7 +99,15 @@ export default defineComponent({
   methods: {
     async handleDocumentation({ key, documentation }: ListItem) {
       if (documentation) {
-        ipc.openLink(documentation);
+        if (documentation.startsWith('https://landigit.com/auditbooks/')) {
+          const path = documentation.replace(
+            'https://landigit.com/auditbooks/',
+            ''
+          );
+          this.$router.push(`/help/${path}`);
+        } else {
+          ipc.openLink(documentation);
+        }
       }
 
       switch (key) {

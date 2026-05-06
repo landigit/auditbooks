@@ -15,6 +15,7 @@ import {
 import { Money } from 'pesa';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { Payment } from 'models/baseModels/Payment/Payment';
+import { useAppStore } from 'src/stores/app';
 
 export type PrintTemplateHint = {
   [key: string]: string | PrintTemplateHint | PrintTemplateHint[];
@@ -563,8 +564,9 @@ export async function updatePrintTemplates(fyo: Fyo) {
     updateList.push(...updates);
   }
 
-  const isLogging = fyo.store.skipTelemetryLogging;
-  fyo.store.skipTelemetryLogging = true;
+  const appStore = useAppStore();
+  const isLogging = appStore.skipTelemetryLogging;
+  appStore.skipTelemetryLogging = true;
   for (const { name, type, template, width, height } of updateList) {
     const doc = await getDocFromNameIfExistsElseNew(
       ModelNameEnum.PrintTemplate,
@@ -583,7 +585,7 @@ export async function updatePrintTemplates(fyo: Fyo) {
     await doc.set(updateData);
     await doc.sync();
   }
-  fyo.store.skipTelemetryLogging = isLogging;
+  appStore.skipTelemetryLogging = isLogging;
 }
 
 function getPrintTemplateUpdateList(

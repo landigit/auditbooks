@@ -23,6 +23,7 @@ const auditBooksConfig = {
     { from: 'log_creds.txt', to: '../creds/log_creds.txt' },
     { from: 'translations', to: '../translations' },
     { from: 'templates', to: '../templates' },
+    { from: 'books/docs', to: 'books/docs' },
   ],
   files: '**',
   extends: null,

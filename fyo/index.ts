@@ -23,6 +23,17 @@ import type { reports } from 'reports/index';
 import type { Report } from 'reports/Report';
 
 export class Fyo {
+  isDevelopment = false;
+  skipTelemetryLogging = false;
+  appVersion = '';
+  platform = '';
+  language = 'English';
+  instanceId = '';
+  deviceId = '';
+  openCount = 0;
+  appFlags: Record<string, boolean> = {};
+  reports: Record<keyof typeof reports, Report | undefined> = {} as any;
+
   t = t;
   T = T;
 
@@ -225,19 +236,6 @@ export class Fyo {
     await this.db.purgeCache();
     this.doc.purgeCache();
   }
-
-  store = {
-    isDevelopment: false,
-    skipTelemetryLogging: false,
-    appVersion: '',
-    platform: '',
-    language: '',
-    instanceId: '',
-    deviceId: '',
-    openCount: -1,
-    appFlags: {} as Record<string, boolean>,
-    reports: {} as Record<keyof typeof reports, Report | undefined>,
-  };
 }
 
 export { T, t };

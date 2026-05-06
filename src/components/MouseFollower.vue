@@ -1,35 +1,62 @@
 <template>
-  <Tooltip ref="tooltip"><slot></slot></Tooltip>
+  <Tooltip :open="show">
+    <TooltipTrigger as-child>
+      <div
+        ref="trigger"
+        class="fixed pointer-events-none"
+        :style="{
+          left: `${x}px`,
+          top: `${y}px`,
+        }"
+      />
+    </TooltipTrigger>
+    <TooltipContent
+      :side="placement"
+      :side-offset="offset"
+      v-bind="$attrs"
+    >
+      <slot />
+    </TooltipContent>
+  </Tooltip>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
-import Tooltip from './Tooltip.vue';
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { Tooltip, TooltipTrigger, TooltipContent } from 'src/components/ui'
 
-export default defineComponent({
-  components: { Tooltip },
-  props: { show: { type: Boolean, default: false } },
-  watch: {
-    show(val) {
-      if (val) {
-        this.$refs.tooltip.create();
-        this.setListeners();
-      } else {
-        this.$refs.tooltip.destroy();
-        this.removeListener();
-      }
-    },
-  },
-  methods: {
-    mousemoveListener(e) {
-      this.$refs.tooltip.update(e);
-    },
-    setListeners() {
-      window.addEventListener('mousemove', this.mousemoveListener);
-    },
-    removeListener() {
-      window.removeEventListener('mousemove', this.mousemoveListener);
-    },
-  },
-});
+const props = withDefaults(defineProps<{
+  show?: boolean
+  offset?: number
+  placement?: 'top' | 'right' | 'bottom' | 'left'
+}>(), {
+  show: false,
+  offset: 10,
+  placement: 'top',
+})
+
+const x = ref(0)
+const y = ref(0)
+
+const updateMousePosition = (e: MouseEvent) => {
+  x.value = e.clientX
+  y.value = e.clientY
+}
+
+watch(() => props.show, (isVisible) => {
+  if (isVisible) {
+    window.addEventListener('mousemove', updateMousePosition)
+  } else {
+    window.removeEventListener('mousemove', updateMousePosition)
+  }
+})
+
+onMounted(() => {
+  if (props.show) {
+    window.addEventListener('mousemove', updateMousePosition)
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', updateMousePosition)
+})
 </script>

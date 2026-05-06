@@ -3,12 +3,12 @@
     class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface"
     :class="[
       border ? 'border-b border-border' : '',
-      platform !== 'Windows' ? 'window-drag' : '',
+      store.platform !== 'Windows' ? 'window-drag' : '',
     ]"
   >
     <Transition name="spacer" class="border-none">
       <div
-        v-if="!showSidebar && platform === 'Mac' && languageDirection !== 'rtl'"
+        v-if="!store.showSidebar && store.platform === 'Mac' && store.languageDirection !== 'rtl'"
         class="h-full"
         :class="spacerClass"
       />
@@ -16,7 +16,7 @@
 
     <div
       class="flex items-center window-no-drag gap-4 me-auto"
-      :class="platform === 'Mac' && languageDirection === 'rtl' ? 'me-18' : ''"
+      :class="store.platform === 'Mac' && store.languageDirection === 'rtl' ? 'me-18' : ''"
     >
       <!-- Nav Group -->
       <PageHeaderNavGroup />
@@ -36,16 +36,15 @@
     <!-- Right (regular) Slot -->
     <div
       class="flex items-stretch window-no-drag gap-2 ms-auto"
-      :class="platform === 'Mac' && languageDirection === 'rtl' ? 'me-18' : ''"
+      :class="store.platform === 'Mac' && store.languageDirection === 'rtl' ? 'me-18' : ''"
     >
       <slot />
     </div>
   </div>
 </template>
 <script lang="ts">
-import { languageDirectionKey } from 'src/utils/injectionKeys';
-import { showSidebar } from 'src/utils/refs';
-import { defineComponent, inject, Transition, defineAsyncComponent } from 'vue';
+import { useAppStore } from 'src/stores/app';
+import { defineComponent, Transition, defineAsyncComponent } from 'vue';
 
 export default defineComponent({
   components: {
@@ -60,14 +59,14 @@ export default defineComponent({
     searchborder: { type: Boolean, default: true },
   },
   setup() {
-    return { showSidebar, languageDirection: inject(languageDirectionKey) };
+    return { store: useAppStore() };
   },
   computed: {
     showBorder() {
       return !!this.$slots.default && this.searchborder;
     },
     spacerClass() {
-      if (this.showSidebar) {
+      if (this.store.showSidebar) {
         return '';
       }
 

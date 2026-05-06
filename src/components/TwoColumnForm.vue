@@ -60,6 +60,7 @@ import { defineComponent } from 'vue';
 import { Field } from 'schemas/types';
 import { PropType } from 'vue';
 import { DocValue } from 'fyo/core/types';
+import { useAppStore } from 'src/stores/app';
 
 export default defineComponent({
   name: 'TwoColumnForm',
@@ -79,7 +80,12 @@ export default defineComponent({
     return {
       formFields: [],
       errors: {},
-    } as { formFields: Field[]; errors: Record<string, string> };
+      store: useAppStore(),
+    } as {
+      formFields: Field[];
+      errors: Record<string, string>;
+      store: ReturnType<typeof useAppStore>;
+    };
   },
   computed: {
     style() {
@@ -98,7 +104,7 @@ export default defineComponent({
   },
   mounted() {
     this.setFormFields();
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.tcf = this;
     }

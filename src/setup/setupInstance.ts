@@ -21,6 +21,7 @@ import {
   initializeInstance,
   setCurrencySymbols,
 } from 'src/utils/initialization';
+import { useAppStore } from 'src/stores/app';
 import { getRandomString } from 'utils';
 import { getDefaultLocations, getDefaultUOMs } from 'utils/defaults';
 import { getCountryCodeFromCountry, getCountryInfo } from 'utils/misc';
@@ -35,8 +36,8 @@ export default async function setupInstance(
 ) {
   const { companyName, country, bankName, chartOfAccounts } =
     setupWizardOptions;
-
-  fyo.store.skipTelemetryLogging = true;
+  const appStore = useAppStore();
+  appStore.skipTelemetryLogging = true;
   await initializeDatabase(dbPath, country, fyo);
   await updateSystemSettings(setupWizardOptions, fyo);
   await updateAccountingSettings(setupWizardOptions, fyo);
@@ -59,7 +60,7 @@ export default async function setupInstance(
     await setCurrencySymbols(fyo);
   }
 
-  fyo.store.skipTelemetryLogging = false;
+  appStore.skipTelemetryLogging = false;
 }
 
 async function createDefaultEntries(fyo: Fyo) {

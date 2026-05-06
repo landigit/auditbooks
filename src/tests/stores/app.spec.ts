@@ -1,7 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { useAppStore } from 'src/stores/app';
+import { setActivePinia, createPinia } from 'pinia';
 
 describe('useAppStore', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it('initializes with default values', () => {
     const store = useAppStore();
     expect(store.platform).toBe('Linux');
@@ -32,13 +37,13 @@ describe('useAppStore', () => {
     expect(store.showSidebar).toBe(true);
   });
 
-  it('setTheme updates theme', () => {
+  it('theme property updates theme', () => {
     const store = useAppStore();
-    store.setTheme('dark');
+    store.theme = 'dark';
     expect(store.theme).toBe('dark');
-    store.setTheme('light');
+    store.theme = 'light';
     expect(store.theme).toBe('light');
-    store.setTheme('auto');
+    store.theme = 'auto';
     expect(store.theme).toBe('auto');
   });
 });

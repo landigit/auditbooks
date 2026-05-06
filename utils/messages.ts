@@ -42,6 +42,8 @@ export enum IPC_ACTIONS {
   DB_CALL = 'db-call',
   DB_BESPOKE = 'db-bespoke',
   DB_SCHEMA = 'db-schema',
+  READ_DOC_FILE = 'READ_DOC_FILE',
+  READ_DOC_DATA = 'READ_DOC_DATA',
 }
 
 // ipcMain.send(...)

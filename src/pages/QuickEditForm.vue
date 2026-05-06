@@ -87,6 +87,7 @@ import {
   focusOrSelectFormControl,
 } from 'src/utils/ui';
 import { useDocShortcuts } from 'src/utils/vueUtils';
+import { useAppStore } from 'src/stores/app';
 import { computed, defineComponent, inject, ref } from 'vue';
 
 export default defineComponent({
@@ -123,6 +124,7 @@ export default defineComponent({
       doc,
       context,
       shortcuts,
+      store: useAppStore(),
     };
   },
   data() {
@@ -175,7 +177,7 @@ export default defineComponent({
   async mounted() {
     await this.initialize();
 
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.qef = this;
     }

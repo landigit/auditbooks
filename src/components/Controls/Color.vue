@@ -3,12 +3,15 @@
     <div v-if="showLabel" :class="labelClasses">
       {{ df.label }}
     </div>
-    <Popover placement="bottom-end">
-      <template #target="{ togglePopover }">
+    <Popover
+      :open="isShown"
+      @update:open="(val) => (isShown = val)"
+    >
+      <PopoverAnchor as-child>
         <div
           tabindex="0"
           :class="[inputClasses, containerClasses]"
-          @click="!isReadOnly && togglePopover()"
+          @click="!isReadOnly && (isShown = !isShown)"
         >
           <div class="flex items-center">
             <div
@@ -24,8 +27,12 @@
             </span>
           </div>
         </div>
-      </template>
-      <template #content>
+      </PopoverAnchor>
+      <PopoverContent
+        side="bottom"
+        align="end"
+        class="w-auto p-0 overflow-hidden"
+      >
         <div class="text-sm p-2 text-center">
           <div>
             <Row :column-count="5" gap="0.5rem">
@@ -49,13 +56,13 @@
             />
           </div>
         </div>
-      </template>
+      </PopoverContent>
     </Popover>
   </div>
 </template>
 
 <script>
-import Popover from 'src/components/Popover.vue';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 import Row from 'src/components/Row.vue';
 import Base from './Base.vue';
 
@@ -63,9 +70,16 @@ export default {
   name: 'Color',
   components: {
     Popover,
+    PopoverAnchor,
+    PopoverContent,
     Row,
   },
   extends: Base,
+  data() {
+    return {
+      isShown: false,
+    };
+  },
   computed: {
     colors() {
       return this.df.options;

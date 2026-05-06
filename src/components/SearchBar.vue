@@ -199,6 +199,7 @@ import {
   getGroupLabelMap,
   searchGroups,
 } from 'src/utils/search';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent, inject, nextTick } from 'vue';
 import Button from './Button.vue';
 import Modal from './Modal.vue';
@@ -213,6 +214,7 @@ export default defineComponent({
     return {
       searcher: inject(searcherKey),
       shortcuts: inject(shortcutsKey),
+      store: useAppStore(),
     };
   },
   data() {
@@ -287,7 +289,7 @@ export default defineComponent({
     },
   },
   async mounted() {
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.search = this;
     }

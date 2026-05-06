@@ -308,4 +308,27 @@ export default function registerIpcMainActionListeners(main: Main) {
       return databaseManager.getSchemaMap();
     });
   });
+
+  ipcMain.handle(IPC_ACTIONS.READ_DOC_FILE, async (_, relPath: string) => {
+    let root = path.join(app.getAppPath(), '..');
+    if (main.isDevelopment) {
+      root = process.cwd();
+    }
+    const decodedPath = decodeURIComponent(relPath);
+    const fullPath = path.join(root, 'books', decodedPath);
+    return await fs.readFile(fullPath, 'utf-8');
+  });
+
+  ipcMain.handle(IPC_ACTIONS.READ_DOC_DATA, async (_, relPath: string) => {
+    let root = path.join(app.getAppPath(), '..');
+    if (main.isDevelopment) {
+      root = process.cwd();
+    }
+    const decodedPath = decodeURIComponent(relPath);
+    const fullPath = path.join(root, 'books', decodedPath);
+    const data = await fs.readFile(fullPath);
+    const ext = path.extname(fullPath).toLowerCase().slice(1);
+    const mime = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'application/octet-stream';
+    return `data:${mime};base64,${data.toString('base64')}`;
+  });
 }

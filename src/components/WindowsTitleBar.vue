@@ -38,72 +38,58 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useAppStore } from 'src/stores/app';
 import Fb from './Icons/18/fb.vue';
 
-export default {
-  name: 'WindowsTitleBar',
-  components: { Fb },
-  props: {
-    dbPath: String,
-    companyName: String,
-  },
-  data() {
-    return {
-      isMax: Boolean,
-      isFullscreen: Boolean,
-    };
-  },
-  mounted() {
-    this.getIsMaximized();
-    this.getIsFullscreen();
-    window.addEventListener('resize', this.getIsFullscreen);
-    document.addEventListener('webkitfullscreenchange', this.getIsFullscreen);
-    document.addEventListener('mozfullscreenchange', this.getIsFullscreen);
-    document.addEventListener('fullscreenchange', this.getIsFullscreen);
-    document.addEventListener('MSFullscreenChange', this.getIsFullscreen);
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.getIsFullscreen);
-    document.removeEventListener(
-      'webkitfullscreenchange',
-      this.getIsFullscreen
-    );
-    document.removeEventListener('mozfullscreenchange', this.getIsFullscreen);
-    document.removeEventListener('fullscreenchange', this.getIsFullscreen);
-    document.removeEventListener('MSFullscreenChange', this.getIsFullscreen);
-  },
-  methods: {
-    minimizeWindow() {
-      ipc.minimizeWindow();
-    },
-    toggleMaximize() {
-      ipc.toggleMaximize();
-      this.getIsMaximized();
-    },
-    closeWindow() {
-      ipc.closeWindow();
-    },
-    getIsMaximized() {
-      ipc
-        .isMaximized()
-        .then((result) => {
-          this.isMax = result;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-    getIsFullscreen() {
-      ipc
-        .isFullscreen()
-        .then((result) => {
-          this.isFullscreen = result;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-  },
+const props = defineProps<{
+  dbPath?: string;
+  companyName?: string;
+}>();
+
+const appStore = useAppStore();
+const isMax = ref(false);
+const isFullscreen = ref(false);
+
+const minimizeWindow = () => ipc.minimizeWindow();
+const toggleMaximize = async () => {
+  await ipc.toggleMaximize();
+  getIsMaximized();
 };
+const closeWindow = () => ipc.closeWindow();
+
+const getIsMaximized = async () => {
+  try {
+    isMax.value = await ipc.isMaximized();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getIsFullscreen = async () => {
+  try {
+    isFullscreen.value = await ipc.isFullscreen();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+onMounted(() => {
+  getIsMaximized();
+  getIsFullscreen();
+  window.addEventListener('resize', getIsFullscreen);
+  document.addEventListener('webkitfullscreenchange', getIsFullscreen);
+  document.addEventListener('mozfullscreenchange', getIsFullscreen);
+  document.addEventListener('fullscreenchange', getIsFullscreen);
+  document.addEventListener('MSFullscreenChange', getIsFullscreen);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', getIsFullscreen);
+  document.removeEventListener('webkitfullscreenchange', getIsFullscreen);
+  document.removeEventListener('mozfullscreenchange', getIsFullscreen);
+  document.removeEventListener('fullscreenchange', getIsFullscreen);
+  document.removeEventListener('MSFullscreenChange', getIsFullscreen);
+});
 </script>

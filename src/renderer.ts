@@ -1,6 +1,7 @@
 import { CUSTOM_EVENTS } from 'utils/messages';
 import { UnexpectedLogObject } from 'utils/types';
 import { App as VueApp, createApp } from 'vue';
+import { createPinia } from 'pinia';
 import App from './App.vue';
 import Badge from './components/Badge.vue';
 import LucideIcon from './components/LucideIcon.vue';
@@ -11,29 +12,54 @@ import registerIpcRendererListeners from './renderer/registerIpcRendererListener
 import router from './router';
 import { stringifyCircular } from './utils';
 import { setLanguageMap } from './utils/language';
+import { useAppStore } from './stores/app';
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 (async () => {
+  const app = createApp(App);
+  const pinia = createPinia();
+  app.use(pinia);
+
+  const appStore = useAppStore();
+  const fyoProps = [
+    'isDevelopment',
+    'skipTelemetryLogging',
+    'appVersion',
+    'platform',
+    'language',
+    'instanceId',
+    'deviceId',
+    'openCount',
+    'appFlags',
+    'reports',
+  ];
+
+  for (const prop of fyoProps) {
+    Object.defineProperty(fyo, prop, {
+      get: () => (appStore as any)[prop],
+      set: (val) => ((appStore as any)[prop] = val),
+      configurable: true,
+    });
+  }
+
   const language = fyo.config.get('language') as string;
   if (language) {
     await setLanguageMap(language);
   }
-  fyo.store.language = language || 'English';
+  appStore.language = language || 'English';
 
   registerIpcRendererListeners();
   const { isDevelopment, platform, version } = await ipc.getEnv();
 
-  fyo.store.isDevelopment = isDevelopment;
-  fyo.store.appVersion = version;
-  fyo.store.platform = platform;
+  appStore.isDevelopment = isDevelopment;
+  appStore.appVersion = version;
+  appStore.setPlatform(platform);
   const platformName = getPlatformName(platform);
 
   setOnWindow(isDevelopment);
 
-  fyo.store.reports = {} as any;
-  fyo.store.skipTelemetryLogging = false;
-
-  const app = createApp(App);
+  appStore.reports = {} as any;
+  appStore.skipTelemetryLogging = false;
   setErrorHandlers(app);
 
   app.use(router);
@@ -48,7 +74,7 @@ import { setLanguageMap } from './utils/language';
         return fyo;
       },
       platform() {
-        return platformName;
+        return appStore.platform;
       },
     },
     methods: {

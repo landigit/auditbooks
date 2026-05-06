@@ -1,7 +1,7 @@
 import { DEFAULT_LANGUAGE } from 'fyo/utils/consts';
 import { setLanguageMapOnTranslationString } from 'fyo/utils/translation';
 import { fyo } from 'src/initFyo';
-import { systemLanguageRef } from './refs';
+import { useAppStore } from 'src/stores/app';
 
 // Language: Language Code in books/translations
 export const languageCodeMap: Record<string, string> = {
@@ -47,7 +47,8 @@ export async function setLanguageMap(
 
   if (success && !usingDefault) {
     fyo.config.set('language', language);
-    systemLanguageRef.value = language;
+    const store = useAppStore();
+    store.language = language;
   }
 
   if (!dontReload && success && initLanguage !== oldLanguage) {

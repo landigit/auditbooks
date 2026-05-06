@@ -26,9 +26,9 @@ import router from 'src/router';
 import { assertIsType } from 'utils/index';
 import { SelectFileOptions } from 'utils/types';
 import { RouteLocationRaw } from 'vue-router';
+import { useAppStore } from 'src/stores/app';
 import { evaluateHidden } from './doc';
 import { showDialog, showToast } from './interactive';
-import { showSidebar } from './refs';
 import {
   ActionGroup,
   QuickEditOptions,
@@ -429,11 +429,8 @@ export async function isPrintable(schemaName: string) {
 }
 
 export function toggleSidebar(value?: boolean) {
-  if (typeof value !== 'boolean') {
-    value = !showSidebar.value;
-  }
-
-  showSidebar.value = value;
+  const appStore = useAppStore();
+  appStore.toggleSidebar(value);
 }
 
 export function focusOrSelectFormControl(

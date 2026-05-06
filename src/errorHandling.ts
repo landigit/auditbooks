@@ -9,6 +9,7 @@ import router from './router';
 import { getErrorMessage, stringifyCircular } from './utils';
 import type { DialogOptions, ToastOptions } from './utils/types';
 import { ModelNameEnum } from 'models/types';
+import { useAppStore } from './stores/app';
 
 function shouldNotStore(error: Error) {
   const shouldLog = (error as BaseError).shouldStore ?? true;
@@ -23,21 +24,22 @@ export async function sendError(errorLogObj: ErrorLog) {
   errorLogObj.more ??= {};
   errorLogObj.more.path ??= router.currentRoute.value.fullPath;
 
+  const store = useAppStore();
   const body = {
     error_name: errorLogObj.name,
     message: errorLogObj.message,
     stack: errorLogObj.stack,
-    platform: fyo.store.platform,
-    version: fyo.store.appVersion,
-    language: fyo.store.language,
-    instance_id: fyo.store.instanceId,
-    device_id: fyo.store.deviceId,
-    open_count: fyo.store.openCount,
+    platform: store.platform,
+    version: store.appVersion,
+    language: store.language,
+    instance_id: store.instanceId,
+    device_id: store.deviceId,
+    open_count: store.openCount,
     country_code: fyo.singles.SystemSettings?.countryCode,
     more: stringifyCircular(errorLogObj.more),
   };
 
-  if (fyo.store.isDevelopment) {
+  if (store.isDevelopment) {
     // eslint-disable-next-line no-console
     console.log('sendError', body);
   }
@@ -139,7 +141,8 @@ export async function handleErrorWithDialog(
 
   await showDialog(options);
   if (dontThrow) {
-    if (fyo.store.isDevelopment) {
+    const store = useAppStore();
+    if (store.isDevelopment) {
       // eslint-disable-next-line no-console
       console.error(error);
     }
@@ -270,8 +273,9 @@ function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
     body.push('**Stack**:', '```', errorLogObj.stack, '```', '');
   }
 
-  body.push(`**Version**: \`${fyo.store.appVersion}\``);
-  body.push(`**Platform**: \`${fyo.store.platform}\``);
+  const store = useAppStore();
+  body.push(`**Version**: \`${store.appVersion}\``);
+  body.push(`**Platform**: \`${store.platform}\``);
   body.push(`**Path**: \`${router.currentRoute.value.fullPath}\``);
 
   body.push(`**Language**: \`${fyo.config.get('language') ?? '-'}\``);

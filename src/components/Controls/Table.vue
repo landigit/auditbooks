@@ -89,6 +89,7 @@
 import Row from 'src/components/Row.vue';
 import { fyo } from 'src/initFyo';
 import { nextTick } from 'vue';
+import { useAppStore } from 'src/stores/app';
 import Base from './Base.vue';
 import TableRow from './TableRow.vue';
 
@@ -116,7 +117,10 @@ export default {
   },
   emits: ['editrow', 'row-change'],
   data() {
-    return { maxHeight: '' };
+    return {
+      maxHeight: '',
+      store: useAppStore(),
+    };
   },
   computed: {
     height() {
@@ -147,7 +151,7 @@ export default {
     },
   },
   mounted() {
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       window.tab = this;
     }
   },

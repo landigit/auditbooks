@@ -163,7 +163,7 @@ import Select from 'src/components/Controls/Select.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { getReport } from 'src/utils/misc';
 import { getPathAndMakePDF } from 'src/utils/printTemplates';
-import { showSidebar } from 'src/utils/refs';
+import { useAppStore } from 'src/stores/app';
 import { paperSizeMap, printSizes } from 'src/utils/ui';
 import { PropType, defineComponent } from 'vue';
 import ScaledContainer from '../TemplateBuilder/ScaledContainer.vue';
@@ -254,6 +254,9 @@ export default defineComponent({
       this.setScale();
     },
   },
+  setup() {
+    return { store: useAppStore() };
+  },
   async mounted() {
     this.report = await getReport(this.reportName);
     this.limit = this.report.reportData.length;
@@ -267,7 +270,7 @@ export default defineComponent({
     setScale() {
       const width = this.size.width * 37.2;
       let containerWidth = window.innerWidth - 26 * 16;
-      if (showSidebar.value) {
+      if (this.store.showSidebar) {
         containerWidth -= 12 * 16;
       }
 
@@ -286,6 +289,7 @@ export default defineComponent({
         innerHTML,
         this.size.width,
         this.size.height,
+        undefined,
         shouldPrint
       );
 

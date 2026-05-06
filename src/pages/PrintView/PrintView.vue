@@ -57,9 +57,9 @@ import PageHeader from 'src/components/PageHeader.vue';
 import { handleErrorWithDialog } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import { getPrintTemplatePropValues } from 'src/utils/printTemplates';
-import { showSidebar } from 'src/utils/refs';
 import { PrintValues } from 'src/utils/types';
 import { getFormRoute, openSettings, routeTo } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent } from 'vue';
 import PrintContainer from '../TemplateBuilder/PrintContainer.vue';
 
@@ -71,6 +71,9 @@ export default defineComponent({
     AutoComplete,
     PrintContainer,
     DropdownWithActions,
+  },
+  setup() {
+    return { store: useAppStore() };
   },
   props: {
     schemaName: { type: String, required: true },
@@ -171,7 +174,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.initialize();
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.pv = this;
     }
@@ -204,7 +207,7 @@ export default defineComponent({
       this.scale = 1;
       const width = (this.templateDoc?.width ?? 21) * 37.8;
       let containerWidth = window.innerWidth - 32;
-      if (showSidebar.value) {
+      if (this.store.showSidebar) {
         containerWidth -= 12 * 16;
       }
 

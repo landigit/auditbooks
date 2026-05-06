@@ -1,6 +1,7 @@
 import { handleError } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import { syncDocumentsToERPNext } from 'src/utils/erpnextSync';
+import { useAppStore } from 'src/stores/app';
 
 export default function registerIpcRendererListeners() {
   ipc.registerMainProcessErrorListener(
@@ -31,11 +32,12 @@ export default function registerIpcRendererListeners() {
   });
 
   ipc.registerConsoleLogListener((_, ...stuff: unknown[]) => {
-    if (!fyo.store.isDevelopment) {
+    const store = useAppStore();
+    if (!store.isDevelopment) {
       return;
     }
 
-    if (fyo.store.isDevelopment) {
+    if (store.isDevelopment) {
       // eslint-disable-next-line no-console
       console.log(...stuff);
     }

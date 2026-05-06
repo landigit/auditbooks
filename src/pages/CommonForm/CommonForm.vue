@@ -170,7 +170,6 @@ import StatusPill from 'src/components/StatusPill.vue';
 import { getErrorMessage } from 'src/utils';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap } from 'src/utils/misc';
-import { docsPathRef } from 'src/utils/refs';
 import { ActionGroup, DocRef, UIGroupedFields } from 'src/utils/types';
 import {
   commonDocSubmit,
@@ -183,6 +182,7 @@ import {
   routeTo,
 } from 'src/utils/ui';
 import { useDocShortcuts } from 'src/utils/vueUtils';
+import { useAppStore } from 'src/stores/app';
 import { computed, defineComponent, inject, nextTick, ref } from 'vue';
 import CommonFormSection from './CommonFormSection.vue';
 import LinkedEntries from './LinkedEntries.vue';
@@ -223,6 +223,7 @@ export default defineComponent({
       shortcuts,
       context,
       printButton: ref<InstanceType<typeof Button> | null>(null),
+      store: useAppStore(),
     };
   },
   data() {
@@ -356,7 +357,7 @@ export default defineComponent({
     this.useFullWidth = !!this.fyo.singles.Misc?.useFullWidth;
   },
   async mounted() {
-    if (this.fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.cf = this;
     }
@@ -371,7 +372,7 @@ export default defineComponent({
   },
   activated(): void {
     this.useFullWidth = !!this.fyo.singles.Misc?.useFullWidth;
-    docsPathRef.value = docsPathMap[this.schemaName] ?? '';
+    this.store.docsPath = docsPathMap[this.schemaName] ?? '';
     this.shortcuts?.pmod.set(this.context, ['KeyP'], () => {
       if (!this.canPrint) {
         return;
@@ -388,7 +389,7 @@ export default defineComponent({
     });
   },
   deactivated(): void {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
     this.showLinks = false;
     this.row = null;
   },

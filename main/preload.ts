@@ -222,6 +222,12 @@ const ipc = {
     ipcRenderer.on(IPC_CHANNELS.CONSOLE_LOG, listener);
   },
 
+  readDocFile: (relPath: string) =>
+    ipcRenderer.invoke(IPC_ACTIONS.READ_DOC_FILE, relPath),
+
+  readDocData: (relPath: string) =>
+    ipcRenderer.invoke(IPC_ACTIONS.READ_DOC_DATA, relPath),
+
   db: {
     async getSchema() {
       return (await ipcRenderer.invoke(

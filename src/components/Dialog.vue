@@ -1,161 +1,95 @@
-<template>
-  <Teleport to="body">
-    <Transition>
-      <!-- Backdrop -->
-      <div v-if="open" class="backdrop z-20 flex justify-center items-center">
-        <!-- Dialog -->
-        <div
-          class="bg-surface border border-border rounded-lg text-main p-4 shadow-2xl w-dialog flex flex-col gap-4 inner"
-        >
-          <div class="flex justify-between items-center">
-            <h1 class="font-semibold">{{ title }}</h1>
-            <LucideIcon
-              :name="config.iconName"
-              class="w-6 h-6"
-              :class="config.iconColor"
-            />
-          </div>
-
-          <template v-if="detail">
-            <p v-if="typeof detail === 'string'" class="text-base">
-              {{ detail }}
-            </p>
-
-            <div v-else v-for="d of detail">
-              <p class="text-base">{{ d }}</p>
-            </div>
-          </template>
-          <div class="flex justify-end gap-4 mt-4">
-            <Button
-              v-for="(b, index) of buttons"
-              :ref="b.isPrimary ? 'primary' : 'secondary'"
-              :key="b.label"
-              style="min-width: 5rem"
-              :type="b.isPrimary ? 'primary' : 'secondary'"
-              @click="() => handleClick(index)"
-            >
-              {{ b.label }}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
-</template>
-<script lang="ts">
-import { getIconConfig } from 'src/utils/interactive';
-import { DialogButton, ToastType } from 'src/utils/types';
-import { defineComponent, nextTick, PropType, ref } from 'vue';
-import Button from './Button.vue';
+<script setup lang="ts">
+import { ref, onMounted, nextTick, computed, type PropType } from 'vue';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  Button,
+} from 'src/components/ui';
 import LucideIcon from './LucideIcon.vue';
+import { getIconConfig } from 'src/utils/interactive';
+import type { DialogButton, ToastType } from 'src/utils/types';
 
-export default defineComponent({
-  components: { Button, LucideIcon },
-  props: {
-    type: { type: String as PropType<ToastType>, default: 'info' },
-    title: { type: String, required: true },
-    detail: {
-      type: [String, Array] as PropType<string | string[]>,
-      required: false,
-    },
-    buttons: {
-      type: Array as PropType<DialogButton[]>,
-      required: true,
-    },
+const props = defineProps({
+  type: { type: String as PropType<ToastType>, default: 'info' },
+  title: { type: String, required: true },
+  detail: {
+    type: [String, Array] as PropType<string | string[]>,
+    required: false,
   },
-  setup() {
-    return {
-      primary: ref<InstanceType<typeof Button>[] | null>(null),
-      secondary: ref<InstanceType<typeof Button>[] | null>(null),
-    };
-  },
-  data() {
-    return { open: false };
-  },
-  computed: {
-    config() {
-      return getIconConfig(this.type);
-    },
-  },
-  watch: {
-    open(value) {
-      if (value) {
-        document.addEventListener('keydown', this.handleEscape);
-      } else {
-        document.removeEventListener('keydown', this.handleEscape);
-      }
-    },
-  },
-  async mounted() {
-    await nextTick(() => {
-      this.open = true;
-    });
-
-    this.focusButton();
-  },
-  methods: {
-    focusButton() {
-      let button = this.primary?.[0];
-      if (!button) {
-        button = this.secondary?.[0];
-      }
-
-      if (!button) {
-        return;
-      }
-
-      button.$el.focus();
-    },
-    handleEscape(event: KeyboardEvent) {
-      if (event.code !== 'Escape') {
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (this.buttons.length === 1) {
-        return this.handleClick(0);
-      }
-
-      const index = this.buttons.findIndex(({ isEscape }) => isEscape);
-
-      if (index === -1) {
-        return;
-      }
-
-      return this.handleClick(index);
-    },
-    handleClick(index: number) {
-      const button = this.buttons[index];
-      button.action();
-      this.open = false;
-    },
+  buttons: {
+    type: Array as PropType<DialogButton[]>,
+    required: true,
   },
 });
+
+const open = ref(false);
+const primaryButtonRef = ref<any>(null);
+const secondaryButtonRef = ref<any>(null);
+
+const config = computed(() => getIconConfig(props.type));
+
+const details = computed(() => {
+  if (!props.detail) return [];
+  return Array.isArray(props.detail) ? props.detail : [props.detail];
+});
+
+const focusButton = () => {
+  // Reka UI handles focus management automatically, but we can still force it if needed
+  // or let the default focus-trap behavior work.
+};
+
+const handleUpdateOpen = (val: boolean) => {
+  open.value = val;
+  // If closed via backdrop or escape, we might want to trigger a default action
+  // but showDialog handles resolution via button clicks.
+};
+
+const handleClick = (index: number) => {
+  const button = props.buttons[index];
+  button.action();
+  open.value = false;
+};
+
+onMounted(async () => {
+  await nextTick();
+  open.value = true;
+});
 </script>
-<style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: all 100ms ease-out;
-}
 
-.inner {
-  transition: all 150ms ease-out;
-}
+<template>
+  <Dialog :open="open" @update:open="handleUpdateOpen">
+    <DialogContent class="sm:max-w-[425px]">
+      <DialogHeader>
+        <div class="flex items-center justify-between mb-2">
+          <DialogTitle>{{ title }}</DialogTitle>
+          <LucideIcon
+            :name="config.iconName"
+            class="w-6 h-6"
+            :class="config.iconColor"
+          />
+        </div>
+        <DialogDescription v-if="details.length">
+          <div v-for="(d, i) in details" :key="i" class="mb-1 last:mb-0">
+            {{ d }}
+          </div>
+        </DialogDescription>
+      </DialogHeader>
 
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-
-.v-enter-from .inner,
-.v-leave-to .inner {
-  transform: translateY(-50px);
-}
-
-.v-enter-to .inner,
-.v-leave-from .inner {
-  transform: translateY(0px);
-}
-</style>
+      <DialogFooter class="mt-6">
+        <Button
+          v-for="(b, index) in buttons"
+          :key="b.label"
+          :variant="b.isPrimary ? 'default' : 'outline'"
+          class="min-w-[5rem]"
+          @click="handleClick(index)"
+        >
+          {{ b.label }}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+</template>

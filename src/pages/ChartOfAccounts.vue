@@ -116,9 +116,9 @@ import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
 import { languageDirectionKey } from 'src/utils/injectionKeys';
 import { docsPathMap } from 'src/utils/misc';
-import { docsPathRef } from 'src/utils/refs';
 import { commongDocDelete, openQuickEdit } from 'src/utils/ui';
 import { getMapFromList, removeAtIndex } from 'utils/index';
+import { useAppStore } from 'src/stores/app';
 import { defineComponent, nextTick } from 'vue';
 import Button from '../components/Button.vue';
 import { inject } from 'vue';
@@ -153,6 +153,7 @@ export default defineComponent({
   setup() {
     return {
       languageDirection: inject(languageDirectionKey),
+      store: useAppStore(),
     };
   },
   data() {
@@ -202,12 +203,12 @@ export default defineComponent({
   },
   async activated() {
     await this.fetchAccounts();
-    if (fyo.store.isDevelopment) {
+    if (this.store.isDevelopment) {
       // @ts-ignore
       window.coa = this;
     }
 
-    docsPathRef.value = docsPathMap.ChartOfAccounts!;
+    this.store.docsPath = docsPathMap.ChartOfAccounts!;
 
     if (this.refetchTotals) {
       await this.setTotalDebitAndCredit();
@@ -215,7 +216,7 @@ export default defineComponent({
     }
   },
   deactivated() {
-    docsPathRef.value = '';
+    this.store.docsPath = '';
   },
   methods: {
     async expand() {
