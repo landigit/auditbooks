@@ -93,8 +93,8 @@ export default defineComponent({
       );
 
       const data = await fyo.db.getIncomeAndExpenses(
-        fromDate.toISO(),
-        toDate.toISO()
+        fromDate.toISO()!,
+        toDate.toISO()!
       );
       const incomes = getValueMapFromList(data.income, 'yearmonth', 'balance');
       const expenses = getValueMapFromList(

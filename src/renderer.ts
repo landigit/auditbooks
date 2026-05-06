@@ -54,7 +54,7 @@ import { useAppStore } from './stores/app';
   appStore.isDevelopment = isDevelopment;
   appStore.appVersion = version;
   appStore.setPlatform(platform);
-  const platformName = getPlatformName(platform);
+  getPlatformName(platform);
 
   setOnWindow(isDevelopment);
 
@@ -63,7 +63,6 @@ import { useAppStore } from './stores/app';
   setErrorHandlers(app);
 
   app.use(router);
-  app.component('LucideIcon', LucideIcon);
   app.component('LucideIcon', LucideIcon);
   app.component('FeatherIcon', LucideIcon);
   app.component('Badge', Badge);

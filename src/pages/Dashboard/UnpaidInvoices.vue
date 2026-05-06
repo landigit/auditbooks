@@ -117,7 +117,7 @@ export default defineComponent({
       unpaidCount: 0,
       paidCount: 0,
       barWidth: 40,
-      period: 'This Year',
+      period: 'This Year' as PeriodKey,
     };
   },
   computed: {
@@ -183,8 +183,8 @@ export default defineComponent({
 
       const { total, outstanding } = await fyo.db.getTotalOutstanding(
         this.schemaName,
-        fromDate.toISO(),
-        toDate.toISO()
+        fromDate.toISO()!,
+        toDate.toISO()!
       );
 
       const { countTotal, countOutstanding } = await this.getCounts(
@@ -213,7 +213,7 @@ export default defineComponent({
         filters: {
           cancelled: false,
           submitted: true,
-          date: ['<=', toDate.toISO(), '>=', fromDate.toISO()],
+          date: ['<=', toDate.toISO()!, '>=', fromDate.toISO()!],
         },
       });
 

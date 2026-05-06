@@ -105,7 +105,7 @@ export default defineComponent({
   data() {
     return {
       docOrNull: null as Doc | null,
-      errors: {},
+      errors: {} as Record<string, string>,
       loading: false,
     };
   },

@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, nextTick } from 'vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAppStore } from 'src/stores/app';
 import { marked } from 'marked';
@@ -94,7 +94,7 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const appStore = useAppStore();
+    useAppStore();
 
     const title = ref('Documentation');
     const renderedContent = ref('');
@@ -178,7 +178,7 @@ export default defineComponent({
         const placeholders: string[] = [];
         processedContent = processedContent.replace(
           containerRegex,
-          (match, type, body) => {
+          (_, type, body) => {
             const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
             const bodyHtml = marked.parseInline(body.trim());
             placeholders.push(`<div class="help-alert alert-${type}">
@@ -194,7 +194,7 @@ export default defineComponent({
           /^> \[!(TIP|INFO|IMPORTANT|WARNING|CAUTION)\](?:\r?\n)((?:>.*\r?\n?)*)/gm;
         processedContent = processedContent.replace(
           alertRegex,
-          (match, type, body) => {
+          (_, type, body) => {
             const typeLower = type.toLowerCase();
             const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
             const cleanBody = body.replace(/^> ?/gm, '').trim();
@@ -261,22 +261,6 @@ export default defineComponent({
         });
 
         renderedContent.value = html;
-
-        // Extract title or fallback to filename
-        const titleMatch =
-          content.match(/^# (.*)/m) || content.match(/^(.*)\n={3,}/m);
-        let extractedTitle = '';
-
-        if (titleMatch && titleMatch[1] && titleMatch[1].trim()) {
-          extractedTitle = titleMatch[1].trim();
-        } else {
-          const filename =
-            relPath.split('/').pop()?.replace('.md', '') || 'Dashboard';
-          extractedTitle = filename
-            .split('-')
-            .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-            .join(' ');
-        }
 
         title.value = 'Documentation';
       } catch (e: any) {

@@ -92,7 +92,7 @@ export default defineComponent({
   },
   data() {
     return {
-      errors: {},
+      errors: {} as Record<string, string>,
       activeTab: ModelNameEnum.AccountingSettings,
       groupedFields: null as UIGroupedFields | null,
     };
@@ -185,9 +185,9 @@ export default defineComponent({
     this.update();
   },
   activated(): void {
-    const tab = this.$route.query.tab;
-    if (typeof tab === 'string' && this.tabLabels[tab]) {
-      this.activeTab = tab;
+    const tab = this.$route.query.tab as string;
+    if (tab && this.tabLabels[tab]) {
+      this.activeTab = tab as ModelNameEnum;
     }
 
     this.store.docsPath = docsPathMap.Settings ?? '';

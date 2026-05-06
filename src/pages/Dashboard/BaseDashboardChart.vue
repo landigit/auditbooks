@@ -10,7 +10,7 @@ export default defineComponent({
   emits: ['period-change'],
   data() {
     return {
-      period: 'This Year',
+      period: 'This Year' as PeriodKey,
       periodOptions: [
         'This Year',
         'YTD',
