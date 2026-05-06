@@ -9,7 +9,7 @@ There are a few tabs under Settings
 3. Print: Settings that are used to customize the Invoice Print View.
 4. System: Settings used to customize System defaults.
 
-:::tip Inventory Settings
+::: tip Inventory Settings
 
 [Inventory Settings](settings.md) are visible only when Inventory has been enabled. :::
 
@@ -63,9 +63,7 @@ An Item from an Invoice is included in the auto Stock Transfer only if these con
 
 1. The item does not use Batches.
 2. The item does not use Serial Numbers.
-3. There is sufficient quantity of the item at the set default Location.
-
-:::
+3. There is sufficient quantity of the item at the set default Location. :::
 
 Print Settings
 --------------

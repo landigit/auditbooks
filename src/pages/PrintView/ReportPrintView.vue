@@ -176,6 +176,9 @@ export default defineComponent({
       required: true,
     },
   },
+  setup() {
+    return { store: useAppStore() };
+  },
   data() {
     return {
       start: 1,
@@ -253,9 +256,6 @@ export default defineComponent({
     size() {
       this.setScale();
     },
-  },
-  setup() {
-    return { store: useAppStore() };
   },
   async mounted() {
     this.report = await getReport(this.reportName);

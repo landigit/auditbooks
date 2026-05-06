@@ -3,10 +3,7 @@
     <div v-if="showLabel" :class="labelClasses">
       {{ df.label }}
     </div>
-    <Popover
-      :open="isShown"
-      @update:open="(val) => (isShown = val)"
-    >
+    <Popover :open="isShown" @update:open="(val) => (isShown = val)">
       <PopoverAnchor as-child>
         <div
           tabindex="0"

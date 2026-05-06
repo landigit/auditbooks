@@ -7,7 +7,7 @@ It is a transactional entry that denotes a sale.
 Creating Sales Invoices
 -----------------------
 
-If you have set up your Auditbooks with Accounts, Taxes, Sales Items, and Customers, creating a Sales Invoice is as simple as it gets. If not you can the follow the steps [here](getting-started.md).
+If you have set up your Auditbooks with Accounts, Taxes, Sales Items, and Customers, creating a Sales Invoice is as simple as it gets. If not you can the follow the steps [here] (getting-started.md).
 
 First navigate to the Sales Invoices page
 
@@ -23,7 +23,7 @@ Then click on the blue `+` button to open the Sales Invoice form.
 4. You can add more items or if you are done, click on Save.
 5. Once finalized, click on Submit. Auditbooks will do the required ledger entries against the appropriate accounts.
 
-This invoice is now in *\u201cSubmitted\u201d* state, it cannot be edited. The sales transaction has been recorded.
+This invoice is now in **Submitted** state, it cannot be edited. The sales transaction has been recorded.
 
 Editing an Invoice Item
 -----------------------
@@ -37,7 +37,7 @@ From here you can change the item description, HSN code check the Taxed Amount, 
 Making Sales Payments
 ---------------------
 
-Once a sales invoice has been submitted, you\u2019ll need to record payment against it to denote that you\u2019ve received the money.
+Once a sales invoice has been submitted, you'll need to record payment against it to denote that you've received the money.
 
 To make a Payment first navigate to the Sales Invoice, then click on the `...` menu button. Then click the Make Payment option.
 
@@ -59,7 +59,7 @@ Once the Outstanding Amount reaches 0, the status will change to **Paid**. :::
 
 ### Auto Payments
 
-You can simplify the *Sales Invoice \u2192 Payment* workflow by using Auto Payments. For this you just need to set the default accounts for Sales Payment.
+You can simplify the *Sales Invoice → Payment* workflow by using Auto Payments. For this you just need to set the default accounts for Sales Payment.
 
 This can be done in `Setup / Settings / Defaults / Auto Payments`: ![Payment Accounts](images/payment-accounts.png)  
 
@@ -67,9 +67,9 @@ Once this is set, whenever you Submit a Sales Invoice a Payment entry will autom
 
 ::: tip Disable Auto Payment for a Sales Invoice
 
-You can disable Auto Payment for a single Sales Invoice by unchecking the Make Payment On Submit check box in the Settings tab before Submitting a Sales Invoice entry.
+You can disable Auto Payment for a single Sales Invoice by unchecking the Make Payment On Submit check box in the Settings tab before Submitting a Sales Invoice entry.:::
 
-![Disable Auto Payment](images/auto-payment.png) :::
+![Disable Auto Payment](images/auto-payment.png) 
 
 Sales Invoice Return
 --------------------
@@ -110,7 +110,7 @@ This will open the Print View, you can click on the Customize button to customiz
 
 ![Print View](images/print-view.png)  
 
-You can now add your company logo and select a brand color that matches your business\u2019 primary color. You can also change the style by selecting one of the given Templates. Choose any that fits your style.
+You can now add your company logo and select a brand color that matches your business primary color. You can also change the style by selecting one of the given Templates. Choose any that fits your style.
 
 Once you have completed customizing, click on Save as PDF to save the Sales Invoice.
 

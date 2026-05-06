@@ -1,7 +1,12 @@
 <template>
   <Popover
     :open="isShown"
-    @update:open="(val) => { isShown = val; $emit('update:open', val) }"
+    @update:open="
+      (val) => {
+        isShown = val;
+        $emit('update:open', val);
+      }
+    "
   >
     <PopoverAnchor as-child>
       <div class="h-full">

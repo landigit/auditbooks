@@ -47,7 +47,7 @@
           @click="cancel"
           >{{ t`Cancel` }}</Button
         >
-         <Button
+        <Button
           v-if="store.isDevelopment && !loading"
           class="w-24 ml-auto mr-4 border border-border"
           :disabled="loading"
@@ -92,20 +92,20 @@ export default defineComponent({
     FormHeader,
     CommonFormSection,
   },
-  setup() {
-    const store = useAppStore();
-    return { store };
-  },
   provide() {
     return {
       doc: computed(() => this.docOrNull),
     };
   },
   emits: ['setup-complete', 'setup-canceled'],
+  setup() {
+    const store = useAppStore();
+    return { store };
+  },
   data() {
     return {
       docOrNull: null as Doc | null,
-      errors: {} as Record<string, string>,
+      errors: {},
       loading: false,
     };
   },

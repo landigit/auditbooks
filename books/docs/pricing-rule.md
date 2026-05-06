@@ -19,14 +19,14 @@ criteria, making your sales promotions more targeted and impactful.
 2. Navigate to the **Features** section.
 3. Check the boxes for the **Enable Discount Accounting** and **Enable Pricing Rule**.
 
-![Enable Pricing Rule](https://raw.githubusercontent.com/frappe/books_docs/3e7792601503e619e94309eb8a7cab9a50bffd2b/docs/entries/images/enable-pricing-rule.png)
+![Enable Pricing Rule](images/enable-pricing-rule.png)
 
 ## Creating a Pricing Rule
 
 1. Go to `Common / Pricing Rule`.
 2. Click the `+` button to create a new rule.
 
-![Create Pricing Rule](https://raw.githubusercontent.com/frappe/books_docs/3e7792601503e619e94309eb8a7cab9a50bffd2b/docs/entries/images/create-pricing-rule.png)
+![Create Pricing Rule](images/create-pricing-rule.png)
 
 ## Pricing Rule Fields
 

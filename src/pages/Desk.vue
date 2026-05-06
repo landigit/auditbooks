@@ -30,7 +30,10 @@ const toggleSidebar = () => appStore.toggleSidebar();
           <div v-if="route?.query?.edit">
             <component
               :is="Component"
-              :key="String(route.query.schemaName || '') + String(route.query.name || '')"
+              :key="
+                String(route.query.schemaName || '') +
+                String(route.query.name || '')
+              "
             />
           </div>
         </Transition>

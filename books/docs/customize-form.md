@@ -47,7 +47,7 @@ Each Form Type can have multiple custom fields. Click on the Add Row button to a
 
 Enter its Label, for example if we want to add a color field to Item, we will set the Label as "Color".
 
-:::tip Fieldname
+::: tip Fieldname
 
 Setting the Label will auto set the Fieldname value. The Fieldname is a name used to refer to the field internally. :::
 
@@ -57,7 +57,7 @@ After setting the Label and the Fieldname, you can select the fieldtype, for mor
 
 Once you are done click on the blue Save button.
 
-:::warning Reload App
+::: warning Reload App
 
 After customizing a form you must reload Auditbooks to view the added fields in the forms. :::
 
@@ -113,6 +113,6 @@ You can delete a forms customizations by deleting its Custom Form entry:
 
 ![Delete Customizations](images/delete-customizations.png)  
 
-:::danger Data Loss
+::: danger Data Loss
 
 Deleting customizations will also delete data that had been stored in the custom fields. :::

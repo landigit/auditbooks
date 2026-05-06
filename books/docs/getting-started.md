@@ -2,19 +2,13 @@
 
 Let’s start applying what we have learned so far by setting up your company in Auditbooks.
 
-If you have not downloaded Auditbooks, you can download it from the [GitHub releases](https://github.com/frappe/books/releases/latest).
-
 ## Setup Instance
 
 When you open Auditbooks, you’ll be presented two options: **New File** and **Existing File**. If this is the first time you are opening Auditbooks, click on **New File**.
 
 Now select an appropriate location where you want to store the file and give it a name.
 
-[
-
 ![New File](images/new-file.png)
-
-]([https://github.com/frappe/books_docs/blob/master/docs/setting-up/images/new-file.png](https://github.com/frappe/books_docs/blob/master/docs/setting-up/images/new-file.png))  
 
 ::: tip File Location Auditbooks stores all your company data and transactions on a local `.db` file on your computer.
 
@@ -23,11 +17,7 @@ You can change the location of this `.db` file. If you have done so you can find
 
 Now, enter your Business Name, Business Email and Country Information. This will help set up the correct Chart of Accounts based on your country.
 
-[
-
 ![Setup Wizard](images/setup-wizard.png)
-
-]([https://github.com/frappe/books_docs/blob/master/docs/setting-up/images/setup-wizard.png](https://github.com/frappe/books_docs/blob/master/docs/setting-up/images/setup-wizard.png))  
 
 ::: tip Chart of Accounts If you don't find the Chart of Accounts of your country, you can select the **Standard Chart of Accounts**.
 :::

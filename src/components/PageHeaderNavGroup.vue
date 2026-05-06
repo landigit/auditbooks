@@ -6,7 +6,9 @@
       ref="backlink"
       class="nav-link border-l border-r border-border bg-canvas-muted"
       :class="
-        store.historyState.back ? 'text-main cursor-pointer' : 'text-description'
+        store.historyState.back
+          ? 'text-main cursor-pointer'
+          : 'text-description'
       "
       @click="$router.back()"
     >
@@ -16,7 +18,9 @@
     <a
       class="nav-link rounded-md rounded-l-none bg-canvas-muted"
       :class="
-        store.historyState.forward ? 'text-main cursor-pointer' : 'text-description'
+        store.historyState.forward
+          ? 'text-main cursor-pointer'
+          : 'text-description'
       "
       @click="$router.forward()"
     >

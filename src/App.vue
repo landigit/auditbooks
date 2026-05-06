@@ -94,7 +94,10 @@ export default defineComponent({
     provide(injectionKeys.keysKey, keys);
     provide(injectionKeys.searcherKey, searcher);
     provide(injectionKeys.shortcutsKey, shortcuts);
-    provide(injectionKeys.languageDirectionKey, computed(() => appStore.languageDirection));
+    provide(
+      injectionKeys.languageDirectionKey,
+      computed(() => appStore.languageDirection)
+    );
 
     const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
       null

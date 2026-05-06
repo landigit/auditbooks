@@ -223,11 +223,11 @@ export default defineComponent({
     Modal,
     Button,
   },
+  emits: ['file-selected', 'new-database'],
   setup() {
     const store = useAppStore();
     return { store };
   },
-  emits: ['file-selected', 'new-database'],
   data() {
     return {
       openModal: false,

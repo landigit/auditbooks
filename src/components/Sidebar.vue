@@ -10,7 +10,9 @@
       <div
         class="px-4 flex flex-row items-center justify-between mb-4"
         :class="
-          store.platform === 'Mac' && languageDirection === 'ltr' ? 'mt-10' : 'mt-2'
+          store.platform === 'Mac' && languageDirection === 'ltr'
+            ? 'mt-10'
+            : 'mt-2'
         "
       >
         <h6
@@ -202,8 +204,7 @@ export default defineComponent({
   computed: {
     resolvedIsDark(): boolean {
       return (
-        this.theme === 'dark' ||
-        (this.theme === 'auto' && this.store.isDark)
+        this.theme === 'dark' || (this.theme === 'auto' && this.store.isDark)
       );
     },
     appVersion() {
@@ -240,7 +241,10 @@ export default defineComponent({
     reportIssue,
     toggleSidebar,
     openDocumentation() {
-      this.$router.push({ name: 'Help', params: { path: this.store.docsPath } });
+      this.$router.push({
+        name: 'Help',
+        params: { path: this.store.docsPath },
+      });
     },
     setActiveGroup() {
       const { fullPath } = this.$router.currentRoute.value;

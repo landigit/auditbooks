@@ -64,6 +64,9 @@ The Quick Search functionality is very powerful, you can run various kind of que
 
 Here are a few examples.
 
- 1. Finding all the Sales Invoices created for Karen 2. Finding all the Purchases Invoices with the item Jacket 3. Finding the Payment for Purchase Invoice PINV-1099 4. Finding all Payments received from Jack
+ 1. Finding all the Sales Invoices created for Karen 
+ 2. Finding all the Purchases Invoices with the item Jacket 
+ 3. Finding the Payment for Purchase Invoice PINV-1099 
+ 4. Finding all Payments received from Jack
 
 ::: tip Keyword Order The order of the keyword doesn't matter. You can enter the search keywords in any order. :::

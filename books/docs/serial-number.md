@@ -52,8 +52,8 @@ Here is a table that shows how the status of a Serial Number changes:
 
 | Status Change | Transaction |
 | --- | --- |
-| Inactive \u2192 Active | Inward transactions: Material Receipt or Manufacture (created) Stock Movement, Purchase Receipt |
-| Active \u2192 Delivered | Outward transactions: Material Issue or Manufacture (used up) Stock Movement, Shipment |
+| Inactive → Active | Inward transactions: Material Receipt or Manufacture (created) Stock Movement, Purchase Receipt |
+| Active → Delivered | Outward transactions: Material Issue or Manufacture (used up) Stock Movement, Shipment |
 
 If a transaction is cancelled then the Serial Number status is reverted.
 

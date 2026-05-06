@@ -5,31 +5,29 @@ which can then be redeemed on future purchases.
 
 ## Enabling Loyalty Program
 
-To enable Loyalty Program you will have to first check the Enable Loyalty
-Program. To
-/ **Setup / Settings / General Tab.**
+To enable Loyalty Program you will have to first check the **Enable Loyalty
+Program** checkbox. To do this navigate to `/Setup/Settings/General Tab`.
 
-![Enable Inventory](https://raw.githubusercontent.com/frappe/books_docs/00c35515b24bd93d6d4c3ab24602f549e6b23c66/docs/transactions/images/enable-loyalty-program.png)
+![Enable Loyalty Program](images/enable-loyalty-program.png)
 
 Once that is done you will have to restart Auditbooks to see the Loyalty
 Program in the sidebar.
 
-/ Note: Loyalty Program cannot be disabled once it has been enabled.
+> Note: Loyalty Program cannot be disabled once it has been enabled.
 
 ## Creating Loyalty Program
 
 To create a Loyalty Program first navigate to the Loyalty Program page
 
-/ **Sales / Loyalty Program**
+**Sales / Loyalty Program**
 
 Then click on the blue `+` button to open the Loyalty Program form.
 
-![Sales Invoice Form](https://raw.githubusercontent.com/frappe/books_docs/00c35515b24bd93d6d4c3ab24602f549e6b23c66/docs/transactions/images/loyalty-program.png)
+![Creating Loyalty Program](images/loyalty-program.png)
 
 1. Enter a unique name for the Loyalty Program.
-2. Add the From and To Date for program's validity period.
-3. Ensure the **IsEnabled** checkbox is checked. This will mark the program
-   active.
+2. Add the **From Date** and **To Date** for program's validity period.
+3. Ensure the **IsEnabled** checkbox is checked. This will mark the program active.
 4. Collection Rules:
 
    - **Tier name:** To differentiate between different levels of rewards.
@@ -46,11 +44,11 @@ Then click on the blue `+` button to open the Loyalty Program form.
 
 Set a Loyalty Program in the Customer to assign a Loyalty Program.
 
-![Sales Invoice Form](https://raw.githubusercontent.com/frappe/books_docs/00c35515b24bd93d6d4c3ab24602f549e6b23c66/docs/transactions/images/choose-loyalty-program.png)
+![Choose Loyalty Program](images/choose-loyalty-program.png)
 
 Loyalty points earned can be viewed in the Customer.
 
-![Sales Invoice Form](https://raw.githubusercontent.com/frappe/books_docs/00c35515b24bd93d6d4c3ab24602f549e6b23c66/docs/transactions/images/loyalty-points.png)
+![Loyalty Points in Customer](images/loyalty-points.png)
 
 ## Loyalty Program Functionality
 
@@ -68,7 +66,7 @@ Loyalty points earned can be viewed in the Customer.
    this invoice. This acts as a log to give an overview of which Customer
    earned how many points against which Sales Invoice.
 
-![Sales Invoice Form](https://raw.githubusercontent.com/frappe/books_docs/00c35515b24bd93d6d4c3ab24602f549e6b23c66/docs/transactions/images/loyalty-point-entry.png)
+![Loyalty Point Entry](images/loyalty-point-entry.png)
 
 ### Redeeming Points
 
@@ -81,4 +79,4 @@ Loyalty points earned can be viewed in the Customer.
    points, and you will only need to pay the remaining balance after the points
    have been applied.
 
-![Sales Invoice Form](https://raw.githubusercontent.com/frappe/books_docs/00c35515b24bd93d6d4c3ab24602f549e6b23c66/docs/transactions/images/redeem-loyalty-points.png)
+![Redeem Loyalty Points](images/redeem-loyalty-points.png)

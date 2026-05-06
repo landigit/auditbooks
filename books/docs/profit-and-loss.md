@@ -1,14 +1,14 @@
 # Profit And Loss Statement
 
-All of the money that your business earned from when it started minus the expenses that it incurred will be the total profit (or loss) the business has generated. But we aren\u2019t interested in the total amount, but the amount that is generated last month or last quarter or last year. Hence, Profit and Loss statement is always viewed for a specific time period.
+All of the money that your business earned from when it started minus the expenses that it incurred will be the total profit (or loss) the business has generated. But we aren't interested in the total amount, but the amount that is generated last month or last quarter or last year. Hence, Profit and Loss statement is always viewed for a specific time period.
 
 Here are some insights you can gain from this report:
 
-1. Compare this month\u2019s profit with last month.
+1. Compare this month's profit with last month.
 2. Compare quarter wise or year wise profits or losses.
 3. Find out the total profit or loss for a specific time window.
 
-The P&L statement for any period reflects all the income minus all the expenses in that period. At the end of the period, (a fiscal year) the total profit (or loss) goes into Owner\u2019s Equity because the profit in the business belongs to the owners. The owner\u2019s account is a liability to the company since the company has to pay out the profits/losses.
+The P&L statement for any period reflects all the income minus all the expenses in that period. At the end of the period, (a fiscal year) the total profit (or loss) goes into Owner's Equity because the profit in the business belongs to the owners. The owner's account is a liability to the company since the company has to pay out the profits/losses.
 
 To check your P&L statement, navigate to it using the sidebar: `Reports / Profit And Loss`
 
@@ -28,8 +28,8 @@ The Profit and Loss report has several filters which can help you narrow the dat
 
 This allows for toggling betwee the kind of filters used set the date range. It has 2 values:
 
-1. Until Date
-2. Fiscal Year
+1. **Until Date**
+2. **Fiscal Year**
 
 ### Periodicity
 

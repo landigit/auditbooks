@@ -50,13 +50,4 @@ This amount is booked under the Write Off Account that can set under General set
 Making Payments from Invoices
 -----------------------------
 
-To make an Invoice Payment to settle the Outstanding Amount of a Sales Invoice or a Purchase Invoice, you can navigate to the Invoice form and click on the Make Payment button under the `...` menu.
-
-For more information check these links:
-
-* [Making Sales Payments](sales-invoices#making-sales-payments.md)
-* [Making Purchase Payments](purchase-invoices#making-purchase-payments.md)
-
-  
-
-
+To make an Invoice Payment to settle the Outstanding Amount of a Sales Invoice or a Purchase Invoice, you can navigate to the Invoice form and click on the Make Payment button under the **...** menu.

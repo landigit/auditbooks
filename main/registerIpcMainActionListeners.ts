@@ -328,7 +328,12 @@ export default function registerIpcMainActionListeners(main: Main) {
     const fullPath = path.join(root, 'books', decodedPath);
     const data = await fs.readFile(fullPath);
     const ext = path.extname(fullPath).toLowerCase().slice(1);
-    const mime = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'application/octet-stream';
+    const mime =
+      ext === 'png'
+        ? 'image/png'
+        : ext === 'jpg' || ext === 'jpeg'
+          ? 'image/jpeg'
+          : 'application/octet-stream';
     return `data:${mime};base64,${data.toString('base64')}`;
   });
 }

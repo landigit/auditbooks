@@ -14,7 +14,7 @@ Add Additional Accounts
 
 Add any accounts from your previous system that do not exist in Auditbooks by navigating to the Chart of Accounts.
 
-You can follow the steps shown [here](initial-entries#add-additional-bank-accounts.md). Make sure you create the Accounts under the correct Account groups.
+You can follow the steps shown [here](create-initial-entries). Make sure you create the Accounts under the correct Account groups.
 
 Create a Journal Entry
 ----------------------
@@ -37,7 +37,7 @@ This will create a Journal Transaction in the system with all your previous stat
 
 ---
 
-Congratulations! You have now set your Opening Balances. \ud83c\udf89
+Congratulations! You have now set your Opening Balances.
 
 This brings your books to the same position that was present in your previous accounting system.
 

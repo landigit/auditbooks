@@ -160,7 +160,7 @@ export default defineComponent({
       data: [] as RenderData[],
       pageStart: 0,
       pageEnd: 0,
-      statusMap: {} as Record<string, string>,
+      statusMap: {},
       selectedItems: [] as string[],
     };
   },

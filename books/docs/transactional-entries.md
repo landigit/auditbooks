@@ -12,15 +12,15 @@ Before initiating sales, a POS shift must be opened to record opening balances a
 
 1. Cash in Denominations
 
-Enter the quantity of each currency denomination (e.g., \u20b91000, \u20b9500, \u20b9100). The system will automatically calculate the total opening cash amount based on these inputs.
+Enter the quantity of each currency denomination (e.g., ₹1000, ₹500, ₹100). The system will automatically calculate the total opening cash amount based on these inputs.
 
 2. Opening Amounts by Payment Method
 
-* The calculated cash amount is automatically populated under the \u201cCash\u201d payment method.
+* The calculated cash amount is automatically populated under the “Cash” payment method.
 
 * Opening balances for other payment methods (e.g., Card, UPI, Wallet) can be entered if applicable.
 
-3. Once all amounts are verified, click Submit. The POS shift will be marked as open, recording the shift\u2019s opening date and time.
+3. Once all amounts are verified, click Submit. The POS shift will be marked as open, recording the shift's opening date and time.
 
 
 ### 2. Creating a POS Invoice
@@ -66,17 +66,17 @@ Items can be selected in two ways: by clicking on the item name or by scanning t
 
 ![](images/Screenshot%20from%202025-08-12%2011-30-14.png)
 
-**1.Grid View:** Displays items in a grid format with images when the grid view icon is clicked.
+1. **Grid View:** Displays items in a grid format with images when the grid view icon is clicked.
 
-**2.[Sales Invoice](https://docs.frappe.io/books/sales-invoices) List:** Redirects to the Sales Invoice List.
+2. **Sales Invoice List:** Redirects to the Sales Invoice List.
 
-**3.[Loyalty Program](https://docs.frappe.io/books/loyalty-program):** Shows the loyalty points earned by the selected customer. Points can be redeemed from this view. The button is disabled if the customer has no loyalty points.
+3. **Loyalty Program:** Shows the loyalty points earned by the selected customer. Points can be redeemed from this view. The button is disabled if the customer has no loyalty points.
 
-**4.[Coupon Code](https://docs.frappe.io/books/coupon-code):** Allows redemption and application of available coupon codes for the selected items. The button is disabled if no coupon codes are available.
+4. **Coupon Code:** Allows redemption and application of available coupon codes for the selected items. The button is disabled if no coupon codes are available.
 
-**5.[Price List](https://docs.frappe.io/books/price-list):** Displays applicable price lists for the selected items, allowing you to apply them. The button is disabled if no price list is available.
+5. **Price List:** Displays applicable price lists for the selected items, allowing you to apply them. The button is disabled if no price list is available.
 
-**6.[Item Enquiry](https://docs.frappe.io/books/item-enquiry):** Allows the user to record and track specific item-related queries.This feature helps maintain detailed records of customer enquiries for better follow-up and service.
+6. **Item Enquiry:** Allows the user to record and track specific item-related queries.This feature helps maintain detailed records of customer enquiries for better follow-up and service.
 
 ### 5. Cart Actions
 
@@ -96,7 +96,7 @@ Items can be selected in two ways: by clicking on the item name or by scanning t
 
   * Saved - Shows all transactions that have been saved but not yet submitted.
   
-  * Submitted \u2013 Displays all submitted invoices, including those that are partially paid.
+  * Submitted – Displays all submitted invoices, including those that are partially paid.
 
 
 ![](images/Screenshot%20from%202025-08-11%2014-22-42.png)
@@ -151,10 +151,3 @@ The Close POS Shift feature is used to end a POS shift by recording final cash c
 
 
 The **Submit** button validates all closing amounts, sets the Closing Date, and links the record to the Opening Shift.
-
-
-
-
-
-
-

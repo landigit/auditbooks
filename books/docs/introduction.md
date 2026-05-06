@@ -17,7 +17,7 @@ A Lead can have various statuses based on the stage of engagement:
 | Quotation      | To sent a Quotation.                      |
 | Do not Contact | Marked as not to be contacted.            |
 
-/ Note: Ensure to update the status of the Lead appropriately as it progresses through
+Note: Ensure to update the status of the Lead appropriately as it progresses through
 different stages.
 
 ## Lead Fields
@@ -40,7 +40,7 @@ different stages.
 The Lead Quick Edit Form includes actions to create associated documents like
 Customer or Sales Quote.
 
-![Recent Actions Widget](https://raw.githubusercontent.com/frappe/books_docs/e0ff943f703b37f902f61a0424d1bc2b4cd81183/docs/entries/images/lead.png)
+![Recent Actions Widget](images/lead.png)
 
 ### Create Customer
 

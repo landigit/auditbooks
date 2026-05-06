@@ -4,15 +4,15 @@ import {
   type HoverCardRootEmits,
   type HoverCardRootProps,
   useForwardPropsEmits,
-} from 'reka-ui'
+} from 'reka-ui';
 
 const props = withDefaults(defineProps<HoverCardRootProps>(), {
   openDelay: 500,
   closeDelay: 100,
-})
-const emits = defineEmits<HoverCardRootEmits>()
+});
+const emits = defineEmits<HoverCardRootEmits>();
 
-const forwarded = useForwardPropsEmits(props, emits)
+const forwarded = useForwardPropsEmits(props, emits);
 </script>
 
 <template>
@@ -24,5 +24,5 @@ const forwarded = useForwardPropsEmits(props, emits)
 </template>
 
 <script lang="ts">
-export { HoverCardTrigger, HoverCardPortal } from 'reka-ui'
+export { HoverCardTrigger, HoverCardPortal } from 'reka-ui';
 </script>

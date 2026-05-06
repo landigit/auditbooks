@@ -44,7 +44,7 @@ Exchange Rate
 
 When a multi currency invoice is made, the ledger entries are created in the company currency.
 
-::: info Exchange Rate Company Currency = Customer Currency \u2a09 Exchange Rate :::
+::: info Exchange Rate Company Currency = Customer Currency ⋉ Exchange Rate :::
 
 Customer and Company Currency
 -----------------------------

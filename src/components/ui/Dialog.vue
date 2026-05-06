@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { DialogRoot, type DialogRootEmits, type DialogRootProps, useForwardPropsEmits } from 'reka-ui'
+import {
+  DialogRoot,
+  type DialogRootEmits,
+  type DialogRootProps,
+  useForwardPropsEmits,
+} from 'reka-ui';
 
-const props = defineProps<DialogRootProps>()
-const emits = defineEmits<DialogRootEmits>()
+const props = defineProps<DialogRootProps>();
+const emits = defineEmits<DialogRootEmits>();
 
-const forwarded = useForwardPropsEmits(props, emits)
+const forwarded = useForwardPropsEmits(props, emits);
 </script>
 
 <template>
@@ -21,5 +26,5 @@ export {
   DialogPortal,
   DialogClose,
   DialogOverlay,
-} from 'reka-ui'
+} from 'reka-ui';
 </script>

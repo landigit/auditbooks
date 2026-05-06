@@ -1,6 +1,6 @@
 # Create Initial Entries
 
-Let\u2019s create some initial entries before you can start recording your transactions.
+Let's create some initial entries before you can start recording your transactions.
 
 Add Additional Bank Accounts
 ----------------------------

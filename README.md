@@ -1,7 +1,7 @@
 <div align="center" markdown="1">
 <br/>
 
-<img src="https://frappe.io/files/books.png" alt="Auditbooks logo" width="80"/>
+<img src="https://landigit.com/auditbooks/logo.png" alt="Auditbooks logo" width="80"/>
 
 <br/>
 
@@ -9,9 +9,9 @@
 
 **Modern Accounting Made Simple**
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/frappe/books)](https://github.com/frappe/books/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/landigit/auditbooks)](https://github.com/landigit/auditbooks/releases)
 ![Platforms](https://img.shields.io/badge/platform-mac%2C%20windows%2C%20linux-yellowgreen)
-[![Publish](https://github.com/frappe/books/actions/workflows/publish.yml/badge.svg)](https://github.com/frappe/books/actions/workflows/publish.yml)
+[![Publish](https://github.com/landigit/auditbooks/actions/workflows/publish.yml/badge.svg)](https://github.com/landigit/auditbooks/actions/workflows/publish.yml)
 
 </div>
 
@@ -20,7 +20,7 @@
 </div>
 <br />
 <div align="center">
-	<a href="https://frappe.io/books">Website</a>
+	<a href="https://landigit.com/auditbooks">Website</a>
 	-
 	<a href="https://landigit.com/auditbooks">Documentation</a>
 </div>
@@ -105,10 +105,10 @@ setup Auditbooks for development and building:
 
 ```bash
 # clone the repository
-git clone https://github.com/frappe/books.git
+git clone https://github.com/landigit/auditbooks.git
 
 # change directory
-cd books
+cd auditbooks
 
 # install dependencies
 yarn

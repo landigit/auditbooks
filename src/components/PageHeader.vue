@@ -8,7 +8,11 @@
   >
     <Transition name="spacer" class="border-none">
       <div
-        v-if="!store.showSidebar && store.platform === 'Mac' && store.languageDirection !== 'rtl'"
+        v-if="
+          !store.showSidebar &&
+          store.platform === 'Mac' &&
+          store.languageDirection !== 'rtl'
+        "
         class="h-full"
         :class="spacerClass"
       />
@@ -16,7 +20,11 @@
 
     <div
       class="flex items-center window-no-drag gap-4 me-auto"
-      :class="store.platform === 'Mac' && store.languageDirection === 'rtl' ? 'me-18' : ''"
+      :class="
+        store.platform === 'Mac' && store.languageDirection === 'rtl'
+          ? 'me-18'
+          : ''
+      "
     >
       <!-- Nav Group -->
       <PageHeaderNavGroup />
@@ -36,7 +44,11 @@
     <!-- Right (regular) Slot -->
     <div
       class="flex items-stretch window-no-drag gap-2 ms-auto"
-      :class="store.platform === 'Mac' && store.languageDirection === 'rtl' ? 'me-18' : ''"
+      :class="
+        store.platform === 'Mac' && store.languageDirection === 'rtl'
+          ? 'me-18'
+          : ''
+      "
     >
       <slot />
     </div>

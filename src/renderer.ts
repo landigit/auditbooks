@@ -64,8 +64,8 @@ import { useAppStore } from './stores/app';
 
   app.use(router);
   app.component('LucideIcon', LucideIcon);
-  app.component('lucide-icon', LucideIcon);
-  app.component('feather-icon', LucideIcon);
+  app.component('LucideIcon', LucideIcon);
+  app.component('FeatherIcon', LucideIcon);
   app.component('Badge', Badge);
   app.directive('on-outside-click', outsideClickDirective);
   app.mixin({

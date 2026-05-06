@@ -315,28 +315,52 @@
 
   /* Animations */
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes fade-out {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
   }
   @keyframes zoom-in {
-    from { transform: scale(0.95); }
-    to { transform: scale(1); }
+    from {
+      transform: scale(0.95);
+    }
+    to {
+      transform: scale(1);
+    }
   }
   @keyframes zoom-out {
-    from { transform: scale(1); }
-    to { transform: scale(0.95); }
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(0.95);
+    }
   }
   @keyframes slide-in-from-top {
-    from { transform: translateY(-0.5rem); }
-    to { transform: translateY(0); }
+    from {
+      transform: translateY(-0.5rem);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
   @keyframes slide-in-from-bottom {
-    from { transform: translateY(0.5rem); }
-    to { transform: translateY(0); }
+    from {
+      transform: translateY(0.5rem);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 
   --animate-in: fade-in 0.2s ease-out, zoom-in 0.2s ease-out;
@@ -553,7 +577,6 @@
 @utility border-indicator-teal-border {
   border-color: var(--color-indicator-teal-text);
 }
-
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -826,19 +849,51 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 /* Status Indicator Classes */
-.bg-indicator-unpaid-bg { background-color: var(--bg-indicator-unpaid-bg); }
-.text-indicator-unpaid-text { color: var(--text-indicator-unpaid-text); }
-.bg-indicator-paid-bg { background-color: var(--bg-indicator-paid-bg); }
-.text-indicator-paid-text { color: var(--text-indicator-paid-text); }
-.bg-indicator-submitted-bg { background-color: var(--bg-indicator-submitted-bg); }
-.text-indicator-submitted-text { color: var(--text-indicator-submitted-text); }
-.bg-indicator-success-bg { background-color: var(--bg-indicator-success-bg); }
-.text-indicator-success-text { color: var(--text-indicator-success-text); }
-.bg-indicator-error-bg { background-color: var(--bg-indicator-error-bg); }
-.text-indicator-error-text { color: var(--text-indicator-error-text); }
-.bg-indicator-draft-bg { background-color: var(--bg-indicator-draft-bg); }
-.text-indicator-draft-text { color: var(--text-indicator-draft-text); }
-.bg-indicator-cancelled-bg { background-color: var(--bg-indicator-cancelled-bg); }
-.text-indicator-cancelled-text { color: var(--text-indicator-cancelled-text); }
-.bg-indicator-yellow-bg { background-color: var(--bg-indicator-yellow-bg); }
-.text-indicator-yellow-text { color: var(--text-indicator-yellow-text); }
+.bg-indicator-unpaid-bg {
+  background-color: var(--bg-indicator-unpaid-bg);
+}
+.text-indicator-unpaid-text {
+  color: var(--text-indicator-unpaid-text);
+}
+.bg-indicator-paid-bg {
+  background-color: var(--bg-indicator-paid-bg);
+}
+.text-indicator-paid-text {
+  color: var(--text-indicator-paid-text);
+}
+.bg-indicator-submitted-bg {
+  background-color: var(--bg-indicator-submitted-bg);
+}
+.text-indicator-submitted-text {
+  color: var(--text-indicator-submitted-text);
+}
+.bg-indicator-success-bg {
+  background-color: var(--bg-indicator-success-bg);
+}
+.text-indicator-success-text {
+  color: var(--text-indicator-success-text);
+}
+.bg-indicator-error-bg {
+  background-color: var(--bg-indicator-error-bg);
+}
+.text-indicator-error-text {
+  color: var(--text-indicator-error-text);
+}
+.bg-indicator-draft-bg {
+  background-color: var(--bg-indicator-draft-bg);
+}
+.text-indicator-draft-text {
+  color: var(--text-indicator-draft-text);
+}
+.bg-indicator-cancelled-bg {
+  background-color: var(--bg-indicator-cancelled-bg);
+}
+.text-indicator-cancelled-text {
+  color: var(--text-indicator-cancelled-text);
+}
+.bg-indicator-yellow-bg {
+  background-color: var(--bg-indicator-yellow-bg);
+}
+.text-indicator-yellow-text {
+  color: var(--text-indicator-yellow-text);
+}

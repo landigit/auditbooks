@@ -14,7 +14,7 @@ you set up.
 
 / Note: **Discount Accounting** and **Pricing Rule** should be enabled to use **Coupon Codes**
 
-![Enable Coupon Codes](https://raw.githubusercontent.com/frappe/books_docs/5601f51269118621cdd73b3ad47f2033c1eff868/docs/entries/images/enable-coupon-code.png)
+![Enable Coupon Codes](images/enable-coupon-code.png)
 
 Once that is done you will have to restart Auditbooks to see the Coupon Code
 in the sidebar.
@@ -29,7 +29,7 @@ To create a Coupon Code first navigate to the Coupon Code page
 
 Then click on the `+` button to open the Coupon Code form.
 
-![Coupon Code](https://raw.githubusercontent.com/frappe/books_docs/5601f51269118621cdd73b3ad47f2033c1eff868/docs/entries/images/coupon-code.png)
+![Coupon Code](images/coupon-code.png)
 
 - **Is Enabled:** To mark the Coupon Code as active.
 - **Pricing Rule:** Select the pricing rule that applies when a specific coupon
@@ -46,8 +46,8 @@ Then click on the `+` button to open the Coupon Code form.
 You can select coupons to get discounts. The coupon will apply a discount based
 on the rules set for that coupon.
 
-![Coupon Code](https://raw.githubusercontent.com/frappe/books_docs/5601f51269118621cdd73b3ad47f2033c1eff868/docs/entries/images/choose-coupon-code.png)
+![Coupon Code](images/choose-coupon-code.png)
 
 Applied Pricing rule can be viewed in the Pricing Rule Detail section.
 
-![Coupon Code](https://raw.githubusercontent.com/frappe/books_docs/5601f51269118621cdd73b3ad47f2033c1eff868/docs/entries/images/applyed-coupon-code.png)
+![Coupon Code](images/applyed-coupon-code.png)

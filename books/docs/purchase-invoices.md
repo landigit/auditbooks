@@ -23,12 +23,12 @@ Then click on the blue `+` button to open the Purchase Invoice form.
 4. You can add more items or if you are done, click on Save.
 5. Once finalized, click on Submit. Auditbooks will do the required ledger entries against the appropriate accounts.
 
-This invoice is now in *\u201cSubmitted\u201d* state, it cannot be edited. The purchase transaction has been recorded.
+This invoice is now in **Submitted** state, it cannot be edited. The purchase transaction has been recorded.
 
 Making Purchase Payments
 ------------------------
 
-Once a purchase invoice has been submitted, you\u2019ll need to record payment against it to denote that you\u2019ve paid the money.
+Once a purchase invoice has been submitted, you'll need to record payment against it to denote that you've paid the money.
 
 To make a Payment first navigate to the Purchase Invoice, then click on the `...` menu button. Then click the Make Payment option.
 
@@ -50,7 +50,7 @@ Once the Outstanding Amount reaches 0, the status will change to **Paid**. :::
 
 ### Auto Payments
 
-You can simplify the *Purchase Invoice \u2192 Payment* workflow by using Auto Payments. For this you just need to set the default accounts for Purchase Payment.
+You can simplify the **Purchase Invoice → Payment** workflow by using Auto Payments. For this you just need to set the default accounts for Purchase Payment.
 
 This can be done in `Setup / Settings / Defaults / Auto Payments`: ![Payment Accounts](images/payment-accounts.png)  
 
@@ -58,9 +58,9 @@ Once this is set, whenever you Submit a Purchase Invoice a Payment entry will au
 
 ::: tip Disable Auto Payment for a Purchase Invoice
 
-You can disable Auto Payment for a single Purchase Invoice by unchecking the Make Payment On Submit check box in the Settings tab before Submitting the Purchase Invoice entry.
+You can disable Auto Payment for a single Purchase Invoice by unchecking the Make Payment On Submit check box in the Settings tab before Submitting the Purchase Invoice entry. :::
 
-![Disable Auto Payment](images/auto-payment.png) :::
+![Disable Auto Payment](images/auto-payment.png) 
 
 Purchase Invoice Return
 -----------------------

@@ -6,7 +6,7 @@ To view and create Print Templates navigate to its page using the sidebar: `Setu
 
 ![Print Templates](images/print-templates.png)  
 
-:::tip Preloaded Templates
+::: tip Preloaded Templates
 
 When you create a new instance of Auditbooks, it comes preloaded with a few templates.
 
@@ -27,15 +27,15 @@ Next, select the template type. Sales Invoice is selected by default, but you ca
 
 ![Template Type](images/template-type.png)  
 
-:::tip Display Entry
+::: tip Display Entry
 
 You can change the example Entry being displayed. By default Auditbooks selects the latest entry that has been created. :::
 
-:::tip Custom Sizes
+::: tip Custom Sizes
 
-You can adjust the size of the Print Template by clicking on the Set Print Size option in the `\u00b7\u00b7\u00b7` menu.
+You can adjust the size of the Print Template by clicking on the Set Print Size option in the `***` menu. :::
 
-![Custom Print Template Size](images/custom-print-size.png) :::
+![Custom Print Template Size](images/custom-print-size.png)
 
 Now you are ready to edit the Print Template
 
@@ -46,15 +46,15 @@ The left pane contains the Template Editor which is used to edit the template. Y
 
 ![Template Editor](images/template-editor.png)  
 
-:::info Template Syntax
+::: info Template Syntax
 
 The templates follow the Vue.js template syntax. You can learn more about it [here](https://vuejs.org/guide/essentials/template-syntax.html). :::
 
-:::tip Resizing the Template Editor
+::: tip Resizing the Template Editor
 
-You can resize the Template Editor by clicking on the border and dragging it.
+You can resize the Template Editor by clicking on the border and dragging it. :::
 
-![Resize Template Editor](images/resize-template-editor.png) :::
+![Resize Template Editor](images/resize-template-editor.png) 
 
 ### Displaying Values
 
@@ -73,7 +73,7 @@ There are two sets of keys to display values:
 1. `doc`: these keys are used to display values from the entry such as Invoice No, Account, Date, etc. These keys vary depending on the Entry Type.
 2. `print`: these keys are used to read Print Settings values such as Logo, Email, Color, etc.
 
-:::tip Key Hints If you want to see the available values you can click on the **Key Hints** section below the Template Editor.
+::: tip Key Hints If you want to see the available values you can click on the **Key Hints** section below the Template Editor.
 
 ![Key Hints](images/key-hints.png) :::
 
@@ -86,7 +86,7 @@ You can either use [inline CSS styles](https://developer.mozilla.org/en-US/docs/
 To apply the changes made in the editor, you can:
 
 1. Click outside the template editor
-2. Press the shortcut keys (`\u2303 return` for macOS and `Ctrl Enter` for other operating systems).
+2. Press the shortcut keys (⌘ Return for macOS and Ctrl Enter for other operating systems).
 
 Using the Template
 ------------------

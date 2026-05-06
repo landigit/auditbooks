@@ -1,9 +1,8 @@
 # Journal Entries
 
-Journal Entries are transactional entries used to record transactions that don\u2019t strictly identify as a Sale or Purchase. Such as the transfer of funds from a Bank Account to a Cash Account.
+Journal Entries are transactional entries used to record transactions that don't strictly identify as a Sale or Purchase. Such as the transfer of funds from a Bank Account to a Cash Account.
 
-Creating Journal Entries
-------------------------
+## Creating Journal Entries
 
 To create a Journal Entry first navigate to the Journal Entry page
 
@@ -23,8 +22,7 @@ After clicking Submit, Auditbooks will the make ledger entries and update the ac
 
 You can check the entries by clicking Ledger Entries under the `...` menu.
 
-Examples
---------
+## Examples
 
 These are two examples of how you can make direct Journal Entries to account for transactions that are different from Sales or Purchases.
 
@@ -34,16 +32,16 @@ When you have expenses that you pay at the time of purchase, you can record an E
 
 To do so add two rows to a new Journal Entry form, one for Debit and one for Credit.
 
-Let\u2019s say you incur an expense of \u20b95,000 for traveling to a client site, and you paid it directly from your Bank Account, then you must add the following rows:
+Let's say you incur an expense of 5,000 for traveling to a client site, and you paid it directly from your Bank Account, then you must add the following rows:
 
 | Account | Debit | Credit |
 | --- | --- | --- |
-| Bank Account |  | \u20b95,000 |
-| Travel Expenses | \u20b95,000 |  |
+| **Bank Account** |  | 5,000 |
+| **Travel Expenses** | 5,000 |  |
 
 ### Recording Prepayments
 
-When a customer pays for a product or service that you haven\u2019t delivered yet, it cannot be booked as Income yet. This is a Liability for your business to fulfill later.
+When a customer pays for a product or service that you haven't delivered yet, it cannot be booked as Income yet. This is a Liability for your business to fulfill later.
 
 To make an entry that reflects this, add two rows to a new Journal Entry form.
 
@@ -52,5 +50,5 @@ To make an entry that reflects this, add two rows to a new Journal Entry form.
 
 | Account | Debit | Credit |
 | --- | --- | --- |
-| Bank Account | \u20b95,000 |  |
-| Prepayment |  | \u20b95,000 |
+| **Bank Account** | 5,000 |  |
+| **Prepayment** |  | 5,000 |

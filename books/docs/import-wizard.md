@@ -28,7 +28,7 @@ To import data you, it needs to fit some template for this, first click on the S
 
 This will download a `.csv` template file.
 
-:::tip The Template.csv file The Template.csv file can be filled using any spreadsheet software.
+::: tip The Template.csv file The Template.csv file can be filled using any spreadsheet software. :::
 
 ![Import Template CSV](images/import-template-csv.png)  
 
@@ -37,9 +37,7 @@ The Import Template has three rows:
 
 1. Entry type row: Some entries have child tables and this indicates whether the column belongs to the child table.
 2. Field label row: This tells us which field of the entry (or its child table) does the column belong to.
-3. Field key row: This row allows the Import Wizard to auto assign the columns when the file is selected. If this row is not present then Column Assignment Bar can be used to assign the fields.
-
-:::
+3. Field key row: This row allows the Import Wizard to auto assign the columns when the file is selected. If this row is not present then Column Assignment Bar can be used to assign the fields. 
 
 To use the Template.csv file you must
 
@@ -56,16 +54,16 @@ You can now check the imported values and if everything seems right. If you want
 ![Import File Selected](images/import-file-selected.png)  
 
 
-:::tip The Add Row button You can click on the Add Row button to add an additional empty row to the bottom of the import table which can be edited to enter the required values.
+::: tip The Add Row button You can click on the Add Row button to add an additional empty row to the bottom of the import table which can be edited to enter the required values. 
 
 This feature can be used for making multiple entries quickly without even selecting a file. :::
 
-:::info Fixing Conversion Errors If the Import Wizard couldn't convert a value then it will be marked with a red border.
+::: info Fixing Conversion Errors If the Import Wizard couldn't convert a value then it will be marked with a red border. :::
 
 ![Conversion Error](images/import-conversion-error.png)  
 
 
-You can hover over the field to view what the raw value was and fix the value to remove the error :::
+You can hover over the field to view what the raw value was and fix the value to remove the error 
 
 Finally if everything is fine, click on Import Data to begin importing the data.
 
@@ -78,7 +76,7 @@ Once import is done, you'll see the Import Complete modal
 
 Clicking on Show Me will take you to the List View of the newly created entries. Clicking on Done will reset the Import Wizard allowing you to make more entries.
 
-:::info Fixing Failed Imports If certain entries could not be imported then you can click on the Fix Failed button that is visible only on failed imports.
+::: info Fixing Failed Imports If certain entries could not be imported then you can click on the Fix Failed button that is visible only on failed imports.
 
 Clicking it will clear all the successful imports and allow you to fix the failed ones and retry. :::
 

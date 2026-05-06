@@ -22,7 +22,10 @@
       >
         {{ formattedValue }}
       </p>
-      <p v-else-if="inputPlaceholder" class="text-base text-description w-full opacity-50">
+      <p
+        v-else-if="inputPlaceholder"
+        class="text-base text-description w-full opacity-50"
+      >
         {{ inputPlaceholder }}
       </p>
     </div>

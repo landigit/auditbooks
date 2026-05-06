@@ -32,7 +32,7 @@ Price List Fields:
 2. **For Sales**: if enabled, the Price List can be selected in Sales Invoices.
 3. **For Purchases**: if enabled, the Price List can be selected in Purchase Invoices.
 
-:::tip Multiple Prices
+::: tip Multiple Prices
 
 You can add multiple prices for an Item in the Price List. When fetching the price from the Price List, the first Item Price with a matching Unit Type will be selected. :::
 

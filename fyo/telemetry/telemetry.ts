@@ -122,8 +122,7 @@ export class TelemetryManager {
     return {
       country: countryCode ?? '',
       language: this.fyo.language,
-      deviceId:
-        this.fyo.deviceId || (this.fyo.config.get('deviceId') ?? '-'),
+      deviceId: this.fyo.deviceId || (this.fyo.config.get('deviceId') ?? '-'),
       instanceId: this.fyo.instanceId,
       version: this.fyo.appVersion,
       openCount: this.fyo.openCount,

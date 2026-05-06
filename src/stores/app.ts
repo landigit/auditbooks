@@ -49,7 +49,9 @@ export const useAppStore = defineStore('app', () => {
   const dbPath = ref('');
   const companyName = ref('');
   const docsPath = ref('');
-  const reports = ref({} as Record<keyof typeof reportsMap, Report | undefined>);
+  const reports = ref(
+    {} as Record<keyof typeof reportsMap, Report | undefined>
+  );
   const appFlags = ref({} as Record<string, boolean>);
   const historyState = reactive({
     forward: !!(history.state as HistoryState)?.forward,

@@ -93,8 +93,7 @@ import SectionHeader from './SectionHeader.vue';
 
 // Linting broken in this file cause of `extends: ...`
 /* 
-  eslint-disable @typescript-eslint/no-unsafe-argument,
-  @typescript-eslint/no-unsafe-return
+  eslint-disable @typescript-eslint/no-unsafe-argument
 */
 export default defineComponent({
   name: 'UnpaidInvoices',

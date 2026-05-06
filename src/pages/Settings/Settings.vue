@@ -92,8 +92,8 @@ export default defineComponent({
   },
   data() {
     return {
-      errors: {} as Record<string, string>,
-      activeTab: ModelNameEnum.AccountingSettings as string,
+      errors: {},
+      activeTab: ModelNameEnum.AccountingSettings,
       groupedFields: null as UIGroupedFields | null,
     };
   },

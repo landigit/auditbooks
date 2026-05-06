@@ -72,12 +72,12 @@ export default defineComponent({
     PrintContainer,
     DropdownWithActions,
   },
-  setup() {
-    return { store: useAppStore() };
-  },
   props: {
     schemaName: { type: String, required: true },
     name: { type: String, required: true },
+  },
+  setup() {
+    return { store: useAppStore() };
   },
   data() {
     return {
