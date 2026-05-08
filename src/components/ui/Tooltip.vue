@@ -29,7 +29,11 @@ const internalOpen = ref(false);
 const x = ref(0);
 const y = ref(0);
 
-const create = () => {
+const create = (e?: MouseEvent) => {
+  if (e) {
+    x.value = e.clientX;
+    y.value = e.clientY;
+  }
   internalOpen.value = true;
 };
 
@@ -41,6 +45,12 @@ const update = (e: MouseEvent) => {
 const destroy = () => {
   internalOpen.value = false;
 };
+
+defineExpose({
+  create,
+  update,
+  destroy,
+});
 
 // Support both prop-driven and imperative-driven open state
 const isOpen = ref(props.open ?? false);
@@ -54,11 +64,6 @@ watch(internalOpen, (val) => {
   isOpen.value = val;
 });
 
-defineExpose({
-  create,
-  update,
-  destroy,
-});
 </script>
 
 <template>

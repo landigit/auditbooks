@@ -7,8 +7,9 @@ import {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-  Button,
+  DialogClose,
 } from 'src/components/ui';
+import Button from './Button.vue';
 import LucideIcon from './LucideIcon.vue';
 import { getIconConfig } from 'src/utils/interactive';
 import type { DialogButton, ToastType } from 'src/utils/types';
@@ -27,8 +28,6 @@ const props = defineProps({
 });
 
 const open = ref(false);
-const primaryButtonRef = ref<any>(null);
-const secondaryButtonRef = ref<any>(null);
 
 const config = computed(() => getIconConfig(props.type));
 
@@ -36,17 +35,6 @@ const details = computed(() => {
   if (!props.detail) return [];
   return Array.isArray(props.detail) ? props.detail : [props.detail];
 });
-
-const focusButton = () => {
-  // Reka UI handles focus management automatically, but we can still force it if needed
-  // or let the default focus-trap behavior work.
-};
-
-const handleUpdateOpen = (val: boolean) => {
-  open.value = val;
-  // If closed via backdrop or escape, we might want to trigger a default action
-  // but showDialog handles resolution via button clicks.
-};
 
 const handleClick = (index: number) => {
   const button = props.buttons[index];
@@ -61,34 +49,41 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Dialog :open="open" @update:open="handleUpdateOpen">
-    <DialogContent class="sm:max-w-[425px]">
-      <DialogHeader>
-        <div class="flex items-center justify-between mb-2">
-          <DialogTitle>{{ title }}</DialogTitle>
+  <Dialog v-model:open="open">
+    <DialogContent class="w-dialog p-0 overflow-hidden sm:max-w-none">
+      <DialogHeader class="p-4 border-b border-border bg-surface">
+        <div class="flex items-center justify-center relative">
+          <DialogTitle class="text-base font-semibold">{{ title }}</DialogTitle>
           <LucideIcon
             :name="config.iconName"
-            class="w-6 h-6"
+            class="w-5 h-5 absolute right-0"
             :class="config.iconColor"
           />
         </div>
-        <DialogDescription v-if="details.length">
+      </DialogHeader>
+
+      <div class="p-6 bg-surface">
+        <DialogDescription v-if="details.length" class="text-center text-main">
           <div v-for="(d, i) in details" :key="i" class="mb-1 last:mb-0">
             {{ d }}
           </div>
         </DialogDescription>
-      </DialogHeader>
+      </div>
 
-      <DialogFooter class="mt-6">
-        <Button
+      <DialogFooter class="p-4 bg-canvas-muted flex justify-center gap-4">
+        <DialogClose
           v-for="(b, index) in buttons"
           :key="b.label"
-          :variant="b.isPrimary ? 'default' : 'outline'"
-          class="min-w-[5rem]"
-          @click="handleClick(index)"
+          as-child
         >
-          {{ b.label }}
-        </Button>
+          <Button
+            :type="b.isPrimary ? 'primary' : 'secondary'"
+            class="w-full"
+            @click="handleClick(index)"
+          >
+            {{ b.label }}
+          </Button>
+        </DialogClose>
       </DialogFooter>
     </DialogContent>
   </Dialog>

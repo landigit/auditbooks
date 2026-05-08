@@ -29,11 +29,17 @@ const datePart = ref<DateValue | undefined>(undefined);
 const hours = ref(0);
 const minutes = ref(0);
 
+// Use a separate ref for the popover to avoid conflicts with model updates
+const isOpen = ref(false);
+
+// Helper for translation if not global
+const t = (window as any).fyo?.t || ((s: any) => s);
+
 // Sync with modelValue
 watch(
   () => props.modelValue,
   (newVal) => {
-    if (newVal) {
+    if (newVal && !isOpen.value) {
       datePart.value = new CalendarDate(
         newVal.getFullYear(),
         newVal.getMonth() + 1,
@@ -41,7 +47,7 @@ watch(
       );
       hours.value = newVal.getHours();
       minutes.value = newVal.getMinutes();
-    } else {
+    } else if (!newVal) {
       datePart.value = undefined;
       hours.value = 0;
       minutes.value = 0;
@@ -50,32 +56,38 @@ watch(
   { immediate: true }
 );
 
-const updateModel = () => {
-  if (!datePart.value) {
-    emits('update:modelValue', null);
-    return;
+const updateModel = (shouldClose = false) => {
+  let targetDate = datePart.value;
+  if (!targetDate) {
+    const now = new Date();
+    targetDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    datePart.value = targetDate;
   }
 
   const d = new Date(
-    datePart.value.year,
-    datePart.value.month - 1,
-    datePart.value.day,
+    targetDate.year,
+    targetDate.month - 1,
+    targetDate.day,
     hours.value,
     minutes.value
   );
+  
   emits('update:modelValue', d);
+  if (shouldClose) {
+    isOpen.value = false;
+  }
 };
 
 const handleDateChange = (val: DateValue | undefined) => {
   datePart.value = val;
-  updateModel();
+  updateModel(false);
 };
 
 const handleTimeChange = (type: 'hours' | 'minutes', val: string) => {
   const num = parseInt(val, 10) || 0;
   if (type === 'hours') hours.value = Math.min(23, Math.max(0, num));
   if (type === 'minutes') minutes.value = Math.min(59, Math.max(0, num));
-  updateModel();
+  updateModel(false);
 };
 
 const displayValue = computed(() => {
@@ -85,7 +97,7 @@ const displayValue = computed(() => {
 </script>
 
 <template>
-  <Popover>
+  <Popover v-model:open="isOpen">
     <PopoverTrigger as-child>
       <button
         variant="outline"
@@ -171,7 +183,7 @@ const displayValue = computed(() => {
           <div class="mt-auto pt-4 border-t border-border flex flex-col gap-2">
             <button
               class="w-full h-8 text-xs font-medium bg-indicator-green-bg text-white rounded hover:opacity-90 transition-opacity"
-              @click="updateModel"
+              @click="updateModel(true)"
             >
               {{ t`Set Time` }}
             </button>

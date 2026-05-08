@@ -75,26 +75,26 @@
           >
             <lucide-icon name="x" class="w-3.5 h-3.5" />
           </button>
-          <HoverCard :open-delay="500" :close-delay="100">
-            <HoverCardTrigger as-child>
+          <Popover v-if="linkSchemaName && value" :open="showQuickView">
+            <PopoverAnchor as-child>
               <button
-                class="p-0.5 rounded -me1 bg-transparent hover:bg-surface-hover transition-colors"
-                @click="routeToLinkedDoc"
+                class="h-6 w-6 flex items-center justify-center p-0 rounded-md text-description hover:text-main hover:bg-surface-hover transition-colors outline-none"
+                @mouseenter="showQuickView = true"
+                @mouseleave="showQuickView = false"
+                @click.stop.prevent="routeToLinkedDoc"
               >
-                <lucide-icon
-                  name="chevron-right"
-                  class="w-4 h-4 text-description"
-                />
+                <lucide-icon name="chevron-right" class="w-4 h-4" />
               </button>
-            </HoverCardTrigger>
-            <HoverCardContent
+            </PopoverAnchor>
+            <PopoverContent
+              v-if="showQuickView"
               side="bottom"
               :side-offset="10"
               class="p-0 overflow-hidden shadow-xl border-border"
             >
               <QuickView :schema-name="linkSchemaName" :name="value" />
-            </HoverCardContent>
-          </HoverCard>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </template>
@@ -109,11 +109,9 @@ import { fuzzyMatch } from 'src/utils';
 import { getFormRoute, routeTo } from 'src/utils/ui';
 import {
   Popover,
+  PopoverTrigger,
   PopoverAnchor,
   PopoverContent,
-  HoverCard,
-  HoverCardTrigger,
-  HoverCardContent,
 } from 'src/components/ui';
 import Base from './Base.vue';
 import QuickView from '../QuickView.vue';
@@ -123,11 +121,9 @@ export default {
   components: {
     Dropdown,
     Popover,
+    PopoverTrigger,
     PopoverAnchor,
     PopoverContent,
-    HoverCard,
-    HoverCardTrigger,
-    HoverCardContent,
     QuickView,
   },
   extends: Base,
@@ -225,6 +221,7 @@ export default {
         return;
       }
 
+      this.showQuickView = false;
       const route = getFormRoute(this.linkSchemaName, name);
       await routeTo(route);
     },

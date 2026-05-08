@@ -95,7 +95,7 @@
         :height="rec.height"
         :fill="rec.color"
         clip-path="url(#positive-rect-clip)"
-        @mouseenter="() => create(rec.xi, rec.yi)"
+        @mouseenter="(e) => create(rec.xi, rec.yi, e)"
         @mousemove="update"
         @mouseleave="destroy"
       />
@@ -111,7 +111,7 @@
         :height="rec.height"
         :fill="rec.color"
         clip-path="url(#negative-rect-clip)"
-        @mouseenter="() => create(rec.xi, rec.yi)"
+        @mouseenter="(e) => create(rec.xi, rec.yi, e)"
         @mousemove="update"
         @mouseleave="destroy"
       />
@@ -339,11 +339,11 @@ export default {
         .join(',');
       return `rgb(${rgb})`;
     },
-    create(xi, yi) {
+    create(xi, yi, event) {
       this.xi = xi;
       this.yi = yi;
       this.activeColor = this.getColor(yi, this.points[yi][xi] > 0);
-      this.$refs.tooltip.create();
+      this.$refs.tooltip.create(event);
     },
     update(event) {
       this.$refs.tooltip.update(event);

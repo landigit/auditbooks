@@ -312,7 +312,7 @@ export default {
         this.$refs.tooltip.destroy();
         return;
       }
-      this.$refs.tooltip.create();
+      this.$refs.tooltip.create(event);
 
       this.xi = xi;
       this.yi = yi;
