@@ -2,12 +2,9 @@
 
 set -e
 
-# Check node and yarn versions
-YARN_VERSION=$(yarn --version)
-if [ "$YARN_VERSION" != "4.14.1" ]; then
-  echo "Incorrect yarn version: $YARN_VERSION"
-  exit 1
-fi
+# Check pnpm version
+PNPM_VERSION=$(pnpm --version)
+echo "Current pnpm version: $PNPM_VERSION"
 
 # Source secrets
 source .env.publish
@@ -30,7 +27,7 @@ echo $TELEMETRY_URL >> log_creds.txt
 
 
 # Install Dependencies
-yarn install
+pnpm install
 
 # Set .env and build
 export GH_TOKEN=$GH_TOKEN &&
@@ -38,6 +35,6 @@ export GH_TOKEN=$GH_TOKEN &&
  export APPLE_ID=$APPLE_ID &&
  export APPLE_TEAM_ID=$APPLE_TEAM_ID &&
  export APPLE_APP_SPECIFIC_PASSWORD=$APPLE_APP_SPECIFIC_PASSWORD &&
- yarn build --mac --publish=always
+ pnpm build --mac --publish=always
 
 cd ../books

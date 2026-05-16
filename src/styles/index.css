@@ -302,22 +302,22 @@
   --color-chart-shadow: rgba(0, 0, 0, 0.25);
 
   /* Status Indicators (Pills) */
-  --bg-indicator-unpaid-bg: var(--color-orange-100);
-  --text-indicator-unpaid-text: var(--color-orange-700);
-  --bg-indicator-paid-bg: var(--color-green-100);
-  --text-indicator-paid-text: var(--color-green-700);
-  --bg-indicator-submitted-bg: var(--color-blue-100);
-  --text-indicator-submitted-text: var(--color-blue-700);
-  --bg-indicator-success-bg: var(--color-green-100);
-  --text-indicator-success-text: var(--color-green-700);
-  --bg-indicator-error-bg: var(--color-red-100);
-  --text-indicator-error-text: var(--color-red-700);
-  --bg-indicator-draft-bg: var(--color-gray-100);
-  --text-indicator-draft-text: var(--color-gray-700);
-  --bg-indicator-cancelled-bg: var(--color-red-100);
-  --text-indicator-cancelled-text: var(--color-red-700);
-  --bg-indicator-yellow-bg: var(--color-yellow-100);
-  --text-indicator-yellow-text: var(--color-yellow-700);
+  --color-indicator-unpaid-bg: var(--color-orange-100);
+  --color-indicator-unpaid-text: var(--color-orange-700);
+  --color-indicator-paid-bg: var(--color-green-100);
+  --color-indicator-paid-text: var(--color-green-700);
+  --color-indicator-submitted-bg: var(--color-blue-100);
+  --color-indicator-submitted-text: var(--color-blue-700);
+  --color-indicator-success-bg: var(--color-green-100);
+  --color-indicator-success-text: var(--color-green-700);
+  --color-indicator-error-bg: var(--color-red-100);
+  --color-indicator-error-text: var(--color-red-700);
+  --color-indicator-draft-bg: var(--color-gray-100);
+  --color-indicator-draft-text: var(--color-gray-700);
+  --color-indicator-cancelled-bg: var(--color-red-100);
+  --color-indicator-cancelled-text: var(--color-red-700);
+  --color-indicator-yellow-bg: var(--color-yellow-100);
+  --color-indicator-yellow-text: var(--color-yellow-700);
 
 }
 
@@ -374,21 +374,21 @@
     --color-indicator-purple-bg: var(--color-purple-600);
     --color-indicator-teal-bg: var(--color-teal-600);
 
-    --bg-indicator-unpaid-bg: var(--color-orange-900);
-    --text-indicator-unpaid-text: var(--color-orange-200);
-    --bg-indicator-paid-bg: var(--color-blue-900);
-    --text-indicator-paid-text: var(--color-blue-200);
-    --bg-indicator-submitted-bg: var(--color-blue-900);
-    --text-indicator-submitted-text: var(--color-blue-200);
-    --bg-indicator-success-bg: var(--color-green-900);
-    --text-indicator-success-text: var(--color-green-200);
-    --bg-indicator-error-bg: var(--color-red-900);
-    --text-indicator-error-text: var(--color-red-200);
-    --bg-indicator-draft-bg: var(--color-gray-800);
-    --text-indicator-draft-text: var(--color-gray-200);
-    --bg-indicator-cancelled-bg: var(--color-red-900);
-    --text-indicator-cancelled-text: var(--color-red-200);
-    --bg-indicator-yellow-bg: var(--color-yellow-900);
+    --color-indicator-unpaid-bg: var(--color-orange-900);
+    --color-indicator-unpaid-text: var(--color-orange-200);
+    --color-indicator-paid-bg: var(--color-blue-900);
+    --color-indicator-paid-text: var(--color-blue-200);
+    --color-indicator-submitted-bg: var(--color-blue-900);
+    --color-indicator-submitted-text: var(--color-blue-200);
+    --color-indicator-success-bg: var(--color-green-900);
+    --color-indicator-success-text: var(--color-green-200);
+    --color-indicator-error-bg: var(--color-red-900);
+    --color-indicator-error-text: var(--color-red-200);
+    --color-indicator-draft-bg: var(--color-gray-800);
+    --color-indicator-draft-text: var(--color-gray-200);
+    --color-indicator-cancelled-bg: var(--color-red-900);
+    --color-indicator-cancelled-text: var(--color-red-200);
+    --color-indicator-yellow-bg: var(--color-yellow-900);
     --text-indicator-yellow-text: var(--color-yellow-200);
   }
 }

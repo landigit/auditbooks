@@ -16,7 +16,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          yarn set version 4.14.1
+          pnpmset version 10.33.2
           yarn
 
       - name: Set Error Log Creds
@@ -41,8 +41,8 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: true
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          yarn set version 4.14.1
-          yarn build --mac --publish always
+          pnpmset version 10.33.2
+          pnpmbuild --mac --publish always
 
       - name: Tar files
         run: tar -cvf dist-macOS.tar dist_electron
@@ -66,7 +66,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          yarn set version 4.14.1
+          pnpmset version 10.33.2
           yarn
 
       - name: Set Error Log Creds
@@ -91,8 +91,8 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: true
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          yarn set version 4.14.1
-          yarn build --mac --publish always
+          pnpmset version 10.33.2
+          pnpmbuild --mac --publish always
 
       - name: Tar files
         run: tar -cvf dist-macOS-arm.tar dist_electron
@@ -116,7 +116,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          yarn set version 4.14.1
+          pnpmset version 10.33.2
           yarn
 
       - name: Set Error Log Creds
@@ -135,8 +135,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          yarn set version 4.14.1
-          yarn build --linux --publish always
+          pnpmset version 10.33.2
+          pnpmbuild --linux --publish always
 
       - name: Tar files
         run: tar -cvf dist-linux.tar dist_electron
@@ -182,7 +182,7 @@ jobs:
           WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
           WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: yarn build --win --publish always
+        run: pnpmbuild --win --publish always
 
       - name: Tar files
         run: tar -cvf dist-windows.tar dist_electron

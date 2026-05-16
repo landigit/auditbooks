@@ -115,11 +115,11 @@ function printHelp() {
   if (shouldPrint) {
     console.log(
       `Usage: ` +
-        `\tyarn script:translate\n` +
-        `\tyarn script:translate -h\n` +
-        `\tyarn script:translate -l [language_code]\n` +
+        `\tpnpmscript:translate\n` +
+        `\tpnpmscript:translate -h\n` +
+        `\tpnpmscript:translate -l [language_code]\n` +
         `\n` +
-        `Example: $ yarn script:translate -l de\n` +
+        `Example: $ pnpmscript:translate -l de\n` +
         `\n` +
         `Description:\n` +
         `\tPassing a language code will create a '.csv' file in\n` +
