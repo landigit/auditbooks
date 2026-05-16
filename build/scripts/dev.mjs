@@ -12,7 +12,7 @@ process.env['VITE_PORT'] = 6969;
 
 /**
  * This script does several things:
- * 1. Runs the vite server in dev mode `yarn vite` (unless --no-renderer is passed)
+ * 1. Runs the vite server in dev mode `pnpmvite` (unless --no-renderer is passed)
  * 2. Runs a file watcher for the main processes
  * 3. Builds the main process on file changes
  * 4. Runs electron which loads renderer using vite server url
@@ -36,7 +36,7 @@ console.log(`running Auditbooks in dev mode\nroot: ${root}`);
 /**
  * @type {import('execa').ExecaChildProcess<string>}
  */
-const viteProcess = $$`yarn vite`;
+const viteProcess = $$`pnpm vite`;
 /**
  * Create esbuild context that is used
  * to [re]build the main process code

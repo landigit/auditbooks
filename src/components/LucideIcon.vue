@@ -1,5 +1,5 @@
 <script>
-import * as icons from 'lucide-vue-next';
+import * as icons from '@lucide/vue';
 import { h } from 'vue';
 
 const toPascalCase = (str) =>

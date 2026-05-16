@@ -1,15 +1,9 @@
 # Publish script for Windows
 $ErrorActionPreference = "Stop"
 
-# Check yarn version
-$yarnVersion = (yarn --version).Trim()
-Write-Host "Current Yarn version: $yarnVersion"
-
-# In the Mac script it was hardcoded to 4.14.1, but the package.json specifies 4.14.1
-if ($yarnVersion -notmatch "^1\.22" -and $yarnVersion -notmatch "^4\.") {
-    Write-Error "Incorrect yarn version: $yarnVersion. Expected 1.22.x or 4.x (as per package.json)"
-    exit 1
-}
+# Check pnpm version
+$pnpmVersion = (pnpm --version).Trim()
+Write-Host "Current pnpm version: $pnpmVersion"
 
 # Source secrets from .env.publish if it exists
 $envPublishPaths = @(".env.publish", ".agents/.env.publish")
@@ -64,8 +58,7 @@ $creds | Out-File -FilePath "log_creds.txt" -Encoding ascii
 
 # Install Dependencies
 Write-Host "Installing dependencies..."
-yarn config set nodeLinker node-modules
-yarn install
+pnpm install
 
 # Build and Publish
 Write-Host "Starting build and publish for Windows..."
@@ -74,7 +67,7 @@ if (-not $env:GH_TOKEN) {
     Write-Warning "GH_TOKEN is not set. Publishing might fail."
 }
 
-yarn build --win --publish=always
+pnpm build --win --publish=always
 
 Write-Host "Publish complete."
 Set-Location $currentPath

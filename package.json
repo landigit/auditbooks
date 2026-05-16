@@ -1,5 +1,5 @@
 {
-  "name": "audit-books",
+  "name": "auditbooks-dev",
   "version": "0.37.8",
   "description": "Simple book-keeping app for everyone",
   "author": {
@@ -11,7 +11,7 @@
     "build": "node build/scripts/build.mjs",
     "release:win": "powershell -ExecutionPolicy Bypass -File scripts/publish-windows.ps1",
     "release:mac-arm": "scripts/publish-mac-arm.sh",
-    "postinstall": "yarn electron-rebuild",
+    "postinstall": "pnpm electron-rebuild",
     "electron-rebuild": "node build/scripts/rebuild.mjs",
     "script:translate": "scripts/runner.sh scripts/generateTranslations.ts",
     "script:profile": "scripts/profile.sh",
@@ -22,14 +22,14 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "format": "prettier --write .",
-    "check": "yarn lint && yarn type",
-    "prepare": "husky"
+    "check": "pnpm lint && pnpm type"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.4.2",
     "@codemirror/lang-vue": "^0.1.1",
     "@floating-ui/dom": "^1.7.6",
     "@internationalized/date": "^3.12.1",
+    "@lucide/vue": "^1.16.0",
     "@tailwindcss/vite": "^4.2.4",
     "better-sqlite3": "^12.9.0",
     "bree": "^9.2.9",
@@ -37,7 +37,6 @@
     "codemirror": "^6.0.2",
     "electron-store": "^8.2.0",
     "knex": "3.2.10",
-    "lucide-vue-next": "^1.0.0",
     "luxon": "^3.7.2",
     "marked": "^18.0.3",
     "pesa": "^1.1.13",
@@ -66,11 +65,11 @@
     "@vue/compiler-dom": "^3.5.33",
     "@vue/test-utils": "^2.4.10",
     "chokidar": "^4.0.3",
-    "dmg-builder": "24.13.3",
+    "dmg-builder": "^25.0.8",
     "dotenv": "^16.6.1",
     "electron": "^32.3.3",
-    "electron-builder": "26.8.1",
-    "electron-builder-squirrel-windows": "24.13.3",
+    "electron-builder": "^25.0.8",
+    "electron-builder-squirrel-windows": "^25.0.8",
     "electron-updater": "^6.8.4",
     "esbuild": "^0.28.0",
     "eslint": "^9.39.4",
@@ -92,14 +91,10 @@
     "vue-tsc": "^2.2.12",
     "yargs": "^17.7.2"
   },
-  "resolutions": {
-    "node-abi": "^3.90.0",
-    "@lezer/common": "^1.5.2",
-    "@lezer/highlight": "^1.1.3",
-    "electron-builder": "26.8.1",
-    "electron-builder-squirrel-windows": "26.8.1",
-    "dmg-builder": "26.8.1",
-    "app-builder-lib": "26.8.1"
+  "pnpm": {
+    "overrides": {
+      "node-abi": "^3.90.0"
+    }
   },
   "prettier": {
     "semi": true,
@@ -111,6 +106,5 @@
   "repository": {
     "url": "https://github.com/landigit/auditbooks"
   },
-  "license": "AGPL-3.0-only",
-  "packageManager": "yarn@4.14.1"
+  "license": "AGPL-3.0-only"
 }

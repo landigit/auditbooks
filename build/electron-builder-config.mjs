@@ -9,8 +9,7 @@ import { fileURLToPath } from 'url';
  */
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-// const root = path.join(dirname, '..', '..');
-const root = dirname; // redundant, but is meant to keep with the previous line
+const root = path.join(dirname, '..');
 const buildDirPath = path.join(root, 'dist_electron', 'build');
 const packageDirPath = path.join(root, 'dist_electron', 'bundled');
 
