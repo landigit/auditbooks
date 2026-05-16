@@ -15,24 +15,24 @@
         class="flex items-center px-4 h-full hover:bg-surface-hover"
         @click="minimizeWindow"
       >
-        <lucide-icon name="minus" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="minus" class="h-4 w-4 flex-shrink-0" />
       </div>
       <div
         class="flex items-center px-4 h-full hover:bg-surface-hover"
         @click="toggleMaximize"
       >
-        <lucide-icon
+        <LucideIcon
           v-if="isMax"
           name="minimize"
           class="h-3 w-3 flex-shrink-0"
         />
-        <lucide-icon v-else name="square" class="h-3 w-3 flex-shrink-0" />
+        <LucideIcon v-else name="square" class="h-3 w-3 flex-shrink-0" />
       </div>
       <div
         class="flex items-center px-4 h-full hover:bg-error hover:text-white"
         @click="closeWindow"
       >
-        <lucide-icon name="x" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="x" class="h-4 w-4 flex-shrink-0" />
       </div>
     </div>
   </div>
@@ -40,15 +40,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { useAppStore } from 'src/stores/app';
 import Fb from './Icons/18/fb.vue';
 
-const props = defineProps<{
+defineProps<{
   dbPath?: string;
   companyName?: string;
 }>();
 
-const appStore = useAppStore();
 const isMax = ref(false);
 const isFullscreen = ref(false);
 
@@ -61,7 +59,7 @@ const closeWindow = () => ipc.closeWindow();
 
 const getIsMaximized = async () => {
   try {
-    isMax.value = await ipc.isMaximized();
+    isMax.value = (await ipc.isMaximized()) as boolean;
   } catch (error) {
     console.error(error);
   }
@@ -69,7 +67,7 @@ const getIsMaximized = async () => {
 
 const getIsFullscreen = async () => {
   try {
-    isFullscreen.value = await ipc.isFullscreen();
+    isFullscreen.value = (await ipc.isFullscreen()) as boolean;
   } catch (error) {
     console.error(error);
   }

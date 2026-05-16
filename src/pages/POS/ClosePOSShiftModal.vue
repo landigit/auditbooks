@@ -95,7 +95,7 @@ export default defineComponent({
 
       posOpeningShiftDoc: undefined as POSOpeningShift | undefined,
       posClosingShiftDoc: undefined as POSClosingShift | undefined,
-      transactedAmount: {},
+      transactedAmount: {} as Record<string, Money>,
     };
   },
   computed: {

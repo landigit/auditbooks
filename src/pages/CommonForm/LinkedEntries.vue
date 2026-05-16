@@ -175,7 +175,12 @@ export default defineComponent({
     return { shortcuts: inject(shortcutsKey) };
   },
   data() {
-    return { entries: {} };
+    return {
+      entries: {} as Record<
+        string,
+        { collapsed: boolean; details: Record<string, any>[] }
+      >,
+    };
   },
   computed: {
     sequence(): string[] {

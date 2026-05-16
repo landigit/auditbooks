@@ -136,7 +136,7 @@
 </template>
 <script>
 import { euclideanDistance, prefixFormat } from 'src/utils/chart';
-import { Tooltip } from 'src/components/ui';
+import { Tooltip } from 'src/components/Ui';
 
 export default {
   components: { Tooltip },
@@ -174,6 +174,13 @@ export default {
   },
   data() {
     return { cx: -1, cy: -1, xi: -1, yi: -1 };
+  },
+  deactivated() {
+    this.xi = -1;
+    this.yi = -1;
+    this.cx = -1;
+    this.cy = -1;
+    this.$refs.tooltip?.destroy();
   },
   computed: {
     fontStyle() {

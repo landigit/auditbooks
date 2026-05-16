@@ -1,6 +1,5 @@
 import {
   Cashflow,
-  IncomeExpense,
   TopExpenses,
   TotalCreditAndDebit,
   TotalOutstanding,
@@ -455,11 +454,11 @@ export class BespokeQueries {
       return;
     }
 
-    const groupedAmounts = await db.knex!(ModelNameEnum.Payment)
+    const groupedAmounts = (await db.knex!(ModelNameEnum.Payment)
       .select('paymentMethod', 'name')
       .whereIn('name', paymentEntryNames)
       .groupBy('paymentMethod', 'name')
-      .sum({ amount: 'amount' });
+      .sum({ amount: 'amount' })) as any[];
 
     const transactedAmounts: Record<string, number> = {};
 

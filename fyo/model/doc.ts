@@ -1125,7 +1125,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
    */
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  async change(ch: ChangeArg) {}
+  async change(_ch: ChangeArg) {}
   async validate() {}
   async beforeSync() {}
   async afterSync() {}
@@ -1151,15 +1151,15 @@ export class Doc extends Observable<DocValue | Doc[]> {
   static defaults: DefaultMap = {};
   static emptyMessages: EmptyMessageMap = {};
 
-  static getListViewSettings(fyo: Fyo): ListViewSettings {
+  static getListViewSettings(_fyo: Fyo): ListViewSettings {
     return {};
   }
 
-  static getTreeSettings(fyo: Fyo): TreeViewSettings | void {
+  static getTreeSettings(_fyo: Fyo): TreeViewSettings | void {
     return;
   }
 
-  static getActions(fyo: Fyo): Action[] {
+  static getActions(_fyo: Fyo): Action[] {
     return [];
   }
 }

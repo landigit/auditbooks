@@ -80,6 +80,8 @@ export default defineComponent({
         yMax,
         yMin,
         formatX: formatXLabels,
+        gridColor: 'var(--color-border)',
+        fontColor: 'var(--color-description)',
       };
     },
   },

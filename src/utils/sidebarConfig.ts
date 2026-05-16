@@ -159,12 +159,12 @@ function getCompleteSidebar(): SidebarConfig {
       route: '/',
       icon: 'dashboard',
     },
-    /* {
+    {
       label: t`Calendar`,
       name: 'calendar',
       route: '/calendar',
-      icon: 'calendar',
-    }, */
+      icon: 'calendar-range',
+    },
     {
       label: t`Sales`,
       name: 'sales',

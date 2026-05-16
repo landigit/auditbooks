@@ -23,15 +23,15 @@ export function getTestSchemaMap(): {
   regionalSchemaMap: RegionalSchemaMap;
 } {
   const appSchemaMap: AppSchemaMap = {
-    Account,
-    JournalEntry,
-    JournalEntryAccount,
-    Party,
-    Customer,
+    Account: Account as any as SchemaStub,
+    JournalEntry: JournalEntry as any as SchemaStub,
+    JournalEntryAccount: JournalEntryAccount as any as SchemaStub,
+    Party: Party as any as SchemaStub,
+    Customer: Customer as any as SchemaStub,
   };
 
   const regionalSchemaMap: RegionalSchemaMap = {
-    Party: PartyRegional,
+    Party: PartyRegional as any as SchemaStub,
   };
 
   return structuredClone({

@@ -34,7 +34,8 @@
           "
           @click="routeToSidebarItem(group)"
         >
-          <Icon
+          <component
+            :is="group.icon === 'calendar-range' ? 'LucideIcon' : 'Icon'"
             class="flex-shrink-0"
             :name="group.icon"
             :size="group.iconSize || '18'"
@@ -79,7 +80,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="openDocumentation"
       >
-        <lucide-icon name="help-circle" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="help-circle" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Help` }}
         </p>
@@ -89,7 +90,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="viewShortcuts = true"
       >
-        <lucide-icon name="command" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="command" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Shortcuts` }}</p>
       </button>
 
@@ -98,7 +99,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="$emit('change-db-file')"
       >
-        <lucide-icon name="database" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="database" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Change DB` }}</p>
       </button>
 
@@ -107,11 +108,11 @@
         @click="$emit('toggle-darkmode')"
       >
         <template v-if="resolvedIsDark">
-          <lucide-icon name="sun" class="h-4 w-4 flex-shrink-0" />
+          <LucideIcon name="sun" class="h-4 w-4 flex-shrink-0" />
           <p>{{ t`Light Mode` }}</p>
         </template>
         <template v-else>
-          <lucide-icon name="moon" class="h-4 w-4 flex-shrink-0" />
+          <LucideIcon name="moon" class="h-4 w-4 flex-shrink-0" />
           <p>{{ t`Dark Mode` }}</p>
         </template>
       </button>
@@ -120,7 +121,7 @@
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="() => reportIssue()"
       >
-        <lucide-icon name="flag" class="h-4 w-4 flex-shrink-0" />
+        <LucideIcon name="flag" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Send Feedback` }}
         </p>
@@ -141,7 +142,7 @@
       class="absolute bottom-0 end-0 text-description hover:bg-surface-hover rounded p-1 m-4 rtl-rotate-180"
       @click="() => toggleSidebar()"
     >
-      <lucide-icon name="chevrons-left" class="w-4 h-4" />
+      <LucideIcon name="chevrons-left" class="w-4 h-4" />
     </button>
 
     <Modal :open-modal="viewShortcuts" @closemodal="viewShortcuts = false">

@@ -52,6 +52,7 @@ export abstract class InvoiceItem extends Doc {
   qty?: number;
   unitConversionFactor?: number;
   batch?: string;
+  serialNumber?: string;
 
   tax?: string;
   stockNotTransferred?: number;

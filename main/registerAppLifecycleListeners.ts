@@ -1,6 +1,5 @@
 import { app } from 'electron';
 import { Main } from '../main';
-import { rendererLog } from './helpers';
 import { emitMainProcessError } from 'backend/helpers';
 
 export default function registerAppLifecycleListeners(main: Main) {

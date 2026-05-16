@@ -49,7 +49,7 @@
           :style="{
             paddingTop: key === activeTab ? 'calc(1rem - 2px)' : '1rem',
           }"
-          @click="activeTab = key"
+          @click="activeTab = key as ModelNameEnum"
         >
           {{ tabLabels[key] }}
         </div>
@@ -279,7 +279,7 @@ export default defineComponent({
       const fields: Field[] = this.schemas.map((s) => s.fields).flat();
 
       for (const field of fields) {
-        const schemaName = field.schemaName!;
+        const schemaName = field.schemaName! as ModelNameEnum;
         if (!grouped.has(schemaName)) {
           grouped.set(schemaName, new Map());
         }

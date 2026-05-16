@@ -10,6 +10,8 @@ import {
 } from 'reka-ui';
 import TooltipContent from './TooltipContent.vue';
 
+import { useRoute } from 'vue-router';
+
 const props = withDefaults(
   defineProps<TooltipRootProps & { open?: boolean }>(),
   {
@@ -64,6 +66,15 @@ watch(internalOpen, (val) => {
   isOpen.value = val;
 });
 
+// Close on route change
+const route = useRoute();
+watch(
+  () => route?.fullPath,
+  () => {
+    internalOpen.value = false;
+    isOpen.value = false;
+  }
+);
 </script>
 
 <template>

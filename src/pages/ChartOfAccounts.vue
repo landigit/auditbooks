@@ -24,7 +24,11 @@
           :style="getItemStyle(account.level)"
           @click="onClick(account)"
         >
-          <component :is="getIconComponent(!!account.isGroup, account.name)" />
+          <LucideIcon
+            :name="getIconName(!!account.isGroup, account.name)"
+            :size="account.isGroup ? 20 : 16"
+            class="text-description group-hover:text-main transition-colors"
+          />
           <div class="flex items-baseline">
             <div
               class="ms-4"
@@ -71,7 +75,11 @@
           class="px-4 border-b border-border cursor-pointer hover:bg-surface-hover group flex items-center text-base"
           :style="getGroupStyle(account.level + 1)"
         >
-          <component :is="getIconComponent(account.addingGroupAccount)" />
+          <LucideIcon
+            :name="getIconName(!!account.addingGroupAccount)"
+            :size="account.addingGroupAccount ? 20 : 16"
+            class="text-description"
+          />
           <div class="flex ms-4 h-row-mid items-center">
             <input
               :ref="account.name"
@@ -83,15 +91,13 @@
               :disabled="insertingAccount"
               @keydown.esc="cancelAddingAccount(account)"
               @keydown.enter="
-                (e) => createNewAccount(account, account.addingGroupAccount)
+                createNewAccount(account, account.addingGroupAccount)
               "
             />
             <button
               v-if="!insertingAccount"
               class="ms-4 text-xs text-description hover:text-main focus:outline-none"
-              @click="
-                (e) => createNewAccount(account, account.addingGroupAccount)
-              "
+              @click="createNewAccount(account, account.addingGroupAccount)"
             >
               {{ t`Save` }}
             </button>
@@ -116,17 +122,16 @@ import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
 import { languageDirectionKey } from 'src/utils/injectionKeys';
 import { docsPathMap } from 'src/utils/misc';
-import { commongDocDelete, openQuickEdit } from 'src/utils/ui';
+import { openQuickEdit, commongDocDelete } from 'src/utils/ui';
 import { getMapFromList, removeAtIndex } from 'utils/index';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent, nextTick } from 'vue';
+import { defineComponent, nextTick, inject } from 'vue';
 import Button from '../components/Button.vue';
-import { inject } from 'vue';
 import { handleErrorWithDialog } from '../errorHandling';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { AccountRootType, AccountType } from 'models/baseModels/Account/types';
 import { TreeViewSettings } from 'fyo/model/types';
 import { Doc } from 'fyo/model/doc';
-import { Component } from 'vue';
 import { showDialog } from 'src/utils/interactive';
 
 type AccountItem = {
@@ -149,6 +154,7 @@ export default defineComponent({
   components: {
     Button,
     PageHeader,
+    LucideIcon,
   },
   setup() {
     return {
@@ -165,7 +171,10 @@ export default defineComponent({
       schemaName: 'Account',
       newAccountName: '',
       insertingAccount: false,
-      totals: {},
+      totals: {} as Record<
+        string,
+        { totalCredit: number; totalDebit: number } | undefined
+      >,
       refetchTotals: false,
       settings: null as null | TreeViewSettings,
     };
@@ -483,46 +492,16 @@ export default defineComponent({
       let { edit, schemaName, name } = this.$route.query;
       return !!(edit && schemaName === 'Account' && name === account.name);
     },
-    getIconComponent(isGroup: boolean, name?: string): Component {
-      let lightColor = 'var(--color-description)';
-      let darkColor = 'var(--color-main)';
-      let icons = {
-        'Application of Funds (Assets)': `<svg class="w-4 h-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" fill-rule="evenodd">
-              <path d="M15.333 5.333H.667A.667.667 0 000 6v9.333c0 .368.299.667.667.667h14.666a.667.667 0 00.667-.667V6a.667.667 0 00-.667-.667zM8 12.667a2 2 0 110-4 2 2 0 010 4z" fill="${darkColor}" fill-rule="nonzero"/>
-              <path d="M14 2.667V4H2V2.667h12zM11.333 0v1.333H4.667V0h6.666z" fill="${lightColor}"/>
-            </g>
-          </svg>`,
-        Expenses: `<svg class="w-4 h-4" viewBox="0 0 14 16" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.668 0v15.333a.666.666 0 01-.666.667h-12a.666.666 0 01-.667-.667V0l2.667 2 2-2 2 2 2-2 2 2 2.666-2zM9.964 4.273H4.386l-.311 1.133h1.62c.933 0 1.474.362 1.67.963H4.373l-.298 1.053h3.324c-.175.673-.767 1.044-1.705 1.044H4.182l.008.83L7.241 13h1.556v-.072L6.01 9.514c1.751-.106 2.574-.942 2.748-2.092h.904l.298-1.053H8.75a2.375 2.375 0 00-.43-1.044l1.342.009.302-1.061z" fill="${darkColor}" fill-rule="evenodd"/>
-          </svg>`,
-        Income: `<svg class="w-4 h-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" fill-rule="evenodd">
-              <path d="M16 12.859V14c0 1.105-2.09 2-4.667 2-2.494 0-4.531-.839-4.66-1.894L6.667 14v-1.141C7.73 13.574 9.366 14 11.333 14c1.968 0 3.602-.426 4.667-1.141zm0-3.334v1.142c0 1.104-2.09 2-4.667 2-2.494 0-4.531-.839-4.66-1.894l-.006-.106V9.525c1.064.716 2.699 1.142 4.666 1.142 1.968 0 3.602-.426 4.667-1.142zm-4.667-4.192c2.578 0 4.667.896 4.667 2 0 1.105-2.09 2-4.667 2s-4.666-.895-4.666-2c0-1.104 2.089-2 4.666-2z" fill="${darkColor}"/>
-              <path d="M0 10.859C1.065 11.574 2.7 12 4.667 12l.337-.005.33-.013v1.995c-.219.014-.44.023-.667.023-2.495 0-4.532-.839-4.66-1.894L0 12v-1.141zm0-2.192V7.525c1.065.716 2.7 1.142 4.667 1.142l.337-.005.33-.013v1.995c-.219.013-.44.023-.667.023-2.495 0-4.532-.839-4.66-1.894L0 8.667V7.525zm0-4.475c1.065.715 2.7 1.141 4.667 1.141.694 0 1.345-.056 1.946-.156-.806.56-1.27 1.292-1.278 2.134-.219.013-.441.022-.668.022-2.578 0-4.667-.895-4.667-2zM4.667 0c2.577 0 4.666.895 4.666 2S7.244 4 4.667 4C2.089 4 0 3.105 0 2s2.09-2 4.667-2z" fill="${lightColor}"/>
-            </g>
-          </svg>`,
-        'Source of Funds (Liabilities)': `<svg class="w-4 h-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" fill-rule="evenodd">
-              <path d="M7.332 11.36l4.666-3.734 2 1.6V.666A.667.667 0 0013.332 0h-12a.667.667 0 00-.667.667v14.666c0 .369.298.667.667.667h6v-4.64zm-4-7.36H11.3v1.333H3.332V4zm2.666 8H3.332v-1.333h2.666V12zM3.332 8.667V7.333h5.333v1.334H3.332z" fill="${darkColor}"/>
-              <path d="M15.332 12l-3.334-2.667L8.665 12v3.333c0 .369.298.667.667.667h2v-2h1.333v2h2a.667.667 0 00.667-.667V12z" fill="${lightColor}"/>
-            </g>
-          </svg>`,
+    getIconName(isGroup: boolean, name?: string): string {
+      const icons: Record<string, string> = {
+        'Application of Funds (Assets)': 'dock',
+        Expenses: 'indian-rupee',
+        Income: 'hand-coins',
+        'Source of Funds (Liabilities)': 'wallet-cards',
       };
 
-      let leaf = `<svg class="w-2 h-2" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
-        <circle stroke="${darkColor}" cx="4" cy="4" r="3.5" fill="none" fill-rule="evenodd"/>
-      </svg>`;
-
-      let folder = `<svg class="w-3 h-3" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8.333 3.367L6.333.7H.667A.667.667 0 000 1.367v12a2 2 0 002 2h12a2 2 0 002-2V4.033a.667.667 0 00-.667-.666h-7z" fill="${darkColor}" fill-rule="evenodd"/>
-      </svg>`;
-
-      let icon = isGroup ? folder : leaf;
-
-      return {
-        template: icons[name as keyof typeof icons] || icon,
-      };
+      if (name && icons[name]) return icons[name];
+      return isGroup ? 'folder' : 'circle';
     },
     getItemStyle(level: number) {
       const styles: Record<string, string> = {

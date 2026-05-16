@@ -17,21 +17,22 @@
             class="w-full md:w-1/3 sm:w-1/2"
           >
             <div
-              class="flex flex-col justify-between h-40 p-4 border border-border text-main rounded-lg"
+              class="flex flex-col justify-between min-h-40 p-4 border border-border text-main rounded-lg"
               @mouseenter="() => (activeCard = item.key)"
               @mouseleave="() => (activeCard = null)"
             >
               <div>
-                <component
-                  :is="getIconComponent(item)"
-                  v-show="activeCard !== item.key && !isCompleted(item)"
-                  class="mb-4"
+                <LucideIcon
+                  v-if="!isCompleted(item)"
+                  :name="item.icon"
+                  :size="24"
+                  class="mb-4 text-description"
                 />
-                <Icon
-                  v-show="isCompleted(item)"
-                  name="green-check"
-                  size="24"
-                  class="w-5 h-5 mb-4"
+                <LucideIcon
+                  v-else
+                  name="check-circle-2"
+                  :size="24"
+                  class="mb-4 text-green-500"
                 />
                 <h3 class="font-medium">{{ item.label }}</h3>
                 <p class="mt-2 text-sm text-description">
@@ -39,8 +40,8 @@
                 </p>
               </div>
               <div
-                v-show="activeCard === item.key && !isCompleted(item)"
-                class="flex mt-2 overflow-hidden"
+                v-if="!isCompleted(item)"
+                class="flex mt-4 overflow-hidden"
               >
                 <Button
                   v-if="item.action"
@@ -70,12 +71,12 @@
 <script lang="ts">
 import { DocValue } from 'fyo/core/types';
 import Button from 'src/components/Button.vue';
-import Icon from 'src/components/Icon.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
 import { getGetStartedConfig } from 'src/utils/getStartedConfig';
 import { GetStartedConfigItem } from 'src/utils/types';
-import { Component, defineComponent, h } from 'vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
+import { defineComponent } from 'vue';
 
 type ListItem = GetStartedConfigItem['items'][number];
 
@@ -84,7 +85,7 @@ export default defineComponent({
   components: {
     PageHeader,
     Button,
-    Icon,
+    LucideIcon,
   },
   data() {
     return {
@@ -209,26 +210,6 @@ export default defineComponent({
     },
     isCompleted(item: ListItem) {
       return fyo.singles.GetStarted?.get(item.fieldname) || false;
-    },
-    getIconComponent(item: ListItem) {
-      let completed = fyo.singles.GetStarted?.[item.fieldname] || false;
-      let name = completed ? 'green-check' : item.icon;
-      let size = completed ? '24' : '18';
-      return {
-        name,
-        render() {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          return h(Icon, {
-            ...Object.assign(
-              {
-                name,
-                size,
-              },
-              this.$attrs
-            ),
-          });
-        },
-      } as Component;
     },
   },
 });

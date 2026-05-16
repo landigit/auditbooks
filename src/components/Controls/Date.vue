@@ -35,7 +35,7 @@
 import { fyo } from 'src/initFyo';
 import { defineComponent } from 'vue';
 import Base from './Base.vue';
-import { DatePicker } from 'src/components/ui';
+import { DatePicker } from 'src/components/Ui';
 
 export default defineComponent({
   extends: Base,

@@ -53,7 +53,7 @@ export function getRandomDates(count: number, months: number): Date[] {
   let endDate = DateTime.now();
   if (months !== 0) {
     const back = endDate.minus({ months });
-    endDate = DateTime.local(back.year, back.month, back.daysInMonth);
+    endDate = DateTime.local(back.year, back.month, back.daysInMonth ?? 30) as any;
   }
 
   const dates: Date[] = [];

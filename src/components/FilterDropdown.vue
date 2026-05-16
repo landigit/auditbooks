@@ -7,7 +7,7 @@
     <PopoverTrigger as-child>
       <Button :icon="true">
         <span class="flex items-center">
-          <Icon name="filter" size="12" class="stroke-current text-muted" />
+          <LucideIcon name="filter" :size="12" class="text-muted" />
           <span class="ms-1">
             <template v-if="activeFilterCount > 0">
               {{ filterAppliedMessage }}
@@ -37,10 +37,9 @@
                   class="cursor-pointer w-4 h-4 flex items-center justify-center text-description hover:text-main rounded-md group"
                 >
                   <span class="hidden group-hover:inline-block">
-                    <lucide-icon
+                    <LucideIcon
                       name="x"
                       class="w-4 h-4 cursor-pointer"
-                      :button="true"
                       @click="removeFilter(i)"
                     />
                   </span>
@@ -116,7 +115,7 @@
             class="text-base border-t border-border p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
             @click.stop="addNewFilter"
           >
-            <lucide-icon name="plus" class="w-4 h-4" />
+            <LucideIcon name="plus" class="w-4 h-4" />
             <span class="ms-2">{{ t`Add a filter` }}</span>
           </div>
 
@@ -126,7 +125,7 @@
               class="text-base p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
               @click="clearAllFilters"
             >
-              <lucide-icon name="trash-2" class="w-4 h-4" />
+              <LucideIcon name="trash-2" class="w-4 h-4" />
               <span class="ms-2">{{ t`Clear` }}</span>
             </div>
 
@@ -135,7 +134,7 @@
               @click="applyFilters"
               class="text-base border-t border-border p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
             >
-              <lucide-icon name="search" class="w-4 h-4" />
+              <LucideIcon name="search" class="w-4 h-4" />
               <span class="ml-2 text-sm">{{ t`Apply` }}</span>
             </div>
           </div>
@@ -152,8 +151,7 @@ import { defineComponent } from 'vue';
 import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
-import Icon from './Icon.vue';
-import { Popover, PopoverTrigger, PopoverContent } from 'src/components/ui';
+import { Popover, PopoverTrigger, PopoverContent } from 'src/components/Ui';
 import { QueryFilter } from 'utils/db/types';
 import { t } from 'fyo';
 
@@ -184,7 +182,6 @@ export default defineComponent({
     PopoverTrigger,
     PopoverContent,
     Button,
-    Icon,
     Select,
     Data,
   },

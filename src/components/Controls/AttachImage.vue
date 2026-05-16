@@ -106,7 +106,7 @@ export default defineComponent({
         return;
       }
       const extension = name.split('.').at(-1);
-      const type = mime_types[extension];
+      const type = (extension && mime_types[extension]) || 'image/png';
       const dataURL = await getDataURL(type, data);
 
       // @ts-ignore

@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Calendar } from 'src/components/ui';
+import { Calendar as CalendarUI } from 'src/components/Ui';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
-import { CalendarDate, type DateValue } from '@internationalized/date';
+import { CalendarDate } from '@internationalized/date';
 import { routeTo } from 'src/utils/ui';
 import { getFormRoute } from 'src/utils/ui';
-import StatusPill from 'src/components/StatusPill.vue';
+import Badge from 'src/components/Badge.vue';
 
 const today = new Date();
-const dateValue = ref<DateValue>(
+const dateValue = ref<any>(
   new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate())
 );
 const transactions = ref<any[]>([]);
@@ -32,7 +32,11 @@ async function fetchTransactions() {
 
   transactions.value = allResults
     .flat()
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort(
+      (a, b) =>
+        new Date(b.date as string).getTime() -
+        new Date(a.date as string).getTime()
+    );
 }
 
 const selectedDayTransactions = computed(() => {
@@ -45,7 +49,9 @@ const selectedDayTransactions = computed(() => {
     .toISOString()
     .split('T')[0];
 
-  return transactions.value.filter((t) => t.date.startsWith(selectedDateStr));
+  return transactions.value.filter((t) =>
+    (t.date as string).startsWith(selectedDateStr)
+  );
 });
 
 onMounted(fetchTransactions);
@@ -63,10 +69,20 @@ async function openTransaction(t: any) {
     <div class="flex-1 flex overflow-hidden p-6 gap-6">
       <!-- Calendar Panel -->
       <div class="w-1/3 flex flex-col gap-4">
-        <Calendar
-          v-model="dateValue"
-          class="w-full border-border border rounded"
-          @update:model-value="fetchTransactions"
+        <component
+          :is="CalendarUI"
+          v-bind="
+            {
+              modelValue: dateValue,
+              class: 'w-full border-border border rounded',
+            } as any
+          "
+          @update:model-value="
+            (val: any) => {
+              dateValue = val;
+              fetchTransactions();
+            }
+          "
         />
 
         <!-- <div class="bg-surface p-4 rounded border border-border">
@@ -127,7 +143,9 @@ async function openTransaction(t: any) {
                 fyo.format(t.grandTotal || t.total_amount || 0, 'Currency')
               }}</span>
               <div class="mt-1">
-                <StatusPill :value="t.status || 'Submitted'" />
+                <Badge color="blue">
+                  {{ t.status || 'Submitted' }}
+                </Badge>
               </div>
             </div>
           </div>
@@ -136,7 +154,7 @@ async function openTransaction(t: any) {
             v-if="selectedDayTransactions.length === 0"
             class="h-full flex flex-col items-center justify-center text-description py-20"
           >
-            <lucide-icon name="calendar" class="w-12 h-12 mb-4 opacity-20" />
+            <lucide-icon name="calendar-range" class="w-12 h-12 mb-4 opacity-20" />
             <p>{{ t`No transactions for this day` }}</p>
           </div>
         </div>

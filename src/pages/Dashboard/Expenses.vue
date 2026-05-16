@@ -16,7 +16,7 @@
           :key="d.account"
           class="flex items-center text-sm"
           @mouseover="active = i"
-          @mouseleave="active = null"
+          @mouseleave="active = undefined"
         >
           <div class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
           <p class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28">
@@ -54,7 +54,6 @@
 
 <script lang="ts">
 import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
 import { truncate } from 'src/utils';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { defineComponent } from 'vue';
@@ -78,12 +77,12 @@ export default defineComponent({
   extends: DashboardChartBase,
   props: {},
   data: () => ({
-    active: null as null | number,
+    active: undefined as undefined | number,
     expenses: [] as {
       account: string;
       total: number;
-      color: { color: string; darkColor: string };
-      class: { class: string; darkClass: string };
+      color: string;
+      class: string;
     }[],
   }),
   computed: {
@@ -94,7 +93,7 @@ export default defineComponent({
       return this.expenses.length > 0;
     },
     sectors(): {
-      color: { color: string; darkColor: string };
+      color: string;
       label: string;
       value: number;
     }[] {
@@ -108,12 +107,15 @@ export default defineComponent({
   activated() {
     this.setData();
   },
+  deactivated() {
+    this.active = undefined;
+  },
   methods: {
     async setData() {
       const { fromDate, toDate } = getDatesAndPeriodList(this.period);
       let topExpenses = await fyo.db.getTopExpenses(
-        fromDate.toISO(),
-        toDate.toISO()
+        fromDate.toISO() as string,
+        toDate.toISO() as string
       );
       const shades = [
         { class: 'bg-chart-pink-1', hex: 'var(--color-chart-pink-1)' },

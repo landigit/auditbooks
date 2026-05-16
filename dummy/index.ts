@@ -44,7 +44,7 @@ export async function setupDummyInstance(
     chartOfAccounts: 'India - Chart of Accounts',
   };
   await setupInstance(dbPath, options, fyo);
-  fyo.store.skipTelemetryLogging = true;
+  fyo.skipTelemetryLogging = true;
 
   years = Math.floor(years);
   notifier?.(fyo.t`Creating Items and Parties`, -1);
@@ -58,7 +58,7 @@ export async function setupDummyInstance(
   )) as string;
   await fyo.singles.SystemSettings?.setAndSync('hideGetStarted', true);
 
-  fyo.store.skipTelemetryLogging = false;
+  fyo.skipTelemetryLogging = false;
   return { companyName: options.companyName, instanceId };
 }
 
@@ -280,7 +280,7 @@ async function getSalesInvoices(
     const numItems = Math.ceil(Math.random() * 5);
     for (let i = 0; i < numItems; i++) {
       const item = salesItems[Math.floor(Math.random() * salesItems.length)];
-      if ((doc.items ?? []).find((i) => i.item === item)) {
+      if ((doc.items ?? []).find((i) => i.item === item.name)) {
         continue;
       }
 

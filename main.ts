@@ -127,7 +127,7 @@ export class Main {
     if (this.isDevelopment) {
       this.mainWindow.webContents.on(
         'console-message',
-        (event, level, message, line, sourceId) => {
+        (_event, level, message, line, sourceId) => {
           const levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
           console.log(
             `[Renderer ${levels[level] || 'LOG'}] ${message} (${sourceId}:${line})`

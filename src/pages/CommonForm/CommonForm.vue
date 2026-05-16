@@ -36,7 +36,7 @@
         :title="t`View linked entries`"
         @click="showLinks = true"
       >
-        <lucide-icon name="link" class="w-4 h-4"></lucide-icon>
+        <LucideIcon name="link" class="w-4 h-4"></LucideIcon>
       </Button>
       <Button
         v-if="canPrint"
@@ -45,17 +45,17 @@
         :title="t`Open Print View`"
         @click="routeTo(`/print/${doc.schemaName}/${doc.name}`)"
       >
-        <lucide-icon name="printer" class="w-4 h-4"></lucide-icon>
+        <LucideIcon name="printer" class="w-4 h-4"></LucideIcon>
       </Button>
       <Button
         :icon="true"
         :title="t`Toggle between form and full width`"
         @click="toggleWidth"
       >
-        <lucide-icon
+        <LucideIcon
           :name="useFullWidth ? 'minimize' : 'maximize'"
           class="w-4 h-4"
-        ></lucide-icon>
+        ></LucideIcon>
       </Button>
       <DropdownWithActions
         v-for="group of groupedActions"
@@ -66,7 +66,7 @@
         <p v-if="group.group">
           {{ group.group }}
         </p>
-        <lucide-icon v-else name="more-horizontal" class="w-4 h-4" />
+        <LucideIcon v-else name="more-horizontal" class="w-4 h-4" />
       </DropdownWithActions>
       <Button v-if="doc?.canSave" type="primary" @click="sync">
         {{ t`Save` }}
@@ -228,13 +228,13 @@ export default defineComponent({
   },
   data() {
     return {
-      errors: {},
+      errors: {} as Record<string, string>,
       activeTab: this.t`Default`,
-      groupedFields: null,
+      groupedFields: null as UIGroupedFields | null,
       isPrintable: false,
       showLinks: false,
       useFullWidth: false,
-      row: null,
+      row: null as { index: number; fieldname: string } | null,
     };
   },
   computed: {

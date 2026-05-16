@@ -205,7 +205,7 @@ export class TrialBalance extends AccountReport {
       this.fromDate = endpoints.fromDate;
       this.toDate = DateTime.fromISO(endpoints.toDate)
         .minus({ days: 1 })
-        .toISODate();
+        .toISODate()!;
     }
 
     await this._setDateRanges();

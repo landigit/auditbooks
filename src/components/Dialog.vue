@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from 'src/components/ui';
+} from 'src/components/Ui';
 import Button from './Button.vue';
 import LucideIcon from './LucideIcon.vue';
 import { getIconConfig } from 'src/utils/interactive';
@@ -71,11 +71,7 @@ onMounted(async () => {
       </div>
 
       <DialogFooter class="p-4 bg-canvas-muted flex justify-center gap-4">
-        <DialogClose
-          v-for="(b, index) in buttons"
-          :key="b.label"
-          as-child
-        >
+        <DialogClose v-for="(b, index) in buttons" :key="b.label" as-child>
           <Button
             :type="b.isPrimary ? 'primary' : 'secondary'"
             class="w-full"

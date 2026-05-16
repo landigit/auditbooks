@@ -318,7 +318,6 @@
   --color-indicator-cancelled-text: var(--color-red-700);
   --color-indicator-yellow-bg: var(--color-yellow-100);
   --color-indicator-yellow-text: var(--color-yellow-700);
-
 }
 
 @layer base {
@@ -394,31 +393,54 @@
 }
 
 @theme {
-
   /* Animations */
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes fade-out {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
   }
   @keyframes zoom-in {
-    from { transform: scale(0.95); }
-    to { transform: scale(1); }
+    from {
+      transform: scale(0.95);
+    }
+    to {
+      transform: scale(1);
+    }
   }
   @keyframes zoom-out {
-    from { transform: scale(1); }
-    to { transform: scale(0.95); }
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(0.95);
+    }
   }
   @keyframes slide-in-from-top {
-    from { transform: translateY(-0.5rem); }
-    to { transform: translateY(0); }
+    from {
+      transform: translateY(-0.5rem);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
   @keyframes slide-in-from-bottom {
-    from { transform: translateY(0.5rem); }
-    to { transform: translateY(0); }
+    from {
+      transform: translateY(0.5rem);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 
   --animate-in: fade-in 0.2s ease-out, zoom-in 0.2s ease-out;
@@ -574,18 +596,43 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 /* App Layout Classes */
-.w-form { width: var(--w-form); }
-.w-dialog { width: 24rem; }
-.w-toast { width: 24rem; }
-.w-quick-edit { width: var(--w-quick-edit); flex-shrink: 0; }
-.h-form { height: var(--h-app); }
-.h-row-smallest { height: var(--h-row-smallest); }
-.h-row-small { height: var(--h-row-small); }
-.h-row-mid { height: var(--h-row-mid); }
-.h-row-large { height: var(--h-row-large); }
-.h-row-largest { height: var(--h-row-largest); }
-.w-sidebar { width: var(--w-sidebar); }
-.w-desk { width: var(--w-desk); }
+.w-form {
+  width: var(--w-form);
+}
+.w-dialog {
+  width: 24rem;
+}
+.w-toast {
+  width: 24rem;
+}
+.w-quick-edit {
+  width: var(--w-quick-edit);
+  flex-shrink: 0;
+}
+.h-form {
+  height: var(--h-app);
+}
+.h-row-smallest {
+  height: var(--h-row-smallest);
+}
+.h-row-small {
+  height: var(--h-row-small);
+}
+.h-row-mid {
+  height: var(--h-row-mid);
+}
+.h-row-large {
+  height: var(--h-row-large);
+}
+.h-row-largest {
+  height: var(--h-row-largest);
+}
+.w-sidebar {
+  width: var(--w-sidebar);
+}
+.w-desk {
+  width: var(--w-desk);
+}
 
 /* Transitions */
 .quickedit-enter-from,
@@ -607,7 +654,9 @@ input[type='number']::-webkit-inner-spin-button {
 
 /* RTL Support */
 [dir='rtl'] {
-  .rtl-rotate-180 { transform: rotate(180deg); }
+  .rtl-rotate-180 {
+    transform: rotate(180deg);
+  }
   .custom-scroll::-webkit-scrollbar-track:vertical {
     border-right: solid 1px var(--color-border);
   }

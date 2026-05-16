@@ -17,7 +17,7 @@ const props = withDefaults(
     TooltipContentProps & {
       class?: HTMLAttributes['class'];
       offset?: number;
-      placement?: string;
+      placement?: 'top' | 'right' | 'bottom' | 'left';
     }
   >(),
   {

@@ -112,7 +112,7 @@ import {
   PopoverTrigger,
   PopoverAnchor,
   PopoverContent,
-} from 'src/components/ui';
+} from 'src/components/Ui';
 import Base from './Base.vue';
 import QuickView from '../QuickView.vue';
 

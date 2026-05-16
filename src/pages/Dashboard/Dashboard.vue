@@ -16,7 +16,7 @@
         class="ms-2"
         @click="$router.push('/calendar')"
       >
-        <lucide-icon name="calendar" class="w-4 h-4 me-2" />
+        <lucide-icon name="calendar-range" class="w-4 h-4 me-2" />
         {{ t`View Calendar` }}
       </Button> -->
     </PageHeader>
@@ -71,7 +71,7 @@ import Cashflow from './Cashflow.vue';
 import Expenses from './Expenses.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import ProfitAndLoss from './ProfitAndLoss.vue';
-import { Button } from 'src/components/ui';
+import { Button } from 'src/components/Ui';
 import { useAppStore } from 'src/stores/app';
 
 export default {

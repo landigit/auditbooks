@@ -12,7 +12,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'General',
           label: t`General`,
-          icon: 'general',
+          icon: 'home',
           description: t`Set up your company information, email, country and fiscal year`,
           fieldname: 'companySetup',
           action: () => openSettings(ModelNameEnum.AccountingSettings),
@@ -20,7 +20,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Print',
           label: t`Print`,
-          icon: 'invoice',
+          icon: 'file-text',
           description: t`Customize your invoices by adding a logo and address details`,
           fieldname: 'printSetup',
           action: () => openSettings(ModelNameEnum.PrintSettings),
@@ -28,7 +28,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'System',
           label: t`System`,
-          icon: 'system',
+          icon: 'settings-2',
           description: t`Setup system defaults like date format and display precision`,
           fieldname: 'systemSetup',
           action: () => openSettings(ModelNameEnum.SystemSettings),
@@ -41,7 +41,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Review Accounts',
           label: t`Review Accounts`,
-          icon: 'review-ac',
+          icon: 'book-open',
           description: t`Review your chart of accounts, add any account or tax heads as needed`,
           action: () => routeTo('/chart-of-accounts'),
           fieldname: 'chartOfAccountsReviewed',
@@ -50,7 +50,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Opening Balances',
           label: t`Opening Balances`,
-          icon: 'opening-ac',
+          icon: 'arrow-up-right',
           fieldname: 'openingBalanceChecked',
           description: t`Set up your opening balances before performing any accounting entries`,
           documentation:
@@ -59,7 +59,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Add Taxes',
           label: t`Add Taxes`,
-          icon: 'percentage',
+          icon: 'percent',
           fieldname: 'taxesAdded',
           description: t`Set up your tax templates for your sales or purchase transactions`,
           action: () => routeTo('/list/Tax'),
@@ -74,7 +74,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Add Sales Items',
           label: t`Add Items`,
-          icon: 'item',
+          icon: 'box',
           description: t`Add products or services that you sell to your customers`,
           action: () =>
             routeTo({
@@ -90,7 +90,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Add Customers',
           label: t`Add Customers`,
-          icon: 'customer',
+          icon: 'users',
           description: t`Add a few customers to create your first sales invoice`,
           action: () =>
             routeTo({
@@ -106,7 +106,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Create Sales Invoice',
           label: t`Create Sales Invoice`,
-          icon: 'sales-invoice',
+          icon: 'file-up',
           description: t`Create your first sales invoice for the created customer`,
           action: () => routeTo('/list/SalesInvoice'),
           fieldname: 'invoiceCreated',
@@ -120,7 +120,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Add Purchase Items',
           label: t`Add Items`,
-          icon: 'item',
+          icon: 'box',
           description: t`Add products or services that you buy from your suppliers`,
           action: () =>
             routeTo({
@@ -134,7 +134,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Add Suppliers',
           label: t`Add Suppliers`,
-          icon: 'supplier',
+          icon: 'truck',
           description: t`Add a few suppliers to create your first purchase invoice`,
           action: () =>
             routeTo({
@@ -146,7 +146,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
         {
           key: 'Create Purchase Invoice',
           label: t`Create Purchase Invoice`,
-          icon: 'purchase-invoice',
+          icon: 'file-down',
           description: t`Create your first purchase invoice from the created supplier`,
           action: () => routeTo('/list/PurchaseInvoice'),
           fieldname: 'billCreated',

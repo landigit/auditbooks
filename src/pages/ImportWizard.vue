@@ -397,7 +397,7 @@ type ImportWizardData = {
   successOldName: string[];
   failed: { name: string; error: Error }[];
   file: null | { name: string; filePath: string; text: string };
-  nullOrImporter: null | Importer;
+  nullOrImporter: null | any;
   importType: string;
   isMakingEntries: boolean;
   percentLoading: number;

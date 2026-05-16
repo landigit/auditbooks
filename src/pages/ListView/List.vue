@@ -160,7 +160,7 @@ export default defineComponent({
       data: [] as RenderData[],
       pageStart: 0,
       pageEnd: 0,
-      statusMap: {},
+      statusMap: {} as Record<string, string>,
       selectedItems: [] as string[],
     };
   },
@@ -268,8 +268,8 @@ export default defineComponent({
         const lowercaseStatus = String(statusFilter[1]).toLowerCase();
 
         const matchedNames = Object.entries(this.statusMap)
-          .filter((entry) => entry[1].toLowerCase() === lowercaseStatus)
-          .map((entry) => entry[0]);
+          .filter(([, status]) => status.toLowerCase() === lowercaseStatus)
+          .map(([rowId]) => rowId);
 
         filteredData = tableData.filter((row) =>
           matchedNames.includes(String(row.name))

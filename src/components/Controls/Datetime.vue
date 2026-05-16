@@ -34,7 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import DateVue from './Date.vue';
-import { DateTimePicker } from 'src/components/ui';
+import { DateTimePicker } from 'src/components/Ui';
 
 export default defineComponent({
   extends: DateVue,

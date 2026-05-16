@@ -21,7 +21,6 @@ import { LedgerPosting } from 'models/Transactional/LedgerPosting';
 import { Transactional } from 'models/Transactional/Transactional';
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
-import { QueryFilter } from 'utils/db/types';
 import { AccountTypeEnum } from '../Account/types';
 import { Invoice } from '../Invoice/Invoice';
 import { Party } from '../Party/Party';
@@ -774,14 +773,14 @@ export class Payment extends Transactional {
     party: (doc: Doc) => {
       const paymentType = (doc as Payment).paymentType;
       if (paymentType === 'Pay') {
-        return { role: ['in', ['Supplier', 'Both']] };
+        return { role: ['in', ['Supplier', 'Both']] } as any;
       }
 
       if (paymentType === 'Receive') {
-        return { role: ['in', ['Customer', 'Both']] };
+        return { role: ['in', ['Customer', 'Both']] } as any;
       }
 
-      return {};
+      return {} as any;
     },
     numberSeries: () => {
       return { referenceType: 'Payment' };

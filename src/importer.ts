@@ -222,11 +222,14 @@ export class Importer {
     const schema = this.fyo.schemaMap[this.schemaName];
     const targetFieldnameMap = schema?.fields
       .filter((f) => f.fieldtype === FieldTypeEnum.Table)
-      .reduce((acc, f) => {
-        const { target, fieldname } = f as TargetField;
-        acc[target] = fieldname;
-        return acc;
-      }, {});
+      .reduce(
+        (acc, f) => {
+          const { target, fieldname } = f as TargetField;
+          acc[target] = fieldname;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
 
     for (const [name, data] of dataMap.entries()) {
       const doc = this.fyo.doc.getNewDoc(this.schemaName, data, false);
@@ -574,14 +577,17 @@ function getTemplateFields(
   const fields: TemplateField[] = [];
 
   const targetSchemaFieldMap =
-    fyo.schemaMap[importer.schemaName]?.fields.reduce((acc, f) => {
-      if (!(f as TargetField).target) {
-        return acc;
-      }
+    fyo.schemaMap[importer.schemaName]?.fields.reduce(
+      (acc, f) => {
+        if (!(f as TargetField).target) {
+          return acc;
+        }
 
-      acc[f.fieldname] = f;
-      return acc;
-    }, {}) ?? {};
+        acc[f.fieldname] = f;
+        return acc;
+      },
+      {} as Record<string, Field>
+    ) ?? {};
 
   while (schemas.length) {
     const { schema, parentSchemaChildField } = schemas.pop() ?? {};

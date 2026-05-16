@@ -867,10 +867,15 @@ export class Search {
       keywords.push(...this.keywords[sn]);
     }
 
-    return Object.groupBy(
-      keywords.flat(),
-      (k: Keyword) => k.priority
-    ) as unknown as Record<string, Keyword[]>;
+    const grouped: Record<string, Keyword[]> = {};
+    for (const k of keywords) {
+      const priority = String(k.priority);
+      if (!grouped[priority]) {
+        grouped[priority] = [];
+      }
+      grouped[priority].push(k);
+    }
+    return grouped;
   }
 
   _setSearchables() {

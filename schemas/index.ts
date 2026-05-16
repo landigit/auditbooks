@@ -10,7 +10,6 @@ import type {
   SchemaMap,
   SchemaStub,
   SchemaStubMap,
-  SelectOption,
   TargetField,
 } from './types';
 
@@ -318,14 +317,14 @@ function getFieldMapFromRawCustomFields(
         })
         .filter((o) => o.label && o.value);
 
-      const field = {
+      const field: any = {
         label,
         fieldname,
         fieldtype,
         section,
         tab,
         isCustom: true,
-      } as Field;
+      };
 
       if (options?.length) {
         (field as OptionField).options = options;

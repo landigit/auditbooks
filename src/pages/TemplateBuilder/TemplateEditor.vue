@@ -28,7 +28,7 @@ export default defineComponent({
     return {
       state: null as EditorState | null,
       view: null as EditorView | null,
-      compartments: {},
+      compartments: {} as Record<string, Compartment>,
       store: useAppStore(),
     };
   },

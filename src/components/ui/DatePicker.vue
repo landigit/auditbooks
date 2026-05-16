@@ -2,13 +2,10 @@
 import { computed } from 'vue';
 import {
   DateFormatter,
-  type DateValue,
-  getLocalTimeZone,
   CalendarDate,
 } from '@internationalized/date';
-import { Calendar } from 'src/components/ui';
-import { Button } from 'src/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from 'src/components/ui';
+import { Calendar } from 'src/components/Ui';
+import { Popover, PopoverContent, PopoverTrigger } from 'src/components/Ui';
 import { cn } from 'src/utils/cn';
 
 const props = defineProps<{

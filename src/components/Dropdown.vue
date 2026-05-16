@@ -72,7 +72,7 @@ import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { DropdownItem } from 'src/utils/types';
 import { defineComponent, PropType } from 'vue';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
 
 export default defineComponent({
   name: 'Dropdown',

@@ -136,7 +136,7 @@
 </template>
 <script>
 import { prefixFormat } from 'src/utils/chart';
-import { Tooltip } from 'src/components/ui';
+import { Tooltip } from 'src/components/Ui';
 
 export default {
   components: { Tooltip },
@@ -176,6 +176,11 @@ export default {
   },
   data() {
     return { xi: -1, yi: -1, activeColor: 'transparent' };
+  },
+  deactivated() {
+    this.xi = -1;
+    this.yi = -1;
+    this.$refs.tooltip?.destroy();
   },
   computed: {
     fontStyle() {

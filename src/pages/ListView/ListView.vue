@@ -48,7 +48,7 @@
         class="px-3"
         @click="handleMakeNewDoc"
       >
-        <lucide-icon name="plus" class="w-4 h-4" />
+        <LucideIcon name="plus" class="w-4 h-4" />
       </Button>
     </PageHeader>
     <List

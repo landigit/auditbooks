@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { expect, test } from 'vitest';
 import { StockQueue } from '../stockQueue';
 
 test('stockQueue:initialization', () => {

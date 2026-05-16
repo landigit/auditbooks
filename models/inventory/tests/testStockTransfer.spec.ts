@@ -1,4 +1,3 @@
-import { Fyo } from 'fyo';
 import { InventorySettings } from 'models/inventory/InventorySettings';
 import { StockTransfer } from 'models/inventory/StockTransfer';
 import { ModelNameEnum } from 'models/types';
@@ -537,7 +536,7 @@ describe('Stock Transfer', () => {
     expect(sinv.stockNotTransferred).toBe(0);
   });
 
-  test('Create Shipment then create return against it', async (t) => {
+  test('Create Shipment then create return against it', async (_t) => {
     const rate = testDocs.Item[item].rate as number;
     const shpm = fyo.doc.getNewDoc(ModelNameEnum.Shipment) as Shipment;
 

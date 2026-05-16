@@ -260,8 +260,6 @@ describe('DatabaseCore Tests', () => {
     await db.update(schemaName, { name: cOne.name, email });
     const cOneEmail = await db.get(schemaName, cOne.name, 'email');
     expect(cOneEmail.email).toBe(email);
-    const cTwoEmail = await db.get(schemaName, cTwo.name, 'email');
-    expect(cOneEmail.email).toBe(email);
 
     const newName = 'Johnny Whoe';
     await db.rename(schemaName, cOne.name, newName);

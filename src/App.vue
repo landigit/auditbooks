@@ -39,7 +39,6 @@
   </div>
 </template>
 <script lang="ts">
-import { RTL_LANGUAGES } from 'fyo/utils/consts';
 import { ModelNameEnum } from 'models/types';
 import { defineComponent, provide, ref, Ref, computed } from 'vue';
 import WindowsTitleBar from './components/WindowsTitleBar.vue';
@@ -326,7 +325,4 @@ export default defineComponent({
   },
 });
 
-function getLanguageDirection(language: string): 'rtl' | 'ltr' {
-  return RTL_LANGUAGES.includes(language) ? 'rtl' : 'ltr';
-}
 </script>

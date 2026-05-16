@@ -155,6 +155,9 @@ export default defineComponent({
   async activated() {
     await this.setData();
   },
+  deactivated() {
+    this.show = false;
+  },
   methods: {
     async routeToInvoices(type: 'paid' | 'unpaid') {
       if (type === 'paid' && !this.paidCount) {

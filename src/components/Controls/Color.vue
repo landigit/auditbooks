@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
 import Row from 'src/components/Row.vue';
 import Base from './Base.vue';
 

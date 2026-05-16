@@ -431,8 +431,10 @@ export default class DatabaseCore extends DatabaseBase {
         select name from sqlite_schema
         where type='table'
         and name not like 'sqlite_%'`);
-      tableNames = q.map((i) => i.name);
+      tableNames = q.map((i: { name: any }) => i.name);
     }
+
+    if (!tableNames) return;
 
     for (const name of tableNames) {
       await this.knex!(name).del();

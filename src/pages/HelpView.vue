@@ -6,7 +6,7 @@
         <template #right>
           <div class="flex gap-2">
             <Button variant="ghost" @click="$router.back()">
-              <lucide-icon name="arrow-left" class="w-4 h-4 mr-2" />
+              <LucideIcon name="arrow-left" class="w-4 h-4 mr-2" />
               {{ t('Back') }}
             </Button>
           </div>
@@ -27,7 +27,7 @@
               v-else-if="error"
               class="bg-red-50 p-6 rounded-lg border border-red-100 text-red-700 flex flex-col items-center text-center"
             >
-              <lucide-icon
+              <LucideIcon
                 name="file-warning"
                 class="w-12 h-12 mb-4 text-red-400"
               />

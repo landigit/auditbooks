@@ -7,7 +7,7 @@
         :class="[config.containerBorder]"
         style="pointer-events: auto"
       >
-        <lucide-icon
+        <LucideIcon
           :name="config.iconName"
           class="w-6 h-6 me-3"
           :class="config.iconColor"
@@ -19,28 +19,13 @@
           </button>
         </div>
         <div class="ms-auto flex items-center">
-          <svg
+          <LucideIcon
             v-if="isPersistent"
+            name="loader-2"
             class="animate-spin h-4 w-4 text-description"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-              fill="none"
-            />
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            />
-          </svg>
+          />
 
-          <lucide-icon
+          <LucideIcon
             v-else
             name="x"
             class="w-4 h-4 ms-auto text-description cursor-pointer hover:text-main"

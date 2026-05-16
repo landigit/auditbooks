@@ -4,10 +4,9 @@ import {
   DateFormatter,
   type DateValue,
   CalendarDate,
-  Time,
 } from '@internationalized/date';
-import { Calendar } from 'src/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from 'src/components/ui';
+import { Calendar } from 'src/components/Ui';
+import { Popover, PopoverContent, PopoverTrigger } from 'src/components/Ui';
 import { cn } from 'src/utils/cn';
 
 const props = defineProps<{
@@ -60,7 +59,11 @@ const updateModel = (shouldClose = false) => {
   let targetDate = datePart.value;
   if (!targetDate) {
     const now = new Date();
-    targetDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    targetDate = new CalendarDate(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      now.getDate()
+    );
     datePart.value = targetDate;
   }
 
@@ -71,7 +74,7 @@ const updateModel = (shouldClose = false) => {
     hours.value,
     minutes.value
   );
-  
+
   emits('update:modelValue', d);
   if (shouldClose) {
     isOpen.value = false;
@@ -124,7 +127,7 @@ const displayValue = computed(() => {
         class="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-border"
       >
         <Calendar
-          :model-value="datePart"
+          :model-value="(datePart as any)"
           class="border-none shadow-none rounded-none"
           @update:model-value="handleDateChange"
         />

@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { docsNavigation, DocNode } from 'src/utils/docsNavigation';
 

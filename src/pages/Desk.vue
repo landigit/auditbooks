@@ -46,7 +46,7 @@ const toggleSidebar = () => appStore.toggleSidebar();
       class="absolute bottom-0 start-0 text-description hover:bg-surface-hover rounded rtl-rotate-180 p-1 m-4 opacity-0 hover:opacity-100 hover:shadow-md"
       @click="() => toggleSidebar()"
     >
-      <lucide-icon name="chevrons-right" class="w-4 h-4" />
+      <LucideIcon name="chevrons-right" class="w-4 h-4" />
     </button>
   </div>
 </template>
