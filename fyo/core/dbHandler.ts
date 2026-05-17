@@ -248,7 +248,7 @@ export class DatabaseHandler extends DatabaseBase {
    * Bespoke function
    *
    * These are functions to run custom queries that are too complex for
-   * DatabaseCore and require use of knex or raw queries. The output
+   * DatabaseCore and require use of drizzle or raw queries. The output
    * of these is not converted to DocValue and is used as is (RawValue).
    *
    * The query logic for these is in backend/database/bespoke.ts

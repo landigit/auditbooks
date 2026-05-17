@@ -50,7 +50,7 @@ export interface Patch {
   priority?: number;
 }
 
-export type KnexColumnType =
+export type DatabaseColumnType =
   | 'text'
   | 'integer'
   | 'float'

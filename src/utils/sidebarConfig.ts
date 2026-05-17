@@ -164,6 +164,7 @@ function getCompleteSidebar(): SidebarConfig {
       name: 'calendar',
       route: '/calendar',
       icon: 'calendar-range',
+      hidden: () => true,
     },
     {
       label: t`Sales`,

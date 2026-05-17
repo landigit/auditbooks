@@ -1,40 +1,38 @@
 import { DatabaseManager } from '../../database/manager';
 
-/* eslint-disable */
 async function execute(dm: DatabaseManager) {
+  if (!dm.db || !dm.db.client) {
+    return;
+  }
 
-    const sourceTables = [
-        "PurchaseInvoice", 
-        "SalesInvoice", 
-        "JournalEntry",
-        "Payment", 
-        "StockMovement", 
-        "StockTransfer"
-    ];
+  const sourceTables = [
+    "PurchaseInvoice", 
+    "SalesInvoice", 
+    "JournalEntry",
+    "Payment", 
+    "StockMovement", 
+    "StockTransfer"
+  ];
 
-    await dm.db!.knex!('AccountingLedgerEntry')
-        .select('name', 'date', 'referenceName')
-        .then((trx: Array<{name: string; date: Date; referenceName: string;}> ) => {
-            trx.forEach(async entry => {
+  const entriesRes = await dm.db.client.execute(`SELECT name, date, referenceName FROM AccountingLedgerEntry`);
+  const entries = entriesRes.rows;
 
-                sourceTables.forEach(async table => {
-                    await dm.db!.knex!
-                    .select('name','date')
-                    .from(table)
-                    .where({ name: entry['referenceName'] })
-                    .then(async (resp: Array<{name: string; date: Date;}>) => {
-                        if (resp.length !== 0) {
-                            
-                            const dateTimeValue = new Date(resp[0]['date']);
-                            await dm.db!.knex!('AccountingLedgerEntry')
-                            .where({ name: entry['name'] })
-                            .update({ date: dateTimeValue.toISOString() });
-                        }
-                    })
-                });
-            });
+  for (const entry of entries) {
+    for (const table of sourceTables) {
+      const respRes = await dm.db.client.execute({
+        sql: `SELECT date FROM "${table}" WHERE name = ? LIMIT 1`,
+        args: [entry.referenceName as string]
+      });
+      const resp = respRes.rows;
+      if (resp.length !== 0) {
+        const dateTimeValue = new Date(resp[0].date as string);
+        await dm.db.client.execute({
+          sql: `UPDATE AccountingLedgerEntry SET date = ? WHERE name = ?`,
+          args: [dateTimeValue.toISOString(), entry.name as string]
         });
+      }
+    }
+  }
 }
 
 export default { execute, beforeMigrate: true };
-/* eslint-enable */

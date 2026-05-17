@@ -19,7 +19,15 @@ export function getMainProcessCommonConfig(root) {
     sourcesContent: false,
     platform: 'node',
     target: 'node20',
-    external: ['knex', 'electron', 'better-sqlite3', 'electron-store'],
+    external: [
+      '@libsql/client',
+      'drizzle-orm',
+      'drizzle-orm/libsql',
+      'drizzle-orm/sqlite-core',
+      'drizzle-orm/relations',
+      'electron',
+      'electron-store'
+    ],
     plugins: [excludeVendorFromSourceMap],
     write: true,
   };

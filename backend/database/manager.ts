@@ -1,4 +1,3 @@
-import BetterSQLite3 from 'better-sqlite3';
 import fs from 'fs';
 import { DatabaseError } from 'fyo/utils/errors';
 import path from 'path';
@@ -18,7 +17,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
   rawCustomFields: RawCustomField[] = [];
 
   get #isInitialized(): boolean {
-    return this.db !== undefined && this.db.knex !== undefined;
+    return this.db !== undefined && this.db.client !== undefined;
   }
 
   getSchemaMap() {
@@ -52,7 +51,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async setRawCustomFields() {
     try {
-      this.rawCustomFields = (await this.db?.knex?.(
+      this.rawCustomFields = (await this.db?.getAll(
         'CustomField'
       )) as RawCustomField[];
     } catch {}
@@ -100,7 +99,9 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return { pre: [], post: [] };
     }
 
-    const query = (await this.db.knex!('PatchRun').select()) as {
+    const query = (await this.db.getAll('PatchRun', {
+      fields: ['name', 'version', 'failed']
+    })) as {
       name: string;
       version?: string;
       failed?: boolean;
@@ -167,21 +168,23 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async #getIsFirstRun(): Promise<boolean> {
-    const knex = this.db?.knex;
-    if (!knex) {
+    if (!this.db || !this.db.client) {
       return true;
     }
-
-    const query = await knex('sqlite_master').where({
-      type: 'table',
-      name: 'PatchRun',
-    });
-    return !query.length;
+    try {
+      const res = await this.db.client.execute({
+        sql: "select count(*) as count from sqlite_master where type='table' and name='PatchRun'",
+        args: []
+      });
+      return Number(res.rows[0]?.count) === 0;
+    } catch {
+      return true;
+    }
   }
 
   async #createBackup() {
     const { dbPath } = this.db ?? {};
-    if (!dbPath || process.env.IS_TEST) {
+    if (!dbPath || process.env.IS_TEST || !this.db?.client) {
       return;
     }
 
@@ -190,8 +193,22 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return;
     }
 
-    const db = this.getDriver();
-    await db?.backup(backupPath).then(() => db.close());
+    // Delete any existing file at backupPath to prevent sqlite error
+    await unlinkIfExists(backupPath);
+
+    try {
+      await this.db.client.execute({
+        sql: `VACUUM INTO ?`,
+        args: [backupPath]
+      });
+    } catch (err) {
+      // Fallback: Copy database file directly if VACUUM INTO is not supported or fails
+      try {
+        await fs.promises.copyFile(dbPath, backupPath);
+      } catch (copyErr) {
+        console.error('Failed to create backup:', copyErr);
+      }
+    }
   }
 
   async #getBackupFilePath() {
@@ -214,25 +231,16 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async #getAppVersion(): Promise<string> {
-    const knex = this.db?.knex;
-    if (!knex) {
+    if (!this.db || !this.db.client) {
       return '0.0.0';
     }
 
-    const query = await knex('SingleValue')
-      .select('value')
-      .where({ fieldname: 'version', parent: 'SystemSettings' });
-    const value = (query[0] as undefined | { value: string })?.value;
-    return value || '0.0.0';
-  }
-
-  getDriver() {
-    const { dbPath } = this.db ?? {};
-    if (!dbPath) {
-      return null;
-    }
-
-    return BetterSQLite3(dbPath, { readonly: true });
+    const query = await this.db.getSingleValues({
+      fieldname: 'version',
+      parent: 'SystemSettings'
+    });
+    const value = query[0]?.value;
+    return (value as string) || '0.0.0';
   }
 }
 

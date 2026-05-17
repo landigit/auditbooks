@@ -35,3 +35,16 @@ yarn-error.log*
 /dist_electron
 log_creds.txt*
 *.pfx
+
+# Local databases and SQLite runtimes
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+__update_schemas_temp.db
+
+# Developer verification and scratch files
+test-db.ts
+test-core.ts
+inspect.ts
+tables.txt

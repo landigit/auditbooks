@@ -2,9 +2,9 @@ import { constants } from 'fs';
 import fs from 'fs/promises';
 import { DatabaseMethod } from 'utils/db/types';
 import { CUSTOM_EVENTS } from 'utils/messages';
-import { KnexColumnType } from './database/types';
+import { DatabaseColumnType } from './database/types';
 
-export const sqliteTypeMap: Record<string, KnexColumnType> = {
+export const sqliteTypeMap: Record<string, DatabaseColumnType> = {
   AutoComplete: 'text',
   Currency: 'text',
   Int: 'integer',
