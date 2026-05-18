@@ -56,7 +56,7 @@
           >
             {{ i + pageStart + 1 }}
           </div>
-          <div class="w-8 flex justify-end me-2">
+          <div v-else class="w-8 flex justify-end me-2">
             <Check
               :df="{
                 fieldtype: 'Check',
