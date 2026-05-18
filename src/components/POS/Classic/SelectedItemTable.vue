@@ -42,109 +42,94 @@
   </div>
 </template>
 
-<script lang="ts">
-import FormContainer from 'src/components/FormContainer.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import Link from 'src/components/Controls/Link.vue';
+<script setup lang="ts">
+import { computed, inject } from 'vue';
 import Row from 'src/components/Row.vue';
-import RowEditForm from 'src/pages/CommonForm/RowEditForm.vue';
 import SelectedItemRow from './SelectedItemRow.vue';
 import { isNumeric } from 'src/utils';
-import { inject } from 'vue';
-import { defineComponent, PropType } from 'vue';
 import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { Field } from 'schemas/types';
 
-export default defineComponent({
-  name: 'SelectedItemTable',
-  components: {
-    FormContainer,
-    FormControl,
-    Link,
-    Row,
-    RowEditForm,
-    SelectedItemRow,
-  },
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  props: {
-    expandedBatchId: {
-      type: String as PropType<string | null | undefined>,
-      default: undefined,
-    },
-  },
-  emits: ['applyPricingRule', 'selectedRow', 'setExpandedBatchId'],
-  computed: {
-    ratio() {
-      return [0.1, 0.9, 0.8, 0.8, 0.8, 0.8, 0.2];
-    },
-    tableFields() {
-      return [
-        {
-          fieldname: 'toggler',
-          fieldtype: 'Link',
-          label: ' ',
-        },
-        {
-          fieldname: 'item',
-          fieldtype: 'Link',
-          label: 'Item',
-          placeholder: 'Item',
-          required: true,
-          schemaName: 'Item',
-        },
-        {
-          fieldname: 'quantity',
-          label: 'Quantity',
-          placeholder: 'Quantity',
-          fieldtype: 'Int',
-          required: true,
-          schemaName: '',
-        },
-        {
-          fieldname: 'unit',
-          label: 'Unit Type',
-          placeholder: 'Unit',
-          fieldtype: 'Link',
-          required: true,
-          schemaName: 'UOM',
-        },
-        {
-          fieldname: 'rate',
-          label: 'Rate',
-          placeholder: 'Rate',
-          fieldtype: 'Currency',
-          required: true,
-          schemaName: '',
-        },
-        {
-          fieldname: 'amount',
-          label: 'Amount',
-          placeholder: 'Amount',
-          fieldtype: 'Currency',
-          required: true,
-          schemaName: '',
-        },
-        {
-          fieldname: 'removeItem',
-          fieldtype: 'Link',
-          label: ' ',
-        },
-      ];
-    },
-  },
-  methods: {
-    async runSinvFormulas() {
-      await this.sinvDoc.runFormulas();
-    },
-    selectedItemRow(row: SalesInvoiceItem) {
-      this.$emit('selectedRow', row);
-    },
-    isNumeric,
+defineProps({
+  expandedBatchId: {
+    type: String,
+    default: undefined,
   },
 });
+
+const emit = defineEmits([
+  'applyPricingRule',
+  'selectedRow',
+  'setExpandedBatchId',
+]);
+
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+
+const ratio = computed(() => {
+  return [0.1, 0.9, 0.8, 0.8, 0.8, 0.8, 0.2];
+});
+
+const tableFields = computed(() => {
+  return [
+    {
+      fieldname: 'toggler',
+      fieldtype: 'Link',
+      label: ' ',
+    },
+    {
+      fieldname: 'item',
+      fieldtype: 'Link',
+      label: 'Item',
+      placeholder: 'Item',
+      required: true,
+      schemaName: 'Item',
+    },
+    {
+      fieldname: 'quantity',
+      label: 'Quantity',
+      placeholder: 'Quantity',
+      fieldtype: 'Int',
+      required: true,
+      schemaName: '',
+    },
+    {
+      fieldname: 'unit',
+      label: 'Unit Type',
+      placeholder: 'Unit',
+      fieldtype: 'Link',
+      required: true,
+      schemaName: 'UOM',
+    },
+    {
+      fieldname: 'rate',
+      label: 'Rate',
+      placeholder: 'Rate',
+      fieldtype: 'Currency',
+      required: true,
+      schemaName: '',
+    },
+    {
+      fieldname: 'amount',
+      label: 'Amount',
+      placeholder: 'Amount',
+      fieldtype: 'Currency',
+      required: true,
+      schemaName: '',
+    },
+    {
+      fieldname: 'removeItem',
+      fieldtype: 'Link',
+      label: ' ',
+    },
+  ];
+});
+
+async function runSinvFormulas() {
+  await sinvDoc.runFormulas();
+}
+
+function selectedItemRow(row: SalesInvoiceItem) {
+  emit('selectedRow', row);
+}
 </script>

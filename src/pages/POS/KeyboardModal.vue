@@ -263,14 +263,11 @@ const saveSelectedItem = async () => {
       props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype ===
       ModelNameEnum.Currency
     ) {
-      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] = fyo.pesa(
-        Number(selectedValue.value)
-      ) as any;
+      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
+        fyo.pesa(Number(selectedValue.value)) as any;
 
       if (props.selectedItemField === 'rate') {
-        props.selectedItemRow.setRate = fyo.pesa(
-          Number(selectedValue.value)
-        );
+        props.selectedItemRow.setRate = fyo.pesa(Number(selectedValue.value));
 
         await sinvDoc.runFormulas();
         emit('toggleModal', 'Keyboard');
@@ -279,9 +276,7 @@ const saveSelectedItem = async () => {
 
       if (props.selectedItemField === 'itemDiscountAmount') {
         if (sinvDoc.grandTotal?.lte(selectedValue.value)) {
-          props.selectedItemRow.itemDiscountAmount = fyo.pesa(
-            Number(0)
-          );
+          props.selectedItemRow.itemDiscountAmount = fyo.pesa(Number(0));
 
           throw new ValidationError(
             fyo.t`Discount Amount (${fyo.format(
@@ -301,9 +296,8 @@ const saveSelectedItem = async () => {
         );
       }
     } else {
-      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] = Number(
-        selectedValue.value
-      ) as any;
+      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
+        Number(selectedValue.value) as any;
 
       if (props.selectedItemField === 'itemDiscountPercent') {
         if (Number(selectedValue.value) > 100) {
@@ -329,11 +323,7 @@ const saveSelectedItem = async () => {
               !invoiceItem.isFreeItem
           ) ?? [];
 
-        await validateQty(
-          sinvDoc,
-          props.selectedItemRow,
-          existingItems
-        );
+        await validateQty(sinvDoc, props.selectedItemRow, existingItems);
 
         emit('applyPricingRule');
       }
@@ -369,13 +359,16 @@ const closeKeyboardModal = async () => {
 };
 
 // Watchers
-watch(() => props.modalStatus, async (newVal) => {
-  if (newVal) {
-    await nextTick();
-    await focusInput();
+watch(
+  () => props.modalStatus,
+  async (newVal) => {
+    if (newVal) {
+      await nextTick();
+      await focusInput();
+    }
+    updateSelectedValue();
   }
-  updateSelectedValue();
-});
+);
 
 // Lifecycles
 onMounted(async () => {

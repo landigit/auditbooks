@@ -130,7 +130,9 @@ const limit = ref<number | null>(null);
 const useListFilters = ref(true);
 const exportFormat = ref<ExportFormat>('csv');
 const fields = ref<ExportField[]>(getExportFields(_schemaFields));
-const tableFields = ref<ExportTableField[]>(getExportTableFields(_schemaFields, fyo));
+const tableFields = ref<ExportTableField[]>(
+  getExportTableFields(_schemaFields, fyo)
+);
 
 // --- Computed ---
 const label = computed(() => {
@@ -153,9 +155,8 @@ const numSelected = computed(() => {
       (acc, f) => f.fields.filter((subF) => subF.export).length + acc,
       0
     ) +
-    fields.value.filter(
-      (f) => f.fieldtype !== FieldTypeEnum.Table && f.export
-    ).length
+    fields.value.filter((f) => f.fieldtype !== FieldTypeEnum.Table && f.export)
+      .length
   );
 });
 

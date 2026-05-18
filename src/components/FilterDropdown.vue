@@ -198,7 +198,8 @@ const fields = computed<Field[]>(() => {
     FieldTypeEnum.AttachImage,
   ];
 
-  const listViewSettings = fyo.models[props.schemaName]?.getListViewSettings?.(fyo);
+  const listViewSettings =
+    fyo.models[props.schemaName]?.getListViewSettings?.(fyo);
   const statusField = listViewSettings?.columns?.[1] as any;
 
   const schemaFields = fyo.schemaMap[props.schemaName]?.fields ?? [];
@@ -245,12 +246,14 @@ const fieldOptions = computed<{ label: string; value: string }[]>(() => {
   }));
 });
 
-const conditionsForDropdown = computed<{ label: string; value: string }[]>(() => {
-  return conditions.map((c) => ({
-    label: c.label,
-    value: c.label,
-  }));
-});
+const conditionsForDropdown = computed<{ label: string; value: string }[]>(
+  () => {
+    return conditions.map((c) => ({
+      label: c.label,
+      value: c.label,
+    }));
+  }
+);
 
 const explicitFilters = computed<Filter[]>(() => {
   return filters.value.filter((f) => !f.implicit);

@@ -21,9 +21,12 @@
   </svg>
 </template>
 <script setup lang="ts">
-withDefaults(defineProps<{
-  active?: boolean;
-}>(), {
-  active: false,
-});
+withDefaults(
+  defineProps<{
+    active?: boolean;
+  }>(),
+  {
+    active: false,
+  }
+);
 </script>

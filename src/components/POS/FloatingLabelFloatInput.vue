@@ -1,8 +1,5 @@
 <template>
-  <FloatingLabelInputBase
-    v-bind="props"
-    input-type="number"
-  />
+  <FloatingLabelInputBase v-bind="props" input-type="number" />
 </template>
 
 <script setup lang="ts">

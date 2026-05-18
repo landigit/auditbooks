@@ -265,16 +265,16 @@
   </template>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, inject, watch, computed, onMounted, nextTick } from 'vue';
 import Currency from 'src/components/Controls/Currency.vue';
-import Data from 'src/components/Controls/Data.vue';
 import Float from 'src/components/Controls/Float.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Link from 'src/components/Controls/Link.vue';
 import Text from 'src/components/Controls/Text.vue';
-import { inject } from 'vue';
+import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
+import { t } from 'fyo';
 import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { Money } from 'pesa';
 import { DiscountType } from '../types';
@@ -284,434 +284,439 @@ import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { showToast } from 'src/utils/interactive';
 import { ModelNameEnum } from 'models/types';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
 
-export default defineComponent({
-  name: 'SelectedItemRow',
-  components: { Currency, Data, Float, Int, Link, Text, AutoComplete },
-  props: {
-    row: { type: SalesInvoiceItem, required: true },
-    batchAdded: { type: Boolean, default: false },
-    expandedBatchId: {
-      type: String as PropType<string | null | undefined>,
-      default: undefined,
-    },
-  },
-  emits: [
-    'runSinvFormulas',
-    'applyPricingRule',
-    'selectedRow',
-    'setExpandedBatchId',
-  ],
-  setup() {
-    return {
-      isDiscountingEnabled: inject('isDiscountingEnabled') as boolean,
-      itemSerialNumbers: inject('itemSerialNumbers') as {
-        [item: string]: string;
-      },
-    };
-  },
-  data() {
-    return {
-      isExapanded: false,
-      batches: [] as string[],
-      availableQtyInBatch: 0,
-      itemVisibility: '',
-      defaultRate: this.row.rate as Money,
-      profileDiscountSetting: null as boolean | null,
-      profileRateSetting: null as boolean | null,
-      transferUnitOptions: [] as Array<{ label: string; value: string }>,
-      isMounted: false,
-      pendingTransferUnitChange: false,
-      transferUnitChangeOldQty: 0,
-    };
-  },
-  watch: {
-    expandedBatchId(newVal) {
-      if (newVal !== this.row.name) {
-        this.isExapanded = false;
-      }
-    },
-    'row.batch': {
-      async handler(newBatch) {
-        if (newBatch) {
-          this.availableQtyInBatch = await this.getAvailableQtyInBatch();
-          this.isExapanded = true;
-          this.$emit('setExpandedBatchId', this.row.name);
-        }
-      },
-      immediate: true,
-    },
-    'row.item': {
-      async handler(newItem) {
-        if (newItem) {
-          await this.updateTransferUnitOptions();
-        } else {
-          this.transferUnitOptions = [];
-        }
-      },
-      immediate: true,
-    },
-    'row.quantity': {
-      async handler(newQuantity, oldQuantity) {
-        if (
-          this.hasSerialNumber &&
-          newQuantity &&
-          newQuantity > 0 &&
-          this.isMounted &&
-          newQuantity !== oldQuantity
-        ) {
-          await this.fetchSerialNumbers(false, true);
-        }
-      },
-      immediate: false,
-    },
-    'row.transferQuantity': {
-      async handler(newTransferQuantity, oldTransferQuantity) {
-        if (
-          this.pendingTransferUnitChange &&
-          newTransferQuantity !== this.transferUnitChangeOldQty
-        ) {
-          this.pendingTransferUnitChange = false;
-          this.transferUnitChangeOldQty = 0;
-
-          await this.fetchSerialNumbers(true, false);
-          return;
-        }
-
-        if (
-          this.isUOMConversionEnabled &&
-          this.hasSerialNumber &&
-          newTransferQuantity &&
-          newTransferQuantity > 0 &&
-          this.isMounted &&
-          newTransferQuantity !== oldTransferQuantity &&
-          !this.pendingTransferUnitChange
-        ) {
-          await this.fetchSerialNumbers(false, false);
-        }
-      },
-      immediate: false,
-    },
-    'row.transferUnit': {
-      async handler(newTransferUnit, oldTransferUnit) {
-        if (
-          this.isUOMConversionEnabled &&
-          this.hasSerialNumber &&
-          newTransferUnit &&
-          oldTransferUnit &&
-          newTransferUnit !== oldTransferUnit &&
-          this.isMounted
-        ) {
-          delete this.itemSerialNumbers[this.row.item as string];
-          await this.row.set('serialNumber', '');
-
-          this.pendingTransferUnitChange = true;
-          this.transferUnitChangeOldQty = this.row.transferQuantity ?? 0;
-        }
-      },
-      immediate: false,
-    },
-  },
-  computed: {
-    isUOMConversionEnabled(): boolean {
-      return !!fyo.singles.InventorySettings?.enableUomConversions;
-    },
-    hasSerialNumber(): boolean {
-      return !!(this.row.links?.item && this.row.links?.item.hasSerialNumber);
-    },
-    isReadOnly() {
-      return this.row.isFreeItem;
-    },
-    showAvlQuantityInBatch() {
-      return (
-        this.row.links?.item &&
-        this.row.links?.item.hasBatch &&
-        this.itemVisibility
-      );
-    },
-  },
-
-  async mounted() {
-    const posProfileName = this.fyo.singles.POSSettings?.posProfile;
-
-    if (posProfileName) {
-      const profile = await this.fyo.doc.getDoc(
-        ModelNameEnum.POSProfile,
-        posProfileName as string
-      );
-
-      this.profileDiscountSetting =
-        !!profile?.canEditDiscount ||
-        !!this.fyo.singles.POSSettings?.canEditDiscount;
-
-      this.profileRateSetting =
-        !!profile?.canChangeRate ||
-        !!this.fyo.singles.POSSettings?.canChangeRate;
-
-      this.itemVisibility = await getItemVisibility(this.fyo);
-    } else {
-      this.profileDiscountSetting =
-        !!this.fyo.singles.POSSettings?.canEditDiscount;
-
-      this.profileRateSetting = !!this.fyo.singles.POSSettings?.canChangeRate;
-      this.itemVisibility = await getItemVisibility(this.fyo);
-    }
-
-    await this.$nextTick();
-
-    this.isMounted = true;
-
-    if (this.hasSerialNumber) {
-      await this.fetchSerialNumbers();
-    }
-  },
-
-  methods: {
-    toggleExpand() {
-      if (this.isExapanded) {
-        this.isExapanded = false;
-        this.$emit('setExpandedBatchId', undefined);
-      } else {
-        this.isExapanded = true;
-        this.$emit('setExpandedBatchId', this.row.name);
-      }
-    },
-    toggleExpandAndEmit() {
-      this.toggleExpand();
-      this.$emit('selectedRow', this.row);
-    },
-    emitSelectedRow() {
-      this.$emit('selectedRow', this.row);
-    },
-    adjustQuantity(change: number) {
-      let currentQuantity = this.row.quantity ?? 1;
-      let newQuantity = currentQuantity + change;
-
-      if (newQuantity === 0) {
-        return;
-      }
-
-      this.setQuantity(newQuantity);
-    },
-    async updateTransferUnitOptions() {
-      if (!this.row.item) {
-        this.transferUnitOptions = [];
-        return;
-      }
-
-      const itemDoc = await fyo.doc.getDoc('Item', this.row.item as string);
-
-      const conversions = (itemDoc?.uomConversions ?? []) as Array<{
-        uom: string;
-        conversionFactor: number;
-      }>;
-
-      const allowedUoms = new Set<string>();
-
-      if (typeof itemDoc?.unit === 'string') {
-        allowedUoms.add(itemDoc.unit);
-      }
-
-      for (const c of conversions) {
-        if (typeof c.uom === 'string') {
-          allowedUoms.add(c.uom);
-        }
-      }
-
-      this.transferUnitOptions = [...allowedUoms].map((uom) => ({
-        label: uom,
-        value: uom,
-      }));
-    },
-
-    async getAvailableQtyInBatch(): Promise<number> {
-      if (!this.row.batch) {
-        return 0;
-      }
-
-      return (
-        (await fyo.db.getStockQuantity(
-          this.row.item as string,
-          undefined,
-          undefined,
-          undefined,
-          this.row.batch
-        )) ?? 0
-      );
-    },
-
-    getDisplayTransferQuantity() {
-      const transferQty = this.row.transferQuantity;
-
-      if (!this.isUOMConversionEnabled) {
-        return transferQty;
-      }
-
-      const hasValidQuantity = transferQty && transferQty;
-
-      if (this.row.isReturn && hasValidQuantity) {
-        return -Math.abs(transferQty);
-      }
-
-      return transferQty;
-    },
-
-    isDiscountsReadOnly(isValidDiscount: boolean) {
-      const canEditDiscount = this.profileDiscountSetting;
-
-      return this.row.isFreeItem || !canEditDiscount || isValidDiscount;
-    },
-    async setBatch(batch: string) {
-      this.row.set('batch', batch);
-      await this.getAvailableQtyInBatch();
-    },
-    setSerialNumber(serialNumber: string) {
-      if (!serialNumber) {
-        return;
-      }
-
-      this.row.set('serialNumber', serialNumber);
-      this.itemSerialNumbers[this.row.item as string] = serialNumber;
-
-      validateSerialNumberCount(
-        serialNumber,
-        Math.abs(this.row.quantity ?? 0),
-        this.row.item!
-      );
-    },
-    async fetchSerialNumbers(forceRefetch = false, useDirectQuantity = false) {
-      if (!this.hasSerialNumber) {
-        return;
-      }
-
-      let quantity = 0;
-      if (useDirectQuantity) {
-        quantity = Math.abs(this.row.quantity ?? 0);
-      } else if (this.isUOMConversionEnabled && this.row.transferQuantity) {
-        quantity = Math.abs(this.row.transferQuantity);
-      } else if (this.row.quantity) {
-        quantity = Math.abs(this.row.quantity);
-      }
-
-      if (quantity <= 0) {
-        return;
-      }
-
-      const existingSerialNumbers =
-        this.itemSerialNumbers[this.row.item as string];
-
-      if (existingSerialNumbers && !forceRefetch) {
-        const existingCount = existingSerialNumbers
-          .split('\n')
-          .filter((s) => s.trim()).length;
-
-        if (existingCount === quantity) {
-          return;
-        } else {
-        }
-      }
-
-      try {
-        const serialNumbers = await getExistingActiveSerialNumbersForItem(
-          this.fyo,
-          this.row.item as string,
-          quantity
-        );
-
-        if (serialNumbers) {
-          await this.row.set('serialNumber', serialNumbers);
-          this.itemSerialNumbers[this.row.item as string] = serialNumbers;
-        } else {
-        }
-      } catch (error) {}
-    },
-    isRateReadOnly() {
-      const canChangeRate = this.profileRateSetting;
-      return this.row.isFreeItem || !canChangeRate;
-    },
-    setItemDiscount(type: DiscountType, value: Money | number) {
-      if (type === 'percent') {
-        this.row.set('setItemDiscountAmount', false);
-        this.row.set('itemDiscountPercent', value as number);
-        return;
-      }
-      this.row.set('setItemDiscountAmount', true);
-      this.row.set('itemDiscountAmount', value as Money);
-    },
-    setRate(rate: Money) {
-      this.row.setRate = rate;
-      this.$emit('runSinvFormulas');
-    },
-    async setQuantity(quantity: number) {
-      const hasManualDiscount = this.row.setItemDiscountAmount;
-      const isPercentageDiscount =
-        !hasManualDiscount && this.row.itemDiscountPercent !== 0;
-      const manualDiscountAmount = this.row.itemDiscountAmount;
-      const manualDiscountPercent = this.row.itemDiscountPercent;
-
-      if (!this.row.isReturn && quantity <= 0) {
-        showToast({
-          type: 'error',
-          message: 'Quantity must be greater than zero.',
-          duration: 'short',
-        });
-
-        quantity = this.row.quantity ?? 1;
-      }
-
-      this.row.set('quantity', quantity);
-
-      const existingItems =
-        (this.row.parentdoc as SalesInvoice).items?.filter(
-          (invoiceItem: InvoiceItem) =>
-            invoiceItem.item === this.row.item && !invoiceItem.isFreeItem
-        ) ?? [];
-
-      quantity = this.row.quantity ?? 1;
-
-      try {
-        await validateQty(
-          this.row.parentdoc as SalesInvoice,
-          this.row,
-          existingItems
-        );
-      } catch (error) {
-        this.row.set('quantity', quantity);
-
-        return showToast({
-          type: 'error',
-          message: this.t`${error as string}`,
-          duration: 'short',
-        });
-      }
-
-      if (!this.row.isFreeItem) {
-        this.$emit('applyPricingRule');
-        this.$emit('runSinvFormulas');
-
-        if (!hasManualDiscount && !isPercentageDiscount) {
-          this.row.set('setItemDiscountAmount', false);
-          this.row.set('itemDiscountPercent', 0);
-        }
-
-        if (hasManualDiscount) {
-          this.row.set('setItemDiscountAmount', true);
-          this.row.set('itemDiscountAmount', manualDiscountAmount);
-        } else if (isPercentageDiscount) {
-          this.row.set('setItemDiscountAmount', false);
-          this.row.set('itemDiscountPercent', manualDiscountPercent);
-        }
-      }
-    },
-    async removeAddedItem(row: SalesInvoiceItem) {
-      this.row.parentdoc?.remove('items', row?.idx as number);
-      this.row.runFormulas();
-      if (!row.isFreeItem) {
-        this.$emit('applyPricingRule');
-      }
-    },
+const props = defineProps({
+  row: { type: SalesInvoiceItem, required: true },
+  batchAdded: { type: Boolean, default: false },
+  expandedBatchId: {
+    type: String,
+    default: undefined,
   },
 });
+
+const emit = defineEmits([
+  'runSinvFormulas',
+  'applyPricingRule',
+  'selectedRow',
+  'setExpandedBatchId',
+]);
+
+const isDiscountingEnabled = inject('isDiscountingEnabled') as boolean;
+const itemSerialNumbers = inject('itemSerialNumbers') as {
+  [item: string]: string;
+};
+
+const isExapanded = ref(false);
+
+const availableQtyInBatch = ref(0);
+const itemVisibility = ref('');
+
+const profileDiscountSetting = ref<boolean | null>(null);
+const profileRateSetting = ref<boolean | null>(null);
+const transferUnitOptions = ref<Array<{ label: string; value: string }>>([]);
+const isMountedRef = ref(false);
+const pendingTransferUnitChange = ref(false);
+const transferUnitChangeOldQty = ref(0);
+
+const isUOMConversionEnabled = computed(
+  () => !!fyo.singles.InventorySettings?.enableUomConversions
+);
+
+const hasSerialNumber = computed(
+  () => !!(props.row.links?.item && props.row.links?.item.hasSerialNumber)
+);
+
+const isReadOnly = computed(() => props.row.isFreeItem);
+
+const showAvlQuantityInBatch = computed(
+  () =>
+    !!(
+      props.row.links?.item &&
+      props.row.links?.item.hasBatch &&
+      itemVisibility.value
+    )
+);
+
+watch(
+  () => props.expandedBatchId,
+  (newVal) => {
+    if (newVal !== props.row.name) {
+      isExapanded.value = false;
+    }
+  }
+);
+
+watch(
+  () => props.row.batch,
+  async (newBatch) => {
+    if (newBatch) {
+      availableQtyInBatch.value = await getAvailableQtyInBatch();
+      isExapanded.value = true;
+      emit('setExpandedBatchId', props.row.name);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.row.item,
+  async (newItem) => {
+    if (newItem) {
+      await updateTransferUnitOptions();
+    } else {
+      transferUnitOptions.value = [];
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.row.quantity,
+  async (newQuantity, oldQuantity) => {
+    if (
+      hasSerialNumber.value &&
+      newQuantity &&
+      newQuantity > 0 &&
+      isMountedRef.value &&
+      newQuantity !== oldQuantity
+    ) {
+      await fetchSerialNumbers(false, true);
+    }
+  }
+);
+
+watch(
+  () => props.row.transferQuantity,
+  async (newTransferQuantity, oldTransferQuantity) => {
+    if (
+      pendingTransferUnitChange.value &&
+      newTransferQuantity !== transferUnitChangeOldQty.value
+    ) {
+      pendingTransferUnitChange.value = false;
+      transferUnitChangeOldQty.value = 0;
+
+      await fetchSerialNumbers(true, false);
+      return;
+    }
+
+    if (
+      isUOMConversionEnabled.value &&
+      hasSerialNumber.value &&
+      newTransferQuantity &&
+      newTransferQuantity > 0 &&
+      isMountedRef.value &&
+      newTransferQuantity !== oldTransferQuantity &&
+      !pendingTransferUnitChange.value
+    ) {
+      await fetchSerialNumbers(false, false);
+    }
+  }
+);
+
+watch(
+  () => props.row.transferUnit,
+  async (newTransferUnit, oldTransferUnit) => {
+    if (
+      isUOMConversionEnabled.value &&
+      hasSerialNumber.value &&
+      newTransferUnit &&
+      oldTransferUnit &&
+      newTransferUnit !== oldTransferUnit &&
+      isMountedRef.value
+    ) {
+      delete itemSerialNumbers[props.row.item as string];
+      await props.row.set('serialNumber', '');
+
+      pendingTransferUnitChange.value = true;
+      transferUnitChangeOldQty.value = props.row.transferQuantity ?? 0;
+    }
+  }
+);
+
+onMounted(async () => {
+  const posProfileName = fyo.singles.POSSettings?.posProfile;
+
+  if (posProfileName) {
+    const profile = await fyo.doc.getDoc(
+      ModelNameEnum.POSProfile,
+      posProfileName as string
+    );
+
+    profileDiscountSetting.value =
+      !!profile?.canEditDiscount || !!fyo.singles.POSSettings?.canEditDiscount;
+
+    profileRateSetting.value =
+      !!profile?.canChangeRate || !!fyo.singles.POSSettings?.canChangeRate;
+
+    itemVisibility.value = await getItemVisibility(fyo);
+  } else {
+    profileDiscountSetting.value = !!fyo.singles.POSSettings?.canEditDiscount;
+
+    profileRateSetting.value = !!fyo.singles.POSSettings?.canChangeRate;
+    itemVisibility.value = await getItemVisibility(fyo);
+  }
+
+  await nextTick();
+
+  isMountedRef.value = true;
+
+  if (hasSerialNumber.value) {
+    await fetchSerialNumbers();
+  }
+});
+
+function toggleExpand() {
+  if (isExapanded.value) {
+    isExapanded.value = false;
+    emit('setExpandedBatchId', undefined);
+  } else {
+    isExapanded.value = true;
+    emit('setExpandedBatchId', props.row.name);
+  }
+}
+
+function toggleExpandAndEmit() {
+  toggleExpand();
+  emit('selectedRow', props.row);
+}
+
+function adjustQuantity(change: number) {
+  let currentQuantity = props.row.quantity ?? 1;
+  let newQuantity = currentQuantity + change;
+
+  if (newQuantity === 0) {
+    return;
+  }
+
+  setQuantity(newQuantity);
+}
+
+async function updateTransferUnitOptions() {
+  if (!props.row.item) {
+    transferUnitOptions.value = [];
+    return;
+  }
+
+  const itemDoc = await fyo.doc.getDoc('Item', props.row.item as string);
+
+  const conversions = (itemDoc?.uomConversions ?? []) as Array<{
+    uom: string;
+    conversionFactor: number;
+  }>;
+
+  const allowedUoms = new Set<string>();
+
+  if (typeof itemDoc?.unit === 'string') {
+    allowedUoms.add(itemDoc.unit);
+  }
+
+  for (const c of conversions) {
+    if (typeof c.uom === 'string') {
+      allowedUoms.add(c.uom);
+    }
+  }
+
+  transferUnitOptions.value = [...allowedUoms].map((uom) => ({
+    label: uom,
+    value: uom,
+  }));
+}
+
+async function getAvailableQtyInBatch(): Promise<number> {
+  if (!props.row.batch) {
+    return 0;
+  }
+
+  return (
+    (await fyo.db.getStockQuantity(
+      props.row.item as string,
+      undefined,
+      undefined,
+      undefined,
+      props.row.batch
+    )) ?? 0
+  );
+}
+
+function getDisplayTransferQuantity() {
+  const transferQty = props.row.transferQuantity;
+
+  if (!isUOMConversionEnabled.value) {
+    return transferQty;
+  }
+
+  const hasValidQuantity = transferQty && transferQty;
+
+  if (props.row.isReturn && hasValidQuantity) {
+    return -Math.abs(transferQty);
+  }
+
+  return transferQty;
+}
+
+function isDiscountsReadOnly(isValidDiscount: boolean) {
+  const canEditDiscount = profileDiscountSetting.value;
+
+  return props.row.isFreeItem || !canEditDiscount || isValidDiscount;
+}
+
+async function setBatch(batch: string) {
+  props.row.set('batch', batch);
+  await getAvailableQtyInBatch();
+}
+
+function setSerialNumber(serialNumber: string) {
+  if (!serialNumber) {
+    return;
+  }
+
+  props.row.set('serialNumber', serialNumber);
+  itemSerialNumbers[props.row.item as string] = serialNumber;
+
+  validateSerialNumberCount(
+    serialNumber,
+    Math.abs(props.row.quantity ?? 0),
+    props.row.item!
+  );
+}
+
+async function fetchSerialNumbers(
+  forceRefetch = false,
+  useDirectQuantity = false
+) {
+  if (!hasSerialNumber.value) {
+    return;
+  }
+
+  let quantity = 0;
+  if (useDirectQuantity) {
+    quantity = Math.abs(props.row.quantity ?? 0);
+  } else if (isUOMConversionEnabled.value && props.row.transferQuantity) {
+    quantity = Math.abs(props.row.transferQuantity);
+  } else if (props.row.quantity) {
+    quantity = Math.abs(props.row.quantity);
+  }
+
+  if (quantity <= 0) {
+    return;
+  }
+
+  const existingSerialNumbers = itemSerialNumbers[props.row.item as string];
+
+  if (existingSerialNumbers && !forceRefetch) {
+    const existingCount = existingSerialNumbers
+      .split('\n')
+      .filter((s) => s.trim()).length;
+
+    if (existingCount === quantity) {
+      return;
+    } else {
+    }
+  }
+
+  try {
+    const serialNumbers = await getExistingActiveSerialNumbersForItem(
+      fyo,
+      props.row.item as string,
+      quantity
+    );
+
+    if (serialNumbers) {
+      await props.row.set('serialNumber', serialNumbers);
+      itemSerialNumbers[props.row.item as string] = serialNumbers;
+    } else {
+    }
+  } catch (error) {}
+}
+
+function isRateReadOnly() {
+  const canChangeRate = profileRateSetting.value;
+  return props.row.isFreeItem || !canChangeRate;
+}
+
+function setItemDiscount(type: DiscountType, value: Money | number) {
+  if (type === 'percent') {
+    props.row.set('setItemDiscountAmount', false);
+    props.row.set('itemDiscountPercent', value as number);
+    return;
+  }
+  props.row.set('setItemDiscountAmount', true);
+  props.row.set('itemDiscountAmount', value as Money);
+}
+
+function setRate(rate: Money) {
+  props.row.setRate = rate;
+  emit('runSinvFormulas');
+}
+
+async function setQuantity(quantity: number) {
+  const hasManualDiscount = props.row.setItemDiscountAmount;
+  const isPercentageDiscount =
+    !hasManualDiscount && props.row.itemDiscountPercent !== 0;
+  const manualDiscountAmount = props.row.itemDiscountAmount;
+  const manualDiscountPercent = props.row.itemDiscountPercent;
+
+  if (!props.row.isReturn && quantity <= 0) {
+    showToast({
+      type: 'error',
+      message: 'Quantity must be greater than zero.',
+      duration: 'short',
+    });
+
+    quantity = props.row.quantity ?? 1;
+  }
+
+  props.row.set('quantity', quantity);
+
+  const existingItems =
+    (props.row.parentdoc as SalesInvoice).items?.filter(
+      (invoiceItem: InvoiceItem) =>
+        invoiceItem.item === props.row.item && !invoiceItem.isFreeItem
+    ) ?? [];
+
+  quantity = props.row.quantity ?? 1;
+
+  try {
+    await validateQty(
+      props.row.parentdoc as SalesInvoice,
+      props.row,
+      existingItems
+    );
+  } catch (error) {
+    props.row.set('quantity', quantity);
+
+    return showToast({
+      type: 'error',
+      message: t`${error as string}`,
+      duration: 'short',
+    });
+  }
+
+  if (!props.row.isFreeItem) {
+    emit('applyPricingRule');
+    emit('runSinvFormulas');
+
+    if (!hasManualDiscount && !isPercentageDiscount) {
+      props.row.set('setItemDiscountAmount', false);
+      props.row.set('itemDiscountPercent', 0);
+    }
+
+    if (hasManualDiscount) {
+      props.row.set('setItemDiscountAmount', true);
+      props.row.set('itemDiscountAmount', manualDiscountAmount);
+    } else if (isPercentageDiscount) {
+      props.row.set('setItemDiscountAmount', false);
+      props.row.set('itemDiscountPercent', manualDiscountPercent);
+    }
+  }
+}
+
+async function removeAddedItem(row: SalesInvoiceItem) {
+  props.row.parentdoc?.remove('items', row?.idx as number);
+  props.row.runFormulas();
+  if (!row.isFreeItem) {
+    emit('applyPricingRule');
+  }
+}
 </script>

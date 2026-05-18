@@ -31,7 +31,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
@@ -64,7 +67,7 @@ const {
   isNumeric,
   focus,
   triggerChange,
-  parse
+  parse,
 } = useBaseControl(props as any, emit, inputRef);
 
 defineExpose({
@@ -80,6 +83,6 @@ defineExpose({
   inputPlaceholder,
   isReadOnly,
   showMandatory,
-  onBlur
+  onBlur,
 });
 </script>

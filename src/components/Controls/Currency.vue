@@ -36,7 +36,10 @@ import { isPesa } from 'fyo/utils';
 import { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
 import { safeParsePesa } from 'utils/index';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface CurrencyProps extends BaseControlProps {
   focusInput?: boolean;
@@ -72,7 +75,7 @@ const {
   isReadOnly,
   inputPlaceholder,
   triggerChange,
-  focus
+  focus,
 } = useBaseControl(props, emit, inputEl);
 
 // Since Float/Int overridden inputType, for Currency we want number

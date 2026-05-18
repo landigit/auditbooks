@@ -291,11 +291,7 @@ const showBalanceAmount = computed((): boolean => {
     return false;
   }
 
-  if (
-    fyo
-      .pesa(paidAmount.float)
-      .gte(sinvDoc?.grandTotal ?? fyo.pesa(0))
-  ) {
+  if (fyo.pesa(paidAmount.float).gte(sinvDoc?.grandTotal ?? fyo.pesa(0))) {
     return false;
   }
 
@@ -318,11 +314,7 @@ const showPaidChange = computed((): boolean => {
     return false;
   }
 
-  if (
-    fyo
-      .pesa(paidAmount.float)
-      .gt(sinvDoc?.grandTotal ?? fyo.pesa(0))
-  ) {
+  if (fyo.pesa(paidAmount.float).gt(sinvDoc?.grandTotal ?? fyo.pesa(0))) {
     return true;
   }
 
@@ -337,10 +329,7 @@ const showPaidChange = computed((): boolean => {
 const setPaymentMethodAndAmount = (paymentMethodValue?: string) => {
   if (paymentMethodValue) {
     emit('setPaymentMethod', paymentMethodValue);
-    emit(
-      'setPaidAmount',
-      (sinvDoc.outstandingAmount as Money).float
-    );
+    emit('setPaidAmount', (sinvDoc.outstandingAmount as Money).float);
   }
 };
 

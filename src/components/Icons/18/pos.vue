@@ -10,11 +10,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = withDefaults(defineProps<{
-  active?: boolean;
-}>(), {
-  active: false,
-});
+const props = withDefaults(
+  defineProps<{
+    active?: boolean;
+  }>(),
+  {
+    active: false,
+  }
+);
 
 const darkColor = computed(() => {
   return props.active ? 'var(--icon-dark-active)' : 'var(--icon-dark-passive)';

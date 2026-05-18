@@ -37,7 +37,10 @@
 import { computed, ref } from 'vue';
 import { fyo } from 'src/initFyo';
 import { DateTimePicker } from 'src/components/Ui';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 // --- Props & Emits ---
 const props = withDefaults(defineProps<BaseControlProps>(), {
@@ -70,7 +73,7 @@ const {
   baseInputClasses,
   inputPlaceholder,
   parse,
-  triggerChange
+  triggerChange,
 } = useBaseControl(props, emit, inputRef);
 
 // --- Computed ---

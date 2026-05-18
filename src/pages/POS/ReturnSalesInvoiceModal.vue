@@ -217,11 +217,14 @@ const setReturnedInvoices = async () => {
 };
 
 // Watchers
-watch(() => props.modalStatus, async (newVal) => {
-  if (newVal) {
-    await setReturnedInvoices();
+watch(
+  () => props.modalStatus,
+  async (newVal) => {
+    if (newVal) {
+      await setReturnedInvoices();
+    }
   }
-});
+);
 
 watch(invoiceSearchTerm, () => {
   pageStart.value = 0;

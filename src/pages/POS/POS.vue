@@ -151,7 +151,16 @@ import { Shipment } from 'models/inventory/Shipment';
 import { routeTo, toggleSidebar } from 'src/utils/ui';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import PageHeader from 'src/components/PageHeader.vue';
-import { computed, inject, ref, provide, onMounted, onActivated, onDeactivated, watch } from 'vue';
+import {
+  computed,
+  inject,
+  ref,
+  provide,
+  onMounted,
+  onActivated,
+  onDeactivated,
+  watch,
+} from 'vue';
 import { Payment } from 'models/baseModels/Payment/Payment';
 import { ModalName, modalNames } from 'src/components/POS/types';
 import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
@@ -237,15 +246,21 @@ const quickQtyKeyDownHandler = ref<((e: KeyboardEvent) => void) | null>(null);
 const quickQtyKeyUpHandler = ref<((e: KeyboardEvent) => void) | null>(null);
 const selectedItemForBatch = ref('');
 const pendingBatchItem = ref<{ item: POSItem; quantity: number } | null>(null);
-const expandedBatchId = ref<string | null | undefined>(undefined);
-const itemVisibilityValue = ref<'Inventory Items' | 'ERP Sync Items' | 'Non-Inventory Items'>('Inventory Items');
+const expandedBatchId = ref<string | undefined>(undefined);
+const itemVisibilityValue = ref<
+  'Inventory Items' | 'ERP Sync Items' | 'Non-Inventory Items'
+>('Inventory Items');
 
 // Injections
 const shortcuts = inject(shortcutsKey);
 
 // Computed
-const defaultPOSCashAccount = computed(() => fyo.singles.POSSettings?.cashAccount ?? undefined);
-const isDiscountingEnabled = computed(() => !!fyo.singles.AccountingSettings?.enableDiscounting);
+const defaultPOSCashAccount = computed(
+  () => fyo.singles.POSSettings?.cashAccount ?? undefined
+);
+const isDiscountingEnabled = computed(
+  () => !!fyo.singles.AccountingSettings?.enableDiscounting
+);
 const isPosShiftOpen = computed(() => !!fyo.singles.POSSettings?.isShiftOpen);
 const itemVisibility = computed(() => itemVisibilityValue.value);
 const disablePayButton = computed(() => {
@@ -256,21 +271,66 @@ const disablePayButton = computed(() => {
 });
 
 // Provides
-provide('doc', computed(() => sinvDoc.value));
-provide('sinvDoc', computed(() => sinvDoc.value));
-provide('coupons', computed(() => coupons.value));
-provide('itemQtyMap', computed(() => itemQtyMap.value));
-provide('paidAmount', computed(() => paidAmount.value));
-provide('paymentMethod', computed(() => paymentMethod.value));
-provide('transferRefNo', computed(() => transferRefNo.value));
-provide('itemDiscounts', computed(() => itemDiscounts.value));
-provide('transferAmount', computed(() => transferAmount.value));
-provide('appliedCoupons', computed(() => sinvDoc.value.coupons));
-provide('totalTaxedAmount', computed(() => totalTaxedAmount.value));
-provide('itemSerialNumbers', computed(() => itemSerialNumbers.value));
-provide('isDiscountingEnabled', computed(() => isDiscountingEnabled.value));
-provide('transferClearanceDate', computed(() => transferClearanceDate.value));
-provide('posSettings', computed(() => fyo.singles.POSSettings));
+provide(
+  'doc',
+  computed(() => sinvDoc.value)
+);
+provide(
+  'sinvDoc',
+  computed(() => sinvDoc.value)
+);
+provide(
+  'coupons',
+  computed(() => coupons.value)
+);
+provide(
+  'itemQtyMap',
+  computed(() => itemQtyMap.value)
+);
+provide(
+  'paidAmount',
+  computed(() => paidAmount.value)
+);
+provide(
+  'paymentMethod',
+  computed(() => paymentMethod.value)
+);
+provide(
+  'transferRefNo',
+  computed(() => transferRefNo.value)
+);
+provide(
+  'itemDiscounts',
+  computed(() => itemDiscounts.value)
+);
+provide(
+  'transferAmount',
+  computed(() => transferAmount.value)
+);
+provide(
+  'appliedCoupons',
+  computed(() => sinvDoc.value.coupons)
+);
+provide(
+  'totalTaxedAmount',
+  computed(() => totalTaxedAmount.value)
+);
+provide(
+  'itemSerialNumbers',
+  computed(() => itemSerialNumbers.value)
+);
+provide(
+  'isDiscountingEnabled',
+  computed(() => isDiscountingEnabled.value)
+);
+provide(
+  'transferClearanceDate',
+  computed(() => transferClearanceDate.value)
+);
+provide(
+  'posSettings',
+  computed(() => fyo.singles.POSSettings)
+);
 
 // Watchers
 watch(
@@ -288,7 +348,10 @@ watch(
 onMounted(async () => {
   await setItems();
   await loadPOSProfile();
-  itemVisibilityValue.value = await getItemVisibility(fyo) as 'Inventory Items' | 'ERP Sync Items' | 'Non-Inventory Items';
+  itemVisibilityValue.value = (await getItemVisibility(fyo)) as
+    | 'Inventory Items'
+    | 'ERP Sync Items'
+    | 'Non-Inventory Items';
 });
 
 onActivated(async () => {
@@ -316,24 +379,33 @@ function setQuickQtySelectedRow(row: SalesInvoiceItem) {
   quickQtyRow.value = row;
 }
 
-function setExpandedBatchId(rowName: string | null) {
+function setExpandedBatchId(rowName: string | undefined) {
   expandedBatchId.value = rowName;
 }
 
 function addQuickQtyListeners() {
   quickQtyKeyDownHandler.value = (e: KeyboardEvent) => onQuickQtyKeyDown(e);
   quickQtyKeyUpHandler.value = (e: KeyboardEvent) => onQuickQtyKeyUp(e);
-  window.addEventListener('keydown', quickQtyKeyDownHandler.value as EventListener);
+  window.addEventListener(
+    'keydown',
+    quickQtyKeyDownHandler.value as EventListener
+  );
   window.addEventListener('keyup', quickQtyKeyUpHandler.value as EventListener);
 }
 
 function removeQuickQtyListeners() {
   if (quickQtyKeyDownHandler.value) {
-    window.removeEventListener('keydown', quickQtyKeyDownHandler.value as EventListener);
+    window.removeEventListener(
+      'keydown',
+      quickQtyKeyDownHandler.value as EventListener
+    );
     quickQtyKeyDownHandler.value = null;
   }
   if (quickQtyKeyUpHandler.value) {
-    window.removeEventListener('keyup', quickQtyKeyUpHandler.value as EventListener);
+    window.removeEventListener(
+      'keyup',
+      quickQtyKeyUpHandler.value as EventListener
+    );
     quickQtyKeyUpHandler.value = null;
   }
 }
@@ -603,9 +675,9 @@ function isModalOpen() {
         Payment: openPaymentModal,
         ReturnSalesInvoice: openReturnSalesInvoiceModal,
         Alert: openAlertModal,
-        Keyboard: openKeyboardModal
+        Keyboard: openKeyboardModal,
       };
-      
+
       const modalRef = modalsMap[modal];
       if (modalRef && modalRef.value) {
         modalRef.value = false;
@@ -785,9 +857,7 @@ function setPaymentMethod(method: string) {
 
 function setDefaultCustomer() {
   defaultCustomer.value =
-    posProfile.value?.posCustomer ??
-    fyo.singles.Defaults?.posCustomer ??
-    '';
+    posProfile.value?.posCustomer ?? fyo.singles.Defaults?.posCustomer ?? '';
   sinvDoc.value.party = defaultCustomer.value;
 }
 
@@ -874,15 +944,11 @@ function setTransferRefNo(ref: string) {
 
 function validateInvoice() {
   if (sinvDoc.value.isSubmitted) {
-    throw new ValidationError(
-      t`Cannot add an item to a submitted invoice.`
-    );
+    throw new ValidationError(t`Cannot add an item to a submitted invoice.`);
   }
 
   if (sinvDoc.value.returnAgainst) {
-    throw new ValidationError(
-      t`Unable to add an item to the return invoice.`
-    );
+    throw new ValidationError(t`Unable to add an item to the return invoice.`);
   }
 }
 
@@ -961,12 +1027,11 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
             if (item.hasSerialNumber) {
               const qty = currentQty + addQty;
 
-              const serialNumbers =
-                await getExistingActiveSerialNumbersForItem(
-                  fyo,
-                  itemName,
-                  qty
-                );
+              const serialNumbers = await getExistingActiveSerialNumbersForItem(
+                fyo,
+                itemName,
+                qty
+              );
 
               if (serialNumbers) {
                 itemSerialNumbers.value[itemName] = serialNumbers;
@@ -1189,10 +1254,7 @@ async function createTransaction(shouldPrint = false, isPay = false) {
 
     const visibility = await getItemVisibility(fyo);
 
-    if (
-      sinvDoc.value.stockNotTransferred &&
-      visibility === 'Inventory Items'
-    ) {
+    if (sinvDoc.value.stockNotTransferred && visibility === 'Inventory Items') {
       await makeStockTransfer();
     }
 
@@ -1201,9 +1263,7 @@ async function createTransaction(shouldPrint = false, isPay = false) {
     }
 
     if (shouldPrint) {
-      await routeTo(
-        `/print/${sinvDoc.value.schemaName}/${sinvDoc.value.name}`
-      );
+      await routeTo(`/print/${sinvDoc.value.schemaName}/${sinvDoc.value.name}`);
     }
 
     await afterTransaction();
@@ -1228,7 +1288,8 @@ async function makePayment(shouldPrint: boolean) {
   await paymentDoc.value.set('amount', fyo.pesa(paidAmount.value.float));
   await paymentDoc.value.set('referenceType', ModelNameEnum.SalesInvoice);
 
-  const paymentMethodDoc = await paymentDoc.value.loadAndGetLink('paymentMethod');
+  const paymentMethodDoc =
+    await paymentDoc.value.loadAndGetLink('paymentMethod');
 
   if (paymentMethodDoc?.type !== 'Cash') {
     await paymentDoc.value.setMultiple({
@@ -1256,9 +1317,7 @@ async function makePayment(shouldPrint: boolean) {
     await paymentDoc.value?.submit();
 
     if (shouldPrint) {
-      await routeTo(
-        `/print/${sinvDoc.value.schemaName}/${sinvDoc.value.name}`
-      );
+      await routeTo(`/print/${sinvDoc.value.schemaName}/${sinvDoc.value.name}`);
     }
   } catch (error) {
     return showToast({
@@ -1375,7 +1434,7 @@ function toggleModal(modal: ModalName, value?: boolean) {
     Payment: openPaymentModal,
     ReturnSalesInvoice: openReturnSalesInvoiceModal,
     Alert: openAlertModal,
-    Keyboard: openKeyboardModal
+    Keyboard: openKeyboardModal,
   };
 
   const modalRef = modalMap[modal];
@@ -1406,9 +1465,7 @@ async function applyPricingRule() {
   if (ignorePricingRules()) {
     return;
   }
-  const hasPricingRules = await getPricingRule(
-    sinvDoc.value as SalesInvoice
-  );
+  const hasPricingRules = await getPricingRule(sinvDoc.value as SalesInvoice);
 
   if (!hasPricingRules || !hasPricingRules.length) {
     sinvDoc.value.pricingRuleDetail = undefined;
@@ -1427,8 +1484,7 @@ async function applyPricingRule() {
   const map = await getItemQtyMap(sinvDoc.value as SalesInvoice);
 
   hasPricingRules.map((pRule) => {
-    const freeItemQty =
-      map[pRule.pricingRule.freeItem as string]?.availableQty;
+    const freeItemQty = map[pRule.pricingRule.freeItem as string]?.availableQty;
 
     if (freeItemQty <= 0) {
       sinvDoc.value.items = sinvDoc.value.items?.filter(

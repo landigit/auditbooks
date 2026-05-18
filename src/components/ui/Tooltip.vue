@@ -100,7 +100,3 @@ watch(
     </TooltipRoot>
   </TooltipProvider>
 </template>
-
-<script lang="ts">
-export { TooltipTrigger } from 'reka-ui';
-</script>

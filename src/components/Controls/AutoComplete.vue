@@ -34,7 +34,11 @@
           :tabindex="isReadOnly ? '-1' : '0'"
           @focus="(e) => !isReadOnly && onInputFocus(e)"
           @click="(e) => !isReadOnly && onClick(e, toggleDropdown)"
-          @blur="(e) => !isReadOnly && onBlur((e.target as HTMLInputElement).value, toggleDropdown)"
+          @blur="
+            (e) =>
+              !isReadOnly &&
+              onBlur((e.target as HTMLInputElement).value, toggleDropdown)
+          "
           @input="(e) => onInput(e, toggleDropdown)"
           @keydown.up="onKeyDownUp($event, toggleDropdown, highlightItemUp)"
           @keydown.down="
@@ -92,7 +96,10 @@
               :side-offset="10"
               class="p-0 overflow-hidden shadow-xl border-border"
             >
-              <QuickView :schema-name="linkSchemaName" :name="value as string" />
+              <QuickView
+                :schema-name="linkSchemaName"
+                :name="value as string"
+              />
             </PopoverContent>
           </Popover>
         </div>
@@ -108,13 +115,12 @@ import { FieldTypeEnum } from 'schemas/types';
 import Dropdown from 'src/components/Dropdown.vue';
 import { fuzzyMatch } from 'src/utils';
 import { getFormRoute, routeTo } from 'src/utils/ui';
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-} from 'src/components/Ui';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
 import QuickView from '../QuickView.vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface AutoCompleteProps extends BaseControlProps {
   focusInput?: boolean;
@@ -148,11 +154,14 @@ const emit = defineEmits<{
 const showQuickView = ref(false);
 const internalLinkValue = ref('');
 const linkValue = computed({
-  get: () => props.linkValueOverride !== null ? props.linkValueOverride : internalLinkValue.value,
+  get: () =>
+    props.linkValueOverride !== null
+      ? props.linkValueOverride
+      : internalLinkValue.value,
   set: (val) => {
     internalLinkValue.value = val;
     emit('update:linkValue', val);
-  }
+  },
 });
 
 const focInp = ref(false);
@@ -171,7 +180,7 @@ const {
   inputPlaceholder,
   showMandatory,
   triggerChange,
-  focus
+  focus,
 } = useBaseControl(props, emit, inputRef);
 
 const linkSchemaName = computed(() => {
@@ -344,7 +353,10 @@ const onIconFocus = (e: MouseEvent, toggleDropdown: (val: boolean) => void) => {
   emit('focus', e as any);
 };
 
-const onBlur = async (label: string, _toggleDropdown: (val: boolean) => void) => {
+const onBlur = async (
+  label: string,
+  _toggleDropdown: (val: boolean) => void
+) => {
   isFocused.value = false;
   isDropdownOpen.value = false;
   if (!label && !props.value) {
@@ -385,14 +397,14 @@ const onInput = (e: any, toggleDropdown: (val: boolean) => void) => {
   updateSuggestions(e.target.value);
 };
 
-const onPressEnter = async (e: any, toggleDropdown: (val: boolean) => void, selectHighlightedItem: () => Promise<void>) => {
+const onPressEnter = async (
+  e: any,
+  toggleDropdown: (val: boolean) => void,
+  selectHighlightedItem: () => Promise<void>
+) => {
   e.preventDefault();
 
-  if (
-    suggestions.value.length > 0 &&
-    isFocused.value &&
-    isDropdownOpen.value
-  ) {
+  if (suggestions.value.length > 0 && isFocused.value && isDropdownOpen.value) {
     await selectHighlightedItem();
     closeDropdown(e, toggleDropdown);
     return;
@@ -403,7 +415,11 @@ const onPressEnter = async (e: any, toggleDropdown: (val: boolean) => void, sele
   isDropdownOpen.value = true;
 };
 
-const onKeyDownUp = (_e: any, toggleDropdown: (val: boolean) => void, highlightItemUp: () => void) => {
+const onKeyDownUp = (
+  _e: any,
+  toggleDropdown: (val: boolean) => void,
+  highlightItemUp: () => void
+) => {
   if (suggestions.value.length === 0) {
     updateSuggestions();
     toggleDropdown(true);
@@ -412,7 +428,11 @@ const onKeyDownUp = (_e: any, toggleDropdown: (val: boolean) => void, highlightI
   highlightItemUp();
 };
 
-const onKeyDownDown = (_e: any, toggleDropdown: (val: boolean) => void, highlightItemDown: () => void) => {
+const onKeyDownDown = (
+  _e: any,
+  toggleDropdown: (val: boolean) => void,
+  highlightItemDown: () => void
+) => {
   if (suggestions.value.length === 0) {
     updateSuggestions();
     toggleDropdown(true);
@@ -426,9 +446,13 @@ const closeDropdown = (_e: any, toggleDropdown: (val: boolean) => void) => {
   isDropdownOpen.value = false;
 };
 
-watch(() => props.value, (newValue) => {
-  setLinkValue(getLinkValue(newValue));
-}, { immediate: true });
+watch(
+  () => props.value,
+  (newValue) => {
+    setLinkValue(getLinkValue(newValue));
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   const value = linkValue.value || props.value;

@@ -41,10 +41,13 @@ watch(period, async () => {
   await periodChange();
 });
 
-watch(() => props.commonPeriod, (val) => {
-  if (!val || !periodOptions.value.includes(val)) {
-    return;
+watch(
+  () => props.commonPeriod,
+  (val) => {
+    if (!val || !periodOptions.value.includes(val)) {
+      return;
+    }
+    period.value = val;
   }
-  period.value = val;
-});
+);
 </script>

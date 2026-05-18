@@ -23,7 +23,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface TextProps extends BaseControlProps {
   rows?: number;
@@ -57,10 +60,10 @@ const {
   isReadOnly,
   showMandatory,
   onBlur,
-  focus
+  focus,
 } = useBaseControl(props as any, emit, inputRef);
 
 defineExpose({
-  focus
+  focus,
 });
 </script>

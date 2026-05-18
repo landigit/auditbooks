@@ -20,7 +20,10 @@ import { fuzzyMatch } from 'src/utils';
 import { getCreateFiltersFromListViewFilters } from 'src/utils/misc';
 import { markRaw } from 'vue';
 import AutoComplete from './AutoComplete.vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface MultiLabelLinkProps extends BaseControlProps {
   thirdLink?: string;
@@ -104,7 +107,7 @@ const getOptions = async () => {
 
   const schema = fyo.schemaMap[schemaName];
   if (!schema) {
-     return [];
+    return [];
   }
   const filters = await getFilters();
 
@@ -127,7 +130,8 @@ const getOptions = async () => {
       const option: any = {
         label:
           r[props.secondaryLink as string] && props.showSecondaryLink
-            ? `${r[schema.titleField as string]}  ` + `  ${r[props.secondaryLink as string]}`
+            ? `${r[schema.titleField as string]}  ` +
+              `  ${r[props.secondaryLink as string]}`
             : r[schema.titleField as string],
         value: r.name,
         value2: r[props.secondaryLink as string],
@@ -166,7 +170,7 @@ const getSuggestions = async (keyword = '') => {
             '<span class="text-description">{{ t`No results found` }}</span>',
           setup() {
             return { t };
-          }
+          },
         }),
         action: () => {},
         actionOnly: true,
@@ -206,8 +210,7 @@ const openNewDoc = async () => {
   if (!schema) {
     return;
   }
-  const name =
-    linkValue.value || fyo.doc.getTemporaryName(schema);
+  const name = linkValue.value || fyo.doc.getTemporaryName(schema);
   const filters = await getCreateFilters();
   const { openQuickEdit } = await import('src/utils/ui');
 
@@ -226,7 +229,9 @@ const getCreateFilters = async () => {
 
   const getCreateFiltersFunc =
     fyo.models[schemaName]?.createFilters?.[fieldname];
-  let createFilters = doc.value ? await getCreateFiltersFunc?.(doc.value) : undefined;
+  let createFilters = doc.value
+    ? await getCreateFiltersFunc?.(doc.value)
+    : undefined;
 
   if (createFilters !== undefined) {
     return createFilters;
@@ -265,6 +270,6 @@ const focus = () => {
 };
 
 defineExpose({
-  focus
+  focus,
 });
 </script>

@@ -220,7 +220,9 @@ onMounted(async () => {
     }
   });
   shortcuts?.set(COMPONENT_NAME, ['F1'], () => openDocumentation());
-  shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyD'], () => emit('toggle-darkmode'));
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyD'], () =>
+    emit('toggle-darkmode')
+  );
 
   showDevMode.value = store.isDevelopment;
 });

@@ -97,7 +97,10 @@ const posClosingShiftDoc = ref<POSClosingShift | undefined>(undefined);
 const transactedAmount = ref<Record<string, Money>>({});
 
 // Provide context to child elements
-provide('doc', computed(() => posClosingShiftDoc.value));
+provide(
+  'doc',
+  computed(() => posClosingShiftDoc.value)
+);
 
 // Computed Properties
 const isOnline = computed(() => {
@@ -226,10 +229,13 @@ const handleSubmit = async () => {
 };
 
 // Watchers
-watch(() => props.openModal, async () => {
-  await setTransactedAmount();
-  await seedClosingAmounts();
-});
+watch(
+  () => props.openModal,
+  async () => {
+    await setTransactedAmount();
+    await seedClosingAmounts();
+  }
+);
 
 // Lifecycles
 onActivated(async () => {

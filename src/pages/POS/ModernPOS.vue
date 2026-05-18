@@ -442,12 +442,12 @@ defineProps<{
   profile?: POSProfile | null;
   batchAddedItems?: string[];
   selectedItemForBatch?: string;
-  expandedBatchId?: string | null;
+  expandedBatchId?: string;
 }>();
 
 // Define Emits
 const emit = defineEmits<{
-  (e: 'setExpandedBatchId', rowName: string | null | undefined): void;
+  (e: 'setExpandedBatchId', rowName: string | undefined): void;
   (e: 'addItem', item: any): void;
   (e: 'toggleView'): void;
   (e: 'toggleModal', modalName: PosEmits, value?: any): void;

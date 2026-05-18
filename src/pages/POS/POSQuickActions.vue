@@ -1,6 +1,9 @@
 <template>
   <div class="relative group">
-    <div class="bg-surface p-1.5 rounded-md cursor-pointer" @click="toggleItemsView">
+    <div
+      class="bg-surface p-1.5 rounded-md cursor-pointer"
+      @click="toggleItemsView"
+    >
       <LucideIcon
         :name="tableView ? 'grid' : 'list'"
         class="w-5 h-5 text-main"

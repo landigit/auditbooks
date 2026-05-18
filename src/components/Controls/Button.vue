@@ -19,7 +19,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface ButtonProps extends BaseControlProps {
   spaceBetween?: boolean;
@@ -50,11 +53,11 @@ const emit = defineEmits<{
 
 const inputRef = ref<HTMLButtonElement | null>(null);
 
-const {
-  containerClasses,
-  isReadOnly,
-  triggerChange,
-} = useBaseControl(props, emit, inputRef);
+const { containerClasses, isReadOnly, triggerChange } = useBaseControl(
+  props,
+  emit,
+  inputRef
+);
 
 const labelClasses = computed(() => {
   return props.labelClass || 'text-description text-base';

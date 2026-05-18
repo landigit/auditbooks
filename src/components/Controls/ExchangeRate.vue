@@ -46,58 +46,55 @@
     </button>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import { safeParseFloat } from 'utils/index';
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  props: {
-    disabled: { type: Boolean, default: false },
-    fromCurrency: { type: String, default: 'USD' },
-    toCurrency: { type: String, default: 'INR' },
-    exchangeRate: { type: Number, default: 75 },
-  },
-  emits: ['change'],
-  data() {
-    return { fromValue: 1, isSwapped: false };
-  },
-  computed: {
-    left(): string {
-      if (this.isSwapped) {
-        return this.toCurrency;
-      }
-
-      return this.fromCurrency;
-    },
-    right(): string {
-      if (this.isSwapped) {
-        return this.fromCurrency;
-      }
-
-      return this.toCurrency;
-    },
-  },
-  methods: {
-    swap() {
-      this.isSwapped = !this.isSwapped;
-    },
-    rightChange(e: Event) {
-      let value: string | number = 1;
-      if (e.target instanceof HTMLInputElement) {
-        value = e.target.value;
-      }
-
-      value = safeParseFloat(value);
-
-      let exchangeRate = value / this.fromValue;
-      if (this.isSwapped) {
-        exchangeRate = this.fromValue / value;
-      }
-
-      this.$emit('change', exchangeRate);
-    },
-  },
+const props = defineProps({
+  disabled: { type: Boolean, default: false },
+  fromCurrency: { type: String, default: 'USD' },
+  toCurrency: { type: String, default: 'INR' },
+  exchangeRate: { type: Number, default: 75 },
 });
+
+const emit = defineEmits(['change']);
+
+const fromValue = ref(1);
+const isSwapped = ref(false);
+
+const left = computed(() => {
+  if (isSwapped.value) {
+    return props.toCurrency;
+  }
+  return props.fromCurrency;
+});
+
+const right = computed(() => {
+  if (isSwapped.value) {
+    return props.fromCurrency;
+  }
+  return props.toCurrency;
+});
+
+function swap() {
+  isSwapped.value = !isSwapped.value;
+}
+
+function rightChange(e: Event) {
+  let value: string | number = 1;
+  if (e.target instanceof HTMLInputElement) {
+    value = e.target.value;
+  }
+
+  value = safeParseFloat(value);
+
+  let exchangeRate = value / fromValue.value;
+  if (isSwapped.value) {
+    exchangeRate = fromValue.value / value;
+  }
+
+  emit('change', exchangeRate);
+}
 </script>
 <style scoped>
 @reference "../../styles/index.css";

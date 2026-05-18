@@ -19,12 +19,3 @@ const forwarded = useForwardPropsEmits(props, emits);
     </DialogRoot>
   </div>
 </template>
-
-<script lang="ts">
-export {
-  DialogTrigger,
-  DialogPortal,
-  DialogClose,
-  DialogOverlay,
-} from 'reka-ui';
-</script>

@@ -100,7 +100,10 @@ const emit = defineEmits<{
   (e: 'editrow', row: Doc): void;
 }>();
 
-provide('doc', computed(() => props.row));
+provide(
+  'doc',
+  computed(() => props.row)
+);
 
 const isRowIndexVisible = ref(false);
 const errors = ref<Record<string, string | null>>({});
@@ -157,6 +160,6 @@ const focusFirstInput = () => {
 };
 
 defineExpose({
-  focusFirstInput
+  focusFirstInput,
 });
 </script>

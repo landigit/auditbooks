@@ -1,9 +1,5 @@
 <template>
-  <Link
-    ref="linkRef"
-    v-bind="props"
-    :get-suggestions="getLinkSuggestions"
-  />
+  <Link ref="linkRef" v-bind="props" :get-suggestions="getLinkSuggestions" />
 </template>
 
 <script setup lang="ts">
@@ -95,7 +91,10 @@ const getOptions = async (filters: any) => {
 
   results.value = dbResults
     .map((r: any) => {
-      const option: any = { label: r[schema.titleField as string], value: r.name };
+      const option: any = {
+        label: r[schema.titleField as string],
+        value: r.name,
+      };
       if ((props.df as any).groupBy) {
         option.group = r[(props.df as any).groupBy];
       }
@@ -153,6 +152,6 @@ const focus = () => {
 };
 
 defineExpose({
-  focus
+  focus,
 });
 </script>

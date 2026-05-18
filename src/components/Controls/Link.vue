@@ -20,7 +20,10 @@ import { getCreateFiltersFromListViewFilters } from 'src/utils/misc';
 import { markRaw } from 'vue';
 import Badge from 'src/components/Badge.vue';
 import AutoComplete from './AutoComplete.vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface LinkProps extends BaseControlProps {
   focusInput?: boolean;
@@ -101,7 +104,7 @@ const getOptions = async (filters: any) => {
   if (!schema) {
     return [];
   }
-  
+
   const fields = [
     ...new Set(['name', schema.titleField, (props.df as any).groupBy]),
   ].filter(Boolean) as string[];
@@ -113,7 +116,10 @@ const getOptions = async (filters: any) => {
 
   results.value = dbResults
     .map((r: any) => {
-      const option: any = { label: r[schema.titleField as string], value: r.name };
+      const option: any = {
+        label: r[schema.titleField as string],
+        value: r.name,
+      };
       if ((props.df as any).groupBy) {
         option.group = r[(props.df as any).groupBy];
       }
@@ -145,13 +151,16 @@ const getLinkSuggestions = async (keyword = '') => {
               '<span class="text-description">{{ t`No results found, disable filters` }}</span>',
             setup() {
               return { t };
-            }
+            },
           }),
           action: () => disableFiltering(keyword),
           actionOnly: true,
         },
       ];
-    } else if (autoCompleteRef.value?.isFocused && (!doc.value || !(props.df as any).create)) {
+    } else if (
+      autoCompleteRef.value?.isFocused &&
+      (!doc.value || !(props.df as any).create)
+    ) {
       optionsList = [
         {
           component: markRaw({
@@ -159,7 +168,7 @@ const getLinkSuggestions = async (keyword = '') => {
               '<span class="text-description">{{ t`No results found` }}</span>',
             setup() {
               return { t };
-            }
+            },
           }),
           action: () => {},
           actionOnly: true,
@@ -215,8 +224,7 @@ const openNewDoc = async () => {
   if (!schema) {
     return;
   }
-  const name =
-    linkValue.value || fyo.doc.getTemporaryName(schema);
+  const name = linkValue.value || fyo.doc.getTemporaryName(schema);
   const filters = await getCreateFilters();
   const { openQuickEdit } = await import('src/utils/ui');
 
@@ -234,7 +242,9 @@ const getCreateFilters = async () => {
   const { schemaName, fieldname } = props.df as any;
   const getCreateFiltersFunc =
     fyo.models[schemaName]?.createFilters?.[fieldname];
-  let createFilters = doc.value ? await getCreateFiltersFunc?.(doc.value) : undefined;
+  let createFilters = doc.value
+    ? await getCreateFiltersFunc?.(doc.value)
+    : undefined;
 
   if (createFilters !== undefined) {
     return createFilters;
@@ -275,9 +285,13 @@ const focus = () => {
   autoCompleteRef.value?.focus();
 };
 
-watch(() => props.value, (newValue) => {
-  setLinkValue(newValue);
-}, { immediate: true });
+watch(
+  () => props.value,
+  (newValue) => {
+    setLinkValue(newValue);
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   if (props.value) {
@@ -295,6 +309,6 @@ defineExpose({
   setLinkValue,
   linkValue,
   results,
-  doc
+  doc,
 });
 </script>

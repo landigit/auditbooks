@@ -4,10 +4,14 @@
       class="flex items-center"
       :class="[
         spaceBetween ? 'justify-between' : '',
-        isReadOnly ? 'cursor-default' : 'cursor-pointer select-none group'
+        isReadOnly ? 'cursor-default' : 'cursor-pointer select-none group',
       ]"
     >
-      <div v-if="showLabel && !labelRight" class="me-3 transition-colors duration-200" :class="labelClasses">
+      <div
+        v-if="showLabel && !labelRight"
+        class="me-3 transition-colors duration-200"
+        :class="labelClasses"
+      >
         {{ df.label }}
       </div>
       <div
@@ -75,7 +79,11 @@
           class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
         />
       </div>
-      <div v-if="showLabel && labelRight" class="ms-3 transition-colors duration-200" :class="labelClasses">
+      <div
+        v-if="showLabel && labelRight"
+        class="ms-3 transition-colors duration-200"
+        :class="labelClasses"
+      >
         {{ df.label }}
       </div>
     </label>
@@ -84,7 +92,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface CheckProps extends BaseControlProps {
   spaceBetween?: boolean;
@@ -114,12 +125,8 @@ const offColor = ref('#0000');
 const color = ref('var(--color-description)');
 const inputRef = ref<HTMLInputElement | null>(null);
 
-const {
-  inputClasses,
-  containerClasses,
-  isReadOnly,
-  triggerChange,
-} = useBaseControl(props, emit, inputRef);
+const { inputClasses, containerClasses, isReadOnly, triggerChange } =
+  useBaseControl(props, emit, inputRef);
 
 const labelClasses = computed(() => {
   return props.labelClass || 'text-description text-base';

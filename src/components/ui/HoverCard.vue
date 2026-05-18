@@ -22,7 +22,3 @@ const forwarded = useForwardPropsEmits(props, emits);
     </HoverCardRoot>
   </div>
 </template>
-
-<script lang="ts">
-export { HoverCardTrigger, HoverCardPortal } from 'reka-ui';
-</script>

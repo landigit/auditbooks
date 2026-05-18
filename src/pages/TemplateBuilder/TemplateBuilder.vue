@@ -200,7 +200,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onActivated, onDeactivated, inject, provide } from 'vue';
+import {
+  ref,
+  computed,
+  onMounted,
+  onActivated,
+  onDeactivated,
+  inject,
+  provide,
+} from 'vue';
 import { EditorView } from 'codemirror';
 import { Doc } from 'fyo/model/doc';
 import { ModelNameEnum } from 'models/types';
@@ -317,10 +325,7 @@ const maxWidth = computed(() => {
 });
 
 const fields = computed<Record<string, Field>>(() => {
-  return getMapFromList(
-    fyo.schemaMap.PrintTemplate?.fields ?? [],
-    'fieldname'
-  );
+  return getMapFromList(fyo.schemaMap.PrintTemplate?.fields ?? [], 'fieldname');
 });
 
 const displayDocField = computed<TargetField>(() => {

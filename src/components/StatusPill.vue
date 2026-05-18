@@ -56,9 +56,7 @@ const text = computed(() => {
 
   if (hasOutstanding && status.value === 'PartlyPaid') {
     const outstandingPayment = fyo.format(
-      (props.doc.grandTotal as Money).sub(
-        props.doc.outstandingAmount as Money
-      ),
+      (props.doc.grandTotal as Money).sub(props.doc.outstandingAmount as Money),
       'Currency'
     );
     return t`Partly Paid ${outstandingPayment}`;

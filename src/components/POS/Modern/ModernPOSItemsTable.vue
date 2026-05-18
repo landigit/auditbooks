@@ -22,7 +22,7 @@
 
       <Row
         v-for="row in firstColumnItems as POSItem[]"
-        :key="row.id"
+        :key="row.name"
         :ratio="ratio"
         :border="true"
         class="px-2 w-full border flex items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
@@ -60,7 +60,7 @@
       </Row>
       <Row
         v-for="row in secondColumnItems as POSItem[]"
-        :key="row.id"
+        :key="row.name"
         :ratio="ratio"
         :border="true"
         class="px-2 w-full border flex items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
@@ -79,85 +79,85 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed } from 'vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Row from 'src/components/Row.vue';
 import { isNumeric } from 'src/utils';
 import { t } from 'fyo';
-import { defineComponent } from 'vue';
 import { Field } from 'schemas/types';
 import { POSItem } from '../types';
 
-export default defineComponent({
-  name: 'ModernPOSItemsTable',
-  components: { FormControl, Row },
-  emits: ['addItem', 'updateValues'],
-  props: {
-    items: Array,
-    itemQtyMap: Object,
-    itemVisibility: {
-      type: String,
-      default: 'Inventory Items',
-    },
+const props = defineProps({
+  items: {
+    type: Array as () => POSItem[],
+    default: () => [],
   },
-  computed: {
-    ratio() {
-      if (this.itemVisibility === 'ERP Sync Items') {
-        return [1, 1.5, 0.8];
-      }
-      return [1, 1, 1, 0.7];
-    },
-    tableFields() {
-      const fields = [
-        {
-          fieldname: 'name',
-          fieldtype: 'Data',
-          label: t`Item`,
-          placeholder: 'Item',
-          readOnly: true,
-        },
-        {
-          fieldname: 'rate',
-          label: t`Rate`,
-          placeholder: 'Rate',
-          fieldtype: 'Currency',
-          readOnly: true,
-        },
-        {
-          fieldname: 'unit',
-          label: t`Unit`,
-          placeholder: 'Unit',
-          fieldtype: 'Data',
-          target: 'UOM',
-          readOnly: true,
-        },
-      ] as Field[];
-
-      if (this.itemVisibility !== 'ERP Sync Items') {
-        fields.splice(2, 0, {
-          fieldname: 'availableQty',
-          label: t`Qty`,
-          placeholder: 'Available Qty',
-          fieldtype: 'Float',
-          readOnly: true,
-        });
-      }
-
-      return fields;
-    },
-    firstColumnItems() {
-      return this.items?.slice(0, Math.ceil(this.items.length / 2));
-    },
-    secondColumnItems() {
-      return this.items?.slice(Math.ceil(this.items.length / 2));
-    },
-  },
-  methods: {
-    handleChange(value: POSItem) {
-      this.$emit('addItem', value);
-      this.$emit('updateValues');
-    },
-    isNumeric,
+  itemQtyMap: Object,
+  itemVisibility: {
+    type: String,
+    default: 'Inventory Items',
   },
 });
+
+const emit = defineEmits(['addItem', 'updateValues']);
+
+const ratio = computed(() => {
+  if (props.itemVisibility === 'ERP Sync Items') {
+    return [1, 1.5, 0.8];
+  }
+  return [1, 1, 1, 0.7];
+});
+
+const tableFields = computed(() => {
+  const fields = [
+    {
+      fieldname: 'name',
+      fieldtype: 'Data',
+      label: t`Item`,
+      placeholder: 'Item',
+      readOnly: true,
+    },
+    {
+      fieldname: 'rate',
+      label: t`Rate`,
+      placeholder: 'Rate',
+      fieldtype: 'Currency',
+      readOnly: true,
+    },
+    {
+      fieldname: 'unit',
+      label: t`Unit`,
+      placeholder: 'Unit',
+      fieldtype: 'Data',
+      target: 'UOM',
+      readOnly: true,
+    },
+  ] as Field[];
+
+  if (props.itemVisibility !== 'ERP Sync Items') {
+    fields.splice(2, 0, {
+      fieldname: 'availableQty',
+      label: t`Qty`,
+      placeholder: 'Available Qty',
+      fieldtype: 'Float',
+      readOnly: true,
+    });
+  }
+
+  return fields;
+});
+
+const firstColumnItems = computed(() => {
+  return props.items?.slice(0, Math.ceil(props.items.length / 2)) || [];
+});
+
+const secondColumnItems = computed(() => {
+  return props.items?.slice(Math.ceil(props.items.length / 2)) || [];
+});
+
+function handleChange(value: POSItem) {
+  emit('addItem', value);
+  emit('updateValues');
+}
 </script>

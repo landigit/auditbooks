@@ -328,7 +328,9 @@ const yScalerLocation = (i: number) => {
 const yScalerValue = (i: number) => {
   const minVal = hMin.value;
   const maxVal = hMax.value;
-  return props.formatY((i * (maxVal - minVal)) / props.yLabelDivisions + minVal);
+  return props.formatY(
+    (i * (maxVal - minVal)) / props.yLabelDivisions + minVal
+  );
 };
 
 const getLine = (i: number) => {
@@ -365,7 +367,13 @@ const update = (event: MouseEvent) => {
   }
 
   const { x, y } = getSvgXY(event);
-  const { xi: pXi, yi: pYi, cx: pCx, cy: pCy, d } = getPointIndexAndCoords(x, y);
+  const {
+    xi: pXi,
+    yi: pYi,
+    cx: pCx,
+    cy: pCy,
+    d,
+  } = getPointIndexAndCoords(x, y);
 
   if (d === undefined || d > props.tooltipDispDistThreshold) {
     xi.value = -1;

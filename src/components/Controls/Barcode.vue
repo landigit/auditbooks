@@ -17,123 +17,130 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from 'vue';
 import { showToast } from 'src/utils/interactive';
-import { defineComponent } from 'vue';
-export default defineComponent({
-  emits: ['item-selected'],
-  data() {
-    return {
-      timerId: null,
-      barcode: '',
-      cooldown: '',
-    } as {
-      timerId: null | ReturnType<typeof setTimeout>;
-      barcode: string;
-      cooldown: string;
-    };
-  },
-  mounted() {
-    document.addEventListener('keydown', this.scanListener);
-  },
-  unmounted() {
-    document.removeEventListener('keydown', this.scanListener);
-  },
-  activated() {
-    document.addEventListener('keydown', this.scanListener);
-  },
-  deactivated() {
-    document.removeEventListener('keydown', this.scanListener);
-  },
-  methods: {
-    handleChange(e: Event) {
-      const elem = e.target as HTMLInputElement;
-      this.selectItem(elem.value);
-      elem.value = '';
-    },
-    async selectItem(code: string) {
-      const barcode = code.trim();
-      if (!/^[A-Za-z0-9]{12,}$/.test(barcode)) {
-        return this.error(this.t`Invalid barcode value ${barcode}.`);
-      }
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-      /**
-       * Between two entries of the same item, this adds
-       * a cooldown period of 100ms. This is to prevent
-       * double entry.
-       */
-      if (this.cooldown === barcode) {
-        return;
-      }
-      this.cooldown = barcode;
-      setTimeout(() => (this.cooldown = ''), 100);
+const emit = defineEmits(['item-selected']);
 
-      const items = (await this.fyo.db.getAll('Item', {
-        filters: { barcode },
-        fields: ['name'],
-      })) as { name: string }[];
+const scanner = ref<HTMLInputElement | null>(null);
 
-      const name = items?.[0]?.name;
+let timerId: ReturnType<typeof setTimeout> | null = null;
+let barcode = '';
+let cooldown = '';
 
-      if (!name) {
-        return this.error(this.t`Item with barcode ${barcode} not found.`);
-      }
+function handleChange(e: Event) {
+  const elem = e.target as HTMLInputElement;
+  selectItem(elem.value);
+  elem.value = '';
+}
 
-      this.success(this.t`${name} quantity 1 added.`);
-      this.$emit('item-selected', name);
-    },
-    async scanListener({ key, code }: KeyboardEvent) {
-      /**
-       * Based under the assumption that
-       * - Barcode scanners trigger keydown events
-       * - Keydown events are triggered quicker than human can
-       *    i.e. at max 20ms between events
-       * - Keydown events are triggered for barcode digits
-       * - The sequence of digits might be punctuated by a return
-       */
+async function selectItem(code: string) {
+  const cleanBarcode = code.trim();
+  if (!/^[A-Za-z0-9]{12,}$/.test(cleanBarcode)) {
+    return error(t`Invalid barcode value ${cleanBarcode}.`);
+  }
 
-      const keyCode = Number(key);
-      const isEnter = code === 'Enter';
-      if (Number.isNaN(keyCode) && !isEnter) {
-        return;
-      }
+  /**
+   * Between two entries of the same item, this adds
+   * a cooldown period of 100ms. This is to prevent
+   * double entry.
+   */
+  if (cooldown === cleanBarcode) {
+    return;
+  }
+  cooldown = cleanBarcode;
+  setTimeout(() => (cooldown = ''), 100);
 
-      if (isEnter) {
-        return await this.setItemFromBarcode();
-      }
+  const items = (await fyo.db.getAll('Item', {
+    filters: { barcode: cleanBarcode },
+    fields: ['name'],
+  })) as { name: string }[];
 
-      this.clearInterval();
+  const name = items?.[0]?.name;
 
-      this.barcode += key;
-      this.timerId = setTimeout(async () => {
-        await this.setItemFromBarcode();
-        this.barcode = '';
-      }, 20);
-    },
-    async setItemFromBarcode() {
-      if (this.barcode.length < 12) {
-        return;
-      }
+  if (!name) {
+    return error(t`Item with barcode ${cleanBarcode} not found.`);
+  }
 
-      await this.selectItem(this.barcode);
+  success(t`${name} quantity 1 added.`);
+  emit('item-selected', name);
+}
 
-      this.barcode = '';
-      this.clearInterval();
-    },
-    clearInterval() {
-      if (this.timerId === null) {
-        return;
-      }
+async function scanListener(e: KeyboardEvent) {
+  /**
+   * Based under the assumption that
+   * - Barcode scanners trigger keydown events
+   * - Keydown events are triggered quicker than human can
+   *    i.e. at max 20ms between events
+   * - Keydown events are triggered for barcode digits
+   * - The sequence of digits might be punctuated by a return
+   */
 
-      clearInterval(this.timerId);
-      this.timerId = null;
-    },
-    error(message: string) {
-      showToast({ type: 'error', message });
-    },
-    success(message: string) {
-      showToast({ type: 'success', message });
-    },
-  },
+  const { key, code } = e;
+  const keyCode = Number(key);
+  const isEnter = code === 'Enter';
+
+  if (Number.isNaN(keyCode) && !isEnter) {
+    return;
+  }
+
+  if (isEnter) {
+    return await setItemFromBarcode();
+  }
+
+  clearTimer();
+
+  barcode += key;
+  timerId = setTimeout(async () => {
+    await setItemFromBarcode();
+    barcode = '';
+  }, 20);
+}
+
+async function setItemFromBarcode() {
+  if (barcode.length < 12) {
+    return;
+  }
+
+  await selectItem(barcode);
+
+  barcode = '';
+  clearTimer();
+}
+
+function clearTimer() {
+  if (timerId === null) {
+    return;
+  }
+
+  clearInterval(timerId);
+  timerId = null;
+}
+
+function error(message: string) {
+  showToast({ type: 'error', message });
+}
+
+function success(message: string) {
+  showToast({ type: 'success', message });
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', scanListener);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', scanListener);
+});
+
+onActivated(() => {
+  document.addEventListener('keydown', scanListener);
+});
+
+onDeactivated(() => {
+  document.removeEventListener('keydown', scanListener);
 });
 </script>

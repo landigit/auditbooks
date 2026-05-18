@@ -140,9 +140,7 @@ const updateLoyaltyPoints = async (newValue: number) => {
       sinvDoc.loyaltyPoints = newValue;
     } else {
       throw new Error(
-        `${sinvDoc.party as string} only has ${
-          props.loyaltyPoints
-        } points`
+        `${sinvDoc.party as string} only has ${props.loyaltyPoints} points`
       );
     }
 

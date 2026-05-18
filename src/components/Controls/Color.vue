@@ -61,7 +61,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { t } from 'fyo';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
 import Row from 'src/components/Row.vue';
 
@@ -92,7 +95,7 @@ const {
   inputPlaceholder,
   isReadOnly,
   triggerChange,
-  focus
+  focus,
 } = useBaseControl(props as any, emit, inputRef);
 
 const colors = computed<any[]>(() => {
@@ -119,6 +122,6 @@ const setColorValue = (val: string) => {
 };
 
 defineExpose({
-  focus
+  focus,
 });
 </script>

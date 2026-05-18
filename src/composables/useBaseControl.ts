@@ -176,7 +176,7 @@ export function useBaseControl(
   function onBlur(e: FocusEvent) {
     const target = e.target as HTMLInputElement | HTMLTextAreaElement | null;
     if (!target) return;
-    
+
     if (isReadOnly.value) {
       return;
     }
@@ -211,6 +211,6 @@ export function useBaseControl(
     focus,
     triggerChange,
     parse,
-    isNumeric
+    isNumeric,
   };
 }

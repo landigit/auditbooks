@@ -49,7 +49,10 @@
 import { computed, ref } from 'vue';
 import { fyo } from 'src/initFyo';
 import { getDataURL } from 'src/utils/misc';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 import LucideIcon from '../LucideIcon.vue';
 
 interface AttachImageProps extends BaseControlProps {
@@ -85,11 +88,11 @@ const mime_types: Record<string, string> = {
 };
 
 const inputRef = ref<HTMLElement | null>(null);
-const {
-  isReadOnly,
-  triggerChange,
-  focus
-} = useBaseControl(props as any, emit, inputRef);
+const { isReadOnly, triggerChange, focus } = useBaseControl(
+  props as any,
+  emit,
+  inputRef
+);
 
 const imageSizeStyle = computed(() => {
   if (props.size === 'form') {
@@ -136,6 +139,6 @@ const selectImage = async () => {
 };
 
 defineExpose({
-  focus
+  focus,
 });
 </script>

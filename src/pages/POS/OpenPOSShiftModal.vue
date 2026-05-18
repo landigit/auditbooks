@@ -99,7 +99,10 @@ const posShiftDoc = ref<POSOpeningShift | undefined>(undefined);
 const isValuesSeeded = ref(false);
 
 // Provide context to child elements
-provide('doc', computed(() => posShiftDoc.value));
+provide(
+  'doc',
+  computed(() => posShiftDoc.value)
+);
 
 // Computed Properties
 const getDefaultCashDenominations = computed(() => {
@@ -183,9 +186,7 @@ const handleChange = () => {
 const handleSubmit = async () => {
   try {
     if (posShiftDoc.value?.openingCashAmount.isNegative()) {
-      throw new ValidationError(
-        t`Opening Cash Amount can not be negative.`
-      );
+      throw new ValidationError(t`Opening Cash Amount can not be negative.`);
     }
 
     await posShiftDoc.value?.setMultiple({

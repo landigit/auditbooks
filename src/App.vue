@@ -38,12 +38,13 @@
     ></div>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, shallowRef, computed, provide, onMounted } from 'vue';
 import { ModelNameEnum } from 'models/types';
-import { defineComponent, provide, ref, Ref, computed } from 'vue';
 import WindowsTitleBar from './components/WindowsTitleBar.vue';
 import { handleErrorWithDialog } from './errorHandling';
 import { fyo } from './initFyo';
+import { t } from 'fyo';
 import DatabaseSelector from './pages/DatabaseSelector.vue';
 import Desk from './pages/Desk.vue';
 import SetupWizard from './pages/SetupWizard/SetupWizard.vue';
@@ -76,252 +77,226 @@ enum Screen {
   SetupWizard = 'SetupWizard',
 }
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    Desk,
-    SetupWizard,
-    DatabaseSelector,
-    WindowsTitleBar,
-  },
-  setup() {
-    const keys = useKeys();
-    const searcher: Ref<null | Search> = ref(null);
-    const shortcuts = new Shortcuts(keys);
-    const appStore = useAppStore();
+const keys = useKeys();
+const searcher = shallowRef<null | Search>(null);
+const shortcuts = new Shortcuts(keys);
+const appStore = useAppStore();
 
-    provide(injectionKeys.keysKey, keys);
-    provide(injectionKeys.searcherKey, searcher);
-    provide(injectionKeys.shortcutsKey, shortcuts);
-    provide(
-      injectionKeys.languageDirectionKey,
-      computed(() => appStore.languageDirection)
-    );
+provide(injectionKeys.keysKey, keys);
+provide(injectionKeys.searcherKey, searcher);
+provide(injectionKeys.shortcutsKey, shortcuts);
+provide(
+  injectionKeys.languageDirectionKey,
+  computed(() => appStore.languageDirection)
+);
 
-    const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
-      null
-    );
+const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
+  null
+);
+const activeScreen = ref<Screen | null>(null);
 
-    return {
-      keys,
-      searcher,
-      shortcuts,
-      appStore,
-      databaseSelector,
-    };
-  },
-  data() {
-    return {
-      activeScreen: null as Screen | null,
-    };
-  },
-  computed: {
-    language(): string {
-      return this.appStore.language;
-    },
-    theme(): string {
-      return this.appStore.theme;
-    },
-    languageDirection(): string {
-      return this.appStore.languageDirection;
-    },
-  },
-  watch: {},
-  async mounted() {
-    await this.setInitialScreen();
-    const theme = (fyo.singles.SystemSettings?.theme as any) || 'auto';
-    const font = fyo.singles.SystemSettings?.font;
-    setTheme(theme);
-    setFont(font as string);
-    this.appStore.theme = theme;
-  },
-  methods: {
-    async setInitialScreen(): Promise<void> {
-      const lastSelectedFilePath = fyo.config.get('lastSelectedFilePath', null);
+const language = computed(() => appStore.language);
+const theme = computed(() => appStore.theme);
+const languageDirection = computed(() => appStore.languageDirection);
 
-      if (
-        typeof lastSelectedFilePath !== 'string' ||
-        !lastSelectedFilePath.length
-      ) {
-        this.activeScreen = Screen.DatabaseSelector;
-        return;
-      }
+onMounted(async () => {
+  await setInitialScreen();
+  const themeSetting = (fyo.singles.SystemSettings?.theme as any) || 'auto';
+  const fontSetting = fyo.singles.SystemSettings?.font;
+  setTheme(themeSetting);
+  setFont(fontSetting as string);
+  appStore.theme = themeSetting;
+});
 
-      await this.fileSelected(lastSelectedFilePath);
-    },
-    async setSearcher(): Promise<void> {
-      this.searcher = new Search(fyo);
-      await this.searcher.initializeKeywords();
-    },
-    async setDesk(filePath: string): Promise<void> {
-      await setLanguageMap();
-      this.activeScreen = Screen.Desk;
-      await this.setDeskRoute();
-      await fyo.telemetry.start(true);
-      await ipc.checkForUpdates();
-      this.appStore.dbPath = filePath;
-      this.appStore.companyName = (await fyo.getValue(
-        ModelNameEnum.AccountingSettings,
-        'companyName'
-      )) as string;
-      await this.setSearcher();
-      updateConfigFiles(fyo);
-    },
-    newDatabase() {
-      this.activeScreen = Screen.SetupWizard;
-    },
-    async fileSelected(filePath: string): Promise<void> {
-      fyo.config.set('lastSelectedFilePath', filePath);
-      if (filePath !== ':memory:' && !(await ipc.checkDbAccess(filePath))) {
-        await showDialog({
-          title: this.t`Cannot open file`,
-          type: 'error',
-          detail: this
-            .t`Auditbooks does not have access to the selected file: ${filePath}`,
-        });
+async function setInitialScreen(): Promise<void> {
+  const lastSelectedFilePath = fyo.config.get('lastSelectedFilePath', null);
 
-        fyo.config.set('lastSelectedFilePath', null);
-        return;
-      }
+  if (
+    typeof lastSelectedFilePath !== 'string' ||
+    !lastSelectedFilePath.length
+  ) {
+    activeScreen.value = Screen.DatabaseSelector;
+    return;
+  }
+
+  await fileSelected(lastSelectedFilePath);
+}
+
+async function setSearcher(): Promise<void> {
+  searcher.value = new Search(fyo);
+  await searcher.value.initializeKeywords();
+}
+
+async function setDesk(filePath: string): Promise<void> {
+  await setLanguageMap();
+  activeScreen.value = Screen.Desk;
+  await setDeskRoute();
+  await fyo.telemetry.start(true);
+  await ipc.checkForUpdates();
+  appStore.dbPath = filePath;
+  appStore.companyName = (await fyo.getValue(
+    ModelNameEnum.AccountingSettings,
+    'companyName'
+  )) as string;
+  await setSearcher();
+  updateConfigFiles(fyo);
+}
+
+function newDatabase() {
+  activeScreen.value = Screen.SetupWizard;
+}
+
+async function fileSelected(filePath: string): Promise<void> {
+  fyo.config.set('lastSelectedFilePath', filePath);
+  if (filePath !== ':memory:' && !(await ipc.checkDbAccess(filePath))) {
+    await showDialog({
+      title: t`Cannot open file`,
+      type: 'error',
+      detail: t`Auditbooks does not have access to the selected file: ${filePath}`,
+    });
+
+    fyo.config.set('lastSelectedFilePath', null);
+    return;
+  }
+
+  try {
+    await showSetupWizardOrDesk(filePath);
+  } catch (error) {
+    await handleErrorWithDialog(error, undefined, true, true);
+    await showDbSelector();
+  }
+}
+
+async function setupComplete(
+  setupWizardOptions: SetupWizardOptions
+): Promise<void> {
+  const companyName = setupWizardOptions.companyName;
+  const filePath = await ipc.getDbDefaultPath(companyName);
+  await setupInstance(filePath, setupWizardOptions, fyo);
+  fyo.config.set('lastSelectedFilePath', filePath);
+  await setDesk(filePath);
+}
+
+async function showSetupWizardOrDesk(filePath: string): Promise<void> {
+  const { countryCode, error, actionSymbol } = await connectToDatabase(
+    fyo,
+    filePath
+  );
+
+  if (!countryCode && error && actionSymbol) {
+    return await handleConnectionFailed(error, actionSymbol);
+  }
+
+  const setupCompleteVal = await fyo.getValue(
+    ModelNameEnum.AccountingSettings,
+    'setupComplete'
+  );
+
+  if (!setupCompleteVal) {
+    activeScreen.value = Screen.SetupWizard;
+    return;
+  }
+
+  await initializeInstance(filePath, false, countryCode, fyo);
+  await updatePrintTemplates(fyo);
+
+  const syncSettingsDoc = (await fyo.doc.getDoc(
+    ModelNameEnum.ERPNextSyncSettings
+  )) as ERPNextSyncSettings;
+
+  const baseURL = syncSettingsDoc.baseURL;
+  const token = syncSettingsDoc.authToken;
+  const enableERPNextSync = fyo.singles.AccountingSettings?.enableERPNextSync;
+
+  if (enableERPNextSync && baseURL && token) {
+    try {
+      await registerInstanceToERPNext(fyo);
+      await updateERPNSyncSettings(fyo);
+      await ipc.initScheduler(
+        `${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       try {
-        await this.showSetupWizardOrDesk(filePath);
-      } catch (error) {
-        await handleErrorWithDialog(error, undefined, true, true);
-        await this.showDbSelector();
-      }
-    },
-    async setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
-      const companyName = setupWizardOptions.companyName;
-      const filePath = await ipc.getDbDefaultPath(companyName);
-      await setupInstance(filePath, setupWizardOptions, fyo);
-      fyo.config.set('lastSelectedFilePath', filePath);
-      await this.setDesk(filePath);
-    },
-    async showSetupWizardOrDesk(filePath: string): Promise<void> {
-      const { countryCode, error, actionSymbol } = await connectToDatabase(
-        this.fyo,
-        filePath
-      );
+        const existing = await fyo.db.getAll(ErrorLogEnum.IntegrationErrorLog, {
+          filters: {
+            error: errorMessage,
+          },
+          limit: 1,
+        });
 
-      if (!countryCode && error && actionSymbol) {
-        return await this.handleConnectionFailed(error, actionSymbol);
-      }
-
-      const setupComplete = await fyo.getValue(
-        ModelNameEnum.AccountingSettings,
-        'setupComplete'
-      );
-
-      if (!setupComplete) {
-        this.activeScreen = Screen.SetupWizard;
-        return;
-      }
-
-      await initializeInstance(filePath, false, countryCode, fyo);
-      await updatePrintTemplates(fyo);
-
-      const syncSettingsDoc = (await fyo.doc.getDoc(
-        ModelNameEnum.ERPNextSyncSettings
-      )) as ERPNextSyncSettings;
-
-      const baseURL = syncSettingsDoc.baseURL;
-      const token = syncSettingsDoc.authToken;
-      const enableERPNextSync =
-        fyo.singles.AccountingSettings?.enableERPNextSync;
-
-      if (enableERPNextSync && baseURL && token) {
-        try {
-          await registerInstanceToERPNext(fyo);
-          await updateERPNSyncSettings(fyo);
-          await ipc.initScheduler(
-            `${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`
-          );
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-
-          try {
-            const existing = await fyo.db.getAll(
-              ErrorLogEnum.IntegrationErrorLog,
-              {
-                filters: {
-                  error: errorMessage,
-                },
-                limit: 1,
-              }
-            );
-
-            if (!existing.length) {
-              await fyo.doc
-                .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
-                  error: errorMessage,
-                  data: JSON.stringify({
-                    instance: fyo.singles.ERPNextSyncSettings?.deviceID,
-                    operation: 'register_instance',
-                    trigger: 'showSetupWizardOrDesk',
-                    baseURL: baseURL,
-                  }),
-                })
-                .sync();
-            }
-          } catch (logError) {
-            throw logError;
-          }
-          showToast({ message: 'Connection Failed', type: 'error' });
+        if (!existing.length) {
+          await fyo.doc
+            .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
+              error: errorMessage,
+              data: JSON.stringify({
+                instance: fyo.singles.ERPNextSyncSettings?.deviceID,
+                operation: 'register_instance',
+                trigger: 'showSetupWizardOrDesk',
+                baseURL: baseURL,
+              }),
+            })
+            .sync();
         }
+      } catch (logError) {
+        throw logError;
       }
+      showToast({ message: 'Connection Failed', type: 'error' });
+    }
+  }
 
-      await this.setDesk(filePath);
-    },
-    async handleConnectionFailed(error: Error, actionSymbol: symbol) {
-      await this.showDbSelector();
+  await setDesk(filePath);
+}
 
-      if (actionSymbol === dbErrorActionSymbols.CancelSelection) {
-        return;
-      }
+async function handleConnectionFailed(error: Error, actionSymbol: symbol) {
+  await showDbSelector();
 
-      if (actionSymbol === dbErrorActionSymbols.SelectFile) {
-        await this.databaseSelector?.existingDatabase();
-        return;
-      }
+  if (actionSymbol === dbErrorActionSymbols.CancelSelection) {
+    return;
+  }
 
-      throw error;
-    },
-    async setDeskRoute(): Promise<void> {
-      const { onboardingComplete } = await fyo.doc.getDoc('GetStarted');
-      const { hideGetStarted } = await fyo.doc.getDoc('SystemSettings');
+  if (actionSymbol === dbErrorActionSymbols.SelectFile) {
+    await databaseSelector.value?.existingDatabase();
+    return;
+  }
 
-      let route = '/get-started';
-      if (hideGetStarted || onboardingComplete) {
-        route = localStorage.getItem('lastRoute') || '/';
-      }
+  throw error;
+}
 
-      await routeTo(route);
-    },
-    async showDbSelector(): Promise<void> {
-      localStorage.clear();
-      fyo.config.set('lastSelectedFilePath', null);
-      fyo.telemetry.stop();
-      await fyo.purgeCache();
-      this.activeScreen = Screen.DatabaseSelector;
-      this.appStore.dbPath = '';
-      this.searcher = null;
-      this.appStore.companyName = '';
-    },
-    async toggleDarkMode() {
-      // Toggle only between light and dark in the sidebar
-      const isCurrentlyDark = this.appStore.isDark;
+async function setDeskRoute(): Promise<void> {
+  const { onboardingComplete } = await fyo.doc.getDoc('GetStarted');
+  const { hideGetStarted } = await fyo.doc.getDoc('SystemSettings');
 
-      this.appStore.theme = isCurrentlyDark ? 'light' : 'dark';
+  let route = '/get-started';
+  if (hideGetStarted || onboardingComplete) {
+    route = localStorage.getItem('lastRoute') || '/';
+  }
 
-      setTheme(this.appStore.theme);
+  await routeTo(route);
+}
 
-      // Persist to database
-      const doc = await fyo.doc.getDoc('SystemSettings');
-      await doc.set('theme', this.appStore.theme);
-      await doc.sync();
-    },
-  },
-});
+async function showDbSelector(): Promise<void> {
+  localStorage.clear();
+  fyo.config.set('lastSelectedFilePath', null);
+  fyo.telemetry.stop();
+  await fyo.purgeCache();
+  activeScreen.value = Screen.DatabaseSelector;
+  appStore.dbPath = '';
+  searcher.value = null;
+  appStore.companyName = '';
+}
+
+async function toggleDarkMode() {
+  const isCurrentlyDark = appStore.isDark;
+
+  appStore.theme = isCurrentlyDark ? 'light' : 'dark';
+
+  setTheme(appStore.theme);
+
+  const doc = await fyo.doc.getDoc('SystemSettings');
+  await doc.set('theme', appStore.theme);
+  await doc.sync();
+}
 </script>

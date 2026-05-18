@@ -71,142 +71,139 @@
     <div v-else class="h-4" />
   </div>
 </template>
-<script>
-import { Report } from 'reports/Report';
+<script setup lang="ts">
+import { ref, computed, inject } from 'vue';
 import { isNumeric } from 'src/utils';
 import { languageDirectionKey } from 'src/utils/injectionKeys';
-import { defineComponent } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import Paginator from '../Paginator.vue';
 import WithScroll from '../WithScroll.vue';
-import { inject } from 'vue';
 
-export default defineComponent({
-  components: { Paginator, WithScroll },
-  props: {
-    report: Report,
-  },
-  setup() {
-    return {
-      languageDirection: inject(languageDirectionKey),
-    };
-  },
-  data() {
-    return {
-      wconst: 8,
-      hconst: 48,
-      pageStart: 0,
-      pageEnd: 0,
-    };
-  },
-  computed: {
-    dataSlice() {
-      if (this.report?.usePagination) {
-        return this.report.reportData.slice(this.pageStart, this.pageEnd);
-      }
+const props = defineProps<{
+  report: any;
+}>();
 
-      return this.report.reportData;
-    },
-  },
-  methods: {
-    scroll({ scrollLeft }) {
-      this.$refs.titlerow.scrollLeft = scrollLeft;
-    },
-    setPageIndices({ start, end }) {
-      this.pageStart = start;
-      this.pageEnd = end;
-    },
-    onRowClick(clickedRow, r) {
-      if (!clickedRow.isGroup) {
-        return;
-      }
+const languageDirection = inject(languageDirectionKey);
 
-      r += 1;
-      clickedRow.foldedBelow = !clickedRow.foldedBelow;
-      const folded = clickedRow.foldedBelow;
-      let row = this.dataSlice[r];
+const titlerow = ref<HTMLDivElement | null>(null);
 
-      while (row && row.level > clickedRow.level) {
-        row.folded = folded;
-        r += 1;
-        row = this.dataSlice[r];
-      }
-    },
-    getCellStyle(cell, i) {
-      const styles = {};
-      const width = cell.width ?? 1;
+const wconst = 8;
+const hconst = 48;
+const pageStart = ref(0);
+const pageEnd = ref(0);
 
-      let align = cell.align ?? 'left';
-      if (this.languageDirection === 'rtl') {
-        align = this.languageDirection === 'rtl' ? 'right' : 'left';
-      }
+const dataSlice = computed(() => {
+  if (props.report?.usePagination) {
+    return props.report.reportData.slice(pageStart.value, pageEnd.value);
+  }
 
-      styles['width'] = `${width * this.wconst}rem`;
-      styles['text-align'] = align;
-
-      if (cell.bold) {
-        styles['font-weight'] = 'bold';
-      }
-
-      if (cell.italics) {
-        styles['font-style'] = 'oblique 15deg';
-      }
-
-      if (i === 0) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-right'] = '0px';
-        } else {
-          styles['padding-left'] = '0px';
-        }
-      }
-
-      if (!cell.align && isNumeric(cell.fieldtype)) {
-        styles['text-align'] = 'right';
-      }
-
-      if (i === this.report.columns.length - 1) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-left'] = '0px';
-        } else {
-          styles['padding-right'] = '0px';
-        }
-      }
-
-      if (cell.indent) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-right'] = `${cell.indent * 2}rem`;
-        } else {
-          styles['padding-left'] = `${cell.indent * 2}rem`;
-        }
-      }
-
-      return styles;
-    },
-    getCellColorClass(cell) {
-      if (cell.color === 'red') {
-        return 'text-error';
-      } else if (cell.color === 'green') {
-        return 'text-indicator-green-text';
-      }
-
-      if (!cell.rawValue) {
-        return 'text-description';
-      }
-
-      if (typeof cell.rawValue !== 'number') {
-        return 'text-main';
-      }
-
-      if (cell.rawValue === 0) {
-        return 'text-description';
-      }
-
-      const prec = this.fyo?.singles?.displayPrecision ?? 2;
-      if (Number(cell.rawValue.toFixed(prec)) === 0) {
-        return 'text-description';
-      }
-
-      return 'text-main';
-    },
-  },
+  return props.report.reportData;
 });
+
+function scroll({ scrollLeft }: { scrollLeft: number }) {
+  if (titlerow.value) {
+    titlerow.value.scrollLeft = scrollLeft;
+  }
+}
+
+function setPageIndices({ start, end }: { start: number; end: number }) {
+  pageStart.value = start;
+  pageEnd.value = end;
+}
+
+function onRowClick(clickedRow: any, r: number) {
+  if (!clickedRow.isGroup) {
+    return;
+  }
+
+  r += 1;
+  clickedRow.foldedBelow = !clickedRow.foldedBelow;
+  const folded = clickedRow.foldedBelow;
+  let row = dataSlice.value[r];
+
+  while (row && row.level > clickedRow.level) {
+    row.folded = folded;
+    r += 1;
+    row = dataSlice.value[r];
+  }
+}
+
+function getCellStyle(cell: any, i: number) {
+  const styles: Record<string, string> = {};
+  const width = cell.width ?? 1;
+
+  let align = cell.align ?? 'left';
+  if (languageDirection?.value === 'rtl') {
+    align = languageDirection?.value === 'rtl' ? 'right' : 'left';
+  }
+
+  styles['width'] = `${width * wconst}rem`;
+  styles['text-align'] = align;
+
+  if (cell.bold) {
+    styles['font-weight'] = 'bold';
+  }
+
+  if (cell.italics) {
+    styles['font-style'] = 'oblique 15deg';
+  }
+
+  if (i === 0) {
+    if (languageDirection?.value === 'rtl') {
+      styles['padding-right'] = '0px';
+    } else {
+      styles['padding-left'] = '0px';
+    }
+  }
+
+  if (!cell.align && isNumeric(cell.fieldtype)) {
+    styles['text-align'] = 'right';
+  }
+
+  if (i === props.report.columns.length - 1) {
+    if (languageDirection?.value === 'rtl') {
+      styles['padding-left'] = '0px';
+    } else {
+      styles['padding-right'] = '0px';
+    }
+  }
+
+  if (cell.indent) {
+    if (languageDirection?.value === 'rtl') {
+      styles['padding-right'] = `${cell.indent * 2}rem`;
+    } else {
+      styles['padding-left'] = `${cell.indent * 2}rem`;
+    }
+  }
+
+  return styles;
+}
+
+function getCellColorClass(cell: any) {
+  if (cell.color === 'red') {
+    return 'text-error';
+  } else if (cell.color === 'green') {
+    return 'text-indicator-green-text';
+  }
+
+  if (!cell.rawValue) {
+    return 'text-description';
+  }
+
+  if (typeof cell.rawValue !== 'number') {
+    return 'text-main';
+  }
+
+  if (cell.rawValue === 0) {
+    return 'text-description';
+  }
+
+  const prec = fyo?.singles?.displayPrecision ?? 2;
+  if (Number(cell.rawValue.toFixed(prec)) === 0) {
+    return 'text-description';
+  }
+
+  return 'text-main';
+}
 </script>

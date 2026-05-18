@@ -111,9 +111,12 @@ const init = () => {
 };
 
 // Watchers
-watch(() => props.disabled, (value: boolean) => {
-  setDisabled(value);
-});
+watch(
+  () => props.disabled,
+  (value: boolean) => {
+    setDisabled(value);
+  }
+);
 
 // Lifecycles
 onMounted(() => {

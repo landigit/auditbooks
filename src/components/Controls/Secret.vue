@@ -1,8 +1,5 @@
 <template>
-  <Base
-    v-bind="props"
-    input-type="password"
-  />
+  <Base v-bind="props" input-type="password" />
 </template>
 
 <script setup lang="ts">

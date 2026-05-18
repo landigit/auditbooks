@@ -200,7 +200,15 @@ import {
   searchGroups,
 } from 'src/utils/search';
 import { useAppStore } from 'src/stores/app';
-import { ref, computed, inject, nextTick, onMounted, onActivated, onDeactivated } from 'vue';
+import {
+  ref,
+  computed,
+  inject,
+  nextTick,
+  onMounted,
+  onActivated,
+  onDeactivated,
+} from 'vue';
 import Button from './Button.vue';
 import Modal from './Modal.vue';
 import { t } from 'fyo';

@@ -1,9 +1,5 @@
 <template>
-  <Base
-    v-bind="props"
-    input-type="number"
-    :parse="parse"
-  />
+  <Base v-bind="props" input-type="number" :parse="parse" />
 </template>
 
 <script setup lang="ts">

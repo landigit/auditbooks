@@ -171,13 +171,10 @@ const filteredInvoices = computed(() => {
 
 // Methods
 const setSavedInvoices = async () => {
-  savedInvoices.value = (await fyo.db.getAll(
-    ModelNameEnum.SalesInvoice,
-    {
-      fields: [],
-      filters: { isPOS: true, submitted: false },
-    }
-  )) as SalesInvoice[];
+  savedInvoices.value = (await fyo.db.getAll(ModelNameEnum.SalesInvoice, {
+    fields: [],
+    filters: { isPOS: true, submitted: false },
+  })) as SalesInvoice[];
 };
 
 const setSubmittedInvoices = async () => {
@@ -213,12 +210,15 @@ const handleEnterKey = () => {
 };
 
 // Watchers
-watch(() => props.modalStatus, async (newVal) => {
-  if (newVal) {
-    await setSavedInvoices();
-    await setSubmittedInvoices();
+watch(
+  () => props.modalStatus,
+  async (newVal) => {
+    if (newVal) {
+      await setSavedInvoices();
+      await setSubmittedInvoices();
+    }
   }
-});
+);
 
 // Lifecycles
 onMounted(async () => {

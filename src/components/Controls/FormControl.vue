@@ -1,9 +1,5 @@
 <template>
-  <component
-    :is="component"
-    ref="controlRef"
-    v-bind="attrs"
-  />
+  <component :is="component" ref="controlRef" v-bind="attrs" />
 </template>
 
 <script setup lang="ts">
@@ -47,7 +43,7 @@ const components: Record<string, any> = {
 };
 
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 });
 
 const attrs = useAttrs();

@@ -69,7 +69,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 import { SelectOption } from 'schemas/types';
 import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
 import LucideIcon from '../LucideIcon.vue';
@@ -108,7 +111,7 @@ const {
   isReadOnly,
   showMandatory,
   triggerChange,
-  focus
+  focus,
 } = useBaseControl(props as any, emit, inputRef);
 
 const options = computed<SelectOption[]>(() => {
@@ -136,6 +139,6 @@ const selectOption = (option: SelectOption) => {
 };
 
 defineExpose({
-  focus
+  focus,
 });
 </script>

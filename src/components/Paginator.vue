@@ -27,7 +27,9 @@
           :value="pageNo"
           min="1"
           :max="maxPages"
-          @change="(e: Event) => setPageNo((e.target as HTMLInputElement).value)"
+          @change="
+            (e: Event) => setPageNo((e.target as HTMLInputElement).value)
+          "
           @input="(e: Event) => setPageNo((e.target as HTMLInputElement).value)"
         />
         <p class="text-description">/</p>

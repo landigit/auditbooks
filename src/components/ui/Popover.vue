@@ -42,7 +42,3 @@ const handleUpdateOpen = (val: boolean) => {
     </PopoverRoot>
   </div>
 </template>
-
-<script lang="ts">
-export { PopoverTrigger, PopoverAnchor, PopoverArrow } from 'reka-ui';
-</script>

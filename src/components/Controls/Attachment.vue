@@ -49,7 +49,10 @@
 import { ref, computed } from 'vue';
 import { t } from 'fyo';
 import { convertFileToDataURL } from 'src/utils/misc';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 import LucideIcon from '../LucideIcon.vue';
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
@@ -77,7 +80,7 @@ const {
   containerClasses,
   isReadOnly,
   triggerChange,
-  focus
+  focus,
 } = useBaseControl(props as any, emit, fileInput);
 
 const label = computed(() => {
@@ -142,6 +145,6 @@ const getAttachment = async (file: File | null) => {
 };
 
 defineExpose({
-  focus
+  focus,
 });
 </script>

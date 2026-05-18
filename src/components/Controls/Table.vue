@@ -45,7 +45,9 @@
           :read-only="isReadOnly"
           :can-edit-row="canEditRow"
           @remove="removeRow(row)"
-          @change="(field: any, value: any) => $emit('row-change', field, value, df)"
+          @change="
+            (field: any, value: any) => $emit('row-change', field, value, df)
+          "
         />
       </div>
 
@@ -92,7 +94,10 @@ import { fyo } from 'src/initFyo';
 import { useAppStore } from 'src/stores/app';
 import Row from 'src/components/Row.vue';
 import TableRow from './TableRow.vue';
-import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface TableProps extends BaseControlProps {
   value?: any[];
@@ -127,12 +132,11 @@ const store = useAppStore();
 const inputRef = ref<HTMLElement | null>(null);
 const tableRowRefs = ref<any[]>([]);
 
-const {
-  doc,
-  isReadOnly,
-  isNumeric,
-  triggerChange,
-} = useBaseControl(props, emit, inputRef);
+const { doc, isReadOnly, isNumeric, triggerChange } = useBaseControl(
+  props,
+  emit,
+  inputRef
+);
 
 const canEditRow = computed(() => {
   return (props.df as any).edit;
@@ -152,9 +156,13 @@ const tableFields = computed(() => {
   return fields.map((fieldname: string) => fyo.getField(target, fieldname));
 });
 
-watch(() => props.value, () => {
-  setMaxHeight();
-}, { deep: true });
+watch(
+  () => props.value,
+  () => {
+    setMaxHeight();
+  },
+  { deep: true }
+);
 
 onMounted(() => {
   if (store.isDevelopment) {
@@ -176,7 +184,7 @@ const addRow = async () => {
   await nextTick();
   scrollToRow(props.value.length - 1);
   triggerChange(props.value);
-  
+
   nextTick(() => {
     const rows = tableRowRefs.value;
     if (rows && rows.length > 0) {
@@ -222,7 +230,8 @@ const setMaxHeight = () => {
     return;
   }
 
-  const computedMaxHeight = rowHeight * Math.min(props.maxRowsBeforeOverflow, size);
+  const computedMaxHeight =
+    rowHeight * Math.min(props.maxRowsBeforeOverflow, size);
   maxHeight.value = `${computedMaxHeight}px`;
 };
 

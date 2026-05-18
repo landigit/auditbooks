@@ -81,7 +81,9 @@ const props = withDefaults(
 const scaledContainer = ref<InstanceType<typeof ScaledContainer> | null>(null);
 
 // Reactive State
-const error = ref<{ name: string; message: string; detail?: string } | null>(null);
+const error = ref<{ name: string; message: string; detail?: string } | null>(
+  null
+);
 
 // Computed Properties
 const templateComponent = computed(() => {
@@ -168,9 +170,12 @@ defineExpose({
 });
 
 // Watchers
-watch(() => props.template, (value: string) => {
-  compile(value);
-});
+watch(
+  () => props.template,
+  (value: string) => {
+    compile(value);
+  }
+);
 
 // Lifecycles
 onMounted(() => {

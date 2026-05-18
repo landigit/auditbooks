@@ -1,8 +1,5 @@
 <template>
-  <Base
-    v-bind="props"
-    input-type="text"
-  />
+  <Base v-bind="props" input-type="text" />
 </template>
 
 <script setup lang="ts">
