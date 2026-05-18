@@ -22,76 +22,83 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+// --- Imports ---
+import { ref, computed, watch, onMounted } from 'vue';
 import { isFalsy } from 'fyo/utils';
 import { Field } from 'schemas/types';
-import { defineComponent } from 'vue';
+import { fyo } from 'src/initFyo';
 
-export default defineComponent({
-  props: {
-    schemaName: { type: String, required: true },
-    name: { type: String, required: true },
-  },
-  data() {
-    return { values: [] } as { values: { label: string; value: string }[] };
-  },
-  computed: {
-    schema() {
-      return this.fyo.schemaMap[this.schemaName];
-    },
-  },
-  watch: {
-    async name(v1, v2) {
-      if (v1 === v2) {
-        return;
-      }
+// --- Props & Emits ---
+const props = defineProps<{
+  schemaName: string;
+  name: string;
+}>();
 
-      await this.setValues();
-    },
-  },
-  async mounted() {
-    await this.setValues();
-  },
-  methods: {
-    async setValues() {
-      const fields: Field[] = (this.schema?.fields ?? []).filter(
-        (f) =>
-          f &&
-          f.fieldtype !== 'Table' &&
-          f.fieldtype !== 'AttachImage' &&
-          f.fieldtype !== 'Attachment' &&
-          f.fieldname !== 'name' &&
-          !f.hidden &&
-          !f.meta &&
-          !f.abstract &&
-          !f.computed
-      );
+// --- State ---
+const values = ref<{ label: string; value: string }[]>([]);
 
-      const data = (
-        await this.fyo.db.getAll(this.schemaName, {
-          fields: fields.map((f) => f.fieldname),
-          filters: { name: this.name },
-        })
-      )[0];
-
-      if (!data) {
-        return;
-      }
-
-      this.values = fields
-        .map((f) => {
-          const value = data[f.fieldname];
-          if (isFalsy(value)) {
-            return { value: '', label: '' };
-          }
-
-          return {
-            value: this.fyo.format(data[f.fieldname], f),
-            label: f.label,
-          };
-        })
-        .filter((i) => !!i.value);
-    },
-  },
+// --- Computed ---
+const schema = computed(() => {
+  return fyo.schemaMap[props.schemaName];
 });
+
+// --- Watchers ---
+watch(
+  () => props.name,
+  async (v1, v2) => {
+    if (v1 === v2) {
+      return;
+    }
+
+    await setValues();
+  }
+);
+
+// --- Lifecycle ---
+onMounted(async () => {
+  await setValues();
+});
+
+// --- Methods ---
+async function setValues() {
+  const fields: Field[] = (schema.value?.fields ?? []).filter(
+    (f) =>
+      f &&
+      f.fieldtype !== 'Table' &&
+      f.fieldtype !== 'AttachImage' &&
+      f.fieldtype !== 'Attachment' &&
+      f.fieldname !== 'name' &&
+      !f.hidden &&
+      !f.meta &&
+      !f.abstract &&
+      !f.computed
+  );
+
+  const data = (
+    await fyo.db.getAll(props.schemaName, {
+      fields: fields.map((f) => f.fieldname),
+      filters: { name: props.name },
+    })
+  )[0];
+
+  if (!data) {
+    return;
+  }
+
+  values.value = fields
+    .map((f) => {
+      const value = data[f.fieldname];
+      if (isFalsy(value)) {
+        return { value: '', label: '' };
+      }
+
+      return {
+        value: fyo.format(data[f.fieldname], f),
+        label: f.label,
+      };
+    })
+    .filter((i) => !!i.value);
+}
 </script>

@@ -27,8 +27,8 @@
           :value="pageNo"
           min="1"
           :max="maxPages"
-          @change="(e) => setPageNo(e.target.value)"
-          @input="(e) => setPageNo(e.target.value)"
+          @change="(e: Event) => setPageNo((e.target as HTMLInputElement).value)"
+          @input="(e: Event) => setPageNo((e.target as HTMLInputElement).value)"
         />
         <p class="text-description">/</p>
         <p class="w-7">
@@ -68,71 +68,91 @@
     </div>
   </div>
 </template>
-<script>
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  props: {
-    itemCount: { type: Number, default: 0 },
-    allowedCounts: { type: Array, default: () => [50, 100, 500, -1] },
-  },
-  emits: ['index-change'],
-  data() {
-    return {
-      pageNo: 1,
-      count: 0,
-    };
-  },
-  computed: {
-    maxPages() {
-      return Math.ceil(this.itemCount / this.count);
-    },
-    filteredCounts() {
-      return this.allowedCounts.filter(this.filterCount);
-    },
-  },
-  mounted() {
-    this.count = this.allowedCounts[0];
-    this.emitIndices();
-  },
-  methods: {
-    filterCount(count) {
-      if (count !== -1 && this.itemCount < count) {
-        return false;
-      }
+<script setup lang="ts">
+// --- Imports ---
+import { ref, computed, onMounted } from 'vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
+import { t } from 'fyo';
 
-      if (count === -1 && this.itemCount < this.allowedCounts[0]) {
-        return false;
-      }
+// --- Props & Emits ---
+const props = withDefaults(
+  defineProps<{
+    itemCount?: number;
+    allowedCounts?: number[];
+  }>(),
+  {
+    itemCount: 0,
+    allowedCounts: () => [50, 100, 500, -1],
+  }
+);
 
-      return true;
-    },
-    setPageNo(value) {
-      value = parseInt(value);
-      if (isNaN(value)) {
-        return;
-      }
+const emit = defineEmits<{
+  (e: 'index-change', indices: { start: number; end: number }): void;
+}>();
 
-      this.pageNo = Math.min(Math.max(1, value), this.maxPages);
-      this.emitIndices();
-    },
-    setCount(count) {
-      this.pageNo = 1;
-      if (count === -1) {
-        count = this.itemCount;
-      }
-      this.count = count;
-      this.emitIndices();
-    },
-    emitIndices() {
-      const indices = this.getSliceIndices();
-      this.$emit('index-change', indices);
-    },
-    getSliceIndices() {
-      const start = (this.pageNo - 1) * this.count;
-      const end = this.pageNo * this.count;
-      return { start, end };
-    },
-  },
+// --- State ---
+const pageNo = ref(1);
+const count = ref(0);
+
+// --- Computed ---
+const maxPages = computed(() => {
+  if (count.value === 0) return 1;
+  return Math.max(1, Math.ceil(props.itemCount / count.value));
 });
+
+const filteredCounts = computed(() => {
+  return props.allowedCounts.filter(filterCount);
+});
+
+// --- Lifecycle ---
+onMounted(() => {
+  count.value = props.allowedCounts[0];
+  emitIndices();
+});
+
+// --- Methods ---
+function filterCount(c: number) {
+  if (c !== -1 && props.itemCount < c) {
+    return false;
+  }
+
+  if (c === -1 && props.itemCount < props.allowedCounts[0]) {
+    return false;
+  }
+
+  return true;
+}
+
+function setPageNo(value: string | number) {
+  let parsedValue = typeof value === 'string' ? parseInt(value) : value;
+
+  if (isNaN(parsedValue)) {
+    return;
+  }
+
+  pageNo.value = Math.min(Math.max(1, parsedValue), maxPages.value);
+  emitIndices();
+}
+
+function setCount(c: number) {
+  pageNo.value = 1;
+  if (c === -1) {
+    count.value = props.itemCount;
+  } else {
+    count.value = c;
+  }
+  emitIndices();
+}
+
+function emitIndices() {
+  const indices = getSliceIndices();
+  emit('index-change', indices);
+}
+
+function getSliceIndices() {
+  const start = (pageNo.value - 1) * count.value;
+  const end = pageNo.value * count.value;
+  return { start, end };
+}
 </script>

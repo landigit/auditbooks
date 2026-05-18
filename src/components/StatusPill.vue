@@ -3,7 +3,10 @@
     {{ text }}
   </p>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+// --- Imports ---
+import { computed } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
@@ -12,83 +15,88 @@ import { LoyaltyProgram } from 'models/baseModels/LoyaltyProgram/LoyaltyProgram'
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import { getBgTextColorClass } from 'src/utils/colors';
-import { defineComponent } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
+// --- Types ---
 type Status = ReturnType<typeof getStatus>;
 type UIColors = 'gray' | 'orange' | 'red' | 'green' | 'blue' | 'yellow';
 
-export default defineComponent({
-  props: { doc: { type: Doc, required: true } },
-  data() {
-    return {
-      showStatus: true,
-    };
-  },
-  computed: {
-    styleClass(): string {
-      return getBgTextColorClass(this.color);
-    },
-    status(): Status {
-      return getStatus(this.doc);
-    },
-    text() {
-      if (
-        this.doc.schemaName === ModelNameEnum.SalesQuote &&
-        this.doc.isSubmitted
-      ) {
-        this.showStatus = false;
-      }
+// --- Props & Emits ---
+const props = defineProps<{
+  doc: Doc;
+}>();
 
-      const hasOutstanding = isPesa(this.doc.outstandingAmount);
-
-      if (hasOutstanding && this.status === 'Unpaid') {
-        const amt = this.fyo.format(this.doc.outstandingAmount, 'Currency');
-        return this.t`Unpaid ${amt}`;
-      }
-
-      if (hasOutstanding && this.status === 'PartlyPaid') {
-        const outstandingPayment = this.fyo.format(
-          (this.doc.grandTotal as Money).sub(
-            this.doc.outstandingAmount as Money
-          ),
-          'Currency'
-        );
-        return this.t`Partly Paid ${outstandingPayment}`;
-      }
-
-      if (this.status === 'Outstanding') {
-        const outstandingPayment = this.fyo.format(
-          this.doc.outstandingAmount as Money,
-          'Currency'
-        );
-        return this.t`Unpaid ${outstandingPayment}`;
-      }
-
-      return {
-        Draft: this.t`Draft`,
-        Cancelled: this.t`Cancelled`,
-        Outstanding: this.t`Outstanding`,
-        NotTransferred: this.t`Not Transferred`,
-        NotSaved: this.t`Not Saved`,
-        NotSubmitted: this.t`Not Submitted`,
-        Paid: this.t`Paid`,
-        Saved: this.t`Saved`,
-        Submitted: this.t`Submitted`,
-        Return: this.t`Return`,
-        ReturnIssued: this.t`Return Issued`,
-        Unpaid: this.t`Unpaid`,
-        PartlyPaid: this.t`Partly Paid`,
-        Expired: this.t`Expired`,
-        Active: this.t`Active`,
-        Maxed: this.t`Maxed`,
-      }[this.status];
-    },
-    color(): UIColors {
-      return statusColorMap[this.status];
-    },
-  },
+// --- Computed ---
+const showStatus = computed(() => {
+  if (
+    props.doc.schemaName === ModelNameEnum.SalesQuote &&
+    props.doc.isSubmitted
+  ) {
+    return false;
+  }
+  return true;
 });
 
+const status = computed<Status>(() => {
+  return getStatus(props.doc);
+});
+
+const styleClass = computed<string>(() => {
+  return getBgTextColorClass(color.value);
+});
+
+const text = computed(() => {
+  const hasOutstanding = isPesa(props.doc.outstandingAmount);
+
+  if (hasOutstanding && status.value === 'Unpaid') {
+    const amt = fyo.format(props.doc.outstandingAmount as Money, 'Currency');
+    return t`Unpaid ${amt}`;
+  }
+
+  if (hasOutstanding && status.value === 'PartlyPaid') {
+    const outstandingPayment = fyo.format(
+      (props.doc.grandTotal as Money).sub(
+        props.doc.outstandingAmount as Money
+      ),
+      'Currency'
+    );
+    return t`Partly Paid ${outstandingPayment}`;
+  }
+
+  if (status.value === 'Outstanding') {
+    const outstandingPayment = fyo.format(
+      props.doc.outstandingAmount as Money,
+      'Currency'
+    );
+    return t`Unpaid ${outstandingPayment}`;
+  }
+
+  return {
+    Draft: t`Draft`,
+    Cancelled: t`Cancelled`,
+    Outstanding: t`Outstanding`,
+    NotTransferred: t`Not Transferred`,
+    NotSaved: t`Not Saved`,
+    NotSubmitted: t`Not Submitted`,
+    Paid: t`Paid`,
+    Saved: t`Saved`,
+    Submitted: t`Submitted`,
+    Return: t`Return`,
+    ReturnIssued: t`Return Issued`,
+    Unpaid: t`Unpaid`,
+    PartlyPaid: t`Partly Paid`,
+    Expired: t`Expired`,
+    Active: t`Active`,
+    Maxed: t`Maxed`,
+  }[status.value];
+});
+
+const color = computed<UIColors>(() => {
+  return statusColorMap[status.value];
+});
+
+// --- Constants ---
 const statusColorMap: Record<Status, UIColors> = {
   Draft: 'gray',
   Cancelled: 'red',
@@ -108,6 +116,7 @@ const statusColorMap: Record<Status, UIColors> = {
   Maxed: 'orange',
 };
 
+// --- Methods ---
 function getStatus(doc: Doc) {
   if (doc.notInserted) {
     return 'Draft';

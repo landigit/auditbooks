@@ -5,15 +5,15 @@
     </div>
     <div :class="showMandatory ? 'show-mandatory' : ''">
       <textarea
-        ref="input"
+        ref="inputRef"
         :rows="df.rows ?? rows"
         :class="['resize-none bg-transparent', inputClasses, containerClasses]"
-        :value="value"
+        :value="value as any"
         :placeholder="inputPlaceholder"
         style="vertical-align: top"
         :readonly="isReadOnly"
         :tabindex="isReadOnly ? '-1' : '0'"
-        @blur="(e) => triggerChange(e.target.value)"
+        @blur="onBlur"
         @focus="(e) => $emit('focus', e)"
         @input="(e) => $emit('input', e)"
       ></textarea>
@@ -21,13 +21,46 @@
   </div>
 </template>
 
-<script>
-import Base from './Base.vue';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 
-export default {
-  name: 'Text',
-  extends: Base,
-  props: { rows: { type: Number, default: 3 } },
-  emits: ['focus', 'input'],
-};
+interface TextProps extends BaseControlProps {
+  rows?: number;
+}
+
+const props = withDefaults(defineProps<TextProps>(), {
+  rows: 3,
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
+
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
+
+const inputRef = ref<HTMLTextAreaElement | null>(null);
+
+const {
+  labelClasses,
+  inputClasses,
+  containerClasses,
+  inputPlaceholder,
+  isReadOnly,
+  showMandatory,
+  onBlur,
+  focus
+} = useBaseControl(props as any, emit, inputRef);
+
+defineExpose({
+  focus
+});
 </script>

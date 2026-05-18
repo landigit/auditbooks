@@ -88,7 +88,10 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+// --- Imports ---
+import { ref, computed } from 'vue';
 import { t } from 'fyo';
 import { Verb } from 'fyo/telemetry/types';
 import { Field, FieldTypeEnum } from 'schemas/types';
@@ -102,175 +105,171 @@ import {
 import { ExportField, ExportFormat, ExportTableField } from 'src/utils/types';
 import { getSavePath, showExportInFolder } from 'src/utils/ui';
 import { QueryFilter } from 'utils/db/types';
-import { PropType, defineComponent } from 'vue';
 import Button from './Button.vue';
 import Check from './Controls/Check.vue';
 import Int from './Controls/Int.vue';
 import Select from './Controls/Select.vue';
 import FormHeader from './FormHeader.vue';
 
-interface ExportWizardData {
-  useListFilters: boolean;
-  exportFormat: ExportFormat;
-  fields: ExportField[];
-  limit: number | null;
-  tableFields: ExportTableField[];
-  numUnfilteredEntries: number;
+// --- Props & Emits ---
+const props = withDefaults(
+  defineProps<{
+    schemaName: string;
+    listFilters?: QueryFilter;
+    pageTitle?: string;
+  }>(),
+  {
+    listFilters: () => ({}),
+    pageTitle: undefined,
+  }
+);
+
+// --- State ---
+const _schemaFields = fyo.schemaMap[props.schemaName]?.fields ?? [];
+const limit = ref<number | null>(null);
+const useListFilters = ref(true);
+const exportFormat = ref<ExportFormat>('csv');
+const fields = ref<ExportField[]>(getExportFields(_schemaFields));
+const tableFields = ref<ExportTableField[]>(getExportTableFields(_schemaFields, fyo));
+
+// --- Computed ---
+const label = computed(() => {
+  if (props.pageTitle) {
+    return props.pageTitle;
+  }
+  return fyo.schemaMap?.[props.schemaName]?.label ?? '';
+});
+
+const filteredTableFields = computed(() => {
+  return tableFields.value.filter((f) => {
+    const ef = getExportField(f.fieldname);
+    return !!ef?.export;
+  });
+});
+
+const numSelected = computed(() => {
+  return (
+    filteredTableFields.value.reduce(
+      (acc, f) => f.fields.filter((subF) => subF.export).length + acc,
+      0
+    ) +
+    fields.value.filter(
+      (f) => f.fieldtype !== FieldTypeEnum.Table && f.export
+    ).length
+  );
+});
+
+const configFields = computed(() => {
+  return {
+    useListFilters: {
+      fieldtype: 'Check',
+      label: t`Use List Filters`,
+      fieldname: 'useListFilters',
+    } as Field,
+    limit: {
+      placeholder: 'Limit number of rows',
+      fieldtype: 'Int',
+      label: t`Limit`,
+      fieldname: 'limit',
+    } as Field,
+    exportFormat: {
+      fieldtype: 'Select',
+      label: t`Export Format`,
+      fieldname: 'exportFormat',
+      options: [
+        { value: 'json', label: 'JSON' },
+        { value: 'csv', label: 'CSV' },
+      ],
+    } as Field,
+  };
+});
+
+// --- Methods ---
+function getField(ef: ExportField): Field {
+  return {
+    fieldtype: 'Check',
+    label: ef.label,
+    fieldname: ef.fieldname,
+  };
 }
 
-export default defineComponent({
-  components: { FormHeader, Check, Select, Button, Int },
-  props: {
-    schemaName: { type: String, required: true },
-    listFilters: { type: Object as PropType<QueryFilter>, default: () => {} },
-    pageTitle: String,
-  },
-  data() {
-    const fields = fyo.schemaMap[this.schemaName]?.fields ?? [];
-    const exportFields = getExportFields(fields);
-    const exportTableFields = getExportTableFields(fields, fyo);
+function getExportField(
+  fieldname: string,
+  target?: string
+): ExportField | undefined {
+  let listFields: ExportField[] | undefined;
 
-    return {
-      limit: null,
-      useListFilters: true,
-      exportFormat: 'csv',
-      fields: exportFields,
-      tableFields: exportTableFields,
-    } as ExportWizardData;
-  },
-  computed: {
-    label() {
-      if (this.pageTitle) {
-        return this.pageTitle;
-      }
+  if (!target) {
+    listFields = fields.value;
+  } else {
+    listFields = tableFields.value.find((f) => f.target === target)?.fields;
+  }
 
-      return fyo.schemaMap?.[this.schemaName]?.label ?? '';
-    },
-    filteredTableFields() {
-      return this.tableFields.filter((f) => {
-        const ef = this.getExportField(f.fieldname);
-        return !!ef?.export;
-      });
-    },
-    numSelected() {
-      return (
-        this.filteredTableFields.reduce(
-          (acc, f) => f.fields.filter((f) => f.export).length + acc,
-          0
-        ) +
-        this.fields.filter(
-          (f) => f.fieldtype !== FieldTypeEnum.Table && f.export
-        ).length
-      );
-    },
-    configFields() {
-      return {
-        useListFilters: {
-          fieldtype: 'Check',
-          label: t`Use List Filters`,
-          fieldname: 'useListFilters',
-        } as Field,
-        limit: {
-          placeholder: 'Limit number of rows',
-          fieldtype: 'Int',
-          label: t`Limit`,
-          fieldname: 'limit',
-        } as Field,
-        exportFormat: {
-          fieldtype: 'Select',
-          label: t`Export Format`,
-          fieldname: 'exportFormat',
-          options: [
-            { value: 'json', label: 'JSON' },
-            { value: 'csv', label: 'CSV' },
-          ],
-        } as Field,
-      };
-    },
-  },
-  methods: {
-    getField(ef: ExportField): Field {
-      return {
-        fieldtype: 'Check',
-        label: ef.label,
-        fieldname: ef.fieldname,
-      };
-    },
-    getExportField(
-      fieldname: string,
-      target?: string
-    ): ExportField | undefined {
-      let fields: ExportField[] | undefined;
+  if (!listFields) {
+    return undefined;
+  }
 
-      if (!target) {
-        fields = this.fields;
-      } else {
-        fields = this.tableFields.find((f) => f.target === target)?.fields;
-      }
+  return listFields.find((f) => f.fieldname === fieldname);
+}
 
-      if (!fields) {
-        return undefined;
-      }
+function setExportFieldValue(ef: ExportField, value: boolean, target?: string) {
+  const field = getExportField(ef.fieldname, target);
+  if (!field) {
+    return;
+  }
 
-      return fields.find((f) => f.fieldname === fieldname);
-    },
-    setExportFieldValue(ef: ExportField, value: boolean, target?: string) {
-      const field = this.getExportField(ef.fieldname, target);
-      if (!field) {
-        return;
-      }
+  field.export = value;
+}
 
-      field.export = value;
-    },
-    async exportData() {
-      const filters = JSON.parse(
-        JSON.stringify(this.useListFilters ? this.listFilters : {})
-      );
+async function exportData() {
+  const filters = JSON.parse(
+    JSON.stringify(useListFilters.value ? props.listFilters : {})
+  );
 
-      let data: string;
-      if (this.exportFormat === 'json') {
-        data = await getJsonExportData(
-          this.schemaName,
-          this.fields,
-          this.tableFields,
-          this.limit,
-          filters,
-          fyo
-        );
-      } else {
-        data = await getCsvExportData(
-          this.schemaName,
-          this.fields,
-          this.tableFields,
-          this.limit,
-          filters,
-          fyo
-        );
-      }
+  let data: string;
+  if (exportFormat.value === 'json') {
+    data = await getJsonExportData(
+      props.schemaName,
+      fields.value,
+      tableFields.value,
+      limit.value,
+      filters,
+      fyo
+    );
+  } else {
+    data = await getCsvExportData(
+      props.schemaName,
+      fields.value,
+      tableFields.value,
+      limit.value,
+      filters,
+      fyo
+    );
+  }
 
-      await this.saveExportData(data);
-    },
-    async saveExportData(data: string) {
-      const fileName = this.getFileName();
-      const { canceled, filePath } = await getSavePath(
-        fileName,
-        this.exportFormat
-      );
-      if (canceled || !filePath) {
-        return;
-      }
+  await saveExportData(data);
+}
 
-      await ipc.saveData(data, filePath);
-      this.fyo.telemetry.log(Verb.Exported, this.schemaName, {
-        extension: this.exportFormat,
-      });
-      showExportInFolder(fyo.t`Export Successful`, filePath);
-    },
-    getFileName() {
-      const fileName = this.label.toLowerCase().replace(/\s/g, '-');
-      const dateString = new Date().toISOString().split('T')[0];
-      return `${fileName}_${dateString}`;
-    },
-  },
-});
+async function saveExportData(data: string) {
+  const fileName = getFileName();
+  const { canceled, filePath } = await getSavePath(
+    fileName,
+    exportFormat.value
+  );
+  if (canceled || !filePath) {
+    return;
+  }
+
+  await ipc.saveData(data, filePath);
+  fyo.telemetry.log(Verb.Exported, props.schemaName, {
+    extension: exportFormat.value,
+  });
+  showExportInFolder(t`Export Successful`, filePath);
+}
+
+function getFileName() {
+  const fileStr = label.value.toLowerCase().replace(/\s/g, '-');
+  const dateString = new Date().toISOString().split('T')[0];
+  return `${fileStr}_${dateString}`;
+}
 </script>

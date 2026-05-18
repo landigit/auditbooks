@@ -1,11 +1,12 @@
 <template>
   <div class="relative">
     <input
+      ref="inputRef"
       :type="inputType"
       :class="[inputClasses, size === 'large' ? 'text-lg' : 'text-sm']"
-      :value="value"
-      :max="isNumeric(df) ? df.maxvalue : undefined"
-      :min="isNumeric(df) ? df.minvalue : undefined"
+      :value="value as any"
+      :max="isNumeric(df) ? (df as any).maxvalue : undefined"
+      :min="isNumeric(df) ? (df as any).minvalue : undefined"
       :readonly="isReadOnly"
       :tabindex="isReadOnly ? '-1' : '0'"
       @blur="onBlur"
@@ -19,12 +20,40 @@
     >
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Base from '../Controls/Base.vue';
 
-export default defineComponent({
-  name: 'FloatingLabelInputBase',
-  extends: Base,
+<script setup lang="ts">
+import { ref } from 'vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
+
+const props = withDefaults(defineProps<BaseControlProps>(), {
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
+
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
+
+const inputRef = ref<HTMLInputElement | null>(null);
+
+const {
+  inputType,
+  inputClasses,
+  isReadOnly,
+  onBlur,
+  isNumeric,
+  focus
+} = useBaseControl(props as any, emit, inputRef);
+
+defineExpose({
+  focus
 });
 </script>

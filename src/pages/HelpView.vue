@@ -76,228 +76,200 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAppStore } from 'src/stores/app';
 import { marked } from 'marked';
 import PageHeader from 'src/components/PageHeader.vue';
 import Button from 'src/components/Button.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
 import { ipc } from 'src/initFyo';
 
-export default defineComponent({
-  name: 'HelpView',
-  components: {
-    PageHeader,
-    Button,
-  },
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    useAppStore();
+const route = useRoute();
+const router = useRouter();
+useAppStore();
 
-    const title = ref('Documentation');
-    const renderedContent = ref('');
-    const loading = ref(true);
-    const error = ref('');
-    const toc = ref<{ id: string; text: string; level: number }[]>([]);
+const title = ref('Documentation');
+const renderedContent = ref('');
+const loading = ref(true);
+const error = ref('');
+const toc = ref<{ id: string; text: string; level: number }[]>([]);
 
-    const loadDefault = () => {
-      router.push({ name: 'Help', params: { path: 'getting-started' } });
-    };
+const loadDefault = () => {
+  router.push({ name: 'Help', params: { path: 'getting-started' } });
+};
 
-    const loadContent = async () => {
-      loading.value = true;
-      error.value = '';
-      toc.value = [];
+const loadContent = async () => {
+  loading.value = true;
+  error.value = '';
+  toc.value = [];
 
-      try {
-        const pathParam = route.params.path;
-        let relPath = Array.isArray(pathParam)
-          ? pathParam.join('/')
-          : pathParam;
+  try {
+    const pathParam = route.params.path;
+    let relPath = Array.isArray(pathParam) ? pathParam.join('/') : pathParam;
 
-        // Handle defaults and broken paths
-        if (!relPath || relPath === 'books' || relPath === 'index') {
-          relPath = 'getting-started';
-        }
+    // Handle defaults and broken paths
+    if (!relPath || relPath === 'books' || relPath === 'index') {
+      relPath = 'getting-started';
+    }
 
-        // Strip legacy books/ prefix
-        if (relPath.startsWith('books/')) {
-          relPath = relPath.substring(6);
-        }
+    // Strip legacy books/ prefix
+    if (relPath.startsWith('books/')) {
+      relPath = relPath.substring(6);
+    }
 
-        // Ensure docs/ prefix
-        if (!relPath.startsWith('docs/')) {
-          relPath = 'docs/' + relPath;
-        }
+    // Ensure docs/ prefix
+    if (!relPath.startsWith('docs/')) {
+      relPath = 'docs/' + relPath;
+    }
 
-        // Ensure .md extension
-        if (!relPath.endsWith('.md')) relPath += '.md';
+    // Ensure .md extension
+    if (!relPath.endsWith('.md')) relPath += '.md';
 
-        let content = '';
-        try {
-          content = await ipc.readDocFile(relPath);
-        } catch (e) {
-          // Try fallback if file not found
-          if (relPath !== 'docs/introduction.md') {
-            relPath = 'docs/introduction.md';
-            content = await ipc.readDocFile(relPath);
-          } else {
-            throw e;
-          }
-        }
-
-        // Rebranding: Frappe Books -> Auditbooks
-        content = content.replace(/Frappe Books/g, 'Auditbooks');
-        content = content.replace(/frappe\/books/g, 'landigit/auditbooks');
-
-        // Extract TOC
-        const headingRegex = /^(#{2,3})\s+(.*)$/gm;
-        let match;
-        const tempToc = [];
-        while ((match = headingRegex.exec(content)) !== null) {
-          const level = match[1].length;
-          const text = match[2].trim();
-          const id = text.toLowerCase().replace(/[^\w]+/g, '-');
-          tempToc.push({ id, text, level });
-        }
-        toc.value = tempToc;
-
-        // Configure marked
-        marked.setOptions({
-          gfm: true,
-          breaks: true,
-        });
-
-        // Handle ::: type alerts
-        const containerRegex =
-          /^::: (tip|info|warning|important|caution)\s?([\s\S]*?)\s?:::/gm;
-        let processedContent = content;
-
-        const placeholders: string[] = [];
-        processedContent = processedContent.replace(
-          containerRegex,
-          (_, type, body) => {
-            const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
-            const bodyHtml = marked.parseInline(body.trim());
-            placeholders.push(`<div class="help-alert alert-${type}">
-            <div class="alert-title font-bold uppercase text-xs mb-1">${type}</div>
-            <div class="alert-body">${bodyHtml}</div>
-          </div>`);
-            return id;
-          }
-        );
-
-        // Handle GitHub-style alerts > [!TIP]
-        const alertRegex =
-          /^> \[!(TIP|INFO|IMPORTANT|WARNING|CAUTION)\](?:\r?\n)((?:>.*\r?\n?)*)/gm;
-        processedContent = processedContent.replace(
-          alertRegex,
-          (_, type, body) => {
-            const typeLower = type.toLowerCase();
-            const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
-            const cleanBody = body.replace(/^> ?/gm, '').trim();
-            const bodyHtml = marked.parse(cleanBody);
-            placeholders.push(`<div class="help-alert alert-${typeLower}">
-            <div class="alert-title font-bold uppercase text-xs mb-1">${type}</div>
-            <div class="alert-body">${bodyHtml}</div>
-          </div>`);
-            return id;
-          }
-        );
-
-        // Pre-process images: fix paths and resolve spaces
-        const docDir = relPath.includes('/')
-          ? relPath.substring(0, relPath.lastIndexOf('/') + 1)
-          : '';
-        const imgRegex = /!\[(.*?)\]\((.*?)\)/g;
-        const imgMatches = [...processedContent.matchAll(imgRegex)];
-
-        for (const match of imgMatches) {
-          const fullMatch = match[0];
-          const alt = match[1];
-          let href = match[2];
-
-          if (href && !href.startsWith('http') && !href.startsWith('data:')) {
-            try {
-              let cleanSrc = decodeURIComponent(href);
-
-              const isRelative =
-                !cleanSrc.startsWith('/') &&
-                !cleanSrc.startsWith('./') &&
-                !cleanSrc.startsWith('../');
-              cleanSrc = cleanSrc.replace(/^\.?\/+/, '');
-
-              if (isRelative && docDir) {
-                cleanSrc = docDir + cleanSrc;
-              }
-
-              const dataUrl = await ipc.readDocData(cleanSrc);
-              processedContent = processedContent.replace(
-                fullMatch,
-                `![${alt}](${dataUrl})`
-              );
-            } catch (e) {
-              console.warn('Failed to pre-load image:', href, e);
-            }
-          }
-        }
-
-        let html = await marked(processedContent);
-
-        // Restore placeholders
-        placeholders.forEach((htmlBlock, index) => {
-          html = html.replace(`:::ALERT_PLACEHOLDER_${index}:::`, htmlBlock);
-        });
-
-        // Add IDs to headings for TOC scroll
-        toc.value.forEach((item) => {
-          const hRegex = new RegExp(
-            `<(h${item.level})>(.*?${item.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*?)</h${item.level}>`,
-            'i'
-          );
-          html = html.replace(hRegex, `<$1 id="${item.id}">$2</$1>`);
-        });
-
-        renderedContent.value = html;
-
-        title.value = 'Documentation';
-      } catch (e: any) {
-        console.error('Failed to load help file:', e);
-        error.value = 'Documentation file not found or could not be loaded.';
-      } finally {
-        loading.value = false;
+    let content = '';
+    try {
+      content = await ipc.readDocFile(relPath);
+    } catch (e) {
+      // Try fallback if file not found
+      if (relPath !== 'docs/introduction.md') {
+        relPath = 'docs/introduction.md';
+        content = await ipc.readDocFile(relPath);
+      } else {
+        throw e;
       }
-    };
+    }
+    // Extract TOC
+    const headingRegex = /^(#{2,3})\s+(.*)$/gm;
+    let match;
+    const tempToc = [];
+    while ((match = headingRegex.exec(content)) !== null) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+      tempToc.push({ id, text, level });
+    }
+    toc.value = tempToc;
 
-    const scrollTo = (id: string) => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    };
-
-    onMounted(() => {
-      loadContent();
+    // Configure marked
+    marked.setOptions({
+      gfm: true,
+      breaks: true,
     });
 
-    watch(
-      () => route.params.path,
-      () => loadContent()
+    // Handle ::: type alerts
+    const containerRegex =
+      /^::: (tip|info|warning|important|caution)\s?([\s\S]*?)\s?:::/gm;
+    let processedContent = content;
+
+    const placeholders: string[] = [];
+    processedContent = processedContent.replace(
+      containerRegex,
+      (_, type, body) => {
+        const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
+        const bodyHtml = marked.parseInline(body.trim());
+        placeholders.push(`<div class="help-alert alert-${type}">
+        <div class="alert-title font-bold uppercase text-xs mb-1">${type}</div>
+        <div class="alert-body">${bodyHtml}</div>
+      </div>`);
+        return id;
+      }
     );
 
-    return {
-      title,
-      renderedContent,
-      loading,
-      error,
-      toc,
-      scrollTo,
-      loadDefault,
-    };
-  },
+    // Handle GitHub-style alerts > [!TIP]
+    const alertRegex =
+      /^> \[!(TIP|INFO|IMPORTANT|WARNING|CAUTION)\](?:\r?\n)((?:>.*\r?\n?)*)/gm;
+    processedContent = processedContent.replace(alertRegex, (_, type, body) => {
+      const typeLower = type.toLowerCase();
+      const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
+      const cleanBody = body.replace(/^> ?/gm, '').trim();
+      const bodyHtml = marked.parse(cleanBody);
+      placeholders.push(`<div class="help-alert alert-${typeLower}">
+        <div class="alert-title font-bold uppercase text-xs mb-1">${type}</div>
+        <div class="alert-body">${bodyHtml}</div>
+      </div>`);
+      return id;
+    });
+
+    // Pre-process images: fix paths and resolve spaces
+    const docDir = relPath.includes('/')
+      ? relPath.substring(0, relPath.lastIndexOf('/') + 1)
+      : '';
+    const imgRegex = /!\[(.*?)\]\((.*?)\)/g;
+    const imgMatches = [...processedContent.matchAll(imgRegex)];
+
+    for (const match of imgMatches) {
+      const fullMatch = match[0];
+      const alt = match[1];
+      let href = match[2];
+
+      if (href && !href.startsWith('http') && !href.startsWith('data:')) {
+        try {
+          let cleanSrc = decodeURIComponent(href);
+
+          const isRelative =
+            !cleanSrc.startsWith('/') &&
+            !cleanSrc.startsWith('./') &&
+            !cleanSrc.startsWith('../');
+          cleanSrc = cleanSrc.replace(/^\.?\/+/, '');
+
+          if (isRelative && docDir) {
+            cleanSrc = docDir + cleanSrc;
+          }
+
+          const dataUrl = await ipc.readDocData(cleanSrc);
+          processedContent = processedContent.replace(
+            fullMatch,
+            `![${alt}](${dataUrl})`
+          );
+        } catch (e) {
+          console.warn('Failed to pre-load image:', href, e);
+        }
+      }
+    }
+
+    let html = await marked(processedContent);
+
+    // Restore placeholders
+    placeholders.forEach((htmlBlock, index) => {
+      html = html.replace(`:::ALERT_PLACEHOLDER_${index}:::`, htmlBlock);
+    });
+
+    // Add IDs to headings for TOC scroll
+    toc.value.forEach((item) => {
+      const hRegex = new RegExp(
+        `<(h${item.level})>(.*?${item.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*?)</h${item.level}>`,
+        'i'
+      );
+      html = html.replace(hRegex, `<$1 id="${item.id}">$2</$1>`);
+    });
+
+    renderedContent.value = html;
+
+    title.value = 'Documentation';
+  } catch (e: any) {
+    console.error('Failed to load help file:', e);
+    error.value = 'Documentation file not found or could not be loaded.';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const scrollTo = (id: string) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
+onMounted(() => {
+  loadContent();
 });
+
+watch(
+  () => route.params.path,
+  () => loadContent()
+);
 </script>
 
 <style scoped>

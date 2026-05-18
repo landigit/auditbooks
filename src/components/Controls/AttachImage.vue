@@ -44,13 +44,37 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Field } from 'schemas/types';
+
+<script setup lang="ts">
+import { computed, ref } from 'vue';
 import { fyo } from 'src/initFyo';
 import { getDataURL } from 'src/utils/misc';
-import { defineComponent, PropType } from 'vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 import LucideIcon from '../LucideIcon.vue';
-import Base from './Base.vue';
+
+interface AttachImageProps extends BaseControlProps {
+  letterPlaceholder?: string;
+  value?: string;
+}
+
+const props = withDefaults(defineProps<AttachImageProps>(), {
+  letterPlaceholder: '',
+  value: '',
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
+
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
 
 const mime_types: Record<string, string> = {
   png: 'image/png',
@@ -60,58 +84,58 @@ const mime_types: Record<string, string> = {
   svg: 'image/svg+xml',
 };
 
-export default defineComponent({
-  name: 'AttachImage',
-  components: { LucideIcon },
-  extends: Base,
-  props: {
-    letterPlaceholder: { type: String, default: '' },
-    value: { type: String, default: '' },
-    df: { type: Object as PropType<Field> },
-  },
-  computed: {
-    imageSizeStyle() {
-      if (this.size === 'form') {
-        return { width: '135px', height: '135px' };
-      }
-      return {};
-    },
-    shouldClear() {
-      return !!this.value;
-    },
-  },
-  methods: {
-    async handleClick() {
-      if (this.value) {
-        return await this.clearImage();
-      }
-      return await this.selectImage();
-    },
-    async clearImage() {
-      // @ts-ignore
-      this.triggerChange(null);
-    },
-    async selectImage() {
-      if (this.isReadOnly) {
-        return;
-      }
-      const options = {
-        title: fyo.t`Select Image`,
-        filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
-      };
+const inputRef = ref<HTMLElement | null>(null);
+const {
+  isReadOnly,
+  triggerChange,
+  focus
+} = useBaseControl(props as any, emit, inputRef);
 
-      const { name, success, data } = await ipc.selectFile(options);
+const imageSizeStyle = computed(() => {
+  if (props.size === 'form') {
+    return { width: '135px', height: '135px' };
+  }
+  return {};
+});
 
-      if (!success) {
-        return;
-      }
-      const extension = name.split('.').at(-1);
-      const type = (extension && mime_types[extension]) || 'image/png';
-      const dataURL = await getDataURL(type, data);
+const shouldClear = computed(() => {
+  return !!props.value;
+});
 
-      // @ts-ignore
-      this.triggerChange(dataURL);
-    },
-  },
+const handleClick = async () => {
+  if (props.value) {
+    return await clearImage();
+  }
+  return await selectImage();
+};
+
+const clearImage = async () => {
+  triggerChange(null);
+};
+
+const selectImage = async () => {
+  if (isReadOnly.value) {
+    return;
+  }
+  const options = {
+    title: fyo.t`Select Image`,
+    filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
+  };
+
+  // @ts-ignore
+  const { name, success, data } = await ipc.selectFile(options);
+
+  if (!success) {
+    return;
+  }
+  const extension = name.split('.').at(-1);
+  const type = (extension && mime_types[extension]) || 'image/png';
+  const dataURL = await getDataURL(type, data);
+
+  triggerChange(dataURL);
+};
+
+defineExpose({
+  focus
 });
 </script>

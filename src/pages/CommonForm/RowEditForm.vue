@@ -9,7 +9,7 @@
     >
       <div class="flex items-center justify-between px-4 h-row-largest">
         <!-- Close Button -->
-        <Button :icon="true" @click="$emit('close')">
+        <Button :icon="true" @click="emit('close')">
           <lucide-icon name="x" class="w-4 h-4" />
         </Button>
 
@@ -18,11 +18,11 @@
           <Button
             v-if="previous >= 0"
             :icon="true"
-            @click="$emit('previous', previous)"
+            @click="emit('previous', previous)"
           >
             <lucide-icon name="chevron-left" class="w-4 h-4" />
           </Button>
-          <Button v-if="next >= 0" :icon="true" @click="$emit('next', next)">
+          <Button v-if="next >= 0" :icon="true" @click="emit('next', next)">
             <lucide-icon name="chevron-right" class="w-4 h-4" />
           </Button>
         </div>
@@ -42,77 +42,83 @@
     />
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { computed, inject, provide, onMounted, onUnmounted } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { ValueError } from 'fyo/utils/errors';
 import Button from 'src/components/Button.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import TwoColumnForm from 'src/components/TwoColumnForm.vue';
 import { shortcutsKey } from 'src/utils/injectionKeys';
-import { computed } from 'vue';
-import { inject } from 'vue';
-import { defineComponent } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 const COMPONENT_NAME = 'RowEditForm';
 
-export default defineComponent({
-  components: { Button, TwoColumnForm, FormHeader },
-  provide() {
-    return {
-      doc: computed(() => this.row),
-    };
-  },
-  props: {
-    doc: { type: Doc, required: true },
-    index: { type: Number, required: true },
-    fieldname: { type: String, required: true },
-  },
-  emits: ['next', 'previous', 'close'],
-  setup() {
-    return { shortcuts: inject(shortcutsKey) };
-  },
-  computed: {
-    fieldlabel() {
-      return (
-        this.fyo.getField(this.doc.schemaName, this.fieldname)?.label ?? ''
-      );
-    },
-    row() {
-      const rows = this.doc.get(this.fieldname);
-      if (Array.isArray(rows) && rows[this.index] instanceof Doc) {
-        return rows[this.index];
-      }
+// Define Props
+const props = defineProps<{
+  doc: Doc;
+  index: number;
+  fieldname: string;
+}>();
 
-      const label = `${this.doc.name ?? '_name'}.${this.fieldname}[${
-        this.index
-      }]`;
-      throw new ValueError(this.t`Invalid value found for ${label}`);
-    },
-    fields() {
-      const fieldnames = this.row.schema.quickEditFields ?? [];
-      return fieldnames.map((f) => this.fyo.getField(this.row.schemaName, f));
-    },
-    previous(): number {
-      return this.index - 1;
-    },
-    next() {
-      const rows = this.doc.get(this.fieldname);
-      if (!Array.isArray(rows)) {
-        return -1;
-      }
+// Define Emits
+const emit = defineEmits<{
+  (e: 'next', nextIndex: number): void;
+  (e: 'previous', prevIndex: number): void;
+  (e: 'close'): void;
+}>();
 
-      if (rows.length - 1 === this.index) {
-        return -1;
-      }
+// Inject Shortcuts
+const shortcuts = inject(shortcutsKey);
 
-      return this.index + 1;
-    },
-  },
-  mounted() {
-    this.shortcuts?.set(COMPONENT_NAME, ['Escape'], () => this.$emit('close'));
-  },
-  unmounted() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
+// Computed Properties
+const fieldlabel = computed(() => {
+  return fyo.getField(props.doc.schemaName, props.fieldname)?.label ?? '';
+});
+
+const row = computed(() => {
+  const rows = props.doc.get(props.fieldname);
+  if (Array.isArray(rows) && rows[props.index] instanceof Doc) {
+    return rows[props.index];
+  }
+
+  const label = `${props.doc.name ?? '_name'}.${props.fieldname}[${props.index}]`;
+  throw new ValueError(t`Invalid value found for ${label}`);
+});
+
+const fields = computed(() => {
+  const fieldnames = row.value.schema.quickEditFields ?? [];
+  return fieldnames.map((f) => fyo.getField(row.value.schemaName, f));
+});
+
+const previous = computed<number>(() => {
+  return props.index - 1;
+});
+
+const next = computed<number>(() => {
+  const rows = props.doc.get(props.fieldname);
+  if (!Array.isArray(rows)) {
+    return -1;
+  }
+
+  if (rows.length - 1 === props.index) {
+    return -1;
+  }
+
+  return props.index + 1;
+});
+
+// Provide document context to child elements
+provide('doc', row);
+
+// Lifecycles
+onMounted(() => {
+  shortcuts?.set(COMPONENT_NAME, ['Escape'], () => emit('close'));
+});
+
+onUnmounted(() => {
+  shortcuts?.delete(COMPONENT_NAME);
 });
 </script>

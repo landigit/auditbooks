@@ -26,7 +26,7 @@ export function getMainProcessCommonConfig(root) {
       'drizzle-orm/sqlite-core',
       'drizzle-orm/relations',
       'electron',
-      'electron-store'
+      'electron-store',
     ],
     plugins: [excludeVendorFromSourceMap],
     write: true,

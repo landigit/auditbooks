@@ -14,7 +14,7 @@
             <div
               v-if="value"
               class="w-3 h-3 rounded me-1"
-              :style="{ backgroundColor: value }"
+              :style="{ backgroundColor: value as any }"
             ></div>
             <span v-if="value">
               {{ selectedColorLabel }}
@@ -47,9 +47,9 @@
               type="color"
               :placeholder="t`Custom Hex`"
               :class="[inputClasses, containerClasses]"
-              :value="value"
+              :value="value as any"
               style="padding: 0"
-              @change="(e) => setColorValue(e.target.value)"
+              @change="(e: any) => setColorValue(e.target.value)"
             />
           </div>
         </div>
@@ -58,48 +58,67 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { t } from 'fyo';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
 import Row from 'src/components/Row.vue';
-import Base from './Base.vue';
 
-export default {
-  name: 'Color',
-  components: {
-    Popover,
-    PopoverAnchor,
-    PopoverContent,
-    Row,
-  },
-  extends: Base,
-  data() {
-    return {
-      isShown: false,
-    };
-  },
-  computed: {
-    colors() {
-      return this.df.options;
-    },
-    selectedColorLabel() {
-      if (!this.colors) return this.value;
-      const color = this.colors.find((c) => this.value === c.value);
-      return color ? color.label : this.value;
-    },
-  },
-  methods: {
-    setColorValue(value) {
-      if (value.startsWith('var(')) {
-        this.triggerChange(value);
-        return;
-      }
-      if (!value.startsWith('#')) {
-        value = '#' + value;
-      }
-      if (/^#[0-9A-F]{6}$/i.test(value)) {
-        this.triggerChange(value);
-      }
-    },
-  },
+const props = withDefaults(defineProps<BaseControlProps>(), {
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
+
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
+
+const isShown = ref(false);
+
+const inputRef = ref<HTMLElement | null>(null);
+const {
+  labelClasses,
+  inputClasses,
+  containerClasses,
+  inputPlaceholder,
+  isReadOnly,
+  triggerChange,
+  focus
+} = useBaseControl(props as any, emit, inputRef);
+
+const colors = computed<any[]>(() => {
+  return (props.df as any).options || [];
+});
+
+const selectedColorLabel = computed(() => {
+  if (!colors.value) return props.value;
+  const color = colors.value.find((c) => props.value === c.value);
+  return color ? color.label : props.value;
+});
+
+const setColorValue = (val: string) => {
+  if (val.startsWith('var(')) {
+    triggerChange(val);
+    return;
+  }
+  if (!val.startsWith('#')) {
+    val = '#' + val;
+  }
+  if (/^#[0-9A-F]{6}$/i.test(val)) {
+    triggerChange(val);
+  }
 };
+
+defineExpose({
+  focus
+});
 </script>

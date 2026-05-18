@@ -39,52 +39,57 @@
     </template>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { PrintTemplateHint } from 'src/utils/printTemplates';
-import { PropType } from 'vue';
-import { defineComponent } from 'vue';
+
 type HintRow = {
   key: string;
   value: PrintTemplateHint[string];
   isCollapsible: boolean;
   collapsed: boolean;
 };
-export default defineComponent({
-  name: 'TemplateBuilderHint',
-  props: {
-    prefix: { type: String, default: '' },
-    hints: {
-      type: Object as PropType<PrintTemplateHint>,
-      required: true,
-    },
-    level: { type: Number, default: 0 },
-  },
-  data() {
-    return { rows: [] as HintRow[] };
-  },
-  mounted() {
-    this.rows = Object.entries(this.hints)
-      .map(([key, value]) => ({
-        key,
-        value,
-        isCollapsible: typeof value === 'object',
-        collapsed: this.level > 0,
-      }))
-      .sort((a, b) => Number(a.isCollapsible) - Number(b.isCollapsible));
-  },
-  methods: {
-    getKey(row: HintRow) {
-      const isArray = Array.isArray(row.value);
-      if (isArray) {
-        return `${this.prefix}.${row.key}[number]`;
-      }
 
-      if (this.prefix.length) {
-        return `${this.prefix}.${row.key}`;
-      }
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    prefix?: string;
+    hints: PrintTemplateHint;
+    level?: number;
+  }>(),
+  {
+    prefix: '',
+    level: 0,
+  }
+);
 
-      return row.key;
-    },
-  },
+// Reactive State
+const rows = ref<HintRow[]>([]);
+
+// Methods
+const getKey = (row: HintRow) => {
+  const isArray = Array.isArray(row.value);
+  if (isArray) {
+    return `${props.prefix}.${row.key}[number]`;
+  }
+
+  if (props.prefix.length) {
+    return `${props.prefix}.${row.key}`;
+  }
+
+  return row.key;
+};
+
+// Lifecycles
+onMounted(() => {
+  rows.value = Object.entries(props.hints)
+    .map(([key, value]) => ({
+      key,
+      value,
+      isCollapsible: typeof value === 'object',
+      collapsed: props.level > 0,
+    }))
+    .sort((a, b) => Number(a.isCollapsible) - Number(b.isCollapsible));
 });
 </script>

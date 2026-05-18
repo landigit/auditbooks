@@ -1,31 +1,38 @@
 <template>
-  <div class="custom-scroll custom-scroll-thumb1">
+  <div ref="scrollContainer" class="custom-scroll custom-scroll-thumb1">
     <slot></slot>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'WithScroll',
-  emits: ['scroll'],
-  data() {
-    return { listener: undefined } as { listener?: () => void };
-  },
-  mounted() {
-    this.listener = () => {
-      let { scrollLeft, scrollTop } = this.$el;
-      this.$emit('scroll', { scrollLeft, scrollTop });
-    };
-    this.$el.addEventListener('scroll', this.listener);
-  },
-  beforeUnmount() {
-    if (!this.listener) {
-      return;
-    }
+<script setup lang="ts">
+// --- Imports ---
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-    this.$el.removeEventListener('scroll', this.listener);
-    delete this.listener;
-  },
+// --- Props & Emits ---
+const emit = defineEmits<{
+  (e: 'scroll', payload: { scrollLeft: number; scrollTop: number }): void;
+}>();
+
+// --- State ---
+const scrollContainer = ref<HTMLElement | null>(null);
+let listener: (() => void) | undefined = undefined;
+
+// --- Lifecycle ---
+onMounted(() => {
+  listener = () => {
+    if (!scrollContainer.value) return;
+    const { scrollLeft, scrollTop } = scrollContainer.value;
+    emit('scroll', { scrollLeft, scrollTop });
+  };
+  scrollContainer.value?.addEventListener('scroll', listener);
+});
+
+onBeforeUnmount(() => {
+  if (!listener || !scrollContainer.value) {
+    return;
+  }
+
+  scrollContainer.value.removeEventListener('scroll', listener);
+  listener = undefined;
 });
 </script>

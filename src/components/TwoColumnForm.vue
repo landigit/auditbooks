@@ -49,111 +49,114 @@
     </template>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+// --- Imports ---
+import { ref, computed, watch, onMounted } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import { getErrorMessage } from 'src/utils';
 import { evaluateHidden } from 'src/utils/doc';
 import Table from './Controls/Table.vue';
-import { defineComponent } from 'vue';
 import { Field } from 'schemas/types';
-import { PropType } from 'vue';
 import { DocValue } from 'fyo/core/types';
 import { useAppStore } from 'src/stores/app';
 
-export default defineComponent({
-  name: 'TwoColumnForm',
-  components: {
-    FormControl,
-    Table,
-  },
-  props: {
-    doc: { type: Doc, required: true },
-    fields: { type: Array as PropType<Field[]>, default: () => [] },
-    columnRatio: {
-      type: Array as PropType<number[]>,
-      default: () => [1, 1],
-    },
-  },
-  data() {
-    return {
-      formFields: [],
-      errors: {},
-      store: useAppStore(),
-    } as {
-      formFields: Field[];
-      errors: Record<string, string>;
-      store: ReturnType<typeof useAppStore>;
-    };
-  },
-  computed: {
-    style() {
-      let templateColumns = (this.columnRatio || [1, 1])
-        .map((r) => `minmax(0, ${r}fr)`)
-        .join(' ');
-      return {
-        'grid-template-columns': templateColumns,
-      };
-    },
-  },
-  watch: {
-    doc() {
-      this.setFormFields();
-    },
-  },
-  mounted() {
-    this.setFormFields();
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.tcf = this;
-    }
-  },
-  methods: {
-    getFieldHeight(field: Field) {
-      if (['AttachImage', 'Text'].includes(field.fieldtype)) {
-        return 'calc((var(--h-row-mid) + 1px) * 2)';
-      }
+// --- Props & Emits ---
+const props = withDefaults(
+  defineProps<{
+    doc: Doc;
+    fields?: Field[];
+    columnRatio?: number[];
+  }>(),
+  {
+    fields: () => [],
+    columnRatio: () => [1, 1],
+  }
+);
 
-      if (this.errors[field.fieldname]) {
-        return 'calc((var(--h-row-mid) + 1px) * 2)';
-      }
+// --- State ---
+const formFields = ref<Field[]>([]);
+const errors = ref<Record<string, string>>({});
+const store = useAppStore();
+const controls = ref<any[]>([]);
 
-      return 'calc(var(--h-row-mid) + 1px)';
-    },
-    async onChange(field: Field, value: DocValue) {
-      const { fieldname } = field;
-      delete this.errors[fieldname];
-
-      let isSet = false;
-      try {
-        isSet = await this.doc.set(fieldname, value);
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          return;
-        }
-
-        this.errors[fieldname] = getErrorMessage(err, this.doc);
-      }
-
-      if (isSet) {
-        this.setFormFields();
-      }
-    },
-    setFormFields() {
-      let fieldList = this.fields;
-
-      if (fieldList.length === 0) {
-        fieldList = this.doc.quickEditFields;
-      }
-
-      if (fieldList.length === 0) {
-        fieldList = this.doc.schema.fields.filter((f) => f.required);
-      }
-
-      this.formFields = fieldList.filter(
-        (field) => field && !evaluateHidden(field, this.doc)
-      );
-    },
-  },
+// --- Computed ---
+const style = computed(() => {
+  let templateColumns = (props.columnRatio || [1, 1])
+    .map((r) => `minmax(0, ${r}fr)`)
+    .join(' ');
+  return {
+    'grid-template-columns': templateColumns,
+  };
 });
+
+// --- Watchers ---
+watch(
+  () => props.doc,
+  () => {
+    setFormFields();
+  }
+);
+
+// --- Expose ---
+defineExpose({ onChange });
+
+// --- Lifecycle ---
+onMounted(() => {
+  setFormFields();
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.tcf = { formFields, errors, props };
+  }
+});
+
+// --- Methods ---
+function getFieldHeight(field: Field) {
+  if (['AttachImage', 'Text'].includes(field.fieldtype)) {
+    return 'calc((var(--h-row-mid) + 1px) * 2)';
+  }
+
+  if (errors.value[field.fieldname]) {
+    return 'calc((var(--h-row-mid) + 1px) * 2)';
+  }
+
+  return 'calc(var(--h-row-mid) + 1px)';
+}
+
+async function onChange(field: Field, value: DocValue) {
+  const { fieldname } = field;
+  delete errors.value[fieldname];
+
+  let isSet = false;
+  try {
+    isSet = await props.doc.set(fieldname, value);
+  } catch (err) {
+    if (!(err instanceof Error)) {
+      return;
+    }
+
+    errors.value[fieldname] = getErrorMessage(err, props.doc);
+  }
+
+  if (isSet) {
+    setFormFields();
+  }
+}
+
+function setFormFields() {
+  let fieldList = props.fields;
+
+  if (fieldList.length === 0) {
+    fieldList = props.doc.quickEditFields;
+  }
+
+  if (fieldList.length === 0) {
+    fieldList = props.doc.schema.fields.filter((f) => f.required);
+  }
+
+  formFields.value = fieldList.filter(
+    (field) => field && !evaluateHidden(field, props.doc)
+  );
+}
 </script>

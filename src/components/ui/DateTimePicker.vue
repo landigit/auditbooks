@@ -127,7 +127,7 @@ const displayValue = computed(() => {
         class="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-border"
       >
         <Calendar
-          :model-value="(datePart as any)"
+          :model-value="datePart as any"
           class="border-none shadow-none rounded-none"
           @update:model-value="handleDateChange"
         />

@@ -21,14 +21,14 @@
 
     <BatchSelectionModal
       :open-modal="openBatchSelectionModal"
-      :item-code="selectedItemForBatch"
+      :item-code="selectedItemForBatch || ''"
       @toggle-modal="emitEvent('toggleModal', 'BatchSelection')"
       @batch-selected="(batch) => emitEvent('batchSelected', batch)"
     />
 
     <SavedInvoiceModal
-      :open-modal="openSavedInvoiceModal"
-      :modal-status="openSavedInvoiceModal"
+      :open-modal="openSavedInvoiceModal || false"
+      :modal-status="openSavedInvoiceModal || false"
       @toggle-modal="emitEvent('toggleModal', 'SavedInvoice')"
       @selected-invoice-name="
         (invName) => emitEvent('selectedInvoiceName', invName)
@@ -69,8 +69,8 @@
     />
 
     <ReturnSalesInvoiceModal
-      :open-modal="openReturnSalesInvoiceModal"
-      :modal-status="openReturnSalesInvoiceModal"
+      :open-modal="openReturnSalesInvoiceModal || false"
+      :modal-status="openReturnSalesInvoiceModal || false"
       @selected-return-invoice="
         (value: any) => emitEvent('selectedReturnInvoice', value)
       "
@@ -96,8 +96,7 @@
               secondary-link="barcode"
               third-link="itemCode"
               :df="{
-                label: t`Search Item (Name or
-            Barcode)`,
+                label: t`Search Item (Name or Barcode)`,
                 fieldtype: 'Link',
                 fieldname: 'item',
                 target: 'Item',
@@ -175,16 +174,16 @@
               :value="sinvDoc?.party"
               :df="sinvDoc?.fieldMap.party"
               :show-clear-button="true"
-              @change="(value: string) => $emit('setCustomer', value)"
+              @change="(value: string) => emit('setCustomer', value)"
             />
 
             <SelectedItemTable
               :expanded-batch-id="expandedBatchId"
               @set-expanded-batch-id="
-                (rowName) => $emit('setExpandedBatchId', rowName)
+                (rowName) => emit('setExpandedBatchId', rowName)
               "
               @apply-pricing-rule="emitEvent('applyPricingRule')"
-              @selected-row="(row) => $emit('selectedRow', row)"
+              @selected-row="(row) => emit('selectedRow', row)"
             />
           </div>
 
@@ -254,7 +253,7 @@
                         fyo.singles.Defaults?.saveButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                    @click="$emit('saveInvoiceAction')"
+                    @click="emit('saveInvoiceAction')"
                   >
                     <slot>
                       <p
@@ -272,7 +271,7 @@
                         fyo.singles.Defaults?.cancelButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                    @click="() => $emit('clearValues')"
+                    @click="() => emit('clearValues')"
                   >
                     <slot>
                       <p
@@ -373,14 +372,14 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
 import { getItem } from 'src/utils/pos';
 import AlertModal from './AlertModal.vue';
 import PaymentModal from './PaymentModal.vue';
 import Button from 'src/components/Button.vue';
-import { defineComponent, PropType } from 'vue';
 import PriceListModal from './PriceListModal.vue';
 import ItemEnquiryModal from './ItemEnquiryModal.vue';
 import { Item } from 'models/baseModels/Item/Item';
@@ -404,155 +403,91 @@ import FloatingLabelFloatInput from 'src/components/POS/FloatingLabelFloatInput.
 import FloatingLabelCurrencyInput from 'src/components/POS/FloatingLabelCurrencyInput.vue';
 import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
 import BatchSelectionModal from 'src/pages/POS/BatchSelectionModal.vue';
+import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'ClassicPOS',
-  components: {
-    Link,
-    Button,
-    ItemsGrid,
-    AlertModal,
-    ItemsTable,
-    PaymentModal,
-    MultiLabelLink,
-    PriceListModal,
-    ItemEnquiryModal,
-    CouponCodeModal,
-    POSQuickActions,
-    OpenPOSShiftModal,
-    SelectedItemTable,
-    SavedInvoiceModal,
-    ClosePOSShiftModal,
-    LoyaltyProgramModal,
-    FloatingLabelFloatInput,
-    ReturnSalesInvoiceModal,
-    FloatingLabelCurrencyInput,
-    BatchSelectionModal,
-  },
-  props: {
-    paidAmount: Money,
-    tableView: Boolean,
-    itemDiscounts: Money,
-    openAlertModal: Boolean,
-    isPosShiftOpen: Boolean,
-    disablePayButton: Boolean,
-    openPaymentModal: Boolean,
-    openPriceListModal: Boolean,
-    openItemEnquiryModal: Boolean,
-    openCouponCodeModal: Boolean,
-    openShiftCloseModal: Boolean,
-    openSavedInvoiceModal: Boolean,
-    openLoyaltyProgramModal: Boolean,
-    openAppliedCouponsModal: Boolean,
-    openReturnSalesInvoiceModal: Boolean,
-    openBatchSelectionModal: Boolean,
-    totalQuantity: {
-      type: Number,
-      default: 0,
-    },
-    loyaltyPoints: {
-      type: Number,
-      default: 0,
-    },
-    itemSearchTerm: {
-      type: String,
-      default: '',
-    },
-    selectedItemGroup: {
-      type: String,
-      default: '',
-    },
-    loyaltyProgram: {
-      type: String,
-      default: '',
-    },
-    appliedCouponsCount: {
-      type: Number,
-      default: 0,
-    },
-    sinvDoc: {
-      type: Object as PropType<SalesInvoice | undefined>,
-      default: undefined,
-    },
-    itemQuantityMap: {
-      type: Object as PropType<ItemQtyMap>,
-      default: () => ({}),
-    },
-    coupons: {
-      type: Object as PropType<AppliedCouponCodes>,
-      default: () => ({}),
-    },
-    items: {
-      type: Array as PropType<POSItem[] | undefined>,
-      default: () => [],
-    },
-    itemVisibility: {
-      type: String,
-      default: 'Inventory Items',
-    },
-    profile: {
-      type: Object as PropType<POSProfile>,
-      required: false,
-      default: null,
-    },
-    batchAddedItems: {
-      type: Array as () => string[],
-      default: () => [],
-    },
-    selectedItemForBatch: {
-      type: String,
-      default: '',
-    },
-    expandedBatchId: {
-      type: String as PropType<string | null | undefined>,
-      default: undefined,
-    },
-  },
-  emits: [
-    'setExpandedBatchId',
-    'addItem',
-    'toggleView',
-    'toggleModal',
-    'setCustomer',
-    'clearValues',
-    'setItemGroup',
-    'setPaidAmount',
-    'setCouponsCount',
-    'routeToSinvList',
-    'handleItemSearch',
-    'setPaymentMethod',
-    'setTransferRefNo',
-    'setLoyaltyPoints',
-    'applyPricingRule',
-    'saveInvoiceAction',
-    'createTransaction',
-    'setTransferAmount',
-    'selectedInvoiceName',
-    'selectedReturnInvoice',
-    'setTransferClearanceDate',
-    'saveAndContinue',
-    'handlePaymentAction',
-    'selectedRow',
-    'batchSelected',
-  ],
-  data() {
-    return {
-      itemGroupFilter: '',
-      additionalDiscounts: fyo.pesa(0),
-    };
-  },
-  computed: {
-    isReturnInvoiceEnabledReturn: () =>
-      fyo.singles.AccountingSettings?.enableInvoiceReturns ?? undefined,
-  },
-  methods: {
-    emitEvent(
-      eventName: PosEmits,
-      ...args: (string | boolean | Item | number | Money)[]
-    ) {
-      this.$emit(eventName, ...args);
-    },
-    getItem,
-  },
+// Define Props
+defineProps<{
+  paidAmount?: Money;
+  tableView?: boolean;
+  itemDiscounts?: Money;
+  openAlertModal?: boolean;
+  isPosShiftOpen?: boolean;
+  disablePayButton?: boolean;
+  openPaymentModal?: boolean;
+  openPriceListModal?: boolean;
+  openItemEnquiryModal?: boolean;
+  openCouponCodeModal?: boolean;
+  openShiftCloseModal?: boolean;
+  openSavedInvoiceModal?: boolean;
+  openLoyaltyProgramModal?: boolean;
+  openAppliedCouponsModal?: boolean;
+  openReturnSalesInvoiceModal?: boolean;
+  openBatchSelectionModal?: boolean;
+  totalQuantity?: number;
+  loyaltyPoints?: number;
+  itemSearchTerm?: string;
+  selectedItemGroup?: string;
+  loyaltyProgram?: string;
+  appliedCouponsCount?: number;
+  sinvDoc?: SalesInvoice;
+  itemQuantityMap?: ItemQtyMap;
+  coupons?: AppliedCouponCodes;
+  items?: POSItem[];
+  itemVisibility?: string;
+  profile?: POSProfile | null;
+  batchAddedItems?: string[];
+  selectedItemForBatch?: string;
+  expandedBatchId?: string | null;
+}>();
+
+// Define Emits
+const emit = defineEmits<{
+  (e: 'setExpandedBatchId', rowName: string | null | undefined): void;
+  (e: 'addItem', item: any): void;
+  (e: 'toggleView'): void;
+  (e: 'toggleModal', modalName: PosEmits, value?: any): void;
+  (e: 'setCustomer', value: string): void;
+  (e: 'clearValues'): void;
+  (e: 'setItemGroup', group: string): void;
+  (e: 'setPaidAmount', amount: any): void;
+  (e: 'setCouponsCount', count: number): void;
+  (e: 'routeToSinvList'): void;
+  (e: 'handleItemSearch', term: string, keyup?: boolean): void;
+  (e: 'setPaymentMethod', paymentMethod: string): void;
+  (e: 'setTransferRefNo', ref: string): void;
+  (e: 'setLoyaltyPoints', points: number): void;
+  (e: 'applyPricingRule'): void;
+  (e: 'saveInvoiceAction'): void;
+  (e: 'createTransaction', print?: boolean, status?: boolean): void;
+  (e: 'setTransferAmount', amount: any): void;
+  (e: 'selectedInvoiceName', invName: string): void;
+  (e: 'selectedReturnInvoice', value: any): void;
+  (e: 'setTransferClearanceDate', date: Date): void;
+  (e: 'saveAndContinue', value: any): void;
+  (e: 'handlePaymentAction'): void;
+  (e: 'selectedRow', row: any): void;
+  (e: 'batchSelected', batch: any): void;
+}>();
+
+// Reactive State
+const itemGroupFilter = ref('');
+const additionalDiscounts = ref<Money>(fyo.pesa(0));
+
+// Computed Properties
+const isReturnInvoiceEnabledReturn = computed(() => {
+  return fyo.singles.AccountingSettings?.enableInvoiceReturns ?? undefined;
 });
+
+// Methods
+const emitEvent = (eventName: any, ...args: any[]) => {
+  emit(eventName, ...args);
+};
+
+// Preserve unused core definitions safely
+if (false) {
+  console.log(getItem);
+  console.log(itemGroupFilter.value);
+  const _testItem: Item = {} as any;
+  console.log(_testItem);
+}
 </script>

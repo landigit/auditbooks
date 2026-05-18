@@ -16,49 +16,45 @@
   </Dropdown>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed, inject } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
 import Button from 'src/components/Button.vue';
 import Dropdown from 'src/components/Dropdown.vue';
 import { DropdownItem } from 'src/utils/types';
-import { defineComponent, PropType } from 'vue';
 
-export default defineComponent({
-  name: 'DropdownWithActions',
-  components: {
-    Dropdown,
-    Button,
-  },
-  inject: {
-    injectedDoc: {
-      from: 'doc',
-      default: undefined,
-    },
-  },
-  props: {
-    actions: { type: Array as PropType<Action[]>, default: () => [] },
-    type: { type: String, default: 'secondary' },
-    icon: { type: Boolean, default: true },
-  },
-  computed: {
-    doc() {
-      // @ts-ignore
-      const doc = this.injectedDoc;
-      if (doc instanceof Doc) {
-        return doc;
-      }
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    actions?: Action[];
+    type?: string;
+    icon?: boolean;
+  }>(),
+  {
+    actions: () => [],
+    type: 'secondary',
+    icon: true,
+  }
+);
 
-      return undefined;
-    },
-    items(): DropdownItem[] {
-      return this.actions.map(({ label, group, component, action }) => ({
-        label,
-        group,
-        action,
-        component,
-      }));
-    },
-  },
+// Inject Doc
+const injectedDoc = inject<Doc | undefined>('doc', undefined);
+
+// Computed Properties
+const doc = computed(() => {
+  if (injectedDoc instanceof Doc) {
+    return injectedDoc;
+  }
+  return undefined;
+});
+
+const items = computed<DropdownItem[]>(() => {
+  return props.actions.map(({ label, group, component, action }) => ({
+    label,
+    group,
+    action,
+    component,
+  }));
 });
 </script>

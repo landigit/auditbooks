@@ -1,7 +1,9 @@
 <template>
   <div ref="container" class="bg-surface text-main"></div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, watch, onMounted, markRaw } from 'vue';
 import { autocompletion, CompletionContext } from '@codemirror/autocomplete';
 import { vue } from '@codemirror/lang-vue';
 import {
@@ -15,108 +17,124 @@ import { EditorView, ViewUpdate } from '@codemirror/view';
 import { tags } from '@lezer/highlight';
 import { basicSetup } from 'codemirror';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent, markRaw } from 'vue';
 
-export default defineComponent({
-  props: {
-    initialValue: { type: String, required: true },
-    disabled: { type: Boolean, default: false },
-    hints: { type: Object, default: undefined },
-  },
-  emits: ['input', 'blur'],
-  data() {
-    return {
-      state: null as EditorState | null,
-      view: null as EditorView | null,
-      compartments: {} as Record<string, Compartment>,
-      store: useAppStore(),
-    };
-  },
-  computed: {
-    container() {
-      const { container } = this.$refs;
-      if (container instanceof HTMLDivElement) {
-        return container;
-      }
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    initialValue: string;
+    disabled?: boolean;
+    hints?: Record<string, unknown>;
+  }>(),
+  {
+    disabled: false,
+    hints: undefined,
+  }
+);
 
-      throw new Error('ref container is not a div element');
+// Define Emits
+const emit = defineEmits<{
+  (e: 'input', value: string): void;
+  (e: 'blur', value: string): void;
+}>();
+
+// Template Refs
+const container = ref<HTMLDivElement | null>(null);
+
+// Reactive State
+const editorState = ref<EditorState | null>(null);
+const view = ref<EditorView | null>(null);
+const compartments = ref<Record<string, Compartment>>({});
+const store = useAppStore();
+
+// Methods
+const updateListener = (update: ViewUpdate) => {
+  if (update.docChanged) {
+    emit('input', view.value?.state.doc.toString() ?? '');
+  }
+
+  if (update.focusChanged && !view.value?.hasFocus) {
+    emit('blur', view.value?.state.doc.toString() ?? '');
+  }
+};
+
+const setDisabled = (value: boolean) => {
+  const { readOnly, editable } = compartments.value;
+  view.value?.dispatch({
+    effects: [
+      readOnly.reconfigure(EditorState.readOnly.of(value)),
+      editable.reconfigure(EditorView.editable.of(!value)),
+    ],
+  });
+};
+
+const init = () => {
+  const readOnly = new Compartment();
+  const editable = new Compartment();
+
+  const highlightStyle = HighlightStyle.define([
+    { tag: tags.typeName, color: 'var(--color-syntax-type)' },
+    { tag: tags.angleBracket, color: 'var(--color-syntax-angle)' },
+    { tag: tags.attributeName, color: 'var(--color-syntax-attr-name)' },
+    { tag: tags.attributeValue, color: 'var(--color-syntax-attr-value)' },
+    {
+      tag: tags.comment,
+      color: 'var(--color-syntax-comment)',
+      fontStyle: 'italic',
     },
-  },
-  watch: {
-    disabled(value: boolean) {
-      this.setDisabled(value);
-    },
-  },
-  mounted() {
-    if (!this.view) {
-      this.init();
-    }
+    { tag: tags.keyword, color: 'var(--color-syntax-keyword)' },
+    { tag: tags.variableName, color: 'var(--color-syntax-variable)' },
+    { tag: tags.string, color: 'var(--color-syntax-string)' },
+  ]);
+  const completions = getCompletionsFromHints(props.hints ?? {});
 
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.te = this;
-    }
-  },
-  methods: {
-    init() {
-      const readOnly = new Compartment();
-      const editable = new Compartment();
+  if (!container.value) {
+    throw new Error('container is not initialized');
+  }
 
-      const highlightStyle = HighlightStyle.define([
-        { tag: tags.typeName, color: 'var(--color-syntax-type)' },
-        { tag: tags.angleBracket, color: 'var(--color-syntax-angle)' },
-        { tag: tags.attributeName, color: 'var(--color-syntax-attr-name)' },
-        { tag: tags.attributeValue, color: 'var(--color-syntax-attr-value)' },
-        {
-          tag: tags.comment,
-          color: 'var(--color-syntax-comment)',
-          fontStyle: 'italic',
-        },
-        { tag: tags.keyword, color: 'var(--color-syntax-keyword)' },
-        { tag: tags.variableName, color: 'var(--color-syntax-variable)' },
-        { tag: tags.string, color: 'var(--color-syntax-string)' },
-      ]);
-      const completions = getCompletionsFromHints(this.hints ?? {});
+  const editorView = new EditorView({
+    doc: props.initialValue,
+    extensions: [
+      EditorView.updateListener.of(updateListener),
+      readOnly.of(EditorState.readOnly.of(props.disabled)),
+      editable.of(EditorView.editable.of(!props.disabled)),
+      basicSetup,
+      vue(),
+      syntaxHighlighting(highlightStyle),
+      autocompletion({ override: [completions] }),
+    ],
+    parent: container.value,
+  });
+  view.value = markRaw(editorView);
 
-      const view = new EditorView({
-        doc: this.initialValue,
-        extensions: [
-          EditorView.updateListener.of(this.updateListener.bind(this)),
-          readOnly.of(EditorState.readOnly.of(this.disabled)),
-          editable.of(EditorView.editable.of(!this.disabled)),
-          basicSetup,
-          vue(),
-          syntaxHighlighting(highlightStyle),
-          autocompletion({ override: [completions] }),
-        ],
-        parent: this.container,
-      });
-      this.view = markRaw(view);
+  const comps = { readOnly, editable };
+  compartments.value = markRaw(comps);
+};
 
-      const compartments = { readOnly, editable };
-      this.compartments = markRaw(compartments);
-    },
-    updateListener(update: ViewUpdate) {
-      if (update.docChanged) {
-        this.$emit('input', this.view?.state.doc.toString() ?? '');
-      }
-
-      if (update.focusChanged && !this.view?.hasFocus) {
-        this.$emit('blur', this.view?.state.doc.toString() ?? '');
-      }
-    },
-    setDisabled(value: boolean) {
-      const { readOnly, editable } = this.compartments;
-      this.view?.dispatch({
-        effects: [
-          readOnly.reconfigure(EditorState.readOnly.of(value)),
-          editable.reconfigure(EditorView.editable.of(!value)),
-        ],
-      });
-    },
-  },
+// Watchers
+watch(() => props.disabled, (value: boolean) => {
+  setDisabled(value);
 });
 
+// Lifecycles
+onMounted(() => {
+  if (!view.value) {
+    init();
+  }
+
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.te = {
+      editorState,
+      view,
+      compartments,
+      init,
+      updateListener,
+      setDisabled,
+    };
+  }
+});
+
+// CodeMirror completions helpers
 function getCompletionsFromHints(hints: Record<string, unknown>) {
   const options = hintsToCompletionOptions(hints);
   return function completions(context: CompletionContext) {
@@ -206,6 +224,7 @@ function getCompletionOption(
   return null;
 }
 </script>
+
 <style>
 @reference "../../styles/index.css";
 .cm-line {

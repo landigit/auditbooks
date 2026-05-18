@@ -31,88 +31,105 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onActivated } from 'vue';
 import BarChart from 'src/components/Charts/BarChart.vue';
 import { fyo } from 'src/initFyo';
 import { formatXLabels, getYMax, getYMin } from 'src/utils/chart';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { getValueMapFromList } from 'utils';
-import DashboardChartBase from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
-import { defineComponent } from 'vue';
+import { PeriodKey } from 'src/utils/types';
 
-// Linting broken in this file cause of `extends: ...`
-/*
-  eslint-disable @typescript-eslint/no-unsafe-argument,
-  @typescript-eslint/no-unsafe-return
-*/
-export default defineComponent({
-  name: 'ProfitAndLoss',
-  components: {
-    PeriodSelector,
-    SectionHeader,
-    BarChart,
-  },
-  extends: DashboardChartBase,
-  data: () => ({
-    data: [] as { yearmonth: string; balance: number }[],
-    hasData: false,
-    periodOptions: ['This Year', 'This Quarter', 'YTD'],
-  }),
-  computed: {
-    chartData() {
-      const points = [this.data.map((d) => d.balance)];
-      const colors = [
-        {
-          positive: 'var(--chart-blue-main)',
-          negative: 'var(--chart-pink-main)',
-        },
-      ];
-      const format = (value: number) => fyo.format(value ?? 0, 'Currency');
-      const yMax = getYMax(points);
-      const yMin = getYMin(points);
-      return {
-        xLabels: this.data.map((d) => d.yearmonth),
-        points,
-        format,
-        colors,
-        yMax,
-        yMin,
-        formatX: formatXLabels,
-        gridColor: 'var(--color-border)',
-        fontColor: 'var(--color-description)',
-      };
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    commonPeriod?: PeriodKey;
+  }>(),
+  {
+    commonPeriod: 'This Year',
+  }
+);
+
+// Define Emits
+const emit = defineEmits<{
+  (e: 'period-change', period: PeriodKey): void;
+}>();
+
+// State definition
+const data = ref<{ yearmonth: string; balance: number }[]>([]);
+const hasData = ref(false);
+const period = ref<PeriodKey>('This Year');
+const periodOptions: PeriodKey[] = ['This Year', 'This Quarter', 'YTD'];
+
+// Methods
+const setData = async () => {
+  const { fromDate, toDate, periodList } = getDatesAndPeriodList(period.value);
+
+  const res = await fyo.db.getIncomeAndExpenses(
+    fromDate.toISO()!,
+    toDate.toISO()!
+  );
+  const incomes = getValueMapFromList(res.income, 'yearmonth', 'balance');
+  const expenses = getValueMapFromList(res.expense, 'yearmonth', 'balance');
+
+  data.value = periodList.map((d) => {
+    const key = d.toFormat('yyyy-MM');
+    const inc = incomes[key] ?? 0;
+    const exp = expenses[key] ?? 0;
+    return { yearmonth: key, balance: inc - exp };
+  });
+  hasData.value = res.income.length > 0 || res.expense.length > 0;
+};
+
+const periodChange = async () => {
+  emit('period-change', period.value);
+  await setData();
+};
+
+// Computed Properties
+const chartData = computed(() => {
+  const points = [data.value.map((d) => d.balance)];
+  const colors = [
+    {
+      positive: 'var(--chart-blue-main)',
+      negative: 'var(--chart-pink-main)',
     },
-  },
-  activated() {
-    this.setData();
-  },
-  methods: {
-    async setData() {
-      const { fromDate, toDate, periodList } = getDatesAndPeriodList(
-        this.period
-      );
+  ];
+  const format = (value: number) => fyo.format(value ?? 0, 'Currency');
+  const yMax = getYMax(points);
+  const yMin = getYMin(points);
+  return {
+    xLabels: data.value.map((d) => d.yearmonth),
+    points,
+    format,
+    colors,
+    yMax,
+    yMin,
+    formatX: formatXLabels,
+    gridColor: 'var(--color-border)',
+    fontColor: 'var(--color-description)',
+  };
+});
 
-      const data = await fyo.db.getIncomeAndExpenses(
-        fromDate.toISO()!,
-        toDate.toISO()!
-      );
-      const incomes = getValueMapFromList(data.income, 'yearmonth', 'balance');
-      const expenses = getValueMapFromList(
-        data.expense,
-        'yearmonth',
-        'balance'
-      );
+// Watchers
+watch(period, async () => {
+  await periodChange();
+});
 
-      this.data = periodList.map((d) => {
-        const key = d.toFormat('yyyy-MM');
-        const inc = incomes[key] ?? 0;
-        const exp = expenses[key] ?? 0;
-        return { yearmonth: key, balance: inc - exp };
-      });
-      this.hasData = data.income.length > 0 || data.expense.length > 0;
-    },
-  },
+watch(
+  () => props.commonPeriod,
+  (val) => {
+    if (!val || !periodOptions.includes(val)) {
+      return;
+    }
+    period.value = val;
+  }
+);
+
+// Lifecycle Hooks
+onActivated(async () => {
+  await setData();
 });
 </script>

@@ -10,7 +10,7 @@
       <div class="flex col-span-2 gap-5">
         <Button
           class="py-5 w-full bg-indicator-red-bg"
-          @click="$emit('toggleModal', 'Alert')"
+          @click="emit('toggleModal', 'Alert')"
         >
           <slot>
             <p class="uppercase text-lg text-indicator-red-text font-semibold">
@@ -23,7 +23,7 @@
           class="w-full py-5 bg-indicator-green-bg"
           @click="
             routeTo('/list/SalesInvoice');
-            $emit('toggleModal', 'Alert');
+            emit('toggleModal', 'Alert');
           "
         >
           <slot>
@@ -38,7 +38,7 @@
       <div class="col-span-2 flex justify-center mt-3">
         <Button
           class="w-full py-5 bg-indicator-blue-bg"
-          @click="$emit('saveAndContinue')"
+          @click="emit('saveAndContinue')"
         >
           <slot>
             <p class="uppercase text-lg text-indicator-blue-text font-semibold">
@@ -51,21 +51,15 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
-import { defineComponent } from 'vue';
 import { routeTo } from 'src/utils/ui';
+import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'AlertModal',
-  components: {
-    Modal,
-    Button,
-  },
-  emits: ['toggleModal', 'saveAndContinue'],
-  methods: {
-    routeTo,
-  },
-});
+// Define Emits
+const emit = defineEmits<{
+  (e: 'toggleModal', value: string): void;
+  (e: 'saveAndContinue', value?: any): void;
+}>();
 </script>

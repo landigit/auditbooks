@@ -12,6 +12,7 @@
         @click="handleChange(item as POSItem)"
         v-for="item in items as POSItem[]"
         :key="item.name"
+        v-memo="[item.name, item.image, item.availableQty, item.rate]"
       >
         <div class="self-center w-full h-32 lg:h-28 p-1 rounded-lg">
           <div class="relative w-auto h-full">
@@ -56,36 +57,40 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { POSItem } from '../types';
+<script setup lang="ts">
+import { fyo } from 'src/initFyo';
+import { POSItem, ItemQtyMap } from '../types';
 
-export default defineComponent({
-  name: 'ModernPOSItemsGrid',
-  emits: ['addItem', 'updateValues'],
-  props: {
-    items: {
-      type: Array,
-    },
-    itemQtyMap: {
-      type: Object,
-    },
-    itemVisibility: {
-      type: String,
-      default: 'Inventory Items',
-    },
-  },
-  methods: {
-    getExtractedWords(item: string) {
-      const initials = item.split(' ').map((word) => {
-        return word[0].toUpperCase();
-      });
-      return initials.join('');
-    },
-    handleChange(value: POSItem) {
-      this.$emit('addItem', value);
-      this.$emit('updateValues');
-    },
-  },
-});
+// Define Props
+withDefaults(
+  defineProps<{
+    items?: unknown[];
+    itemQtyMap?: ItemQtyMap;
+    itemVisibility?: string;
+  }>(),
+  {
+    items: () => [],
+    itemQtyMap: () => ({}),
+    itemVisibility: 'Inventory Items',
+  }
+);
+
+// Define Emits
+const emit = defineEmits<{
+  (e: 'addItem', value: POSItem): void;
+  (e: 'updateValues'): void;
+}>();
+
+// Helper Methods
+const getExtractedWords = (item: string) => {
+  const initials = item.split(' ').map((word) => {
+    return word[0]?.toUpperCase() || '';
+  });
+  return initials.join('');
+};
+
+const handleChange = (value: POSItem) => {
+  emit('addItem', value);
+  emit('updateValues');
+};
 </script>

@@ -48,7 +48,7 @@
           :key="df.fieldname"
           size="large"
           :df="df"
-          :value="row[df.fieldname]"
+          :value="(row as any)[df.fieldname]"
           :read-only="true"
         />
       </Row>
@@ -66,7 +66,7 @@
       <div class="col-span-2">
         <Button
           class="w-full p-5 bg-indicator-red-bg"
-          @click="$emit('toggleModal', 'SavedInvoice')"
+          @click="emit('toggleModal', 'SavedInvoice')"
         >
           <slot>
             <p class="uppercase text-lg text-indicator-red-text font-semibold">
@@ -79,157 +79,164 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, onActivated, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import Row from 'src/components/Row.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
 import { ModelNameEnum } from 'models/types';
 import { Field } from 'schemas/types';
 import { Money } from 'pesa';
 import Paginator from 'src/components/Paginator.vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'ReturnSalesInvoice',
-  components: {
-    Modal,
-    Button,
-    FormControl,
-    Row,
-    Paginator,
-  },
-  props: {
-    modalStatus: Boolean,
-  },
-  emits: ['toggleModal', 'selectedReturnInvoice'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  data() {
-    return {
-      returnedInvoices: [] as SalesInvoice[],
-      invoiceSearchTerm: '',
-      pageStart: 0,
-      pageEnd: 20,
-    };
-  },
-  computed: {
-    ratio() {
-      return [1, 1, 1, 0.8];
+// Define Props
+const props = defineProps<{
+  modalStatus: boolean;
+}>();
+
+// Define Emits
+const emit = defineEmits<{
+  (e: 'toggleModal', modal: string): void;
+  (e: 'selectedReturnInvoice', invoiceName: string): void;
+}>();
+
+// App Store / Context Injections
+const _sinvDoc = inject('sinvDoc') as SalesInvoice;
+
+// Reactive State
+const returnedInvoices = ref<any[]>([]);
+const invoiceSearchTerm = ref('');
+const pageStart = ref(0);
+const pageEnd = ref(20);
+
+// Computed Properties
+const ratio = computed(() => {
+  return [1, 1, 1, 0.8];
+});
+
+const tableFields = computed<Field[]>(() => {
+  return [
+    {
+      fieldname: 'name',
+      label: 'Name',
+      fieldtype: 'Link',
+      target: 'SalesInvoice',
+      readOnly: true,
     },
-    tableFields() {
-      return [
-        {
-          fieldname: 'name',
-          label: 'Name',
-          fieldtype: 'Link',
-          target: 'SalesInvoice',
-          readOnly: true,
-        },
-        {
-          fieldname: 'party',
-          fieldtype: 'Link',
-          label: 'Customer',
-          target: 'Party',
-          placeholder: 'Customer',
-          readOnly: true,
-        },
-        {
-          fieldname: 'date',
-          label: 'Date',
-          fieldtype: 'Date',
-          readOnly: true,
-        },
-        {
-          fieldname: 'grandTotal',
-          label: 'Grand Total',
-          fieldtype: 'Currency',
-          readOnly: true,
-        },
-      ] as Field[];
+    {
+      fieldname: 'party',
+      fieldtype: 'Link',
+      label: 'Customer',
+      target: 'Party',
+      placeholder: 'Customer',
+      readOnly: true,
     },
-    filteredInvoices() {
-      return this.returnedInvoices.filter((invoice) =>
-        (invoice.name as string)
-          .toLowerCase()
-          .includes(this.invoiceSearchTerm.toLowerCase())
-      );
+    {
+      fieldname: 'date',
+      label: 'Date',
+      fieldtype: 'Date',
+      readOnly: true,
     },
-    paginatedInvoices() {
-      return this.filteredInvoices.slice(this.pageStart, this.pageEnd);
+    {
+      fieldname: 'grandTotal',
+      label: 'Grand Total',
+      fieldtype: 'Currency',
+      readOnly: true,
     },
-  },
-  watch: {
-    async modalStatus(newVal) {
-      if (newVal) {
-        await this.setReturnedInvoices();
+  ] as Field[];
+});
+
+const filteredInvoices = computed(() => {
+  return returnedInvoices.value.filter((invoice) =>
+    (invoice.name as string)
+      .toLowerCase()
+      .includes(invoiceSearchTerm.value.toLowerCase())
+  );
+});
+
+const paginatedInvoices = computed(() => {
+  return filteredInvoices.value.slice(pageStart.value, pageEnd.value);
+});
+
+// Methods
+const returnInvoice = (row: SalesInvoice) => {
+  emit('selectedReturnInvoice', row.name as string);
+  emit('toggleModal', 'ReturnSalesInvoice');
+};
+
+const handleSearchEnter = () => {
+  if (filteredInvoices.value.length === 1) {
+    returnInvoice(filteredInvoices.value[0] as SalesInvoice);
+  }
+};
+
+const setPageIndices = ({ start, end }: { start: number; end: number }) => {
+  pageStart.value = start;
+  pageEnd.value = end;
+};
+
+const setReturnedInvoices = async () => {
+  const allInvoices = await fyo.db.getAll(ModelNameEnum.SalesInvoice, {
+    fields: [],
+    filters: {
+      isPOS: true,
+      submitted: true,
+      cancelled: false,
+    },
+  });
+
+  const returnedInvoiceNames = allInvoices
+    .filter((inv) => {
+      if (inv.isFullyReturned || inv.returnAgainst) {
+        return false;
       }
-    },
-    invoiceSearchTerm() {
-      this.pageStart = 0;
-      this.pageEnd = this.pageEnd - this.pageStart || 20;
-    },
-  },
-  async mounted() {
-    await this.setReturnedInvoices();
-  },
-  async activated() {
-    await this.setReturnedInvoices();
-  },
 
-  methods: {
-    returnInvoice(row: SalesInvoice) {
-      this.$emit('selectedReturnInvoice', row.name);
-      this.$emit('toggleModal', 'ReturnSalesInvoice');
-    },
-    handleSearchEnter() {
-      if (this.filteredInvoices.length === 1) {
-        this.returnInvoice(this.filteredInvoices[0] as SalesInvoice);
+      if (inv.isReturned && !inv.isFullyReturned) {
+        return true;
       }
-    },
-    setPageIndices({ start, end }: { start: number; end: number }) {
-      this.pageStart = start;
-      this.pageEnd = end;
-    },
-    async setReturnedInvoices() {
-      const allInvoices = await this.fyo.db.getAll(ModelNameEnum.SalesInvoice, {
-        fields: [],
-        filters: {
-          isPOS: true,
-          submitted: true,
-          cancelled: false,
-        },
-      });
 
-      const returnedInvoiceNames = allInvoices
-        .filter((inv) => {
-          if (inv.isFullyReturned || inv.returnAgainst) {
-            return false;
-          }
+      if (!inv.isReturned && !inv.returnAgainst) {
+        return true;
+      }
 
-          if (inv.isReturned && !inv.isFullyReturned) {
-            return true;
-          }
+      if (!inv.isReturned && !(inv.outstandingAmount as Money).isZero()) {
+        return true;
+      }
 
-          if (!inv.isReturned && !inv.returnAgainst) {
-            return true;
-          }
+      return false;
+    })
+    .map((inv) => inv.name);
 
-          if (!inv.isReturned && !(inv.outstandingAmount as Money).isZero()) {
-            return true;
-          }
+  returnedInvoices.value = allInvoices.filter((inv) =>
+    returnedInvoiceNames.includes(inv.name)
+  ) as SalesInvoice[];
+};
 
-          return false;
-        })
-        .map((inv) => inv.name);
-      this.returnedInvoices = allInvoices.filter((inv) =>
-        returnedInvoiceNames.includes(inv.name)
-      ) as SalesInvoice[];
-    },
-  },
+// Watchers
+watch(() => props.modalStatus, async (newVal) => {
+  if (newVal) {
+    await setReturnedInvoices();
+  }
+});
+
+watch(invoiceSearchTerm, () => {
+  pageStart.value = 0;
+  pageEnd.value = pageEnd.value - pageStart.value || 20;
+});
+
+// Lifecycles
+onMounted(async () => {
+  await setReturnedInvoices();
+  if (false) {
+    console.log(_sinvDoc);
+  }
+});
+
+onActivated(async () => {
+  await setReturnedInvoices();
 });
 </script>

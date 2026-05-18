@@ -100,7 +100,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     }
 
     const query = (await this.db.getAll('PatchRun', {
-      fields: ['name', 'version', 'failed']
+      fields: ['name', 'version', 'failed'],
     })) as {
       name: string;
       version?: string;
@@ -174,7 +174,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     try {
       const res = await this.db.client.execute({
         sql: "select count(*) as count from sqlite_master where type='table' and name='PatchRun'",
-        args: []
+        args: [],
       });
       return Number(res.rows[0]?.count) === 0;
     } catch {
@@ -199,7 +199,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     try {
       await this.db.client.execute({
         sql: `VACUUM INTO ?`,
-        args: [backupPath]
+        args: [backupPath],
       });
     } catch (err) {
       // Fallback: Copy database file directly if VACUUM INTO is not supported or fails
@@ -237,7 +237,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
     const query = await this.db.getSingleValues({
       fieldname: 'version',
-      parent: 'SystemSettings'
+      parent: 'SystemSettings',
     });
     const value = query[0]?.value;
     return (value as string) || '0.0.0';

@@ -6,14 +6,22 @@
       store.platform !== 'Windows' ? 'window-drag' : '',
     ]"
   >
-    <Transition name="spacer" class="border-none">
+    <Transition
+      enter-active-class="transition-all duration-150 ease-out"
+      enter-from-class="opacity-0 w-0 !mr-0 !border-r-0"
+      enter-to-class="opacity-100 w-[var(--w-trafficlights)] mr-4 border-r border-border"
+      leave-active-class="transition-all duration-150 ease-in"
+      leave-from-class="opacity-100 w-[var(--w-trafficlights)] mr-4 border-r border-border"
+      leave-to-class="opacity-0 w-0 !mr-0 !border-r-0"
+      class="border-none"
+    >
       <div
         v-if="
           !store.showSidebar &&
           store.platform === 'Mac' &&
           store.languageDirection !== 'rtl'
         "
-        class="h-full"
+        class="h-full w-tl"
         :class="spacerClass"
       />
     </Transition>
@@ -54,66 +62,47 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { computed, defineAsyncComponent } from 'vue';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent, Transition, defineAsyncComponent } from 'vue';
 
-export default defineComponent({
-  components: {
-    Transition,
-    PageHeaderNavGroup: defineAsyncComponent(
-      () => import('./PageHeaderNavGroup.vue')
-    ),
-  },
-  props: {
-    title: { type: String, default: '' },
-    border: { type: Boolean, default: true },
-    searchborder: { type: Boolean, default: true },
-  },
-  setup() {
-    return { store: useAppStore() };
-  },
-  computed: {
-    showBorder() {
-      return !!this.$slots.default && this.searchborder;
-    },
-    spacerClass() {
-      if (this.store.showSidebar) {
-        return '';
-      }
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    title?: string;
+    border?: boolean;
+    searchborder?: boolean;
+  }>(),
+  {
+    title: '',
+    border: true,
+    searchborder: true,
+  }
+);
 
-      if (this.border) {
-        return 'w-tl me-4 border-e border-border';
-      }
+const store = useAppStore();
 
-      return 'w-tl me-4';
-    },
-  },
+const PageHeaderNavGroup = defineAsyncComponent(
+  () => import('./PageHeaderNavGroup.vue')
+);
+
+// Computed Properties
+const spacerClass = computed(() => {
+  if (store.showSidebar) {
+    return '';
+  }
+
+  if (props.border) {
+    return 'me-4 border-e border-border';
+  }
+
+  return 'me-4';
 });
 </script>
+
 <style scoped>
 .w-tl {
   width: var(--w-trafficlights);
-}
-
-.spacer-enter-from,
-.spacer-leave-to {
-  opacity: 0;
-  width: 0px;
-  margin-right: 0px;
-  border-right-width: 0px;
-}
-
-.spacer-enter-to,
-.spacer-leave-from {
-  opacity: 1;
-  width: var(--w-trafficlights);
-  margin-right: 1rem;
-  border-right-width: 1px;
-}
-
-.spacer-enter-active,
-.spacer-leave-active {
-  transition: all 150ms ease-out;
 }
 </style>

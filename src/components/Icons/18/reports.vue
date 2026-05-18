@@ -12,10 +12,20 @@
     </g>
   </svg>
 </template>
-<script>
-import Base from '../base.vue';
-export default {
-  name: 'IconReports',
-  extends: Base,
-};
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = withDefaults(defineProps<{
+  active?: boolean;
+}>(), {
+  active: false,
+});
+
+const lightColor = computed(() => {
+  return props.active ? 'var(--icon-light-active)' : 'var(--icon-light-passive)';
+});
+
+const darkColor = computed(() => {
+  return props.active ? 'var(--icon-dark-active)' : 'var(--icon-dark-passive)';
+});
 </script>

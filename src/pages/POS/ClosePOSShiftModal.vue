@@ -33,7 +33,7 @@
     <div class="mt-4 grid grid-cols-2 gap-4 items-end">
       <Button
         class="w-full py-5 bg-indicator-red-bg"
-        @click="$emit('toggleModal', 'ShiftClose', false)"
+        @click="emit('toggleModal', 'ShiftClose', false)"
       >
         <slot>
           <p class="uppercase text-lg text-indicator-red-text font-semibold">
@@ -53,7 +53,8 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onActivated, onUpdated, provide } from 'vue';
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import Table from 'src/components/Controls/Table.vue';
@@ -61,8 +62,6 @@ import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import { OpeningAmounts } from 'models/inventory/Point of Sale/OpeningAmounts';
 import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { computed } from 'vue';
-import { defineComponent } from 'vue';
 import { fyo } from 'src/initFyo';
 import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
@@ -74,168 +73,175 @@ import {
 import { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
 import { ForbiddenError } from 'fyo/utils/errors';
 
-export default defineComponent({
-  name: 'ClosePOSShiftModal',
-  components: { Button, Modal, Table },
-  provide() {
-    return {
-      doc: computed(() => this.posClosingShiftDoc),
-    };
-  },
-  props: {
-    openModal: {
-      default: false,
-      type: Boolean,
-    },
-  },
-  emits: ['toggleModal'],
-  data() {
-    return {
-      isValuesSeeded: false,
+declare const ipc: any;
 
-      posOpeningShiftDoc: undefined as POSOpeningShift | undefined,
-      posClosingShiftDoc: undefined as POSClosingShift | undefined,
-      transactedAmount: {} as Record<string, Money>,
-    };
-  },
-  computed: {
-    isOnline() {
-      return !!navigator.onLine;
-    },
-  },
-  watch: {
-    openModal: {
-      async handler() {
-        await this.setTransactedAmount();
-        await this.seedClosingAmounts();
-      },
-    },
-  },
-  async activated() {
-    this.posClosingShiftDoc = fyo.doc.getNewDoc(
-      ModelNameEnum.POSClosingShift
-    ) as POSClosingShift;
-    await this.seedValues();
-    await this.setTransactedAmount();
-  },
-  async updated() {
-    this.posOpeningShiftDoc = await getPOSOpeningShiftDoc(fyo);
-    await this.seedValues();
-  },
-  methods: {
-    async setTransactedAmount() {
-      this.posOpeningShiftDoc = await getPOSOpeningShiftDoc(fyo);
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    openModal?: boolean;
+  }>(),
+  {
+    openModal: false,
+  }
+);
 
-      const fromDate = this.posOpeningShiftDoc?.openingDate as Date;
-      if (!fromDate) {
-        return;
-      }
+// Define Emits
+const emit = defineEmits<{
+  (e: 'toggleModal', modal: string, value?: boolean): void;
+}>();
 
-      this.transactedAmount =
-        (await fyo.db.getPOSTransactedAmount(fromDate, new Date())) ?? {};
-    },
-    seedClosingCash() {
-      if (!this.posClosingShiftDoc) {
-        return;
-      }
+// Reactive State
+const isValuesSeeded = ref(false);
+const posOpeningShiftDoc = ref<POSOpeningShift | undefined>(undefined);
+const posClosingShiftDoc = ref<POSClosingShift | undefined>(undefined);
+const transactedAmount = ref<Record<string, Money>>({});
 
-      this.posClosingShiftDoc.closingCash = [];
+// Provide context to child elements
+provide('doc', computed(() => posClosingShiftDoc.value));
 
-      this.posOpeningShiftDoc?.openingCash?.map(async (row) => {
-        await this.posClosingShiftDoc?.append('closingCash', {
-          count: row.count,
-          denomination: row.denomination as Money,
-        });
-      });
-    },
-    setClosingCashAmount() {
-      if (!this.posClosingShiftDoc?.closingAmounts) {
-        return;
-      }
+// Computed Properties
+const isOnline = computed(() => {
+  return !!navigator.onLine;
+});
 
-      this.posClosingShiftDoc.closingAmounts.map((row) => {
-        if (row.paymentMethod === 'Cash') {
-          row.closingAmount = this.posClosingShiftDoc?.closingCashAmount;
-          if (row.closingAmount) {
-            row.differenceAmount = row.closingAmount.sub(
-              row.expectedAmount as Money
-            );
-          }
-        }
-      });
-    },
-    async seedClosingAmounts() {
-      if (!this.posClosingShiftDoc || !this.posOpeningShiftDoc) {
-        return;
-      }
+// Methods
+const setTransactedAmount = async () => {
+  posOpeningShiftDoc.value = await getPOSOpeningShiftDoc(fyo);
 
-      this.posClosingShiftDoc.closingAmounts = [];
+  const fromDate = posOpeningShiftDoc.value?.openingDate as Date;
+  if (!fromDate) {
+    return;
+  }
 
-      const openingAmounts = this.posOpeningShiftDoc
-        ?.openingAmounts as OpeningAmounts[];
+  transactedAmount.value =
+    (await fyo.db.getPOSTransactedAmount(fromDate, new Date())) ?? {};
+};
 
-      for (const row of openingAmounts) {
-        if (!row.paymentMethod) {
-          return;
-        }
+const seedClosingCash = () => {
+  if (!posClosingShiftDoc.value) {
+    return;
+  }
 
-        let expectedAmount = row.amount ?? fyo.pesa(0);
+  posClosingShiftDoc.value.closingCash = [];
 
-        if (this.transactedAmount) {
-          expectedAmount = expectedAmount.add(
-            this.transactedAmount[row.paymentMethod]
-          );
-        }
+  posOpeningShiftDoc.value?.openingCash?.map(async (row) => {
+    await posClosingShiftDoc.value?.append('closingCash', {
+      count: row.count,
+      denomination: row.denomination as Money,
+    });
+  });
+};
 
-        await this.posClosingShiftDoc.append('closingAmounts', {
-          paymentMethod: row.paymentMethod,
-          openingAmount: row.amount,
-          closingAmount: fyo.pesa(0),
-          expectedAmount: expectedAmount,
-          differenceAmount: fyo.pesa(0),
-        });
-      }
-    },
-    async seedValues() {
-      this.isValuesSeeded = false;
-      this.seedClosingCash();
-      await this.seedClosingAmounts();
-      this.isValuesSeeded = true;
-    },
-    getField(fieldname: string) {
-      return fyo.getField(ModelNameEnum.POSClosingShift, fieldname);
-    },
-    async handleSubmit() {
-      try {
-        if (!this.isOnline) {
-          throw new ForbiddenError(
-            t`Device is offline. Please connect to a network to continue.`
-          );
-        }
+const setClosingCashAmount = () => {
+  if (!posClosingShiftDoc.value?.closingAmounts) {
+    return;
+  }
 
-        validateClosingAmounts(this.posClosingShiftDoc as POSClosingShift);
-        await this.posClosingShiftDoc?.set('closingDate', new Date());
-        await this.posClosingShiftDoc?.set(
-          'openingShift',
-          this.posOpeningShiftDoc?.name
+  posClosingShiftDoc.value.closingAmounts.map((row) => {
+    if (row.paymentMethod === 'Cash') {
+      row.closingAmount = posClosingShiftDoc.value?.closingCashAmount;
+      if (row.closingAmount) {
+        row.differenceAmount = row.closingAmount.sub(
+          row.expectedAmount as Money
         );
-        await this.posClosingShiftDoc?.sync();
-        await transferPOSCashAndWriteOff(
-          fyo,
-          this.posClosingShiftDoc as POSClosingShift
-        );
-
-        await this.fyo.singles.POSSettings?.setAndSync('isShiftOpen', false);
-        this.$emit('toggleModal', 'ShiftClose');
-        ipc.reloadWindow();
-      } catch (error) {
-        return showToast({
-          type: 'error',
-          message: t`${error as string}`,
-          duration: 'short',
-        });
       }
-    },
-  },
+    }
+  });
+};
+
+const seedClosingAmounts = async () => {
+  if (!posClosingShiftDoc.value || !posOpeningShiftDoc.value) {
+    return;
+  }
+
+  posClosingShiftDoc.value.closingAmounts = [];
+
+  const openingAmounts = posOpeningShiftDoc.value
+    ?.openingAmounts as OpeningAmounts[];
+
+  for (const row of openingAmounts) {
+    if (!row.paymentMethod) {
+      return;
+    }
+
+    let expectedAmount = row.amount ?? fyo.pesa(0);
+
+    if (transactedAmount.value) {
+      expectedAmount = expectedAmount.add(
+        transactedAmount.value[row.paymentMethod]
+      );
+    }
+
+    await posClosingShiftDoc.value.append('closingAmounts', {
+      paymentMethod: row.paymentMethod,
+      openingAmount: row.amount,
+      closingAmount: fyo.pesa(0),
+      expectedAmount: expectedAmount,
+      differenceAmount: fyo.pesa(0),
+    });
+  }
+};
+
+const seedValues = async () => {
+  isValuesSeeded.value = false;
+  seedClosingCash();
+  await seedClosingAmounts();
+  isValuesSeeded.value = true;
+};
+
+const getField = (fieldname: string) => {
+  return fyo.getField(ModelNameEnum.POSClosingShift, fieldname);
+};
+
+const handleSubmit = async () => {
+  try {
+    if (!isOnline.value) {
+      throw new ForbiddenError(
+        t`Device is offline. Please connect to a network to continue.`
+      );
+    }
+
+    validateClosingAmounts(posClosingShiftDoc.value as POSClosingShift);
+    await posClosingShiftDoc.value?.set('closingDate', new Date());
+    await posClosingShiftDoc.value?.set(
+      'openingShift',
+      posOpeningShiftDoc.value?.name
+    );
+    await posClosingShiftDoc.value?.sync();
+    await transferPOSCashAndWriteOff(
+      fyo,
+      posClosingShiftDoc.value as POSClosingShift
+    );
+
+    await fyo.singles.POSSettings?.setAndSync('isShiftOpen', false);
+    emit('toggleModal', 'ShiftClose');
+    ipc.reloadWindow();
+  } catch (error) {
+    return showToast({
+      type: 'error',
+      message: t`${error as string}`,
+      duration: 'short',
+    });
+  }
+};
+
+// Watchers
+watch(() => props.openModal, async () => {
+  await setTransactedAmount();
+  await seedClosingAmounts();
+});
+
+// Lifecycles
+onActivated(async () => {
+  posClosingShiftDoc.value = fyo.doc.getNewDoc(
+    ModelNameEnum.POSClosingShift
+  ) as POSClosingShift;
+  await seedValues();
+  await setTransactedAmount();
+});
+
+onUpdated(async () => {
+  posOpeningShiftDoc.value = await getPOSOpeningShiftDoc(fyo);
+  await seedValues();
 });
 </script>

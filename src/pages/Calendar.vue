@@ -154,7 +154,10 @@ async function openTransaction(t: any) {
             v-if="selectedDayTransactions.length === 0"
             class="h-full flex flex-col items-center justify-center text-description py-20"
           >
-            <lucide-icon name="calendar-range" class="w-12 h-12 mb-4 opacity-20" />
+            <lucide-icon
+              name="calendar-range"
+              class="w-12 h-12 mb-4 opacity-20"
+            />
             <p>{{ t`No transactions for this day` }}</p>
           </div>
         </div>

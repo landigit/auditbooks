@@ -1,4 +1,18 @@
-<script>
+<template>
+  <AutoComplete
+    ref="autoCompleteRef"
+    v-bind="props"
+    :get-suggestions="getSuggestions"
+    :link-value-override="linkValue"
+    :custom-clear="clearValue"
+    @focus="(e: FocusEvent) => emit('focus', e)"
+    @input="(e: Event) => emit('input', e)"
+    @change="(val: any) => emit('change', val)"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref, watch, onMounted, computed } from 'vue';
 import { t } from 'fyo';
 import Badge from 'src/components/Badge.vue';
 import { fyo } from 'src/initFyo';
@@ -6,204 +20,251 @@ import { fuzzyMatch } from 'src/utils';
 import { getCreateFiltersFromListViewFilters } from 'src/utils/misc';
 import { markRaw } from 'vue';
 import AutoComplete from './AutoComplete.vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 
-export default {
-  name: 'MultiLabelLink',
-  extends: AutoComplete,
-  data() {
-    return { results: [] };
+interface MultiLabelLinkProps extends BaseControlProps {
+  thirdLink?: string;
+  showSecondaryLink?: boolean;
+  secondaryLink?: string;
+  showClearButton?: boolean;
+}
+
+const props = withDefaults(defineProps<MultiLabelLinkProps>(), {
+  showSecondaryLink: false,
+  showClearButton: false,
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
+
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
+
+const autoCompleteRef = ref<any>(null);
+const linkValue = ref('');
+const results = ref<any[]>([]);
+
+const { doc } = useBaseControl(props, emit, ref(null));
+
+watch(
+  () => props.value,
+  (newValue) => {
+    setLinkValue(newValue);
   },
-  watch: {
-    value: {
-      immediate: true,
-      handler(newValue) {
-        this.setLinkValue(newValue);
-      },
-    },
-  },
-  props: {
-    thirdLink: String,
-    showSecondaryLink: {
-      type: Boolean,
-      default: false,
-    },
-    secondaryLink: String,
-    showClearButton: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  mounted() {
-    if (this.value) {
-      this.setLinkValue();
-    }
-  },
-  methods: {
-    async setLinkValue(newValue, isInput) {
-      if (isInput) {
-        return (this.linkValue = newValue || '');
+  { immediate: true }
+);
+
+onMounted(() => {
+  if (props.value) {
+    setLinkValue();
+  }
+});
+
+const setLinkValue = async (newValue?: any, isInput?: boolean) => {
+  if (isInput) {
+    linkValue.value = newValue || '';
+    return;
+  }
+
+  const value = newValue !== undefined ? newValue : props.value;
+  const df = props.df as any;
+  const { fieldname, target } = df ?? {};
+  const linkDisplayField = fyo.schemaMap[target ?? '']?.linkDisplayField;
+
+  if (!linkDisplayField) {
+    linkValue.value = (value as string) || '';
+    return;
+  }
+
+  const linkDoc = await doc.value?.loadAndGetLink(fieldname);
+  linkValue.value = (linkDoc?.get(linkDisplayField) as string) ?? '';
+};
+
+const getTargetSchemaName = () => {
+  return (props.df as any).target;
+};
+
+const getOptions = async () => {
+  const schemaName = getTargetSchemaName();
+  if (!schemaName) {
+    return [];
+  }
+
+  if (results.value?.length) {
+    return results.value;
+  }
+
+  const schema = fyo.schemaMap[schemaName];
+  if (!schema) {
+     return [];
+  }
+  const filters = await getFilters();
+
+  const fields = [
+    ...new Set([
+      'name',
+      props.secondaryLink,
+      schema.titleField,
+      (props.df as any).groupBy,
+    ]),
+  ].filter(Boolean) as string[];
+
+  const dbResults = await fyo.db.getAll(schemaName, {
+    filters,
+    fields,
+  });
+
+  results.value = dbResults
+    .map((r: any) => {
+      const option: any = {
+        label:
+          r[props.secondaryLink as string] && props.showSecondaryLink
+            ? `${r[schema.titleField as string]}  ` + `  ${r[props.secondaryLink as string]}`
+            : r[schema.titleField as string],
+        value: r.name,
+        value2: r[props.secondaryLink as string],
+      };
+
+      if ((props.df as any).groupBy) {
+        option.group = r[(props.df as any).groupBy];
       }
+      return option;
+    })
+    .filter(Boolean);
 
-      const value = newValue ?? this.value;
-      const { fieldname, target } = this.df ?? {};
-      const linkDisplayField = fyo.schemaMap[target ?? '']?.linkDisplayField;
+  return results.value;
+};
 
-      if (!linkDisplayField) {
-        return (this.linkValue = value);
-      }
+const getSuggestions = async (keyword = '') => {
+  let options = await getOptions();
 
-      const linkDoc = await this.doc?.loadAndGetLink(fieldname);
-      this.linkValue = linkDoc?.get(linkDisplayField) ?? '';
-    },
-    getTargetSchemaName() {
-      return this.df.target;
-    },
-    async getOptions() {
-      const schemaName = this.getTargetSchemaName();
+  if (keyword) {
+    options = options
+      .map((item) => ({ ...fuzzyMatch(keyword, item.label), item }))
+      .filter(({ isMatch }) => isMatch)
+      .sort((a, b) => a.distance - b.distance)
+      .map(({ item }) => item);
+  }
 
-      if (!schemaName) {
-        return [];
-      }
+  if (doc.value && (props.df as any).create) {
+    options = options.concat(getCreateNewOption());
+  }
 
-      if (this.results?.length) {
-        return this.results;
-      }
-
-      const schema = fyo.schemaMap[schemaName];
-      const filters = await this.getFilters();
-
-      const fields = [
-        ...new Set([
-          'name',
-          this.secondaryLink,
-          schema.titleField,
-          this.df.groupBy,
-        ]),
-      ].filter(Boolean);
-
-      const results = await fyo.db.getAll(schemaName, {
-        filters,
-        fields,
-      });
-
-      return (this.results = results
-        .map((r) => {
-          const option = {
-            label:
-              r[this.secondaryLink] && this.showSecondaryLink
-                ? `${r[schema.titleField]}  ` + `  ${r[this.secondaryLink]}`
-                : r[schema.titleField],
-            value: r.name,
-            value2: r[this.secondaryLink],
-          };
-
-          if (this.df.groupBy) {
-            option.group = r[this.df.groupBy];
-          }
-          return option;
-        })
-        .filter(Boolean));
-    },
-    async getSuggestions(keyword = '') {
-      let options = await this.getOptions();
-
-      if (keyword) {
-        options = options
-          .map((item) => ({ ...fuzzyMatch(keyword, item.label), item }))
-          .filter(({ isMatch }) => isMatch)
-          .sort((a, b) => a.distance - b.distance)
-          .map(({ item }) => item);
-      }
-
-      if (this.doc && this.df.create) {
-        options = options.concat(this.getCreateNewOption());
-      }
-
-      if (options.length === 0 && !this.df.emptyMessage) {
-        return [
-          {
-            component: markRaw({
-              template:
-                '<span class="text-description">{{ t`No results found` }}</span>',
-            }),
-            action: () => {},
-            actionOnly: true,
-          },
-        ];
-      }
-
-      return options;
-    },
-    getCreateNewOption() {
-      return {
-        label: t`Create`,
-        action: () => this.openNewDoc(),
-        actionOnly: true,
+  if (options.length === 0 && !(props.df as any).emptyMessage) {
+    return [
+      {
         component: markRaw({
           template:
-            '<div class="flex items-center font-semibold">{{ t`Create` }}' +
-            '<Badge color="blue" class="ms-2" v-if="isNewValue">{{ linkValue }}</Badge>' +
-            '</div>',
-          computed: {
-            value: () => this.value,
-            linkValue: () => this.linkValue,
-            isNewValue: () => {
-              const values = this.suggestions.map((d) => d.label);
-              return this.linkValue && !values.includes(this.linkValue);
-            },
-          },
-          components: { Badge },
+            '<span class="text-description">{{ t`No results found` }}</span>',
+          setup() {
+            return { t };
+          }
         }),
-      };
-    },
-    async openNewDoc() {
-      const schemaName = this.df.target;
-      const name =
-        this.linkValue || fyo.doc.getTemporaryName(fyo.schemaMap[schemaName]);
-      const filters = await this.getCreateFilters();
-      const { openQuickEdit } = await import('src/utils/ui');
+        action: () => {},
+        actionOnly: true,
+      },
+    ];
+  }
 
-      const doc = fyo.doc.getNewDoc(schemaName, { name, ...filters });
-      openQuickEdit({ doc });
-
-      doc.once('afterSync', () => {
-        this.$router.back();
-        this.results = [];
-        this.triggerChange(doc.name);
-      });
-    },
-    async getCreateFilters() {
-      const { schemaName, fieldname } = this.df;
-
-      const getCreateFilters =
-        fyo.models[schemaName]?.createFilters?.[fieldname];
-      let createFilters = await getCreateFilters?.(this.doc);
-
-      if (createFilters !== undefined) {
-        return createFilters;
-      }
-
-      const filters = await this.getFilters();
-      return getCreateFiltersFromListViewFilters(filters);
-    },
-    async getFilters() {
-      const { schemaName, fieldname } = this.df;
-      const getFilters = fyo.models[schemaName]?.filters?.[fieldname];
-
-      if (getFilters === undefined) {
-        return {};
-      }
-
-      if (this.doc) {
-        return (await getFilters(this.doc)) ?? {};
-      }
-
-      try {
-        return (await getFilters()) ?? {};
-      } catch {
-        return {};
-      }
-    },
-  },
+  return options;
 };
+
+const getCreateNewOption = () => {
+  return {
+    label: t`Create`,
+    action: () => openNewDoc(),
+    actionOnly: true,
+    component: markRaw({
+      template:
+        '<div class="flex items-center font-semibold">{{ t`Create` }}' +
+        '<Badge color="blue" class="ms-2" v-if="isNewValue">{{ linkValue }}</Badge>' +
+        '</div>',
+      setup() {
+        const isNewValue = computed(() => {
+          const suggestions = autoCompleteRef.value?.suggestions || [];
+          const values = suggestions.map((d: any) => d.label);
+          return linkValue.value && !values.includes(linkValue.value);
+        });
+        return { t, linkValue, isNewValue };
+      },
+      components: { Badge },
+    }),
+  };
+};
+
+const openNewDoc = async () => {
+  const schemaName = (props.df as any).target;
+  const schema = fyo.schemaMap[schemaName];
+  if (!schema) {
+    return;
+  }
+  const name =
+    linkValue.value || fyo.doc.getTemporaryName(schema);
+  const filters = await getCreateFilters();
+  const { openQuickEdit } = await import('src/utils/ui');
+
+  const newDoc = fyo.doc.getNewDoc(schemaName, { name, ...filters });
+  openQuickEdit({ doc: newDoc });
+
+  newDoc.once('afterSync', () => {
+    window.history.back();
+    results.value = [];
+    emit('change', newDoc.name);
+  });
+};
+
+const getCreateFilters = async () => {
+  const { schemaName, fieldname } = props.df as any;
+
+  const getCreateFiltersFunc =
+    fyo.models[schemaName]?.createFilters?.[fieldname];
+  let createFilters = doc.value ? await getCreateFiltersFunc?.(doc.value) : undefined;
+
+  if (createFilters !== undefined) {
+    return createFilters;
+  }
+
+  const filters = await getFilters();
+  return getCreateFiltersFromListViewFilters(filters);
+};
+
+const getFilters = async () => {
+  const { schemaName, fieldname } = props.df as any;
+  const getFiltersFunc = fyo.models[schemaName]?.filters?.[fieldname];
+
+  if (getFiltersFunc === undefined) {
+    return {};
+  }
+
+  if (doc.value) {
+    return (await getFiltersFunc(doc.value)) ?? {};
+  }
+
+  try {
+    return (await (getFiltersFunc as any)()) ?? {};
+  } catch {
+    return {};
+  }
+};
+
+const clearValue = () => {
+  emit('change', '');
+  linkValue.value = '';
+};
+
+const focus = () => {
+  autoCompleteRef.value?.focus();
+};
+
+defineExpose({
+  focus
+});
 </script>

@@ -1,5 +1,13 @@
-<script>
-import { h } from 'vue';
+<template>
+  <component
+    :is="component"
+    ref="controlRef"
+    v-bind="attrs"
+  />
+</template>
+
+<script setup lang="ts">
+import { computed, ref, useAttrs } from 'vue';
 import AttachImage from './AttachImage.vue';
 import Attachment from './Attachment.vue';
 import AutoComplete from './AutoComplete.vue';
@@ -18,7 +26,7 @@ import Select from './Select.vue';
 import Text from './Text.vue';
 import Secret from './Secret.vue';
 
-const components = {
+const components: Record<string, any> = {
   AttachImage,
   Data,
   Check,
@@ -38,33 +46,42 @@ const components = {
   Secret,
 };
 
-export default {
-  name: 'FormControl',
-  methods: {
-    clear() {
-      const input = this.$refs.control.$refs.input;
-      if (input instanceof HTMLInputElement) {
-        input.value = '';
-      }
-    },
-    select() {
-      this.$refs.control.$refs?.input?.select();
-    },
-    focus() {
-      this.$refs.control.focus();
-    },
-    getInput() {
-      return this.$refs.control.$refs.input;
-    },
-  },
-  render() {
-    const fieldtype = this.$attrs.df.fieldtype;
-    const component = components[fieldtype] ?? Data;
+defineOptions({
+  inheritAttrs: false
+});
 
-    return h(component, {
-      ...this.$attrs,
-      ref: 'control',
-    });
-  },
+const attrs = useAttrs();
+const controlRef = ref<any>(null);
+
+const component = computed(() => {
+  const df = (attrs.df as any) ?? {};
+  const fieldtype = df.fieldtype;
+  return components[fieldtype] ?? Data;
+});
+
+const clear = () => {
+  const input = controlRef.value?.$refs?.input;
+  if (input instanceof HTMLInputElement) {
+    input.value = '';
+  }
 };
+
+const select = () => {
+  controlRef.value?.$refs?.input?.select();
+};
+
+const focus = () => {
+  controlRef.value?.focus();
+};
+
+const getInput = () => {
+  return controlRef.value?.$refs?.input;
+};
+
+defineExpose({
+  clear,
+  select,
+  focus,
+  getInput,
+});
 </script>

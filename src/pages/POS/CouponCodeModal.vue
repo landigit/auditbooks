@@ -12,7 +12,7 @@
         :style="{ height: appliedCoupons.length >= 2 ? '11vh' : '8vh' }"
       >
         <Row
-          v-for="(coupon, index) in appliedCoupons as AppliedCouponCodes[]"
+          v-for="(coupon, index) in appliedCoupons"
           :key="index"
           :ratio="ratio"
           :border="true"
@@ -26,7 +26,7 @@
                 size="large"
                 class="w-full"
                 :df="df"
-                :value="coupon[df.fieldname]"
+                :value="(coupon as any)[df.fieldname]"
                 :read-only="true"
               />
             </div>
@@ -35,7 +35,7 @@
             <lucide-icon
               name="trash"
               class="w-4 text-xl text-error cursor-pointer"
-              @click="removeAppliedCoupon(coupon)"
+              @click="removeAppliedCoupon(coupon as any)"
             />
           </div>
         </Row>
@@ -100,12 +100,11 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
-import { t } from 'fyo';
 import { showToast } from 'src/utils/interactive';
 import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
 import Link from 'src/components/Controls/Link.vue';
@@ -115,102 +114,98 @@ import { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Row from 'src/components/Row.vue';
 import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'CouponCodeModal',
-  components: {
-    Modal,
-    Button,
-    Link,
-    FormControl,
-    Row,
-  },
-  emits: ['setCouponsCount', 'toggleModal', 'applyPricingRule'],
+// Define Emits
+const emit = defineEmits<{
+  (e: 'setCouponsCount', value: number): void;
+  (e: 'toggleModal', value: string): void;
+  (e: 'applyPricingRule'): void;
+}>();
 
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-      coupons: inject('coupons') as AppliedCouponCodes,
-      appliedCoupons: inject('appliedCoupons') as AppliedCouponCodes[],
-    };
-  },
-  data() {
-    return {
-      validationError: false,
-      couponCode: '',
-    };
-  },
-  computed: {
-    ratio() {
-      return [1, 0.1, 1, 0.7];
-    },
-    tableFields() {
-      return [
-        {
-          fieldname: 'coupons',
-          fieldtype: 'Link',
-          required: true,
-          readOnly: true,
-        },
-      ] as Field[];
-    },
-  },
-  methods: {
-    async updateCouponCode(value: string | Event) {
-      try {
-        if (!value) {
-          return;
-        }
-        this.validationError = false;
+// App Store / Context Injections
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+const coupons = inject('coupons') as AppliedCouponCodes;
+const appliedCoupons = inject('appliedCoupons') as AppliedCouponCodes[];
 
-        if ((value as Event).type === 'keydown') {
-          value = ((value as Event).target as HTMLInputElement).value;
-        }
+// Reactive State
+const validationError = ref(false);
+const couponCode = ref('');
 
-        this.couponCode = value as string;
-        const appliedCouponCodes = this.fyo.doc.getNewDoc(
-          ModelNameEnum.AppliedCouponCodes
-        );
-
-        await validateCouponCode(
-          appliedCouponCodes as AppliedCouponCodes,
-          this.couponCode,
-          this.sinvDoc
-        );
-
-        await this.sinvDoc.append('coupons', { coupons: this.couponCode });
-
-        this.$emit('applyPricingRule');
-        this.couponCode = '';
-        this.validationError = false;
-      } catch (error) {
-        this.validationError = true;
-
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-        });
-      }
-    },
-    setCouponCode() {
-      this.$emit('toggleModal', 'CouponCode');
-    },
-    async removeAppliedCoupon(coupon: AppliedCouponCodes) {
-      this.sinvDoc?.items?.map((item: InvoiceItem) => {
-        item.itemDiscountAmount = this.fyo.pesa(0);
-        item.itemDiscountPercent = 0;
-        item.setItemDiscountAmount = false;
-      });
-
-      await coupon?.parentdoc?.remove('coupons', coupon.idx as number);
-
-      this.$emit('applyPricingRule');
-      this.$emit('setCouponsCount', this.coupons?.length);
-    },
-    cancelApplyCouponCode() {
-      this.couponCode = '';
-      this.$emit('toggleModal', 'CouponCode');
-    },
-  },
+// Computed Properties
+const ratio = computed(() => {
+  return [1, 0.1, 1, 0.7];
 });
+
+const tableFields = computed<Field[]>(() => {
+  return [
+    {
+      fieldname: 'coupons',
+      fieldtype: 'Link',
+      required: true,
+      readOnly: true,
+    },
+  ] as Field[];
+});
+
+// Methods
+const updateCouponCode = async (value: string | Event) => {
+  try {
+    if (!value) {
+      return;
+    }
+    validationError.value = false;
+
+    if (value instanceof Event) {
+      value = (value.target as HTMLInputElement).value;
+    }
+
+    couponCode.value = value as string;
+    const appliedCouponCodes = fyo.doc.getNewDoc(
+      ModelNameEnum.AppliedCouponCodes
+    );
+
+    await validateCouponCode(
+      appliedCouponCodes as AppliedCouponCodes,
+      couponCode.value,
+      sinvDoc
+    );
+
+    await sinvDoc.append('coupons', { coupons: couponCode.value });
+
+    emit('applyPricingRule');
+    couponCode.value = '';
+    validationError.value = false;
+  } catch (error) {
+    validationError.value = true;
+
+    showToast({
+      type: 'error',
+      message: t`${error as string}`,
+    });
+  }
+};
+
+const setCouponCode = () => {
+  emit('toggleModal', 'CouponCode');
+};
+
+const removeAppliedCoupon = async (coupon: AppliedCouponCodes) => {
+  sinvDoc?.items?.map((item: InvoiceItem) => {
+    item.itemDiscountAmount = fyo.pesa(0);
+    item.itemDiscountPercent = 0;
+    item.setItemDiscountAmount = false;
+  });
+
+  await coupon?.parentdoc?.remove('coupons', coupon.idx as number);
+
+  emit('applyPricingRule');
+  emit('setCouponsCount', (coupons as any)?.length || 0);
+};
+
+const cancelApplyCouponCode = () => {
+  couponCode.value = '';
+  emit('toggleModal', 'CouponCode');
+};
 </script>

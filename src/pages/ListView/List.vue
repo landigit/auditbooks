@@ -56,7 +56,7 @@
           >
             {{ i + pageStart + 1 }}
           </div>
-          <div v-else class="w-8 flex justify-end me-2">
+          <div class="w-8 flex justify-end me-2">
             <Check
               :df="{
                 fieldtype: 'Check',
@@ -73,7 +73,7 @@
             gap="1rem"
             class="cursor-pointer text-main flex-1 h-row-mid"
             :column-count="columns.length"
-            @click="isSelectionMode ? null : $emit('openDoc', row.name)"
+            @click="isSelectionMode ? null : emit('openDoc', String(row.name))"
           >
             <ListCell
               v-for="(column, c) in columns"
@@ -114,189 +114,207 @@
       <p class="my-3 text-description">
         {{ t`No entries found` }}
       </p>
-      <Button v-if="canCreate" type="primary" @click="$emit('makeNewDoc')">
+      <Button v-if="canCreate" type="primary" @click="emit('makeNewDoc')">
         {{ t`Make Entry` }}
       </Button>
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, toRaw } from 'vue';
 import { ListViewSettings, RenderData } from 'fyo/model/types';
 import Button from 'src/components/Button.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Paginator from 'src/components/Paginator.vue';
 import Row from 'src/components/Row.vue';
 import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import { isNumeric } from 'src/utils';
 import { QueryFilter } from 'utils/db/types';
-import { PropType, defineComponent, toRaw } from 'vue';
 import ListCell from './ListCell.vue';
 
-export default defineComponent({
-  name: 'List',
-  components: {
-    Row,
-    ListCell,
-    Button,
-    Check,
-    Paginator,
-  },
-  props: {
-    listConfig: {
-      type: Object as PropType<ListViewSettings | undefined>,
-      default: () => ({ columns: [] }),
-    },
-    filters: {
-      type: Object as PropType<QueryFilter>,
-      default: () => ({}),
-    },
-    schemaName: { type: String, required: true },
-    canCreate: Boolean,
-    isSelectionMode: Boolean,
-  },
-  emits: ['openDoc', 'makeNewDoc', 'updatedData', 'selected-items-changed'],
-  data() {
-    return {
-      data: [] as RenderData[],
-      pageStart: 0,
-      pageEnd: 0,
-      statusMap: {} as Record<string, string>,
-      selectedItems: [] as string[],
-    };
-  },
-  computed: {
-    dataSlice() {
-      return this.data.slice(this.pageStart, this.pageEnd);
-    },
-    count() {
-      return this.pageEnd - this.pageStart + 1;
-    },
-    isAllSelected(): boolean {
-      return (
-        this.data.length > 0 && this.selectedItems.length === this.data.length
-      );
-    },
-    columns() {
-      let columns = this.listConfig?.columns ?? [];
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    listConfig?: ListViewSettings;
+    filters?: QueryFilter;
+    schemaName: string;
+    canCreate?: boolean;
+    isSelectionMode?: boolean;
+  }>(),
+  {
+    listConfig: () => ({ columns: [] }),
+    filters: () => ({}),
+    canCreate: false,
+    isSelectionMode: false,
+  }
+);
 
-      if (columns.length === 0) {
-        columns = fyo.schemaMap[this.schemaName]?.quickEditFields ?? [];
-        columns = [...new Set(['name', ...columns])];
+// Define Emits
+const emit = defineEmits<{
+  (e: 'openDoc', name: string): void;
+  (e: 'makeNewDoc'): void;
+  (e: 'updatedData', filters: any): void;
+  (e: 'selected-items-changed', selectedItems: string[]): void;
+}>();
+
+// Reactive State
+const data = ref<RenderData[]>([]);
+const pageStart = ref(0);
+const pageEnd = ref(0);
+const statusMap = ref<Record<string, string>>({});
+const selectedItems = ref<string[]>([]);
+
+// Computed properties
+const dataSlice = computed(() => {
+  return data.value.slice(pageStart.value, pageEnd.value);
+});
+
+const isAllSelected = computed(() => {
+  return (
+    data.value.length > 0 && selectedItems.value.length === data.value.length
+  );
+});
+
+const columns = computed(() => {
+  let cols = props.listConfig?.columns ?? [];
+
+  if (cols.length === 0) {
+    cols = fyo.schemaMap[props.schemaName]?.quickEditFields ?? [];
+    cols = [...new Set(['name', ...cols])];
+  }
+
+  return cols
+    .map((fieldname) => {
+      if (typeof fieldname === 'object') {
+        return fieldname;
       }
 
-      return columns
-        .map((fieldname) => {
-          if (typeof fieldname === 'object') {
-            return fieldname;
-          }
+      return fyo.getField(props.schemaName, fieldname as string);
+    })
+    .filter(Boolean);
+});
 
-          return fyo.getField(this.schemaName, fieldname);
-        })
-        .filter(Boolean);
-    },
-  },
-  watch: {
-    async schemaName(oldValue, newValue) {
-      if (oldValue === newValue) {
-        return;
-      }
+// Methods
+const handleStatusFound = ({
+  rowId,
+  status,
+}: {
+  rowId: string;
+  status: string;
+}) => {
+  statusMap.value[rowId] = status;
+};
 
-      await this.updateData();
-    },
-  },
-  async mounted() {
-    await this.updateData();
-    this.setUpdateListeners();
-  },
-  methods: {
-    handleStatusFound({ rowId, status }: { rowId: string; status: string }) {
-      this.statusMap[rowId] = status;
-    },
-    isNumeric,
-    setPageIndices({ start, end }: { start: number; end: number }) {
-      this.pageStart = start;
-      this.pageEnd = end;
-    },
-    setUpdateListeners() {
-      if (!this.schemaName) {
-        return;
-      }
+const setPageIndices = ({ start, end }: { start: number; end: number }) => {
+  pageStart.value = start;
+  pageEnd.value = end;
+};
 
-      const listener = async () => {
-        await this.updateData();
-      };
+const updateData = async (filterObj?: Record<string, unknown>) => {
+  const baseFilters = structuredClone(toRaw(props.filters));
+  const activeFilters = structuredClone({ ...baseFilters, ...filterObj });
 
-      if (fyo.schemaMap[this.schemaName]?.isSubmittable) {
-        fyo.doc.observer.on(`submit:${this.schemaName}`, listener);
-        fyo.doc.observer.on(`revert:${this.schemaName}`, listener);
-      }
+  let statusFilter: [string, string] | undefined;
 
-      fyo.doc.observer.on(`sync:${this.schemaName}`, listener);
-      fyo.db.observer.on(`delete:${this.schemaName}`, listener);
-      fyo.doc.observer.on(`rename:${this.schemaName}`, listener);
-    },
-    async updateData(filters?: Record<string, unknown>) {
-      const baseFilters = structuredClone(toRaw(this.filters));
-      filters = structuredClone({ ...baseFilters, ...filters });
+  if ('status' in activeFilters) {
+    statusFilter = activeFilters['status'] as [string, string];
+  }
 
-      let statusFilter: [string, string] | undefined;
+  const isStatusFilter =
+    Array.isArray(statusFilter) && statusFilter[0] === 'like';
+  if (isStatusFilter) {
+    delete activeFilters['status'];
+  }
 
-      if ('status' in filters) {
-        statusFilter = filters['status'] as [string, string];
-      }
+  const orderBy = ['created'];
+  if (fyo.db.fieldMap[props.schemaName]['date']) {
+    orderBy.unshift('date');
+  }
 
-      const isStatusFilter =
-        Array.isArray(statusFilter) && statusFilter[0] === 'like';
-      if (isStatusFilter) {
-        delete filters['status'];
-      }
+  const tableData = await fyo.db.getAll(props.schemaName, {
+    fields: ['*'],
+    filters: activeFilters as QueryFilter,
+    orderBy,
+  });
 
-      const orderBy = ['created'];
-      if (fyo.db.fieldMap[this.schemaName]['date']) {
-        orderBy.unshift('date');
-      }
+  let filteredData = tableData;
 
-      const tableData = await fyo.db.getAll(this.schemaName, {
-        fields: ['*'],
-        filters: filters as QueryFilter,
-        orderBy,
-      });
+  if (isStatusFilter && statusFilter?.[1]) {
+    const lowercaseStatus = String(statusFilter[1]).toLowerCase();
 
-      let filteredData = tableData;
+    const matchedNames = Object.entries(statusMap.value)
+      .filter(([, status]) => status.toLowerCase() === lowercaseStatus)
+      .map(([rowId]) => rowId);
 
-      if (isStatusFilter && statusFilter?.[1]) {
-        const lowercaseStatus = String(statusFilter[1]).toLowerCase();
+    filteredData = tableData.filter((row) =>
+      matchedNames.includes(String(row.name))
+    );
+  }
 
-        const matchedNames = Object.entries(this.statusMap)
-          .filter(([, status]) => status.toLowerCase() === lowercaseStatus)
-          .map(([rowId]) => rowId);
+  data.value = filteredData.map((d) => ({
+    ...d,
+    schema: fyo.schemaMap[props.schemaName],
+  })) as RenderData[];
+  emit('updatedData', activeFilters);
+};
 
-        filteredData = tableData.filter((row) =>
-          matchedNames.includes(String(row.name))
-        );
-      }
+const setUpdateListeners = () => {
+  if (!props.schemaName) {
+    return;
+  }
 
-      this.data = filteredData.map((d) => ({
-        ...d,
-        schema: fyo.schemaMap[this.schemaName],
-      })) as RenderData[];
-      this.$emit('updatedData', filters);
-    },
-    toggleItemSelection(itemName: string) {
-      const index = this.selectedItems.indexOf(itemName);
-      if (index > -1) {
-        this.selectedItems.splice(index, 1);
-      } else {
-        this.selectedItems.push(itemName);
-      }
-      this.$emit('selected-items-changed', this.selectedItems);
-    },
-    toggleSelectAll(checked: boolean) {
-      this.selectedItems = checked
-        ? this.data.map((row) => row.name as string)
-        : [];
-      this.$emit('selected-items-changed', this.selectedItems);
-    },
-  },
+  const listener = async () => {
+    await updateData();
+  };
+
+  if (fyo.schemaMap[props.schemaName]?.isSubmittable) {
+    fyo.doc.observer.on(`submit:${props.schemaName}`, listener);
+    fyo.doc.observer.on(`revert:${props.schemaName}`, listener);
+  }
+
+  fyo.doc.observer.on(`sync:${props.schemaName}`, listener);
+  fyo.db.observer.on(`delete:${props.schemaName}`, listener);
+  fyo.doc.observer.on(`rename:${props.schemaName}`, listener);
+};
+
+const toggleItemSelection = (itemName: string) => {
+  const index = selectedItems.value.indexOf(itemName);
+  if (index > -1) {
+    selectedItems.value.splice(index, 1);
+  } else {
+    selectedItems.value.push(itemName);
+  }
+  emit('selected-items-changed', selectedItems.value);
+};
+
+const toggleSelectAll = (checked: boolean) => {
+  selectedItems.value = checked
+    ? data.value.map((row) => row.name as string)
+    : [];
+  emit('selected-items-changed', selectedItems.value);
+};
+
+// Watchers
+watch(
+  () => props.schemaName,
+  async (newValue, oldValue) => {
+    if (oldValue === newValue) {
+      return;
+    }
+
+    await updateData();
+  }
+);
+
+onMounted(async () => {
+  await updateData();
+  setUpdateListeners();
+});
+
+// Expose updateData so parents can trigger updates
+defineExpose({
+  updateData,
 });
 </script>

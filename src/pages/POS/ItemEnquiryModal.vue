@@ -113,8 +113,8 @@
   </Modal>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { t } from 'fyo';
 import { showToast } from 'src/utils/interactive';
 import Modal from 'src/components/Modal.vue';
@@ -122,58 +122,52 @@ import Button from 'src/components/Button.vue';
 import Link from 'src/components/Controls/Link.vue';
 import Text from 'src/components/Controls/Text.vue';
 import Data from 'src/components/Controls/Data.vue';
-import { ItemEnquiry } from 'models/baseModels/ItemEnquiry/ItemEnquiry';
+import { ItemEnquiry as ItemEnquiryClass } from 'models/baseModels/ItemEnquiry/ItemEnquiry';
 import { ModelNameEnum } from 'models/types';
 import { DocValueMap } from 'fyo/core/types';
+import { fyo } from 'src/initFyo';
 
-export default defineComponent({
-  name: 'ItemEnquiryModal',
-  components: {
-    Modal,
-    Button,
-    Link,
-    Text,
-    Data,
-  },
-  emits: ['toggleModal'],
-  data() {
-    return {
-      ItemEnquiry: {} as ItemEnquiry,
-    };
-  },
-  methods: {
-    async updateCustomerContact(customer: string) {
-      this.ItemEnquiry.contact =
-        ((await this.fyo.getValue('Party', customer, 'phone')) as string) || '';
-    },
+// Define Emits
+const emit = defineEmits<{
+  (e: 'toggleModal', value: string): void;
+}>();
 
-    async submitForm() {
-      try {
-        const itemEnquiryDoc = this.fyo.doc.getNewDoc(
-          ModelNameEnum.ItemEnquiry,
-          this.ItemEnquiry as DocValueMap
-        );
-        await itemEnquiryDoc.sync();
-        showToast({
-          type: 'success',
-          message: t`Item enquiry submitted`,
-        });
-        this.clearValues();
-        this.$emit('toggleModal', 'ItemEnquiry');
-      } catch (error) {
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-        });
-      }
-    },
-    clearValues() {
-      this.ItemEnquiry = {} as ItemEnquiry;
-    },
-    closeModal() {
-      this.clearValues();
-      this.$emit('toggleModal', 'ItemEnquiry');
-    },
-  },
-});
+// Reactive State
+const ItemEnquiry = ref<Partial<ItemEnquiryClass>>({});
+
+// Methods
+const updateCustomerContact = async (customer: string) => {
+  ItemEnquiry.value.contact =
+    ((await fyo.getValue('Party', customer, 'phone')) as string) || '';
+};
+
+const submitForm = async () => {
+  try {
+    const itemEnquiryDoc = fyo.doc.getNewDoc(
+      ModelNameEnum.ItemEnquiry,
+      ItemEnquiry.value as DocValueMap
+    );
+    await itemEnquiryDoc.sync();
+    showToast({
+      type: 'success',
+      message: t`Item enquiry submitted`,
+    });
+    clearValues();
+    emit('toggleModal', 'ItemEnquiry');
+  } catch (error) {
+    showToast({
+      type: 'error',
+      message: t`${error as string}`,
+    });
+  }
+};
+
+const clearValues = () => {
+  ItemEnquiry.value = {};
+};
+
+const closeModal = () => {
+  clearValues();
+  emit('toggleModal', 'ItemEnquiry');
+};
 </script>

@@ -35,7 +35,7 @@
           @click="routeToSidebarItem(group)"
         >
           <component
-            :is="group.icon === 'calendar-range' ? 'LucideIcon' : 'Icon'"
+            :is="group.icon === 'calendar-range' ? 'LucideIcon' : Icon"
             class="flex-shrink-0"
             :name="group.icon"
             :size="group.iconSize || '18'"
@@ -150,7 +150,11 @@
     </Modal>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+// --- Imports ---
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { reportIssue } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import { languageDirectionKey, shortcutsKey } from 'src/utils/injectionKeys';
@@ -158,149 +162,138 @@ import { getSidebarConfig } from 'src/utils/sidebarConfig';
 import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
 import { routeTo, toggleSidebar } from 'src/utils/ui';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent, inject } from 'vue';
-import router from '../router';
 import Icon from './Icon.vue';
 import Modal from './Modal.vue';
 import ShortcutsHelper from './ShortcutsHelper.vue';
+import { t } from 'fyo';
 
+// --- Types ---
 const COMPONENT_NAME = 'Sidebar';
 
-export default defineComponent({
-  components: {
-    Icon,
-    Modal,
-    ShortcutsHelper,
-  },
-  props: {
-    theme: {
-      type: String,
-      default: 'auto',
-    },
-  },
-  emits: ['change-db-file', 'toggle-darkmode'],
-  setup() {
-    const store = useAppStore();
-    return {
-      languageDirection: inject(languageDirectionKey),
-      shortcuts: inject(shortcutsKey),
-      store,
-    };
-  },
-  data() {
-    return {
-      companyName: '',
-      groups: [],
-      viewShortcuts: false,
-      activeGroup: null,
-      showDevMode: false,
-    } as {
-      companyName: string;
-      groups: SidebarConfig;
-      viewShortcuts: boolean;
-      activeGroup: null | SidebarRoot;
-      showDevMode: boolean;
-    };
-  },
-  computed: {
-    resolvedIsDark(): boolean {
-      return (
-        this.theme === 'dark' || (this.theme === 'auto' && this.store.isDark)
-      );
-    },
-    appVersion() {
-      return this.store.appVersion;
-    },
-  },
-  async mounted() {
-    const { companyName } = await fyo.doc.getDoc('AccountingSettings');
-    this.companyName = companyName as string;
-    this.groups = await getSidebarConfig();
+// --- Props & Emits ---
+const props = withDefaults(
+  defineProps<{
+    theme?: string;
+  }>(),
+  {
+    theme: 'auto',
+  }
+);
 
-    this.setActiveGroup();
-    router.afterEach(() => {
-      this.setActiveGroup();
-    });
+const emit = defineEmits<{
+  (e: 'change-db-file'): void;
+  (e: 'toggle-darkmode'): void;
+}>();
 
-    this.shortcuts?.shift.set(COMPONENT_NAME, ['KeyH'], () => {
-      if (document.body === document.activeElement) {
-        this.toggleSidebar();
-      }
-    });
-    this.shortcuts?.set(COMPONENT_NAME, ['F1'], () => this.openDocumentation());
-    this.shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyD'], () =>
-      this.$emit('toggle-darkmode')
-    );
+// --- State ---
+const router = useRouter();
+const route = useRoute();
+const store = useAppStore();
+const languageDirection = inject(languageDirectionKey);
+const shortcuts = inject(shortcutsKey);
 
-    this.showDevMode = this.store.isDevelopment;
-  },
-  unmounted() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    routeTo,
-    reportIssue,
-    toggleSidebar,
-    openDocumentation() {
-      this.$router.push({
-        name: 'Help',
-        params: { path: this.store.docsPath },
-      });
-    },
-    setActiveGroup() {
-      const { fullPath } = this.$router.currentRoute.value;
-      const fallBackGroup = this.activeGroup;
-      this.activeGroup =
-        this.groups.find((g) => {
-          if (fullPath.startsWith(g.route) && g.route !== '/') {
-            return true;
-          }
+const companyName = ref('');
+const groups = ref<SidebarConfig>([]);
+const viewShortcuts = ref(false);
+const activeGroup = ref<SidebarRoot | null>(null);
+const showDevMode = ref(false);
 
-          if (g.route === fullPath) {
-            return true;
-          }
-
-          if (g.items) {
-            let activeItem = g.items.filter(
-              ({ route }) => route === fullPath || fullPath.startsWith(route)
-            );
-
-            if (activeItem.length) {
-              return true;
-            }
-          }
-        }) ??
-        fallBackGroup ??
-        this.groups[0];
-    },
-    isItemActive(item: SidebarItem) {
-      const { path: currentRoute, params } = this.$route;
-      const routeMatch = currentRoute === item.route;
-
-      const schemaNameMatch =
-        item.schemaName && params.schemaName === item.schemaName;
-
-      const isMatch = routeMatch || schemaNameMatch;
-      if (params.name && item.schemaName && !isMatch) {
-        return currentRoute.includes(`${item.schemaName}/${params.name}`);
-      }
-
-      return isMatch;
-    },
-    isGroupActive(group: SidebarRoot) {
-      return this.activeGroup && group.label === this.activeGroup.label;
-    },
-    routeToSidebarItem(item: SidebarItem | SidebarRoot) {
-      routeTo(this.getPath(item));
-    },
-    getPath(item: SidebarItem | SidebarRoot) {
-      const { route: path, filters } = item;
-      if (!filters) {
-        return path;
-      }
-
-      return { path, query: { filters: JSON.stringify(filters) } };
-    },
-  },
+// --- Computed ---
+const resolvedIsDark = computed(() => {
+  return props.theme === 'dark' || (props.theme === 'auto' && store.isDark);
 });
+
+// --- Lifecycle ---
+onMounted(async () => {
+  const { companyName: cName } = await fyo.doc.getDoc('AccountingSettings');
+  companyName.value = cName as string;
+  groups.value = await getSidebarConfig();
+
+  setActiveGroup();
+  router.afterEach(() => {
+    setActiveGroup();
+  });
+
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyH'], () => {
+    if (document.body === document.activeElement) {
+      toggleSidebar();
+    }
+  });
+  shortcuts?.set(COMPONENT_NAME, ['F1'], () => openDocumentation());
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyD'], () => emit('toggle-darkmode'));
+
+  showDevMode.value = store.isDevelopment;
+});
+
+onUnmounted(() => {
+  shortcuts?.delete(COMPONENT_NAME);
+});
+
+// --- Methods ---
+function openDocumentation() {
+  router.push({
+    name: 'Help',
+    params: { path: store.docsPath },
+  });
+}
+
+function setActiveGroup() {
+  const { fullPath } = router.currentRoute.value;
+  const fallBackGroup = activeGroup.value;
+  activeGroup.value =
+    groups.value.find((g) => {
+      if (fullPath.startsWith(g.route) && g.route !== '/') {
+        return true;
+      }
+
+      if (g.route === fullPath) {
+        return true;
+      }
+
+      if (g.items) {
+        let activeItem = g.items.filter(
+          ({ route }) => route === fullPath || fullPath.startsWith(route)
+        );
+
+        if (activeItem.length) {
+          return true;
+        }
+      }
+    }) ??
+    fallBackGroup ??
+    groups.value[0];
+}
+
+function isItemActive(item: SidebarItem) {
+  const currentRoute = route.path;
+  const params = route.params;
+  const routeMatch = currentRoute === item.route;
+
+  const schemaNameMatch =
+    item.schemaName && params.schemaName === item.schemaName;
+
+  const isMatch = routeMatch || schemaNameMatch;
+  if (params.name && item.schemaName && !isMatch) {
+    return currentRoute.includes(`${item.schemaName}/${params.name as string}`);
+  }
+
+  return isMatch;
+}
+
+function isGroupActive(group: SidebarRoot) {
+  return activeGroup.value && group.label === activeGroup.value.label;
+}
+
+function routeToSidebarItem(item: SidebarItem | SidebarRoot) {
+  routeTo(getPath(item));
+}
+
+function getPath(item: SidebarItem | SidebarRoot) {
+  const { route: path, filters } = item;
+  if (!filters) {
+    return path as any;
+  }
+
+  return { path, query: { filters: JSON.stringify(filters) } } as any;
+}
 </script>

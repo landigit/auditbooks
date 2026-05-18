@@ -66,148 +66,155 @@
     </template>
   </FormContainer>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, provide, onMounted } from 'vue';
 import { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import { Verb } from 'fyo/telemetry/types';
 import { TranslationString } from 'fyo/utils/translation';
 import { ModelNameEnum } from 'models/types';
 import { Field } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import FormContainer from 'src/components/FormContainer.vue';
-import FormHeader from 'src/components/FormHeader.vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import { getErrorMessage } from 'src/utils';
 import { showDialog } from 'src/utils/interactive';
 import { getSetupWizardDoc } from 'src/utils/misc';
 import { getFieldsGroupedByTabAndSection } from 'src/utils/ui';
 import { useAppStore } from 'src/stores/app';
-import { computed, defineComponent } from 'vue';
+import { SetupWizardOptions } from 'src/setup/types';
+import Button from 'src/components/Button.vue';
+import FormContainer from 'src/components/FormContainer.vue';
+import FormHeader from 'src/components/FormHeader.vue';
 import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 
-export default defineComponent({
-  name: 'SetupWizard',
-  components: {
-    Button,
-    FormContainer,
-    FormHeader,
-    CommonFormSection,
-  },
-  provide() {
-    return {
-      doc: computed(() => this.docOrNull),
-    };
-  },
-  emits: ['setup-complete', 'setup-canceled'],
-  setup() {
-    const store = useAppStore();
-    return { store };
-  },
-  data() {
-    return {
-      docOrNull: null as Doc | null,
-      errors: {} as Record<string, string>,
-      loading: false,
-    };
-  },
-  computed: {
-    hasDoc(): boolean {
-      return this.docOrNull instanceof Doc;
-    },
-    doc(): Doc {
-      if (this.docOrNull instanceof Doc) {
-        return this.docOrNull;
-      }
+// Define Emits
+const emit = defineEmits<{
+  (e: 'setup-complete', values: SetupWizardOptions): void;
+  (e: 'setup-canceled'): void;
+}>();
 
-      throw new Error(`Doc is null`);
-    },
-    areAllValuesFilled(): boolean {
-      if (!this.hasDoc) {
-        return false;
-      }
+// State definition
+const store = useAppStore();
+const docOrNull = ref<Doc | null>(null);
+const errors = ref<Record<string, string>>({});
+const loading = ref(false);
 
-      const values = this.doc.schema.fields
-        .filter((f) => f.required)
-        .map((f) => this.doc[f.fieldname]);
+// Provide 'doc' down to child components
+provide(
+  'doc',
+  computed(() => docOrNull.value)
+);
 
-      return values.every(Boolean);
-    },
-    activeGroup(): Map<string, Field[]> {
-      if (!this.hasDoc) {
-        return new Map();
-      }
+// Computed Properties
+const hasDoc = computed(() => docOrNull.value instanceof Doc);
 
-      const groupedFields = getFieldsGroupedByTabAndSection(
-        this.doc.schema,
-        this.doc
-      );
+const doc = computed(() => {
+  if (docOrNull.value instanceof Doc) {
+    return docOrNull.value;
+  }
+  throw new Error(`Doc is null`);
+});
 
-      return [...groupedFields.values()][0];
-    },
-  },
-  async mounted() {
-    const languageMap = TranslationString.prototype.languageMap;
-    this.docOrNull = getSetupWizardDoc(languageMap);
-    if (!this.fyo.db.isConnected) {
-      await this.fyo.db.init();
+const areAllValuesFilled = computed(() => {
+  if (!hasDoc.value) {
+    return false;
+  }
+  const values = doc.value.schema.fields
+    .filter((f) => f.required)
+    .map((f) => doc.value[f.fieldname]);
+
+  return values.every(Boolean);
+});
+
+const activeGroup = computed(() => {
+  if (!hasDoc.value) {
+    return new Map<string, Field[]>();
+  }
+  const groupedFields = getFieldsGroupedByTabAndSection(
+    doc.value.schema,
+    doc.value
+  );
+  return [...groupedFields.values()][0];
+});
+
+// Methods
+const fill = async () => {
+  if (!hasDoc.value) {
+    return;
+  }
+  await doc.value.set('companyName', "Lin's Things");
+  await doc.value.set('email', 'lin@lthings.com');
+  await doc.value.set('fullname', 'Lin Slovenly');
+  await doc.value.set('bankName', 'Max Finance');
+  await doc.value.set('country', 'India');
+};
+
+const onValueChange = async (field: Field, value: DocValue) => {
+  if (!hasDoc.value) {
+    return;
+  }
+  const { fieldname } = field;
+  delete errors.value[fieldname];
+
+  try {
+    await doc.value.set(fieldname, value);
+  } catch (err) {
+    if (!(err instanceof Error)) {
+      return;
     }
+    errors.value[fieldname] = getErrorMessage(err, doc.value);
+  }
+};
 
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.sw = this;
-    }
-    this.fyo.telemetry.log(Verb.Started, ModelNameEnum.SetupWizard);
-  },
-  methods: {
-    async fill() {
-      if (!this.hasDoc) {
-        return;
-      }
+const submit = async () => {
+  if (!hasDoc.value) {
+    return;
+  }
+  if (!areAllValuesFilled.value) {
+    return await showDialog({
+      title: t`Mandatory Error`,
+      detail: t`Please fill all values.`,
+      type: 'error',
+    });
+  }
 
-      await this.doc.set('companyName', "Lin's Things");
-      await this.doc.set('email', 'lin@lthings.com');
-      await this.doc.set('fullname', 'Lin Slovenly');
-      await this.doc.set('bankName', 'Max Finance');
-      await this.doc.set('country', 'India');
-    },
-    async onValueChange(field: Field, value: DocValue) {
-      if (!this.hasDoc) {
-        return;
-      }
+  loading.value = true;
+  fyo.telemetry.log(Verb.Completed, ModelNameEnum.SetupWizard);
+  emit(
+    'setup-complete',
+    doc.value.getValidDict() as unknown as SetupWizardOptions
+  );
+};
 
-      const { fieldname } = field;
-      delete this.errors[fieldname];
+const cancel = () => {
+  fyo.telemetry.log(Verb.Cancelled, ModelNameEnum.SetupWizard);
+  emit('setup-canceled');
+};
 
-      try {
-        await this.doc.set(fieldname, value);
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          return;
-        }
+// Lifecycle hooks
+onMounted(async () => {
+  const languageMap = TranslationString.prototype.languageMap;
+  docOrNull.value = getSetupWizardDoc(languageMap);
+  if (!fyo.db.isConnected) {
+    await fyo.db.init();
+  }
 
-        this.errors[fieldname] = getErrorMessage(err, this.doc);
-      }
-    },
-    async submit() {
-      if (!this.hasDoc) {
-        return;
-      }
-
-      if (!this.areAllValuesFilled) {
-        return await showDialog({
-          title: this.t`Mandatory Error`,
-          detail: this.t`Please fill all values.`,
-          type: 'error',
-        });
-      }
-
-      this.loading = true;
-      this.fyo.telemetry.log(Verb.Completed, ModelNameEnum.SetupWizard);
-      this.$emit('setup-complete', this.doc.getValidDict());
-    },
-    cancel() {
-      this.fyo.telemetry.log(Verb.Cancelled, ModelNameEnum.SetupWizard);
-      this.$emit('setup-canceled');
-    },
-  },
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.sw = {
+      docOrNull,
+      errors,
+      loading,
+      hasDoc,
+      doc,
+      areAllValuesFilled,
+      activeGroup,
+      fill,
+      onValueChange,
+      submit,
+      cancel,
+    };
+  }
+  fyo.telemetry.log(Verb.Started, ModelNameEnum.SetupWizard);
 });
 </script>

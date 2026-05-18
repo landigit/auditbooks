@@ -2,22 +2,27 @@
   <div :class="[inputClasses, containerClasses]">
     <label
       class="flex items-center"
-      :class="spaceBetween ? 'justify-between' : ''"
+      :class="[
+        spaceBetween ? 'justify-between' : '',
+        isReadOnly ? 'cursor-default' : 'cursor-pointer select-none group'
+      ]"
     >
-      <div v-if="showLabel && !labelRight" class="me-3" :class="labelClasses">
+      <div v-if="showLabel && !labelRight" class="me-3 transition-colors duration-200" :class="labelClasses">
         {{ df.label }}
       </div>
       <div
-        style="width: 14px; height: 14px"
+        style="width: 16px; height: 16px"
+        class="relative flex items-center justify-center transition-transform duration-200 active:scale-90"
         :class="isReadOnly ? 'cursor-default' : 'cursor-pointer'"
       >
         <svg
           v-if="value"
-          width="14"
-          height="14"
+          width="16"
+          height="16"
           viewBox="0 0 14 14"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          class="transition-all duration-200 transform scale-100"
         >
           <mask id="path-1-inside-1_107_160" fill="white">
             <path
@@ -41,11 +46,12 @@
 
         <svg
           v-else
-          width="14"
-          height="14"
+          width="16"
+          height="16"
           viewBox="0 0 14 14"
           :fill="offColor"
           xmlns="http://www.w3.org/2000/svg"
+          class="transition-all duration-200 group-hover:scale-105"
         >
           <rect
             x="0.5"
@@ -55,84 +61,101 @@
             rx="3"
             :stroke="color"
             stroke-width="1.5"
+            class="transition-colors duration-200 group-hover:stroke-accent"
           />
         </svg>
 
         <input
-          ref="input"
+          ref="inputRef"
           type="checkbox"
           :checked="getChecked(value)"
           :readonly="isReadOnly"
           :tabindex="isReadOnly ? '-1' : '0'"
           @change="onChange"
-          @focus="(e) => $emit('focus', e)"
+          class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
         />
       </div>
-      <div v-if="showLabel && labelRight" class="ms-3" :class="labelClasses">
+      <div v-if="showLabel && labelRight" class="ms-3 transition-colors duration-200" :class="labelClasses">
         {{ df.label }}
       </div>
     </label>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Base from './Base.vue';
 
-export default defineComponent({
-  name: 'Check',
-  extends: Base,
-  props: {
-    spaceBetween: {
-      default: false,
-      type: Boolean,
-    },
-    labelRight: {
-      default: true,
-      type: Boolean,
-    },
-    labelClass: String,
-  },
-  emits: ['focus'],
-  data() {
-    return {
-      offColor: '#0000',
-      color: 'var(--color-description)',
-    };
-  },
-  computed: {
-    labelClasses() {
-      if (this.labelClass) {
-        return this.labelClass;
-      }
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 
-      return 'text-description text-base';
-    },
-  },
-  methods: {
-    getChecked(value: unknown) {
-      return Boolean(value);
-    },
-    onChange(e: Event) {
-      if (this.isReadOnly) {
-        return;
-      }
+interface CheckProps extends BaseControlProps {
+  spaceBetween?: boolean;
+  labelRight?: boolean;
+  labelClass?: string;
+}
 
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
+const props = withDefaults(defineProps<CheckProps>(), {
+  spaceBetween: false,
+  labelRight: true,
+  labelClass: '',
+  step: 1,
+  border: false,
+  size: 'large',
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
 
-      this.triggerChange(target.checked);
-    },
-  },
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'change', val: any): void;
+}>();
+
+const offColor = ref('#0000');
+const color = ref('var(--color-description)');
+const inputRef = ref<HTMLInputElement | null>(null);
+
+const {
+  inputClasses,
+  containerClasses,
+  isReadOnly,
+  triggerChange,
+} = useBaseControl(props, emit, inputRef);
+
+const labelClasses = computed(() => {
+  return props.labelClass || 'text-description text-base';
+});
+
+const getChecked = (value: unknown) => {
+  return Boolean(value);
+};
+
+const onChange = (e: Event) => {
+  if (isReadOnly.value) {
+    return;
+  }
+
+  const target = e.target;
+  if (!(target instanceof HTMLInputElement)) {
+    return;
+  }
+
+  triggerChange(target.checked);
+};
+
+// Expose properties
+defineExpose({
+  isReadOnly,
+  containerClasses,
+  labelClasses,
+  inputRef,
+  onChange,
+  getChecked,
 });
 </script>
 
 <style scoped>
+/* Keeping clean layout with zero hidden layout issues */
 input[type='checkbox'] {
-  height: 14px;
-  width: 14px;
-  transform: translateY(-14px);
   display: none;
 }
 </style>

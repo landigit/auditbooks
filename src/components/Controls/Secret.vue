@@ -1,14 +1,13 @@
-<script lang="ts">
-import Base from './Base.vue';
-import { defineComponent } from 'vue';
+<template>
+  <Base
+    v-bind="props"
+    input-type="password"
+  />
+</template>
 
-export default defineComponent({
-  name: 'Secret',
-  extends: Base,
-  computed: {
-    inputType() {
-      return 'password';
-    },
-  },
-});
+<script setup lang="ts">
+import Base from './Base.vue';
+import { BaseControlProps } from 'src/composables/useBaseControl';
+
+const props = defineProps<BaseControlProps>();
 </script>

@@ -364,7 +364,16 @@
     </Modal>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onActivated,
+  onDeactivated,
+} from 'vue';
+import { useRouter } from 'vue-router';
 import { DocValue } from 'fyo/core/types';
 import { Action } from 'fyo/model/types';
 import { Verb } from 'fyo/telemetry/types';
@@ -383,584 +392,634 @@ import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { Importer, TemplateField, getColumnLabel } from 'src/importer';
 import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import { showDialog } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
 import { getSavePath, selectTextFile } from 'src/utils/ui';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent } from 'vue';
 import Loading from '../components/Loading.vue';
 
-type ImportWizardData = {
-  showColumnPicker: boolean;
-  complete: boolean;
-  success: string[];
-  successOldName: string[];
-  failed: { name: string; error: Error }[];
-  file: null | { name: string; filePath: string; text: string };
-  nullOrImporter: null | any;
-  importType: string;
-  isMakingEntries: boolean;
-  percentLoading: number;
-  messageLoading: string;
+// Router & App Store
+const router = useRouter();
+const store = useAppStore();
+
+// Reactive State definitions
+const showColumnPicker = ref(false);
+const complete = ref(false);
+const success = ref<string[]>([]);
+const successOldName = ref<string[]>([]);
+const failed = ref<{ name: string; error: Error }[]>([]);
+const file = ref<null | { name: string; filePath: string; text: string }>(null);
+const nullOrImporter = ref<any>(null);
+const importType = ref('');
+const isMakingEntries = ref(false);
+const percentLoading = ref(0);
+const messageLoading = ref('');
+
+// Computed properties
+const gridTemplateColumn = computed(() => {
+  return `grid-template-columns: 4rem repeat(${columnCount.value}, 10rem)`;
+});
+
+const duplicates = computed<string[]>(() => {
+  if (!hasImporter.value) {
+    return [];
+  }
+
+  const dupes = new Set<string>();
+  const assignedSet = new Set<string>();
+
+  for (const key of importer.value.assignedTemplateFields) {
+    if (!key) {
+      continue;
+    }
+
+    const tf = importer.value.templateFieldsMap.get(key);
+    if (assignedSet.has(key) && tf) {
+      dupes.add(getColumnLabel(tf));
+    }
+
+    assignedSet.add(key);
+  }
+
+  return Array.from(dupes);
+});
+
+const requiredNotSelected = computed<string[]>(() => {
+  if (!hasImporter.value) {
+    return [];
+  }
+
+  const assigned = new Set(importer.value.assignedTemplateFields);
+  return [...importer.value.templateFieldsMap.values()]
+    .filter((f) => {
+      if (assigned.has(f.fieldKey) || !f.required) {
+        return false;
+      }
+
+      if (f.parentSchemaChildField && !f.parentSchemaChildField.required) {
+        return false;
+      }
+
+      return f.required;
+    })
+    .map((f) => getColumnLabel(f));
+});
+
+const errorMessage = computed<string>(() => {
+  if (duplicates.value.length) {
+    return t`Duplicate columns found: ${duplicates.value.join(', ')}`;
+  }
+
+  if (requiredNotSelected.value.length) {
+    return t`Required fields not selected: ${requiredNotSelected.value.join(', ')}`;
+  }
+
+  return '';
+});
+
+const canImportData = computed(() => {
+  if (!hasImporter.value) {
+    return false;
+  }
+
+  return importer.value.valueMatrix.length > 0;
+});
+
+const canSelectFile = computed(() => {
+  return !file.value;
+});
+
+const columnCount = computed(() => {
+  if (!hasImporter.value) {
+    return 0;
+  }
+
+  if (!file.value) {
+    return numColumnsPicked.value;
+  }
+
+  if (!importer.value.valueMatrix.length) {
+    return importer.value.assignedTemplateFields.length;
+  }
+
+  return Math.min(
+    importer.value.assignedTemplateFields.length,
+    importer.value.valueMatrix[0].length
+  );
+});
+
+const columnIterator = computed<number[]>(() => {
+  return Array(columnCount.value)
+    .fill(null)
+    .map((_, i) => i);
+});
+
+const hasImporter = computed(() => {
+  return !!nullOrImporter.value;
+});
+
+const numColumnsPicked = computed(() => {
+  if (!hasImporter.value) {
+    return 0;
+  }
+  return [...importer.value.templateFieldsPicked.values()].filter(Boolean)
+    .length;
+});
+
+const columnPickerFieldsMap = computed(() => {
+  const map: Map<string, TemplateField[]> = new Map();
+  if (!hasImporter.value) {
+    return map;
+  }
+
+  for (const value of importer.value.templateFieldsMap.values()) {
+    let label = value.schemaLabel;
+    if (value.parentSchemaChildField) {
+      label = `${value.parentSchemaChildField.label} (${value.schemaLabel})`;
+    }
+
+    if (!map.has(label)) {
+      map.set(label, []);
+    }
+
+    map.get(label)!.push(value);
+  }
+
+  return map;
+});
+
+const importer = computed<any>(() => {
+  if (!nullOrImporter.value) {
+    throw new ValidationError(t`Importer not set, reload tool`, false);
+  }
+
+  return nullOrImporter.value;
+});
+
+const importableSchemaNames = computed(() => {
+  const importables = [
+    ModelNameEnum.SalesInvoice,
+    ModelNameEnum.PurchaseInvoice,
+    ModelNameEnum.Payment,
+    ModelNameEnum.Party,
+    ModelNameEnum.Item,
+    ModelNameEnum.JournalEntry,
+    ModelNameEnum.Tax,
+    ModelNameEnum.Account,
+    ModelNameEnum.Address,
+    ModelNameEnum.NumberSeries,
+  ];
+
+  const hasInventory = fyo.doc.singles.AccountingSettings?.enableInventory;
+  if (hasInventory) {
+    importables.push(
+      ModelNameEnum.StockMovement,
+      ModelNameEnum.Shipment,
+      ModelNameEnum.PurchaseReceipt,
+      ModelNameEnum.Location
+    );
+  }
+
+  return importables;
+});
+
+const actions = computed<Action[]>(() => {
+  const list: Action[] = [];
+  if (!hasImporter.value) {
+    return list;
+  }
+
+  let selectFileLabel = t`Select File`;
+  if (file.value) {
+    selectFileLabel = t`Change File`;
+  }
+
+  if (canImportData.value) {
+    list.push({
+      label: selectFileLabel,
+      component: {
+        template: `<span>{{ "${selectFileLabel}" }}</span>`,
+      },
+      action: selectFile.bind(null),
+    });
+  }
+
+  const pickColumnsAction = {
+    label: t`Pick Import Columns`,
+    component: {
+      template: '<span>{{ t`Pick Import Columns` }}</span>',
+    },
+    action: () => (showColumnPicker.value = true),
+  };
+
+  const cancelAction = {
+    label: t`Cancel`,
+    component: {
+      template: '<span class="text-error" >{{ t`Cancel` }}</span>',
+    },
+    action: clear.bind(null),
+  };
+  list.push(pickColumnsAction, cancelAction);
+
+  return list;
+});
+
+const fileName = computed(() => {
+  if (!file.value) {
+    return '';
+  }
+
+  return file.value.name;
+});
+
+const helperMessage = computed(() => {
+  if (!importType.value) {
+    return t`Set an Import Type`;
+  } else if (!fileName.value) {
+    return '';
+  }
+
+  return fileName.value;
+});
+
+const isSubmittable = computed(() => {
+  if (!hasImporter.value) {
+    return false;
+  }
+  const sName = importer.value.schemaName;
+  return fyo.schemaMap[sName]?.isSubmittable ?? false;
+});
+
+const gridColumnTitleDf = computed<OptionField>(() => {
+  const options: SelectOption[] = [];
+  if (!hasImporter.value) {
+    return {
+      fieldname: 'col',
+      fieldtype: 'Select',
+      options,
+    } as OptionField;
+  }
+
+  for (const field of importer.value.templateFieldsMap.values()) {
+    const val = field.fieldKey;
+    if (!importer.value.templateFieldsPicked.get(val)) {
+      continue;
+    }
+
+    const label = getColumnLabel(field);
+
+    options.push({ value: val, label });
+  }
+
+  options.push({ value: '', label: t`None` });
+  return {
+    fieldname: 'col',
+    fieldtype: 'Select',
+    options,
+  } as OptionField;
+});
+
+const pickedArray = computed<string[]>(() => {
+  if (!hasImporter.value) {
+    return [];
+  }
+  return [...importer.value.templateFieldsPicked.entries()]
+    .filter(([, picked]) => picked)
+    .map(([key]) => key);
+});
+
+// Watch Count Change
+watch(columnCount, (val) => {
+  if (!hasImporter.value) {
+    return;
+  }
+
+  const possiblyAssigned = importer.value.assignedTemplateFields.length;
+  if (val >= importer.value.assignedTemplateFields.length) {
+    return;
+  }
+
+  for (let i = val; i < possiblyAssigned; i++) {
+    importer.value.assignedTemplateFields[i] = null;
+  }
+});
+
+// Methods
+const getFieldTitle = (vmi: {
+  value?: DocValue;
+  rawValue?: RawValue;
+  error?: boolean;
+}): string => {
+  const title: string[] = [];
+  if (vmi.value != null) {
+    title.push(t`Value: ${String(vmi.value)}`);
+  }
+
+  if (vmi.rawValue != null) {
+    title.push(t`Raw Value: ${String(vmi.rawValue)}`);
+  }
+
+  if (vmi.error) {
+    title.push(t`Conversion Error`);
+  }
+
+  if (!title.length) {
+    return t`No Value`;
+  }
+
+  return title.join(', ');
 };
 
-export default defineComponent({
-  components: {
-    PageHeader,
-    FormControl,
-    Button,
-    DropdownWithActions,
-    Loading,
-    AutoComplete,
-    Data,
-    Modal,
-    FormHeader,
-    Check,
-    Select,
-  },
-  setup() {
-    return { store: useAppStore() };
-  },
-  data(): ImportWizardData {
-    return {
-      showColumnPicker: false,
-      complete: false,
-      success: [],
-      successOldName: [],
-      failed: [],
-      file: null,
-      nullOrImporter: null,
-      importType: '',
-      isMakingEntries: false,
-      percentLoading: 0,
-      messageLoading: '',
+const pickColumn = (fieldKey: string, value: boolean): void => {
+  importer.value.templateFieldsPicked.set(fieldKey, value);
+  if (value) {
+    return;
+  }
+
+  const idx = importer.value.assignedTemplateFields.findIndex(
+    (f: any) => f === fieldKey
+  );
+
+  if (idx >= 0) {
+    importer.value.assignedTemplateFields[idx] = null;
+    reassignTemplateFields();
+  }
+};
+
+const reassignTemplateFields = (): void => {
+  if (importer.value.valueMatrix.length) {
+    return;
+  }
+
+  for (let idx = 0; idx < importer.value.assignedTemplateFields.length; idx++) {
+    importer.value.assignedTemplateFields[idx] = null;
+  }
+
+  let idx = 0;
+  for (const [fieldKey, value] of importer.value.templateFieldsPicked) {
+    if (!value) {
+      continue;
+    }
+
+    importer.value.assignedTemplateFields[idx] = fieldKey;
+    idx += 1;
+  }
+};
+
+const showMe = async (): Promise<void> => {
+  const sName = importer.value.schemaName;
+  clear();
+  await router.push(`/list/${sName}`);
+};
+
+const clear = (): void => {
+  file.value = null;
+  success.value = [];
+  successOldName.value = [];
+  failed.value = [];
+  nullOrImporter.value = null;
+  importType.value = '';
+  complete.value = false;
+  isMakingEntries.value = false;
+  percentLoading.value = 0;
+  messageLoading.value = '';
+};
+
+const saveTemplate = async (): Promise<void> => {
+  const template = importer.value.getCSVTemplate();
+  const templateName = importType.value + ' ' + t`Template`;
+  const { canceled, filePath } = await getSavePath(templateName, 'csv');
+
+  if (canceled || !filePath) {
+    return;
+  }
+
+  // @ts-ignore
+  await ipc.saveData(template, filePath);
+};
+
+const preImportValidations = async (): Promise<boolean> => {
+  const title = t`Cannot Import`;
+  if (errorMessage.value.length) {
+    await showDialog({
+      title,
+      type: 'error',
+      detail: errorMessage.value,
+    });
+    return false;
+  }
+
+  const cellErrors = importer.value.checkCellErrors();
+  if (cellErrors.length) {
+    await showDialog({
+      title,
+      type: 'error',
+      detail: t`Following cells have errors: ${cellErrors.join(', ')}.`,
+    });
+    return false;
+  }
+
+  const absentLinks = await importer.value.checkLinks();
+  if (absentLinks.length) {
+    await showDialog({
+      title,
+      type: 'error',
+      detail: t`Following links do not exist: ${absentLinks
+        .map((l: any) => `(${l.schemaLabel ?? l.schemaName}, ${l.name})`)
+        .join(', ')}.`,
+    });
+    return false;
+  }
+
+  return true;
+};
+
+const askShouldSubmit = async (): Promise<boolean> => {
+  if (!fyo.schemaMap[importType.value]?.isSubmittable) {
+    return false;
+  }
+
+  let shouldSubmit = false;
+  await showDialog({
+    title: t`Submit entries?`,
+    type: 'info',
+    details: t`Should entries be submitted after syncing?`,
+    buttons: [
+      {
+        label: t`Yes`,
+        action() {
+          shouldSubmit = true;
+        },
+        isPrimary: true,
+      },
+      {
+        label: t`No`,
+        action() {
+          return null;
+        },
+        isEscape: true,
+      },
+    ],
+  });
+
+  return shouldSubmit;
+};
+
+const importData = async (): Promise<void> => {
+  const isValid = await preImportValidations();
+  if (!isValid || isMakingEntries.value || complete.value) {
+    return;
+  }
+
+  isMakingEntries.value = true;
+  importer.value.populateDocs();
+
+  const shouldSubmit = await askShouldSubmit();
+
+  let doneCount = 0;
+  for (const doc of importer.value.docs) {
+    setLoadingStatus(doneCount, importer.value.docs.length);
+    const oldName = doc.name ?? '';
+    try {
+      await doc.sync();
+      if (shouldSubmit) {
+        await doc.submit();
+      }
+      doneCount += 1;
+
+      success.value.push(doc.name!);
+      successOldName.value.push(oldName);
+    } catch (error) {
+      if (error instanceof Error) {
+        failed.value.push({ name: doc.name!, error });
+      }
+    }
+  }
+
+  fyo.telemetry.log(Verb.Imported, importer.value.schemaName);
+  isMakingEntries.value = false;
+  complete.value = true;
+};
+
+const clearSuccessfullyImportedEntries = () => {
+  const sName = importer.value.schemaName;
+  const nameFieldKey = `${sName}.name`;
+  const nameIndex = importer.value.assignedTemplateFields.findIndex(
+    (n: any) => n === nameFieldKey
+  );
+
+  const failedEntriesValueMatrix = importer.value.valueMatrix.filter(
+    (row: any) => {
+      const value = row[nameIndex].value;
+      if (typeof value !== 'string') {
+        return false;
+      }
+
+      return !successOldName.value.includes(value);
+    }
+  );
+
+  setImportType(importType.value);
+  importer.value.valueMatrix = failedEntriesValueMatrix;
+};
+
+const setImportType = (type: string): void => {
+  clear();
+  if (!type) {
+    return;
+  }
+
+  importType.value = type;
+  nullOrImporter.value = new Importer(type, fyo);
+};
+
+const setLoadingStatus = (entriesMade: number, totalEntries: number): void => {
+  percentLoading.value = entriesMade / totalEntries;
+  messageLoading.value = isMakingEntries.value
+    ? `${entriesMade} entries made out of ${totalEntries}...`
+    : '';
+};
+
+const selectFile = async (): Promise<void> => {
+  const { text, name, filePath } = await selectTextFile([
+    { name: 'CSV', extensions: ['csv'] },
+  ]);
+
+  if (!text) {
+    return;
+  }
+
+  const isValid = importer.value.selectFile(text);
+  if (!isValid) {
+    await showDialog({
+      title: t`Cannot read file`,
+      detail: t`Bad import data, could not read file.`,
+      type: 'error',
+    });
+    return;
+  }
+
+  file.value = {
+    name,
+    filePath,
+    text,
+  };
+};
+
+// Lifecycles
+onMounted(() => {
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.iw = {
+      showColumnPicker,
+      complete,
+      success,
+      successOldName,
+      failed,
+      file,
+      nullOrImporter,
+      importType,
+      isMakingEntries,
+      percentLoading,
+      messageLoading,
+      gridTemplateColumn,
+      duplicates,
+      requiredNotSelected,
+      errorMessage,
+      canImportData,
+      canSelectFile,
+      columnCount,
+      columnIterator,
+      hasImporter,
+      numColumnsPicked,
+      columnPickerFieldsMap,
+      importer,
+      importableSchemaNames,
+      actions,
+      fileName,
+      helperMessage,
+      isSubmittable,
+      gridColumnTitleDf,
+      pickedArray,
     };
-  },
-  computed: {
-    gridTemplateColumn(): string {
-      return `grid-template-columns: 4rem repeat(${this.columnCount}, 10rem)`;
-    },
-    duplicates(): string[] {
-      if (!this.hasImporter) {
-        return [];
-      }
+  }
+});
 
-      const dupes = new Set<string>();
-      const assignedSet = new Set<string>();
+onActivated(() => {
+  store.docsPath = docsPathMap.ImportWizard ?? '';
+});
 
-      for (const key of this.importer.assignedTemplateFields) {
-        if (!key) {
-          continue;
-        }
+onDeactivated(() => {
+  store.docsPath = '';
+  if (!complete.value) {
+    return;
+  }
 
-        const tf = this.importer.templateFieldsMap.get(key);
-        if (assignedSet.has(key) && tf) {
-          dupes.add(getColumnLabel(tf));
-        }
-
-        assignedSet.add(key);
-      }
-
-      return Array.from(dupes);
-    },
-    requiredNotSelected(): string[] {
-      if (!this.hasImporter) {
-        return [];
-      }
-
-      const assigned = new Set(this.importer.assignedTemplateFields);
-      return [...this.importer.templateFieldsMap.values()]
-        .filter((f) => {
-          if (assigned.has(f.fieldKey) || !f.required) {
-            return false;
-          }
-
-          if (f.parentSchemaChildField && !f.parentSchemaChildField.required) {
-            return false;
-          }
-
-          return f.required;
-        })
-        .map((f) => getColumnLabel(f));
-    },
-    errorMessage(): string {
-      if (this.duplicates.length) {
-        return this.t`Duplicate columns found: ${this.duplicates.join(', ')}`;
-      }
-
-      if (this.requiredNotSelected.length) {
-        return this
-          .t`Required fields not selected: ${this.requiredNotSelected.join(
-          ', '
-        )}`;
-      }
-
-      return '';
-    },
-    canImportData(): boolean {
-      if (!this.hasImporter) {
-        return false;
-      }
-
-      return this.importer.valueMatrix.length > 0;
-    },
-    canSelectFile(): boolean {
-      return !this.file;
-    },
-    columnCount(): number {
-      if (!this.hasImporter) {
-        return 0;
-      }
-
-      if (!this.file) {
-        return this.numColumnsPicked;
-      }
-
-      if (!this.importer.valueMatrix.length) {
-        return this.importer.assignedTemplateFields.length;
-      }
-
-      return Math.min(
-        this.importer.assignedTemplateFields.length,
-        this.importer.valueMatrix[0].length
-      );
-    },
-    columnIterator(): number[] {
-      return Array(this.columnCount)
-        .fill(null)
-        .map((_, i) => i);
-    },
-    hasImporter(): boolean {
-      return !!this.nullOrImporter;
-    },
-    numColumnsPicked(): number {
-      return [...this.importer.templateFieldsPicked.values()].filter(Boolean)
-        .length;
-    },
-    columnPickerFieldsMap(): Map<string, TemplateField[]> {
-      const map: Map<string, TemplateField[]> = new Map();
-
-      for (const value of this.importer.templateFieldsMap.values()) {
-        let label = value.schemaLabel;
-        if (value.parentSchemaChildField) {
-          label = `${value.parentSchemaChildField.label} (${value.schemaLabel})`;
-        }
-
-        if (!map.has(label)) {
-          map.set(label, []);
-        }
-
-        map.get(label)!.push(value);
-      }
-
-      return map;
-    },
-    importer(): Importer {
-      if (!this.nullOrImporter) {
-        throw new ValidationError(this.t`Importer not set, reload tool`, false);
-      }
-
-      return this.nullOrImporter;
-    },
-    importableSchemaNames(): ModelNameEnum[] {
-      const importables = [
-        ModelNameEnum.SalesInvoice,
-        ModelNameEnum.PurchaseInvoice,
-        ModelNameEnum.Payment,
-        ModelNameEnum.Party,
-        ModelNameEnum.Item,
-        ModelNameEnum.JournalEntry,
-        ModelNameEnum.Tax,
-        ModelNameEnum.Account,
-        ModelNameEnum.Address,
-        ModelNameEnum.NumberSeries,
-      ];
-
-      const hasInventory = fyo.doc.singles.AccountingSettings?.enableInventory;
-      if (hasInventory) {
-        importables.push(
-          ModelNameEnum.StockMovement,
-          ModelNameEnum.Shipment,
-          ModelNameEnum.PurchaseReceipt,
-          ModelNameEnum.Location
-        );
-      }
-
-      return importables;
-    },
-    actions(): Action[] {
-      const actions: Action[] = [];
-
-      let selectFileLabel = this.t`Select File`;
-      if (this.file) {
-        selectFileLabel = this.t`Change File`;
-      }
-
-      if (this.canImportData) {
-        actions.push({
-          label: selectFileLabel,
-          component: {
-            template: `<span>{{ "${selectFileLabel}" }}</span>`,
-          },
-          action: this.selectFile.bind(this),
-        });
-      }
-
-      const pickColumnsAction = {
-        label: this.t`Pick Import Columns`,
-        component: {
-          template: '<span>{{ t`Pick Import Columns` }}</span>',
-        },
-        action: () => (this.showColumnPicker = true),
-      };
-
-      const cancelAction = {
-        label: this.t`Cancel`,
-        component: {
-          template: '<span class="text-error" >{{ t`Cancel` }}</span>',
-        },
-        action: this.clear.bind(this),
-      };
-      actions.push(pickColumnsAction, cancelAction);
-
-      return actions;
-    },
-    fileName(): string {
-      if (!this.file) {
-        return '';
-      }
-
-      return this.file.name;
-    },
-    helperMessage(): string {
-      if (!this.importType) {
-        return this.t`Set an Import Type`;
-      } else if (!this.fileName) {
-        return '';
-      }
-
-      return this.fileName;
-    },
-    isSubmittable(): boolean {
-      const schemaName = this.importer.schemaName;
-      return fyo.schemaMap[schemaName]?.isSubmittable ?? false;
-    },
-    gridColumnTitleDf(): OptionField {
-      const options: SelectOption[] = [];
-      for (const field of this.importer.templateFieldsMap.values()) {
-        const value = field.fieldKey;
-        if (!this.importer.templateFieldsPicked.get(value)) {
-          continue;
-        }
-
-        const label = getColumnLabel(field);
-
-        options.push({ value, label });
-      }
-
-      options.push({ value: '', label: this.t`None` });
-      return {
-        fieldname: 'col',
-        fieldtype: 'Select',
-        options,
-      } as OptionField;
-    },
-    pickedArray(): string[] {
-      return [...this.importer.templateFieldsPicked.entries()]
-        .filter(([, picked]) => picked)
-        .map(([key]) => key);
-    },
-  },
-  watch: {
-    columnCount(val) {
-      if (!this.hasImporter) {
-        return;
-      }
-
-      const possiblyAssigned = this.importer.assignedTemplateFields.length;
-      if (val >= this.importer.assignedTemplateFields.length) {
-        return;
-      }
-
-      for (let i = val; i < possiblyAssigned; i++) {
-        this.importer.assignedTemplateFields[i] = null;
-      }
-    },
-  },
-  mounted() {
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.iw = this;
-    }
-  },
-  activated(): void {
-    this.store.docsPath = docsPathMap.ImportWizard ?? '';
-  },
-  deactivated(): void {
-    this.store.docsPath = '';
-    if (!this.complete) {
-      return;
-    }
-
-    this.clear();
-  },
-  methods: {
-    getFieldTitle(vmi: {
-      value?: DocValue;
-      rawValue?: RawValue;
-      error?: boolean;
-    }): string {
-      const title: string[] = [];
-      if (vmi.value != null) {
-        title.push(this.t`Value: ${String(vmi.value)}`);
-      }
-
-      if (vmi.rawValue != null) {
-        title.push(this.t`Raw Value: ${String(vmi.rawValue)}`);
-      }
-
-      if (vmi.error) {
-        title.push(this.t`Conversion Error`);
-      }
-
-      if (!title.length) {
-        return this.t`No Value`;
-      }
-
-      return title.join(', ');
-    },
-    pickColumn(fieldKey: string, value: boolean): void {
-      this.importer.templateFieldsPicked.set(fieldKey, value);
-      if (value) {
-        return;
-      }
-
-      const idx = this.importer.assignedTemplateFields.findIndex(
-        (f) => f === fieldKey
-      );
-
-      if (idx >= 0) {
-        this.importer.assignedTemplateFields[idx] = null;
-        this.reassignTemplateFields();
-      }
-    },
-    reassignTemplateFields(): void {
-      if (this.importer.valueMatrix.length) {
-        return;
-      }
-
-      for (
-        let idx = 0;
-        idx < this.importer.assignedTemplateFields.length;
-        idx++
-      ) {
-        this.importer.assignedTemplateFields[idx] = null;
-      }
-
-      let idx = 0;
-      for (const [fieldKey, value] of this.importer.templateFieldsPicked) {
-        if (!value) {
-          continue;
-        }
-
-        this.importer.assignedTemplateFields[idx] = fieldKey;
-        idx += 1;
-      }
-    },
-    async showMe(): Promise<void> {
-      const schemaName = this.importer.schemaName;
-      this.clear();
-      await this.$router.push(`/list/${schemaName}`);
-    },
-    clear(): void {
-      this.file = null;
-      this.success = [];
-      this.successOldName = [];
-      this.failed = [];
-      this.nullOrImporter = null;
-      this.importType = '';
-      this.complete = false;
-      this.isMakingEntries = false;
-      this.percentLoading = 0;
-      this.messageLoading = '';
-    },
-    async saveTemplate(): Promise<void> {
-      const template = this.importer.getCSVTemplate();
-      const templateName = this.importType + ' ' + this.t`Template`;
-      const { canceled, filePath } = await getSavePath(templateName, 'csv');
-
-      if (canceled || !filePath) {
-        return;
-      }
-
-      await ipc.saveData(template, filePath);
-    },
-    async preImportValidations(): Promise<boolean> {
-      const title = this.t`Cannot Import`;
-      if (this.errorMessage.length) {
-        await showDialog({
-          title,
-          type: 'error',
-          detail: this.errorMessage,
-        });
-        return false;
-      }
-
-      const cellErrors = this.importer.checkCellErrors();
-      if (cellErrors.length) {
-        await showDialog({
-          title,
-          type: 'error',
-          detail: this.t`Following cells have errors: ${cellErrors.join(
-            ', '
-          )}.`,
-        });
-        return false;
-      }
-
-      const absentLinks = await this.importer.checkLinks();
-      if (absentLinks.length) {
-        await showDialog({
-          title,
-          type: 'error',
-          detail: this.t`Following links do not exist: ${absentLinks
-            .map((l) => `(${l.schemaLabel ?? l.schemaName}, ${l.name})`)
-            .join(', ')}.`,
-        });
-        return false;
-      }
-
-      return true;
-    },
-    async importData(): Promise<void> {
-      const isValid = await this.preImportValidations();
-      if (!isValid || this.isMakingEntries || this.complete) {
-        return;
-      }
-
-      this.isMakingEntries = true;
-      this.importer.populateDocs();
-
-      const shouldSubmit = await this.askShouldSubmit();
-
-      let doneCount = 0;
-      for (const doc of this.importer.docs) {
-        this.setLoadingStatus(doneCount, this.importer.docs.length);
-        const oldName = doc.name ?? '';
-        try {
-          await doc.sync();
-          if (shouldSubmit) {
-            await doc.submit();
-          }
-          doneCount += 1;
-
-          this.success.push(doc.name!);
-          this.successOldName.push(oldName);
-        } catch (error) {
-          if (error instanceof Error) {
-            this.failed.push({ name: doc.name!, error });
-          }
-        }
-      }
-
-      this.fyo.telemetry.log(Verb.Imported, this.importer.schemaName);
-      this.isMakingEntries = false;
-      this.complete = true;
-    },
-    async askShouldSubmit(): Promise<boolean> {
-      if (!this.fyo.schemaMap[this.importType]?.isSubmittable) {
-        return false;
-      }
-
-      let shouldSubmit = false;
-      await showDialog({
-        title: this.t`Submit entries?`,
-        type: 'info',
-        details: this.t`Should entries be submitted after syncing?`,
-        buttons: [
-          {
-            label: this.t`Yes`,
-            action() {
-              shouldSubmit = true;
-            },
-            isPrimary: true,
-          },
-          {
-            label: this.t`No`,
-            action() {
-              return null;
-            },
-            isEscape: true,
-          },
-        ],
-      });
-
-      return shouldSubmit;
-    },
-    clearSuccessfullyImportedEntries() {
-      const schemaName = this.importer.schemaName;
-      const nameFieldKey = `${schemaName}.name`;
-      const nameIndex = this.importer.assignedTemplateFields.findIndex(
-        (n) => n === nameFieldKey
-      );
-
-      const failedEntriesValueMatrix = this.importer.valueMatrix.filter(
-        (row) => {
-          const value = row[nameIndex].value;
-          if (typeof value !== 'string') {
-            return false;
-          }
-
-          return !this.successOldName.includes(value);
-        }
-      );
-
-      this.setImportType(this.importType);
-      this.importer.valueMatrix = failedEntriesValueMatrix;
-    },
-    setImportType(importType: string): void {
-      this.clear();
-      if (!importType) {
-        return;
-      }
-
-      this.importType = importType;
-      this.nullOrImporter = new Importer(importType, fyo);
-    },
-    setLoadingStatus(entriesMade: number, totalEntries: number): void {
-      this.percentLoading = entriesMade / totalEntries;
-      this.messageLoading = this.isMakingEntries
-        ? `${entriesMade} entries made out of ${totalEntries}...`
-        : '';
-    },
-    async selectFile(): Promise<void> {
-      const { text, name, filePath } = await selectTextFile([
-        { name: 'CSV', extensions: ['csv'] },
-      ]);
-
-      if (!text) {
-        return;
-      }
-
-      const isValid = this.importer.selectFile(text);
-      if (!isValid) {
-        await showDialog({
-          title: this.t`Cannot read file`,
-          detail: this.t`Bad import data, could not read file.`,
-          type: 'error',
-        });
-        return;
-      }
-
-      this.file = {
-        name,
-        filePath,
-        text,
-      };
-    },
-  },
+  clear();
 });
 </script>
+
 <style scoped>
 @reference "../styles/index.css";
 .index-cell {

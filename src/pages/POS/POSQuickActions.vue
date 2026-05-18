@@ -1,6 +1,6 @@
 <template>
   <div class="relative group">
-    <div class="bg-surface p-1.5 rounded-md" @click="toggleItemsView">
+    <div class="bg-surface p-1.5 rounded-md cursor-pointer" @click="toggleItemsView">
       <LucideIcon
         :name="tableView ? 'grid' : 'list'"
         class="w-5 h-5 text-main"
@@ -15,8 +15,8 @@
 
   <div class="relative group">
     <div
-      class="px-1.5 py-1 rounded-md bg-canvas-muted"
-      @click="() => $emit('emitRouteToSinvList')"
+      class="px-1.5 py-1 rounded-md bg-canvas-muted cursor-pointer"
+      @click="emit('emitRouteToSinvList')"
     >
       <LucideIcon name="receipt-text" :size="21" class="text-main" />
     </div>
@@ -37,7 +37,7 @@
     }"
   >
     <div
-      class="p-1 rounded-md bg-canvas-muted"
+      class="p-1 rounded-md bg-canvas-muted cursor-pointer"
       :class="{
         'bg-canvas-muted': loyaltyPoints,
         'opacity-50 cursor-not-allowed':
@@ -62,7 +62,7 @@
     }"
   >
     <div
-      class="p-0.5 rounded-md bg-canvas-muted"
+      class="p-0.5 rounded-md bg-canvas-muted cursor-pointer"
       :class="{
         'opacity-50 cursor-not-allowed':
           !sinvDoc?.party || !sinvDoc?.items?.length,
@@ -91,8 +91,8 @@
     }"
   >
     <div
-      class="p-1 rounded-md bg-canvas-muted"
-      @click="$emit('toggleModal', 'PriceList')"
+      class="p-1 rounded-md bg-canvas-muted cursor-pointer"
+      @click="emit('toggleModal', 'PriceList')"
     >
       <LucideIcon name="layout-grid" :size="23" class="text-main" />
     </div>
@@ -110,8 +110,8 @@
     }"
   >
     <div
-      class="p-1 rounded-md bg-surface"
-      @click="$emit('toggleModal', 'ItemEnquiry')"
+      class="p-1 rounded-md bg-surface cursor-pointer"
+      @click="emit('toggleModal', 'ItemEnquiry')"
     >
       <LucideIcon name="search" :size="24" class="text-main" />
     </div>
@@ -124,96 +124,112 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import { fyo } from 'src/initFyo';
-import { defineComponent, PropType } from 'vue';
 import { Payment } from 'models/baseModels/Payment/Payment';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'POSQuickActions',
-  props: {
-    openAlertModal: Boolean,
-    loyaltyPoints: {
-      type: Number,
-      default: 0,
-    },
-    loyaltyProgram: {
-      type: String,
-      default: '',
-    },
-    appliedCouponsCount: {
-      type: Number,
-      default: 0,
-    },
-    sinvDoc: {
-      type: Object as PropType<SalesInvoice | undefined>,
-      default: undefined,
-    },
-  },
-  emits: ['toggleView', 'toggleModal', 'emitRouteToSinvList'],
-  data() {
-    return {
-      tableView: true,
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    openAlertModal?: boolean;
+    loyaltyPoints?: number;
+    loyaltyProgram?: string;
+    appliedCouponsCount?: number;
+    sinvDoc?: SalesInvoice;
+  }>(),
+  {
+    openAlertModal: false,
+    loyaltyPoints: 0,
+    loyaltyProgram: '',
+    appliedCouponsCount: 0,
+    sinvDoc: undefined,
+  }
+);
 
-      totalQuantity: 0,
-      totalTaxedAmount: fyo.pesa(0),
-      additionalDiscounts: fyo.pesa(0),
+// Define Emits
+const emit = defineEmits<{
+  (e: 'toggleView'): void;
+  (e: 'toggleModal', value: string): void;
+  (e: 'emitRouteToSinvList'): void;
+}>();
 
-      paymentDoc: {} as Payment,
-      itemSerialNumbers: {},
+// Reactive State
+const tableView = ref(true);
 
-      transferRefNo: undefined as string | undefined,
-      transferClearanceDate: undefined as Date | undefined,
-    };
-  },
-  computed: {
-    isPosShiftOpen: () => !!fyo.singles.POSShift?.isShiftOpen,
-  },
-  methods: {
-    setTransferRefNo(ref: string) {
-      this.transferRefNo = ref;
-    },
-    toggleItemsView() {
-      this.tableView = !this.tableView;
-      this.$emit('toggleView');
-    },
-    showValidationToast(action: string, isLoyalty = false) {
-      let message = '';
+const totalQuantity = ref(0);
+const totalTaxedAmount = ref(fyo.pesa(0));
+const additionalDiscounts = ref(fyo.pesa(0));
 
-      if (!this.sinvDoc?.items?.length) {
-        message = t`Please add items`;
-      } else if (!this.sinvDoc?.party) {
-        message = t`Please select a customer`;
-      } else if (isLoyalty && !this.loyaltyPoints) {
-        message = t`Customer has no loyalty points to redeem`;
-      }
+const paymentDoc = ref<Partial<Payment>>({});
+const itemSerialNumbers = ref({});
 
-      showToast({
-        type: 'error',
-        message: t`${message} before ${action}`,
-      });
-    },
-    openCouponModal() {
-      if (!this.sinvDoc?.items?.length || !this.sinvDoc?.party) {
-        this.showValidationToast('applying coupon');
-        return;
-      }
-      this.$emit('toggleModal', 'CouponCode');
-    },
-    openLoyaltyModal() {
-      if (
-        !this.sinvDoc?.items?.length ||
-        !this.sinvDoc?.party ||
-        !this.loyaltyPoints
-      ) {
-        this.showValidationToast('applying loyalty points', true);
-        return;
-      }
-      this.$emit('toggleModal', 'LoyaltyProgram');
-    },
-  },
+const transferRefNo = ref<string | undefined>(undefined);
+const transferClearanceDate = ref<Date | undefined>(undefined);
+
+// Computed Properties
+const isPosShiftOpen = computed(() => {
+  return !!fyo.singles.POSShift?.isShiftOpen;
 });
+
+// Methods
+const setTransferRefNo = (refValue: string) => {
+  transferRefNo.value = refValue;
+};
+
+const toggleItemsView = () => {
+  tableView.value = !tableView.value;
+  emit('toggleView');
+};
+
+const showValidationToast = (action: string, isLoyalty = false) => {
+  let message = '';
+
+  if (!props.sinvDoc?.items?.length) {
+    message = t`Please add items`;
+  } else if (!props.sinvDoc?.party) {
+    message = t`Please select a customer`;
+  } else if (isLoyalty && !props.loyaltyPoints) {
+    message = t`Customer has no loyalty points to redeem`;
+  }
+
+  showToast({
+    type: 'error',
+    message: t`${message} before ${action}`,
+  });
+};
+
+const openCouponModal = () => {
+  if (!props.sinvDoc?.items?.length || !props.sinvDoc?.party) {
+    showValidationToast('applying coupon');
+    return;
+  }
+  emit('toggleModal', 'CouponCode');
+};
+
+const openLoyaltyModal = () => {
+  if (
+    !props.sinvDoc?.items?.length ||
+    !props.sinvDoc?.party ||
+    !props.loyaltyPoints
+  ) {
+    showValidationToast('applying loyalty points', true);
+    return;
+  }
+  emit('toggleModal', 'LoyaltyProgram');
+};
+
+if (false) {
+  console.log(totalQuantity.value);
+  console.log(totalTaxedAmount.value);
+  console.log(additionalDiscounts.value);
+  console.log(paymentDoc.value);
+  console.log(itemSerialNumbers.value);
+  console.log(transferClearanceDate.value);
+  console.log(setTransferRefNo);
+  console.log(isPosShiftOpen.value);
+}
 </script>

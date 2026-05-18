@@ -198,10 +198,11 @@
     </Modal>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, onMounted, onActivated, onDeactivated, inject, provide } from 'vue';
 import { EditorView } from 'codemirror';
 import { Doc } from 'fyo/model/doc';
-import { PrintTemplate } from 'models/baseModels/PrintTemplate';
 import { ModelNameEnum } from 'models/types';
 import { saveExportData } from 'reports/commonExporter';
 import { Field, TargetField } from 'schemas/types';
@@ -223,7 +224,7 @@ import {
   getPrintTemplatePropHints,
   getPrintTemplatePropValues,
 } from 'src/utils/printTemplates';
-import { DocRef, PrintValues } from 'src/utils/types';
+import { PrintValues } from 'src/utils/types';
 import {
   ShortcutKey,
   focusOrSelectFormControl,
@@ -236,488 +237,504 @@ import {
 import { useDocShortcuts } from 'src/utils/vueUtils';
 import { getMapFromList } from 'utils/index';
 import { useAppStore } from 'src/stores/app';
-import { computed, defineComponent, inject, ref } from 'vue';
 import PrintContainer from './PrintContainer.vue';
 import SetPrintSize from './SetPrintSize.vue';
 import SetType from './SetType.vue';
 import TemplateBuilderHint from './TemplateBuilderHint.vue';
 import TemplateEditor from './TemplateEditor.vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-export default defineComponent({
-  components: {
-    PageHeader,
-    Button,
-    DropdownWithActions,
-    PrintContainer,
-    HorizontalResizer,
-    TemplateEditor,
-    FormControl,
-    TemplateBuilderHint,
-    ShortcutKeys,
-    Link,
-    Modal,
-    SetPrintSize,
-    SetType,
-  },
-  provide() {
-    return { doc: computed(() => this.doc) };
-  },
-  props: { name: { type: String, required: true } },
-  setup() {
-    const doc = ref(null) as DocRef<PrintTemplate>;
-    const shortcuts = inject(shortcutsKey);
+// Define Props
+const props = defineProps<{
+  name: string;
+}>();
 
-    let context = 'TemplateBuilder';
-    if (shortcuts) {
-      context = useDocShortcuts(shortcuts, doc, context, false);
-    }
+// App Store & Context Injections
+const store = useAppStore();
+const shortcuts = inject(shortcutsKey);
+const doc = ref<any>(null);
 
-    return {
+let context = 'TemplateBuilder';
+if (shortcuts) {
+  context = useDocShortcuts(shortcuts, doc as any, context, false);
+}
+
+// Provide document context to child elements
+provide('doc', doc);
+
+// Template Refs
+const printContainer = ref<InstanceType<typeof PrintContainer> | null>(null);
+const templateEditor = ref<InstanceType<typeof TemplateEditor> | null>(null);
+const nameField = ref<InstanceType<typeof FormControl> | null>(null);
+
+// Reactive State
+const editMode = ref(false);
+const showHints = ref(false);
+const hints = ref<PrintTemplateHint | undefined>(undefined);
+const values = ref<PrintValues | null>(null);
+const displayDoc = ref<Doc | null>(null);
+const scale = ref(0.6);
+const panelWidth = ref(22 * 16);
+const templateChanged = ref(false);
+const showTypeModal = ref(false);
+const showSizeModal = ref(false);
+
+const preEditMode = ref({
+  scale: 0.6,
+  showSidebar: true,
+  panelWidth: 22 * 16,
+});
+
+// Computed Properties
+const canDisplayPreview = computed<boolean>(() => {
+  if (!displayDoc.value || !values.value) {
+    return false;
+  }
+
+  if (!doc.value?.template) {
+    return false;
+  }
+
+  return true;
+});
+
+const applyChangesShortcut = computed(() => {
+  return [ShortcutKey.ctrl, ShortcutKey.enter];
+});
+
+const view = computed<EditorView | null>(() => {
+  // @ts-ignore
+  const v = templateEditor.value?.view;
+  if (v instanceof EditorView) {
+    return v;
+  }
+  return null;
+});
+
+const maxWidth = computed(() => {
+  return window.innerWidth - 12 * 16 - 100;
+});
+
+const fields = computed<Record<string, Field>>(() => {
+  return getMapFromList(
+    fyo.schemaMap.PrintTemplate?.fields ?? [],
+    'fieldname'
+  );
+});
+
+const displayDocField = computed<TargetField>(() => {
+  const target = doc.value?.type ?? ModelNameEnum.SalesInvoice;
+  return {
+    fieldname: 'displayDoc',
+    label: t`Display Doc`,
+    fieldtype: 'Link',
+    target,
+  };
+});
+
+const helperMessage = computed(() => {
+  if (!doc.value) {
+    return '';
+  }
+
+  if (!doc.value.type) {
+    return t`Select a Template type`;
+  }
+
+  if (!displayDoc.value) {
+    return t`Select a Display Doc to view the Template`;
+  }
+
+  if (!doc.value.template) {
+    return t`Set a Template value to see the Print Template`;
+  }
+
+  return '';
+});
+
+const templateBuilderBodyStyles = computed<Record<string, string>>(() => {
+  const styles: Record<string, string> = {};
+  styles['grid-template-columns'] = `auto 0px ${panelWidth.value}px`;
+  styles['height'] = 'calc(100vh - var(--h-row-largest) - 1px)';
+  return styles;
+});
+
+const templateDisplayStyles = computed<Record<string, string>>(() => {
+  const styles: Record<string, string> = {};
+  styles.height = `calc(100vh - var(--h-row-largest) - 1px - ${
+    store.platform == 'Windows' ? 'var(--h-row-smallest)' : '0px'
+  })`;
+  return styles;
+});
+
+// Methods
+const getTemplateEditorState = () => {
+  const fallback = doc.value?.template ?? '';
+  if (!view.value) {
+    return fallback;
+  }
+  return view.value.state.doc.toString();
+};
+
+const setTemplate = async (value?: string) => {
+  templateChanged.value = false;
+  if (!doc.value?.isCustom) {
+    return;
+  }
+
+  value ??= getTemplateEditorState();
+  await doc.value?.set('template', value);
+};
+
+const setScale = (e: Event | number) => {
+  let val = scale.value;
+  if (typeof e === 'number') {
+    val = Number(e.toFixed(2));
+  } else if (e instanceof Event && e.target instanceof HTMLInputElement) {
+    val = Number(e.target.value);
+  }
+
+  scale.value = Math.max(Math.min(val, 10), 0.15);
+};
+
+const toggleShowHints = () => {
+  showHints.value = !showHints.value;
+};
+
+const getEditModeScale = (): number => {
+  const div = printContainer.value?.$el;
+  if (!(div instanceof HTMLDivElement)) {
+    return scale.value;
+  }
+
+  const padding = 16 * 2 + 16 * 0.6;
+  const targetWidth = window.innerWidth / 2 - padding;
+  const currentWidth = div.getBoundingClientRect().width;
+  const targetScale = (targetWidth * scale.value) / currentWidth;
+
+  return Number(targetScale.toFixed(2));
+};
+
+const enableEditMode = () => {
+  preEditMode.value.showSidebar = store.showSidebar;
+  preEditMode.value.panelWidth = panelWidth.value;
+  preEditMode.value.scale = scale.value;
+
+  panelWidth.value = Math.max(window.innerWidth / 2, panelWidth.value);
+  store.showSidebar = false;
+  scale.value = getEditModeScale();
+  view.value?.focus();
+};
+
+const disableEditMode = () => {
+  store.showSidebar = preEditMode.value.showSidebar;
+  panelWidth.value = preEditMode.value.panelWidth;
+  scale.value = preEditMode.value.scale;
+};
+
+const toggleEditMode = () => {
+  if (!doc.value?.isCustom) {
+    return;
+  }
+
+  const msg = t`Please set a Display Doc`;
+  if (!displayDoc.value) {
+    return showToast({ type: 'warning', message: msg, duration: 'short' });
+  }
+
+  editMode.value = !editMode.value;
+
+  if (editMode.value) {
+    return enableEditMode();
+  }
+
+  disableEditMode();
+};
+
+const savePDF = (shouldPrint?: boolean) => {
+  if (!printContainer.value?.savePDF) {
+    return;
+  }
+
+  printContainer.value.savePDF(doc.value?.name, shouldPrint);
+};
+
+const setDisplayDoc = async (value: string) => {
+  if (!value) {
+    hints.value = undefined;
+    values.value = null;
+    displayDoc.value = null;
+    return;
+  }
+
+  const schemaName = doc.value?.type;
+  if (!schemaName) {
+    return;
+  }
+
+  const dispDoc = await getDocFromNameIfExistsElseNew(schemaName, value);
+  hints.value = getPrintTemplatePropHints(schemaName, fyo);
+  values.value = await getPrintTemplatePropValues(dispDoc);
+  displayDoc.value = dispDoc;
+};
+
+const setDisplayInitialDoc = async () => {
+  const schemaName = doc.value?.type;
+  if (!schemaName || displayDoc.value?.schemaName === schemaName) {
+    return;
+  }
+
+  const names = (await fyo.db.getAll(schemaName, {
+    limit: 1,
+    order: 'desc',
+    orderBy: 'created',
+    filters: { cancelled: false },
+  })) as { name: string }[];
+
+  const valName = names[0]?.name;
+  if (!valName) {
+    const label = fyo.schemaMap[schemaName]?.label ?? schemaName;
+    await showDialog({
+      title: t`No Display Entries Found`,
+      detail: t`Please create a ${label} entry to view Template Preview.`,
+      type: 'warning',
+    });
+
+    return;
+  }
+
+  await setDisplayDoc(valName);
+};
+
+const setDoc = async () => {
+  if (doc.value) {
+    return;
+  }
+
+  doc.value = await getDocFromNameIfExistsElseNew(
+    ModelNameEnum.PrintTemplate,
+    props.name
+  );
+};
+
+const setType = async (value: unknown) => {
+  if (typeof value !== 'string') {
+    return;
+  }
+
+  await doc.value?.set('type', value);
+  await setDisplayInitialDoc();
+};
+
+const selectFile = async () => {
+  const { name: fileName, text } = await selectTextFile([
+    { name: 'Template', extensions: ['template.html', 'html'] },
+  ]);
+
+  if (!text) {
+    return;
+  }
+
+  await doc.value?.set('template', text);
+  view.value?.dispatch({
+    changes: { from: 0, to: view.value.state.doc.length, insert: text },
+  });
+
+  if (doc.value?.inserted) {
+    return;
+  }
+
+  let nameVal: string | null = null;
+  if (fileName.endsWith('.template.html')) {
+    nameVal = fileName.split('.template.html')[0];
+  }
+
+  if (!nameVal && fileName.endsWith('.html')) {
+    nameVal = fileName.split('.html')[0];
+  }
+
+  if (!nameVal) {
+    return;
+  }
+
+  await doc.value?.set('name', nameVal);
+};
+
+const saveFile = async () => {
+  const nameVal = doc.value?.name;
+  const templateVal = getTemplateEditorState();
+
+  if (!nameVal) {
+    return showToast({
+      type: 'warning',
+      message: t`Print Template Name not set`,
+    });
+  }
+
+  if (!templateVal) {
+    return showToast({
+      type: 'warning',
+      message: t`Print Template is empty`,
+    });
+  }
+
+  const { canceled, filePath } = await getSavePath(nameVal, 'template.html');
+  if (canceled || !filePath) {
+    return;
+  }
+
+  await saveExportData(templateVal, filePath, t`Template file saved`);
+};
+
+const sync = async () => {
+  const activeDoc = doc.value;
+  if (!activeDoc) {
+    return;
+  }
+
+  try {
+    await activeDoc.sync();
+  } catch (errorVal) {
+    await handleErrorWithDialog(errorVal, activeDoc as any);
+  }
+};
+
+const initialize = async () => {
+  await setDoc();
+  if (doc.value?.type) {
+    hints.value = getPrintTemplatePropHints(doc.value.type, fyo);
+  }
+
+  focusOrSelectFormControl(doc.value as any, nameField.value, false);
+
+  if (!doc.value?.template) {
+    await doc.value?.set('template', baseTemplate);
+  }
+
+  await setDisplayInitialDoc();
+};
+
+const reset = () => {
+  doc.value = null;
+  displayDoc.value = null;
+};
+
+const actions = computed(() => {
+  if (!doc.value) {
+    return [];
+  }
+
+  const acts = getActionsForDoc(doc.value as any);
+  acts.push({
+    label: t`Print Settings`,
+    group: t`View`,
+    action: async () => {
+      await openSettings(ModelNameEnum.PrintSettings);
+    },
+  });
+
+  if (doc.value.isCustom && !showTypeModal.value) {
+    acts.push({
+      label: t`Set Template Type`,
+      group: t`Action`,
+      action: () => (showTypeModal.value = true),
+    });
+  }
+
+  if (doc.value.isCustom && !showSizeModal.value) {
+    acts.push({
+      label: t`Set Print Size`,
+      group: t`Action`,
+      action: () => (showSizeModal.value = true),
+    });
+  }
+
+  if (doc.value.isCustom) {
+    acts.push({
+      label: t`Select Template File`,
+      group: t`Action`,
+      action: selectFile,
+    });
+  }
+
+  acts.push({
+    label: t`Save Template File`,
+    group: t`Action`,
+    action: saveFile,
+  });
+
+  return acts;
+});
+
+const setShortcuts = () => {
+  if (!shortcuts) {
+    return;
+  }
+
+  shortcuts.ctrl.set(context, ['Enter'], () => setTemplate());
+  shortcuts.ctrl.set(context, ['KeyE'], () => toggleEditMode());
+  shortcuts.ctrl.set(context, ['KeyH'], () => toggleShowHints());
+  shortcuts.ctrl.set(context, ['Equal'], () => setScale(scale.value + 0.1));
+  shortcuts.ctrl.set(context, ['Minus'], () => setScale(scale.value - 0.1));
+};
+
+// Lifecycles
+onMounted(async () => {
+  await initialize();
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.tb = {
       doc,
       context,
-      shortcuts,
-      store: useAppStore(),
+      editMode,
+      showHints,
+      hints,
+      values,
+      displayDoc,
+      scale,
+      panelWidth,
+      templateChanged,
+      showTypeModal,
+      showSizeModal,
+      preEditMode,
+      initialize,
+      reset,
+      setTemplate,
+      setScale,
+      toggleShowHints,
+      toggleEditMode,
+      enableEditMode,
+      disableEditMode,
+      savePDF,
+      setDisplayDoc,
+      setDisplayInitialDoc,
+      setDoc,
+      setType,
+      selectFile,
+      saveFile,
+      sync,
+      actions,
     };
-  },
-  data() {
-    return {
-      editMode: false,
-      showHints: false,
-      hints: undefined as PrintTemplateHint | undefined,
-      values: null as PrintValues | null,
-      displayDoc: null as Doc | null,
-      scale: 0.6,
-      panelWidth: 22 /** rem */ * 16 /** px */,
-      templateChanged: false,
-      showTypeModal: false,
-      showSizeModal: false,
-      preEditMode: {
-        scale: 0.6,
-        showSidebar: true,
-        panelWidth: 22 * 16,
-      },
-    };
-  },
-  computed: {
-    canDisplayPreview(): boolean {
-      if (!this.displayDoc || !this.values) {
-        return false;
-      }
+  }
+});
 
-      if (!this.doc?.template) {
-        return false;
-      }
+onActivated(async () => {
+  await initialize();
+  store.docsPath = docsPathMap.PrintTemplate ?? '';
+  setShortcuts();
+});
 
-      return true;
-    },
-    applyChangesShortcut() {
-      return [ShortcutKey.ctrl, ShortcutKey.enter];
-    },
-    view(): EditorView | null {
-      // @ts-ignore
-      const { view } = this.$refs.templateEditor ?? {};
-      if (view instanceof EditorView) {
-        return view;
-      }
+onDeactivated(() => {
+  store.docsPath = '';
+  if (editMode.value) {
+    disableEditMode();
+  }
 
-      return null;
-    },
-    maxWidth() {
-      return window.innerWidth - 12 * 16 - 100;
-    },
-    actions() {
-      if (!this.doc) {
-        return [];
-      }
-
-      const actions = getActionsForDoc(this.doc);
-      actions.push({
-        label: this.t`Print Settings`,
-        group: this.t`View`,
-        action: async () => {
-          await openSettings(ModelNameEnum.PrintSettings);
-        },
-      });
-
-      if (this.doc.isCustom && !this.showTypeModal) {
-        actions.push({
-          label: this.t`Set Template Type`,
-          group: this.t`Action`,
-          action: () => (this.showTypeModal = true),
-        });
-      }
-
-      if (this.doc.isCustom && !this.showSizeModal) {
-        actions.push({
-          label: this.t`Set Print Size`,
-          group: this.t`Action`,
-          action: () => (this.showSizeModal = true),
-        });
-      }
-
-      if (this.doc.isCustom) {
-        actions.push({
-          label: this.t`Select Template File`,
-          group: this.t`Action`,
-          action: this.selectFile.bind(this),
-        });
-      }
-
-      actions.push({
-        label: this.t`Save Template File`,
-        group: this.t`Action`,
-        action: this.saveFile.bind(this),
-      });
-
-      return actions;
-    },
-    fields(): Record<string, Field> {
-      return getMapFromList(
-        this.fyo.schemaMap.PrintTemplate?.fields ?? [],
-        'fieldname'
-      );
-    },
-    displayDocField(): TargetField {
-      const target = this.doc?.type ?? ModelNameEnum.SalesInvoice;
-      return {
-        fieldname: 'displayDoc',
-        label: this.t`Display Doc`,
-        fieldtype: 'Link',
-        target,
-      };
-    },
-    helperMessage() {
-      if (!this.doc) {
-        return '';
-      }
-
-      if (!this.doc.type) {
-        return this.t`Select a Template type`;
-      }
-
-      if (!this.displayDoc) {
-        return this.t`Select a Display Doc to view the Template`;
-      }
-
-      if (!this.doc.template) {
-        return this.t`Set a Template value to see the Print Template`;
-      }
-
-      return '';
-    },
-    templateBuilderBodyStyles(): Record<string, string> {
-      const styles: Record<string, string> = {};
-
-      styles['grid-template-columns'] = `auto 0px ${this.panelWidth}px`;
-      styles['height'] = 'calc(100vh - var(--h-row-largest) - 1px)';
-
-      return styles;
-    },
-    templateDisplayStyles(): Record<string, string> {
-      const styles: Record<string, string> = {};
-
-      styles.height = `calc(100vh - var(--h-row-largest) - 1px - ${
-        this.store.platform == 'Windows' ? 'var(--h-row-smallest)' : '0px'
-      }`;
-      return styles;
-    },
-  },
-  async mounted() {
-    await this.initialize();
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.tb = this;
-    }
-  },
-  async activated(): Promise<void> {
-    await this.initialize();
-    this.store.docsPath = docsPathMap.PrintTemplate ?? '';
-    this.setShortcuts();
-  },
-  deactivated(): void {
-    this.store.docsPath = '';
-    if (this.editMode) {
-      this.disableEditMode();
-    }
-
-    if (this.doc?.dirty) {
-      return;
-    }
-    this.reset();
-  },
-  methods: {
-    setShortcuts() {
-      /**
-       * Node: Doc Save and Delete shortcuts are in the setup.
-       */
-      if (!this.shortcuts) {
-        return;
-      }
-
-      this.shortcuts.ctrl.set(
-        this.context,
-        ['Enter'],
-        this.setTemplate.bind(this)
-      );
-      this.shortcuts.ctrl.set(
-        this.context,
-        ['KeyE'],
-        this.toggleEditMode.bind(this)
-      );
-      this.shortcuts.ctrl.set(
-        this.context,
-        ['KeyH'],
-        this.toggleShowHints.bind(this)
-      );
-      this.shortcuts.ctrl.set(this.context, ['Equal'], () =>
-        this.setScale(this.scale + 0.1)
-      );
-      this.shortcuts.ctrl.set(this.context, ['Minus'], () =>
-        this.setScale(this.scale - 0.1)
-      );
-    },
-    async initialize() {
-      await this.setDoc();
-      if (this.doc?.type) {
-        this.hints = getPrintTemplatePropHints(this.doc.type, this.fyo);
-      }
-
-      focusOrSelectFormControl(this.doc as Doc, this.$refs.nameField, false);
-
-      if (!this.doc?.template) {
-        await this.doc?.set('template', baseTemplate);
-      }
-
-      await this.setDisplayInitialDoc();
-    },
-    reset() {
-      this.doc = null;
-      this.displayDoc = null;
-    },
-    getTemplateEditorState() {
-      const fallback = this.doc?.template ?? '';
-
-      if (!this.view) {
-        return fallback;
-      }
-
-      return this.view.state.doc.toString();
-    },
-    async setTemplate(value?: string) {
-      this.templateChanged = false;
-      if (!this.doc?.isCustom) {
-        return;
-      }
-
-      value ??= this.getTemplateEditorState();
-      await this.doc?.set('template', value);
-    },
-    setScale(e: Event | number) {
-      let value = this.scale;
-      if (typeof e === 'number') {
-        value = Number(e.toFixed(2));
-      } else if (e instanceof Event && e.target instanceof HTMLInputElement) {
-        value = Number(e.target.value);
-      }
-
-      this.scale = Math.max(Math.min(value, 10), 0.15);
-    },
-    toggleShowHints() {
-      this.showHints = !this.showHints;
-    },
-    toggleEditMode() {
-      if (!this.doc?.isCustom) {
-        return;
-      }
-
-      let message = this.t`Please set a Display Doc`;
-      if (!this.displayDoc) {
-        return showToast({ type: 'warning', message, duration: 'short' });
-      }
-
-      this.editMode = !this.editMode;
-
-      if (this.editMode) {
-        return this.enableEditMode();
-      }
-
-      this.disableEditMode();
-    },
-    enableEditMode() {
-      this.preEditMode.showSidebar = this.store.showSidebar;
-      this.preEditMode.panelWidth = this.panelWidth;
-      this.preEditMode.scale = this.scale;
-
-      this.panelWidth = Math.max(window.innerWidth / 2, this.panelWidth);
-      this.store.showSidebar = false;
-      this.scale = this.getEditModeScale();
-      this.view?.focus();
-    },
-    disableEditMode() {
-      this.store.showSidebar = this.preEditMode.showSidebar;
-      this.panelWidth = this.preEditMode.panelWidth;
-      this.scale = this.preEditMode.scale;
-    },
-    getEditModeScale(): number {
-      // @ts-ignore
-      const div = this.$refs.printContainer.$el as unknown;
-      if (!(div instanceof HTMLDivElement)) {
-        return this.scale;
-      }
-
-      const padding = 16 * 2 /** p-4 */ + 16 * 0.6; /** w-scrollbar */
-      const targetWidth = window.innerWidth / 2 - padding;
-      const currentWidth = div.getBoundingClientRect().width;
-      const targetScale = (targetWidth * this.scale) / currentWidth;
-
-      return Number(targetScale.toFixed(2));
-    },
-    savePDF(shouldPrint?: boolean) {
-      const printContainer = this.$refs.printContainer as {
-        savePDF: (name?: string, shouldPrint?: boolean) => void;
-      };
-
-      if (!printContainer?.savePDF) {
-        return;
-      }
-
-      printContainer.savePDF(this.doc?.name, shouldPrint);
-    },
-    async setDisplayInitialDoc() {
-      const schemaName = this.doc?.type;
-      if (!schemaName || this.displayDoc?.schemaName === schemaName) {
-        return;
-      }
-
-      const names = (await this.fyo.db.getAll(schemaName, {
-        limit: 1,
-        order: 'desc',
-        orderBy: 'created',
-        filters: { cancelled: false },
-      })) as { name: string }[];
-
-      const name = names[0]?.name;
-      if (!name) {
-        const label = this.fyo.schemaMap[schemaName]?.label ?? schemaName;
-        await showDialog({
-          title: this.t`No Display Entries Found`,
-          detail: this
-            .t`Please create a ${label} entry to view Template Preview.`,
-          type: 'warning',
-        });
-
-        return;
-      }
-
-      await this.setDisplayDoc(name);
-    },
-    async sync() {
-      const doc = this.doc;
-      if (!doc) {
-        return;
-      }
-
-      try {
-        await doc.sync();
-      } catch (error) {
-        await handleErrorWithDialog(error, doc);
-      }
-    },
-    async setDoc() {
-      if (this.doc) {
-        return;
-      }
-
-      this.doc = await getDocFromNameIfExistsElseNew(
-        ModelNameEnum.PrintTemplate,
-        this.name
-      );
-    },
-    async setType(value: unknown) {
-      if (typeof value !== 'string') {
-        return;
-      }
-
-      await this.doc?.set('type', value);
-      await this.setDisplayInitialDoc();
-    },
-    async setDisplayDoc(value: string) {
-      if (!value) {
-        delete this.hints;
-        this.values = null;
-        this.displayDoc = null;
-        return;
-      }
-
-      const schemaName = this.doc?.type;
-      if (!schemaName) {
-        return;
-      }
-
-      const displayDoc = await getDocFromNameIfExistsElseNew(schemaName, value);
-      this.hints = getPrintTemplatePropHints(schemaName, this.fyo);
-      this.values = await getPrintTemplatePropValues(displayDoc);
-      this.displayDoc = displayDoc;
-    },
-    async selectFile() {
-      const { name: fileName, text } = await selectTextFile([
-        { name: 'Template', extensions: ['template.html', 'html'] },
-      ]);
-
-      if (!text) {
-        return;
-      }
-
-      await this.doc?.set('template', text);
-      this.view?.dispatch({
-        changes: { from: 0, to: this.view.state.doc.length, insert: text },
-      });
-
-      if (this.doc?.inserted) {
-        return;
-      }
-
-      let name: string | null = null;
-      if (fileName.endsWith('.template.html')) {
-        name = fileName.split('.template.html')[0];
-      }
-
-      if (!name && fileName.endsWith('.html')) {
-        name = fileName.split('.html')[0];
-      }
-
-      if (!name) {
-        return;
-      }
-
-      await this.doc?.set('name', name);
-    },
-    async saveFile() {
-      const name = this.doc?.name;
-      const template = this.getTemplateEditorState();
-
-      if (!name) {
-        return showToast({
-          type: 'warning',
-          message: this.t`Print Template Name not set`,
-        });
-      }
-
-      if (!template) {
-        return showToast({
-          type: 'warning',
-          message: this.t`Print Template is empty`,
-        });
-      }
-
-      const { canceled, filePath } = await getSavePath(name, 'template.html');
-      if (canceled || !filePath) {
-        return;
-      }
-
-      await saveExportData(template, filePath, this.t`Template file saved`);
-    },
-  },
+  if (doc.value?.dirty) {
+    return;
+  }
+  reset();
 });
 </script>
 

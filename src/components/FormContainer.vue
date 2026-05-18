@@ -33,17 +33,23 @@
     <slot name="quickedit" />
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+
+<script setup lang="ts">
 import PageHeader from './PageHeader.vue';
 
-export default defineComponent({
-  components: { PageHeader },
-  props: {
-    title: { type: String, default: '' },
-    useFullWidth: { type: Boolean, default: false },
-    showHeader: { type: Boolean, default: true },
-    searchborder: { type: Boolean, default: true },
-  },
-});
+// Define Props directly without variable assignment (prevent TS6133)
+withDefaults(
+  defineProps<{
+    title?: string;
+    useFullWidth?: boolean;
+    showHeader?: boolean;
+    searchborder?: boolean;
+  }>(),
+  {
+    title: '',
+    useFullWidth: false,
+    showHeader: true,
+    searchborder: true,
+  }
+);
 </script>

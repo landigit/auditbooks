@@ -71,7 +71,9 @@
     />
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, inject, provide, onActivated, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { DocValue } from 'fyo/core/types';
 import { Field, Schema } from 'schemas/types';
 import Button from 'src/components/Button.vue';
@@ -88,161 +90,183 @@ import {
 } from 'src/utils/ui';
 import { useDocShortcuts } from 'src/utils/vueUtils';
 import { useAppStore } from 'src/stores/app';
-import { computed, defineComponent, inject, ref } from 'vue';
 
-export default defineComponent({
-  name: 'QuickEditForm',
-  components: {
-    Button,
-    FormControl,
-    TwoColumnForm,
-    AttachImage,
-  },
-  provide() {
-    return {
-      doc: computed(() => this.doc),
-    };
-  },
-  props: {
-    name: { type: String, required: true },
-    schemaName: { type: String, required: true },
-    hideFields: { type: Array, default: () => [] },
-    showFields: { type: Array, default: () => [] },
-  },
-  emits: ['close'],
-  setup() {
-    const doc = ref(null) as DocRef;
-    const shortcuts = inject(shortcutsKey);
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    name: string;
+    schemaName: string;
+    hideFields?: string[];
+    showFields?: string[];
+  }>(),
+  {
+    hideFields: () => [],
+    showFields: () => [],
+  }
+);
 
-    let context = 'QuickEditForm';
-    if (shortcuts) {
-      context = useDocShortcuts(shortcuts, doc, context, true);
-    }
+// Define Emits
+defineEmits<{
+  (e: 'close'): void;
+}>();
 
-    return {
-      form: ref<InstanceType<typeof TwoColumnForm> | null>(null),
+// State definition
+const doc = ref(null) as DocRef;
+const titleField = ref<Field | null>(null);
+const imageField = ref<Field | null>(null);
+
+// Template Refs
+const form = ref<InstanceType<typeof TwoColumnForm> | null>(null);
+const titleControl = ref<InstanceType<typeof FormControl> | null>(null);
+
+// Stores & Router
+const store = useAppStore();
+const router = useRouter();
+
+// Provide document context to child elements
+provide(
+  'doc',
+  computed(() => doc.value)
+);
+
+// Shortcuts Injection
+const shortcuts = inject(shortcutsKey);
+let context = 'QuickEditForm';
+if (shortcuts) {
+  context = useDocShortcuts(shortcuts, doc, context, true);
+}
+
+// Computed Properties
+const letterPlaceHolder = computed(() => {
+  if (!doc.value) {
+    return '';
+  }
+
+  const fn = titleField.value?.fieldname ?? 'name';
+  const value = doc.value.get(fn);
+  if (typeof value === 'string') {
+    return value[0];
+  }
+
+  return '';
+});
+
+const schema = computed<Schema>(() => {
+  return fyo.schemaMap[props.schemaName]!;
+});
+
+const fields = computed(() => {
+  if (!schema.value) {
+    return [];
+  }
+
+  const fieldnames = (schema.value.quickEditFields ?? ['name']).filter(
+    (f) => !props.hideFields.includes(f)
+  );
+
+  if (props.showFields?.length) {
+    fieldnames.push(
+      ...schema.value.fields
+        .map((f) => f.fieldname)
+        .filter((f) => props.showFields.includes(f))
+    );
+  }
+
+  return fieldnames.map((f) => fyo.getField(props.schemaName, f));
+});
+
+// Methods
+const setShortcuts = () => {
+  shortcuts?.set(context, ['Escape'], async () => {
+    await routeToPrevious();
+  });
+};
+
+const setFields = () => {
+  const titleFieldName = schema.value.titleField ?? 'name';
+  titleField.value = fyo.getField(props.schemaName, titleFieldName) ?? null;
+  imageField.value = fyo.getField(props.schemaName, 'image') ?? null;
+};
+
+const setDoc = async () => {
+  try {
+    doc.value = await fyo.doc.getDoc(props.schemaName, props.name);
+  } catch (e) {
+    router.back();
+  }
+};
+
+const focusTitle = () => {
+  if (doc.value && titleControl.value) {
+    focusOrSelectFormControl(doc.value, titleControl.value, false);
+  }
+};
+
+const initialize = async () => {
+  if (!schema.value) {
+    return;
+  }
+
+  setFields();
+  await setDoc();
+  if (!doc.value) {
+    return;
+  }
+
+  focusTitle();
+};
+
+const valueChange = (field: Field, value: DocValue) => {
+  form.value?.onChange(field, value);
+};
+
+const sync = async () => {
+  if (!doc.value) {
+    return;
+  }
+
+  await commonDocSync(doc.value);
+};
+
+const submit = async () => {
+  if (!doc.value) {
+    return;
+  }
+
+  await commonDocSubmit(doc.value);
+};
+
+const routeToPrevious = async () => {
+  if (doc.value?.dirty && doc.value?.inserted) {
+    await doc.value.load();
+  }
+
+  if (doc.value && doc.value.notInserted) {
+    await doc.value.delete();
+  }
+
+  router.back();
+};
+
+// Lifecycles
+onActivated(() => {
+  setShortcuts();
+});
+
+onMounted(async () => {
+  await initialize();
+
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.qef = {
       doc,
-      context,
-      shortcuts,
-      store: useAppStore(),
+      titleField,
+      imageField,
+      fields,
+      schema,
     };
-  },
-  data() {
-    return {
-      titleField: null as Field | null,
-      imageField: null as Field | null,
-    };
-  },
-  computed: {
-    letterPlaceHolder() {
-      if (!this.doc) {
-        return '';
-      }
+  }
 
-      const fn = this.titleField?.fieldname ?? 'name';
-      const value = this.doc.get(fn);
-      if (typeof value === 'string') {
-        return value[0];
-      }
-
-      return '';
-    },
-    schema(): Schema {
-      return fyo.schemaMap[this.schemaName]!;
-    },
-    fields() {
-      if (!this.schema) {
-        return [];
-      }
-
-      const fieldnames = (this.schema.quickEditFields ?? ['name']).filter(
-        (f) => !this.hideFields.includes(f)
-      );
-
-      if (this.showFields?.length) {
-        fieldnames.push(
-          ...this.schema.fields
-            .map((f) => f.fieldname)
-            .filter((f) => this.showFields.includes(f))
-        );
-      }
-
-      return fieldnames.map((f) => fyo.getField(this.schemaName, f));
-    },
-  },
-  activated() {
-    this.setShortcuts();
-  },
-
-  async mounted() {
-    await this.initialize();
-
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.qef = this;
-    }
-
-    this.setShortcuts();
-  },
-  methods: {
-    setShortcuts() {
-      this.shortcuts?.set(this.context, ['Escape'], async () => {
-        await this.routeToPrevious();
-      });
-    },
-    async initialize() {
-      if (!this.schema) {
-        return;
-      }
-
-      this.setFields();
-      await this.setDoc();
-      if (!this.doc) {
-        return;
-      }
-
-      focusOrSelectFormControl(this.doc, this.$refs.titleControl, false);
-    },
-    setFields() {
-      const titleFieldName = this.schema.titleField ?? 'name';
-      this.titleField = fyo.getField(this.schemaName, titleFieldName) ?? null;
-      this.imageField = fyo.getField(this.schemaName, 'image') ?? null;
-    },
-    async setDoc() {
-      try {
-        this.doc = await fyo.doc.getDoc(this.schemaName, this.name);
-      } catch (e) {
-        return this.$router.back();
-      }
-    },
-    valueChange(field: Field, value: DocValue) {
-      this.form?.onChange(field, value);
-    },
-    async sync() {
-      if (!this.doc) {
-        return;
-      }
-
-      await commonDocSync(this.doc);
-    },
-    async submit() {
-      if (!this.doc) {
-        return;
-      }
-
-      await commonDocSubmit(this.doc);
-    },
-    async routeToPrevious() {
-      if (this.doc?.dirty && this.doc?.inserted) {
-        await this.doc.load();
-      }
-
-      if (this.doc && this.doc.notInserted) {
-        await this.doc.delete();
-      }
-
-      this.$router.back();
-    },
-  },
+  setShortcuts();
 });
 </script>

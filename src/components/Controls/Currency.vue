@@ -5,7 +5,7 @@
     </div>
     <input
       v-show="showInput"
-      ref="input"
+      ref="inputEl"
       class="text-end"
       :class="[inputClasses, containerClasses]"
       :type="inputType"
@@ -29,85 +29,132 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, nextTick, onMounted } from 'vue';
 import { isPesa } from 'fyo/utils';
 import { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
 import { safeParsePesa } from 'utils/index';
-import { defineComponent, nextTick } from 'vue';
-import Float from './Float.vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 
-export default defineComponent({
-  name: 'Currency',
-  extends: Float,
-  emits: ['input', 'focus'],
-  data() {
-    return {
-      showInput: false,
-      currencySymbol: '',
-    };
-  },
-  props: {
-    focusInput: Boolean,
-  },
-  created() {
-    if (this.focusInput) {
-      this.showInput = true;
-      nextTick(() => {
-        this.focus();
-      });
-    }
-  },
-  computed: {
-    formattedValue() {
-      const value = this.parse(this.value);
-      return fyo.format(value, this.df, this.doc);
-    },
-  },
-  methods: {
-    onFocus(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
+interface CurrencyProps extends BaseControlProps {
+  focusInput?: boolean;
+}
 
-      target.select();
-      this.showInput = true;
-      this.$emit('focus', e);
-    },
-    round(v: unknown) {
-      if (!isPesa(v)) {
-        v = this.parse(v);
-      }
+const props = withDefaults(defineProps<CurrencyProps>(), {
+  focusInput: false,
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
 
-      if (isPesa(v)) {
-        return v.round();
-      }
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
 
-      return fyo.pesa(0).round();
-    },
-    parse(value: unknown): Money {
-      return safeParsePesa(value, this.fyo);
-    },
-    onBlur(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
+const showInput = ref(false);
+const currencySymbol = ref('');
+const inputEl = ref<HTMLInputElement | null>(null);
 
-      this.showInput = false;
-      this.triggerChange(target.value);
-    },
-    activateInput() {
-      if (this.isReadOnly) {
-        return;
-      }
+const {
+  doc,
+  labelClasses,
+  inputClasses,
+  containerClasses,
+  isReadOnly,
+  inputPlaceholder,
+  triggerChange,
+  focus
+} = useBaseControl(props, emit, inputEl);
 
-      this.showInput = true;
-      nextTick(() => {
-        this.focus();
-      });
-    },
-  },
+// Since Float/Int overridden inputType, for Currency we want number
+const inputType = computed(() => 'number');
+
+onMounted(() => {
+  if (props.focusInput) {
+    showInput.value = true;
+    nextTick(() => {
+      focus();
+    });
+  }
+});
+
+const formattedValue = computed(() => {
+  const parsedVal = parse(props.value);
+  return fyo.format(parsedVal, props.df, doc.value);
+});
+
+const onFocus = (e: FocusEvent) => {
+  const target = e.target;
+  if (!(target instanceof HTMLInputElement)) {
+    return;
+  }
+
+  target.select();
+  showInput.value = true;
+  emit('focus', e);
+};
+
+const round = (v: unknown) => {
+  if (!isPesa(v)) {
+    v = parse(v);
+  }
+
+  if (isPesa(v)) {
+    return v.round();
+  }
+
+  return fyo.pesa(0).round();
+};
+
+const parse = (value: unknown): Money => {
+  return safeParsePesa(value, fyo);
+};
+
+const onBlur = (e: FocusEvent) => {
+  const target = e.target;
+  if (!(target instanceof HTMLInputElement)) {
+    return;
+  }
+
+  showInput.value = false;
+  triggerChange(target.value);
+};
+
+const activateInput = () => {
+  if (isReadOnly.value) {
+    return;
+  }
+
+  showInput.value = true;
+  nextTick(() => {
+    focus();
+  });
+};
+
+defineExpose({
+  showInput,
+  currencySymbol,
+  inputEl,
+  formattedValue,
+  onFocus,
+  round,
+  parse,
+  onBlur,
+  activateInput,
+  focus,
+  isReadOnly,
+  containerClasses,
+  inputClasses,
+  labelClasses,
+  inputPlaceholder,
 });
 </script>

@@ -3,49 +3,42 @@
     <slot></slot>
   </div>
 </template>
-<script>
-export default {
-  name: 'Row',
-  props: {
-    columnWidth: {
-      type: String,
-      default: '1fr',
-    },
-    columnCount: {
-      type: Number,
-      default: 0,
-    },
-    ratio: {
-      type: Array,
-      default: () => [],
-    },
-    gridTemplateColumns: {
-      type: String,
-      default: null,
-    },
-    gap: String,
-  },
-  computed: {
-    style() {
-      let obj = {};
-      if (this.columnCount) {
-        // prettier-ignore
-        obj['grid-template-columns'] = `repeat(${this.columnCount}, ${this.columnWidth})`;
-      }
-      if (this.ratio.length) {
-        obj['grid-template-columns'] = this.ratio
-          .map((r) => `minmax(0, ${r}fr)`)
-          .join(' ');
-      }
-      if (this.gridTemplateColumns) {
-        obj['grid-template-columns'] = this.gridTemplateColumns;
-      }
-      if (this.gap) {
-        obj['grid-gap'] = this.gap;
-      }
 
-      return obj;
-    },
-  },
-};
+<script setup lang="ts">
+import { computed } from 'vue';
+
+interface RowProps {
+  columnWidth?: string;
+  columnCount?: number;
+  ratio?: any[];
+  gridTemplateColumns?: string | null;
+  gap?: string;
+}
+
+const props = withDefaults(defineProps<RowProps>(), {
+  columnWidth: '1fr',
+  columnCount: 0,
+  ratio: () => [],
+  gridTemplateColumns: null,
+});
+
+const style = computed(() => {
+  const obj: Record<string, string> = {};
+  if (props.columnCount) {
+    obj['grid-template-columns'] = `repeat(${props.columnCount}, ${props.columnWidth})`;
+  }
+  if (props.ratio.length) {
+    obj['grid-template-columns'] = props.ratio
+      .map((r) => `minmax(0, ${r}fr)`)
+      .join(' ');
+  }
+  if (props.gridTemplateColumns) {
+    obj['grid-template-columns'] = props.gridTemplateColumns;
+  }
+  if (props.gap) {
+    obj['grid-gap'] = props.gap;
+  }
+
+  return obj;
+});
 </script>

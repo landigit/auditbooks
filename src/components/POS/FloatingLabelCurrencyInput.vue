@@ -1,11 +1,12 @@
 <template>
   <div class="relative">
     <input
+      ref="inputRef"
       :type="inputType"
       :class="[inputClasses, size === 'large' ? 'text-lg' : 'text-sm']"
       :value="round(value)"
-      :max="isNumeric(df) ? df.maxvalue : undefined"
-      :min="isNumeric(df) ? df.minvalue : undefined"
+      :max="isNumeric(df) ? (df as any).maxvalue : undefined"
+      :min="isNumeric(df) ? (df as any).minvalue : undefined"
       :readonly="isReadOnly"
       :tabindex="isReadOnly ? '-1' : '0'"
       @blur="onBlur"
@@ -26,39 +27,65 @@
   </div>
 </template>
 
-<script lang="ts">
-import FloatingLabelInputBase from './FloatingLabelInputBase.vue';
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 import { safeParsePesa } from 'utils/index';
 import { isPesa } from 'fyo/utils';
 import { fyo } from 'src/initFyo';
-import { defineComponent } from 'vue';
 import { Money } from 'pesa';
 
-export default defineComponent({
-  name: 'FloatingLabelCurrencyInput',
-  extends: FloatingLabelInputBase,
-  computed: {
-    currency(): string | undefined {
-      if (this.value) {
-        return (this.value as Money).getCurrency();
-      }
-    },
-  },
-  methods: {
-    round(v: unknown) {
-      if (!isPesa(v)) {
-        v = this.parse(v);
-      }
+const props = withDefaults(defineProps<BaseControlProps>(), {
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
 
-      if (isPesa(v)) {
-        return v.round();
-      }
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
 
-      return fyo.pesa(0).round();
-    },
-    parse(value: unknown): Money {
-      return safeParsePesa(value, this.fyo);
-    },
-  },
+const inputRef = ref<HTMLInputElement | null>(null);
+
+const parse = (value: unknown): Money => {
+  return safeParsePesa(value, fyo);
+};
+
+const {
+  inputType,
+  inputClasses,
+  isReadOnly,
+  onBlur,
+  isNumeric,
+  focus
+} = useBaseControl(props as any, emit, inputRef);
+
+const currency = computed<string | undefined>(() => {
+  if (props.value) {
+    return (props.value as Money).getCurrency();
+  }
+});
+
+const round = (v: unknown) => {
+  if (!isPesa(v)) {
+    v = parse(v);
+  }
+
+  if (isPesa(v)) {
+    return v.round();
+  }
+
+  return fyo.pesa(0).round();
+};
+
+defineExpose({
+  focus
 });
 </script>

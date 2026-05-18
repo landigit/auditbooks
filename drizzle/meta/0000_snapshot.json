@@ -514,12 +514,8 @@
           "name": "Account_parentAccount_Account_name_fk",
           "tableFrom": "Account",
           "tableTo": "Account",
-          "columnsFrom": [
-            "parentAccount"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["parentAccount"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -637,12 +633,8 @@
           "name": "AccountingLedgerEntry_reverts_AccountingLedgerEntry_name_fk",
           "tableFrom": "AccountingLedgerEntry",
           "tableTo": "AccountingLedgerEntry",
-          "columnsFrom": [
-            "reverts"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["reverts"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -650,12 +642,8 @@
           "name": "AccountingLedgerEntry_account_Account_name_fk",
           "tableFrom": "AccountingLedgerEntry",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -663,12 +651,8 @@
           "name": "AccountingLedgerEntry_party_Party_name_fk",
           "tableFrom": "AccountingLedgerEntry",
           "tableTo": "Party",
-          "columnsFrom": [
-            "party"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["party"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -751,12 +735,8 @@
           "name": "Lead_address_Address_name_fk",
           "tableFrom": "Lead",
           "tableTo": "Address",
-          "columnsFrom": [
-            "address"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["address"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -953,12 +933,8 @@
           "name": "ItemGroup_tax_Tax_name_fk",
           "tableFrom": "ItemGroup",
           "tableTo": "Tax",
-          "columnsFrom": [
-            "tax"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["tax"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1080,12 +1056,8 @@
           "name": "UOMConversionItem_uom_UOM_name_fk",
           "tableFrom": "UOMConversionItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "uom"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["uom"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1200,12 +1172,8 @@
           "name": "LoyaltyProgram_expenseAccount_Account_name_fk",
           "tableFrom": "LoyaltyProgram",
           "tableTo": "Account",
-          "columnsFrom": [
-            "expenseAccount"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["expenseAccount"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1315,12 +1283,8 @@
           "name": "LoyaltyPointEntry_invoice_SalesInvoice_name_fk",
           "tableFrom": "LoyaltyPointEntry",
           "tableTo": "SalesInvoice",
-          "columnsFrom": [
-            "invoice"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["invoice"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -1328,12 +1292,8 @@
           "name": "LoyaltyPointEntry_customer_Party_name_fk",
           "tableFrom": "LoyaltyPointEntry",
           "tableTo": "Party",
-          "columnsFrom": [
-            "customer"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["customer"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1567,12 +1527,8 @@
           "name": "Payment_paymentMethod_PaymentMethod_name_fk",
           "tableFrom": "Payment",
           "tableTo": "PaymentMethod",
-          "columnsFrom": [
-            "paymentMethod"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["paymentMethod"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -1580,12 +1536,8 @@
           "name": "Payment_paymentAccount_Account_name_fk",
           "tableFrom": "Payment",
           "tableTo": "Account",
-          "columnsFrom": [
-            "paymentAccount"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["paymentAccount"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -1593,12 +1545,8 @@
           "name": "Payment_account_Account_name_fk",
           "tableFrom": "Payment",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -1606,12 +1554,8 @@
           "name": "Payment_party_Party_name_fk",
           "tableFrom": "Payment",
           "tableTo": "Party",
-          "columnsFrom": [
-            "party"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["party"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -1619,12 +1563,8 @@
           "name": "Payment_numberSeries_NumberSeries_name_fk",
           "tableFrom": "Payment",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1692,12 +1632,8 @@
           "name": "PaymentMethod_account_Account_name_fk",
           "tableFrom": "PaymentMethod",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1881,12 +1817,8 @@
           "name": "JournalEntry_numberSeries_NumberSeries_name_fk",
           "tableFrom": "JournalEntry",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1961,12 +1893,8 @@
           "name": "JournalEntryAccount_account_Account_name_fk",
           "tableFrom": "JournalEntryAccount",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -2166,12 +2094,8 @@
           "name": "CouponCode_pricingRule_PricingRule_name_fk",
           "tableFrom": "CouponCode",
           "tableTo": "PricingRule",
-          "columnsFrom": [
-            "pricingRule"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["pricingRule"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -2232,12 +2156,8 @@
           "name": "AppliedCouponCodes_coupons_CouponCode_name_fk",
           "tableFrom": "AppliedCouponCodes",
           "tableTo": "CouponCode",
-          "columnsFrom": [
-            "coupons"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["coupons"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -2381,12 +2301,8 @@
           "name": "PriceListItem_unit_UOM_name_fk",
           "tableFrom": "PriceListItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -2394,12 +2310,8 @@
           "name": "PriceListItem_item_Item_name_fk",
           "tableFrom": "PriceListItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -2620,12 +2532,8 @@
           "name": "PricingRule_freeItemUnit_UOM_name_fk",
           "tableFrom": "PricingRule",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "freeItemUnit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["freeItemUnit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -2633,12 +2541,8 @@
           "name": "PricingRule_freeItem_Item_name_fk",
           "tableFrom": "PricingRule",
           "tableTo": "Item",
-          "columnsFrom": [
-            "freeItem"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["freeItem"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -2646,12 +2550,8 @@
           "name": "PricingRule_numberSeries_NumberSeries_name_fk",
           "tableFrom": "PricingRule",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -2719,12 +2619,8 @@
           "name": "PricingRuleItem_unit_UOM_name_fk",
           "tableFrom": "PricingRuleItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -2732,12 +2628,8 @@
           "name": "PricingRuleItem_item_Item_name_fk",
           "tableFrom": "PricingRuleItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -2805,12 +2697,8 @@
           "name": "PricingRuleDetail_referenceItem_Item_name_fk",
           "tableFrom": "PricingRuleDetail",
           "tableTo": "Item",
-          "columnsFrom": [
-            "referenceItem"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["referenceItem"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -2818,12 +2706,8 @@
           "name": "PricingRuleDetail_referenceName_PricingRule_name_fk",
           "tableFrom": "PricingRuleDetail",
           "tableTo": "PricingRule",
-          "columnsFrom": [
-            "referenceName"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["referenceName"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -2943,12 +2827,8 @@
           "name": "TaxDetail_payment_account_Account_name_fk",
           "tableFrom": "TaxDetail",
           "tableTo": "Account",
-          "columnsFrom": [
-            "payment_account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["payment_account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -2956,12 +2836,8 @@
           "name": "TaxDetail_account_Account_name_fk",
           "tableFrom": "TaxDetail",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -3043,12 +2919,8 @@
           "name": "TaxSummary_from_account_Account_name_fk",
           "tableFrom": "TaxSummary",
           "tableTo": "Account",
-          "columnsFrom": [
-            "from_account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["from_account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3056,12 +2928,8 @@
           "name": "TaxSummary_account_Account_name_fk",
           "tableFrom": "TaxSummary",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -3122,12 +2990,8 @@
           "name": "Location_address_Address_name_fk",
           "tableFrom": "Location",
           "tableTo": "Address",
-          "columnsFrom": [
-            "address"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["address"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -3244,12 +3108,8 @@
           "name": "StockLedgerEntry_item_Item_name_fk",
           "tableFrom": "StockLedgerEntry",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3257,12 +3117,8 @@
           "name": "StockLedgerEntry_serialNumber_SerialNumber_name_fk",
           "tableFrom": "StockLedgerEntry",
           "tableTo": "SerialNumber",
-          "columnsFrom": [
-            "serialNumber"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["serialNumber"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3270,12 +3126,8 @@
           "name": "StockLedgerEntry_batch_Batch_name_fk",
           "tableFrom": "StockLedgerEntry",
           "tableTo": "Batch",
-          "columnsFrom": [
-            "batch"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["batch"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3283,12 +3135,8 @@
           "name": "StockLedgerEntry_location_Location_name_fk",
           "tableFrom": "StockLedgerEntry",
           "tableTo": "Location",
-          "columnsFrom": [
-            "location"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["location"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -3385,12 +3233,8 @@
           "name": "StockMovement_numberSeries_NumberSeries_name_fk",
           "tableFrom": "StockMovement",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -3533,12 +3377,8 @@
           "name": "StockMovementItem_batch_Batch_name_fk",
           "tableFrom": "StockMovementItem",
           "tableTo": "Batch",
-          "columnsFrom": [
-            "batch"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["batch"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3546,12 +3386,8 @@
           "name": "StockMovementItem_unit_UOM_name_fk",
           "tableFrom": "StockMovementItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3559,12 +3395,8 @@
           "name": "StockMovementItem_transferUnit_UOM_name_fk",
           "tableFrom": "StockMovementItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "transferUnit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["transferUnit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3572,12 +3404,8 @@
           "name": "StockMovementItem_toLocation_Location_name_fk",
           "tableFrom": "StockMovementItem",
           "tableTo": "Location",
-          "columnsFrom": [
-            "toLocation"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["toLocation"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3585,12 +3413,8 @@
           "name": "StockMovementItem_fromLocation_Location_name_fk",
           "tableFrom": "StockMovementItem",
           "tableTo": "Location",
-          "columnsFrom": [
-            "fromLocation"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["fromLocation"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -3598,12 +3422,8 @@
           "name": "StockMovementItem_item_Item_name_fk",
           "tableFrom": "StockMovementItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -3678,12 +3498,8 @@
           "name": "Batch_item_Item_name_fk",
           "tableFrom": "Batch",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -3759,12 +3575,8 @@
           "name": "SerialNumber_item_Item_name_fk",
           "tableFrom": "SerialNumber",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -4115,12 +3927,8 @@
           "name": "POSProfile_posPrintTemplate_PrintTemplate_name_fk",
           "tableFrom": "POSProfile",
           "tableTo": "PrintTemplate",
-          "columnsFrom": [
-            "posPrintTemplate"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["posPrintTemplate"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4128,12 +3936,8 @@
           "name": "POSProfile_inventory_Location_name_fk",
           "tableFrom": "POSProfile",
           "tableTo": "Location",
-          "columnsFrom": [
-            "inventory"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["inventory"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4141,12 +3945,8 @@
           "name": "POSProfile_posCustomer_Party_name_fk",
           "tableFrom": "POSProfile",
           "tableTo": "Party",
-          "columnsFrom": [
-            "posCustomer"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["posCustomer"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -4266,12 +4066,8 @@
           "name": "POSClosingShift_openingShift_POSOpeningShift_name_fk",
           "tableFrom": "POSClosingShift",
           "tableTo": "POSOpeningShift",
-          "columnsFrom": [
-            "openingShift"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["openingShift"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -4767,12 +4563,8 @@
           "name": "SalesInvoice_loyaltyProgram_LoyaltyProgram_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "LoyaltyProgram",
-          "columnsFrom": [
-            "loyaltyProgram"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["loyaltyProgram"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4780,12 +4572,8 @@
           "name": "SalesInvoice_quote_SalesQuote_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "SalesQuote",
-          "columnsFrom": [
-            "quote"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["quote"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4793,12 +4581,8 @@
           "name": "SalesInvoice_returnAgainst_SalesInvoice_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "SalesInvoice",
-          "columnsFrom": [
-            "returnAgainst"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["returnAgainst"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4806,12 +4590,8 @@
           "name": "SalesInvoice_backReference_Shipment_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "Shipment",
-          "columnsFrom": [
-            "backReference"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["backReference"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4819,12 +4599,8 @@
           "name": "SalesInvoice_currency_Currency_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "Currency",
-          "columnsFrom": [
-            "currency"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["currency"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4832,12 +4608,8 @@
           "name": "SalesInvoice_priceList_PriceList_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "PriceList",
-          "columnsFrom": [
-            "priceList"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["priceList"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4845,12 +4617,8 @@
           "name": "SalesInvoice_account_Account_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4858,12 +4626,8 @@
           "name": "SalesInvoice_party_Party_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "Party",
-          "columnsFrom": [
-            "party"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["party"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -4871,12 +4635,8 @@
           "name": "SalesInvoice_numberSeries_NumberSeries_name_fk",
           "tableFrom": "SalesInvoice",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -5136,12 +4896,8 @@
           "name": "PurchaseInvoice_returnAgainst_PurchaseInvoice_name_fk",
           "tableFrom": "PurchaseInvoice",
           "tableTo": "PurchaseInvoice",
-          "columnsFrom": [
-            "returnAgainst"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["returnAgainst"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5149,12 +4905,8 @@
           "name": "PurchaseInvoice_backReference_PurchaseReceipt_name_fk",
           "tableFrom": "PurchaseInvoice",
           "tableTo": "PurchaseReceipt",
-          "columnsFrom": [
-            "backReference"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["backReference"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5162,12 +4914,8 @@
           "name": "PurchaseInvoice_currency_Currency_name_fk",
           "tableFrom": "PurchaseInvoice",
           "tableTo": "Currency",
-          "columnsFrom": [
-            "currency"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["currency"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5175,12 +4923,8 @@
           "name": "PurchaseInvoice_priceList_PriceList_name_fk",
           "tableFrom": "PurchaseInvoice",
           "tableTo": "PriceList",
-          "columnsFrom": [
-            "priceList"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["priceList"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5188,12 +4932,8 @@
           "name": "PurchaseInvoice_account_Account_name_fk",
           "tableFrom": "PurchaseInvoice",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5201,12 +4941,8 @@
           "name": "PurchaseInvoice_party_Party_name_fk",
           "tableFrom": "PurchaseInvoice",
           "tableTo": "Party",
-          "columnsFrom": [
-            "party"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["party"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5214,12 +4950,8 @@
           "name": "PurchaseInvoice_numberSeries_NumberSeries_name_fk",
           "tableFrom": "PurchaseInvoice",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -5443,12 +5175,8 @@
           "name": "SalesQuote_currency_Currency_name_fk",
           "tableFrom": "SalesQuote",
           "tableTo": "Currency",
-          "columnsFrom": [
-            "currency"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["currency"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5456,12 +5184,8 @@
           "name": "SalesQuote_priceList_PriceList_name_fk",
           "tableFrom": "SalesQuote",
           "tableTo": "PriceList",
-          "columnsFrom": [
-            "priceList"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["priceList"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5469,12 +5193,8 @@
           "name": "SalesQuote_numberSeries_NumberSeries_name_fk",
           "tableFrom": "SalesQuote",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -5675,12 +5395,8 @@
           "name": "SalesInvoiceItem_tax_Tax_name_fk",
           "tableFrom": "SalesInvoiceItem",
           "tableTo": "Tax",
-          "columnsFrom": [
-            "tax"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["tax"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5688,12 +5404,8 @@
           "name": "SalesInvoiceItem_account_Account_name_fk",
           "tableFrom": "SalesInvoiceItem",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5701,12 +5413,8 @@
           "name": "SalesInvoiceItem_batch_Batch_name_fk",
           "tableFrom": "SalesInvoiceItem",
           "tableTo": "Batch",
-          "columnsFrom": [
-            "batch"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["batch"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5714,12 +5422,8 @@
           "name": "SalesInvoiceItem_unit_UOM_name_fk",
           "tableFrom": "SalesInvoiceItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5727,12 +5431,8 @@
           "name": "SalesInvoiceItem_transferUnit_UOM_name_fk",
           "tableFrom": "SalesInvoiceItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "transferUnit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["transferUnit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5740,12 +5440,8 @@
           "name": "SalesInvoiceItem_item_Item_name_fk",
           "tableFrom": "SalesInvoiceItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -5931,12 +5627,8 @@
           "name": "PurchaseInvoiceItem_tax_Tax_name_fk",
           "tableFrom": "PurchaseInvoiceItem",
           "tableTo": "Tax",
-          "columnsFrom": [
-            "tax"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["tax"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5944,12 +5636,8 @@
           "name": "PurchaseInvoiceItem_account_Account_name_fk",
           "tableFrom": "PurchaseInvoiceItem",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5957,12 +5645,8 @@
           "name": "PurchaseInvoiceItem_batch_Batch_name_fk",
           "tableFrom": "PurchaseInvoiceItem",
           "tableTo": "Batch",
-          "columnsFrom": [
-            "batch"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["batch"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5970,12 +5654,8 @@
           "name": "PurchaseInvoiceItem_unit_UOM_name_fk",
           "tableFrom": "PurchaseInvoiceItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5983,12 +5663,8 @@
           "name": "PurchaseInvoiceItem_transferUnit_UOM_name_fk",
           "tableFrom": "PurchaseInvoiceItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "transferUnit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["transferUnit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -5996,12 +5672,8 @@
           "name": "PurchaseInvoiceItem_item_Item_name_fk",
           "tableFrom": "PurchaseInvoiceItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -6187,12 +5859,8 @@
           "name": "SalesQuoteItem_tax_Tax_name_fk",
           "tableFrom": "SalesQuoteItem",
           "tableTo": "Tax",
-          "columnsFrom": [
-            "tax"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["tax"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6200,12 +5868,8 @@
           "name": "SalesQuoteItem_account_Account_name_fk",
           "tableFrom": "SalesQuoteItem",
           "tableTo": "Account",
-          "columnsFrom": [
-            "account"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["account"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6213,12 +5877,8 @@
           "name": "SalesQuoteItem_batch_Batch_name_fk",
           "tableFrom": "SalesQuoteItem",
           "tableTo": "Batch",
-          "columnsFrom": [
-            "batch"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["batch"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6226,12 +5886,8 @@
           "name": "SalesQuoteItem_unit_UOM_name_fk",
           "tableFrom": "SalesQuoteItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6239,12 +5895,8 @@
           "name": "SalesQuoteItem_transferUnit_UOM_name_fk",
           "tableFrom": "SalesQuoteItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "transferUnit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["transferUnit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6252,12 +5904,8 @@
           "name": "SalesQuoteItem_item_Item_name_fk",
           "tableFrom": "SalesQuoteItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -6390,12 +6038,8 @@
           "name": "Shipment_returnAgainst_Shipment_name_fk",
           "tableFrom": "Shipment",
           "tableTo": "Shipment",
-          "columnsFrom": [
-            "returnAgainst"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["returnAgainst"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6403,12 +6047,8 @@
           "name": "Shipment_backReference_SalesInvoice_name_fk",
           "tableFrom": "Shipment",
           "tableTo": "SalesInvoice",
-          "columnsFrom": [
-            "backReference"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["backReference"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6416,12 +6056,8 @@
           "name": "Shipment_party_Party_name_fk",
           "tableFrom": "Shipment",
           "tableTo": "Party",
-          "columnsFrom": [
-            "party"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["party"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6429,12 +6065,8 @@
           "name": "Shipment_numberSeries_NumberSeries_name_fk",
           "tableFrom": "Shipment",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -6598,12 +6230,8 @@
           "name": "ShipmentItem_batch_Batch_name_fk",
           "tableFrom": "ShipmentItem",
           "tableTo": "Batch",
-          "columnsFrom": [
-            "batch"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["batch"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6611,12 +6239,8 @@
           "name": "ShipmentItem_unit_UOM_name_fk",
           "tableFrom": "ShipmentItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6624,12 +6248,8 @@
           "name": "ShipmentItem_transferUnit_UOM_name_fk",
           "tableFrom": "ShipmentItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "transferUnit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["transferUnit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6637,12 +6257,8 @@
           "name": "ShipmentItem_location_Location_name_fk",
           "tableFrom": "ShipmentItem",
           "tableTo": "Location",
-          "columnsFrom": [
-            "location"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["location"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6650,12 +6266,8 @@
           "name": "ShipmentItem_item_Item_name_fk",
           "tableFrom": "ShipmentItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -6788,12 +6400,8 @@
           "name": "PurchaseReceipt_returnAgainst_PurchaseReceipt_name_fk",
           "tableFrom": "PurchaseReceipt",
           "tableTo": "PurchaseReceipt",
-          "columnsFrom": [
-            "returnAgainst"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["returnAgainst"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6801,12 +6409,8 @@
           "name": "PurchaseReceipt_backReference_PurchaseInvoice_name_fk",
           "tableFrom": "PurchaseReceipt",
           "tableTo": "PurchaseInvoice",
-          "columnsFrom": [
-            "backReference"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["backReference"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6814,12 +6418,8 @@
           "name": "PurchaseReceipt_party_Party_name_fk",
           "tableFrom": "PurchaseReceipt",
           "tableTo": "Party",
-          "columnsFrom": [
-            "party"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["party"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -6827,12 +6427,8 @@
           "name": "PurchaseReceipt_numberSeries_NumberSeries_name_fk",
           "tableFrom": "PurchaseReceipt",
           "tableTo": "NumberSeries",
-          "columnsFrom": [
-            "numberSeries"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["numberSeries"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -6996,12 +6592,8 @@
           "name": "PurchaseReceiptItem_batch_Batch_name_fk",
           "tableFrom": "PurchaseReceiptItem",
           "tableTo": "Batch",
-          "columnsFrom": [
-            "batch"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["batch"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7009,12 +6601,8 @@
           "name": "PurchaseReceiptItem_unit_UOM_name_fk",
           "tableFrom": "PurchaseReceiptItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7022,12 +6610,8 @@
           "name": "PurchaseReceiptItem_transferUnit_UOM_name_fk",
           "tableFrom": "PurchaseReceiptItem",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "transferUnit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["transferUnit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7035,12 +6619,8 @@
           "name": "PurchaseReceiptItem_location_Location_name_fk",
           "tableFrom": "PurchaseReceiptItem",
           "tableTo": "Location",
-          "columnsFrom": [
-            "location"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["location"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7048,12 +6628,8 @@
           "name": "PurchaseReceiptItem_item_Item_name_fk",
           "tableFrom": "PurchaseReceiptItem",
           "tableTo": "Item",
-          "columnsFrom": [
-            "item"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["item"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -7685,12 +7261,8 @@
           "name": "Item_tax_Tax_name_fk",
           "tableFrom": "Item",
           "tableTo": "Tax",
-          "columnsFrom": [
-            "tax"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["tax"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7698,12 +7270,8 @@
           "name": "Item_expenseAccount_Account_name_fk",
           "tableFrom": "Item",
           "tableTo": "Account",
-          "columnsFrom": [
-            "expenseAccount"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["expenseAccount"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7711,12 +7279,8 @@
           "name": "Item_incomeAccount_Account_name_fk",
           "tableFrom": "Item",
           "tableTo": "Account",
-          "columnsFrom": [
-            "incomeAccount"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["incomeAccount"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7724,12 +7288,8 @@
           "name": "Item_unit_UOM_name_fk",
           "tableFrom": "Item",
           "tableTo": "UOM",
-          "columnsFrom": [
-            "unit"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["unit"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7737,12 +7297,8 @@
           "name": "Item_itemGroup_ItemGroup_name_fk",
           "tableFrom": "Item",
           "tableTo": "ItemGroup",
-          "columnsFrom": [
-            "itemGroup"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["itemGroup"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -7890,12 +7446,8 @@
           "name": "Party_loyaltyProgram_LoyaltyProgram_name_fk",
           "tableFrom": "Party",
           "tableTo": "LoyaltyProgram",
-          "columnsFrom": [
-            "loyaltyProgram"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["loyaltyProgram"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7903,12 +7455,8 @@
           "name": "Party_fromLead_Lead_name_fk",
           "tableFrom": "Party",
           "tableTo": "Lead",
-          "columnsFrom": [
-            "fromLead"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["fromLead"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7916,12 +7464,8 @@
           "name": "Party_currency_Currency_name_fk",
           "tableFrom": "Party",
           "tableTo": "Currency",
-          "columnsFrom": [
-            "currency"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["currency"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7929,12 +7473,8 @@
           "name": "Party_defaultAccount_Account_name_fk",
           "tableFrom": "Party",
           "tableTo": "Account",
-          "columnsFrom": [
-            "defaultAccount"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["defaultAccount"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -7942,12 +7482,8 @@
           "name": "Party_address_Address_name_fk",
           "tableFrom": "Party",
           "tableTo": "Address",
-          "columnsFrom": [
-            "address"
-          ],
-          "columnsTo": [
-            "name"
-          ],
+          "columnsFrom": ["address"],
+          "columnsTo": ["name"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }

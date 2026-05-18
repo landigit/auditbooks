@@ -8,49 +8,50 @@
     <slot></slot>
   </button>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'Button',
-  props: {
-    type: {
-      type: String,
-      default: 'secondary',
-    },
-    icon: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    padding: {
-      type: Boolean,
-      default: true,
-    },
-    background: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  computed: {
-    _class() {
-      return {
-        'opacity-50 cursor-not-allowed pointer-events-none': this.disabled,
-        'text-button-primary-text': this.type === 'primary',
-        'bg-button-primary-bg': this.type === 'primary' && this.background,
-        'text-button-secondary-text': this.type !== 'primary',
-        'bg-button-secondary-bg': this.type !== 'primary' && this.background,
-        'h-8': this.background,
-        'px-3': this.padding && this.icon,
-        'px-6': this.padding && !this.icon,
-      };
-    },
-  },
+<script setup lang="ts">
+import { computed, useAttrs } from 'vue';
+
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    type?: string;
+    icon?: boolean;
+    disabled?: boolean;
+    padding?: boolean;
+    background?: boolean;
+  }>(),
+  {
+    type: 'secondary',
+    icon: false,
+    disabled: false,
+    padding: true,
+    background: true,
+  }
+);
+
+const attrs = useAttrs();
+
+// Computed classes
+const _class = computed(() => {
+  const customClass = attrs.class;
+  const hasHeightOrPadding =
+    typeof customClass === 'string' &&
+    (/\bh-\d+/.test(customClass) || /\bpy-\d+/.test(customClass));
+
+  return {
+    'opacity-50 cursor-not-allowed pointer-events-none': props.disabled,
+    'text-button-primary-text': props.type === 'primary',
+    'bg-button-primary-bg': props.type === 'primary' && props.background,
+    'text-button-secondary-text': props.type !== 'primary',
+    'bg-button-secondary-bg': props.type !== 'primary' && props.background,
+    'h-8': props.background && !hasHeightOrPadding,
+    'px-3': props.padding && props.icon,
+    'px-6': props.padding && !props.icon,
+  };
 });
 </script>
+
 <style scoped>
 button:focus {
   filter: brightness(0.95);

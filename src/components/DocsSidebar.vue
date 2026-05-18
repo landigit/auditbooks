@@ -53,62 +53,53 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { docsNavigation, DocNode } from 'src/utils/docsNavigation';
 
-export default defineComponent({
-  name: 'DocsSidebar',
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const searchQuery = ref('');
-    const nav = ref(docsNavigation.map((g) => ({ ...g, isExpanded: true })));
+const router = useRouter();
+const route = useRoute();
+const searchQuery = ref('');
+const nav = ref(docsNavigation.map((g) => ({ ...g, isExpanded: true })));
 
-    const filteredNav = computed(() => {
-      if (!searchQuery.value) return nav.value;
+const filteredNav = computed(() => {
+  if (!searchQuery.value) return nav.value;
 
-      const query = searchQuery.value.toLowerCase();
-      return nav.value
-        .map((group) => {
-          const filteredChildren = group.children?.filter((child) =>
-            child.title.toLowerCase().includes(query)
-          );
-          return {
-            ...group,
-            children: filteredChildren,
-            isExpanded: true,
-          };
-        })
-        .filter((group) => (group.children?.length ?? 0) > 0);
-    });
-
-    const toggleGroup = (group: any) => {
-      group.isExpanded = !group.isExpanded;
-    };
-
-    const navigateTo = (item: DocNode) => {
-      if (item.path) {
-        router.push({ name: 'Help', params: { path: item.path } });
-      }
-    };
-
-    const isActive = (item: DocNode) => {
-      const currentPath = route.params.path;
-      const normalizedCurrent = Array.isArray(currentPath)
-        ? currentPath.join('/')
-        : currentPath;
-      return normalizedCurrent === item.path;
-    };
-
-    return {
-      searchQuery,
-      filteredNav,
-      toggleGroup,
-      navigateTo,
-      isActive,
-    };
-  },
+  const query = searchQuery.value.toLowerCase();
+  return nav.value
+    .map((group) => {
+      const filteredChildren = group.children?.filter((child) =>
+        child.title.toLowerCase().includes(query)
+      );
+      return {
+        ...group,
+        children: filteredChildren,
+        isExpanded: true,
+      };
+    })
+    .filter((group) => (group.children?.length ?? 0) > 0);
 });
+
+const toggleGroup = (group: any) => {
+  group.isExpanded = !group.isExpanded;
+};
+
+const navigateTo = (item: DocNode) => {
+  if (item.path) {
+    router.push({ name: 'Help', params: { path: item.path } });
+  }
+};
+
+const isActive = (item: DocNode) => {
+  const currentPath = route.params.path;
+  const normalizedCurrent = Array.isArray(currentPath)
+    ? currentPath.join('/')
+    : currentPath;
+  return normalizedCurrent === item.path;
+};
 </script>
+
+<style scoped>
+@reference "../styles/index.css";
+</style>

@@ -45,13 +45,16 @@
 
       <!-- Widget Bar -->
       <div
-        class="mt-2 relative rounded overflow-hidden"
+        class="mt-3 relative rounded-full overflow-hidden h-2.5 bg-gray-100 dark:bg-gray-800/50"
         @mouseenter="show = true"
         @mouseleave="show = false"
       >
-        <div class="w-full h-4" :class="unpaidColor"></div>
         <div
-          class="absolute inset-0 h-4"
+          class="w-full h-2.5 transition-all duration-300"
+          :class="unpaidColor"
+        ></div>
+        <div
+          class="absolute inset-y-0 start-0 h-2.5 rounded-full transition-all duration-500 ease-out"
           :class="paidColor"
           :style="`width: ${barWidth}%`"
         ></div>
@@ -76,7 +79,8 @@
     </MouseFollower>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onActivated, onDeactivated } from 'vue';
 import { t } from 'fyo';
 import { DateTime } from 'luxon';
 import { ModelNameEnum } from 'models/types';
@@ -86,149 +90,179 @@ import { getDatesAndPeriodList } from 'src/utils/misc';
 import { PeriodKey } from 'src/utils/types';
 import { routeTo } from 'src/utils/ui';
 import { safeParseFloat } from 'utils/index';
-import { PropType, defineComponent } from 'vue';
-import BaseDashboardChart from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
 
-// Linting broken in this file cause of `extends: ...`
-/* 
-  eslint-disable @typescript-eslint/no-unsafe-argument
-*/
-export default defineComponent({
-  name: 'UnpaidInvoices',
-  components: {
-    PeriodSelector,
-    SectionHeader,
-    MouseFollower,
-  },
-  extends: BaseDashboardChart,
-  props: {
-    schemaName: { type: String as PropType<string>, required: true },
-  },
-  data() {
-    return {
-      show: false,
-      total: 0,
-      unpaid: 0,
-      hasData: false,
-      paid: 0,
-      count: 0,
-      unpaidCount: 0,
-      paidCount: 0,
-      barWidth: 40,
-      period: 'This Year' as PeriodKey,
-    };
-  },
-  computed: {
-    title(): string {
-      return fyo.schemaMap[this.schemaName]?.label ?? '';
-    },
-    color(): 'blue' | 'pink' {
-      if (this.schemaName === ModelNameEnum.SalesInvoice) {
-        return 'blue';
-      }
-      return 'pink';
-    },
-    colors(): string {
-      return this.color === 'blue'
-        ? 'var(--chart-blue-main)'
-        : 'var(--chart-pink-main)';
-    },
-    paidColor(): string {
-      if (!this.hasData) {
-        return 'bg-canvas-muted';
-      }
-      return this.color === 'blue'
-        ? 'bg-(--chart-blue-main)'
-        : 'bg-(--chart-pink-main)';
-    },
-    unpaidColor(): string {
-      if (!this.hasData) {
-        return 'bg-canvas-muted';
-      }
-      return this.color === 'blue'
-        ? 'bg-(--chart-blue-muted)'
-        : 'bg-(--chart-pink-muted)';
-    },
-  },
-  async activated() {
-    await this.setData();
-  },
-  deactivated() {
-    this.show = false;
-  },
-  methods: {
-    async routeToInvoices(type: 'paid' | 'unpaid') {
-      if (type === 'paid' && !this.paidCount) {
-        return;
-      }
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    schemaName: string;
+    commonPeriod?: PeriodKey;
+  }>(),
+  {
+    commonPeriod: 'This Year',
+  }
+);
 
-      if (type === 'unpaid' && !this.unpaidCount) {
-        return;
-      }
+// Define Emits
+const emit = defineEmits<{
+  (e: 'period-change', period: PeriodKey): void;
+}>();
 
-      const zero = this.fyo.pesa(0).store;
-      const filters = { outstandingAmount: ['=', zero] };
-      const schemaLabel = fyo.schemaMap[this.schemaName]?.label ?? '';
-      let label = t`Paid ${schemaLabel}`;
-      if (type === 'unpaid') {
-        filters.outstandingAmount[0] = '!=';
-        label = t`Unpaid ${schemaLabel}`;
-      }
+// State definition
+const show = ref(false);
+const total = ref(0);
+const unpaid = ref(0);
+const hasData = ref(false);
+const paid = ref(0);
+const count = ref(0);
+const unpaidCount = ref(0);
+const paidCount = ref(0);
+const barWidth = ref(40);
+const period = ref<PeriodKey>('This Year');
+const periodOptions: PeriodKey[] = ['This Year', 'This Quarter', 'YTD'];
 
-      const path = `/list/${this.schemaName}/${label}`;
-      const query = { filters: JSON.stringify(filters) };
-      await routeTo({ path, query });
+// Computed Properties
+const title = computed(() => {
+  return fyo.schemaMap[props.schemaName]?.label ?? '';
+});
+
+const color = computed(() => {
+  if (props.schemaName === ModelNameEnum.SalesInvoice) {
+    return 'blue';
+  }
+  return 'pink';
+});
+
+const colors = computed(() => {
+  return color.value === 'blue'
+    ? 'var(--chart-blue-main)'
+    : 'var(--chart-pink-main)';
+});
+
+const paidColor = computed(() => {
+  if (!hasData.value) {
+    return 'bg-canvas-muted';
+  }
+  return color.value === 'blue'
+    ? 'bg-(--chart-blue-main)'
+    : 'bg-(--chart-pink-main)';
+});
+
+const unpaidColor = computed(() => {
+  if (!hasData.value) {
+    return 'bg-canvas-muted';
+  }
+  return color.value === 'blue'
+    ? 'bg-(--chart-blue-muted)'
+    : 'bg-(--chart-pink-muted)';
+});
+
+// Methods
+const getCounts = async (
+  schemaName: string,
+  fromDate: DateTime,
+  toDate: DateTime
+) => {
+  const outstandingAmounts = await fyo.db.getAllRaw(schemaName, {
+    fields: ['outstandingAmount'],
+    filters: {
+      cancelled: false,
+      submitted: true,
+      date: ['<=', toDate.toISO()!, '>=', fromDate.toISO()!],
     },
-    async setData() {
-      const { fromDate, toDate } = getDatesAndPeriodList(this.period);
+  });
 
-      const { total, outstanding } = await fyo.db.getTotalOutstanding(
-        this.schemaName,
-        fromDate.toISO()!,
-        toDate.toISO()!
-      );
+  const isOutstanding = outstandingAmounts.map((o) =>
+    safeParseFloat(o.outstandingAmount)
+  );
 
-      const { countTotal, countOutstanding } = await this.getCounts(
-        this.schemaName,
-        fromDate,
-        toDate
-      );
+  return {
+    countTotal: isOutstanding.length,
+    countOutstanding: isOutstanding.filter((o) => o > 0).length,
+  };
+};
 
-      this.total = total ?? 0;
-      this.unpaid = outstanding ?? 0;
-      this.paid = total - outstanding;
-      this.hasData = countTotal > 0;
-      this.count = countTotal;
-      this.paidCount = countTotal - countOutstanding;
-      this.unpaidCount = countOutstanding;
-      this.barWidth = (this.paid / (this.total || 1)) * 100;
-    },
-    async newInvoice() {
-      const doc = fyo.doc.getNewDoc(this.schemaName);
-      await routeTo(`/edit/${this.schemaName}/${doc.name!}`);
-    },
+const setData = async () => {
+  const { fromDate, toDate } = getDatesAndPeriodList(period.value);
 
-    async getCounts(schemaName: string, fromDate: DateTime, toDate: DateTime) {
-      const outstandingAmounts = await fyo.db.getAllRaw(schemaName, {
-        fields: ['outstandingAmount'],
-        filters: {
-          cancelled: false,
-          submitted: true,
-          date: ['<=', toDate.toISO()!, '>=', fromDate.toISO()!],
-        },
-      });
+  const res = await fyo.db.getTotalOutstanding(
+    props.schemaName,
+    fromDate.toISO()!,
+    toDate.toISO()!
+  );
 
-      const isOutstanding = outstandingAmounts.map((o) =>
-        safeParseFloat(o.outstandingAmount)
-      );
+  const counts = await getCounts(props.schemaName, fromDate, toDate);
 
-      return {
-        countTotal: isOutstanding.length,
-        countOutstanding: isOutstanding.filter((o) => o > 0).length,
-      };
-    },
-  },
+  total.value = res.total ?? 0;
+  unpaid.value = res.outstanding ?? 0;
+  paid.value = total.value - unpaid.value;
+  hasData.value = counts.countTotal > 0;
+  count.value = counts.countTotal;
+  paidCount.value = counts.countTotal - counts.countOutstanding;
+  unpaidCount.value = counts.countOutstanding;
+  barWidth.value = (paid.value / (total.value || 1)) * 100;
+};
+
+const periodChange = async () => {
+  emit('period-change', period.value);
+  await setData();
+};
+
+const routeToInvoices = async (type: 'paid' | 'unpaid') => {
+  if (type === 'paid' && !paidCount.value) {
+    return;
+  }
+
+  if (type === 'unpaid' && !unpaidCount.value) {
+    return;
+  }
+
+  const zero = fyo.pesa(0).store;
+  const filters = { outstandingAmount: ['=', zero] };
+  const schemaLabel = fyo.schemaMap[props.schemaName]?.label ?? '';
+  let label = t`Paid ${schemaLabel}`;
+  if (type === 'unpaid') {
+    filters.outstandingAmount[0] = '!=';
+    label = t`Unpaid ${schemaLabel}`;
+  }
+
+  const path = `/list/${props.schemaName}/${label}`;
+  const query = { filters: JSON.stringify(filters) };
+  await routeTo({ path, query });
+};
+
+// Expose methods publicly if needed
+defineExpose({
+  newInvoice,
+});
+
+async function newInvoice() {
+  const doc = fyo.doc.getNewDoc(props.schemaName);
+  await routeTo(`/edit/${props.schemaName}/${doc.name!}`);
+}
+
+// Watchers
+watch(period, async () => {
+  await periodChange();
+});
+
+watch(
+  () => props.commonPeriod,
+  (val) => {
+    if (!val || !periodOptions.includes(val)) {
+      return;
+    }
+    period.value = val;
+  }
+);
+
+// Lifecycle Hooks (activated/deactivated)
+onActivated(async () => {
+  await setData();
+});
+
+onDeactivated(() => {
+  show.value = false;
 });
 </script>

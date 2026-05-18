@@ -20,10 +20,10 @@
     />
   </svg>
 </template>
-<script>
-import Base from '../base.vue';
-export default {
-  name: 'FB',
-  extends: Base,
-};
+<script setup lang="ts">
+withDefaults(defineProps<{
+  active?: boolean;
+}>(), {
+  active: false,
+});
 </script>

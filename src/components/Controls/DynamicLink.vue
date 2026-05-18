@@ -1,97 +1,158 @@
-<script>
+<template>
+  <Link
+    ref="linkRef"
+    v-bind="props"
+    :get-suggestions="getLinkSuggestions"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref, inject, computed, watch } from 'vue';
 import { fyo } from 'src/initFyo';
+import { fuzzyMatch } from 'src/utils';
 import Link from './Link.vue';
-export default {
-  name: 'DynamicLink',
-  extends: Link,
-  inject: {
-    report: { default: null },
-  },
-  props: ['target'],
-  created() {
-    const watchKey = `doc.${this.df.references}`;
-    this.targetWatcher = this.$watch(watchKey, function (newTarget, oldTarget) {
-      if (oldTarget && newTarget !== oldTarget) {
-        this.triggerChange('');
-      }
-    });
-  },
-  unmounted() {
-    this.targetWatcher();
-  },
-  methods: {
-    getTargetSchemaName() {
-      const references = this.df.references;
-      if (!references) {
-        return null;
-      }
+import { BaseControlProps } from 'src/composables/useBaseControl';
 
-      let schemaName = this.doc?.[references];
-      if (!schemaName) {
-        schemaName = this.report?.[references];
-      }
+interface DynamicLinkProps extends BaseControlProps {
+  target?: string;
+  focusInput?: boolean;
+  showClearButton?: boolean;
+}
 
-      if (!schemaName) {
-        return null;
-      }
+const props = withDefaults(defineProps<DynamicLinkProps>(), {
+  focusInput: false,
+  showClearButton: false,
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
 
-      if (!fyo.schemaMap[schemaName]) {
-        return null;
-      }
+const linkRef = ref<any>(null);
+const report = inject<any>('report', null);
+const results = ref<any[]>([]);
 
-      return schemaName;
-    },
-    async getOptions() {
-      this.results = [];
-      const schemaName = this.getTargetSchemaName();
-      if (!schemaName) {
-        return [];
-      }
+const doc = computed(() => linkRef.value?.doc);
 
-      if (this.results?.length) {
-        return this.results;
-      }
+watch(
+  () => doc.value?.[(props.df as any).references as string],
+  (newTarget, oldTarget) => {
+    if (oldTarget && newTarget !== oldTarget) {
+      linkRef.value?.clearValue();
+    }
+  }
+);
 
-      const schema = fyo.schemaMap[schemaName];
-      const filters = await this.getFilters();
+const getTargetSchemaName = () => {
+  const references = (props.df as any).references;
+  if (!references) {
+    return null;
+  }
 
-      const fields = [
-        ...new Set(['name', schema.titleField, this.df.groupBy]),
-      ].filter(Boolean);
+  let schemaName = doc.value?.[references];
+  if (!schemaName) {
+    schemaName = report?.[references];
+  }
 
-      const results = await fyo.db.getAll(schemaName, {
-        filters,
-        fields,
-      });
-      return (this.results = results
-        .map((r) => {
-          const option = { label: r[schema.titleField], value: r.name };
-          if (this.df.groupBy) {
-            option.group = r[this.df.groupBy];
-          }
-          return option;
-        })
-        .filter(Boolean));
-    },
-    async openNewDoc() {
-      const schemaName = this.getTargetSchemaName();
-      if (!schemaName) {
-        return;
-      }
-      const name =
-        this.linkValue || fyo.doc.getTemporaryName(fyo.schemaMap[schemaName]);
-      const filters = await this.getCreateFilters();
-      const { openQuickEdit } = await import('src/utils/ui');
+  if (!schemaName) {
+    return null;
+  }
 
-      const doc = fyo.doc.getNewDoc(schemaName, { name, ...filters });
-      openQuickEdit({ doc });
+  if (!fyo.schemaMap[schemaName]) {
+    return null;
+  }
 
-      doc.once('afterSync', () => {
-        this.$router.back();
-        this.results = [];
-        this.triggerChange(doc.name);
-      });
-    },
-  },
+  return schemaName as string;
 };
+
+const getOptions = async (filters: any) => {
+  const schemaName = getTargetSchemaName();
+  if (!schemaName) {
+    return [];
+  }
+
+  if (results.value?.length) {
+    return results.value;
+  }
+
+  const schema = fyo.schemaMap[schemaName];
+  if (!schema) {
+    return [];
+  }
+
+  const fields = [
+    ...new Set(['name', schema.titleField, (props.df as any).groupBy]),
+  ].filter(Boolean) as string[];
+
+  const dbResults = await fyo.db.getAll(schemaName, {
+    filters,
+    fields,
+  });
+
+  results.value = dbResults
+    .map((r: any) => {
+      const option: any = { label: r[schema.titleField as string], value: r.name };
+      if ((props.df as any).groupBy) {
+        option.group = r[(props.df as any).groupBy];
+      }
+      return option;
+    })
+    .filter(Boolean);
+
+  return results.value;
+};
+
+const getFilters = async () => {
+  if (props.df.filters) {
+    return props.df.filters;
+  }
+
+  if (fyo.singles.SystemSettings?.removeFilter) {
+    return null;
+  }
+
+  const { schemaName, fieldname } = props.df as any;
+  const getFiltersFunc = fyo.models[schemaName]?.filters?.[fieldname];
+
+  if (getFiltersFunc === undefined) {
+    return null;
+  }
+
+  if (doc.value) {
+    return await getFiltersFunc(doc.value);
+  }
+
+  try {
+    return await (getFiltersFunc as any)();
+  } catch {
+    return null;
+  }
+};
+
+const getLinkSuggestions = async (keyword = '') => {
+  const filters = await getFilters();
+  let optionsList = await getOptions(filters || {});
+
+  if (keyword) {
+    optionsList = optionsList
+      .map((item) => ({ ...fuzzyMatch(keyword, item.label), item }))
+      .filter(({ isMatch }) => isMatch)
+      .sort((a, b) => a.distance - b.distance)
+      .map(({ item }) => item);
+  }
+
+  return optionsList;
+};
+
+const focus = () => {
+  linkRef.value?.focus();
+};
+
+defineExpose({
+  focus
+});
 </script>

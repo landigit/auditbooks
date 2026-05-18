@@ -1,43 +1,43 @@
-<script>
-import * as icons from '@lucide/vue';
-import { h } from 'vue';
+<template>
+  <component
+    :is="iconComponent"
+    :size="size"
+    :stroke-width="strokeWidth"
+    class="lucide-icon"
+  />
+</template>
 
-const toPascalCase = (str) =>
+<script setup lang="ts">
+import { computed } from 'vue';
+import * as icons from '@lucide/vue';
+
+interface LucideIconProps {
+  name: string;
+  size?: string | number;
+  strokeWidth?: string | number;
+}
+
+const props = withDefaults(defineProps<LucideIconProps>(), {
+  size: 16,
+  strokeWidth: 2,
+});
+
+const toPascalCase = (str: string) =>
   str.replace(/(^\w|-\w)/g, (match) => match.replace(/-/, '').toUpperCase());
 
-export default {
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    size: {
-      type: [String, Number],
-      default: 16,
-    },
-    strokeWidth: {
-      type: [String, Number],
-      default: 2,
-    },
-  },
-  render() {
-    const iconName = toPascalCase(this.name);
-    const Icon = icons[iconName];
+const iconComponent = computed(() => {
+  const iconName = toPascalCase(props.name);
+  const Icon = (icons as Record<string, any>)[iconName];
 
-    if (!Icon) {
-      console.warn(
-        `[Lucide] Icon "${this.name}" (mapped to "${iconName}") not found.`
-      );
-      return null;
-    }
+  if (!Icon) {
+    console.warn(
+      `[Lucide] Icon "${props.name}" (mapped to "${iconName}") not found.`
+    );
+    return null;
+  }
 
-    return h(Icon, {
-      size: this.size,
-      'stroke-width': this.strokeWidth,
-      class: 'lucide-icon',
-    });
-  },
-};
+  return Icon;
+});
 </script>
 
 <style scoped>

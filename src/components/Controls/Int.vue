@@ -1,20 +1,19 @@
-<script lang="ts">
-import Data from './Data.vue';
-import { defineComponent } from 'vue';
+<template>
+  <Base
+    v-bind="props"
+    input-type="number"
+    :parse="parse"
+  />
+</template>
+
+<script setup lang="ts">
+import Base from './Base.vue';
+import { BaseControlProps } from 'src/composables/useBaseControl';
 import { safeParseInt } from 'utils/index';
 
-export default defineComponent({
-  name: 'Int',
-  extends: Data,
-  computed: {
-    inputType() {
-      return 'number';
-    },
-  },
-  methods: {
-    parse(value: unknown): number {
-      return safeParseInt(value);
-    },
-  },
-});
+const props = defineProps<BaseControlProps>();
+
+const parse = (value: unknown): number => {
+  return safeParseInt(value);
+};
 </script>

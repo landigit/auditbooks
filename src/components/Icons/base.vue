@@ -1,20 +1,16 @@
-<script lang="ts">
-export default {
-  name: 'IconBase',
-  props: {
-    active: Boolean,
-  },
-  computed: {
-    lightColor(): string {
-      return this.active
-        ? 'var(--icon-light-active)'
-        : 'var(--icon-light-passive)';
-    },
-    darkColor(): string {
-      return this.active
-        ? 'var(--icon-dark-active)'
-        : 'var(--icon-dark-passive)';
-    },
-  },
-};
+<script setup lang="ts">
+import { useIconColors } from './useIconColors';
+
+const props = withDefaults(defineProps<{
+  active?: boolean;
+}>(), {
+  active: false,
+});
+
+const { lightColor, darkColor } = useIconColors(() => !!props.active);
+
+defineExpose({
+  lightColor,
+  darkColor,
+});
 </script>

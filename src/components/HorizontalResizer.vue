@@ -16,94 +16,85 @@
     </MouseFollower>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+
+<script setup lang="ts">
+// --- Imports ---
+import { ref, computed } from 'vue';
 import MouseFollower from './MouseFollower.vue';
 
-export default defineComponent({
-  components: { MouseFollower },
-  props: {
-    initialX: { type: Number, required: true },
-    minX: Number,
-    maxX: Number,
-  },
-  emits: ['resize'],
-  data() {
-    return {
-      x: 0,
-      delta: 0,
-      xOnMouseDown: 0,
-      resizing: false,
-      listener: null,
-    };
-  },
-  computed: {
-    value() {
-      let value = this.delta + this.xOnMouseDown;
-      if (typeof this.minX === 'number') {
-        value = Math.max(this.minX, value);
-      }
+// --- Props & Emits ---
+const props = defineProps<{
+  initialX: number;
+  minX?: number;
+  maxX?: number;
+}>();
 
-      if (typeof this.maxX === 'number') {
-        value = Math.min(this.maxX, value);
-      }
+const emit = defineEmits<{
+  (e: 'resize', value: number): void;
+}>();
 
-      return value;
-    },
-    minDelta() {
-      if (typeof this.minX !== 'number') {
-        return null;
-      }
+// --- State ---
+const hr = ref<HTMLElement | null>(null);
+const x = ref(0);
+const delta = ref(0);
+const xOnMouseDown = ref(0);
+const resizing = ref(false);
 
-      return this.initialX - this.minX;
-    },
-    maxDelta() {
-      if (typeof this.maxX !== 'number') {
-        return null;
-      }
+// --- Computed ---
+const value = computed(() => {
+  let val = delta.value + xOnMouseDown.value;
+  if (typeof props.minX === 'number') {
+    val = Math.max(props.minX, val);
+  }
 
-      return this.maxX - this.initialX;
-    },
-  },
-  methods: {
-    onMouseDown(e: MouseEvent) {
-      e.preventDefault();
+  if (typeof props.maxX === 'number') {
+    val = Math.min(props.maxX, val);
+  }
 
-      this.x = e.clientX;
-      this.xOnMouseDown = this.initialX;
-      this.setResizing(true);
-
-      document.addEventListener('mousemove', this.mouseMoveListener);
-      document.addEventListener('mouseup', this.mouseUpListener);
-    },
-    mouseUpListener(e: MouseEvent) {
-      e.preventDefault();
-
-      this.x = e.clientX;
-      this.setResizing(false);
-
-      this.$emit('resize', this.value);
-      this.removeListeners();
-    },
-    mouseMoveListener(e: MouseEvent) {
-      e.preventDefault();
-      this.delta = this.x - e.clientX;
-      this.$emit('resize', this.value);
-    },
-    removeListeners() {
-      document.removeEventListener('mousemove', this.mouseMoveListener);
-      document.removeEventListener('mouseup', this.mouseUpListener);
-    },
-    setResizing(value: boolean) {
-      this.resizing = value;
-
-      if (value) {
-        this.delta = 0;
-        document.body.style.cursor = 'col-resize';
-      } else {
-        document.body.style.cursor = '';
-      }
-    },
-  },
+  return val;
 });
+
+// --- Methods ---
+function onMouseDown(e: MouseEvent) {
+  e.preventDefault();
+
+  x.value = e.clientX;
+  xOnMouseDown.value = props.initialX;
+  setResizing(true);
+
+  document.addEventListener('mousemove', mouseMoveListener);
+  document.addEventListener('mouseup', mouseUpListener);
+}
+
+function mouseUpListener(e: MouseEvent) {
+  e.preventDefault();
+
+  x.value = e.clientX;
+  setResizing(false);
+
+  emit('resize', value.value);
+  removeListeners();
+}
+
+function mouseMoveListener(e: MouseEvent) {
+  e.preventDefault();
+  delta.value = x.value - e.clientX;
+  emit('resize', value.value);
+}
+
+function removeListeners() {
+  document.removeEventListener('mousemove', mouseMoveListener);
+  document.removeEventListener('mouseup', mouseUpListener);
+}
+
+function setResizing(val: boolean) {
+  resizing.value = val;
+
+  if (val) {
+    delta.value = 0;
+    document.body.style.cursor = 'col-resize';
+  } else {
+    document.body.style.cursor = '';
+  }
+}
 </script>

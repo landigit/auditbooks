@@ -36,9 +36,11 @@
     </div>
   </ScaledContainer>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
 import {
-  compile,
+  compile as compilerCompile,
   CompilerError,
   generateCodeFrame,
   SourceLocation,
@@ -47,139 +49,131 @@ import { Verb } from 'fyo/telemetry/types';
 import ErrorBoundary from 'src/components/ErrorBoundary.vue';
 import { getPathAndMakePDF } from 'src/utils/printTemplates';
 import { PrintValues } from 'src/utils/types';
-import { defineComponent, PropType } from 'vue';
 import ScaledContainer from './ScaledContainer.vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-export const baseSafeTemplate = `<main class="h-full w-full bg-surface">
+const baseSafeTemplate = `<main class="h-full w-full bg-surface">
   <p class="p-4 text-indicator-red-text">
     <span class="font-bold">ERROR</span>: Template failed to load due to errors.
   </p>
 </main>
 `;
 
-export default defineComponent({
-  components: { ScaledContainer, ErrorBoundary },
-  props: {
-    template: { type: String, required: true },
-    printSchemaName: { type: String, required: true },
-    scale: { type: Number, default: 0.65 },
-    width: { type: Number, default: 21 },
-    height: { type: Number, default: 29.7 },
-    values: {
-      type: Object as PropType<PrintValues>,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      error: null as { name: string; message: string; detail?: string } | null,
-    };
-  },
-  computed: {
-    templateComponent() {
-      let template = this.template;
-      if (this.error) {
-        template = baseSafeTemplate;
-      }
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    template: string;
+    printSchemaName: string;
+    scale?: number;
+    width?: number;
+    height?: number;
+    values: PrintValues;
+  }>(),
+  {
+    scale: 0.65,
+    width: 21,
+    height: 29.7,
+  }
+);
 
-      return {
-        template,
-        props: ['doc', 'print'],
-        computed: {
-          fyo() {
-            return {};
-          },
-          platform() {
-            return '';
-          },
-        },
-        // eslint-disable-next-line @typescript-eslint/ban-types
-      };
-    },
-  },
-  watch: {
-    template(value: string) {
-      this.compile(value);
-    },
-  },
-  mounted() {
-    this.compile(this.template);
-  },
-  methods: {
-    compile(template: string) {
-      /**
-       * Note: This is a hacky method to prevent
-       * broken templates from reaching the `<component />`
-       * element.
-       *
-       * It's required because the CompilerOptions doesn't
-       * have an option to capture the errors.
-       *
-       * The compile function returns a code that can be
-       * converted into a render function.
-       *
-       * This render function can be used instead
-       * of passing the template to the `<component />` element
-       * where it gets compiled again.
-       */
-      this.error = null;
-      return compile(template, {
-        hoistStatic: true,
-        onWarn: this.onError.bind(this),
-        onError: this.onError.bind(this),
-      });
-    },
-    handleErrorCaptured(error: unknown) {
-      if (!(error instanceof Error)) {
-        throw error;
-      }
+// Template Refs
+const scaledContainer = ref<InstanceType<typeof ScaledContainer> | null>(null);
 
-      const message = error.message;
-      let name = error.name;
-      let detail = '';
-      if (name === 'TypeError' && message.includes('Cannot read')) {
-        name = this.t`Invalid Key Error`;
-        detail = this.t`Please check Key Hints for valid key names`;
-      }
+// Reactive State
+const error = ref<{ name: string; message: string; detail?: string } | null>(null);
 
-      this.error = { name, message, detail };
+// Computed Properties
+const templateComponent = computed(() => {
+  let templateHtml = props.template;
+  if (error.value) {
+    templateHtml = baseSafeTemplate;
+  }
+
+  return {
+    template: templateHtml,
+    props: ['doc', 'print'],
+    computed: {
+      fyo() {
+        return {};
+      },
+      platform() {
+        return '';
+      },
     },
-    onError({ message, loc }: CompilerError) {
-      const codeframe = loc ? this.getCodeFrame(loc) : '';
+  };
+});
 
-      this.error = {
-        name: this.t`Template Compilation Error`,
-        detail: codeframe,
-        message,
-      };
-    },
-    getCodeFrame(loc: SourceLocation) {
-      return generateCodeFrame(this.template, loc.start.offset, loc.end.offset);
-    },
-    async savePDF(name?: string, shouldPrint?: boolean) {
-      /* eslint-disable */
+// Methods
+const getCodeFrame = (loc: SourceLocation) => {
+  return generateCodeFrame(props.template, loc.start.offset, loc.end.offset);
+};
 
-      /**
-       * To be called through ref by the parent component.
-       */
+const onError = (compilerError: CompilerError) => {
+  const codeframe = compilerError.loc ? getCodeFrame(compilerError.loc) : '';
 
-      // @ts-ignore
-      const innerHTML = this.$refs.scaledContainer.$el.children[0].innerHTML;
-      if (typeof innerHTML !== 'string') {
-        return;
-      }
+  error.value = {
+    name: t`Template Compilation Error`,
+    detail: codeframe,
+    message: compilerError.message,
+  };
+};
 
-      await getPathAndMakePDF(
-        name ?? this.t`Entry`,
-        innerHTML,
-        this.width,
-        this.height,
-        this.values.print.font as string,
-        shouldPrint
-      );
+const compile = (templateString: string) => {
+  error.value = null;
+  return compilerCompile(templateString, {
+    hoistStatic: true,
+    onWarn: onError,
+    onError: onError,
+  });
+};
 
-      this.fyo.telemetry.log(Verb.Printed, this.printSchemaName);
-    },
-  },
+const handleErrorCaptured = (err: unknown) => {
+  if (!(err instanceof Error)) {
+    throw err;
+  }
+
+  const message = err.message;
+  let name = err.name;
+  let detail = '';
+  if (name === 'TypeError' && message.includes('Cannot read')) {
+    name = t`Invalid Key Error`;
+    detail = t`Please check Key Hints for valid key names`;
+  }
+
+  error.value = { name, message, detail };
+};
+
+const savePDF = async (name?: string, shouldPrint?: boolean) => {
+  const innerHTML = scaledContainer.value?.$el.children[0].innerHTML;
+  if (typeof innerHTML !== 'string') {
+    return;
+  }
+
+  await getPathAndMakePDF(
+    name ?? t`Entry`,
+    innerHTML,
+    props.width,
+    props.height,
+    props.values.print.font as string,
+    shouldPrint
+  );
+
+  fyo.telemetry.log(Verb.Printed, props.printSchemaName);
+};
+
+// Expose public methods
+defineExpose({
+  savePDF,
+});
+
+// Watchers
+watch(() => props.template, (value: string) => {
+  compile(value);
+});
+
+// Lifecycles
+onMounted(() => {
+  compile(props.template);
 });
 </script>

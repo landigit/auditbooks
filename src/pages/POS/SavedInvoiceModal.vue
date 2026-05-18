@@ -58,14 +58,14 @@
         :ratio="ratio"
         :border="true"
         class="border-b border-l border-r border-border bg-surface flex group h-row-mid hover:bg-surface-hover items-center justify-center px-2 w-full"
-        @click="$emit('selectedInvoiceName', row)"
+        @click="emit('selectedInvoiceName', row)"
       >
         <FormControl
           v-for="df in tableFields"
           :key="df.fieldname"
           size="large"
           :df="df"
-          :value="row[df.fieldname]"
+          :value="(row as any)[df.fieldname]"
           :read-only="true"
         />
       </Row>
@@ -75,7 +75,7 @@
       <div class="col-span-2">
         <Button
           class="w-full p-5 bg-indicator-red-bg"
-          @click="$emit('toggleModal', 'SavedInvoice')"
+          @click="emit('toggleModal', 'SavedInvoice')"
         >
           <slot>
             <p class="uppercase text-lg text-indicator-red-text font-semibold">
@@ -88,139 +88,149 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, onActivated, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import Row from 'src/components/Row.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
 import { ModelNameEnum } from 'models/types';
 import { Field } from 'schemas/types';
 import { Money } from 'pesa';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'SavedInvoiceModal',
-  components: {
-    Modal,
-    Button,
-    FormControl,
-    Row,
-  },
-  props: {
-    modalStatus: Boolean,
-  },
-  emits: ['toggleModal', 'selectedInvoiceName'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  data() {
-    return {
-      savedInvoiceList: true,
-      savedInvoices: [] as SalesInvoice[],
-      submittedInvoices: [] as SalesInvoice[],
-      invoiceSearchTerm: '',
-    };
-  },
-  computed: {
-    ratio() {
-      return [1, 1, 1, 0.8];
-    },
-    tableFields() {
-      return [
-        {
-          fieldname: 'name',
-          label: 'Name',
-          fieldtype: 'Link',
-          target: 'SalesInvoice',
-          readOnly: true,
-        },
-        {
-          fieldname: 'party',
-          fieldtype: 'Link',
-          label: 'Customer',
-          target: 'Party',
-          placeholder: 'Customer',
-          readOnly: true,
-        },
-        {
-          fieldname: 'date',
-          label: 'Date',
-          fieldtype: 'Date',
-          readOnly: true,
-        },
-        {
-          fieldname: 'grandTotal',
-          label: 'Grand Total',
-          fieldtype: 'Currency',
-          readOnly: true,
-        },
-      ] as Field[];
-    },
-    filteredInvoices() {
-      const invoices = this.savedInvoiceList
-        ? this.savedInvoices
-        : this.submittedInvoices;
-      return invoices.filter((invoice) =>
-        (invoice.name as string)
-          .toLowerCase()
-          .includes(this.invoiceSearchTerm.toLowerCase())
-      );
-    },
-  },
-  watch: {
-    async modalStatus(newVal) {
-      if (newVal) {
-        await this.setSavedInvoices();
-        await this.setSubmittedInvoices();
-      }
-    },
-  },
-  async mounted() {
-    await this.setSavedInvoices();
-    await this.setSubmittedInvoices();
-  },
-  async activated() {
-    await this.setSavedInvoices();
-    await this.setSubmittedInvoices();
-  },
+// Define Props
+const props = defineProps<{
+  modalStatus: boolean;
+}>();
 
-  methods: {
-    async setSavedInvoices() {
-      this.savedInvoices = (await this.fyo.db.getAll(
-        ModelNameEnum.SalesInvoice,
-        {
-          fields: [],
-          filters: { isPOS: true, submitted: false },
-        }
-      )) as SalesInvoice[];
-    },
-    async setSubmittedInvoices() {
-      const invoices = (await this.fyo.db.getAll(ModelNameEnum.SalesInvoice, {
-        fields: [],
-        filters: { isPOS: true, submitted: true, returnAgainst: null },
-      })) as SalesInvoice[];
+// Define Emits
+const emit = defineEmits<{
+  (e: 'toggleModal', value: string): void;
+  (e: 'selectedInvoiceName', value: any): void;
+}>();
 
-      this.submittedInvoices = invoices.filter(
-        (invoice) => !(invoice.outstandingAmount as Money).isZero()
-      );
-    },
-    async selectedInvoice(row: SalesInvoice) {
-      let selectedInvoiceDoc = (await this.fyo.doc.getDoc(
-        ModelNameEnum.SalesInvoice,
-        row.name
-      )) as SalesInvoice;
+// App Store / Context Injections
+const sinvDoc = inject<any>('sinvDoc');
 
-      this.sinvDoc = selectedInvoiceDoc;
-      this.$emit('toggleModal', 'SavedInvoice');
+// Reactive State
+const savedInvoiceList = ref(true);
+const savedInvoices = ref<any[]>([]);
+const submittedInvoices = ref<any[]>([]);
+const invoiceSearchTerm = ref('');
+
+// Computed Properties
+const ratio = computed(() => {
+  return [1, 1, 1, 0.8];
+});
+
+const tableFields = computed<Field[]>(() => {
+  return [
+    {
+      fieldname: 'name',
+      label: 'Name',
+      fieldtype: 'Link',
+      target: 'SalesInvoice',
+      readOnly: true,
     },
-    handleEnterKey() {
-      if (this.filteredInvoices.length === 1) {
-        this.$emit('selectedInvoiceName', this.filteredInvoices[0]);
-      }
+    {
+      fieldname: 'party',
+      fieldtype: 'Link',
+      label: 'Customer',
+      target: 'Party',
+      placeholder: 'Customer',
+      readOnly: true,
     },
-  },
+    {
+      fieldname: 'date',
+      label: 'Date',
+      fieldtype: 'Date',
+      readOnly: true,
+    },
+    {
+      fieldname: 'grandTotal',
+      label: 'Grand Total',
+      fieldtype: 'Currency',
+      readOnly: true,
+    },
+  ] as Field[];
+});
+
+const filteredInvoices = computed(() => {
+  const invoices = savedInvoiceList.value
+    ? savedInvoices.value
+    : submittedInvoices.value;
+  return invoices.filter((invoice) =>
+    (invoice.name as string)
+      .toLowerCase()
+      .includes(invoiceSearchTerm.value.toLowerCase())
+  );
+});
+
+// Methods
+const setSavedInvoices = async () => {
+  savedInvoices.value = (await fyo.db.getAll(
+    ModelNameEnum.SalesInvoice,
+    {
+      fields: [],
+      filters: { isPOS: true, submitted: false },
+    }
+  )) as SalesInvoice[];
+};
+
+const setSubmittedInvoices = async () => {
+  const invoices = (await fyo.db.getAll(ModelNameEnum.SalesInvoice, {
+    fields: [],
+    filters: { isPOS: true, submitted: true, returnAgainst: null },
+  })) as SalesInvoice[];
+
+  submittedInvoices.value = invoices.filter(
+    (invoice) => !(invoice.outstandingAmount as Money).isZero()
+  );
+};
+
+const _selectedInvoice = async (row: SalesInvoice) => {
+  let selectedInvoiceDoc = (await fyo.doc.getDoc(
+    ModelNameEnum.SalesInvoice,
+    row.name
+  )) as SalesInvoice;
+
+  if (sinvDoc && 'value' in sinvDoc) {
+    sinvDoc.value = selectedInvoiceDoc;
+  } else if (sinvDoc) {
+    // If it's a direct object instead of a ref
+    Object.assign(sinvDoc, selectedInvoiceDoc);
+  }
+  emit('toggleModal', 'SavedInvoice');
+};
+
+const handleEnterKey = () => {
+  if (filteredInvoices.value.length === 1) {
+    emit('selectedInvoiceName', filteredInvoices.value[0]);
+  }
+};
+
+// Watchers
+watch(() => props.modalStatus, async (newVal) => {
+  if (newVal) {
+    await setSavedInvoices();
+    await setSubmittedInvoices();
+  }
+});
+
+// Lifecycles
+onMounted(async () => {
+  await setSavedInvoices();
+  await setSubmittedInvoices();
+  if (false) {
+    console.log(_selectedInvoice);
+  }
+});
+
+onActivated(async () => {
+  await setSavedInvoices();
+  await setSubmittedInvoices();
 });
 </script>

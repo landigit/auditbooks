@@ -67,61 +67,75 @@
   </div>
 </template>
 
-<script lang="ts">
-import Base from './Base.vue';
-
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 import { SelectOption } from 'schemas/types';
 import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
 import LucideIcon from '../LucideIcon.vue';
 
-export default defineComponent({
-  name: 'Select',
-  components: {
-    Popover,
-    PopoverAnchor,
-    PopoverContent,
-    LucideIcon,
-  },
-  extends: Base,
-  emits: ['focus'],
-  data() {
-    return {
-      dropdownVisible: false,
-      selectValue: this.value,
-    };
-  },
-  props: {
-    closeDropDown: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  computed: {
-    options(): SelectOption[] {
-      if (this.df.fieldtype !== 'Select') {
-        return [];
-      }
+interface SelectProps extends BaseControlProps {
+  closeDropDown?: boolean;
+}
 
-      return this.df.options;
-    },
-  },
-  methods: {
-    toggleDropdown() {
-      if (!this.closeDropDown) {
-        this.dropdownVisible = true;
-      } else if (!this.isReadOnly) {
-        this.dropdownVisible = !this.dropdownVisible;
-      }
-    },
-    selectOption(option: SelectOption) {
-      this.selectValue = option.label;
-      this.triggerChange(option.value);
+const props = withDefaults(defineProps<SelectProps>(), {
+  closeDropDown: true,
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
 
-      if (this.closeDropDown) {
-        this.dropdownVisible = !this.dropdownVisible;
-      }
-    },
-  },
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
+
+const dropdownVisible = ref(false);
+const selectValue = ref<any>(props.value);
+
+const inputRef = ref<HTMLElement | null>(null);
+const {
+  labelClasses,
+  inputClasses,
+  containerClasses,
+  inputPlaceholder,
+  isReadOnly,
+  showMandatory,
+  triggerChange,
+  focus
+} = useBaseControl(props as any, emit, inputRef);
+
+const options = computed<SelectOption[]>(() => {
+  if (props.df.fieldtype !== 'Select') {
+    return [];
+  }
+  return props.df.options || [];
+});
+
+const toggleDropdown = () => {
+  if (!props.closeDropDown) {
+    dropdownVisible.value = true;
+  } else if (!isReadOnly.value) {
+    dropdownVisible.value = !dropdownVisible.value;
+  }
+};
+
+const selectOption = (option: SelectOption) => {
+  selectValue.value = option.label;
+  triggerChange(option.value);
+
+  if (props.closeDropDown) {
+    dropdownVisible.value = !dropdownVisible.value;
+  }
+};
+
+defineExpose({
+  focus
 });
 </script>

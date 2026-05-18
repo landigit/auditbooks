@@ -92,6 +92,8 @@ export class Main {
       autoHideMenuBar: true,
       frame: false,
       resizable: true,
+      minWidth: 800,
+      minHeight: 600,
     };
 
     if (this.isDevelopment || this.isLinux) {

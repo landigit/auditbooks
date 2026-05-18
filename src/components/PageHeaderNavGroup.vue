@@ -10,7 +10,7 @@
           ? 'text-main cursor-pointer'
           : 'text-description'
       "
-      @click="$router.back()"
+      @click="router.back()"
     >
       <lucide-icon name="chevron-left" class="w-4 h-4" />
     </a>
@@ -22,48 +22,40 @@
           ? 'text-main cursor-pointer'
           : 'text-description'
       "
-      @click="$router.forward()"
+      @click="router.forward()"
     >
       <lucide-icon name="chevron-right" class="w-4 h-4" />
     </a>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, inject, onActivated, onDeactivated } from 'vue';
+import { useRouter } from 'vue-router';
 import { shortcutsKey } from 'src/utils/injectionKeys';
-import { ref, inject } from 'vue';
-import { defineComponent } from 'vue';
 import SearchBar from './SearchBar.vue';
 import { useAppStore } from 'src/stores/app';
 
 const COMPONENT_NAME = 'PageHeaderNavGroup';
 
-export default defineComponent({
-  components: { SearchBar },
-  setup() {
-    return {
-      store: useAppStore(),
-      backlink: ref<HTMLAnchorElement | null>(null),
-      shortcuts: inject(shortcutsKey),
-    };
-  },
-  computed: {
-    hasBack() {
-      return !!history.back;
-    },
-    hasForward() {
-      return !!history.forward;
-    },
-  },
-  activated() {
-    this.shortcuts?.shift.set(COMPONENT_NAME, ['Backspace'], () => {
-      this.backlink?.click();
-    });
-    // @ts-ignore
-    window.ng = this;
-  },
-  deactivated() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
+const store = useAppStore();
+const router = useRouter();
+const shortcuts = inject(shortcutsKey);
+
+// Template Ref
+const backlink = ref<HTMLAnchorElement | null>(null);
+
+// Lifecycles
+onActivated(() => {
+  shortcuts?.shift.set(COMPONENT_NAME, ['Backspace'], () => {
+    backlink.value?.click();
+  });
+  // @ts-ignore
+  window.ng = { backlink };
+});
+
+onDeactivated(() => {
+  shortcuts?.delete(COMPONENT_NAME);
 });
 </script>
 

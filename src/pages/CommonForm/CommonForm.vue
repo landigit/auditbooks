@@ -131,14 +131,28 @@
       </div>
     </template>
     <template #quickedit>
-      <Transition name="quickedit">
+      <Transition
+        enter-active-class="transition-all duration-150 ease-out"
+        enter-from-class="translate-x-full opacity-0 w-0"
+        enter-to-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
+        leave-to-class="translate-x-full opacity-0 w-0"
+      >
         <LinkedEntries
           v-if="showLinks && canShowLinks"
           :doc="doc"
           @close="showLinks = false"
         />
       </Transition>
-      <Transition name="quickedit">
+      <Transition
+        enter-active-class="transition-all duration-150 ease-out"
+        enter-from-class="translate-x-full opacity-0 w-0"
+        enter-to-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
+        leave-to-class="translate-x-full opacity-0 w-0"
+      >
         <RowEditForm
           v-if="row && !showLinks"
           :doc="doc"
@@ -152,7 +166,19 @@
     </template>
   </FormContainer>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import {
+  ref,
+  computed,
+  inject,
+  provide,
+  onBeforeMount,
+  onMounted,
+  onActivated,
+  onDeactivated,
+  nextTick,
+} from 'vue';
+import { useRouter } from 'vue-router';
 import { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import { DEFAULT_CURRENCY } from 'fyo/utils/consts';
@@ -178,297 +204,344 @@ import {
   getFieldsGroupedByTabAndSection,
   getFormRoute,
   getGroupedActionsForDoc,
-  isPrintable,
+  isPrintable as isPrintableFn,
   routeTo,
 } from 'src/utils/ui';
 import { useDocShortcuts } from 'src/utils/vueUtils';
 import { useAppStore } from 'src/stores/app';
-import { computed, defineComponent, inject, nextTick, ref } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import CommonFormSection from './CommonFormSection.vue';
 import LinkedEntries from './LinkedEntries.vue';
 import RowEditForm from './RowEditForm.vue';
 
-export default defineComponent({
-  components: {
-    FormContainer,
-    FormHeader,
-    CommonFormSection,
-    Button,
-    DropdownWithActions,
-    Barcode,
-    ExchangeRate,
-    LinkedEntries,
-    RowEditForm,
-    StatusPill,
-  },
-  provide() {
-    return {
-      doc: computed(() => this.docOrNull),
-    };
-  },
-  props: {
-    name: { type: String, default: '' },
-    schemaName: { type: String, default: ModelNameEnum.SalesInvoice },
-  },
-  setup() {
-    const shortcuts = inject(shortcutsKey);
-    const docOrNull = ref(null) as DocRef;
-    let context = 'CommonForm';
-    if (shortcuts) {
-      context = useDocShortcuts(shortcuts, docOrNull, 'CommonForm', true);
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    name?: string;
+    schemaName?: ModelNameEnum;
+  }>(),
+  {
+    name: '',
+    schemaName: ModelNameEnum.SalesInvoice,
+  }
+);
+
+// Router & App Store
+const router = useRouter();
+const store = useAppStore();
+
+// Setup injection dependencies
+const shortcuts = inject(shortcutsKey);
+const docOrNull = ref(null) as DocRef;
+let context = 'CommonForm';
+if (shortcuts) {
+  context = useDocShortcuts(shortcuts, docOrNull, 'CommonForm', true);
+}
+
+// Provide document context to child elements
+provide(
+  'doc',
+  computed(() => docOrNull.value)
+);
+
+// Template Ref
+const printButton = ref<InstanceType<typeof Button> | null>(null);
+
+// Reactive State definitions
+const errors = ref<Record<string, string>>({});
+const activeTab = ref(t`Default`);
+const groupedFields = ref<UIGroupedFields | null>(null);
+const isPrintable = ref(false);
+const showLinks = ref(false);
+const useFullWidth = ref(false);
+const row = ref<{ index: number; fieldname: string } | null>(null);
+
+// Computed properties
+const canShowBarcode = computed<boolean>(() => {
+  if (!fyo.singles.InventorySettings?.enableBarcodes) {
+    return false;
+  }
+
+  if (!hasDoc.value) {
+    return false;
+  }
+
+  if (doc.value.isSubmitted || doc.value.isCancelled) {
+    return false;
+  }
+
+  // @ts-ignore
+  return typeof doc.value?.addItem === 'function';
+});
+
+const canShowExchangeRate = computed<boolean>(() => {
+  return hasDoc.value && !!doc.value.isMultiCurrency;
+});
+
+const exchangeRate = computed<number>(() => {
+  if (!hasDoc.value || typeof doc.value.exchangeRate !== 'number') {
+    return 1;
+  }
+
+  return doc.value.exchangeRate;
+});
+
+const fromCurrency = computed<string>(() => {
+  const currency = doc.value?.currency;
+  if (typeof currency !== 'string') {
+    return toCurrency.value;
+  }
+
+  return currency;
+});
+
+const toCurrency = computed<string>(() => {
+  const currency = fyo.singles.SystemSettings?.currency;
+  if (typeof currency !== 'string') {
+    return DEFAULT_CURRENCY;
+  }
+
+  return currency;
+});
+
+const canPrint = computed<boolean>(() => {
+  if (!hasDoc.value) {
+    return false;
+  }
+
+  return !doc.value.isCancelled && !doc.value.dirty && isPrintable.value;
+});
+
+const canShowLinks = computed<boolean>(() => {
+  if (!hasDoc.value) {
+    return false;
+  }
+
+  if (doc.value.schema.isSubmittable && !doc.value.isSubmitted) {
+    return false;
+  }
+
+  return doc.value.inserted;
+});
+
+const hasDoc = computed<boolean>(() => {
+  return docOrNull.value instanceof Doc;
+});
+
+const status = computed<string>(() => {
+  if (!hasDoc.value) {
+    return '';
+  }
+
+  return getDocStatus(doc.value);
+});
+
+const doc = computed<Doc>(() => {
+  const d = docOrNull.value;
+  if (!d) {
+    throw new ValidationError(
+      t`Doc ${schema.value.label} ${props.name} not set`
+    );
+  }
+  return d;
+});
+
+const title = computed<string>(() => {
+  if (schema.value.isSubmittable && docOrNull.value?.notInserted) {
+    return t`New Entry`;
+  }
+
+  return docOrNull.value?.name || t`New Entry`;
+});
+
+const schema = computed<Schema>(() => {
+  const s = fyo.schemaMap[props.schemaName];
+  if (!s) {
+    throw new ValidationError(`no schema found with ${props.schemaName}`);
+  }
+
+  return s;
+});
+
+const activeGroup = computed<Map<string, Field[]>>(() => {
+  if (!groupedFields.value) {
+    return new Map();
+  }
+
+  const group = groupedFields.value.get(activeTab.value);
+  if (!group) {
+    const tab = [...groupedFields.value.keys()][0];
+    return groupedFields.value.get(tab) ?? new Map<string, Field[]>();
+  }
+
+  return group;
+});
+
+const groupedActions = computed<ActionGroup[]>(() => {
+  if (!hasDoc.value) {
+    return [];
+  }
+
+  return getGroupedActionsForDoc(doc.value);
+});
+
+// Methods
+const toggleWidth = async () => {
+  const value = !useFullWidth.value;
+  await fyo.singles.Misc?.setAndSync('useFullWidth', value);
+  useFullWidth.value = value;
+};
+
+const updateGroupedFields = (): void => {
+  if (!hasDoc.value) {
+    return;
+  }
+
+  groupedFields.value = getFieldsGroupedByTabAndSection(
+    schema.value,
+    doc.value
+  );
+};
+
+const sync = async (useDialog?: boolean) => {
+  if (await commonDocSync(doc.value, useDialog)) {
+    updateGroupedFields();
+  }
+};
+
+const submit = async () => {
+  if (await commonDocSubmit(doc.value)) {
+    updateGroupedFields();
+  }
+};
+
+const setDoc = async () => {
+  if (hasDoc.value) {
+    return;
+  }
+
+  docOrNull.value = await getDocFromNameIfExistsElseNew(
+    props.schemaName,
+    props.name
+  );
+};
+
+const replacePathAfterSync = () => {
+  if (!hasDoc.value || doc.value.inserted) {
+    return;
+  }
+
+  doc.value.once('afterSync', async () => {
+    const route = getFormRoute(props.schemaName, doc.value.name!);
+    await router.replace(route);
+  });
+};
+
+const showRowEditForm = async (childDoc: Doc) => {
+  if (showLinks.value) {
+    showLinks.value = false;
+    await nextTick();
+  }
+
+  const index = childDoc.idx;
+  const fieldname = childDoc.parentFieldname;
+
+  if (typeof index === 'number' && typeof fieldname === 'string') {
+    row.value = { index, fieldname };
+  }
+};
+
+const onValueChange = async (field: Field, value: DocValue) => {
+  const { fieldname } = field;
+  delete errors.value[fieldname];
+
+  try {
+    await doc.value.set(fieldname, value);
+  } catch (err) {
+    if (!(err instanceof Error)) {
+      return;
     }
 
-    return {
-      docOrNull,
-      shortcuts,
-      context,
-      printButton: ref<InstanceType<typeof Button> | null>(null),
-      store: useAppStore(),
+    errors.value[fieldname] = getErrorMessage(err, doc.value);
+  }
+
+  updateGroupedFields();
+};
+
+// Lifecycles
+onBeforeMount(() => {
+  useFullWidth.value = !!fyo.singles.Misc?.useFullWidth;
+});
+
+onMounted(async () => {
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.cf = {
+      errors,
+      activeTab,
+      groupedFields,
+      isPrintable,
+      showLinks,
+      useFullWidth,
+      row,
+      canShowBarcode,
+      canShowExchangeRate,
+      exchangeRate,
+      fromCurrency,
+      toCurrency,
+      canPrint,
+      canShowLinks,
+      hasDoc,
+      status,
+      doc,
+      title,
+      schema,
+      activeGroup,
+      groupedActions,
+      printButton,
+      toggleWidth,
+      updateGroupedFields,
+      sync,
+      submit,
+      setDoc,
+      replacePathAfterSync,
+      showRowEditForm,
+      onValueChange,
     };
-  },
-  data() {
-    return {
-      errors: {} as Record<string, string>,
-      activeTab: this.t`Default`,
-      groupedFields: null as UIGroupedFields | null,
-      isPrintable: false,
-      showLinks: false,
-      useFullWidth: false,
-      row: null as { index: number; fieldname: string } | null,
-    };
-  },
-  computed: {
-    canShowBarcode(): boolean {
-      if (!this.fyo.singles.InventorySettings?.enableBarcodes) {
-        return false;
-      }
+  }
 
-      if (!this.hasDoc) {
-        return false;
-      }
+  await setDoc();
+  replacePathAfterSync();
+  updateGroupedFields();
+  if (groupedFields.value) {
+    activeTab.value = [...groupedFields.value.keys()][0];
+  }
+  isPrintable.value = await isPrintableFn(props.schemaName);
+});
 
-      if (this.doc.isSubmitted || this.doc.isCancelled) {
-        return false;
-      }
-
-      // @ts-ignore
-      return typeof this.doc?.addItem === 'function';
-    },
-    canShowExchangeRate(): boolean {
-      return this.hasDoc && !!this.doc.isMultiCurrency;
-    },
-    exchangeRate(): number {
-      if (!this.hasDoc || typeof this.doc.exchangeRate !== 'number') {
-        return 1;
-      }
-
-      return this.doc.exchangeRate;
-    },
-    fromCurrency(): string {
-      const currency = this.doc?.currency;
-      if (typeof currency !== 'string') {
-        return this.toCurrency;
-      }
-
-      return currency;
-    },
-    toCurrency(): string {
-      const currency = this.fyo.singles.SystemSettings?.currency;
-      if (typeof currency !== 'string') {
-        return DEFAULT_CURRENCY;
-      }
-
-      return currency;
-    },
-    canPrint(): boolean {
-      if (!this.hasDoc) {
-        return false;
-      }
-
-      return !this.doc.isCancelled && !this.doc.dirty && this.isPrintable;
-    },
-    canShowLinks(): boolean {
-      if (!this.hasDoc) {
-        return false;
-      }
-
-      if (this.doc.schema.isSubmittable && !this.doc.isSubmitted) {
-        return false;
-      }
-
-      return this.doc.inserted;
-    },
-    hasDoc(): boolean {
-      return this.docOrNull instanceof Doc;
-    },
-    status(): string {
-      if (!this.hasDoc) {
-        return '';
-      }
-
-      return getDocStatus(this.doc);
-    },
-    doc(): Doc {
-      const doc = this.docOrNull;
-      if (!doc) {
-        throw new ValidationError(
-          this.t`Doc ${this.schema.label} ${this.name} not set`
-        );
-      }
-      return doc;
-    },
-    title(): string {
-      if (this.schema.isSubmittable && this.docOrNull?.notInserted) {
-        return this.t`New Entry`;
-      }
-
-      return this.docOrNull?.name || this.t`New Entry`;
-    },
-    schema(): Schema {
-      const schema = this.fyo.schemaMap[this.schemaName];
-      if (!schema) {
-        throw new ValidationError(`no schema found with ${this.schemaName}`);
-      }
-
-      return schema;
-    },
-    activeGroup(): Map<string, Field[]> {
-      if (!this.groupedFields) {
-        return new Map();
-      }
-
-      const group = this.groupedFields.get(this.activeTab);
-      if (!group) {
-        const tab = [...this.groupedFields.keys()][0];
-        return this.groupedFields.get(tab) ?? new Map<string, Field[]>();
-      }
-
-      return group;
-    },
-    groupedActions(): ActionGroup[] {
-      if (!this.hasDoc) {
-        return [];
-      }
-
-      return getGroupedActionsForDoc(this.doc);
-    },
-  },
-  beforeMount() {
-    this.useFullWidth = !!this.fyo.singles.Misc?.useFullWidth;
-  },
-  async mounted() {
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.cf = this;
+onActivated(() => {
+  useFullWidth.value = !!fyo.singles.Misc?.useFullWidth;
+  store.docsPath = docsPathMap[props.schemaName] ?? '';
+  shortcuts?.pmod.set(context, ['KeyP'], () => {
+    if (!canPrint.value) {
+      return;
     }
 
-    await this.setDoc();
-    this.replacePathAfterSync();
-    this.updateGroupedFields();
-    if (this.groupedFields) {
-      this.activeTab = [...this.groupedFields.keys()][0];
+    printButton.value?.$el.click();
+  });
+  shortcuts?.pmod.set(context, ['KeyL'], () => {
+    if (!canShowLinks.value && !showLinks.value) {
+      return;
     }
-    this.isPrintable = await isPrintable(this.schemaName);
-  },
-  activated(): void {
-    this.useFullWidth = !!this.fyo.singles.Misc?.useFullWidth;
-    this.store.docsPath = docsPathMap[this.schemaName] ?? '';
-    this.shortcuts?.pmod.set(this.context, ['KeyP'], () => {
-      if (!this.canPrint) {
-        return;
-      }
 
-      this.printButton?.$el.click();
-    });
-    this.shortcuts?.pmod.set(this.context, ['KeyL'], () => {
-      if (!this.canShowLinks && !this.showLinks) {
-        return;
-      }
+    showLinks.value = !showLinks.value;
+  });
+});
 
-      this.showLinks = !this.showLinks;
-    });
-  },
-  deactivated(): void {
-    this.store.docsPath = '';
-    this.showLinks = false;
-    this.row = null;
-  },
-  methods: {
-    routeTo,
-    async toggleWidth() {
-      const value = !this.useFullWidth;
-      await this.fyo.singles.Misc?.setAndSync('useFullWidth', value);
-      this.useFullWidth = value;
-    },
-    updateGroupedFields(): void {
-      if (!this.hasDoc) {
-        return;
-      }
-
-      this.groupedFields = getFieldsGroupedByTabAndSection(
-        this.schema,
-        this.doc
-      );
-    },
-    async sync(useDialog?: boolean) {
-      if (await commonDocSync(this.doc, useDialog)) {
-        this.updateGroupedFields();
-      }
-    },
-    async submit() {
-      if (await commonDocSubmit(this.doc)) {
-        this.updateGroupedFields();
-      }
-    },
-    async setDoc() {
-      if (this.hasDoc) {
-        return;
-      }
-
-      this.docOrNull = await getDocFromNameIfExistsElseNew(
-        this.schemaName,
-        this.name
-      );
-    },
-    replacePathAfterSync() {
-      if (!this.hasDoc || this.doc.inserted) {
-        return;
-      }
-
-      this.doc.once('afterSync', async () => {
-        const route = getFormRoute(this.schemaName, this.doc.name!);
-        await this.$router.replace(route);
-      });
-    },
-    async showRowEditForm(doc: Doc) {
-      if (this.showLinks) {
-        this.showLinks = false;
-        await nextTick();
-      }
-
-      const index = doc.idx;
-      const fieldname = doc.parentFieldname;
-
-      if (typeof index === 'number' && typeof fieldname === 'string') {
-        this.row = { index, fieldname };
-      }
-    },
-    async onValueChange(field: Field, value: DocValue) {
-      const { fieldname } = field;
-      delete this.errors[fieldname];
-
-      try {
-        await this.doc.set(fieldname, value);
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          return;
-        }
-
-        this.errors[fieldname] = getErrorMessage(err, this.doc);
-      }
-
-      this.updateGroupedFields();
-    },
-  },
+onDeactivated(() => {
+  store.docsPath = '';
+  showLinks.value = false;
+  row.value = null;
 });
 </script>

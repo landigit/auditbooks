@@ -19,7 +19,7 @@
           <div class="w-10 flex justify-end items-center">
             <lucide-icon
               name="trash"
-              class="w-5 text-xl text-error"
+              class="w-5 text-xl text-error cursor-pointer"
               @click="removePriceList"
             />
           </div>
@@ -65,53 +65,49 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { inject } from 'vue';
 import { t } from 'fyo';
 import Modal from 'src/components/Modal.vue';
-import { defineComponent, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import { showToast } from 'src/utils/interactive';
 import Link from 'src/components/Controls/Link.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 
-export default defineComponent({
-  name: 'PriceListModal',
-  components: {
-    Link,
-    Modal,
-    Button,
-  },
-  emits: ['toggleModal'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  methods: {
-    async removePriceList() {
-      await this.sinvDoc.set('priceList', '');
-    },
-    async applyPriceList(value?: string) {
-      try {
-        if (!value || value == this.sinvDoc.priceList) {
-          return;
-        }
+// Define Emits
+const emit = defineEmits<{
+  (e: 'toggleModal', value: string): void;
+}>();
 
-        await this.sinvDoc.set('priceList', value);
-        this.$emit('toggleModal', 'PriceList');
-      } catch (error) {
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-        });
-      }
-    },
-    cancelPriceList() {
-      this.$emit('toggleModal', 'PriceList');
-    },
-    setPriceList() {
-      this.$emit('toggleModal', 'PriceList');
-    },
-  },
-});
+// App Store / Context Injections
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+
+// Methods
+const removePriceList = async () => {
+  await sinvDoc.set('priceList', '');
+};
+
+const applyPriceList = async (value?: string) => {
+  try {
+    if (!value || value == sinvDoc.priceList) {
+      return;
+    }
+
+    await sinvDoc.set('priceList', value);
+    emit('toggleModal', 'PriceList');
+  } catch (error) {
+    showToast({
+      type: 'error',
+      message: t`${error as string}`,
+    });
+  }
+};
+
+const cancelPriceList = () => {
+  emit('toggleModal', 'PriceList');
+};
+
+const setPriceList = () => {
+  emit('toggleModal', 'PriceList');
+};
 </script>

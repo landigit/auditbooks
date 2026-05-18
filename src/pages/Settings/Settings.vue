@@ -57,7 +57,18 @@
     </template>
   </FormContainer>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import {
+  ref,
+  computed,
+  inject,
+  provide,
+  onMounted,
+  onActivated,
+  onDeactivated,
+} from 'vue';
+import { useRoute } from 'vue-router';
 import { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import { ValidationError } from 'fyo/utils/errors';
@@ -74,236 +85,253 @@ import { showDialog } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
 import { UIGroupedFields } from 'src/utils/types';
 import { useAppStore } from 'src/stores/app';
-import { computed, defineComponent, inject } from 'vue';
 import CommonFormSection from '../CommonForm/CommonFormSection.vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 const COMPONENT_NAME = 'Settings';
 
-export default defineComponent({
-  components: { FormContainer, Button, FormHeader, CommonFormSection },
-  provide() {
-    return { doc: computed(() => this.doc) };
-  },
-  setup() {
-    return {
-      shortcuts: inject(shortcutsKey),
-      store: useAppStore(),
-    };
-  },
-  data() {
-    return {
-      errors: {} as Record<string, string>,
-      activeTab: ModelNameEnum.AccountingSettings,
-      groupedFields: null as UIGroupedFields | null,
-    };
-  },
-  computed: {
-    canSave() {
-      return [
-        ModelNameEnum.AccountingSettings,
-        ModelNameEnum.InventorySettings,
-        ModelNameEnum.Defaults,
-        ModelNameEnum.POSSettings,
-        ModelNameEnum.ERPNextSyncSettings,
-        ModelNameEnum.PrintSettings,
-        ModelNameEnum.SystemSettings,
-      ].some((s) => this.fyo.singles[s]?.canSave);
-    },
-    doc(): Doc | null {
-      const doc = this.fyo.singles[this.activeTab];
-      if (!doc) {
-        return null;
+// Inject Dependencies
+const shortcuts = inject(shortcutsKey);
+const store = useAppStore();
+const route = useRoute();
+
+// Reactive State
+const errors = ref<Record<string, string>>({});
+const activeTab = ref<ModelNameEnum>(ModelNameEnum.AccountingSettings);
+const groupedFields = ref<UIGroupedFields | null>(null);
+
+// Computed Properties
+const canSave = computed<boolean>(() => {
+  return [
+    ModelNameEnum.AccountingSettings,
+    ModelNameEnum.InventorySettings,
+    ModelNameEnum.Defaults,
+    ModelNameEnum.POSSettings,
+    ModelNameEnum.ERPNextSyncSettings,
+    ModelNameEnum.PrintSettings,
+    ModelNameEnum.SystemSettings,
+  ].some((s) => fyo.singles[s]?.canSave);
+});
+
+const doc = computed<Doc | null>(() => {
+  const activeDoc = fyo.singles[activeTab.value];
+  if (!activeDoc) {
+    return null;
+  }
+  return activeDoc;
+});
+
+const tabLabels = computed<Record<string, string>>(() => {
+  return {
+    [ModelNameEnum.AccountingSettings]: t`General`,
+    [ModelNameEnum.PrintSettings]: t`Print`,
+    [ModelNameEnum.InventorySettings]: t`Inventory`,
+    [ModelNameEnum.Defaults]: t`Defaults`,
+    [ModelNameEnum.POSSettings]: t`POS Settings`,
+    [ModelNameEnum.ERPNextSyncSettings]: t`ERPNext Sync`,
+    [ModelNameEnum.SystemSettings]: t`System`,
+  };
+});
+
+const schemas = computed<Schema[]>(() => {
+  const enableInventory = !!fyo.singles.AccountingSettings?.enableInventory;
+  const enablePOS = !!fyo.singles.InventorySettings?.enablePointOfSale;
+  const enableERPNextSync = !!fyo.singles.AccountingSettings?.enableERPNextSync;
+
+  return [
+    ModelNameEnum.AccountingSettings,
+    ModelNameEnum.InventorySettings,
+    ModelNameEnum.Defaults,
+    ModelNameEnum.POSSettings,
+    ModelNameEnum.ERPNextSyncSettings,
+    ModelNameEnum.PrintSettings,
+    ModelNameEnum.SystemSettings,
+  ]
+    .filter((s) => {
+      if (s === ModelNameEnum.InventorySettings && !enableInventory) {
+        return false;
       }
 
-      return doc;
-    },
-    tabLabels(): Record<string, string> {
-      return {
-        [ModelNameEnum.AccountingSettings]: this.t`General`,
-        [ModelNameEnum.PrintSettings]: this.t`Print`,
-        [ModelNameEnum.InventorySettings]: this.t`Inventory`,
-        [ModelNameEnum.Defaults]: this.t`Defaults`,
-        [ModelNameEnum.POSSettings]: this.t`POS Settings`,
-        [ModelNameEnum.ERPNextSyncSettings]: this.t`ERPNext Sync`,
-        [ModelNameEnum.SystemSettings]: this.t`System`,
-      };
-    },
-    schemas(): Schema[] {
-      const enableInventory =
-        !!this.fyo.singles.AccountingSettings?.enableInventory;
-      const enablePOS = !!this.fyo.singles.InventorySettings?.enablePointOfSale;
-      const enableERPNextSync =
-        !!this.fyo.singles.AccountingSettings?.enableERPNextSync;
-
-      return [
-        ModelNameEnum.AccountingSettings,
-        ModelNameEnum.InventorySettings,
-        ModelNameEnum.Defaults,
-        ModelNameEnum.POSSettings,
-        ModelNameEnum.ERPNextSyncSettings,
-        ModelNameEnum.PrintSettings,
-        ModelNameEnum.SystemSettings,
-      ]
-        .filter((s) => {
-          if (s === ModelNameEnum.InventorySettings && !enableInventory) {
-            return false;
-          }
-
-          if (s === ModelNameEnum.POSSettings && !enablePOS) {
-            return false;
-          }
-
-          if (s === ModelNameEnum.ERPNextSyncSettings && !enableERPNextSync) {
-            return false;
-          }
-
-          return true;
-        })
-        .map((s) => this.fyo.schemaMap[s]!);
-    },
-    activeGroup(): Map<string, Field[]> {
-      if (!this.groupedFields) {
-        return new Map();
+      if (s === ModelNameEnum.POSSettings && !enablePOS) {
+        return false;
       }
 
-      const group = this.groupedFields.get(this.activeTab);
-      if (!group) {
-        throw new ValidationError(
-          `Tab group ${this.activeTab} has no value set`
-        );
+      if (s === ModelNameEnum.ERPNextSyncSettings && !enableERPNextSync) {
+        return false;
       }
 
-      return group;
-    },
-  },
-  mounted() {
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.settings = this;
+      return true;
+    })
+    .map((s) => fyo.schemaMap[s]!);
+});
+
+const activeGroup = computed<Map<string, Field[]>>(() => {
+  if (!groupedFields.value) {
+    return new Map();
+  }
+
+  const group = groupedFields.value.get(activeTab.value);
+  if (!group) {
+    throw new ValidationError(`Tab group ${activeTab.value} has no value set`);
+  }
+
+  return group;
+});
+
+// Provide document context to child elements
+provide('doc', doc);
+
+// Methods
+const updateGroupedFields = () => {
+  const grouped: UIGroupedFields = new Map();
+  const fields: Field[] = schemas.value.map((s) => s.fields).flat();
+
+  for (const field of fields) {
+    const schemaName = field.schemaName! as ModelNameEnum;
+    if (!grouped.has(schemaName)) {
+      grouped.set(schemaName, new Map());
     }
 
-    this.update();
-  },
-  activated(): void {
-    const tab = this.$route.query.tab as string;
-    if (tab && this.tabLabels[tab]) {
-      this.activeTab = tab as ModelNameEnum;
+    const tabbed = grouped.get(schemaName)!;
+    const section = field.section ?? t`Miscellaneous`;
+    if (!tabbed.has(section)) {
+      tabbed.set(section, []);
     }
 
-    this.store.docsPath = docsPathMap.Settings ?? '';
-    this.shortcuts?.pmod.set(COMPONENT_NAME, ['KeyS'], async () => {
-      if (!this.canSave) {
-        return;
-      }
+    if (field.meta) {
+      continue;
+    }
 
-      await this.sync();
-    });
-  },
-  async deactivated(): Promise<void> {
-    this.store.docsPath = '';
-    this.shortcuts?.delete(COMPONENT_NAME);
-    if (!this.canSave) {
+    const activeDoc = fyo.singles[schemaName];
+    if (evaluateHidden(field, activeDoc)) {
+      continue;
+    }
+
+    tabbed.get(section)!.push(field);
+  }
+
+  groupedFields.value = grouped;
+};
+
+const update = () => {
+  updateGroupedFields();
+};
+
+const reset = async () => {
+  const resetableDocs = schemas.value
+    .map(({ name }) => fyo.singles[name])
+    .filter((activeDoc) => activeDoc?.dirty) as Doc[];
+
+  for (const activeDoc of resetableDocs) {
+    await activeDoc.load();
+  }
+
+  update();
+};
+
+const syncDoc = async (activeDoc: Doc) => {
+  try {
+    await activeDoc.sync();
+    updateGroupedFields();
+  } catch (error) {
+    await handleErrorWithDialog(error, activeDoc);
+  }
+};
+
+const sync = async () => {
+  const syncableDocs = schemas.value
+    .map(({ name }) => fyo.singles[name])
+    .filter((activeDoc) => activeDoc?.canSave) as Doc[];
+
+  for (const activeDoc of syncableDocs) {
+    await syncDoc(activeDoc);
+  }
+
+  update();
+  await showDialog({
+    title: t`Reload Auditbooks?`,
+    detail: t`Changes made to settings will be visible on reload.`,
+    type: 'info',
+    buttons: [
+      {
+        label: t`Yes`,
+        isPrimary: true,
+        // @ts-ignore
+        action: ipc.reloadWindow.bind(ipc),
+      },
+      {
+        label: t`No`,
+        action: () => null,
+        isEscape: true,
+      },
+    ],
+  });
+};
+
+const onValueChange = async (field: Field, value: DocValue) => {
+  const { fieldname } = field;
+  delete errors.value[fieldname];
+
+  try {
+    await doc.value?.set(fieldname, value ?? '');
+  } catch (err) {
+    if (!(err instanceof Error)) {
       return;
     }
-    await this.reset();
-  },
-  methods: {
-    async reset() {
-      const resetableDocs = this.schemas
-        .map(({ name }) => this.fyo.singles[name])
-        .filter((doc) => doc?.dirty) as Doc[];
 
-      for (const doc of resetableDocs) {
-        await doc.load();
-      }
+    errors.value[fieldname] = getErrorMessage(err, doc.value ?? undefined);
+  }
 
-      this.update();
-    },
-    async sync(): Promise<void> {
-      const syncableDocs = this.schemas
-        .map(({ name }) => this.fyo.singles[name])
-        .filter((doc) => doc?.canSave) as Doc[];
+  update();
+};
 
-      for (const doc of syncableDocs) {
-        await this.syncDoc(doc);
-      }
+// Lifecycles
+onMounted(() => {
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.settings = {
+      errors,
+      activeTab,
+      groupedFields,
+      canSave,
+      doc,
+      tabLabels,
+      schemas,
+      activeGroup,
+      reset,
+      sync,
+      onValueChange,
+      update,
+      updateGroupedFields,
+    };
+  }
 
-      this.update();
-      await showDialog({
-        title: this.t`Reload Auditbooks?`,
-        detail: this.t`Changes made to settings will be visible on reload.`,
-        type: 'info',
-        buttons: [
-          {
-            label: this.t`Yes`,
-            isPrimary: true,
-            action: ipc.reloadWindow.bind(ipc),
-          },
-          {
-            label: this.t`No`,
-            action: () => null,
-            isEscape: true,
-          },
-        ],
-      });
-    },
-    async syncDoc(doc: Doc): Promise<void> {
-      try {
-        await doc.sync();
-        this.updateGroupedFields();
-      } catch (error) {
-        await handleErrorWithDialog(error, doc);
-      }
-    },
-    async onValueChange(field: Field, value: DocValue): Promise<void> {
-      const { fieldname } = field;
-      delete this.errors[fieldname];
+  update();
+});
 
-      try {
-        await this.doc?.set(fieldname, value ?? '');
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          return;
-        }
+onActivated(() => {
+  const tab = route.query.tab as string;
+  if (tab && tabLabels.value[tab]) {
+    activeTab.value = tab as ModelNameEnum;
+  }
 
-        this.errors[fieldname] = getErrorMessage(err, this.doc ?? undefined);
-      }
+  store.docsPath = docsPathMap.Settings ?? '';
+  shortcuts?.pmod.set(COMPONENT_NAME, ['KeyS'], async () => {
+    if (!canSave.value) {
+      return;
+    }
 
-      this.update();
-    },
-    update(): void {
-      this.updateGroupedFields();
-    },
-    updateGroupedFields(): void {
-      const grouped: UIGroupedFields = new Map();
-      const fields: Field[] = this.schemas.map((s) => s.fields).flat();
+    await sync();
+  });
+});
 
-      for (const field of fields) {
-        const schemaName = field.schemaName! as ModelNameEnum;
-        if (!grouped.has(schemaName)) {
-          grouped.set(schemaName, new Map());
-        }
-
-        const tabbed = grouped.get(schemaName)!;
-        const section = field.section ?? this.t`Miscellaneous`;
-        if (!tabbed.has(section)) {
-          tabbed.set(section, []);
-        }
-
-        if (field.meta) {
-          continue;
-        }
-
-        const doc = this.fyo.singles[schemaName];
-        if (evaluateHidden(field, doc)) {
-          continue;
-        }
-
-        tabbed.get(section)!.push(field);
-      }
-
-      this.groupedFields = grouped;
-    },
-  },
+onDeactivated(async () => {
+  store.docsPath = '';
+  shortcuts?.delete(COMPONENT_NAME);
+  if (!canSave.value) {
+    return;
+  }
+  await reset();
 });
 </script>

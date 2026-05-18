@@ -21,50 +21,60 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
 import { PrintTemplate } from 'models/baseModels/PrintTemplate';
 import { OptionField } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import Select from 'src/components/Controls/Select.vue';
 import FormHeader from 'src/components/FormHeader.vue';
-import { defineComponent } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-export default defineComponent({
-  components: { FormHeader, Select, Button },
-  props: { doc: { type: PrintTemplate, required: true } },
-  emits: ['done'],
-  data() {
-    return { type: 'SalesInvoice' };
-  },
-  computed: {
-    df(): OptionField {
-      const options = PrintTemplate.lists.type!(this.doc) as {
-        value: string;
-        label: string;
-      }[];
-      return {
-        ...this.fyo.getField('PrintTemplate', 'type'),
-        options,
-        fieldtype: 'Select',
-        default: options[0].value,
-      };
-    },
-  },
-  mounted() {
-    this.type = this.doc.type ?? 'SalesInvoice';
-  },
-  methods: {
-    typeChange(v: string) {
-      if (this.type === v) {
-        return;
-      }
+// Define Props
+const props = defineProps<{
+  doc: PrintTemplate;
+}>();
 
-      this.type = v;
-    },
-    async done() {
-      await this.doc.set('type', this.type);
-      this.$emit('done');
-    },
-  },
+// Define Emits
+const emit = defineEmits<{
+  (e: 'done'): void;
+}>();
+
+// Reactive State
+const type = ref('SalesInvoice');
+
+// Computed Properties
+const df = computed<OptionField>(() => {
+  const options = PrintTemplate.lists.type!(props.doc) as {
+    value: string;
+    label: string;
+  }[];
+  return {
+    ...fyo.getField('PrintTemplate', 'type'),
+    options,
+    fieldtype: 'Select',
+    default: options[0].value,
+  };
+});
+
+// Methods
+const typeChange = (v: string) => {
+  if (type.value === v) {
+    return;
+  }
+
+  type.value = v;
+};
+
+const done = async () => {
+  await props.doc.set('type', type.value);
+  emit('done');
+};
+
+// Lifecycles
+onMounted(() => {
+  type.value = props.doc.type ?? 'SalesInvoice';
 });
 </script>

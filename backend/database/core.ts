@@ -64,7 +64,7 @@ export default class DatabaseCore extends DatabaseBase {
     try {
       const res = await db.client!.execute({
         sql: `SELECT value FROM "SingleValue" WHERE fieldname = 'countryCode' AND parent = 'SystemSettings' LIMIT 1`,
-        args: []
+        args: [],
       });
       query = res.rows as any[];
     } catch {
@@ -84,10 +84,11 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async connect() {
-    const url = this.dbPath === ':memory:' ? 'file::memory:' : `file:${this.dbPath}`;
+    const url =
+      this.dbPath === ':memory:' ? 'file::memory:' : `file:${this.dbPath}`;
     this.client = createClient({ url });
     this.drizzleDb = drizzle(this.client, {
-      schema: { ...schemaExports, ...relationsExports }
+      schema: { ...schemaExports, ...relationsExports },
     });
     await this.client.execute('PRAGMA foreign_keys=ON');
   }
@@ -273,7 +274,12 @@ export default class DatabaseCore extends DatabaseBase {
     } = options;
 
     const selectCols = typeof fields === 'string' ? [fields] : fields;
-    const selectStr = selectCols.length === 0 ? '*' : (selectCols.includes('*') ? '*' : selectCols.map(c => `"${c}"`).join(', '));
+    const selectStr =
+      selectCols.length === 0
+        ? '*'
+        : selectCols.includes('*')
+          ? '*'
+          : selectCols.map((c) => `"${c}"`).join(', ');
 
     let sqlStr = `SELECT ${selectStr} FROM "${schemaName}"`;
     const args: any[] = [];
@@ -286,12 +292,14 @@ export default class DatabaseCore extends DatabaseBase {
         if (operator === 'in') {
           const valArray = Array.isArray(val) ? val : [val];
           const hasNull = valArray.includes(null);
-          const nonNulls = valArray.filter(v => v !== null);
+          const nonNulls = valArray.filter((v) => v !== null);
 
           if (nonNulls.length > 0) {
             const placeholders = nonNulls.map(() => '?').join(', ');
             if (hasNull) {
-              conditions.push(`("${field}" IN (${placeholders}) OR "${field}" IS NULL)`);
+              conditions.push(
+                `("${field}" IN (${placeholders}) OR "${field}" IS NULL)`
+              );
             } else {
               conditions.push(`"${field}" IN (${placeholders})`);
             }
@@ -299,6 +307,13 @@ export default class DatabaseCore extends DatabaseBase {
           } else if (hasNull) {
             conditions.push(`"${field}" IS NULL`);
           }
+        } else if (val === null && (operator === '=' || operator === 'is')) {
+          conditions.push(`"${field}" IS NULL`);
+        } else if (
+          val === null &&
+          (operator === '!=' || operator === 'is not')
+        ) {
+          conditions.push(`"${field}" IS NOT NULL`);
         } else {
           conditions.push(`"${field}" ${operator} ?`);
           args.push(val);
@@ -312,12 +327,12 @@ export default class DatabaseCore extends DatabaseBase {
 
     if (groupBy) {
       const groupByCols = Array.isArray(groupBy) ? groupBy : [groupBy];
-      sqlStr += ` GROUP BY ${groupByCols.map(c => `"${c}"`).join(', ')}`;
+      sqlStr += ` GROUP BY ${groupByCols.map((c) => `"${c}"`).join(', ')}`;
     }
 
     if (orderBy) {
       const orderByCols = Array.isArray(orderBy) ? orderBy : [orderBy];
-      sqlStr += ` ORDER BY ${orderByCols.map(c => `"${c}"`).join(', ')} ${order.toUpperCase()}`;
+      sqlStr += ` ORDER BY ${orderByCols.map((c) => `"${c}"`).join(', ')} ${order.toUpperCase()}`;
     }
 
     if (limit !== undefined) {
@@ -345,12 +360,14 @@ export default class DatabaseCore extends DatabaseBase {
         if (operator === 'in') {
           const valArray = Array.isArray(val) ? val : [val];
           const hasNull = valArray.includes(null);
-          const nonNulls = valArray.filter(v => v !== null);
+          const nonNulls = valArray.filter((v) => v !== null);
 
           if (nonNulls.length > 0) {
             const placeholders = nonNulls.map(() => '?').join(', ');
             if (hasNull) {
-              conditions.push(`("${field}" IN (${placeholders}) OR "${field}" IS NULL)`);
+              conditions.push(
+                `("${field}" IN (${placeholders}) OR "${field}" IS NULL)`
+              );
             } else {
               conditions.push(`"${field}" IN (${placeholders})`);
             }
@@ -358,6 +375,13 @@ export default class DatabaseCore extends DatabaseBase {
           } else if (hasNull) {
             conditions.push(`"${field}" IS NULL`);
           }
+        } else if (val === null && (operator === '=' || operator === 'is')) {
+          conditions.push(`"${field}" IS NULL`);
+        } else if (
+          val === null &&
+          (operator === '!=' || operator === 'is not')
+        ) {
+          conditions.push(`"${field}" IS NOT NULL`);
         } else {
           conditions.push(`"${field}" ${operator} ?`);
           args.push(val);
@@ -410,7 +434,7 @@ export default class DatabaseCore extends DatabaseBase {
   async rename(schemaName: string, oldName: string, newName: string) {
     await this.client!.execute({
       sql: `UPDATE "${schemaName}" SET "name" = ? WHERE "name" = ?`,
-      args: [newName, oldName]
+      args: [newName, oldName],
     });
   }
 
@@ -446,7 +470,7 @@ export default class DatabaseCore extends DatabaseBase {
   async #tableExists(schemaName: string): Promise<boolean> {
     const res = await this.client!.execute({
       sql: "select count(*) as count from sqlite_master where type='table' and name=?",
-      args: [schemaName]
+      args: [schemaName],
     });
     return Number(res.rows[0]?.count) > 0;
   }
@@ -454,7 +478,7 @@ export default class DatabaseCore extends DatabaseBase {
   async #singleExists(singleSchemaName: string): Promise<boolean> {
     const res = await this.client!.execute({
       sql: `SELECT count("parent") as "count" FROM "SingleValue" WHERE "parent" = ? LIMIT 1`,
-      args: [singleSchemaName]
+      args: [singleSchemaName],
     });
     const count = Number(res.rows[0]?.count);
     return count > 0;
@@ -462,7 +486,9 @@ export default class DatabaseCore extends DatabaseBase {
 
   async #dropColumns(schemaName: string, targetColumns: string[]) {
     for (const col of targetColumns) {
-      await this.client!.execute(`ALTER TABLE "${schemaName}" DROP COLUMN "${col}"`);
+      await this.client!.execute(
+        `ALTER TABLE "${schemaName}" DROP COLUMN "${col}"`
+      );
     }
   }
 
@@ -475,25 +501,33 @@ export default class DatabaseCore extends DatabaseBase {
 
     if (tableRows.length > 0) {
       for (const row of tableRows) {
-        const columns = Object.keys(row).map(c => `"${c}"`).join(', ');
-        const placeholders = Object.keys(row).map(() => '?').join(', ');
+        const columns = Object.keys(row)
+          .map((c) => `"${c}"`)
+          .join(', ');
+        const placeholders = Object.keys(row)
+          .map(() => '?')
+          .join(', ');
         const args = Object.values(row);
 
         await this.client!.execute({
           sql: `INSERT INTO "${tempName}" (${columns}) VALUES (${placeholders})`,
-          args: args as any[]
+          args: args as any[],
         });
       }
     }
 
     await this.client!.execute(`DROP TABLE "${schemaName}"`);
-    await this.client!.execute(`ALTER TABLE "${tempName}" RENAME TO "${schemaName}"`);
+    await this.client!.execute(
+      `ALTER TABLE "${tempName}" RENAME TO "${schemaName}"`
+    );
     await this.client!.execute('PRAGMA foreign_keys=ON');
   }
 
   async #getTableColumns(schemaName: string): Promise<string[]> {
     try {
-      const res = await this.client!.execute(`PRAGMA table_info("${schemaName}")`);
+      const res = await this.client!.execute(
+        `PRAGMA table_info("${schemaName}")`
+      );
       return res.rows.map((row: any) => row.name as string);
     } catch {
       return [];
@@ -518,7 +552,9 @@ export default class DatabaseCore extends DatabaseBase {
 
   async #getForeignKeys(schemaName: string): Promise<string[]> {
     try {
-      const res = await this.client!.execute(`PRAGMA foreign_key_list("${schemaName}")`);
+      const res = await this.client!.execute(
+        `PRAGMA foreign_key_list("${schemaName}")`
+      );
       return res.rows.map((row: any) => row.from as string);
     } catch {
       return [];
@@ -601,7 +637,11 @@ export default class DatabaseCore extends DatabaseBase {
     return newForeignKeys;
   }
 
-  #buildColumnForTable(columnDefs: string[], foreignKeys: string[], field: Field) {
+  #buildColumnForTable(
+    columnDefs: string[],
+    foreignKeys: string[],
+    field: Field
+  ) {
     if (field.fieldtype === FieldTypeEnum.Table) {
       return;
     }
@@ -629,7 +669,10 @@ export default class DatabaseCore extends DatabaseBase {
         def += ' NOT NULL';
       }
       if (field.default !== undefined) {
-        const defaultValue = typeof field.default === 'string' ? `'${field.default.replace(/'/g, "''")}'` : field.default;
+        const defaultValue =
+          typeof field.default === 'string'
+            ? `'${field.default.replace(/'/g, "''")}'`
+            : field.default;
         def += ` DEFAULT ${defaultValue}`;
       }
     }
@@ -667,7 +710,10 @@ export default class DatabaseCore extends DatabaseBase {
           def += ' NOT NULL';
         }
         if (field.default !== undefined) {
-          const defaultValue = typeof field.default === 'string' ? `'${field.default.replace(/'/g, "''")}'` : field.default;
+          const defaultValue =
+            typeof field.default === 'string'
+              ? `'${field.default.replace(/'/g, "''")}'`
+              : field.default;
           def += ` DEFAULT ${defaultValue}`;
         }
 
@@ -707,7 +753,7 @@ export default class DatabaseCore extends DatabaseBase {
   async #getNonExtantSingleValues(singleSchemaName: string) {
     const res = await this.client!.execute({
       sql: `SELECT "fieldname" FROM "SingleValue" WHERE "parent" = ?`,
-      args: [singleSchemaName]
+      args: [singleSchemaName],
     });
     const existingFields = res.rows.map((row: any) => row.fieldname as string);
 
@@ -727,21 +773,21 @@ export default class DatabaseCore extends DatabaseBase {
   async #deleteOne(schemaName: string, name: string) {
     return await this.client!.execute({
       sql: `DELETE FROM "${schemaName}" WHERE "name" = ?`,
-      args: [name]
+      args: [name],
     });
   }
 
   async #deleteSingle(schemaName: string, fieldname: string) {
     return await this.client!.execute({
       sql: `DELETE FROM "SingleValue" WHERE "parent" = ? AND "fieldname" = ?`,
-      args: [schemaName, fieldname]
+      args: [schemaName, fieldname],
     });
   }
 
   #deleteChildren(schemaName: string, parentName: string) {
     return this.client!.execute({
       sql: `DELETE FROM "${schemaName}" WHERE "parent" = ?`,
-      args: [parentName]
+      args: [parentName],
     });
   }
 
@@ -753,13 +799,13 @@ export default class DatabaseCore extends DatabaseBase {
     if (added.length === 0) {
       return this.client!.execute({
         sql: `DELETE FROM "${field.target}" WHERE "parent" = ?`,
-        args: [parentName]
+        args: [parentName],
       });
     }
     const placeholders = added.map(() => '?').join(', ');
     return this.client!.execute({
       sql: `DELETE FROM "${field.target}" WHERE "parent" = ? AND "name" NOT IN (${placeholders})`,
-      args: [parentName, ...added]
+      args: [parentName, ...added],
     });
   }
 
@@ -800,10 +846,11 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async #getOne(schemaName: string, name: string, fields: string[]) {
-    const selectCols = fields.length === 0 ? '*' : fields.map(c => `"${c}"`).join(', ');
+    const selectCols =
+      fields.length === 0 ? '*' : fields.map((c) => `"${c}"`).join(', ');
     const res = await this.client!.execute({
       sql: `SELECT ${selectCols} FROM "${schemaName}" WHERE "name" = ? LIMIT 1`,
-      args: [name]
+      args: [name],
     });
     return (res.rows[0] as FieldValueMap) || null;
   }
@@ -878,7 +925,7 @@ export default class DatabaseCore extends DatabaseBase {
   ) {
     const res = await this.client!.execute({
       sql: `SELECT "name" FROM "SingleValue" WHERE "parent" = ? AND "fieldname" = ? LIMIT 1`,
-      args: [singleSchemaName, fieldname]
+      args: [singleSchemaName, fieldname],
     });
 
     if (res.rows.length === 0) {
@@ -886,7 +933,13 @@ export default class DatabaseCore extends DatabaseBase {
     } else {
       await this.client!.execute({
         sql: `UPDATE "SingleValue" SET "value" = ?, "modifiedBy" = ?, "modified" = ? WHERE "parent" = ? AND "fieldname" = ?`,
-        args: [value, SYSTEM, new Date().toISOString(), singleSchemaName, fieldname]
+        args: [
+          value,
+          SYSTEM,
+          new Date().toISOString(),
+          singleSchemaName,
+          fieldname,
+        ],
       });
     }
   }
@@ -904,13 +957,17 @@ export default class DatabaseCore extends DatabaseBase {
       name: getRandomString(),
     });
 
-    const columns = Object.keys(fieldValueMap).map(c => `"${c}"`).join(', ');
-    const placeholders = Object.keys(fieldValueMap).map(() => '?').join(', ');
+    const columns = Object.keys(fieldValueMap)
+      .map((c) => `"${c}"`)
+      .join(', ');
+    const placeholders = Object.keys(fieldValueMap)
+      .map(() => '?')
+      .join(', ');
     const args = Object.values(fieldValueMap) as any[];
 
     await this.client!.execute({
       sql: `INSERT INTO "SingleValue" (${columns}) VALUES (${placeholders})`,
-      args
+      args,
     });
   }
 

@@ -8,7 +8,7 @@
       style="z-index: 1"
     >
       <div class="flex items-center justify-between w-full">
-        <Button :icon="true" @click="$emit('close')">
+        <Button :icon="true" @click="emit('close')">
           <lucide-icon name="x" class="w-4 h-4" />
         </Button>
         <p class="text-xl font-semibold text-description">
@@ -17,9 +17,20 @@
       </div>
     </div>
 
+    <!-- Loading Spinner -->
+    <div
+      v-if="loading"
+      class="flex flex-col items-center justify-center p-8 text-description h-64"
+    >
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"
+      ></div>
+      <p class="text-sm text-description">{{ t`Loading linked entries...` }}</p>
+    </div>
+
     <!-- Linked Entry List -->
     <div
-      v-if="sequence.length"
+      v-else-if="sequence.length"
       class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2 border-t border-border"
     >
       <div
@@ -55,7 +66,7 @@
             v-for="e of entries[sn].details"
             :key="String(e.name) + sn"
             class="p-2 text-sm cursor-pointer border-b last:border-0 border-border hover:bg-surface-hover"
-            @click="routeTo(sn, String(e.name))"
+            @click="routeToEntry(sn, String(e.name))"
           >
             <div class="flex justify-between">
               <!-- Name -->
@@ -154,7 +165,9 @@
     </p>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, inject, onMounted, onUnmounted } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { ModelNameEnum } from 'models/types';
@@ -163,79 +176,110 @@ import { getBgTextColorClass } from 'src/utils/colors';
 import { getLinkedEntries } from 'src/utils/doc';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { getFormRoute, routeTo } from 'src/utils/ui';
-import { PropType, defineComponent, inject } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 const COMPONENT_NAME = 'LinkedEntries';
 
-export default defineComponent({
-  components: { Button },
-  props: { doc: { type: Object as PropType<Doc>, required: true } },
-  emits: ['close'],
-  setup() {
-    return { shortcuts: inject(shortcutsKey) };
-  },
-  data() {
-    return {
-      entries: {} as Record<
-        string,
-        { collapsed: boolean; details: Record<string, any>[] }
-      >,
-    };
-  },
-  computed: {
-    sequence(): string[] {
-      const seq: string[] = linkSequence.filter(
-        (s) => !!this.entries[s]?.details?.length
-      );
+// Define Props & Emits
+const props = defineProps<{
+  doc: Doc;
+}>();
 
-      for (const s in this.entries) {
-        if (seq.includes(s)) {
-          continue;
-        }
-        seq.push(s);
-      }
+const emit = defineEmits<{
+  (e: 'close'): void;
+}>();
 
-      return seq;
-    },
-  },
-  async mounted() {
-    await this.setLinkedEntries();
-    this.shortcuts?.set(COMPONENT_NAME, ['Escape'], () => this.$emit('close'));
-  },
-  unmounted() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    isPesa,
-    colorClass: getBgTextColorClass,
-    async routeTo(schemaName: string, name: string) {
-      const route = getFormRoute(schemaName, name);
-      await routeTo(route);
-    },
-    async setLinkedEntries() {
-      const linkedEntries = await getLinkedEntries(this.doc);
-      for (const key in linkedEntries) {
-        const collapsed = false;
-        const entryNames = linkedEntries[key];
-        if (!entryNames.length) {
-          continue;
-        }
+// State definition
+const shortcuts = inject(shortcutsKey);
+const loading = ref(true);
+const entries = ref<
+  Record<string, { collapsed: boolean; details: Record<string, any>[] }>
+>({});
 
-        const fields = linkEntryDisplayFields[key] ?? ['name'];
-        const details = await this.fyo.db.getAll(key, {
-          fields,
-          filters: { name: ['in', entryNames] },
-        });
+const colorClass = getBgTextColorClass;
 
-        this.entries[key] = {
-          collapsed,
-          details,
-        };
-      }
-    },
-  },
+// Computed properties
+const sequence = computed<string[]>(() => {
+  const seq: string[] = linkSequence.filter(
+    (s) => !!entries.value[s]?.details?.length
+  );
+
+  for (const s in entries.value) {
+    if (seq.includes(s)) {
+      continue;
+    }
+    seq.push(s);
+  }
+
+  return seq;
 });
 
+// Methods
+const routeToEntry = async (schemaName: string, name: string) => {
+  const route = getFormRoute(schemaName, name);
+  await routeTo(route);
+};
+
+const setLinkedEntries = async () => {
+  try {
+    const linkedEntries = await getLinkedEntries(props.doc);
+
+    // Fetch all details in parallel using Promise.all!
+    const keys = Object.keys(linkedEntries);
+    const fetchPromises = keys.map(async (key) => {
+      const entryNames = linkedEntries[key];
+      if (!entryNames || !entryNames.length) {
+        return null;
+      }
+
+      const fields = linkEntryDisplayFields[key] ?? ['name'];
+      const details = await fyo.db.getAll(key, {
+        fields,
+        filters: { name: ['in', entryNames] },
+      });
+
+      return {
+        key,
+        collapsed: false,
+        details,
+      };
+    });
+
+    const results = await Promise.all(fetchPromises);
+
+    const newEntries: Record<
+      string,
+      { collapsed: boolean; details: Record<string, any>[] }
+    > = {};
+    for (const res of results) {
+      if (res) {
+        newEntries[res.key] = {
+          collapsed: res.collapsed,
+          details: res.details,
+        };
+      }
+    }
+
+    entries.value = newEntries;
+  } catch (error) {
+    console.error('Error fetching linked entries:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Lifecycles
+onMounted(async () => {
+  await setLinkedEntries();
+  shortcuts?.set(COMPONENT_NAME, ['Escape'], () => emit('close'));
+});
+
+onUnmounted(() => {
+  shortcuts?.delete(COMPONENT_NAME);
+});
+
+// Layout sequence and mappings
 const linkSequence = [
   // Invoices
   ModelNameEnum.SalesInvoice,
@@ -299,6 +343,7 @@ const linkEntryDisplayFields: Record<string, string[]> = {
   ],
 };
 </script>
+
 <style scoped>
 .pill-container:empty {
   display: none;

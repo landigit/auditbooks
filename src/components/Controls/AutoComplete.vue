@@ -23,7 +23,7 @@
         :class="containerClasses"
       >
         <input
-          ref="input"
+          ref="inputRef"
           spellcheck="false"
           :class="inputClasses"
           class="bg-transparent"
@@ -34,7 +34,7 @@
           :tabindex="isReadOnly ? '-1' : '0'"
           @focus="(e) => !isReadOnly && onInputFocus(e)"
           @click="(e) => !isReadOnly && onClick(e, toggleDropdown)"
-          @blur="(e) => !isReadOnly && onBlur(e.target.value, toggleDropdown)"
+          @blur="(e) => !isReadOnly && onBlur((e.target as HTMLInputElement).value, toggleDropdown)"
           @input="(e) => onInput(e, toggleDropdown)"
           @keydown.up="onKeyDownUp($event, toggleDropdown, highlightItemUp)"
           @keydown.down="
@@ -53,7 +53,7 @@
           style="background: inherit; margin-right: -3px"
           viewBox="0 0 5 10"
           xmlns="http://www.w3.org/2000/svg"
-          @click="(e) => !isReadOnly && onFocus(e, toggleDropdown)"
+          @click="(e) => !isReadOnly && onIconFocus(e, toggleDropdown)"
         >
           <path
             d="M1 2.636L2.636 1l1.637 1.636M1 7.364L2.636 9l1.637-1.636"
@@ -92,7 +92,7 @@
               :side-offset="10"
               class="p-0 overflow-hidden shadow-xl border-border"
             >
-              <QuickView :schema-name="linkSchemaName" :name="value" />
+              <QuickView :schema-name="linkSchemaName" :name="value as string" />
             </PopoverContent>
           </Popover>
         </div>
@@ -101,7 +101,8 @@
   </Dropdown>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { getOptionList } from 'fyo/utils';
 import { FieldTypeEnum } from 'schemas/types';
 import Dropdown from 'src/components/Dropdown.vue';
@@ -109,286 +110,350 @@ import { fuzzyMatch } from 'src/utils';
 import { getFormRoute, routeTo } from 'src/utils/ui';
 import {
   Popover,
-  PopoverTrigger,
   PopoverAnchor,
   PopoverContent,
 } from 'src/components/Ui';
-import Base from './Base.vue';
 import QuickView from '../QuickView.vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 
-export default {
-  name: 'AutoComplete',
-  components: {
-    Dropdown,
-    Popover,
-    PopoverTrigger,
-    PopoverAnchor,
-    PopoverContent,
-    QuickView,
-  },
-  extends: Base,
-  emits: ['focus'],
-  data() {
-    return {
-      showQuickView: false,
-      linkValue: '',
-      focInp: false,
-      isLoading: false,
-      suggestions: [],
-      highlightedIndex: -1,
-      isFocused: false,
-      isDropdownOpen: false,
-    };
-  },
-  computed: {
-    linkSchemaName() {
-      let schemaName = this.df?.target;
+interface AutoCompleteProps extends BaseControlProps {
+  focusInput?: boolean;
+  showClearButton?: boolean;
+  getSuggestions?: (keyword?: string) => Promise<any[]> | any[];
+  linkValueOverride?: string | null;
+  customClear?: () => void;
+}
 
-      if (!schemaName) {
-        const references = this.df?.references ?? '';
-        schemaName = this.doc?.[references];
-      }
+const props = withDefaults(defineProps<AutoCompleteProps>(), {
+  focusInput: false,
+  showClearButton: false,
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+  linkValueOverride: null,
+});
 
-      return schemaName;
-    },
-    options() {
-      if (!this.df) {
-        return [];
-      }
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+  (e: 'update:linkValue', val: string): void;
+}>();
 
-      return getOptionList(this.df, this.doc);
-    },
-    canLink() {
-      if (!this.value || !this.df) {
-        return false;
-      }
+const showQuickView = ref(false);
+const internalLinkValue = ref('');
+const linkValue = computed({
+  get: () => props.linkValueOverride !== null ? props.linkValueOverride : internalLinkValue.value,
+  set: (val) => {
+    internalLinkValue.value = val;
+    emit('update:linkValue', val);
+  }
+});
 
-      const fieldtype = this.df?.fieldtype;
-      const isLink = fieldtype === FieldTypeEnum.Link;
-      const isDynamicLink = fieldtype === FieldTypeEnum.DynamicLink;
+const focInp = ref(false);
+const isLoading = ref(false);
+const suggestions = ref<any[]>([]);
+const isFocused = ref(false);
+const isDropdownOpen = ref(false);
+const inputRef = ref<HTMLInputElement | null>(null);
 
-      if (!isLink && !isDynamicLink) {
-        return false;
-      }
+const {
+  doc,
+  labelClasses,
+  inputClasses,
+  containerClasses,
+  isReadOnly,
+  inputPlaceholder,
+  showMandatory,
+  triggerChange,
+  focus
+} = useBaseControl(props, emit, inputRef);
 
-      if (isLink && this.df.target) {
-        return true;
-      }
+const linkSchemaName = computed(() => {
+  let schemaName = (props.df as any)?.target;
+  if (!schemaName) {
+    const references = (props.df as any)?.references ?? '';
+    schemaName = doc.value?.[references];
+  }
+  return schemaName;
+});
 
-      const references = this.df.references;
-      if (!references) {
-        return false;
-      }
+const options = computed(() => {
+  if (!props.df) {
+    return [];
+  }
+  return getOptionList(props.df, doc.value);
+});
 
-      if (!this.doc?.[references]) {
-        return false;
-      }
+const canLink = computed(() => {
+  if (!props.value || !props.df) {
+    return false;
+  }
 
-      return true;
-    },
-  },
-  watch: {
-    value: {
-      immediate: true,
-      handler(newValue) {
-        this.setLinkValue(this.getLinkValue(newValue));
-      },
-    },
-  },
-  mounted() {
-    const value = this.linkValue || this.value;
-    this.setLinkValue(this.getLinkValue(value));
-  },
-  unmounted() {
-    this.showQuickView = false;
-  },
-  deactivated() {
-    this.showQuickView = false;
-  },
-  methods: {
-    clearValue(e) {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
+  const fieldtype = props.df?.fieldtype;
+  const isLink = fieldtype === FieldTypeEnum.Link;
+  const isDynamicLink = fieldtype === FieldTypeEnum.DynamicLink;
 
-      this.triggerChange('');
-      this.setLinkValue('');
-    },
-    async routeToLinkedDoc() {
-      const name = this.value;
-      if (!this.linkSchemaName || !name) {
-        return;
-      }
+  if (!isLink && !isDynamicLink) {
+    return false;
+  }
 
-      this.showQuickView = false;
-      const route = getFormRoute(this.linkSchemaName, name);
-      await routeTo(route);
-    },
-    async focusInputTag() {
-      this.focInp = true;
-      if (this.linkValue) {
-        return;
-      }
+  if (isLink && (props.df as any).target) {
+    return true;
+  }
 
-      await this.$nextTick();
-      this.$refs.input.focus();
-    },
-    setLinkValue(value) {
-      this.linkValue = value;
-    },
-    getLinkValue(value) {
-      const oldValue = this.linkValue;
-      let option = this.options.find((o) => o.value === value);
-      if (!option) {
-        option = this.options.find((o) => o.label === value);
-      }
-      if (!value && !option) {
-        return null;
-      }
+  const references = (props.df as any).references;
+  if (!references) {
+    return false;
+  }
 
-      return option?.label ?? oldValue;
-    },
-    async updateSuggestions(keyword) {
-      if (typeof keyword === 'string') {
-        this.setLinkValue(keyword, true);
-      }
+  if (!doc.value?.[references]) {
+    return false;
+  }
 
-      this.isLoading = true;
-      const suggestions = await this.getSuggestions(keyword);
-      this.suggestions = this.setSetSuggestionAction(suggestions);
-      this.isLoading = false;
-    },
+  return true;
+});
 
-    setSetSuggestionAction(suggestions) {
-      for (const option of suggestions) {
-        if (!option.action) {
-          option.action = () => this.setSuggestion(option);
-        }
-      }
+const clearValue = (e?: Event) => {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
 
-      return suggestions;
-    },
-    async getSuggestions(keyword = '') {
-      keyword = keyword.toLowerCase();
-      if (!keyword) {
-        return this.options;
-      }
+  if (props.customClear) {
+    props.customClear();
+    return;
+  }
 
-      return this.options
-        .map((item) => ({ ...fuzzyMatch(keyword, item.label), item }))
-        .filter(({ isMatch }) => isMatch)
-        .sort((a, b) => a.distance - b.distance)
-        .map(({ item }) => item);
-    },
-    setSuggestion(suggestion) {
-      if (suggestion?.actionOnly) {
-        this.setLinkValue(this.value);
-        return;
-      }
-
-      if (suggestion) {
-        this.setLinkValue(suggestion.label);
-        this.triggerChange(suggestion.value);
-      }
-    },
-    onInputFocus(e) {
-      this.isFocused = true;
-    },
-    onClick(e, toggleDropdown) {
-      if (this.isFocused) {
-        toggleDropdown(true);
-        this.updateSuggestions();
-        this.isDropdownOpen = true;
-        this.$emit('focus', e);
-      }
-    },
-    onFocus(e, toggleDropdown) {
-      this.isFocused = true;
-      toggleDropdown(true);
-      this.updateSuggestions();
-      this.isDropdownOpen = true;
-      this.$emit('focus', e);
-    },
-    async onBlur(label, toggleDropdown) {
-      this.isFocused = false;
-      this.isDropdownOpen = false;
-      if (!label && !this.value) {
-        return;
-      }
-      if (!label) {
-        this.triggerChange('');
-        return;
-      }
-
-      if (this.suggestions.length === 0) {
-        this.triggerChange(label);
-        return;
-      }
-
-      const suggestion = this.suggestions.find((s) => s.label === label);
-      if (suggestion) {
-        this.setSuggestion(suggestion);
-      } else {
-        const suggestions = await this.getSuggestions(label);
-        this.setSuggestion(suggestions[0]);
-      }
-    },
-
-    onInput(e, toggleDropdown) {
-      if (this.isReadOnly) {
-        return;
-      }
-
-      if (!e.target.value || this.focInp) {
-        e.target.value = null;
-        this.focInp = false;
-        toggleDropdown(false);
-        return;
-      }
-
-      this.triggerChange(e.target.value);
-      this.updateSuggestions(e.target.value);
-    },
-
-    async onPressEnter(e, toggleDropdown, selectHighlightedItem) {
-      e.preventDefault();
-
-      if (
-        this.suggestions.length > 0 &&
-        this.isFocused &&
-        this.isDropdownOpen
-      ) {
-        await selectHighlightedItem();
-        this.closeDropdown(e, toggleDropdown);
-        return;
-      }
-
-      await this.updateSuggestions(this.linkValue || e.target.value);
-      toggleDropdown(true);
-      this.isDropdownOpen = true;
-    },
-
-    onKeyDownUp(e, toggleDropdown, highlightItemUp) {
-      if (this.suggestions.length === 0) {
-        this.updateSuggestions();
-        toggleDropdown(true);
-        this.isDropdownOpen = true;
-      }
-      highlightItemUp();
-    },
-    onKeyDownDown(e, toggleDropdown, highlightItemDown) {
-      if (this.suggestions.length === 0) {
-        this.updateSuggestions();
-        toggleDropdown(true);
-        this.isDropdownOpen = true;
-      }
-      highlightItemDown();
-    },
-    closeDropdown(e, toggleDropdown) {
-      toggleDropdown(false);
-      this.isDropdownOpen = false;
-    },
-  },
+  triggerChange('');
+  setLinkValue('');
 };
+
+const routeToLinkedDoc = async () => {
+  const name = props.value as string;
+  if (!linkSchemaName.value || !name) {
+    return;
+  }
+
+  showQuickView.value = false;
+  const route = getFormRoute(linkSchemaName.value, name);
+  await routeTo(route);
+};
+
+const focusInputTag = async () => {
+  focInp.value = true;
+  if (linkValue.value) {
+    return;
+  }
+
+  await nextTick();
+  if (inputRef.value) {
+    inputRef.value.focus();
+  }
+};
+
+const setLinkValue = (value: any) => {
+  linkValue.value = value || '';
+};
+
+const getLinkValue = (value: any) => {
+  const oldValue = linkValue.value;
+  let option = options.value.find((o) => o.value === value);
+  if (!option) {
+    option = options.value.find((o) => o.label === value);
+  }
+  if (!value && !option) {
+    return null;
+  }
+
+  return option?.label ?? oldValue;
+};
+
+const getSuggestionsFunc = async (keyword = '') => {
+  if (props.getSuggestions) {
+    return await props.getSuggestions(keyword);
+  }
+
+  const lowerKeyword = keyword.toLowerCase();
+  if (!lowerKeyword) {
+    return options.value;
+  }
+
+  return options.value
+    .map((item) => ({ ...fuzzyMatch(lowerKeyword, item.label), item }))
+    .filter(({ isMatch }) => isMatch)
+    .sort((a, b) => a.distance - b.distance)
+    .map(({ item }) => item);
+};
+
+const updateSuggestions = async (keyword?: string) => {
+  if (typeof keyword === 'string') {
+    setLinkValue(keyword);
+  }
+
+  isLoading.value = true;
+  const suggestionsList = await getSuggestionsFunc(keyword);
+  suggestions.value = setSetSuggestionAction(suggestionsList);
+  isLoading.value = false;
+};
+
+const setSetSuggestionAction = (suggestionsList: any[]) => {
+  for (const option of suggestionsList) {
+    if (!option.action) {
+      option.action = () => setSuggestion(option);
+    }
+  }
+  return suggestionsList;
+};
+
+const setSuggestion = (suggestion: any) => {
+  if (suggestion?.actionOnly) {
+    setLinkValue(props.value);
+    return;
+  }
+
+  if (suggestion) {
+    setLinkValue(suggestion.label);
+    triggerChange(suggestion.value);
+  }
+};
+
+const onInputFocus = (_e: FocusEvent) => {
+  isFocused.value = true;
+};
+
+const onClick = (e: MouseEvent, toggleDropdown: (val: boolean) => void) => {
+  if (isFocused.value) {
+    toggleDropdown(true);
+    updateSuggestions();
+    isDropdownOpen.value = true;
+    emit('focus', e as any);
+  }
+};
+
+const onIconFocus = (e: MouseEvent, toggleDropdown: (val: boolean) => void) => {
+  isFocused.value = true;
+  toggleDropdown(true);
+  updateSuggestions();
+  isDropdownOpen.value = true;
+  emit('focus', e as any);
+};
+
+const onBlur = async (label: string, _toggleDropdown: (val: boolean) => void) => {
+  isFocused.value = false;
+  isDropdownOpen.value = false;
+  if (!label && !props.value) {
+    return;
+  }
+  if (!label) {
+    triggerChange('');
+    return;
+  }
+
+  if (suggestions.value.length === 0) {
+    triggerChange(label);
+    return;
+  }
+
+  const suggestion = suggestions.value.find((s) => s.label === label);
+  if (suggestion) {
+    setSuggestion(suggestion);
+  } else {
+    const suggestionsList = await getSuggestionsFunc(label);
+    setSuggestion(suggestionsList[0]);
+  }
+};
+
+const onInput = (e: any, toggleDropdown: (val: boolean) => void) => {
+  if (isReadOnly.value) {
+    return;
+  }
+
+  if (!e.target.value || focInp.value) {
+    e.target.value = null;
+    focInp.value = false;
+    toggleDropdown(false);
+    return;
+  }
+
+  triggerChange(e.target.value);
+  updateSuggestions(e.target.value);
+};
+
+const onPressEnter = async (e: any, toggleDropdown: (val: boolean) => void, selectHighlightedItem: () => Promise<void>) => {
+  e.preventDefault();
+
+  if (
+    suggestions.value.length > 0 &&
+    isFocused.value &&
+    isDropdownOpen.value
+  ) {
+    await selectHighlightedItem();
+    closeDropdown(e, toggleDropdown);
+    return;
+  }
+
+  await updateSuggestions(linkValue.value || e.target.value);
+  toggleDropdown(true);
+  isDropdownOpen.value = true;
+};
+
+const onKeyDownUp = (_e: any, toggleDropdown: (val: boolean) => void, highlightItemUp: () => void) => {
+  if (suggestions.value.length === 0) {
+    updateSuggestions();
+    toggleDropdown(true);
+    isDropdownOpen.value = true;
+  }
+  highlightItemUp();
+};
+
+const onKeyDownDown = (_e: any, toggleDropdown: (val: boolean) => void, highlightItemDown: () => void) => {
+  if (suggestions.value.length === 0) {
+    updateSuggestions();
+    toggleDropdown(true);
+    isDropdownOpen.value = true;
+  }
+  highlightItemDown();
+};
+
+const closeDropdown = (_e: any, toggleDropdown: (val: boolean) => void) => {
+  toggleDropdown(false);
+  isDropdownOpen.value = false;
+};
+
+watch(() => props.value, (newValue) => {
+  setLinkValue(getLinkValue(newValue));
+}, { immediate: true });
+
+onMounted(() => {
+  const value = linkValue.value || props.value;
+  setLinkValue(getLinkValue(value));
+});
+
+defineExpose({
+  showQuickView,
+  linkValue,
+  suggestions,
+  isDropdownOpen,
+  inputRef,
+  clearValue,
+  routeToLinkedDoc,
+  focusInputTag,
+  setLinkValue,
+  getLinkValue,
+  updateSuggestions,
+  setSuggestion,
+  focus,
+  isReadOnly,
+  containerClasses,
+  inputClasses,
+  labelClasses,
+  inputPlaceholder,
+  isFocused,
+});
 </script>

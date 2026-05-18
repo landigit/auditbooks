@@ -1,14 +1,28 @@
 <template>
   <slot></slot>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
-export default defineComponent({
-  props: { propagate: { type: Boolean, default: true } },
-  emits: ['error-captured'],
-  errorCaptured(error) {
-    this.$emit('error-captured', error);
-    return this.propagate;
-  },
+
+<script setup lang="ts">
+import { onErrorCaptured } from 'vue';
+
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    propagate?: boolean;
+  }>(),
+  {
+    propagate: true,
+  }
+);
+
+// Define Emits
+const emit = defineEmits<{
+  (e: 'error-captured', error: unknown): void;
+}>();
+
+// Capture Errors
+onErrorCaptured((err) => {
+  emit('error-captured', err);
+  return props.propagate;
 });
 </script>

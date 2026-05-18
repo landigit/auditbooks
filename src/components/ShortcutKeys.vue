@@ -9,33 +9,39 @@
     >
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+// --- Imports ---
+import { computed } from 'vue';
 import { getShortcutKeyMap } from 'src/utils/ui';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent, PropType } from 'vue';
 
-export default defineComponent({
-  props: {
-    keys: { type: Array as PropType<string[]>, required: true },
-    simple: { type: Boolean, default: false },
-  },
-  setup() {
-    return { store: useAppStore() };
-  },
-  computed: {
-    keyMap(): Record<string, string> {
-      return getShortcutKeyMap(this.store.platform);
-    },
-  },
+// --- Props & Emits ---
+withDefaults(
+  defineProps<{
+    keys: string[];
+    simple?: boolean;
+  }>(),
+  {
+    simple: false,
+  }
+);
+
+// --- State ---
+const store = useAppStore();
+
+// --- Computed ---
+const keyMap = computed<Record<string, string>>(() => {
+  return getShortcutKeyMap(store.platform);
 });
 </script>
+
 <style scoped>
 @reference "../styles/index.css";
 .key-common {
   font-family: monospace;
   font-weight: 600;
-  @apply rounded-md px-1.5 py-0.5 bg-canvas-muted text-muted
-    tracking-tighter;
+  @apply rounded-md px-1.5 py-0.5 bg-canvas-muted text-muted tracking-tighter;
 }
 
 .key-styling {

@@ -1,42 +1,50 @@
-<script lang="ts">
+<script setup lang="ts">
+import { ref, watch } from 'vue';
 import { PeriodKey } from 'src/utils/types';
-import { PropType } from 'vue';
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  props: {
-    commonPeriod: { type: String as PropType<PeriodKey>, default: 'This Year' },
-  },
-  emits: ['period-change'],
-  data() {
-    return {
-      period: 'This Year' as PeriodKey,
-      periodOptions: [
-        'This Year',
-        'YTD',
-        'This Quarter',
-        'This Month',
-      ] as PeriodKey[],
-    };
-  },
-  watch: {
-    period: 'periodChange',
-    commonPeriod(val: PeriodKey) {
-      if (!this.periodOptions.includes(val)) {
-        return;
-      }
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    commonPeriod?: PeriodKey;
+  }>(),
+  {
+    commonPeriod: 'This Year',
+  }
+);
 
-      this.period = val;
-    },
-  },
-  methods: {
-    async periodChange() {
-      this.$emit('period-change', this.period);
-      await this.setData();
-    },
-    async setData() {
-      return Promise.resolve(null);
-    },
-  },
+// Define Emits
+const emit = defineEmits<{
+  (e: 'period-change', value: PeriodKey): void;
+}>();
+
+// Reactive State
+const period = ref<PeriodKey>('This Year');
+const periodOptions = ref<PeriodKey[]>([
+  'This Year',
+  'YTD',
+  'This Quarter',
+  'This Month',
+]);
+
+// Methods
+const setData = async () => {
+  return Promise.resolve(null);
+};
+
+const periodChange = async () => {
+  emit('period-change', period.value);
+  await setData();
+};
+
+// Watchers
+watch(period, async () => {
+  await periodChange();
+});
+
+watch(() => props.commonPeriod, (val) => {
+  if (!val || !periodOptions.value.includes(val)) {
+    return;
+  }
+  period.value = val;
 });
 </script>

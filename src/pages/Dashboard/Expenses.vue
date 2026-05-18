@@ -52,90 +52,115 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onActivated, onDeactivated } from 'vue';
 import { fyo } from 'src/initFyo';
 import { truncate } from 'src/utils';
 import { getDatesAndPeriodList } from 'src/utils/misc';
-import { defineComponent } from 'vue';
 import DonutChart from '../../components/Charts/DonutChart.vue';
-import DashboardChartBase from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
+import { PeriodKey } from 'src/utils/types';
 
-// Linting broken in this file cause of `extends: ...`
-/*
-  eslint-disable @typescript-eslint/no-unsafe-argument,
-  @typescript-eslint/no-unsafe-return
-*/
-export default defineComponent({
-  name: 'Expenses',
-  components: {
-    DonutChart,
-    PeriodSelector,
-    SectionHeader,
-  },
-  extends: DashboardChartBase,
-  props: {},
-  data: () => ({
-    active: undefined as undefined | number,
-    expenses: [] as {
-      account: string;
-      total: number;
-      color: string;
-      class: string;
-    }[],
-  }),
-  computed: {
-    totalExpense(): number {
-      return this.expenses.reduce((sum, expense) => sum + expense.total, 0);
-    },
-    hasData(): boolean {
-      return this.expenses.length > 0;
-    },
-    sectors(): {
-      color: string;
-      label: string;
-      value: number;
-    }[] {
-      return this.expenses.map(({ account, color, total }) => ({
-        color,
-        label: truncate(account, { length: 21 }),
-        value: total,
-      }));
-    },
-  },
-  activated() {
-    this.setData();
-  },
-  deactivated() {
-    this.active = undefined;
-  },
-  methods: {
-    async setData() {
-      const { fromDate, toDate } = getDatesAndPeriodList(this.period);
-      let topExpenses = await fyo.db.getTopExpenses(
-        fromDate.toISO() as string,
-        toDate.toISO() as string
-      );
-      const shades = [
-        { class: 'bg-chart-pink-1', hex: 'var(--color-chart-pink-1)' },
-        { class: 'bg-chart-pink-2', hex: 'var(--color-chart-pink-2)' },
-        { class: 'bg-chart-pink-3', hex: 'var(--color-chart-pink-3)' },
-        { class: 'bg-chart-pink-4', hex: 'var(--color-chart-pink-4)' },
-        { class: 'bg-chart-pink-5', hex: 'var(--color-chart-pink-5)' },
-      ];
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    commonPeriod?: PeriodKey;
+  }>(),
+  {
+    commonPeriod: 'This Year',
+  }
+);
 
-      this.expenses = topExpenses
-        .filter((e) => e.total > 0)
-        .map((d, i) => {
-          return {
-            account: d.account,
-            total: d.total,
-            color: shades[i].hex,
-            class: shades[i].class,
-          };
-        });
-    },
-  },
+// Define Emits
+const emit = defineEmits<{
+  (e: 'period-change', period: PeriodKey): void;
+}>();
+
+// State definition
+const active = ref<number | undefined>(undefined);
+const period = ref<PeriodKey>('This Year');
+const periodOptions: PeriodKey[] = [
+  'This Year',
+  'YTD',
+  'This Quarter',
+  'This Month',
+];
+const expenses = ref<
+  {
+    account: string;
+    total: number;
+    color: string;
+    class: string;
+  }[]
+>([]);
+
+// Computed Properties
+const hasData = computed(() => {
+  return expenses.value.length > 0;
+});
+
+const sectors = computed(() => {
+  return expenses.value.map(({ account, color, total }) => ({
+    color,
+    label: truncate(account, { length: 21 }),
+    value: total,
+  }));
+});
+
+// Methods
+const setData = async () => {
+  const { fromDate, toDate } = getDatesAndPeriodList(period.value);
+  let topExpenses = await fyo.db.getTopExpenses(
+    fromDate.toISO() as string,
+    toDate.toISO() as string
+  );
+  const shades = [
+    { class: 'bg-chart-pink-1', hex: 'var(--color-chart-pink-1)' },
+    { class: 'bg-chart-pink-2', hex: 'var(--color-chart-pink-2)' },
+    { class: 'bg-chart-pink-3', hex: 'var(--color-chart-pink-3)' },
+    { class: 'bg-chart-pink-4', hex: 'var(--color-chart-pink-4)' },
+    { class: 'bg-chart-pink-5', hex: 'var(--color-chart-pink-5)' },
+  ];
+
+  expenses.value = topExpenses
+    .filter((e) => e.total > 0)
+    .map((d, i) => {
+      return {
+        account: d.account,
+        total: d.total,
+        color: shades[i].hex,
+        class: shades[i].class,
+      };
+    });
+};
+
+const periodChange = async () => {
+  emit('period-change', period.value);
+  await setData();
+};
+
+// Watchers
+watch(period, async () => {
+  await periodChange();
+});
+
+watch(
+  () => props.commonPeriod,
+  (val) => {
+    if (!val || !periodOptions.includes(val)) {
+      return;
+    }
+    period.value = val;
+  }
+);
+
+// Lifecycle Hooks (activated/deactivated)
+onActivated(async () => {
+  await setData();
+});
+
+onDeactivated(() => {
+  active.value = undefined;
 });
 </script>

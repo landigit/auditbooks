@@ -8,22 +8,21 @@
     />
   </button>
 </template>
-<script>
+
+<script setup lang="ts">
 import LucideIcon from './LucideIcon.vue';
 
-export default {
-  components: { LucideIcon },
-  props: {
-    link: String,
-    icon: {
-      default: true,
-      type: Boolean,
-    },
-  },
-  methods: {
-    openHelpLink() {
-      ipc.openLink(this.link);
-    },
-  },
+interface HowToProps {
+  link?: string;
+  icon?: boolean;
+}
+
+const props = withDefaults(defineProps<HowToProps>(), {
+  link: '',
+  icon: true,
+});
+
+const openHelpLink = () => {
+  (window as any).ipc?.openLink(props.link);
 };
 </script>

@@ -38,7 +38,11 @@ export function getTable(name: string) {
 export async function getRow(tableName: string, name: string) {
   const table = getTable(tableName);
   // In this system, all schemas have 'name' as their primary key
-  const results = await db.select().from(table).where(eq(table.name, name)).limit(1);
+  const results = await db
+    .select()
+    .from(table)
+    .where(eq(table.name, name))
+    .limit(1);
   return results[0] || null;
 }
 
@@ -56,7 +60,11 @@ export async function insertRow(tableName: string, data: any) {
  */
 export async function updateRow(tableName: string, name: string, data: any) {
   const table = getTable(tableName);
-  const result = await db.update(table).set(data).where(eq(table.name, name)).returning();
+  const result = await db
+    .update(table)
+    .set(data)
+    .where(eq(table.name, name))
+    .returning();
   return (result as any)[0];
 }
 
@@ -72,15 +80,18 @@ export async function deleteRow(tableName: string, name: string) {
 /**
  * Fetches multiple rows with filters, ordering, limit, and offset.
  */
-export async function listRows(tableName: string, options: {
-  filters?: Record<string, any>;
-  orderBy?: { column: string; direction: 'asc' | 'desc' };
-  limit?: number;
-  offset?: number;
-} = {}) {
+export async function listRows(
+  tableName: string,
+  options: {
+    filters?: Record<string, any>;
+    orderBy?: { column: string; direction: 'asc' | 'desc' };
+    limit?: number;
+    offset?: number;
+  } = {}
+) {
   const table = getTable(tableName);
   let query = db.select().from(table);
-  
+
   // Dynamically apply filters
   const conditions: SQL[] = [];
   if (options.filters) {
@@ -90,11 +101,11 @@ export async function listRows(tableName: string, options: {
       }
     }
   }
-  
+
   if (conditions.length > 0) {
     query = query.where(and(...conditions)) as any;
   }
-  
+
   // Dynamically apply sorting
   if (options.orderBy) {
     const { column, direction } = options.orderBy;
@@ -103,7 +114,7 @@ export async function listRows(tableName: string, options: {
       query = query.orderBy(orderFn(table[column])) as any;
     }
   }
-  
+
   // Apply pagination
   if (options.limit !== undefined) {
     query = query.limit(options.limit) as any;
@@ -111,7 +122,7 @@ export async function listRows(tableName: string, options: {
   if (options.offset !== undefined) {
     query = query.offset(options.offset) as any;
   }
-  
+
   return await query;
 }
 
@@ -119,13 +130,20 @@ export async function listRows(tableName: string, options: {
  * Gets all child rows linked to a parent table record.
  * Typically child rows have 'parent', 'parentSchemaName', and 'parentFieldname' columns.
  */
-export async function getChildRows(childTableName: string, parentName: string, parentSchemaName?: string) {
+export async function getChildRows(
+  childTableName: string,
+  parentName: string,
+  parentSchemaName?: string
+) {
   const table = getTable(childTableName);
   const conditions: SQL[] = [eq(table.parent, parentName)];
-  
+
   if (parentSchemaName && 'parentSchemaName' in table) {
     conditions.push(eq(table.parentSchemaName, parentSchemaName));
   }
-  
-  return await db.select().from(table).where(and(...conditions));
+
+  return await db
+    .select()
+    .from(table)
+    .where(and(...conditions));
 }

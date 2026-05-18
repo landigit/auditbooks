@@ -45,7 +45,16 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import {
+  ref,
+  computed,
+  onMounted,
+  onActivated,
+  onUnmounted,
+  onDeactivated,
+} from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
 import { PrintTemplate } from 'models/baseModels/PrintTemplate';
@@ -56,242 +65,257 @@ import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { handleErrorWithDialog } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 import { getPrintTemplatePropValues } from 'src/utils/printTemplates';
 import { PrintValues } from 'src/utils/types';
 import { getFormRoute, openSettings, routeTo } from 'src/utils/ui';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent } from 'vue';
 import PrintContainer from '../TemplateBuilder/PrintContainer.vue';
 
-export default defineComponent({
-  name: 'PrintView',
-  components: {
-    PageHeader,
-    Button,
-    AutoComplete,
-    PrintContainer,
-    DropdownWithActions,
-  },
-  props: {
-    schemaName: { type: String, required: true },
-    name: { type: String, required: true },
-  },
-  setup() {
-    return { store: useAppStore() };
-  },
-  data() {
-    return {
-      doc: null as Doc | null,
-      scale: 1,
-      values: null as PrintValues | null,
-      templateDoc: null as PrintTemplate | null,
-      templateName: null as string | null,
-      templateList: [] as string[],
-    };
-  },
-  computed: {
-    helperMessage() {
-      if (!this.templateList.length) {
-        const label =
-          this.fyo.schemaMap[this.schemaName]?.label ?? this.schemaName;
+// Define Props
+const props = defineProps<{
+  schemaName: string;
+  name: string;
+}>();
 
-        return this.t`No Print Templates not found for entry type ${label}`;
-      }
+// App Store
+const store = useAppStore();
 
-      if (!this.templateDoc) {
-        return this.t`Please select a Print Template`;
-      }
+// Template Refs
+const printContainer = ref<InstanceType<typeof PrintContainer> | null>(null);
 
-      return '';
+// Reactive State
+const doc = ref<Doc | null>(null);
+const scale = ref(1);
+const values = ref<PrintValues | null>(null);
+const templateDoc = ref<PrintTemplate | null>(null);
+const templateName = ref<string | null>(null);
+const templateList = ref<string[]>([]);
+
+// Computed Properties
+const helperMessage = computed(() => {
+  if (!templateList.value.length) {
+    const label = fyo.schemaMap[props.schemaName]?.label ?? props.schemaName;
+    return t`No Print Templates not found for entry type ${label}`;
+  }
+
+  if (!templateDoc.value) {
+    return t`Please select a Print Template`;
+  }
+
+  return '';
+});
+
+const printProps = computed(() => {
+  const vals = values.value;
+  if (!vals) {
+    return null;
+  }
+
+  const template = templateDoc.value?.template;
+  if (!template) {
+    return null;
+  }
+
+  return { values: vals, template };
+});
+
+const actions = computed<Action[]>(() => {
+  const acts: Action[] = [
+    {
+      label: t`Print Settings`,
+      group: t`View`,
+      async action() {
+        await openSettings(ModelNameEnum.PrintSettings);
+      },
     },
-    printProps(): null | { template: string; values: PrintValues } {
-      const values = this.values;
-      if (!values) {
-        return null;
-      }
-
-      const template = this.templateDoc?.template;
-      if (!template) {
-        return null;
-      }
-
-      return { values, template };
-    },
-    actions(): Action[] {
-      const actions = [
-        {
-          label: this.t`Print Settings`,
-          group: this.t`View`,
-          async action() {
-            await openSettings(ModelNameEnum.PrintSettings);
-          },
-        },
-        {
-          label: this.t`New Template`,
-          group: this.t`Create`,
-          action: async () => {
-            const doc = this.fyo.doc.getNewDoc(ModelNameEnum.PrintTemplate, {
-              type: this.schemaName,
-            });
-
-            const route = getFormRoute(doc.schemaName, doc.name!);
-            await routeTo(route);
-          },
-        },
-      ];
-
-      const templateDocName = this.templateDoc?.name;
-      if (templateDocName) {
-        actions.push({
-          label: templateDocName,
-          group: this.t`View`,
-          action: async () => {
-            const route = getFormRoute(
-              ModelNameEnum.PrintTemplate,
-              templateDocName
-            );
-            await routeTo(route);
-          },
+    {
+      label: t`New Template`,
+      group: t`Create`,
+      action: async () => {
+        const d = fyo.doc.getNewDoc(ModelNameEnum.PrintTemplate, {
+          type: props.schemaName,
         });
 
-        actions.push({
-          label: this.t`Duplicate Template`,
-          group: this.t`Create`,
-          action: async () => {
-            const doc = this.fyo.doc.getNewDoc(ModelNameEnum.PrintTemplate, {
-              type: this.schemaName,
-              template: this.templateDoc?.template,
-            });
-
-            const route = getFormRoute(doc.schemaName, doc.name!);
-            await routeTo(route);
-          },
-        });
-      }
-
-      return actions;
+        const route = getFormRoute(d.schemaName, d.name!);
+        await routeTo(route);
+      },
     },
-  },
-  async mounted() {
-    await this.initialize();
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.pv = this;
-    }
-  },
-  async activated() {
-    await this.initialize();
-  },
-  unmounted() {
-    this.reset();
-  },
-  deactivated() {
-    this.reset();
-  },
-  methods: {
-    async initialize() {
-      this.doc = await fyo.doc.getDoc(this.schemaName, this.name);
-      await this.setTemplateList();
-      await this.setTemplateFromDefault();
-      if (!this.templateDoc && this.templateList.length) {
-        await this.onTemplateNameChange(this.templateList[0]);
-      }
+  ];
 
-      if (this.doc) {
-        this.values = await getPrintTemplatePropValues(
-          this.doc as unknown as Doc
-        );
-      }
-    },
-    setScale() {
-      this.scale = 1;
-      const width = (this.templateDoc?.width ?? 21) * 37.8;
-      let containerWidth = window.innerWidth - 32;
-      if (this.store.showSidebar) {
-        containerWidth -= 12 * 16;
-      }
-
-      this.scale = Math.min(containerWidth / width, 1);
-    },
-    reset() {
-      this.doc = null;
-      this.values = null;
-      this.templateList = [];
-      this.templateDoc = null;
-      this.scale = 1;
-    },
-    async onTemplateNameChange(value: string | null): Promise<void> {
-      if (!value) {
-        this.templateDoc = null;
-        return;
-      }
-
-      this.templateName = value;
-      try {
-        this.templateDoc = await this.fyo.doc.getDoc(
+  const templateDocName = templateDoc.value?.name;
+  if (templateDocName) {
+    acts.push({
+      label: templateDocName,
+      group: t`View`,
+      action: async () => {
+        const route = getFormRoute(
           ModelNameEnum.PrintTemplate,
-          this.templateName
+          templateDocName
         );
-      } catch (error) {
-        await handleErrorWithDialog(error);
+        await routeTo(route);
+      },
+    });
+
+    acts.push({
+      label: t`Duplicate Template`,
+      group: t`Create`,
+      action: async () => {
+        const d = fyo.doc.getNewDoc(ModelNameEnum.PrintTemplate, {
+          type: props.schemaName,
+          template: templateDoc.value?.template,
+        });
+
+        const route = getFormRoute(d.schemaName, d.name!);
+        await routeTo(route);
+      },
+    });
+  }
+
+  return acts;
+});
+
+// Methods
+const setScale = () => {
+  scale.value = 1;
+  const widthVal = (templateDoc.value?.width ?? 21) * 37.8;
+  let containerWidth = window.innerWidth - 32;
+  if (store.showSidebar) {
+    containerWidth -= 12 * 16;
+  }
+
+  scale.value = Math.min(containerWidth / widthVal, 1);
+};
+
+const onTemplateNameChange = async (value: string | null) => {
+  if (!value) {
+    templateDoc.value = null;
+    return;
+  }
+
+  templateName.value = value;
+  try {
+    templateDoc.value = await fyo.doc.getDoc(
+      ModelNameEnum.PrintTemplate,
+      templateName.value
+    );
+  } catch (error) {
+    await handleErrorWithDialog(error);
+  }
+  setScale();
+};
+
+const setTemplateList = async () => {
+  const list = (await fyo.db.getAllRaw(ModelNameEnum.PrintTemplate, {
+    filters: { type: props.schemaName },
+  })) as { name: string }[];
+
+  templateList.value = list.map(({ name }) => name);
+};
+
+const setTemplateFromDefault = async () => {
+  const defaultName =
+    props.schemaName[0].toLowerCase() +
+    props.schemaName.slice(1) +
+    ModelNameEnum.PrintTemplate;
+
+  let templateNameVal;
+
+  if (
+    props.schemaName == ModelNameEnum.SalesInvoice &&
+    (doc.value as Doc).isPOS
+  ) {
+    templateNameVal = fyo.singles.Defaults?.posPrintTemplate;
+
+    const posProfileName = fyo.singles.POSSettings?.posProfile as string;
+
+    if (posProfileName) {
+      const posProfile = await fyo.doc.getDoc(
+        ModelNameEnum.POSProfile,
+        posProfileName
+      );
+
+      if (posProfile.posPrintTemplate) {
+        templateNameVal = posProfile.posPrintTemplate;
       }
-      this.setScale();
-    },
-    async setTemplateList(): Promise<void> {
-      const list = (await this.fyo.db.getAllRaw(ModelNameEnum.PrintTemplate, {
-        filters: { type: this.schemaName },
-      })) as { name: string }[];
+    }
+  } else {
+    templateNameVal = fyo.singles.Defaults?.get(defaultName);
+  }
 
-      this.templateList = list.map(({ name }) => name);
-    },
-    async savePDF(shouldPrint?: boolean) {
-      const printContainer = this.$refs.printContainer as {
-        savePDF: (name?: string, shouldPrint?: boolean) => Promise<void>;
-      };
+  if (typeof templateNameVal !== 'string') {
+    return;
+  }
 
-      if (!printContainer?.savePDF) {
-        return;
-      }
+  await onTemplateNameChange(templateNameVal);
+};
 
-      await printContainer.savePDF(this.doc?.name, shouldPrint);
-    },
-    async setTemplateFromDefault() {
-      const defaultName =
-        this.schemaName[0].toLowerCase() +
-        this.schemaName.slice(1) +
-        ModelNameEnum.PrintTemplate;
+const initialize = async () => {
+  doc.value = await fyo.doc.getDoc(props.schemaName, props.name);
+  await setTemplateList();
+  await setTemplateFromDefault();
+  if (!templateDoc.value && templateList.value.length) {
+    await onTemplateNameChange(templateList.value[0]);
+  }
 
-      let templateName;
+  if (doc.value) {
+    values.value = await getPrintTemplatePropValues(
+      doc.value as unknown as Doc
+    );
+  }
+};
 
-      if (
-        this.schemaName == ModelNameEnum.SalesInvoice &&
-        (this.doc as Doc).isPOS
-      ) {
-        templateName = this.fyo.singles.Defaults?.posPrintTemplate;
+const reset = () => {
+  doc.value = null;
+  values.value = null;
+  templateList.value = [];
+  templateDoc.value = null;
+  scale.value = 1;
+};
 
-        const posProfileName = this.fyo.singles.POSSettings
-          ?.posProfile as string;
+const savePDF = async (shouldPrint?: boolean) => {
+  if (!printContainer.value?.savePDF) {
+    return;
+  }
 
-        if (posProfileName) {
-          const posProfile = await this.fyo.doc.getDoc(
-            ModelNameEnum.POSProfile,
-            posProfileName
-          );
+  await printContainer.value.savePDF(doc.value?.name, shouldPrint);
+};
 
-          if (posProfile.posPrintTemplate) {
-            templateName = posProfile.posPrintTemplate;
-          }
-        }
-      } else {
-        templateName = this.fyo.singles.Defaults?.get(defaultName);
-      }
+// Lifecycles
+onMounted(async () => {
+  await initialize();
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.pv = {
+      doc,
+      scale,
+      values,
+      templateDoc,
+      templateName,
+      templateList,
+      helperMessage,
+      printProps,
+      actions,
+      setScale,
+      onTemplateNameChange,
+      setTemplateList,
+      setTemplateFromDefault,
+      initialize,
+      reset,
+      savePDF,
+    };
+  }
+});
 
-      if (typeof templateName !== 'string') {
-        return;
-      }
+onActivated(async () => {
+  await initialize();
+});
 
-      await this.onTemplateNameChange(templateName);
-    },
-  },
+onUnmounted(() => {
+  reset();
+});
+
+onDeactivated(() => {
+  reset();
 });
 </script>

@@ -196,162 +196,186 @@
     </Modal>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useAppStore } from 'src/stores/app';
 import { setupDummyInstance } from 'dummy';
 import { t } from 'fyo';
 import { Verb } from 'fyo/telemetry/types';
 import { DateTime } from 'luxon';
-import Button from 'src/components/Button.vue';
-import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
-import LucideIcon from 'src/components/LucideIcon.vue';
-import Loading from 'src/components/Loading.vue';
-import Modal from 'src/components/Modal.vue';
 import { fyo } from 'src/initFyo';
 import { showDialog } from 'src/utils/interactive';
 import { updateConfigFiles } from 'src/utils/misc';
-import { deleteDb, getSavePath, getSelectedFilePath } from 'src/utils/ui';
+import {
+  deleteDb as deleteDbFile,
+  getSavePath,
+  getSelectedFilePath,
+} from 'src/utils/ui';
 import type { ConfigFilesWithModified } from 'utils/types';
-import { useAppStore } from 'src/stores/app';
-import { defineComponent } from 'vue';
+import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
+import Loading from 'src/components/Loading.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
+import Modal from 'src/components/Modal.vue';
+import Button from 'src/components/Button.vue';
 
-export default defineComponent({
-  name: 'DatabaseSelector',
-  components: {
-    LanguageSelector,
-    Loading,
-    LucideIcon,
-    Modal,
-    Button,
-  },
-  emits: ['file-selected', 'new-database'],
-  setup() {
-    const store = useAppStore();
-    return { store };
-  },
-  data() {
-    return {
-      openModal: false,
-      baseCount: 100,
-      creationMessage: '',
-      creationPercent: 0,
-      creatingDemo: false,
-      loadingDatabase: false,
-      files: [] as ConfigFilesWithModified[],
-    };
-  },
-  async mounted() {
-    await this.setFiles();
+// Define Emits
+const emit = defineEmits<{
+  (e: 'file-selected', filePath: string): void;
+  (e: 'new-database'): void;
+}>();
 
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.ds = this;
+// State definition
+const store = useAppStore();
+const openModal = ref(false);
+const baseCount = ref(100);
+const creationMessage = ref('');
+const creationPercent = ref(0);
+const creatingDemo = ref(false);
+const loadingDatabase = ref(false);
+const files = ref<ConfigFilesWithModified[]>([]);
+
+// Methods
+const truncate = (value: string) => {
+  if (value.length < 72) {
+    return value;
+  }
+  return '...' + value.slice(value.length - 72);
+};
+
+const formatDate = (isoDate: string) => {
+  return DateTime.fromISO(isoDate).toRelative();
+};
+
+const setFiles = async () => {
+  const dbList = (await ipc.getDbList()) || [];
+  files.value = dbList.sort(
+    (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
+  );
+};
+
+const deleteDb = async (i: number) => {
+  const file = files.value[i];
+  if (!file) return;
+
+  await showDialog({
+    title: t`Delete ${file.companyName}?`,
+    detail: t`Database file: ${file.dbPath}`,
+    type: 'warning',
+    buttons: [
+      {
+        label: t`Yes`,
+        async action() {
+          await deleteDbFile(file.dbPath);
+          await setFiles();
+        },
+        isPrimary: true,
+      },
+      {
+        label: t`No`,
+        action() {
+          return null;
+        },
+        isEscape: true,
+      },
+    ],
+  });
+};
+
+const emitFileSelected = (filePath: string) => {
+  if (!filePath) {
+    return;
+  }
+  emit('file-selected', filePath);
+};
+
+const startDummyInstanceSetup = async () => {
+  const { filePath, canceled } = await getSavePath('demo', 'db');
+  if (canceled || !filePath) {
+    return;
+  }
+
+  creatingDemo.value = true;
+  await setupDummyInstance(
+    filePath,
+    fyo,
+    1,
+    baseCount.value,
+    (message, percent) => {
+      creationMessage.value = message;
+      creationPercent.value = percent;
     }
-  },
-  methods: {
-    truncate(value: string) {
-      if (value.length < 72) {
-        return value;
-      }
+  );
 
-      return '...' + value.slice(value.length - 72);
-    },
-    formatDate(isoDate: string) {
-      return DateTime.fromISO(isoDate).toRelative();
-    },
-    async deleteDb(i: number) {
-      const file = this.files[i];
-      const setFiles = this.setFiles.bind(this);
+  updateConfigFiles(fyo);
+  await fyo.purgeCache();
+  await setFiles();
+  fyo.telemetry.log(Verb.Created, 'dummy-instance');
+  creatingDemo.value = false;
+  emitFileSelected(filePath);
+};
 
-      await showDialog({
-        title: t`Delete ${file.companyName}?`,
-        detail: t`Database file: ${file.dbPath}`,
-        type: 'warning',
-        buttons: [
-          {
-            label: this.t`Yes`,
-            async action() {
-              await deleteDb(file.dbPath);
-              await setFiles();
-            },
-            isPrimary: true,
-          },
-          {
-            label: this.t`No`,
-            action() {
-              return null;
-            },
-            isEscape: true,
-          },
-        ],
-      });
-    },
-    async createDemo() {
-      if (!this.store.isDevelopment) {
-        await this.startDummyInstanceSetup();
-      } else {
-        this.openModal = true;
-      }
-    },
-    async startDummyInstanceSetup() {
-      const { filePath, canceled } = await getSavePath('demo', 'db');
-      if (canceled || !filePath) {
-        return;
-      }
+const createDemo = async () => {
+  if (!store.isDevelopment) {
+    await startDummyInstanceSetup();
+  } else {
+    openModal.value = true;
+  }
+};
 
-      this.creatingDemo = true;
-      await setupDummyInstance(
-        filePath,
-        fyo,
-        1,
-        this.baseCount,
-        (message, percent) => {
-          this.creationMessage = message;
-          this.creationPercent = percent;
-        }
-      );
+const newDatabase = () => {
+  if (creatingDemo.value) {
+    return;
+  }
+  emit('new-database');
+};
 
-      updateConfigFiles(fyo);
-      await fyo.purgeCache();
-      await this.setFiles();
-      this.fyo.telemetry.log(Verb.Created, 'dummy-instance');
-      this.creatingDemo = false;
-      this.$emit('file-selected', filePath);
-    },
-    async setFiles() {
-      const dbList = (await ipc.getDbList()) || [];
-      this.files = dbList.sort(
-        (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
-      );
-    },
-    newDatabase() {
-      if (this.creatingDemo) {
-        return;
-      }
+const existingDatabase = async () => {
+  if (creatingDemo.value) {
+    return;
+  }
+  const filePath = (await getSelectedFilePath())?.filePaths?.[0];
+  if (filePath) {
+    emitFileSelected(filePath);
+  }
+};
 
-      this.$emit('new-database');
-    },
-    async existingDatabase() {
-      if (this.creatingDemo) {
-        return;
-      }
+const selectFile = (file: ConfigFilesWithModified) => {
+  if (creatingDemo.value) {
+    return;
+  }
+  emitFileSelected(file.dbPath);
+};
 
-      const filePath = (await getSelectedFilePath())?.filePaths?.[0];
-      this.emitFileSelected(filePath);
-    },
-    selectFile(file: ConfigFilesWithModified) {
-      if (this.creatingDemo) {
-        return;
-      }
+// Lifecycle Hooks
+onMounted(async () => {
+  await setFiles();
 
-      this.emitFileSelected(file.dbPath);
-    },
-    emitFileSelected(filePath: string) {
-      if (!filePath) {
-        return;
-      }
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.ds = {
+      truncate,
+      formatDate,
+      deleteDb,
+      createDemo,
+      startDummyInstanceSetup,
+      setFiles,
+      newDatabase,
+      existingDatabase,
+      selectFile,
+      emitFileSelected,
+      openModal,
+      baseCount,
+      creationMessage,
+      creationPercent,
+      creatingDemo,
+      loadingDatabase,
+      files,
+    };
+  }
+});
 
-      this.$emit('file-selected', filePath);
-    },
-  },
+// Expose methods publicly for parent component refs (e.g. App.vue)
+defineExpose({
+  existingDatabase,
 });
 </script>

@@ -20,7 +20,7 @@
       <!-- Search Input -->
       <div class="p-1">
         <input
-          ref="input"
+          ref="inputRef"
           v-model="inputValue"
           type="search"
           autocomplete="off"
@@ -187,7 +187,8 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+// --- Imports ---
 import { fyo } from 'src/initFyo';
 import { getBgTextColorClass } from 'src/utils/colors';
 import { searcherKey, shortcutsKey } from 'src/utils/injectionKeys';
@@ -199,208 +200,214 @@ import {
   searchGroups,
 } from 'src/utils/search';
 import { useAppStore } from 'src/stores/app';
-import { defineComponent, inject, nextTick } from 'vue';
+import { ref, computed, inject, nextTick, onMounted, onActivated, onDeactivated } from 'vue';
 import Button from './Button.vue';
 import Modal from './Modal.vue';
+import { t } from 'fyo';
 
+// --- Types ---
 const COMPONENT_NAME = 'SearchBar';
-
 type SchemaFilters = { value: string; label: string; index: number }[];
 
-export default defineComponent({
-  components: { Modal, Button },
-  setup() {
-    return {
-      searcher: inject(searcherKey),
-      shortcuts: inject(shortcutsKey),
-      store: useAppStore(),
-    };
-  },
-  data() {
-    return {
-      idx: 0,
-      searchGroups,
-      openModal: false,
-      inputValue: '',
-      showMore: false,
-      limit: 50,
-      allowedLimits: [50, 100, 500, -1],
-    };
-  },
-  computed: {
-    groupLabelMap(): Record<SearchGroup, string> {
-      return getGroupLabelMap();
-    },
-    schemaFilters(): SchemaFilters {
-      const searchables = this.searcher?.searchables ?? {};
+// --- State ---
+const searcher = inject(searcherKey);
+const shortcuts = inject(shortcutsKey);
+const store = useAppStore();
 
-      const schemaNames = Object.keys(searchables);
-      const filters = schemaNames
-        .map((value) => {
-          const schema = fyo.schemaMap[value];
-          if (!schema) {
-            return;
-          }
+const inputRef = ref<HTMLInputElement | null>(null);
+const idx = ref(0);
+const openModal = ref(false);
+const inputValue = ref('');
+const showMore = ref(false);
+const limit = ref(50);
+const allowedLimits = [50, 100, 500, -1];
 
-          let index = 1;
-          if (schema.isSubmittable) {
-            index = 0;
-          } else if (schema.isChild) {
-            index = 2;
-          }
-
-          return { value, label: schema.label, index };
-        })
-        .filter(Boolean) as SchemaFilters;
-
-      return filters.sort((a, b) => a.index - b.index);
-    },
-    groupColorMap(): Record<SearchGroup, string> {
-      return {
-        Docs: 'blue',
-        Create: 'green',
-        List: 'teal',
-        Report: 'yellow',
-        Page: 'orange',
-        Recent: 'purple',
-      };
-    },
-    groupColorClassMap(): Record<SearchGroup, string> {
-      return searchGroups.reduce(
-        (map, g) => {
-          map[g] = getBgTextColorClass(this.groupColorMap[g]);
-          return map;
-        },
-        {} as Record<SearchGroup, string>
-      );
-    },
-    suggestions(): SearchItems {
-      if (!this.searcher) {
-        return [];
-      }
-
-      const suggestions = this.searcher.search(this.inputValue);
-      if (this.limit === -1) {
-        return suggestions;
-      }
-
-      return suggestions.slice(0, this.limit);
-    },
-  },
-  async mounted() {
-    if (this.store.isDevelopment) {
-      // @ts-ignore
-      window.search = this;
-    }
-
-    this.openModal = false;
-  },
-  activated() {
-    this.setShortcuts();
-    this.openModal = false;
-  },
-  deactivated() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    openDocs() {
-      ipc.openLink('https://landigit.com/auditbooks/' + docsPathMap.Search);
-    },
-    getShortcuts() {
-      const ifOpen = (cb: Function) => () => this.openModal && cb();
-      const ifClose = (cb: Function) => () => !this.openModal && cb();
-
-      const shortcuts = [
-        {
-          shortcut: 'KeyK',
-          callback: ifClose(() => this.open()),
-        },
-      ];
-
-      for (const i in searchGroups) {
-        shortcuts.push({
-          shortcut: `Digit${Number(i) + 1}`,
-          callback: ifOpen(() => {
-            const group = searchGroups[i];
-            if (!this.searcher) {
-              return;
-            }
-
-            const value = this.searcher.filters.groupFilters[group];
-            if (typeof value !== 'boolean') {
-              return;
-            }
-
-            this.searcher.set(group, !value);
-          }),
-        });
-      }
-
-      return shortcuts;
-    },
-    setShortcuts() {
-      for (const { shortcut, callback } of this.getShortcuts()) {
-        this.shortcuts!.pmod.set(COMPONENT_NAME, [shortcut], callback);
-      }
-    },
-    open(): void {
-      this.openModal = true;
-      this.searcher?.updateKeywords();
-
-      nextTick(() => {
-        (this.$refs.input as HTMLInputElement)?.focus();
-      });
-    },
-    close(): void {
-      this.openModal = false;
-      this.reset();
-    },
-    reset(): void {
-      this.inputValue = '';
-    },
-    up(): void {
-      this.idx = Math.max(this.idx - 1, 0);
-      this.scrollToHighlighted();
-    },
-    down(): void {
-      this.idx = Math.max(
-        Math.min(this.idx + 1, this.suggestions.length - 1),
-        0
-      );
-      this.scrollToHighlighted();
-    },
-    select(idx?: number): void {
-      this.idx = idx ?? this.idx;
-      const selectedItem = this.suggestions[this.idx];
-
-      if (selectedItem?.action) {
-        this.searcher?.addToRecent(selectedItem);
-        selectedItem.action();
-      }
-
-      this.close();
-    },
-    scrollToHighlighted(): void {
-      const query = `[data-index="search-suggestion-${this.idx}"]`;
-      const element = document.querySelectorAll(query)?.[0];
-      element?.scrollIntoView({ block: 'nearest' });
-    },
-    getGroupFilterButtonClass(g: SearchGroup): string {
-      if (!this.searcher) {
-        return '';
-      }
-
-      const isOn = this.searcher.filters.groupFilters[g];
-      const color = this.groupColorMap[g];
-      if (isOn) {
-        return `${getBgTextColorClass(color)} border-indicator-${color}-bg`;
-      }
-
-      return `text-indicator-${color}-text border-indicator-${color}-bg`;
-    },
-  },
+// --- Computed ---
+const groupLabelMap = computed<Record<SearchGroup, string>>(() => {
+  return getGroupLabelMap();
 });
+
+const schemaFilters = computed<SchemaFilters>(() => {
+  const searchables = searcher?.value?.searchables ?? {};
+
+  const schemaNames = Object.keys(searchables);
+  const filters = schemaNames
+    .map((value) => {
+      const schema = fyo.schemaMap[value];
+      if (!schema) {
+        return;
+      }
+
+      let index = 1;
+      if (schema.isSubmittable) {
+        index = 0;
+      } else if (schema.isChild) {
+        index = 2;
+      }
+
+      return { value, label: schema.label, index };
+    })
+    .filter(Boolean) as SchemaFilters;
+
+  return filters.sort((a, b) => a.index - b.index);
+});
+
+const groupColorMap = computed<Record<SearchGroup, string>>(() => {
+  return {
+    Docs: 'blue',
+    Create: 'green',
+    List: 'teal',
+    Report: 'yellow',
+    Page: 'orange',
+    Recent: 'purple',
+  };
+});
+
+// groupColorClassMap removed as it was unused.
+
+const suggestions = computed<SearchItems>(() => {
+  if (!searcher?.value) {
+    return [];
+  }
+
+  const result = searcher.value.search(inputValue.value);
+  if (limit.value === -1) {
+    return result;
+  }
+
+  return result.slice(0, limit.value);
+});
+
+// --- Expose ---
+defineExpose({ open });
+
+// --- Lifecycle ---
+onMounted(() => {
+  if (store.isDevelopment) {
+    // @ts-ignore
+    window.search = { open, close, searcher };
+  }
+
+  openModal.value = false;
+});
+
+onActivated(() => {
+  setShortcuts();
+  openModal.value = false;
+});
+
+onDeactivated(() => {
+  shortcuts?.delete(COMPONENT_NAME);
+});
+
+// --- Methods ---
+function openDocs() {
+  ipc.openLink('https://landigit.com/auditbooks/' + docsPathMap.Search);
+}
+
+function getShortcuts() {
+  const ifOpen = (cb: Function) => () => openModal.value && cb();
+  const ifClose = (cb: Function) => () => !openModal.value && cb();
+
+  const sh = [
+    {
+      shortcut: 'KeyK',
+      callback: ifClose(() => open()),
+    },
+  ];
+
+  for (const i in searchGroups) {
+    sh.push({
+      shortcut: `Digit${Number(i) + 1}`,
+      callback: ifOpen(() => {
+        const group = searchGroups[i];
+        if (!searcher?.value) {
+          return;
+        }
+
+        const value = searcher.value.filters.groupFilters[group];
+        if (typeof value !== 'boolean') {
+          return;
+        }
+
+        searcher.value.set(group, !value);
+      }),
+    });
+  }
+
+  return sh;
+}
+
+function setShortcuts() {
+  for (const { shortcut, callback } of getShortcuts()) {
+    shortcuts!.pmod.set(COMPONENT_NAME, [shortcut], callback);
+  }
+}
+
+function open(): void {
+  openModal.value = true;
+  searcher?.value?.updateKeywords();
+
+  nextTick(() => {
+    inputRef.value?.focus();
+  });
+}
+
+function close(): void {
+  openModal.value = false;
+  reset();
+}
+
+function reset(): void {
+  inputValue.value = '';
+}
+
+function up(): void {
+  idx.value = Math.max(idx.value - 1, 0);
+  scrollToHighlighted();
+}
+
+function down(): void {
+  idx.value = Math.max(
+    Math.min(idx.value + 1, suggestions.value.length - 1),
+    0
+  );
+  scrollToHighlighted();
+}
+
+function select(index?: number): void {
+  idx.value = index ?? idx.value;
+  const selectedItem = suggestions.value[idx.value];
+
+  if (selectedItem?.action) {
+    searcher?.value?.addToRecent(selectedItem);
+    selectedItem.action();
+  }
+
+  close();
+}
+
+function scrollToHighlighted(): void {
+  const query = `[data-index="search-suggestion-${idx.value}"]`;
+  const element = document.querySelectorAll(query)?.[0];
+  element?.scrollIntoView({ block: 'nearest' });
+}
+
+function getGroupFilterButtonClass(g: SearchGroup): string {
+  if (!searcher?.value) {
+    return '';
+  }
+
+  const isOn = searcher.value.filters.groupFilters[g];
+  const color = groupColorMap.value[g];
+  if (isOn) {
+    return `${getBgTextColorClass(color)} border-indicator-${color}-bg`;
+  }
+
+  return `text-indicator-${color}-text border-indicator-${color}-bg`;
+}
 </script>
+
 <style scoped>
 input[type='search']::-webkit-search-decoration,
 input[type='search']::-webkit-search-cancel-button,

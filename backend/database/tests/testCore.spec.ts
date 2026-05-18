@@ -43,7 +43,9 @@ describe('DatabaseCore Tests', () => {
   test('Pre Migrate TableInfo', async () => {
     const db = await getDb(false);
     for (const schemaName in schemaMap) {
-      const columnsRes = await db.client!.execute(`pragma table_info("${schemaName}")`);
+      const columnsRes = await db.client!.execute(
+        `pragma table_info("${schemaName}")`
+      );
       expect(columnsRes.rows.length).toBe(0);
     }
     await db.close();
@@ -54,7 +56,9 @@ describe('DatabaseCore Tests', () => {
     for (const schemaName in schemaMap) {
       const schema = schemaMap[schemaName] as Schema;
       const fieldMap = getMapFromList(schema.fields, 'fieldname');
-      const columnsRes = await db.client!.execute(`pragma table_info("${schemaName}")`);
+      const columnsRes = await db.client!.execute(
+        `pragma table_info("${schemaName}")`
+      );
       const columns = columnsRes.rows as unknown as SqliteTableInfo[];
 
       let columnCount = schema.fields.filter(

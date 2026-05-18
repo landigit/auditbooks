@@ -149,7 +149,9 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 import { Verb } from 'fyo/telemetry/types';
@@ -165,162 +167,186 @@ import { getReport } from 'src/utils/misc';
 import { getPathAndMakePDF } from 'src/utils/printTemplates';
 import { useAppStore } from 'src/stores/app';
 import { paperSizeMap, printSizes } from 'src/utils/ui';
-import { PropType, defineComponent } from 'vue';
 import ScaledContainer from '../TemplateBuilder/ScaledContainer.vue';
 
-export default defineComponent({
-  components: { PageHeader, Button, Check, Int, ScaledContainer, Select },
-  props: {
-    reportName: {
-      type: String as PropType<keyof typeof reports>,
-      required: true,
-    },
-  },
-  setup() {
-    return { store: useAppStore() };
-  },
-  data() {
-    return {
-      start: 1,
-      limit: 0,
-      printSize: 'A4',
-      isLandscape: false,
-      scale: 0.65,
-      report: null as null | Report,
-      columnSelection: [] as boolean[],
-    };
-  },
-  computed: {
-    title(): string {
-      return reports[this.reportName]?.title ?? t`Report`;
-    },
-    printSizeDf(): OptionField {
-      return {
-        label: 'Print Size',
-        fieldname: 'printSize',
-        fieldtype: 'Select',
-        options: printSizes
-          .filter((p) => p !== 'Custom')
-          .map((name) => ({ value: name, label: name })),
-      };
-    },
-    matrix(): { value: string; idx: number }[][] {
-      if (!this.report) {
-        return [];
+// Define Props
+const props = defineProps<{
+  reportName: keyof typeof reports;
+}>();
+
+// App Store
+const store = useAppStore();
+
+// Template Refs
+const scaledContainer = ref<InstanceType<typeof ScaledContainer> | null>(null);
+
+// Reactive State
+const start = ref(1);
+const limit = ref(0);
+const printSize = ref('A4');
+const isLandscape = ref(false);
+const scale = ref(0.65);
+const report = ref<null | Report>(null);
+const columnSelection = ref<boolean[]>([]);
+
+// Computed Properties
+const title = computed(() => {
+  return reports[props.reportName]?.title ?? t`Report`;
+});
+
+const printSizeDf = computed<OptionField>(() => {
+  return {
+    label: 'Print Size',
+    fieldname: 'printSize',
+    fieldtype: 'Select',
+    options: printSizes
+      .filter((p) => p !== 'Custom')
+      .map((name) => ({ value: name, label: name })),
+  };
+});
+
+const matrix = computed(() => {
+  if (!report.value) {
+    return [];
+  }
+
+  const columns = report.value.columns
+    .map((col, idx) => ({ value: col.label, idx }))
+    .filter((_, i) => columnSelection.value[i]);
+
+  const mat: { value: string; idx: number }[][] = [columns];
+  const startVal = Math.max(start.value - 1, 0);
+  const endVal = Math.min(
+    startVal + limit.value,
+    report.value.reportData.length
+  );
+  const slice = report.value.reportData.slice(startVal, endVal);
+
+  for (let i = 0; i < slice.length; i++) {
+    const row = slice[i];
+
+    mat.push([]);
+    for (let j = 0; j < row.cells.length; j++) {
+      if (!columnSelection.value[j]) {
+        continue;
       }
 
-      const columns = this.report.columns
-        .map((col, idx) => ({ value: col.label, idx }))
-        .filter((_, i) => this.columnSelection[i]);
+      const value = row.cells[j].value;
+      mat.at(-1)?.push({ value, idx: Number(j) });
+    }
+  }
 
-      const matrix: { value: string; idx: number }[][] = [columns];
-      const start = Math.max(this.start - 1, 0);
-      const end = Math.min(start + this.limit, this.report.reportData.length);
-      const slice = this.report.reportData.slice(start, end);
+  return mat;
+});
 
-      for (let i = 0; i < slice.length; i++) {
-        const row = slice[i];
+const rowStyles = computed<Record<string, string>>(() => {
+  const style: Record<string, string> = {};
+  const numColumns = columnSelection.value.filter(Boolean).length;
+  style['grid-template-columns'] = `repeat(${numColumns}, minmax(0, auto))`;
+  return style;
+});
 
-        matrix.push([]);
-        for (let j = 0; j < row.cells.length; j++) {
-          if (!this.columnSelection[j]) {
-            continue;
-          }
+const size = computed<{ width: number; height: number }>(() => {
+  const paper = paperSizeMap[printSize.value as keyof typeof paperSizeMap];
+  const long = paper.width > paper.height ? paper.width : paper.height;
+  const short = paper.width <= paper.height ? paper.width : paper.height;
 
-          const value = row.cells[j].value;
-          matrix.at(-1)?.push({ value, idx: Number(j) });
-        }
-      }
+  if (isLandscape.value) {
+    return { width: long, height: short };
+  }
 
-      return matrix;
-    },
-    rowStyles(): Record<string, string> {
-      const style: Record<string, string> = {};
-      const numColumns = this.columnSelection.filter(Boolean).length;
-      style['grid-template-columns'] = `repeat(${numColumns}, minmax(0, auto))`;
-      return style;
-    },
-    size(): { width: number; height: number } {
-      const size = paperSizeMap[this.printSize as keyof typeof paperSizeMap];
-      const long = size.width > size.height ? size.width : size.height;
-      const short = size.width <= size.height ? size.width : size.height;
+  return { width: short, height: long };
+});
 
-      if (this.isLandscape) {
-        return { width: long, height: short };
-      }
+// Methods
+const setScale = () => {
+  const widthVal = size.value.width * 37.2;
+  let containerWidth = window.innerWidth - 26 * 16;
+  if (store.showSidebar) {
+    containerWidth -= 12 * 16;
+  }
 
-      return { width: short, height: long };
-    },
-  },
-  watch: {
-    size() {
-      this.setScale();
-    },
-  },
-  async mounted() {
-    this.report = await getReport(this.reportName);
-    this.limit = this.report.reportData.length;
-    this.columnSelection = this.report.columns.map(() => true);
-    this.setScale();
+  scale.value = Math.min(containerWidth / widthVal, 1);
+};
 
+const savePDF = async (shouldPrint?: boolean) => {
+  const innerHTML = scaledContainer.value?.$el.children[0].innerHTML;
+  if (typeof innerHTML !== 'string') {
+    return;
+  }
+
+  const name = title.value + ' - ' + fyo.format(new Date(), 'Date');
+  await getPathAndMakePDF(
+    name,
+    innerHTML,
+    size.value.width,
+    size.value.height,
+    undefined,
+    shouldPrint
+  );
+
+  fyo.telemetry.log(Verb.Printed, report.value!.reportName);
+};
+
+const cellClasses = (cIdx: number, rIdx: number): string[] => {
+  const classes: string[] = [];
+  if (!report.value) {
+    return classes;
+  }
+
+  const col = report.value.columns[cIdx];
+  const isFirst = cIdx === 0;
+  if (col.align) {
+    classes.push(`text-${col.align}`);
+  }
+
+  if (rIdx === 0) {
+    classes.push('font-semibold');
+  }
+
+  classes.push('border-t border-border');
+  if (!isFirst) {
+    classes.push('border-l border-border');
+  }
+
+  return classes;
+};
+
+// Watchers
+watch(size, () => {
+  setScale();
+});
+
+// Lifecycles
+onMounted(async () => {
+  report.value = await getReport(props.reportName);
+  limit.value = report.value.reportData.length;
+  columnSelection.value = report.value.columns.map(() => true);
+  setScale();
+
+  if (store.isDevelopment) {
     // @ts-ignore
-    window.rpv = this;
-  },
-  methods: {
-    setScale() {
-      const width = this.size.width * 37.2;
-      let containerWidth = window.innerWidth - 26 * 16;
-      if (this.store.showSidebar) {
-        containerWidth -= 12 * 16;
-      }
-
-      this.scale = Math.min(containerWidth / width, 1);
-    },
-    async savePDF(shouldPrint?: boolean): Promise<void> {
-      // @ts-ignore
-      const innerHTML = this.$refs.scaledContainer.$el.children[0].innerHTML;
-      if (typeof innerHTML !== 'string') {
-        return;
-      }
-
-      const name = this.title + ' - ' + fyo.format(new Date(), 'Date');
-      await getPathAndMakePDF(
-        name,
-        innerHTML,
-        this.size.width,
-        this.size.height,
-        undefined,
-        shouldPrint
-      );
-
-      this.fyo.telemetry.log(Verb.Printed, this.report!.reportName);
-    },
-    cellClasses(cIdx: number, rIdx: number): string[] {
-      const classes: string[] = [];
-      if (!this.report) {
-        return classes;
-      }
-
-      const col = this.report.columns[cIdx];
-      const isFirst = cIdx === 0;
-      if (col.align) {
-        classes.push(`text-${col.align}`);
-      }
-
-      if (rIdx === 0) {
-        classes.push('font-semibold');
-      }
-
-      classes.push('border-t border-border');
-      if (!isFirst) {
-        classes.push('border-l border-border');
-      }
-
-      return classes;
-    },
-  },
+    window.rpv = {
+      start,
+      limit,
+      printSize,
+      isLandscape,
+      scale,
+      report,
+      columnSelection,
+      title,
+      printSizeDf,
+      matrix,
+      rowStyles,
+      size,
+      setScale,
+      savePDF,
+      cellClasses,
+    };
+  }
 });
 </script>
+
 <style scoped>
 @reference "../../styles/index.css";
 .outer-container {

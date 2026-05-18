@@ -1,11 +1,36 @@
 <script setup lang="ts">
 import { useAppStore } from 'src/stores/app';
+import Sidebar from '../components/Sidebar.vue';
+
+// Define Props
+withDefaults(
+  defineProps<{
+    theme?: string;
+  }>(),
+  {
+    theme: 'auto',
+  }
+);
+
+// Define Emits
+defineEmits<{
+  (e: 'change-db-file'): void;
+  (e: 'toggle-darkmode'): void;
+}>();
+
 const appStore = useAppStore();
 const toggleSidebar = () => appStore.toggleSidebar();
 </script>
 <template>
   <div class="flex overflow-hidden">
-    <Transition name="sidebar">
+    <Transition
+      enter-active-class="transition-all duration-150 ease-out"
+      enter-from-class="-translate-x-full rtl:translate-x-full opacity-0 w-0"
+      enter-to-class="translate-x-0 opacity-100 w-[var(--w-sidebar)]"
+      leave-active-class="transition-all duration-150 ease-in"
+      leave-from-class="translate-x-0 opacity-100 w-[var(--w-sidebar)]"
+      leave-to-class="-translate-x-full rtl:translate-x-full opacity-0 w-0"
+    >
       <!-- eslint-disable vue/require-explicit-emits -->
       <Sidebar
         v-show="appStore.showSidebar"
@@ -26,7 +51,14 @@ const toggleSidebar = () => appStore.toggleSidebar();
       </router-view>
 
       <router-view v-slot="{ Component, route }" name="edit">
-        <Transition name="quickedit">
+        <Transition
+          enter-active-class="transition-all duration-150 ease-out"
+          enter-from-class="translate-x-full opacity-0 w-0"
+          enter-to-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
+          leave-active-class="transition-all duration-150 ease-in"
+          leave-from-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
+          leave-to-class="translate-x-full opacity-0 w-0"
+        >
           <div v-if="route?.query?.edit">
             <component
               :is="Component"
@@ -50,46 +82,3 @@ const toggleSidebar = () => appStore.toggleSidebar();
     </button>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Sidebar from '../components/Sidebar.vue';
-export default defineComponent({
-  name: 'Desk',
-  components: {
-    Sidebar,
-  },
-  props: {
-    theme: {
-      type: String,
-      default: 'auto',
-    },
-  },
-  emits: ['change-db-file', 'toggle-darkmode'],
-});
-</script>
-
-<style scoped>
-.sidebar-enter-from,
-.sidebar-leave-to {
-  opacity: 0;
-  transform: translateX(calc(-1 * var(--w-sidebar)));
-  width: 0px;
-}
-[dir='rtl'] .sidebar-leave-to {
-  opacity: 0;
-  transform: translateX(calc(1 * var(--w-sidebar)));
-  width: 0px;
-}
-
-.sidebar-enter-to,
-.sidebar-leave-from {
-  opacity: 1;
-  transform: translateX(0px);
-  width: var(--w-sidebar);
-}
-
-.sidebar-enter-active,
-.sidebar-leave-active {
-  transition: all 150ms ease-out;
-}
-</style>

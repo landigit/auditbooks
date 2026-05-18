@@ -1,6 +1,13 @@
 <template>
   <Teleport to="#toast-container">
-    <Transition>
+    <Transition
+      enter-active-class="transition-all duration-150 ease-out"
+      enter-from-class="opacity-0 translate-y-2 scale-95"
+      enter-to-class="opacity-100 translate-y-0 scale-100"
+      leave-active-class="transition-all duration-100 ease-in"
+      leave-from-class="opacity-100 translate-y-0 scale-100"
+      leave-to-class="opacity-0 translate-y-2 scale-95"
+    >
       <div
         v-if="open"
         class="inner text-main shadow-lg px-3 py-2 flex items-center mb-3 w-toast z-30 bg-surface rounded-lg border border-border"
@@ -36,68 +43,54 @@
     </Transition>
   </Teleport>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { getIconConfig } from 'src/utils/interactive';
 import { ToastDuration, ToastType } from 'src/utils/types';
 import { toastDurationMap } from 'src/utils/ui';
-import { PropType, defineComponent, nextTick } from 'vue';
 import LucideIcon from './LucideIcon.vue';
 
-export default defineComponent({
-  components: {
-    LucideIcon,
-  },
-  props: {
-    message: { type: String, required: true },
-    action: { type: Function, default: () => {} },
-    actionText: { type: String, default: '' },
-    type: { type: String as PropType<ToastType>, default: 'info' },
-    duration: { type: String as PropType<ToastDuration>, default: 'long' },
-  },
-  data() {
-    return {
-      open: false,
-    };
-  },
-  computed: {
-    config() {
-      return getIconConfig(this.type);
-    },
-    isPersistent() {
-      return this.duration === 'very_long';
-    },
-  },
-  async mounted() {
-    const duration = toastDurationMap[this.duration];
-    await nextTick(() => (this.open = true));
-    if (duration !== Infinity) {
-      setTimeout(this.closeToast, duration);
-    }
-  },
-  methods: {
-    actionClicked() {
-      this.action();
-      this.closeToast();
-    },
-    closeToast() {
-      this.open = false;
-    },
-  },
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    message: string;
+    action?: () => void;
+    actionText?: string;
+    type?: ToastType;
+    duration?: ToastDuration;
+  }>(),
+  {
+    action: () => {},
+    actionText: '',
+    type: 'info',
+    duration: 'long',
+  }
+);
+
+// Reactive State
+const open = ref(false);
+
+// Computed Properties
+const config = computed(() => getIconConfig(props.type));
+const isPersistent = computed(() => props.duration === 'very_long');
+
+// Methods
+const closeToast = () => {
+  open.value = false;
+};
+
+const actionClicked = () => {
+  props.action();
+  closeToast();
+};
+
+// Lifecycles
+onMounted(async () => {
+  const durationVal = toastDurationMap[props.duration];
+  await nextTick(() => (open.value = true));
+  if (durationVal !== Infinity) {
+    setTimeout(closeToast, durationVal);
+  }
 });
 </script>
-<style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: all 150ms ease-out;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-
-.v-enter-to,
-.v-leave-from {
-  opacity: 1;
-}
-</style>

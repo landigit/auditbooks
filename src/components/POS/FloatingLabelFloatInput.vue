@@ -1,14 +1,13 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import FloatingLabelInputBase from './FloatingLabelInputBase.vue';
+<template>
+  <FloatingLabelInputBase
+    v-bind="props"
+    input-type="number"
+  />
+</template>
 
-export default defineComponent({
-  name: 'FloatingLabelFloatInput',
-  extends: FloatingLabelInputBase,
-  computed: {
-    inputType() {
-      return 'number';
-    },
-  },
-});
+<script setup lang="ts">
+import FloatingLabelInputBase from './FloatingLabelInputBase.vue';
+import { BaseControlProps } from 'src/composables/useBaseControl';
+
+const props = defineProps<BaseControlProps>();
 </script>

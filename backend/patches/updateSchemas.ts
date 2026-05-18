@@ -35,12 +35,16 @@ async function selectAll(client: Client, tableName: string) {
 async function batchInsert(client: Client, tableName: string, values: any[]) {
   if (values.length === 0) return;
   for (const val of values) {
-    const columns = Object.keys(val).map(c => `"${c}"`).join(', ');
-    const placeholders = Object.keys(val).map(() => '?').join(', ');
+    const columns = Object.keys(val)
+      .map((c) => `"${c}"`)
+      .join(', ');
+    const placeholders = Object.keys(val)
+      .map(() => '?')
+      .join(', ');
     const args = Object.values(val) as any[];
     await client.execute({
       sql: `INSERT INTO "${tableName}" (${columns}) VALUES (${placeholders})`,
-      args
+      args,
     });
   }
 }
@@ -53,7 +57,7 @@ async function execute(dm: DatabaseManager) {
   const sourceClient = dm.db!.client!;
   const versionRes = await sourceClient.execute({
     sql: `SELECT value FROM "SingleValue" WHERE fieldname = 'version' LIMIT 1`,
-    args: []
+    args: [],
   });
   const version = (versionRes.rows[0] as any)?.value;
 
@@ -112,7 +116,11 @@ async function replaceDatabaseCore(
   await dm._connect(oldDbPath);
 }
 
-async function copyData(sourceClient: Client, destClient: Client, destDm: DatabaseManager) {
+async function copyData(
+  sourceClient: Client,
+  destClient: Client,
+  destDm: DatabaseManager
+) {
   const schemaMap = destDm.getSchemaMap();
   await destClient.execute('PRAGMA foreign_keys=OFF');
   await copySingleValues(sourceClient, destClient, schemaMap);
@@ -160,7 +168,7 @@ async function copyNumberSeries(
         from "${referenceType}" 
         order by idx desc 
         limit 1`,
-      args: [name.length + 1]
+      args: [name.length + 1],
     });
     const indices = indicesRes.rows;
 
@@ -184,7 +192,10 @@ async function copyLedgerEntries(
   destClient: Client,
   schema: Schema
 ) {
-  const values = await selectAll(sourceClient, ModelNameEnum.AccountingLedgerEntry);
+  const values = await selectAll(
+    sourceClient,
+    ModelNameEnum.AccountingLedgerEntry
+  );
   await copyValues(
     destClient,
     ModelNameEnum.AccountingLedgerEntry,
@@ -284,7 +295,11 @@ async function copyChildTables(
   }
 }
 
-async function copyItem(sourceClient: Client, destClient: Client, schema: Schema) {
+async function copyItem(
+  sourceClient: Client,
+  destClient: Client,
+  schema: Schema
+) {
   const values = await selectAll(sourceClient, ModelNameEnum.Item);
   values.forEach((value) => {
     value.for = 'Both';
@@ -293,7 +308,11 @@ async function copyItem(sourceClient: Client, destClient: Client, schema: Schema
   await copyValues(destClient, ModelNameEnum.Item, values, [], {}, schema);
 }
 
-async function copyParty(sourceClient: Client, destClient: Client, schema: Schema) {
+async function copyParty(
+  sourceClient: Client,
+  destClient: Client,
+  schema: Schema
+) {
   const values = await selectAll(sourceClient, ModelNameEnum.Party);
   values.forEach((value) => {
     // customer will be mapped onto role
@@ -322,14 +341,14 @@ async function copySingleValues(
   const singleSchemaNames = Object.keys(schemaMap).filter(
     (k) => schemaMap[k]?.isSingle
   );
-  
+
   const placeholders = singleSchemaNames.map(() => '?').join(', ');
   const singleValuesRes = await sourceClient.execute({
     sql: `SELECT * FROM "SingleValue" WHERE "parent" IN (${placeholders})`,
-    args: singleSchemaNames
+    args: singleSchemaNames,
   });
   const singleValues = singleValuesRes.rows;
-  
+
   await copyValues(destClient, ModelNameEnum.SingleValue, singleValues);
 }
 
@@ -373,7 +392,7 @@ async function getCountryCode(client: Client) {
   try {
     const countryRes = await client.execute({
       sql: `SELECT value FROM "SingleValue" WHERE fieldname = 'country' LIMIT 1`,
-      args: []
+      args: [],
     });
     const country = (countryRes.rows[0] as any)?.value;
     if (!country) {

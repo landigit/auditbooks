@@ -1,20 +1,19 @@
-<script lang="ts">
-import { safeParseFloat } from 'utils/index';
-import { defineComponent } from 'vue';
-import Int from './Int.vue';
+<template>
+  <Base
+    v-bind="props"
+    input-type="number"
+    :parse="parse"
+  />
+</template>
 
-export default defineComponent({
-  name: 'Float',
-  extends: Int,
-  computed: {
-    inputType() {
-      return 'number';
-    },
-  },
-  methods: {
-    parse(value: unknown): number {
-      return safeParseFloat(value);
-    },
-  },
-});
+<script setup lang="ts">
+import Base from './Base.vue';
+import { BaseControlProps } from 'src/composables/useBaseControl';
+import { safeParseFloat } from 'utils/index';
+
+const props = defineProps<BaseControlProps>();
+
+const parse = (value: unknown): number => {
+  return safeParseFloat(value);
+};
 </script>

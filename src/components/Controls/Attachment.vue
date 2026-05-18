@@ -44,96 +44,104 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import { t } from 'fyo';
-import { Attachment } from 'fyo/core/types';
-import { Field } from 'schemas/types';
 import { convertFileToDataURL } from 'src/utils/misc';
-import { defineComponent, PropType } from 'vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 import LucideIcon from '../LucideIcon.vue';
-import Base from './Base.vue';
 
-export default defineComponent({
-  components: { LucideIcon },
-  extends: Base,
-  props: {
-    df: Object as PropType<Field>,
-    value: { type: Object as PropType<Attachment | null>, default: null },
-    border: { type: Boolean, default: false },
-    size: String,
-  },
-  computed: {
-    label() {
-      if (this.value) {
-        return this.value.name;
-      }
+const props = withDefaults(defineProps<BaseControlProps>(), {
+  step: 1,
+  border: false,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
 
-      return this.df?.placeholder ?? this.df?.label ?? t`Attachment`;
-    },
-    inputReadOnlyClasses() {
-      if (!this.value) {
-        return 'text-description';
-      } else if (this.isReadOnly) {
-        return 'text-main cursor-default';
-      }
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
+}>();
 
-      return 'text-main';
-    },
-    containerReadOnlyClasses() {
-      return '';
-    },
-  },
-  methods: {
-    upload() {
-      (this.$refs.fileInput as HTMLInputElement).click();
-    },
-    clear() {
-      (this.$refs.fileInput as HTMLInputElement).value = '';
-      // @ts-ignore
-      this.triggerChange(null);
-    },
-    download() {
-      if (!this.value) {
-        return;
-      }
+const fileInput = ref<HTMLInputElement | null>(null);
 
-      const { name, data } = this.value;
-      if (!name || !data) {
-        return;
-      }
+const {
+  labelClasses,
+  inputClasses,
+  containerClasses,
+  isReadOnly,
+  triggerChange,
+  focus
+} = useBaseControl(props as any, emit, fileInput);
 
-      const a = document.createElement('a');
+const label = computed(() => {
+  if (props.value) {
+    return (props.value as any).name;
+  }
+  return props.df?.placeholder ?? props.df?.label ?? t`Attachment`;
+});
 
-      a.style.display = 'none';
-      a.href = data;
-      a.target = '_self';
-      a.download = name;
+const upload = () => {
+  fileInput.value?.click();
+};
 
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    },
-    async selectFile(e: Event) {
-      const target = e.target as HTMLInputElement;
-      const file = target.files?.[0];
-      if (!file) {
-        return;
-      }
+const clear = () => {
+  if (fileInput.value) {
+    fileInput.value.value = '';
+  }
+  triggerChange(null);
+};
 
-      const attachment = await this.getAttachment(file);
-      // @ts-ignore
-      this.triggerChange(attachment);
-    },
-    async getAttachment(file: File | null) {
-      if (!file) {
-        return null;
-      }
+const download = () => {
+  if (!props.value) {
+    return;
+  }
 
-      const name = file.name;
-      const type = file.type;
-      const data = await convertFileToDataURL(file, type);
-      return { name, type, data };
-    },
-  },
+  const { name, data } = props.value as any;
+  if (!name || !data) {
+    return;
+  }
+
+  const a = document.createElement('a');
+  a.style.display = 'none';
+  a.href = data;
+  a.target = '_self';
+  a.download = name;
+
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+const selectFile = async (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (!file) {
+    return;
+  }
+
+  const attachment = await getAttachment(file);
+  triggerChange(attachment);
+};
+
+const getAttachment = async (file: File | null) => {
+  if (!file) {
+    return null;
+  }
+
+  const name = file.name;
+  const type = file.type;
+  const data = await convertFileToDataURL(file, type);
+  return { name, type, data };
+};
+
+defineExpose({
+  focus
 });
 </script>

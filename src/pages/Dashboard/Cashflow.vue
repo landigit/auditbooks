@@ -36,7 +36,7 @@
     <LineChart
       v-if="chartData.points.length"
       class="mt-4"
-      :aspect-ratio="4.15"
+      :aspect-ratio="aspectRatio"
       :colors="chartData.colors"
       :grid-color="chartData.gridColor"
       :font-color="chartData.fontColor"
@@ -50,129 +50,149 @@
     />
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, onUnmounted, onActivated } from 'vue';
 import { AccountTypeEnum } from 'models/baseModels/Account/types';
 import { ModelNameEnum } from 'models/types';
 import LineChart from 'src/components/Charts/LineChart.vue';
 import { fyo } from 'src/initFyo';
 import { formatXLabels, getYMax } from 'src/utils/chart';
 import { getDatesAndPeriodList } from 'src/utils/misc';
-import DashboardChartBase from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
-import { defineComponent } from 'vue';
 import { getMapFromList } from 'utils/index';
 import { PeriodKey } from 'src/utils/types';
 
-// Linting broken in this file cause of `extends: ...`
-/* 
-  eslint-disable @typescript-eslint/no-unsafe-argument, 
-  @typescript-eslint/no-unsafe-return
-*/
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    commonPeriod?: PeriodKey;
+  }>(),
+  {
+    commonPeriod: 'This Year',
+  }
+);
 
-export default defineComponent({
-  name: 'Cashflow',
-  components: {
-    PeriodSelector,
-    LineChart,
-  },
-  extends: DashboardChartBase,
-  data: () => ({
-    data: [] as { inflow: number; outflow: number; yearmonth: string }[],
-    periodList: [],
-    periodOptions: ['This Year', 'This Quarter', 'YTD'],
-    hasData: false,
-  }),
-  computed: {
-    chartData() {
-      let data = this.data;
-      let colors = ['var(--chart-blue-main)', 'var(--chart-pink-main)'];
-      if (!this.hasData) {
-        data = dummyData;
-        colors = ['var(--color-chart-empty)', 'var(--color-chart-empty)'];
-      }
+// Define Emits
+const emit = defineEmits<{
+  (e: 'period-change', period: PeriodKey): void;
+}>();
 
-      const xLabels = data.map((cf) => cf.yearmonth);
-      const points = (['inflow', 'outflow'] as const).map((k) =>
-        data.map((d) => d[k])
-      );
+// Dummy data for when there's no real data
+const dummyData = [
+  { inflow: 100, outflow: 250, yearmonth: '2021-05' },
+  { inflow: 350, outflow: 100, yearmonth: '2021-06' },
+  { inflow: 50, outflow: 300, yearmonth: '2021-07' },
+  { inflow: 320, outflow: 100, yearmonth: '2021-08' },
+];
 
-      const format = (value: number) => fyo.format(value ?? 0, 'Currency');
-      const yMax = getYMax(points);
-      return {
-        points,
-        xLabels,
-        colors,
-        format,
-        yMax,
-        formatX: formatXLabels,
-        gridColor: 'var(--color-border)',
-        fontColor: 'var(--color-description)',
-      };
-    },
-  },
-  async activated() {
-    await this.setData();
-    if (!this.hasData) {
-      await this.setHasData();
-    }
-  },
-  methods: {
-    async setData() {
-      const { periodList, fromDate, toDate } = getDatesAndPeriodList(
-        this.period as PeriodKey
-      );
+// State definition
+const data = ref<{ inflow: number; outflow: number; yearmonth: string }[]>([]);
+const period = ref<PeriodKey>('This Year');
+const periodOptions: PeriodKey[] = ['This Year', 'This Quarter', 'YTD'];
+const hasData = ref(false);
+const aspectRatio = ref(4.15);
 
-      const data = await fyo.db.getCashflow(fromDate.toISO()!, toDate.toISO()!);
-      const dataMap = getMapFromList(data, 'yearmonth');
-      this.data = periodList.map((p) => {
-        const key = p.toFormat('yyyy-MM');
-        const item = dataMap[key];
-        if (item) {
-          return item;
-        }
+// Computed Properties
+const chartData = computed(() => {
+  let displayData = data.value;
+  let colors = ['var(--chart-blue-main)', 'var(--chart-pink-main)'];
+  if (!hasData.value) {
+    displayData = dummyData;
+    colors = ['var(--color-chart-empty)', 'var(--color-chart-empty)'];
+  }
 
-        return {
-          inflow: 0,
-          outflow: 0,
-          yearmonth: key,
-        };
-      });
-    },
-    async setHasData() {
-      const accounts = await fyo.db.getAllRaw('Account', {
-        filters: {
-          accountType: ['in', [AccountTypeEnum.Cash, AccountTypeEnum.Bank]],
-        },
-      });
-      const accountNames = accounts.map((a) => a.name as string);
-      const count = await fyo.db.count(ModelNameEnum.AccountingLedgerEntry, {
-        filters: { account: ['in', accountNames] },
-      });
-      this.hasData = count > 0;
-    },
-  },
+  const xLabels = displayData.map((cf) => cf.yearmonth);
+  const points = (['inflow', 'outflow'] as const).map((k) =>
+    displayData.map((d) => d[k])
+  );
+
+  const format = (value: number) => fyo.format(value ?? 0, 'Currency');
+  const yMax = getYMax(points);
+  return {
+    points,
+    xLabels,
+    colors,
+    format,
+    yMax,
+    formatX: formatXLabels,
+    gridColor: 'var(--color-border)',
+    fontColor: 'var(--color-description)',
+  };
 });
 
-const dummyData = [
-  {
-    inflow: 100,
-    outflow: 250,
-    yearmonth: '2021-05',
-  },
-  {
-    inflow: 350,
-    outflow: 100,
-    yearmonth: '2021-06',
-  },
-  {
-    inflow: 50,
-    outflow: 300,
-    yearmonth: '2021-07',
-  },
-  {
-    inflow: 320,
-    outflow: 100,
-    yearmonth: '2021-08',
-  },
-];
+// Methods
+const updateAspectRatio = () => {
+  aspectRatio.value = window.innerWidth < 768 ? 2.2 : 4.15;
+};
+
+const setData = async () => {
+  const { periodList, fromDate, toDate } = getDatesAndPeriodList(period.value);
+
+  const res = await fyo.db.getCashflow(fromDate.toISO()!, toDate.toISO()!);
+  const dataMap = getMapFromList(res, 'yearmonth');
+  data.value = periodList.map((p) => {
+    const key = p.toFormat('yyyy-MM');
+    const item = dataMap[key];
+    if (item) {
+      return item;
+    }
+
+    return {
+      inflow: 0,
+      outflow: 0,
+      yearmonth: key,
+    };
+  });
+};
+
+const setHasData = async () => {
+  const accounts = await fyo.db.getAllRaw('Account', {
+    filters: {
+      accountType: ['in', [AccountTypeEnum.Cash, AccountTypeEnum.Bank]],
+    },
+  });
+  const accountNames = accounts.map((a) => a.name as string);
+  const count = await fyo.db.count(ModelNameEnum.AccountingLedgerEntry, {
+    filters: { account: ['in', accountNames] },
+  });
+  hasData.value = count > 0;
+};
+
+const periodChange = async () => {
+  emit('period-change', period.value);
+  await setData();
+};
+
+// Watchers
+watch(period, async () => {
+  await periodChange();
+});
+
+watch(
+  () => props.commonPeriod,
+  (val) => {
+    if (!val || !periodOptions.includes(val)) {
+      return;
+    }
+    period.value = val;
+  }
+);
+
+// Lifecycle Hooks
+onMounted(() => {
+  updateAspectRatio();
+  window.addEventListener('resize', updateAspectRatio);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateAspectRatio);
+});
+
+onActivated(async () => {
+  updateAspectRatio();
+  await setData();
+  if (!hasData.value) {
+    await setHasData();
+  }
+});
 </script>

@@ -8,7 +8,7 @@
         :text-right="true"
         :value="paidAmount"
         @change="
-          (amount: Money) => $emit('setPaidAmount', (amount as Money).float)
+          (amount: Money) => emit('setPaidAmount', (amount as Money).float)
         "
       />
       <div class="grid grid-cols-2 gap-6">
@@ -35,10 +35,10 @@
           :required="!transferAmount.isZero()"
           :read-only="false"
           :value="transferRefNo"
-          @change="(value: string) => $emit('setTransferRefNo', value)"
+          @change="(value: string) => emit('setTransferRefNo', value)"
         />
 
-        <Date
+        <DateField
           v-show="!isPaymentMethodIsCash"
           :df="fyo.fieldMap.Payment.clearanceDate"
           :show-label="true"
@@ -46,7 +46,7 @@
           :required="!transferAmount.isZero()"
           :read-only="false"
           :value="transferClearanceDate"
-          @change="(value: Date) => $emit('setTransferClearanceDate', value)"
+          @change="(value: Date) => emit('setTransferClearanceDate', value)"
         />
       </div>
 
@@ -222,181 +222,177 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, onMounted, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import Currency from 'src/components/Controls/Currency.vue';
 import Data from 'src/components/Controls/Data.vue';
-import Date from 'src/components/Controls/Date.vue';
+import DateField from 'src/components/Controls/Date.vue';
 import Modal from 'src/components/Modal.vue';
 import { Money } from 'pesa';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
 import { fyo } from 'src/initFyo';
 import { isPesa } from 'fyo/utils';
 import { ModelNameEnum } from 'models/types';
 import { showToast } from 'src/utils/interactive';
+import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'PaymentModal',
-  components: {
-    Modal,
-    Currency,
-    Button,
-    Data,
-    Date,
-  },
-  emits: [
-    'createTransaction',
-    'setPaidAmount',
-    'setPaymentMethod',
-    'setTransferClearanceDate',
-    'setTransferRefNo',
-    'toggleModal',
-  ],
-  setup() {
-    return {
-      paidAmount: inject('paidAmount') as Money,
-      paymentMethod: inject('paymentMethod') as string,
-      isDiscountingEnabled: inject('isDiscountingEnabled') as boolean,
-      itemDiscounts: inject('itemDiscounts') as Money,
-      transferAmount: inject('transferAmount') as Money,
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-      transferRefNo: inject('transferRefNo') as string,
-      transferClearanceDate: inject('transferClearanceDate') as Date,
-      totalTaxedAmount: inject('totalTaxedAmount') as Money,
-    };
-  },
-  data() {
-    return {
-      paymentMethods: [] as string[],
-    };
-  },
-  computed: {
-    isPaymentMethodIsCash(): boolean {
-      return this.paymentMethod === 'Cash';
-    },
-    balanceAmount(): Money {
-      const grandTotal = this.sinvDoc?.grandTotal ?? fyo.pesa(0);
+// Define Emits
+const emit = defineEmits<{
+  (e: 'createTransaction', print?: boolean, pay?: boolean): void;
+  (e: 'setPaidAmount', value: any): void;
+  (e: 'setPaymentMethod', value: string): void;
+  (e: 'setTransferClearanceDate', value: Date): void;
+  (e: 'setTransferRefNo', value: string): void;
+  (e: 'toggleModal', modal: string): void;
+}>();
 
-      if (isPesa(this.paidAmount) && this.paidAmount.isZero()) {
-        return grandTotal.sub(this.transferAmount);
-      }
+// App Store / Context Injections
+const paidAmount = inject('paidAmount') as Money;
+const paymentMethod = inject('paymentMethod') as string;
+const isDiscountingEnabled = inject('isDiscountingEnabled') as boolean;
+const itemDiscounts = inject('itemDiscounts') as Money;
+const transferAmount = inject('transferAmount') as Money;
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+const transferRefNo = inject('transferRefNo') as string;
+const transferClearanceDate = inject('transferClearanceDate') as Date;
+const totalTaxedAmount = inject('totalTaxedAmount') as Money;
 
-      return grandTotal.sub(this.paidAmount);
-    },
-    paidChange(): Money {
-      const grandTotal = this.sinvDoc?.grandTotal ?? fyo.pesa(0);
+// Reactive State
+const paymentMethods = ref<string[]>([]);
 
-      if (this.fyo.pesa(this.paidAmount.float).isZero()) {
-        return this.transferAmount.sub(grandTotal);
-      }
+// Computed Properties
+const isPaymentMethodIsCash = computed((): boolean => {
+  return paymentMethod === 'Cash';
+});
 
-      return this.fyo.pesa(this.paidAmount.float).sub(grandTotal);
-    },
-    showBalanceAmount(): boolean {
-      if (this.paidAmount.float === 0) {
-        return false;
-      }
+const balanceAmount = computed((): Money => {
+  const grandTotal = sinvDoc?.grandTotal ?? fyo.pesa(0);
 
-      if (
-        this.fyo
-          .pesa(this.paidAmount.float)
-          .gte(this.sinvDoc?.grandTotal ?? fyo.pesa(0))
-      ) {
-        return false;
-      }
+  if (isPesa(paidAmount) && paidAmount.isZero()) {
+    return grandTotal.sub(transferAmount);
+  }
 
-      if (this.transferAmount.gte(this.sinvDoc?.grandTotal ?? fyo.pesa(0))) {
-        return false;
-      }
+  return grandTotal.sub(paidAmount);
+});
 
-      return true;
-    },
-    showPaidChange(): boolean {
-      if (this.sinvDoc.isReturn) {
-        return false;
-      }
+const paidChange = computed((): Money => {
+  const grandTotal = sinvDoc?.grandTotal ?? fyo.pesa(0);
 
-      if (
-        this.fyo.pesa(this.paidAmount.float).eq(fyo.pesa(0)) &&
-        this.transferAmount.eq(fyo.pesa(0))
-      ) {
-        return false;
-      }
+  if (fyo.pesa(paidAmount.float).isZero()) {
+    return transferAmount.sub(grandTotal);
+  }
 
-      if (
-        this.fyo
-          .pesa(this.paidAmount.float)
-          .gt(this.sinvDoc?.grandTotal ?? fyo.pesa(0))
-      ) {
-        return true;
-      }
+  return fyo.pesa(paidAmount.float).sub(grandTotal);
+});
 
-      if (this.transferAmount.gt(this.sinvDoc?.grandTotal ?? fyo.pesa(0))) {
-        return true;
-      }
+const showBalanceAmount = computed((): boolean => {
+  if (paidAmount.float === 0) {
+    return false;
+  }
 
-      return false;
-    },
-  },
-  async mounted() {
-    await this.setPaymentMethods();
-  },
-  methods: {
-    setPaymentMethodAndAmount(paymentMethod?: string) {
-      if (paymentMethod) {
-        this.$emit('setPaymentMethod', paymentMethod);
-        this.$emit(
-          'setPaidAmount',
-          (this.sinvDoc.outstandingAmount as Money).float
-        );
-      }
-    },
-    async setPaymentMethods() {
-      this.paymentMethods = (
-        (await this.fyo.db.getAll(ModelNameEnum.PaymentMethod, {
-          fields: ['name'],
-        })) as { name: string }[]
-      ).map((d) => d.name);
-    },
-    submitTransaction() {
-      if (!this.paymentMethod) {
-        return showToast({
-          type: 'error',
-          message: this.fyo
-            .t`Please select a payment method before submitting.`,
-        });
-        return;
-      }
-      this.$emit('createTransaction');
-    },
-    payTransaction() {
-      if (!this.paymentMethod) {
-        return showToast({
-          type: 'error',
-          message: this.fyo
-            .t`Please select a payment method before proceeding with payment.`,
-        });
-        return;
-      }
-      this.$emit('createTransaction', false, true);
-    },
-    payAndPrintTransaction() {
-      if (!this.paymentMethod) {
-        return showToast({
-          type: 'error',
-          message: this.fyo
-            .t`Please select a payment method before proceeding with payment.`,
-        });
-        return;
-      }
+  if (
+    fyo
+      .pesa(paidAmount.float)
+      .gte(sinvDoc?.grandTotal ?? fyo.pesa(0))
+  ) {
+    return false;
+  }
 
-      this.$emit('createTransaction', true, true);
-    },
-    cancelTransaction() {
-      this.$emit('setPaidAmount', fyo.pesa(0));
-      this.$emit('toggleModal', 'Payment');
-    },
-  },
+  if (transferAmount.gte(sinvDoc?.grandTotal ?? fyo.pesa(0))) {
+    return false;
+  }
+
+  return true;
+});
+
+const showPaidChange = computed((): boolean => {
+  if (sinvDoc.isReturn) {
+    return false;
+  }
+
+  if (
+    fyo.pesa(paidAmount.float).eq(fyo.pesa(0)) &&
+    transferAmount.eq(fyo.pesa(0))
+  ) {
+    return false;
+  }
+
+  if (
+    fyo
+      .pesa(paidAmount.float)
+      .gt(sinvDoc?.grandTotal ?? fyo.pesa(0))
+  ) {
+    return true;
+  }
+
+  if (transferAmount.gt(sinvDoc?.grandTotal ?? fyo.pesa(0))) {
+    return true;
+  }
+
+  return false;
+});
+
+// Methods
+const setPaymentMethodAndAmount = (paymentMethodValue?: string) => {
+  if (paymentMethodValue) {
+    emit('setPaymentMethod', paymentMethodValue);
+    emit(
+      'setPaidAmount',
+      (sinvDoc.outstandingAmount as Money).float
+    );
+  }
+};
+
+const setPaymentMethods = async () => {
+  paymentMethods.value = (
+    (await fyo.db.getAll(ModelNameEnum.PaymentMethod, {
+      fields: ['name'],
+    })) as { name: string }[]
+  ).map((d) => d.name);
+};
+
+const submitTransaction = () => {
+  if (!paymentMethod) {
+    showToast({
+      type: 'error',
+      message: fyo.t`Please select a payment method before submitting.`,
+    });
+    return;
+  }
+  emit('createTransaction');
+};
+
+const payTransaction = () => {
+  if (!paymentMethod) {
+    showToast({
+      type: 'error',
+      message: fyo.t`Please select a payment method before proceeding with payment.`,
+    });
+    return;
+  }
+  emit('createTransaction', false, true);
+};
+
+const payAndPrintTransaction = () => {
+  if (!paymentMethod) {
+    showToast({
+      type: 'error',
+      message: fyo.t`Please select a payment method before proceeding with payment.`,
+    });
+    return;
+  }
+
+  emit('createTransaction', true, true);
+};
+
+const cancelTransaction = () => {
+  emit('setPaidAmount', 0);
+  emit('toggleModal', 'Payment');
+};
+
+// Lifecycles
+onMounted(async () => {
+  await setPaymentMethods();
 });
 </script>

@@ -7,44 +7,45 @@
   />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed } from 'vue';
 import icons18 from './Icons/18';
 import icons24 from './Icons/24';
+
+// Define Props
+const props = withDefaults(
+  defineProps<{
+    name: string;
+    active?: boolean;
+    size: '18' | '24';
+    height?: number;
+  }>(),
+  {
+    active: false,
+  }
+);
 
 const components = {
   18: icons18,
   24: icons24,
 } as const;
 
-type IconSize = '18' | '24';
-export default {
-  name: 'Icon',
-  props: {
-    name: { type: String, required: true },
-    active: { type: Boolean, default: false },
-    size: {
-      type: String,
-      required: true,
-    },
-    height: Number,
-  },
-  computed: {
-    iconComponent() {
-      const map = components[this.size as IconSize];
-      return map[this.name as keyof typeof map] ?? null;
-    },
-    iconClasses() {
-      let sizeClass = {
-        18: 'w-5 h-5',
-        24: 'w-6 h-6',
-      }[this.size];
+// Computed Properties
+const iconComponent = computed(() => {
+  const map = components[props.size];
+  return map[props.name as keyof typeof map] ?? null;
+});
 
-      if (this.height) {
-        sizeClass = `w-${this.height} h-${this.height}`;
-      }
+const iconClasses = computed(() => {
+  let sizeClass = {
+    18: 'w-5 h-5',
+    24: 'w-6 h-6',
+  }[props.size];
 
-      return [sizeClass, 'fill-current'];
-    },
-  },
-};
+  if (props.height) {
+    sizeClass = `w-${props.height} h-${props.height}`;
+  }
+
+  return [sizeClass, 'fill-current'];
+});
 </script>

@@ -38,14 +38,14 @@
       >
         <TableRow
           v-for="(row, idx) of value"
-          ref="table-row"
+          ref="tableRowRefs"
           :key="row.name"
           :class="idx < value.length - 1 ? 'border-b border-border' : ''"
           v-bind="{ row, tableFields, size, ratio, isNumeric }"
           :read-only="isReadOnly"
           :can-edit-row="canEditRow"
           @remove="removeRow(row)"
-          @change="(field, value) => $emit('row-change', field, value, df)"
+          @change="(field: any, value: any) => $emit('row-change', field, value, df)"
         />
       </div>
 
@@ -85,126 +85,157 @@
   </div>
 </template>
 
-<script>
-import Row from 'src/components/Row.vue';
+<script setup lang="ts">
+import { ref, computed, nextTick, onMounted, watch } from 'vue';
+import { t } from 'fyo';
 import { fyo } from 'src/initFyo';
-import { nextTick } from 'vue';
 import { useAppStore } from 'src/stores/app';
-import Base from './Base.vue';
+import Row from 'src/components/Row.vue';
 import TableRow from './TableRow.vue';
+import { BaseControlProps, useBaseControl } from 'src/composables/useBaseControl';
 
-export default {
-  name: 'Table',
-  components: {
-    Row,
-    TableRow,
-  },
-  extends: Base,
-  props: {
-    value: { type: Array, default: () => [] },
-    showHeader: {
-      type: Boolean,
-      default: true,
-    },
-    maxRowsBeforeOverflow: {
-      type: Number,
-      default: 3,
-    },
-    border: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['editrow', 'row-change'],
-  data() {
-    return {
-      maxHeight: '',
-      store: useAppStore(),
+interface TableProps extends BaseControlProps {
+  value?: any[];
+  showHeader?: boolean;
+  maxRowsBeforeOverflow?: number;
+  border?: boolean;
+}
+
+const props = withDefaults(defineProps<TableProps>(), {
+  value: () => [],
+  showHeader: true,
+  maxRowsBeforeOverflow: 3,
+  border: false,
+  step: 1,
+  size: 'large',
+  showLabel: false,
+  containerStyles: () => ({}),
+  textRight: null,
+  readOnly: null,
+  required: null,
+});
+
+const emit = defineEmits<{
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'change', val: any): void;
+  (e: 'editrow', ...args: any[]): void;
+  (e: 'row-change', field: any, value: any, df: any): void;
+}>();
+
+const maxHeight = ref('');
+const store = useAppStore();
+const inputRef = ref<HTMLElement | null>(null);
+const tableRowRefs = ref<any[]>([]);
+
+const {
+  doc,
+  isReadOnly,
+  isNumeric,
+  triggerChange,
+} = useBaseControl(props, emit, inputRef);
+
+const canEditRow = computed(() => {
+  return (props.df as any).edit;
+});
+
+const ratio = computed(() => {
+  const baseRatio = [0.3].concat(tableFields.value.map(() => 1));
+  if (canEditRow.value) {
+    return baseRatio.concat(0.3);
+  }
+  return baseRatio;
+});
+
+const tableFields = computed(() => {
+  const target = (props.df as any).target;
+  const fields = fyo.schemaMap[target]?.tableFields ?? [];
+  return fields.map((fieldname: string) => fyo.getField(target, fieldname));
+});
+
+watch(() => props.value, () => {
+  setMaxHeight();
+}, { deep: true });
+
+onMounted(() => {
+  if (store.isDevelopment) {
+    (window as any).tab = {
+      value: props.value,
+      df: props.df,
+      doc: doc.value,
+      tableFields: tableFields.value,
     };
-  },
-  computed: {
-    height() {
-      if (this.size === 'small') {
-      }
-      return 2;
-    },
-    canEditRow() {
-      return this.df.edit;
-    },
-    ratio() {
-      const ratio = [0.3].concat(this.tableFields.map(() => 1));
+  }
+  setMaxHeight();
+});
 
-      if (this.canEditRow) {
-        return ratio.concat(0.3);
-      }
+const focus = () => {};
 
-      return ratio;
-    },
-    tableFields() {
-      const fields = fyo.schemaMap[this.df.target].tableFields ?? [];
-      return fields.map((fieldname) => fyo.getField(this.df.target, fieldname));
-    },
-  },
-  watch: {
-    value() {
-      this.setMaxHeight();
-    },
-  },
-  mounted() {
-    if (this.store.isDevelopment) {
-      window.tab = this;
+const addRow = async () => {
+  if (!doc.value) return;
+  await doc.value.append((props.df as any).fieldname);
+  await nextTick();
+  scrollToRow(props.value.length - 1);
+  triggerChange(props.value);
+  
+  nextTick(() => {
+    const rows = tableRowRefs.value;
+    if (rows && rows.length > 0) {
+      const lastRow = rows[rows.length - 1];
+      if (lastRow?.focusFirstInput) {
+        lastRow.focusFirstInput();
+      }
     }
-  },
-
-  methods: {
-    focus() {},
-    async addRow() {
-      await this.doc.append(this.df.fieldname);
-      await nextTick();
-      this.scrollToRow(this.value.length - 1);
-      this.triggerChange(this.value);
-      this.$nextTick(() => {
-        const rows = this.$refs['table-row'];
-        if (rows && rows.length > 0) {
-          const lastRow = rows[rows.length - 1];
-          if (lastRow.focusFirstInput) {
-            lastRow.focusFirstInput();
-          }
-        }
-      });
-    },
-    removeRow(row) {
-      this.doc.remove(this.df.fieldname, row.idx).then((s) => {
-        if (!s) {
-          return;
-        }
-        this.triggerChange(this.value);
-      });
-    },
-
-    scrollToRow(index) {
-      const row = this.$refs['table-row'][index];
-      row && row.$el.scrollIntoView({ block: 'nearest' });
-    },
-
-    setMaxHeight() {
-      if (this.maxRowsBeforeOverflow === 0) {
-        return (this.maxHeight = '');
-      }
-
-      const size = this?.value?.length ?? 0;
-      if (size === 0) {
-        return (this.maxHeight = '');
-      }
-
-      const rowHeight = this.$refs?.['table-row']?.[0]?.$el.offsetHeight;
-      if (rowHeight === undefined) {
-        return (this.maxHeight = '');
-      }
-
-      const maxHeight = rowHeight * Math.min(this.maxRowsBeforeOverflow, size);
-      return (this.maxHeight = `${maxHeight}px`);
-    },
-  },
+  });
 };
+
+const removeRow = (row: any) => {
+  if (!doc.value) return;
+  doc.value.remove((props.df as any).fieldname, row.idx).then((s) => {
+    if (!s) return;
+    triggerChange(props.value);
+  });
+};
+
+const scrollToRow = (index: number) => {
+  const row = tableRowRefs.value[index];
+  if (row && row.$el) {
+    row.$el.scrollIntoView({ block: 'nearest' });
+  }
+};
+
+const setMaxHeight = () => {
+  if (props.maxRowsBeforeOverflow === 0) {
+    maxHeight.value = '';
+    return;
+  }
+
+  const size = props.value?.length ?? 0;
+  if (size === 0) {
+    maxHeight.value = '';
+    return;
+  }
+
+  const rows = tableRowRefs.value;
+  const rowHeight = rows?.[0]?.$el?.offsetHeight;
+  if (rowHeight === undefined) {
+    maxHeight.value = '';
+    return;
+  }
+
+  const computedMaxHeight = rowHeight * Math.min(props.maxRowsBeforeOverflow, size);
+  maxHeight.value = `${computedMaxHeight}px`;
+};
+
+defineExpose({
+  maxHeight,
+  ratio,
+  tableFields,
+  canEditRow,
+  focus,
+  addRow,
+  removeRow,
+  scrollToRow,
+  setMaxHeight,
+  isReadOnly,
+});
 </script>

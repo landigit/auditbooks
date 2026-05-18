@@ -73,10 +73,15 @@ const getIsFullscreen = async () => {
   }
 };
 
+const handleResize = () => {
+  getIsFullscreen();
+  getIsMaximized();
+};
+
 onMounted(() => {
   getIsMaximized();
   getIsFullscreen();
-  window.addEventListener('resize', getIsFullscreen);
+  window.addEventListener('resize', handleResize);
   document.addEventListener('webkitfullscreenchange', getIsFullscreen);
   document.addEventListener('mozfullscreenchange', getIsFullscreen);
   document.addEventListener('fullscreenchange', getIsFullscreen);
@@ -84,7 +89,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', getIsFullscreen);
+  window.removeEventListener('resize', handleResize);
   document.removeEventListener('webkitfullscreenchange', getIsFullscreen);
   document.removeEventListener('mozfullscreenchange', getIsFullscreen);
   document.removeEventListener('fullscreenchange', getIsFullscreen);

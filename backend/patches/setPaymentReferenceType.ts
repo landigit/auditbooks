@@ -6,11 +6,11 @@ async function execute(dm: DatabaseManager) {
   }
   await dm.db.client.execute({
     sql: `UPDATE "Payment" SET "referenceType" = 'PurchaseInvoice' WHERE "referenceType" IS NULL AND "paymentType" = 'Pay'`,
-    args: []
+    args: [],
   });
   await dm.db.client.execute({
     sql: `UPDATE "Payment" SET "referenceType" = 'SalesInvoice' WHERE "referenceType" IS NULL AND "paymentType" = 'Receive'`,
-    args: []
+    args: [],
   });
 }
 
