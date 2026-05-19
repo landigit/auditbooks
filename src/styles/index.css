@@ -599,7 +599,7 @@ input[type='number']::-webkit-inner-spin-button {
   position: fixed;
   inset: 0;
   background: var(--color-backdrop);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(6px);
   z-index: 50;
 }
 

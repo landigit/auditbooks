@@ -1,7 +1,7 @@
 <template>
   <Row
     :ratio="ratio"
-    class="border border-border flex items-center mt-4 px-2 rounded-t-md text-description w-full"
+    class="border border-border items-center mt-4 px-2 rounded-t-md text-description w-full"
   >
     <div
       v-for="df in tableFields"
@@ -27,7 +27,7 @@
       v-for="row in items as POSItem[]"
       :ratio="ratio"
       :border="true"
-      class="border-b border-l border-r border-border flex group h-row-mid hover:bg-surface-hover bg-surface items-center justify-center px-2 w-full"
+      class="border-b border-l border-r border-border group h-row-mid hover:bg-surface-hover bg-surface items-center justify-center px-2 w-full"
       @click="handleChange(row)"
     >
       <FormControl

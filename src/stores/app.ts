@@ -7,13 +7,17 @@ import type { reports as reportsMap } from 'reports/index';
 import type { Report } from 'reports/Report';
 
 const isSystemDark = ref(
-  window.matchMedia('(prefers-color-scheme: dark)').matches
+  typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : false
 );
-window
-  .matchMedia('(prefers-color-scheme: dark)')
-  .addEventListener('change', (e) => {
-    isSystemDark.value = e.matches;
-  });
+if (typeof window !== 'undefined' && window.matchMedia) {
+  window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (e) => {
+      isSystemDark.value = e.matches;
+    });
+}
 
 export const useAppStore = defineStore('app', () => {
   const _platform = ref('');

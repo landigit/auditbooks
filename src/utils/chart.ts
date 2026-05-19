@@ -64,5 +64,5 @@ export function getYMin(points: number[][]): number {
 }
 
 export function formatXLabels(label: string) {
-  return dayjs(label).format('MMM yy');
+  return dayjs(label).format('MMM YYYY');
 }

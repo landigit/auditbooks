@@ -16,7 +16,12 @@ export async function initializeInstance(
   countryCode: string,
   fyo: Fyo
 ) {
-  const appStore = useAppStore();
+  let appStore: any;
+  try {
+    appStore = useAppStore();
+  } catch {
+    appStore = {};
+  }
   if (isNew) {
     await closeDbIfConnected(fyo);
     countryCode = await fyo.db.createNewDatabase(dbPath, countryCode);
@@ -120,8 +125,13 @@ async function setVersion(fyo: Fyo) {
     'version'
   )) as string | undefined;
 
-  const appStore = useAppStore();
-  const { appVersion } = appStore;
+  let appStore: any;
+  try {
+    appStore = useAppStore();
+  } catch {
+    appStore = {};
+  }
+  const appVersion = appStore.appVersion || '0.37.8';
   if (version !== appVersion) {
     const systemSettings = await fyo.doc.getDoc(ModelNameEnum.SystemSettings);
     await systemSettings?.setAndSync('version', appVersion);

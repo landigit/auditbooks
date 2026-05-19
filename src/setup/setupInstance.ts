@@ -36,8 +36,11 @@ export default async function setupInstance(
 ) {
   const { companyName, country, bankName, chartOfAccounts } =
     setupWizardOptions;
-  const appStore = useAppStore();
-  appStore.skipTelemetryLogging = true;
+  let appStore: any;
+  try {
+    appStore = useAppStore();
+    appStore.skipTelemetryLogging = true;
+  } catch {}
   await initializeDatabase(dbPath, country, fyo);
   await updateSystemSettings(setupWizardOptions, fyo);
   await updateAccountingSettings(setupWizardOptions, fyo);
@@ -60,7 +63,9 @@ export default async function setupInstance(
     await setCurrencySymbols(fyo);
   }
 
-  appStore.skipTelemetryLogging = false;
+  if (appStore) {
+    appStore.skipTelemetryLogging = false;
+  }
 }
 
 async function createDefaultEntries(fyo: Fyo) {

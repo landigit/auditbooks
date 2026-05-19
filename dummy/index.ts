@@ -341,7 +341,7 @@ async function getSalesPurchaseInvoices(
   const dateGrouped = salesInvoices
     .map((si) => {
       const date = dayjs(si.date as Date);
-      const key = `${date.year}-${String(date.month).padStart(2, '0')}`;
+      const key = `${date.year()}-${String(date.month() + 1).padStart(2, '0')}`;
       return { key, si };
     })
     .reduce(

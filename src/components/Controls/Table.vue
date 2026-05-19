@@ -8,7 +8,7 @@
       <!-- Title Row -->
       <Row
         :ratio="ratio"
-        class="border-b border-border px-2 text-description w-full flex items-center"
+        class="border-b border-border px-2 text-description w-full items-center"
       >
         <div class="flex items-center ps-2">#</div>
         <div
@@ -55,7 +55,7 @@
       <Row
         v-if="!isReadOnly"
         :ratio="ratio"
-        class="text-description cursor-pointer px-2 w-full h-row-mid flex items-center focus:outline-none focus:ring-1 focus:ring-main"
+        class="text-description cursor-pointer px-2 w-full h-row-mid items-center focus:outline-none focus:ring-1 focus:ring-main"
         :class="value.length > 0 ? 'border-t border-border' : ''"
         tabindex="0"
         @click="addRow"

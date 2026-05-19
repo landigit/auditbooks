@@ -376,11 +376,18 @@ function toRawDateTime(value: DocValue, field: Field): string | null {
   }
 
   if (value instanceof Date) {
+    if (isNaN(value.getTime())) {
+      return null;
+    }
     return value.toISOString();
   }
 
   if (dayjs.isDayjs(value)) {
-    return value.toDate().toISOString();
+    const d = value.toDate();
+    if (isNaN(d.getTime())) {
+      return null;
+    }
+    return d.toISOString();
   }
 
   throwError(value, field, 'raw');

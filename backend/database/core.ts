@@ -1,8 +1,8 @@
 import { getDbError, NotFoundError, ValueError } from 'fyo/utils/errors';
 import { createClient, Client } from '@libsql/client';
 import { drizzle, LibSQLDatabase } from 'drizzle-orm/libsql';
-import * as schemaExports from '../../db/schema';
-import * as relationsExports from '../../db/relations';
+import * as schemaExports from '../../drizzle/db/schema';
+import * as relationsExports from '../../drizzle/db/relations';
 import {
   Field,
   FieldTypeEnum,

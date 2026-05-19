@@ -29,11 +29,17 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async createNewDatabase(dbPath: string, countryCode: string) {
+    if (this.db) {
+      await this.call('close');
+    }
     await unlinkIfExists(dbPath);
     return await this.connectToDatabase(dbPath, countryCode);
   }
 
   async connectToDatabase(dbPath: string, countryCode?: string) {
+    if (this.db) {
+      await this.call('close');
+    }
     countryCode = await this._connect(dbPath, countryCode);
     await this.#migrate();
     return countryCode;
@@ -71,7 +77,35 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async #executeMigration() {
-    const version = await this.#getAppVersion();
+    const isFirstRun = await this.#getIsFirstRun();
+    let version = '0.0.0';
+
+    if (isFirstRun) {
+      try {
+        const pkgPath = path.join(process.cwd(), 'package.json');
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+        version = pkg.version || '0.37.8';
+      } catch {
+        version = '0.37.8';
+      }
+
+      try {
+        await this.db!.client!.execute({
+          sql: `INSERT OR REPLACE INTO "SingleValue" (name, parent, fieldname, value) VALUES (?, ?, ?, ?)`,
+          args: [
+            `SystemSettings.version`,
+            'SystemSettings',
+            'version',
+            version,
+          ],
+        });
+      } catch (err) {
+        console.error('Failed to set initial version:', err);
+      }
+    } else {
+      version = await this.#getAppVersion();
+    }
+
     const patches = await this.#getPatchesToExecute(version);
 
     const hasPatches = !!patches.pre.length || !!patches.post.length;

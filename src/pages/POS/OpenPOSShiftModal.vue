@@ -1,5 +1,5 @@
 <template>
-  <Modal class="w-3/6 p-4">
+  <Modal class="w-11/12 max-w-4xl p-6">
     <h1 class="text-xl font-semibold text-center text-main pb-4">
       {{ t`Open POS Shift` }}
     </h1>

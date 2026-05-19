@@ -1,54 +1,60 @@
 <template>
-  <Modal :open-modal="openModal" class="w-3/6 p-4">
+  <Modal :open-modal="openModal" class="w-11/12 max-w-4xl p-6">
     <h1 class="text-xl font-semibold text-center text-main pb-4">
       {{ t`Close POS Shift` }}
     </h1>
 
-    <h2 class="mt-4 mb-2 text-lg font-medium text-main">
-      {{ t`Closing Cash` }}
-    </h2>
-    <Table
-      v-if="isValuesSeeded"
-      class="text-base"
-      :df="getField('closingCash')"
-      :show-header="true"
-      :border="true"
-      :value="posClosingShiftDoc?.closingCash ?? []"
-      :read-only="false"
-      @row-change="setClosingCashAmount"
-    />
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-6">
+        <h2 class="text-lg font-medium text-main mb-2">
+          {{ t`Closing Cash` }}
+        </h2>
+        <Table
+          v-if="isValuesSeeded"
+          class="text-base"
+          :df="getField('closingCash')"
+          :show-header="true"
+          :border="true"
+          :value="posClosingShiftDoc?.closingCash ?? []"
+          :read-only="false"
+          @row-change="setClosingCashAmount"
+        />
+      </div>
 
-    <h2 class="mt-6 mb-2 text-lg text-main font-medium">Closing Amounts</h2>
-    <Table
-      v-if="isValuesSeeded"
-      class="text-base"
-      :df="getField('closingAmounts')"
-      :show-header="true"
-      :border="true"
-      :value="posClosingShiftDoc?.closingAmounts"
-      :read-only="true"
-      @row-change="setClosingCashAmount"
-    />
+      <div class="col-span-6">
+        <h2 class="text-lg text-main font-medium mb-2">Closing Amounts</h2>
+        <Table
+          v-if="isValuesSeeded"
+          class="text-base"
+          :df="getField('closingAmounts')"
+          :show-header="true"
+          :border="true"
+          :value="posClosingShiftDoc?.closingAmounts"
+          :read-only="true"
+          @row-change="setClosingCashAmount"
+        />
 
-    <div class="mt-4 grid grid-cols-2 gap-4 items-end">
-      <Button
-        class="w-full py-5 bg-indicator-red-bg"
-        @click="emit('toggleModal', 'ShiftClose', false)"
-      >
-        <slot>
-          <p class="uppercase text-lg text-indicator-red-text font-semibold">
-            {{ t`Cancel` }}
-          </p>
-        </slot>
-      </Button>
+        <div class="mt-6 grid grid-cols-2 gap-4 items-end">
+          <Button
+            class="w-full py-5 bg-indicator-red-bg"
+            @click="emit('toggleModal', 'ShiftClose', false)"
+          >
+            <slot>
+              <p class="uppercase text-lg text-indicator-red-text font-semibold">
+                {{ t`Cancel` }}
+              </p>
+            </slot>
+          </Button>
 
-      <Button class="w-full py-5 bg-indicator-green-bg" @click="handleSubmit">
-        <slot>
-          <p class="uppercase text-lg text-indicator-green-text font-semibold">
-            {{ t`Submit` }}
-          </p>
-        </slot>
-      </Button>
+          <Button class="w-full py-5 bg-indicator-green-bg" @click="handleSubmit">
+            <slot>
+              <p class="uppercase text-lg text-indicator-green-text font-semibold">
+                {{ t`Submit` }}
+              </p>
+            </slot>
+          </Button>
+        </div>
+      </div>
     </div>
   </Modal>
 </template>

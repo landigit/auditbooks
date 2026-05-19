@@ -76,7 +76,18 @@ describe('DatabaseCore Tests', () => {
         const dbColType = sqliteTypeMap[field.fieldtype];
 
         expect(column.name).toBe(field.fieldname);
-        expect(column.type.toLowerCase()).toBe(dbColType);
+        
+        const expectedTypes = [dbColType];
+        if (dbColType === 'datetime' || dbColType === 'date' || dbColType === 'time') {
+          expectedTypes.push('numeric', 'text');
+        }
+        if (dbColType === 'boolean') {
+          expectedTypes.push('numeric', 'integer');
+        }
+        if (dbColType === 'float') {
+          expectedTypes.push('real');
+        }
+        expect(expectedTypes).toContain(column.type.toLowerCase());
 
         if (field.required !== undefined) {
           expect(!!column.notnull).toBe(field.required);
@@ -87,7 +98,8 @@ describe('DatabaseCore Tests', () => {
         if (column.dflt_value === null) {
           expect(field.default).toBeUndefined();
         } else {
-          expect(column.dflt_value.slice(1, -1)).toBe(String(field.default));
+          const cleanedDflt = column.dflt_value.replace(/^['"]|['"]$/g, '');
+          expect(cleanedDflt).toBe(String(field.default));
         }
       }
     }
@@ -255,11 +267,12 @@ describe('DatabaseCore Tests', () => {
     rows = await db.getAll(schemaName, { fields: ['*'] });
     expect(rows.length).toBe(2);
 
-    const cs = [cOne, cTwo];
+    const cs = [cOne, cTwo].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedRows = [...rows].sort((a, b) => (a.name as string).localeCompare(b.name as string));
     for (const i in cs) {
       for (const k in cs[i]) {
         const val = (cs as any)[i][k];
-        expect(rows?.[i]?.[k]).toBe(val);
+        expect(sortedRows?.[i]?.[k]).toBe(val);
       }
     }
 

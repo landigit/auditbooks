@@ -1,9 +1,9 @@
 <template>
-  <div :title="df.label">
+  <div class="w-full" :title="df.label">
     <div v-if="showLabel" :class="labelClasses">
       {{ df.label }}
     </div>
-    <div :class="showMandatory ? 'show-mandatory' : ''">
+    <div :class="[showMandatory ? 'show-mandatory' : '', 'w-full']">
       <input
         ref="inputRef"
         spellcheck="false"

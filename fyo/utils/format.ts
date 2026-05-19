@@ -66,6 +66,16 @@ function toDatetime(value: unknown): Dayjs | null {
   return null;
 }
 
+function translateDateFormat(formatStr: string): string {
+  return formatStr
+    .replace(/yyyy/g, 'YYYY')
+    .replace(/yy/g, 'YY')
+    .replace(/\by\b/g, 'YYYY')
+    .replace(/\byy\b/g, 'YY')
+    .replace(/dd/g, 'DD')
+    .replace(/\bd\b/g, 'D');
+}
+
 function formatDatetime(value: unknown, fyo: Fyo): string {
   if (value == null) {
     return '';
@@ -78,7 +88,7 @@ function formatDatetime(value: unknown, fyo: Fyo): string {
     return '';
   }
 
-  const formattedDatetime = dateTime.format(`${dateFormat} HH:mm:ss`);
+  const formattedDatetime = dateTime.format(`${translateDateFormat(dateFormat)} HH:mm:ss`);
 
   if (value === 'Invalid DateTime') {
     return '';
@@ -100,7 +110,7 @@ function formatDate(value: unknown, fyo: Fyo): string {
     return '';
   }
 
-  const formattedDate = dateTime.format(dateFormat);
+  const formattedDate = dateTime.format(translateDateFormat(dateFormat));
   if (value === 'Invalid DateTime') {
     return '';
   }

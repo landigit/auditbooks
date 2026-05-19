@@ -18,7 +18,7 @@
         {{ df.label }}
       </div>
       <div
-        class="flex items-center justify-between pe-2 rounded"
+        class="flex items-center justify-between pe-2 rounded w-full"
         :style="containerStyles"
         :class="containerClasses"
       >

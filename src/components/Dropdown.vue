@@ -9,7 +9,7 @@
     "
   >
     <PopoverAnchor as-child>
-      <div class="h-full">
+      <div class="h-full w-full">
         <slot
           :toggle-dropdown="toggleDropdown"
           :highlight-item-up="highlightItemUp"

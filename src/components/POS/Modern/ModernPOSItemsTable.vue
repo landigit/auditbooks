@@ -6,7 +6,7 @@
     >
       <Row
         :ratio="ratio"
-        class="mt-2 px-2 w-full flex items-center border rounded-t-md text-description border-border"
+        class="mt-2 px-2 w-full items-center border rounded-t-md text-description border-border"
       >
         <div
           v-for="df in tableFields"
@@ -25,7 +25,7 @@
         :key="row.name"
         :ratio="ratio"
         :border="true"
-        class="px-2 w-full border flex items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
+        class="px-2 w-full border items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
         @click="handleChange(row)"
       >
         <FormControl
@@ -45,7 +45,7 @@
     >
       <Row
         :ratio="ratio"
-        class="mt-2 px-2 w-full flex items-center border rounded-t-md text-description border-border"
+        class="mt-2 px-2 w-full items-center border rounded-t-md text-description border-border"
       >
         <div
           v-for="df in tableFields"
@@ -63,7 +63,7 @@
         :key="row.name"
         :ratio="ratio"
         :border="true"
-        class="px-2 w-full border flex items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
+        class="px-2 w-full border items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
         @click="handleChange(row)"
       >
         <FormControl

@@ -80,8 +80,19 @@ export async function unlinkIfExists(filePath: unknown) {
 
   const exists = await checkFileAccess(filePath);
   if (exists) {
-    await fs.unlink(filePath);
-    return true;
+    for (let i = 0; i < 12; i++) {
+      try {
+        await fs.unlink(filePath);
+        return true;
+      } catch (err) {
+        if (i === 11) {
+          throw err;
+        }
+        await new Promise((resolve) =>
+          setTimeout(resolve, 100 + i * 100)
+        );
+      }
+    }
   }
 
   return false;

@@ -1,19 +1,21 @@
 <template>
-  <Transition>
-    <div
-      v-if="openModal"
-      class="backdrop z-20 flex justify-center items-center"
-      @click="emit('closemodal')"
-    >
+  <Teleport to="body">
+    <Transition>
       <div
-        class="bg-surface rounded-lg shadow-2xl border border-border overflow-hidden inner"
-        v-bind="$attrs"
-        @click.stop
+        v-if="openModal"
+        class="backdrop z-50 flex justify-center items-center"
+        @click="emit('closemodal')"
       >
-        <slot></slot>
+        <div
+          class="bg-surface rounded-lg shadow-2xl border border-border overflow-hidden inner"
+          v-bind="$attrs"
+          @click.stop
+        >
+          <slot></slot>
+        </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -24,9 +26,11 @@ import { shortcutsKey } from 'src/utils/injectionKeys';
 const props = withDefaults(
   defineProps<{
     openModal?: boolean;
+    setCloseListener?: boolean;
   }>(),
   {
     openModal: false,
+    setCloseListener: false,
   }
 );
 
@@ -61,21 +65,22 @@ onUnmounted(() => {
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .inner {
-  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+  backdrop-filter: blur(0px);
 }
 
 .v-enter-from .inner,
 .v-leave-to .inner {
-  transform: translateY(-24px) scale(0.97);
+  transform: translateY(16px) scale(0.95);
 }
 
 .v-enter-to .inner,

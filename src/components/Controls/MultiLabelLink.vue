@@ -57,20 +57,6 @@ const results = ref<any[]>([]);
 
 const { doc } = useBaseControl(props, emit, ref(null));
 
-watch(
-  () => props.value,
-  (newValue) => {
-    setLinkValue(newValue);
-  },
-  { immediate: true }
-);
-
-onMounted(() => {
-  if (props.value) {
-    setLinkValue();
-  }
-});
-
 const setLinkValue = async (newValue?: any, isInput?: boolean) => {
   if (isInput) {
     linkValue.value = newValue || '';
@@ -90,6 +76,20 @@ const setLinkValue = async (newValue?: any, isInput?: boolean) => {
   const linkDoc = await doc.value?.loadAndGetLink(fieldname);
   linkValue.value = (linkDoc?.get(linkDisplayField) as string) ?? '';
 };
+
+watch(
+  () => props.value,
+  (newValue) => {
+    setLinkValue(newValue);
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  if (props.value) {
+    setLinkValue();
+  }
+});
 
 const getTargetSchemaName = () => {
   return (props.df as any).target;

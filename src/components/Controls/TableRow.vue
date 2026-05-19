@@ -1,7 +1,7 @@
 <template>
   <Row
     :ratio="ratio"
-    class="w-full px-2 group flex items-center justify-center h-row-mid"
+    class="w-full px-2 group items-center justify-center h-row-mid"
     :class="readOnly ? '' : 'hover:bg-surface-hover'"
   >
     <!-- Index or Remove button -->
@@ -43,6 +43,7 @@
     <FormControl
       v-for="(df, i) in tableFields"
       :key="df.fieldname"
+      class="w-full"
       :size="size"
       :df="df"
       :value="row[df.fieldname]"

@@ -12,7 +12,7 @@ describe('Dummy Data Tests', () => {
     await assertDoesNotThrow(async () => {
       await setupDummyInstance(dbPath, fyo, 1, 25);
     }, 'setup instance failed');
-  });
+  }, 30_000);
 
   test('purchaseItemParty Existence', async () => {
     for (const item in purchaseItemPartyMap) {

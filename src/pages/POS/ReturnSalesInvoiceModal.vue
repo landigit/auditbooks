@@ -20,7 +20,7 @@
 
     <Row
       :ratio="ratio"
-      class="border border-border flex items-center mt-2 px-2 w-full rounded-t-md text-description"
+      class="border border-border items-center mt-2 px-2 w-full rounded-t-md text-description"
     >
       <div
         v-for="df in tableFields"
@@ -40,7 +40,7 @@
         :key="row.name"
         :ratio="ratio"
         :border="true"
-        class="border-b border-l border-r border-border bg-surface flex group h-row-mid hover:bg-surface-hover items-center justify-center px-2 w-full"
+        class="border-b border-l border-r border-border bg-surface group h-row-mid hover:bg-surface-hover items-center justify-center px-2 w-full"
         @click="returnInvoice(row as SalesInvoice)"
       >
         <FormControl

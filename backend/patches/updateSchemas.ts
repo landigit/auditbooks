@@ -7,6 +7,7 @@ import { ModelNameEnum } from '../../models/types';
 import { FieldTypeEnum, Schema, SchemaMap } from '../../schemas/types';
 import { DatabaseManager } from '../database/manager';
 import { Client } from '@libsql/client';
+import { unlinkIfExists } from '../helpers';
 
 const ignoreColumns = ['keywords'];
 const columnMap = { creation: 'created', owner: 'createdBy' };
@@ -68,6 +69,16 @@ async function execute(dm: DatabaseManager) {
     return;
   }
 
+  // Check if this is a newly initialized database (empty SingleValue table)
+  const singlesCountRes = await sourceClient.execute({
+    sql: `SELECT count(*) as count FROM "SingleValue"`,
+    args: [],
+  });
+  const singlesCount = Number(singlesCountRes.rows[0]?.count);
+  if (singlesCount === 0) {
+    return;
+  }
+
   /**
    * Initialize a different db to copy all the updated
    * data into.
@@ -84,7 +95,7 @@ async function execute(dm: DatabaseManager) {
   } catch (err) {
     const destPath = destDm.db!.dbPath;
     await destDm.db!.close();
-    await fs.unlink(destPath);
+    await unlinkIfExists(destPath);
     throw err;
   }
 
@@ -109,9 +120,29 @@ async function replaceDatabaseCore(
   const newDbPath = destDm.db!.dbPath; // new db with new schema
   const oldDbPath = dm.db!.dbPath; // old db to be replaced
 
+  // Flush WAL to main db file and release all locks before closing
+  try {
+    await dm.db!.client?.execute('PRAGMA wal_checkpoint(TRUNCATE)');
+  } catch {}
+  try {
+    await destDm.db!.client?.execute('PRAGMA wal_checkpoint(TRUNCATE)');
+  } catch {}
+
   await dm.db!.close();
   await destDm.db!.close();
-  await fs.unlink(oldDbPath);
+
+  // Small delay to allow Windows to fully release file handles after close()
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  // Delete all old database files (main, wal, shm)
+  await unlinkIfExists(oldDbPath);
+  await unlinkIfExists(oldDbPath + '-wal');
+  await unlinkIfExists(oldDbPath + '-shm');
+
+  // Delete any temporary wal/shm files before renaming
+  await unlinkIfExists(newDbPath + '-wal');
+  await unlinkIfExists(newDbPath + '-shm');
+
   await fs.rename(newDbPath, oldDbPath);
   await dm._connect(oldDbPath);
 }

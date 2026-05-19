@@ -17,9 +17,9 @@ import {
   payment,
   paymentFor,
   stockLedgerEntry,
-} from '../../db/schema';
+} from '../../drizzle/db/schema';
 import { eq, and, inArray, between, sql, desc, SQL } from 'drizzle-orm';
-import { getTable } from '../../db/operations';
+import { getTable } from '../../drizzle/db/operations';
 
 export class BespokeQueries {
   [key: string]: BespokeFunction;
@@ -334,9 +334,9 @@ export class BespokeQueries {
     const docItemsMap: Record<string, ReturnDocItem> = {};
     const batchesMap:
       | Record<
-          string,
-          { quantity: number; serialNumbers?: string[] | undefined }
-        >
+        string,
+        { quantity: number; serialNumbers?: string[] | undefined }
+      >
       | undefined = {};
 
     for (const item of docItems) {
@@ -407,9 +407,9 @@ export class BespokeQueries {
     const returnBalanceItems: Record<string, ReturnDocItem> | undefined = {};
     const balanceBatchQtyMap:
       | Record<
-          string,
-          { quantity: number; serialNumbers: string[] | undefined }
-        >
+        string,
+        { quantity: number; serialNumbers: string[] | undefined }
+      >
       | undefined = {};
 
     for (const row in docItemsMap) {
@@ -520,9 +520,9 @@ export class BespokeQueries {
       })
       .from(salesInvoice)
       .where(and(...conditions))) as {
-      name: string;
-      returnAgainst: string | null;
-    }[];
+        name: string;
+        returnAgainst: string | null;
+      }[];
 
     if (!invoices.length) {
       return;
