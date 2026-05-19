@@ -58,7 +58,9 @@ export type DatabaseColumnType =
   | 'date'
   | 'datetime'
   | 'time'
-  | 'binary';
+  | 'binary'
+  | 'numeric'
+  | 'real';
 
 // Returned by pragma table_info
 export interface SqliteTableInfo {

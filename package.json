@@ -44,6 +44,7 @@
     "pesa": "^1.1.13",
     "pinia": "^3.0.4",
     "reka-ui": "^2.9.7",
+    "sql.js": "^1.14.1",
     "tailwind-merge": "^3.5.0",
     "vue": "^3.5.33",
     "vue-router": "^4.6.4"
@@ -58,6 +59,7 @@
     "@tailwindcss/vite": "^4.2.4",
     "@types/assert": "^1.5.11",
     "@types/node": "^20.19.39",
+    "@types/sql.js": "^1.4.11",
     "@typescript-eslint/eslint-plugin": "^8.59.1",
     "@typescript-eslint/parser": "^8.59.1",
     "@typescript-eslint/utils": "^8.59.1",
