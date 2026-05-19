@@ -1,6 +1,6 @@
 import { t } from 'fyo';
 import { Action } from 'fyo/model/types';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
 import { Party } from 'models/regionalModels/in/Party';
 import { ModelNameEnum } from 'models/types';
@@ -217,11 +217,11 @@ export abstract class BaseGSTR extends Report {
 
   setDefaultFilters() {
     if (!this.toDate) {
-      this.toDate = DateTime.local().toISODate();
+      this.toDate = dayjs().format('YYYY-MM-DD');
     }
 
     if (!this.fromDate) {
-      this.fromDate = DateTime.local().minus({ months: 3 }).toISODate();
+      this.fromDate = dayjs().subtract(3, 'month').format('YYYY-MM-DD');
     }
 
     if (!this.transferType) {

@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { Dayjs } from 'dayjs';
 import { AccountRootType } from 'models/baseModels/Account/types';
 import { BaseField, FieldType, RawValue } from 'schemas/types';
 
@@ -72,7 +72,7 @@ export interface LedgerEntry {
 
 export type GroupedMap = Map<string, LedgerEntry[]>;
 
-export type DateRange = { fromDate: DateTime; toDate: DateTime };
+export type DateRange = { fromDate: Dayjs; toDate: Dayjs };
 export type ValueMap = Map<DateRange, Record<string, number>>;
 
 export interface Account {

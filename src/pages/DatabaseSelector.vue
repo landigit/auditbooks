@@ -202,7 +202,9 @@ import { useAppStore } from 'src/stores/app';
 import { setupDummyInstance } from 'dummy';
 import { t } from 'fyo';
 import { Verb } from 'fyo/telemetry/types';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 import { fyo } from 'src/initFyo';
 import { showDialog } from 'src/utils/interactive';
 import { updateConfigFiles } from 'src/utils/misc';
@@ -243,7 +245,7 @@ const truncate = (value: string) => {
 };
 
 const formatDate = (isoDate: string) => {
-  return DateTime.fromISO(isoDate).toRelative();
+  return dayjs(isoDate).fromNow();
 };
 
 const setFiles = async () => {

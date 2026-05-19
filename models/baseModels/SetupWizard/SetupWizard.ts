@@ -2,7 +2,7 @@ import { t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
 import { FormulaMap, ListsMap, ValidationMap } from 'fyo/model/types';
 import { validateEmail } from 'fyo/model/validationFunction';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { getCountryInfo, getFiscalYear } from 'utils/misc';
 
 function getCurrencyList(): { countryCode: string; name: string }[] {
@@ -67,10 +67,10 @@ export class SetupWizard extends Doc {
           this.fiscalYearEnd &&
           !this.fiscalYearStart
         ) {
-          return DateTime.fromJSDate(this.fiscalYearEnd)
-            .minus({ years: 1 })
-            .plus({ days: 1 })
-            .toJSDate();
+          return dayjs(this.fiscalYearEnd)
+            .subtract(1, 'year')
+            .add(1, 'day')
+            .toDate();
         }
 
         if (!this.country) {
@@ -91,10 +91,10 @@ export class SetupWizard extends Doc {
           this.fiscalYearStart &&
           !this.fiscalYearEnd
         ) {
-          return DateTime.fromJSDate(this.fiscalYearStart)
-            .plus({ years: 1 })
-            .minus({ days: 1 })
-            .toJSDate();
+          return dayjs(this.fiscalYearStart)
+            .add(1, 'year')
+            .subtract(1, 'day')
+            .toDate();
         }
 
         if (!this.country) {

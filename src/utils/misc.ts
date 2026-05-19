@@ -1,7 +1,7 @@
 import { Fyo } from 'fyo';
 import { ConfigFile } from 'fyo/core/types';
 import { translateSchema } from 'fyo/utils/translation';
-import { DateTime } from 'luxon';
+import dayjs, { Dayjs } from 'dayjs';
 import { SetupWizard } from 'models/baseModels/SetupWizard/SetupWizard';
 import { ModelNameEnum } from 'models/types';
 import { reports } from 'reports/index';
@@ -15,32 +15,32 @@ import { PeriodKey } from './types';
 import { useAppStore } from 'src/stores/app';
 
 export function getDatesAndPeriodList(period: PeriodKey): {
-  periodList: DateTime[];
-  fromDate: DateTime;
-  toDate: DateTime;
+  periodList: Dayjs[];
+  fromDate: Dayjs;
+  toDate: Dayjs;
 } {
-  const toDate: DateTime = DateTime.now().plus({ days: 1 });
-  let fromDate: DateTime;
+  const toDate: Dayjs = dayjs().add(1, 'day');
+  let fromDate: Dayjs;
 
   if (period === 'This Year') {
-    fromDate = toDate.minus({ months: 12 });
+    fromDate = toDate.subtract(12, 'month');
   } else if (period === 'YTD') {
-    fromDate = DateTime.now().startOf('year');
+    fromDate = dayjs().startOf('year');
   } else if (period === 'This Quarter') {
-    fromDate = toDate.minus({ months: 3 });
+    fromDate = toDate.subtract(3, 'month');
   } else if (period === 'This Month') {
     fromDate = toDate.startOf('month');
   } else {
-    fromDate = toDate.minus({ days: 1 });
+    fromDate = toDate.subtract(1, 'day');
   }
 
   /**
    * periodList: Monthly decrements before toDate until fromDate
    */
-  const periodList: DateTime[] = [toDate];
+  const periodList: Dayjs[] = [toDate];
   while (true) {
-    const nextDate = periodList.at(0)!.minus({ months: 1 });
-    if (nextDate.toMillis() < fromDate.toMillis()) {
+    const nextDate = periodList.at(0)!.subtract(1, 'month');
+    if (nextDate.valueOf() < fromDate.valueOf()) {
       if (period === 'YTD') {
         periodList.unshift(nextDate);
         break;

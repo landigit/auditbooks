@@ -2,7 +2,7 @@ import { DatabaseManager } from 'backend/database/manager';
 import { config } from 'dotenv';
 import { Fyo } from 'fyo';
 import { DummyAuthDemux } from 'fyo/tests/helpers';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
@@ -18,12 +18,12 @@ export function getTestSetupWizardOptions(): SetupWizardOptions {
     email: 'test@testmyfantasy.com',
     bankName: 'Test Bank of Scriptia',
     currency: 'INR',
-    fiscalYearStart: DateTime.fromJSDate(
+    fiscalYearStart: dayjs(
       getFiscalYear('04-01', true)!
-    ).toISODate()!,
-    fiscalYearEnd: DateTime.fromJSDate(
+    ).format('YYYY-MM-DD')!,
+    fiscalYearEnd: dayjs(
       getFiscalYear('04-01', false)!
-    ).toISODate()!,
+    ).format('YYYY-MM-DD')!,
     chartOfAccounts: 'India - Chart of Accounts',
   };
 }

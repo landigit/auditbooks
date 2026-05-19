@@ -3,7 +3,7 @@
     <svg
       version="1.1"
       viewBox="0 0 100 100"
-      @mouseleave="$emit('change', null)"
+      @mouseleave="emit('change', null)"
     >
       <defs>
         <clipPath id="donut-hole">
@@ -24,10 +24,10 @@
         :r="radius"
         :stroke-width="
           thickness +
-          (hasNonZeroValues && active === thetasAndStarts[0][0] ? 4 : 0)
+          (hasNonZeroValues && active === thetasAndStarts[0]?.[0] ? 4 : 0)
         "
         :stroke="
-          hasNonZeroValues
+          hasNonZeroValues && thetasAndStarts[0]
             ? sectors[thetasAndStarts[0][0]].color
             : 'var(--color-chart-empty)'
         "
@@ -35,9 +35,9 @@
         :style="{ transformOrigin: `${cx}px ${cy}px` }"
         fill="transparent"
         @mouseover="
-          $emit(
+          emit(
             'change',
-            thetasAndStarts.length === 1 ? thetasAndStarts[0][0] : null
+            thetasAndStarts.length === 1 && thetasAndStarts[0] ? thetasAndStarts[0][0] : null
           )
         "
       />
@@ -52,7 +52,7 @@
           :style="{ transformOrigin: `${cx}px ${cy}px` }"
           class="sector"
           fill="transparent"
-          @mouseover="$emit('change', i)"
+          @mouseover="emit('change', i)"
         />
       </template>
       <text
@@ -67,10 +67,9 @@
       >
         {{
           valueFormatter(
-            active !== null && sectors.length !== 0
+            active !== null && sectors.length !== 0 && sectors[active]
               ? sectors[active].value
-              : totalValue,
-            'Currency'
+              : totalValue
           )
         }}
       </text>
@@ -82,7 +81,7 @@
         class="text-description"
       >
         {{
-          active !== null && sectors.length !== 0
+          active !== null && sectors.length !== 0 && sectors[active]
             ? sectors[active].label
             : totalLabel
         }}
@@ -91,77 +90,104 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    sectors: {
-      default: () => [],
-      type: Array,
-    },
-    totalLabel: { default: 'Total', type: String },
-    radius: { default: 36, type: Number },
-    startAngle: { default: Math.PI, type: Number },
-    thickness: { default: 10, type: Number },
-    active: { default: null, type: Number },
-    valueFormatter: { default: (v) => v.toString(), Function },
-    offsetX: { default: 0, type: Number },
-    offsetY: { default: 0, type: Number },
-    textOffsetX: { default: 0, type: Number },
-    textOffsetY: { default: 0, type: Number },
-  },
-  emits: ['change'],
-  computed: {
-    cx() {
-      return 50 + this.offsetX;
-    },
-    cy() {
-      return 50 + this.offsetY;
-    },
-    totalValue() {
-      return this.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0);
-    },
-    thetasAndStarts() {
-      const thetas = this.sectors
-        .map(({ value }, i) => ({
-          value: (2 * Math.PI * value) / this.totalValue,
-          filterOut: value !== 0,
-          i,
-        }))
-        .filter(({ filterOut }) => filterOut);
+<script setup lang="ts">
+import { computed } from 'vue';
 
-      const starts = [...thetas.map(({ value }) => value)];
-      starts.forEach(({ value }, i) => {
-        starts[i] += starts[i - 1] ?? 0;
-      });
+interface Sector {
+  value: number;
+  label: string;
+  color: string;
+}
 
-      starts.unshift(0);
-      starts.pop();
+const props = withDefaults(
+  defineProps<{
+    sectors?: Sector[];
+    totalLabel?: string;
+    radius?: number;
+    startAngle?: number;
+    thickness?: number;
+    active?: number | null;
+    valueFormatter?: (v: number) => string;
+    offsetX?: number;
+    offsetY?: number;
+    textOffsetX?: number;
+    textOffsetY?: number;
+  }>(),
+  {
+    sectors: () => [],
+    totalLabel: 'Total',
+    radius: 36,
+    startAngle: Math.PI,
+    thickness: 10,
+    active: null,
+    valueFormatter: (v: number) => v.toString(),
+    offsetX: 0,
+    offsetY: 0,
+    textOffsetX: 0,
+    textOffsetY: 0,
+  }
+);
 
-      return thetas.map((t, i) => [t.i, t.value, starts[i]]);
-    },
-    hasNonZeroValues() {
-      return this.thetasAndStarts.some((t) => this.sectors[t[0]].value !== 0);
-    },
-  },
-  methods: {
-    getArcPath(...args) {
-      let [cx, cy, r, start, theta] = args.map(parseFloat);
+const emit = defineEmits<{
+  (e: 'change', active: number | null): void;
+}>();
 
-      start += parseFloat(this.startAngle);
-      const startX = cx + r * Math.cos(start);
-      const startY = cy + r * Math.sin(start);
-      const endX = cx + r * Math.cos(start + theta);
-      const endY = cy + r * Math.sin(start + theta);
-      const largeArcFlag = theta > Math.PI ? 1 : 0;
-      const sweepFlag = 1;
+const cx = computed(() => 50 + props.offsetX);
+const cy = computed(() => 50 + props.offsetY);
 
-      return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
-    },
-    getSectorColor(index) {
-      return this.sectors[index].color;
-    },
-  },
-};
+const totalValue = computed(() =>
+  props.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0)
+);
+
+const thetasAndStarts = computed<[number, number, number][]>(() => {
+  const total = totalValue.value;
+  if (total === 0) {
+    return [];
+  }
+  const thetas = props.sectors
+    .map(({ value }, i) => ({
+      value: (2 * Math.PI * value) / total,
+      filterOut: value !== 0,
+      i,
+    }))
+    .filter(({ filterOut }) => filterOut);
+
+  const starts = [...thetas.map(({ value }) => value)];
+  starts.forEach((_, i) => {
+    starts[i] += starts[i - 1] ?? 0;
+  });
+
+  starts.unshift(0);
+  starts.pop();
+
+  return thetas.map((t, i) => [t.i, t.value, starts[i]]);
+});
+
+const hasNonZeroValues = computed(() =>
+  thetasAndStarts.value.some((t) => props.sectors[t[0]]?.value !== 0)
+);
+
+function getArcPath(
+  cxVal: number,
+  cyVal: number,
+  rVal: number,
+  startVal: number,
+  thetaVal: number
+): string {
+  const start = startVal + props.startAngle;
+  const startX = cxVal + rVal * Math.cos(start);
+  const startY = cyVal + rVal * Math.sin(start);
+  const endX = cxVal + rVal * Math.cos(start + thetaVal);
+  const endY = cyVal + rVal * Math.sin(start + thetaVal);
+  const largeArcFlag = thetaVal > Math.PI ? 1 : 0;
+  const sweepFlag = 1;
+
+  return `M ${startX} ${startY} A ${rVal} ${rVal} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
+}
+
+function getSectorColor(index: number): string {
+  return props.sectors[index]?.color ?? '';
+}
 </script>
 
 <style scoped>

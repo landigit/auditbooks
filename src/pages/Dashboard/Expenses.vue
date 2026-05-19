@@ -36,7 +36,7 @@
         :text-offset-x="6.5"
         :value-formatter="(value: number) => fyo.format(value, 'Currency')"
         :total-label="t`Total Spending`"
-        @change="(value: number) => (active = value)"
+        @change="(value: number | null) => (active = value)"
       />
     </div>
 
@@ -78,7 +78,7 @@ const emit = defineEmits<{
 }>();
 
 // State definition
-const active = ref<number | undefined>(undefined);
+const active = ref<number | null | undefined>(undefined);
 const period = ref<PeriodKey>('This Year');
 const periodOptions: PeriodKey[] = [
   'This Year',
@@ -112,8 +112,8 @@ const sectors = computed(() => {
 const setData = async () => {
   const { fromDate, toDate } = getDatesAndPeriodList(period.value);
   let topExpenses = await fyo.db.getTopExpenses(
-    fromDate.toISO() as string,
-    toDate.toISO() as string
+    fromDate.format('YYYY-MM-DD'),
+    toDate.format('YYYY-MM-DD')
   );
   const shades = [
     { class: 'bg-chart-pink-1', hex: 'var(--color-chart-pink-1)' },

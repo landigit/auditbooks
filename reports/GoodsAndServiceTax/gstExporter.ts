@@ -1,6 +1,6 @@
 import { Action } from 'fyo/model/types';
 import { Verb } from 'fyo/telemetry/types';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { ModelNameEnum } from 'models/types';
 import { codeStateMap } from 'regional/in';
 import { ExportExtention } from 'reports/types';
@@ -196,7 +196,7 @@ export async function getGstrJsonData(report: BaseGSTR): Promise<string> {
     version: 'GST3.0.4',
     hash: 'hash',
     gstin: gstin as string,
-    fp: DateTime.fromISO(toDate).toFormat('MMyyyy'),
+    fp: dayjs(toDate).format('MMyyyy'),
   };
 
   if (transferType === TransferTypeEnum.B2B) {
@@ -227,7 +227,7 @@ async function generateB2bData(report: BaseGSTR): Promise<B2BCustomer[]> {
   for (const row of report.gstrRows ?? []) {
     const invRecord: B2BInvRecord = {
       inum: row.invNo,
-      idt: DateTime.fromJSDate(row.invDate).toFormat('dd-MM-yyyy'),
+      idt: dayjs(row.invDate).format('dd-MM-yyyy'),
       val: row.invAmt,
       pos: row.gstin && row.gstin.substring(0, 2),
       rchrg: row.reverseCharge,
@@ -315,7 +315,7 @@ async function generateB2clData(
   for (const row of report.gstrRows ?? []) {
     const invRecord: B2CLInvRecord = {
       inum: row.invNo,
-      idt: DateTime.fromJSDate(row.invDate).toFormat('dd-MM-yyyy'),
+      idt: dayjs(row.invDate).format('dd-MM-yyyy'),
       val: row.invAmt,
       itms: [],
     };

@@ -1,5 +1,5 @@
 import { Fyo, t } from 'fyo';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { AccountRootType } from 'models/baseModels/Account/types';
 import { isCredit } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
@@ -48,11 +48,11 @@ export abstract class AccountReport extends LedgerReport {
 
   async setDefaultFilters(): Promise<void> {
     if (this.basedOn === 'Until Date' && !this.toDate) {
-      this.toDate = DateTime.now().plus({ days: 1 }).toISODate();
+      this.toDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
     }
 
     if (this.basedOn === 'Fiscal Year' && !this.toYear) {
-      this.fromYear = DateTime.now().year;
+      this.fromYear = dayjs().year();
       this.toYear = this.fromYear + 1;
     }
 
@@ -219,13 +219,13 @@ export abstract class AccountReport extends LedgerReport {
   }
 
   _getRangeMapKey(entry: LedgerEntry): DateRange | null {
-    const entryDate = DateTime.fromISO(
+    const entryDate = dayjs(
       entry.date!.toISOString().split('T')[0]
-    ).toMillis();
+    ).valueOf();
 
     for (const dr of this._dateRanges!) {
-      const toDate = dr.toDate.toMillis();
-      const fromDate = dr.fromDate.toMillis();
+      const toDate = dr.toDate.valueOf();
+      const fromDate = dr.fromDate.valueOf();
 
       if (entryDate >= fromDate && entryDate < toDate) {
         return dr;
@@ -238,9 +238,9 @@ export abstract class AccountReport extends LedgerReport {
   // Fix arythmetic on dates when adding or substracting months. If the
   // reference date was the last day in month, ensure that the resulting date is
   // also the last day.
-  _fixMonthsJump(refDate: DateTime, date: DateTime): DateTime {
-    if (refDate.day == refDate.daysInMonth && date.day != date.daysInMonth) {
-      return date.set({ day: date.daysInMonth });
+  _fixMonthsJump(refDate: dayjs.Dayjs, date: dayjs.Dayjs): dayjs.Dayjs {
+    if (refDate.date() == refDate.daysInMonth() && date.date() != date.daysInMonth()) {
+      return date.set('date', date.daysInMonth());
     } else {
       return date;
     }
@@ -248,8 +248,8 @@ export abstract class AccountReport extends LedgerReport {
 
   async _getDateRanges(): Promise<DateRange[]> {
     const endpoints = await this._getFromAndToDates();
-    const fromDate = DateTime.fromISO(endpoints.fromDate);
-    const toDate = DateTime.fromISO(endpoints.toDate);
+    const fromDate = dayjs(endpoints.fromDate);
+    const toDate = dayjs(endpoints.toDate);
 
     if (this.consolidateColumns) {
       return [
@@ -264,7 +264,7 @@ export abstract class AccountReport extends LedgerReport {
     const dateRanges: DateRange[] = [
       {
         toDate,
-        fromDate: this._fixMonthsJump(toDate, toDate.minus({ months })),
+        fromDate: this._fixMonthsJump(toDate, toDate.subtract(months, 'month')),
       },
     ];
 
@@ -279,12 +279,12 @@ export abstract class AccountReport extends LedgerReport {
         toDate: lastRange.fromDate,
         fromDate: this._fixMonthsJump(
           toDate,
-          lastRange.fromDate.minus({ months })
+          lastRange.fromDate.subtract(months, 'month')
         ),
       });
     }
 
-    return dateRanges.sort((b, a) => b.toDate.toMillis() - a.toDate.toMillis());
+    return dateRanges.sort((b, a) => b.toDate.valueOf() - a.toDate.valueOf());
   }
 
   async _getFromAndToDates() {
@@ -292,16 +292,16 @@ export abstract class AccountReport extends LedgerReport {
     let fromDate: string;
 
     if (this.basedOn === 'Until Date') {
-      toDate = DateTime.fromISO(this.toDate!).plus({ days: 1 }).toISODate()!;
+      toDate = dayjs(this.toDate!).add(1, 'day').format('YYYY-MM-DD')!;
       const months = monthsMap[this.periodicity] * Math.max(this.count ?? 1, 1);
-      fromDate = DateTime.fromISO(this.toDate!).minus({ months }).toISODate()!;
+      fromDate = dayjs(this.toDate!).subtract(months, 'month').format('YYYY-MM-DD')!;
     } else {
       const fy = await getFiscalEndpoints(
         this.toYear!,
         this.fromYear!,
         this.fyo
       );
-      toDate = DateTime.fromISO(fy.toDate).plus({ days: 1 }).toISODate()!;
+      toDate = dayjs(fy.toDate).add(1, 'day').format('YYYY-MM-DD')!;
       fromDate = fy.fromDate;
     }
 
@@ -420,10 +420,10 @@ export abstract class AccountReport extends LedgerReport {
     ] as ColumnField[];
 
     const dateColumns = this._dateRanges!.sort(
-      (a, b) => b.toDate.toMillis() - a.toDate.toMillis()
+      (a, b) => b.toDate.valueOf() - a.toDate.valueOf()
     ).map((d) => {
-      const toDate = d.toDate.minus({ days: 1 });
-      const label = this.fyo.format(toDate.toJSDate(), 'Date');
+      const toDate = d.toDate.subtract(1, 'day');
+      const label = this.fyo.format(toDate.toDate(), 'Date');
 
       return {
         label,

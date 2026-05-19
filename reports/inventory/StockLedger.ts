@@ -1,7 +1,7 @@
 import { Fyo, t } from 'fyo';
 import { RawValueMap } from 'fyo/core/types';
 import { Action } from 'fyo/model/types';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { InventorySettings } from 'models/inventory/InventorySettings';
 import { ValuationMethod } from 'models/inventory/types';
 import { ModelNameEnum } from 'models/types';
@@ -53,8 +53,8 @@ export class StockLedger extends Report {
 
   setDefaultFilters() {
     if (!this.toDate) {
-      this.toDate = DateTime.now().plus({ days: 1 }).toISODate();
-      this.fromDate = DateTime.now().minus({ years: 1 }).toISODate();
+      this.toDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
+      this.fromDate = dayjs().subtract(1, 'year').format('YYYY-MM-DD');
     }
   }
 

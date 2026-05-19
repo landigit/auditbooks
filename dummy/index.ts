@@ -1,7 +1,7 @@
 import { Fyo, t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
 
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
 import { Payment } from 'models/baseModels/Payment/Payment';
 import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
@@ -125,16 +125,14 @@ async function getJournalEntries(fyo: Fyo, salesInvoices: SalesInvoice[]) {
     .reduce((a, b) => a.add(b.amount!), fyo.pesa(0))
     .percent(75)
     .clip(0);
-  const lastInv = salesInvoices
-    .sort((a, b) => +a.date! - +b.date!)
-    .at(-1)!.date!;
-  const date = DateTime.fromJSDate(lastInv).minus({ months: 6 }).toJSDate();
+
+  const startDate = dayjs().subtract(5, 'month').toDate();
 
   // Bank Entry
   let doc = fyo.doc.getNewDoc(
     ModelNameEnum.JournalEntry,
     {
-      date,
+      date: startDate,
       entryType: 'Bank Entry',
     },
     false
@@ -156,7 +154,7 @@ async function getJournalEntries(fyo: Fyo, salesInvoices: SalesInvoice[]) {
   doc = fyo.doc.getNewDoc(
     ModelNameEnum.JournalEntry,
     {
-      date,
+      date: startDate,
       entryType: 'Cash Entry',
     },
     false
@@ -189,9 +187,9 @@ async function getPayments(fyo: Fyo, invoices: Invoice[]) {
     doc.party = invoice.party;
     doc.paymentType = invoice.isSales ? 'Receive' : 'Pay';
     doc.paymentMethod = 'Cash';
-    doc.date = DateTime.fromJSDate(invoice.date as Date)
-      .plus({ hours: 1 })
-      .toJSDate();
+    doc.date = dayjs(invoice.date as Date)
+      .add(1, 'year')
+      .toDate();
     if (doc.paymentType === 'Receive') {
       doc.account = 'Debtors';
       doc.paymentAccount = 'Cash';
@@ -342,7 +340,7 @@ async function getSalesPurchaseInvoices(
    */
   const dateGrouped = salesInvoices
     .map((si) => {
-      const date = DateTime.fromJSDate(si.date as Date);
+      const date = dayjs(si.date as Date);
       const key = `${date.year}-${String(date.month).padStart(2, '0')}`;
       return { key, si };
     })
@@ -459,13 +457,12 @@ async function getNonSalesPurchaseInvoices(
     'Office Rent': 1,
   };
   const invoices: SalesInvoice[] = [];
-
   for (let months = 0; months < years * 12; months++) {
     /**
      * All purchases on the first of the month.
      */
-    const temp = DateTime.now().minus({ months });
-    const date = DateTime.local(temp.year, temp.month, 1).toJSDate();
+    const temp = dayjs().subtract(months, 'month');
+    const date = temp.date(1).toDate();
 
     for (const name in periodic) {
       if (months % periodic[name] !== 0) {

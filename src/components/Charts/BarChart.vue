@@ -46,7 +46,7 @@
             viewBoxHeight -
             axisPadding +
             yLabelOffset +
-            fontStyle.fontSize / 2 -
+            props.fontSize / 2 -
             bottom
           "
           :x="xs[i - 1]"
@@ -125,241 +125,284 @@
     >
       <div class="flex flex-col justify-center items-center">
         <p>
-          {{ xi > -1 ? formatX(xLabels[xi]) : '' }}
+          {{ xi > -1 ? formatX(xLabels[xi] as string) : '' }}
         </p>
         <p class="font-semibold">
-          {{ yi > -1 ? format(points[yi][xi]) : '' }}
+          {{ yi > -1 && xi > -1 ? format(points[yi]?.[xi] as number) : '' }}
         </p>
       </div>
     </Tooltip>
   </div>
 </template>
-<script>
+
+<script setup lang="ts">
+import { ref, computed, onDeactivated } from 'vue';
 import { prefixFormat } from 'src/utils/chart';
 import { Tooltip } from 'src/components/Ui';
 
-export default {
-  components: { Tooltip },
-  props: {
-    skipXLabel: { type: Number, default: 2 },
-    colors: { type: Array, default: () => [] },
-    xLabels: { type: Array, default: () => [] },
-    yLabelDivisions: { type: Number, default: 4 },
-    points: { type: Array, default: () => [[]] },
-    drawAxis: { type: Boolean, default: false },
-    drawXGrid: { type: Boolean, default: true },
-    viewBoxHeight: { type: Number, default: 500 },
-    aspectRatio: { type: Number, default: 2.1 },
-    axisPadding: { type: Number, default: 30 },
-    pointsPadding: { type: Number, default: 40 },
-    xLabelOffset: { type: Number, default: 20 },
-    yLabelOffset: { type: Number, default: 0 },
-    gridColor: { type: String, default: 'currentColor' },
-    zeroLineColor: { type: String, default: 'currentColor' },
-    axisColor: { type: String, default: 'currentColor' },
-    axisThickness: { type: Number, default: 1 },
-    gridThickness: { type: Number, default: 0.5 },
-    yMin: { type: Number, default: null },
-    yMax: { type: Number, default: null },
-    format: { type: Function, default: (n) => n.toFixed(1) },
-    formatY: { type: Function, default: prefixFormat },
-    formatX: { type: Function, default: (v) => v },
-    fontSize: { type: Number, default: 22 },
-    fontColor: { type: String, default: 'currentColor' },
-    bottom: { type: Number, default: 0 },
-    width: { type: Number, default: 28 },
-    left: { type: Number, default: 65 },
-    radius: { type: Number, default: 17 },
-    extendGridX: { type: Number, default: -20 },
-    tooltipDispDistThreshold: { type: Number, default: 20 },
-    drawZeroLine: { type: Boolean, default: true },
-  },
-  data() {
-    return { xi: -1, yi: -1, activeColor: 'transparent' };
-  },
-  deactivated() {
-    this.xi = -1;
-    this.yi = -1;
-    this.$refs.tooltip?.destroy();
-  },
-  computed: {
-    fontStyle() {
-      return { fontSize: this.fontSize, fill: this.fontColor };
-    },
-    viewBoxWidth() {
-      return this.aspectRatio * this.viewBoxHeight;
-    },
-    num() {
-      return this.points.length;
-    },
-    count() {
-      return Math.max(...this.points.map((p) => p.length));
-    },
-    xs() {
-      return Array(this.count)
-        .fill()
-        .map(
-          (_, i) =>
-            this.padding +
-            this.left +
-            (i * (this.viewBoxWidth - this.left - 2 * this.padding)) /
-              (this.count - 1 || 1) // The "or" one (1) prevents accidentally dividing by 0
-        );
-    },
-    z() {
-      return this.getViewBoxY(0);
-    },
-    ys() {
-      return this.points.map((pp) => pp.map(this.getViewBoxY));
-    },
-    xy() {
-      return this.xs.map((x, i) => [x, this.ys.map((y) => y[i])]);
-    },
-    min() {
-      return Math.min(...this.points.flat());
-    },
-    max() {
-      return Math.max(...this.points.flat());
-    },
-    axis() {
-      return `M ${this.axisPadding + this.left} ${this.axisPadding} V ${
-        this.viewBoxHeight - this.axisPadding - this.bottom
-      } H ${this.viewBoxWidth - this.axisPadding}`;
-    },
-    padding() {
-      return this.axisPadding + this.pointsPadding;
-    },
-    xGrid() {
-      const { l, r } = this.xLims;
-      const lo = l + this.extendGridX;
-      const ro = r - this.extendGridX;
-      const ys = Array(this.yLabelDivisions + 1)
-        .fill()
-        .map((_, i) => this.yScalerLocation(i));
-      return ys.map((y) => `M ${lo} ${y} H ${ro}`).join(' ');
-    },
-    yGrid() {
-      return [];
-    },
-    zLine() {
-      const { l, r } = this.xLims;
-      const lo = l + this.extendGridX;
-      const ro = r - this.extendGridX;
-      return `M ${lo} ${this.z} H ${ro}`;
-    },
-    xLims() {
-      const l = this.padding + this.left;
-      const r = this.viewBoxWidth - this.padding;
-      return { l, r };
-    },
-    positiveRects() {
-      return this.rects.flat().filter(({ isPositive }) => isPositive);
-    },
-    negativeRects() {
-      return this.rects.flat().filter(({ isPositive }) => !isPositive);
-    },
-    rects() {
-      return this.xy.map(([x, ys], i) =>
-        ys.map((y, j) => this.getRect(x, y, i, j))
-      );
-    },
-    hMin() {
-      return Math.min(this.yMin ?? this.min, 0);
-    },
-    hMax() {
-      let hMax = Math.max(this.yMax ?? this.max, 0);
-      if (hMax === this.hMin) {
-        return hMax + 1000;
-      }
-      return hMax;
-    },
-  },
-  methods: {
-    gradY(i) {
-      return Math.min(...this.ys[i]).toFixed();
-    },
-    getViewBoxY(value) {
-      const min = this.hMin;
-      const max = this.hMax;
-      let percent = 1 - (value - min) / (max - min);
-      if (percent === -Infinity) {
-        percent = 0;
-      }
-      return (
-        this.padding +
-        percent * (this.viewBoxHeight - 2 * this.padding - this.bottom)
-      );
-    },
-    getRect(px, py, i, j) {
-      const isPositive = py <= this.z;
-      const x = px - (this.width * this.num) / 2 + j * this.width;
-      const y = isPositive ? py : this.z - this.radius;
-      const h = Math.abs(py - this.z);
-      const height = h + this.radius;
-      const color = this.getColor(j, isPositive);
-      return { x, y, height, color, isPositive, xi: i, yi: j };
-    },
-    getColor(j, isPositive) {
-      if (this.colors.length > 0) {
-        const c = this.colors[j];
-        return typeof c === 'string'
-          ? c
-          : c[isPositive ? 'positive' : 'negative'];
-      }
-      return this.getRandomColor();
-    },
-    yScalerLocation(i) {
-      return (
-        ((this.yLabelDivisions - i) *
-          (this.viewBoxHeight - this.padding * 2 - this.bottom)) /
-          this.yLabelDivisions +
-        this.padding
-      );
-    },
-    yScalerValue(i) {
-      const min = this.hMin;
-      const max = this.hMax;
-      return this.formatY((i * (max - min)) / this.yLabelDivisions + min);
-    },
-    getLine(i) {
-      const [x, y] = this.xy[0];
-      let d = `M ${x} ${y[i]} `;
-      this.xy.slice(1).forEach(([x, y]) => {
-        d += `L ${x} ${y[i]} `;
-      });
-      return d;
-    },
-    getGradLine(i) {
-      let bo = this.viewBoxHeight - this.padding - this.bottom;
-      let d = `M ${this.padding + this.left} ${bo}`;
-      this.xy.forEach(([x, y]) => {
-        d += `L ${x} ${y[i]} `;
-      });
-      return d + ` V ${bo} Z`;
-    },
-    getRandomColor() {
-      const rgb = Array(3)
-        .fill()
-        .map(() => parseInt(Math.random() * 255))
-        .join(',');
-      return `rgb(${rgb})`;
-    },
-    create(xi, yi, event) {
-      this.xi = xi;
-      this.yi = yi;
-      this.activeColor = this.getColor(yi, this.points[yi][xi] > 0);
-      this.$refs.tooltip.create(event);
-    },
-    update(event) {
-      this.$refs.tooltip.update(event);
-    },
-    destroy() {
-      this.xi = -1;
-      this.yi = -1;
-      this.$refs.tooltip.destroy();
-    },
-  },
-};
+interface ColorOption {
+  positive: string;
+  negative: string;
+}
+
+const props = withDefaults(
+  defineProps<{
+    skipXLabel?: number;
+    colors?: (string | ColorOption)[];
+    xLabels?: string[];
+    yLabelDivisions?: number;
+    points?: number[][];
+    drawAxis?: boolean;
+    drawXGrid?: boolean;
+    viewBoxHeight?: number;
+    aspectRatio?: number;
+    axisPadding?: number;
+    pointsPadding?: number;
+    xLabelOffset?: number;
+    yLabelOffset?: number;
+    gridColor?: string;
+    zeroLineColor?: string;
+    axisColor?: string;
+    axisThickness?: number;
+    gridThickness?: number;
+    yMin?: number | null;
+    yMax?: number | null;
+    format?: (n: number) => string;
+    formatY?: (v: number) => string;
+    formatX?: (v: string) => string;
+    fontSize?: number;
+    fontColor?: string;
+    bottom?: number;
+    width?: number;
+    left?: number;
+    radius?: number;
+    extendGridX?: number;
+    tooltipDispDistThreshold?: number;
+    drawZeroLine?: boolean;
+  }>(),
+  {
+    skipXLabel: 2,
+    colors: () => [],
+    xLabels: () => [],
+    yLabelDivisions: 4,
+    points: () => [[]],
+    drawAxis: false,
+    drawXGrid: true,
+    viewBoxHeight: 500,
+    aspectRatio: 2.1,
+    axisPadding: 30,
+    pointsPadding: 40,
+    xLabelOffset: 20,
+    yLabelOffset: 0,
+    gridColor: 'currentColor',
+    zeroLineColor: 'currentColor',
+    axisColor: 'currentColor',
+    axisThickness: 1,
+    gridThickness: 0.5,
+    yMin: null,
+    yMax: null,
+    format: (n: number) => n.toFixed(1),
+    formatY: prefixFormat,
+    formatX: (v: string) => v,
+    fontSize: 22,
+    fontColor: 'currentColor',
+    bottom: 0,
+    width: 28,
+    left: 65,
+    radius: 17,
+    extendGridX: -20,
+    tooltipDispDistThreshold: 20,
+    drawZeroLine: true,
+  }
+);
+
+const xi = ref(-1);
+const yi = ref(-1);
+const activeColor = ref('transparent');
+const tooltip = ref<InstanceType<typeof Tooltip> | null>(null);
+
+onDeactivated(() => {
+  xi.value = -1;
+  yi.value = -1;
+  tooltip.value?.destroy();
+});
+
+const fontStyle = computed(() => ({
+  fontSize: `${props.fontSize}px`,
+  fill: props.fontColor,
+}));
+
+const viewBoxWidth = computed(() => props.aspectRatio * props.viewBoxHeight);
+
+const num = computed(() => props.points.length);
+
+const count = computed(() => Math.max(...props.points.map((p) => p.length), 0));
+
+const xs = computed(() => {
+  const cnt = count.value;
+  return Array(cnt)
+    .fill(0)
+    .map(
+      (_, i) =>
+        padding.value +
+        props.left +
+        (i * (viewBoxWidth.value - props.left - 2 * padding.value)) /
+          (cnt - 1 || 1)
+    );
+});
+
+const z = computed(() => getViewBoxY(0));
+
+const ys = computed(() => props.points.map((pp) => pp.map(getViewBoxY)));
+
+const xy = computed<[number, number[]][]>(() =>
+  xs.value.map((x, i) => [x, ys.value.map((y) => y[i] ?? 0)])
+);
+
+const min = computed(() => Math.min(...props.points.flat(), 0));
+const max = computed(() => Math.max(...props.points.flat(), 0));
+
+const axis = computed(() =>
+  `M ${props.axisPadding + props.left} ${props.axisPadding} V ${
+    props.viewBoxHeight - props.axisPadding - props.bottom
+  } H ${viewBoxWidth.value - props.axisPadding}`
+);
+
+const padding = computed(() => props.axisPadding + props.pointsPadding);
+
+const xLims = computed(() => {
+  const l = padding.value + props.left;
+  const r = viewBoxWidth.value - padding.value;
+  return { l, r };
+});
+
+const xGrid = computed(() => {
+  const { l, r } = xLims.value;
+  const lo = l + props.extendGridX;
+  const ro = r - props.extendGridX;
+  const yScales = Array(props.yLabelDivisions + 1)
+    .fill(0)
+    .map((_, i) => yScalerLocation(i));
+  return yScales.map((y) => `M ${lo} ${y} H ${ro}`).join(' ');
+});
+
+const zLine = computed(() => {
+  const { l, r } = xLims.value;
+  const lo = l + props.extendGridX;
+  const ro = r - props.extendGridX;
+  return `M ${lo} ${z.value} H ${ro}`;
+});
+
+interface RectInfo {
+  x: number;
+  y: number;
+  height: number;
+  color: string;
+  isPositive: boolean;
+  xi: number;
+  yi: number;
+}
+
+const rects = computed<RectInfo[][]>(() =>
+  xy.value.map(([x, yValues], i) =>
+    yValues.map((y, j) => getRect(x, y, i, j))
+  )
+);
+
+const positiveRects = computed(() =>
+  rects.value.flat().filter(({ isPositive }) => isPositive)
+);
+
+const negativeRects = computed(() =>
+  rects.value.flat().filter(({ isPositive }) => !isPositive)
+);
+
+const hMin = computed(() => Math.min(props.yMin ?? min.value, 0));
+
+const hMax = computed(() => {
+  const hMaxVal = Math.max(props.yMax ?? max.value, 0);
+  if (hMaxVal === hMin.value) {
+    return hMaxVal + 1000;
+  }
+  return hMaxVal;
+});
+
+function getViewBoxY(value: number): number {
+  const minVal = hMin.value;
+  const maxVal = hMax.value;
+  let percent = 1 - (value - minVal) / (maxVal - minVal);
+  if (percent === -Infinity || isNaN(percent)) {
+    percent = 0;
+  }
+  return (
+    padding.value +
+    percent * (props.viewBoxHeight - 2 * padding.value - props.bottom)
+  );
+}
+
+function getRect(px: number, py: number, i: number, j: number): RectInfo {
+  const isPositive = py <= z.value;
+  const x = px - (props.width * num.value) / 2 + j * props.width;
+  const y = isPositive ? py : z.value - props.radius;
+  const h = Math.abs(py - z.value);
+  const height = h + props.radius;
+  const color = getColor(j, isPositive);
+  return { x, y, height, color, isPositive, xi: i, yi: j };
+}
+
+function getColor(j: number, isPositive: boolean): string {
+  if (props.colors.length > 0) {
+    const c = props.colors[j];
+    if (typeof c === 'string') {
+      return c;
+    }
+    if (c && typeof c === 'object') {
+      return isPositive ? c.positive : c.negative;
+    }
+  }
+  return getRandomColor();
+}
+
+function yScalerLocation(i: number): number {
+  return (
+    ((props.yLabelDivisions - i) *
+      (props.viewBoxHeight - padding.value * 2 - props.bottom)) /
+      props.yLabelDivisions +
+    padding.value
+  );
+}
+
+function yScalerValue(i: number): string {
+  const minVal = hMin.value;
+  const maxVal = hMax.value;
+  return props.formatY((i * (maxVal - minVal)) / props.yLabelDivisions + minVal);
+}
+
+function getRandomColor(): string {
+  const rgb = Array(3)
+    .fill(0)
+    .map(() => Math.floor(Math.random() * 255))
+    .join(',');
+  return `rgb(${rgb})`;
+}
+
+function create(xiVal: number, yiVal: number, event: MouseEvent) {
+  xi.value = xiVal;
+  yi.value = yiVal;
+  const pointVal = props.points[yiVal]?.[xiVal] ?? 0;
+  activeColor.value = getColor(yiVal, pointVal > 0);
+  tooltip.value?.create(event);
+}
+
+function update(event: MouseEvent) {
+  tooltip.value?.update(event);
+}
+
+function destroy() {
+  xi.value = -1;
+  yi.value = -1;
+  tooltip.value?.destroy();
+}
 </script>
 
 <style scoped>

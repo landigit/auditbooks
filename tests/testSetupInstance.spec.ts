@@ -1,5 +1,5 @@
 import { assertDoesNotThrow } from 'backend/database/tests/helpers';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
 import { describe, expect, test, afterAll } from 'vitest';
@@ -41,7 +41,7 @@ describe('Setup Instance Tests', () => {
       const optionsValue = setupOptions[field as keyof SetupWizardOptions];
 
       if (dbValue instanceof Date) {
-        dbValue = DateTime.fromJSDate(dbValue).toISODate();
+        dbValue = dayjs(dbValue).format('YYYY-MM-DD');
       }
 
       expect(dbValue).toBe(optionsValue);

@@ -1,6 +1,6 @@
 import { t } from 'fyo';
 import { ValueError } from 'fyo/utils/errors';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import {
   AccountRootType,
   AccountRootTypeEnum,
@@ -135,18 +135,18 @@ export class TrialBalance extends AccountReport {
       await this.setDefaultFilters();
     }
 
-    const toDate = DateTime.fromISO(this.toDate!);
-    const fromDate = DateTime.fromISO(this.fromDate!);
+    const toDate = dayjs(this.toDate!);
+    const fromDate = dayjs(this.fromDate!);
 
     return [
       {
-        fromDate: DateTime.fromISO('0001-01-01'),
+        fromDate: dayjs('0001-01-01'),
         toDate: fromDate,
       },
       { fromDate, toDate },
       {
         fromDate: toDate,
-        toDate: DateTime.fromISO('9999-12-31'),
+        toDate: dayjs('9999-12-31'),
       },
     ];
   }
@@ -199,13 +199,13 @@ export class TrialBalance extends AccountReport {
 
   async setDefaultFilters(): Promise<void> {
     if (!this.toDate || !this.fromDate) {
-      const { year } = DateTime.now();
+      const year = dayjs().year();
       const endpoints = await getFiscalEndpoints(year + 1, year, this.fyo);
 
       this.fromDate = endpoints.fromDate;
-      this.toDate = DateTime.fromISO(endpoints.toDate)
-        .minus({ days: 1 })
-        .toISODate()!;
+      this.toDate = dayjs(endpoints.toDate)
+        .subtract(1, 'day')
+        .format('YYYY-MM-DD')!;
     }
 
     await this._setDateRanges();

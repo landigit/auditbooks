@@ -1,6 +1,6 @@
 import { Fyo } from 'fyo';
 import { Doc } from 'fyo/model/doc';
-import { DateTime } from 'luxon';
+import dayjs, { Dayjs } from 'dayjs';
 import { Field, FieldType, FieldTypeEnum } from 'schemas/types';
 import { getIsNullOrUndef, safeParseFloat, titleCase } from 'utils';
 import { isPesa } from '.';
@@ -54,13 +54,13 @@ export function format(
   return String(value);
 }
 
-function toDatetime(value: unknown): DateTime | null {
+function toDatetime(value: unknown): Dayjs | null {
   if (typeof value === 'string') {
-    return DateTime.fromISO(value);
+    return dayjs(value);
   } else if (value instanceof Date) {
-    return DateTime.fromJSDate(value);
+    return dayjs(value);
   } else if (typeof value === 'number') {
-    return DateTime.fromSeconds(value);
+    return dayjs.unix(value);
   }
 
   return null;
@@ -78,7 +78,7 @@ function formatDatetime(value: unknown, fyo: Fyo): string {
     return '';
   }
 
-  const formattedDatetime = dateTime.toFormat(`${dateFormat} HH:mm:ss`);
+  const formattedDatetime = dateTime.format(`${dateFormat} HH:mm:ss`);
 
   if (value === 'Invalid DateTime') {
     return '';
@@ -100,7 +100,7 @@ function formatDate(value: unknown, fyo: Fyo): string {
     return '';
   }
 
-  const formattedDate = dateTime.toFormat(dateFormat);
+  const formattedDate = dateTime.format(dateFormat);
   if (value === 'Invalid DateTime') {
     return '';
   }

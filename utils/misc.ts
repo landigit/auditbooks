@@ -1,4 +1,6 @@
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 import countryInfo from '../fixtures/countryInfo.json';
 import { CUSTOM_EVENTS } from './messages';
 import { CountryInfoMap, UnexpectedLogObject } from './types';
@@ -26,17 +28,17 @@ export function getFiscalYear(
     return undefined;
   }
 
-  const today = DateTime.local();
-  const dateTime = DateTime.fromFormat(date, 'MM-dd');
+  const today = dayjs();
+  const dateTime = dayjs(date, 'MM-DD');
   if (isStart) {
     return dateTime
-      .plus({ year: [1, 2, 3].includes(today.month) ? -1 : 0 })
-      .toJSDate();
+      .add([0, 1, 2].includes(today.month()) ? -1 : 0, 'year')
+      .toDate();
   }
 
   return dateTime
-    .plus({ year: [1, 2, 3].includes(today.month) ? 0 : 1 })
-    .toJSDate();
+    .add([0, 1, 2].includes(today.month()) ? 0 : 1, 'year')
+    .toDate();
 }
 
 export function logUnexpected(detail: Partial<UnexpectedLogObject>) {

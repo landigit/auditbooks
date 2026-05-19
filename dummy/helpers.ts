@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 
 // prettier-ignore
 export const partyPurchaseItemMap: Record<string, string[]> = {
@@ -41,8 +41,8 @@ export const flow = [
 ];
 export function getFlowConstant(months: number) {
   // Jan to December
-  const d = DateTime.now().minus({ months });
-  return flow[d.month - 1];
+  const d = dayjs().subtract(months, 'month');
+  return flow[d.month()];
 }
 
 export function getRandomDates(count: number, months: number): Date[] {
@@ -50,22 +50,18 @@ export function getRandomDates(count: number, months: number): Date[] {
    * Returns `count` number of dates for a month, `months` back from the
    * current date.
    */
-  let endDate = DateTime.now();
+  let endDate = dayjs();
   if (months !== 0) {
-    const back = endDate.minus({ months });
-    endDate = DateTime.local(
-      back.year,
-      back.month,
-      back.daysInMonth ?? 30
-    ) as any;
+    endDate = endDate.subtract(months, 'month');
   }
 
   const dates: Date[] = [];
   for (let i = 0; i < count; i++) {
-    const day = Math.ceil(endDate.day * Math.random());
-    const date = DateTime.local(endDate.year, endDate.month, day);
-    dates.push(date.toJSDate());
+    const day = Math.ceil(endDate.daysInMonth() * Math.random());
+    const date = endDate.date(day);
+    dates.push(date.toDate());
   }
 
   return dates;
 }
+

@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 
 export function prefixFormat(value: number): string {
   /*
@@ -64,5 +64,5 @@ export function getYMin(points: number[][]): number {
 }
 
 export function formatXLabels(label: string) {
-  return DateTime.fromISO(label).toFormat('MMM yy');
+  return dayjs(label).format('MMM yy');
 }

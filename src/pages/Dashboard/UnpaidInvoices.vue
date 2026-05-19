@@ -82,7 +82,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onActivated, onDeactivated } from 'vue';
 import { t } from 'fyo';
-import { DateTime } from 'luxon';
+import { Dayjs } from 'dayjs';
 import { ModelNameEnum } from 'models/types';
 import MouseFollower from 'src/components/MouseFollower.vue';
 import { fyo } from 'src/initFyo';
@@ -161,15 +161,15 @@ const unpaidColor = computed(() => {
 // Methods
 const getCounts = async (
   schemaName: string,
-  fromDate: DateTime,
-  toDate: DateTime
+  fromDate: Dayjs,
+  toDate: Dayjs
 ) => {
   const outstandingAmounts = await fyo.db.getAllRaw(schemaName, {
     fields: ['outstandingAmount'],
     filters: {
       cancelled: false,
       submitted: true,
-      date: ['<=', toDate.toISO()!, '>=', fromDate.toISO()!],
+      date: ['<=', toDate.format('YYYY-MM-DD'), '>=', fromDate.format('YYYY-MM-DD')],
     },
   });
 
@@ -188,8 +188,8 @@ const setData = async () => {
 
   const res = await fyo.db.getTotalOutstanding(
     props.schemaName,
-    fromDate.toISO()!,
-    toDate.toISO()!
+    fromDate.format('YYYY-MM-DD'),
+    toDate.format('YYYY-MM-DD')
   );
 
   const counts = await getCounts(props.schemaName, fromDate, toDate);

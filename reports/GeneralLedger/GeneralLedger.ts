@@ -1,5 +1,5 @@
 import { Fyo, t } from 'fyo';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { ModelNameEnum } from 'models/types';
 import { LedgerReport } from 'reports/LedgerReport';
 import {
@@ -38,10 +38,8 @@ export class GeneralLedger extends LedgerReport {
   }
 
   setDefaultFilters() {
-    if (!this.toDate) {
-      this.toDate = DateTime.now().plus({ days: 1 }).toISODate();
-      this.fromDate = DateTime.now().minus({ years: 1 }).toISODate();
-    }
+    this.toDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
+    this.fromDate = dayjs().subtract(1, 'month').format('YYYY-MM-DD');
   }
 
   async setReportData(filter?: string, force?: boolean) {

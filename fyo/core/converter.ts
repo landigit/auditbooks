@@ -2,7 +2,7 @@ import { Fyo } from 'fyo';
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { ValueError } from 'fyo/utils/errors';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { Field, FieldTypeEnum, RawValue, TargetField } from 'schemas/types';
 import { getIsNullOrUndef, safeParseFloat, safeParseInt } from 'utils';
 import { DatabaseHandler } from './dbHandler';
@@ -190,7 +190,7 @@ function toDocDate(value: RawValue, field: Field) {
     throwError(value, field, 'doc');
   }
 
-  const date = DateTime.fromISO(value).toJSDate();
+  const date = dayjs(value).toDate();
   if (date.toString() === 'Invalid Date') {
     throwError(value, field, 'doc');
   }
@@ -356,11 +356,11 @@ function toRawDate(value: DocValue, field: Field): string | null {
   }
 
   if (value instanceof Date) {
-    return DateTime.fromJSDate(value).toISODate();
+    return dayjs(value).format('YYYY-MM-DD');
   }
 
-  if (value instanceof DateTime) {
-    return value.toISODate();
+  if (dayjs.isDayjs(value)) {
+    return value.format('YYYY-MM-DD');
   }
 
   throwError(value, field, 'raw');
@@ -379,8 +379,8 @@ function toRawDateTime(value: DocValue, field: Field): string | null {
     return value.toISOString();
   }
 
-  if (value instanceof DateTime) {
-    return value.toJSDate().toISOString();
+  if (dayjs.isDayjs(value)) {
+    return value.toDate().toISOString();
   }
 
   throwError(value, field, 'raw');

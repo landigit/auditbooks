@@ -19,7 +19,7 @@ import {
 import { AppliedCouponCodes } from './baseModels/AppliedCouponCodes/AppliedCouponCodes';
 import { CollectionRulesItems } from './baseModels/CollectionRulesItems/CollectionRulesItems';
 import { CouponCode } from './baseModels/CouponCode/CouponCode';
-import { DateTime } from 'luxon';
+import dayjs from 'dayjs';
 import { Doc } from 'fyo/model/doc';
 import { Invoice } from './baseModels/Invoice/Invoice';
 import { Lead } from './baseModels/Lead/Lead';
@@ -660,7 +660,7 @@ export async function getExchangeRate({
   }
 
   if (!date) {
-    date = DateTime.local().toISODate();
+    date = dayjs().format('YYYY-MM-DD');
   }
 
   const cacheKey = `currencyExchangeRate:${date}:${fromCurrency}:${toCurrency}`;
