@@ -7,14 +7,14 @@
     <template #body>
       <FormHeader
         :form-title="t`Set up your organization`"
-        class="sticky top-0 bg-surface border-b border-border"
+        class="sticky top-0 bg-surface border-b border-border window-no-drag"
       >
       </FormHeader>
 
       <!-- Section Container -->
       <div
         v-if="hasDoc"
-        class="overflow-auto custom-scroll custom-scroll-thumb1"
+        class="overflow-auto custom-scroll custom-scroll-thumb1 window-no-drag"
       >
         <CommonFormSection
           v-for="([name, fields], idx) in activeGroup.entries()"
@@ -36,7 +36,7 @@
 
       <!-- Buttons Bar -->
       <div
-        class="mt-auto p-4 flex items-center justify-between border-t border-border flex-shrink-0 sticky bottom-0 bg-surface"
+        class="mt-auto p-4 flex items-center justify-between border-t border-border flex-shrink-0 sticky bottom-0 bg-surface window-no-drag"
       >
         <p v-if="loading" class="text-base text-description">
           {{ t`Loading instance...` }}
@@ -46,7 +46,7 @@
           class="w-24 border border-border"
           @click="cancel"
           >{{ t`Cancel` }}</Button
-        >
+         >
         <Button
           v-if="store.isDevelopment && !loading"
           class="w-24 ml-auto mr-4 border border-border"

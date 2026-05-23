@@ -1,102 +1,106 @@
 <template>
-  <div class="text-base flex flex-col overflow-hidden">
-    <!-- Title Row -->
-    <div
-      class="flex items-center"
-      :style="{
-        paddingRight: dataSlice.length > 13 ? 'var(--w-scrollbar)' : '',
-      }"
-    >
-      <div v-if="!isSelectionMode" class="w-8 text-end me-2 text-description">
-        #
-      </div>
-      <div v-else class="w-8 flex justify-end me-2">
-        <Check
-          :df="{
-            fieldtype: 'Check',
-            fieldname: 'selectAll',
-            label: '',
-          }"
-          :show-label="false"
-          :value="isAllSelected"
-          @change="toggleSelectAll"
-        />
-      </div>
-      <Row
-        class="flex-1 text-description h-row-mid"
-        :column-count="columns.length"
-        gap="1rem"
+  <div class="text-base flex flex-col overflow-hidden h-full">
+    <!-- Main Scrollable Table Wrapper -->
+    <ScrollArea v-if="data?.length" class="flex-1 w-full" orientation="both">
+      <div
+        :style="{
+          minWidth: `${Math.max(800, columns.length * 160)}px`,
+        }"
+        class="flex flex-col min-h-full"
       >
+        <!-- Title Row -->
         <div
-          v-for="(column, i) in columns"
-          :key="column.label"
-          class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
-          :class="{
-            'ms-auto': isNumeric(column.fieldtype),
-            'pe-4': i === columns.length - 1,
-          }"
+          class="flex items-center sticky top-0 bg-canvas z-10"
         >
-          {{ column.label }}
-        </div>
-      </Row>
-    </div>
-    <hr class="border-border" />
-
-    <!-- Data Rows -->
-    <div
-      v-if="dataSlice.length !== 0"
-      class="overflow-y-auto custom-scroll custom-scroll-thumb1"
-    >
-      <div v-for="(row, i) in dataSlice" :key="row.name as string">
-        <!-- Row Content -->
-        <div class="flex hover:bg-surface-hover items-center">
-          <div
-            v-if="!isSelectionMode"
-            class="w-8 text-end me-2 text-description"
-          >
-            {{ i + pageStart + 1 }}
+          <div v-if="!isSelectionMode" class="w-8 text-end me-2 text-description">
+            #
           </div>
           <div v-else class="w-8 flex justify-end me-2">
             <Check
               :df="{
                 fieldtype: 'Check',
-                fieldname: 'selectItem',
+                fieldname: 'selectAll',
                 label: '',
               }"
               :show-label="false"
-              :value="selectedItems.includes(row.name as string)"
-              @change="toggleItemSelection(row.name as string)"
+              :value="isAllSelected"
+              @change="toggleSelectAll"
             />
           </div>
-
           <Row
-            gap="1rem"
-            class="cursor-pointer text-main flex-1 h-row-mid"
+            class="flex-1 text-description h-row-mid"
             :column-count="columns.length"
-            @click="isSelectionMode ? null : emit('openDoc', String(row.name))"
+            gap="1rem"
           >
-            <ListCell
-              v-for="(column, c) in columns"
+            <div
+              v-for="(column, i) in columns"
               :key="column.label"
+              class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
               :class="{
-                'text-end': isNumeric(column.fieldtype),
-                'pe-4': c === columns.length - 1,
+                'ms-auto': isNumeric(column.fieldtype),
+                'pe-4': i === columns.length - 1,
               }"
-              :row="row as RenderData"
-              :column="column"
-              @status-found="handleStatusFound"
-            />
+            >
+              {{ column.label }}
+            </div>
           </Row>
         </div>
-        <hr
-          v-if="!(i === dataSlice.length - 1 && i > 13)"
-          class="border-border"
-        />
+        <hr class="border-border sticky top-[var(--h-row-mid)] z-10" />
+
+        <!-- Data Rows -->
+        <div class="flex-1">
+          <div v-for="(row, i) in dataSlice" :key="row.name as string">
+            <!-- Row Content -->
+            <div class="flex hover:bg-surface-hover items-center">
+              <div
+                v-if="!isSelectionMode"
+                class="w-8 text-end me-2 text-description"
+              >
+                {{ i + pageStart + 1 }}
+              </div>
+              <div v-else class="w-8 flex justify-end me-2">
+                <Check
+                  :df="{
+                    fieldtype: 'Check',
+                    fieldname: 'selectItem',
+                    label: '',
+                  }"
+                  :show-label="false"
+                  :value="selectedItems.includes(row.name as string)"
+                  @change="toggleItemSelection(row.name as string)"
+                />
+              </div>
+
+              <Row
+                gap="1rem"
+                class="cursor-pointer text-main flex-1 h-row-mid"
+                :column-count="columns.length"
+                @click="isSelectionMode ? null : emit('openDoc', String(row.name))"
+              >
+                <ListCell
+                  v-for="(column, c) in columns"
+                  :key="column.label"
+                  :class="{
+                    'text-end': isNumeric(column.fieldtype),
+                    'pe-4': c === columns.length - 1,
+                  }"
+                  :row="row as RenderData"
+                  :column="column"
+                  @status-found="handleStatusFound"
+                />
+              </Row>
+            </div>
+            <hr
+              v-if="!(i === dataSlice.length - 1 && i > 13)"
+              class="border-border"
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </ScrollArea>
 
     <!-- Pagination Footer -->
-    <div v-if="data?.length" class="mt-auto">
+    <div v-if="data?.length" class="mt-auto flex-shrink-0">
       <hr class="border-border" />
       <Paginator
         :item-count="data.length"
@@ -128,6 +132,7 @@ import Button from 'src/components/Button.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Paginator from 'src/components/Paginator.vue';
 import Row from 'src/components/Row.vue';
+import { ScrollArea } from 'src/components/ui';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 import { isNumeric } from 'src/utils';

@@ -1,23 +1,21 @@
 <template>
   <div
     class="py-2 h-full flex justify-between flex-col bg-sidebar relative"
-    :class="{
-      'window-drag': store.platform !== 'Windows',
-    }"
   >
-    <div>
+    <div class="window-no-drag">
       <!-- Company name -->
       <div
         class="px-4 flex flex-row items-center justify-between mb-4"
-        :class="
+        :class="[
+          store.platform !== 'Windows' ? 'window-drag' : '',
           store.platform === 'Mac' && languageDirection === 'ltr'
             ? 'mt-10'
-            : 'mt-2'
-        "
+            : 'mt-2',
+        ]"
       >
         <h6
           data-testid="company-name"
-          class="font-semibold text-main whitespace-nowrap overflow-auto no-scrollbar select-none"
+          class="window-no-drag font-semibold text-main whitespace-nowrap overflow-auto no-scrollbar select-none"
         >
           {{ companyName }}
         </h6>
