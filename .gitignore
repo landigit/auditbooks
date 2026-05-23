@@ -12,6 +12,7 @@ package-lock.json
 .env.publish
 .env.local
 .env.*.local
+.electron-gyp
 
 # Log files
 npm-debug.log*

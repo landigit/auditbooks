@@ -124,7 +124,11 @@ async function handleResult(result) {
 }
 
 function runElectron() {
-  const electronProcess = $$`npx electron --inspect=5858 ${path.join(
+  const args = ['--inspect=5858'];
+  if (process.platform === 'linux') {
+    args.push('--no-sandbox');
+  }
+  const electronProcess = $$`npx electron ${args} ${path.join(
     root,
     'dist_electron',
     'dev',

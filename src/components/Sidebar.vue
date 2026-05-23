@@ -24,7 +24,7 @@
       </div>
 
       <!-- Sidebar Items -->
-      <div v-for="group in groups" :key="group.label">
+      <div v-for="group in groups" :key="group.label" class="window-no-drag">
         <div
           class="px-4 flex items-center cursor-pointer hover:bg-surface-hover h-10"
           :class="

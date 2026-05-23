@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { Calendar as CalendarUI } from 'src/components/Ui';
+import { Calendar as CalendarUI } from 'src/components/ui';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
 import { CalendarDate } from '@internationalized/date';

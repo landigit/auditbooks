@@ -7,7 +7,7 @@
     }"
   >
     <div
-      class="w-full w-form shadow-lg rounded-lg border border-border relative bg-surface"
+      class="w-full w-form shadow-lg rounded-lg border border-border relative bg-surface window-no-drag"
       style="height: 700px"
     >
       <!-- Welcome to Auditbooks -->

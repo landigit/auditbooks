@@ -65,7 +65,7 @@ import {
   BaseControlProps,
   useBaseControl,
 } from 'src/composables/useBaseControl';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 import Row from 'src/components/Row.vue';
 
 const props = withDefaults(defineProps<BaseControlProps>(), {

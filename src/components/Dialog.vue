@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from 'src/components/Ui';
+} from 'src/components/ui';
 import Button from './Button.vue';
 import LucideIcon from './LucideIcon.vue';
 import { getIconConfig } from 'src/utils/interactive';

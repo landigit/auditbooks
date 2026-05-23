@@ -153,7 +153,7 @@ import { getRandomString } from 'utils';
 import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
-import { Popover, PopoverTrigger, PopoverContent } from 'src/components/Ui';
+import { Popover, PopoverTrigger, PopoverContent } from 'src/components/ui';
 import { QueryFilter } from 'utils/db/types';
 import { t } from 'fyo';
 

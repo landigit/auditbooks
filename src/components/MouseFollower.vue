@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { Tooltip, TooltipTrigger, TooltipContent } from 'src/components/Ui';
+import { Tooltip, TooltipTrigger, TooltipContent } from 'src/components/ui';
 
 const props = withDefaults(
   defineProps<{

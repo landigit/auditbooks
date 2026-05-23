@@ -6,7 +6,7 @@
     :language="language"
   >
     <WindowsTitleBar
-      v-if="appStore.platform === 'Windows'"
+      v-if="appStore.platform !== 'Mac'"
       :db-path="appStore.dbPath"
       :company-name="appStore.companyName"
     />

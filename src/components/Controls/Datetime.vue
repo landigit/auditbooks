@@ -36,7 +36,7 @@
 // --- Imports ---
 import { computed, ref } from 'vue';
 import { fyo } from 'src/initFyo';
-import { DateTimePicker } from 'src/components/Ui';
+import { DateTimePicker } from 'src/components/ui';
 import {
   BaseControlProps,
   useBaseControl,

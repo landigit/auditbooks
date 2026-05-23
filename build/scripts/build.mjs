@@ -73,6 +73,9 @@ async function buildRendererProcessSource() {
     plugins: [tailwindcss(), vue()],
     resolve: {
       alias: {
+        '@libsql/client': path.join(root, 'src', 'renderer', 'mocks', 'libsql-client.ts'),
+        'fs/promises': path.join(root, 'src', 'renderer', 'mocks', 'fs.ts'),
+        fs: path.join(root, 'src', 'renderer', 'mocks', 'fs.ts'),
         vue: 'vue/dist/vue.esm-bundler.js',
         fyo: path.join(root, 'fyo'),
         src: path.join(root, 'src'),

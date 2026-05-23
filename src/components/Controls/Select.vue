@@ -74,7 +74,7 @@ import {
   useBaseControl,
 } from 'src/composables/useBaseControl';
 import { SelectOption } from 'schemas/types';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 import LucideIcon from '../LucideIcon.vue';
 
 interface SelectProps extends BaseControlProps {

@@ -76,7 +76,7 @@ import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 import { DropdownItem } from 'src/utils/types';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/Ui';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 
 // --- Props & Emits ---
 const props = withDefaults(

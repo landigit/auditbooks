@@ -5,8 +5,8 @@ import {
   type DateValue,
   CalendarDate,
 } from '@internationalized/date';
-import { Calendar } from 'src/components/Ui';
-import { Popover, PopoverContent, PopoverTrigger } from 'src/components/Ui';
+import { Calendar } from 'src/components/ui';
+import { Popover, PopoverContent, PopoverTrigger } from 'src/components/ui';
 import { cn } from 'src/utils/cn';
 
 const props = defineProps<{

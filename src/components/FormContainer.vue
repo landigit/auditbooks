@@ -18,7 +18,7 @@
 
       <!-- Common Form -->
       <div
-        class="flex flex-col self-center h-full overflow-auto bg-surface"
+        class="flex flex-col self-center h-full overflow-auto bg-surface window-no-drag"
         :class="
           useFullWidth
             ? 'w-full border-t border-border'

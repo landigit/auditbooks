@@ -260,13 +260,15 @@ const mockIpc = {
   }
 };
 
-try {
-  Object.defineProperty(globalThis, 'ipc', {
-    value: mockIpc,
-    writable: true,
-    configurable: true,
-  });
-} catch (e) {
-  (globalThis as any).ipc = mockIpc;
+if (!(globalThis as any).ipc) {
+  try {
+    Object.defineProperty(globalThis, 'ipc', {
+      value: mockIpc,
+      writable: true,
+      configurable: true,
+    });
+  } catch (e) {
+    (globalThis as any).ipc = mockIpc;
+  }
 }
 export default mockIpc;
