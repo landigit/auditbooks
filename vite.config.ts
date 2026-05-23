@@ -52,7 +52,7 @@ export default () => {
       },
     },
     optimizeDeps: {
-      exclude: ['electron', 'sql.js', '@libsql/client'],
+      exclude: ['electron'],
     },
     root: path.resolve(__dirname, './src'),
     plugins: [
@@ -66,9 +66,6 @@ export default () => {
     ],
     resolve: {
       alias: {
-        '@libsql/client': path.resolve(__dirname, './src/renderer/mocks/libsql-client.ts'),
-        'fs/promises': path.resolve(__dirname, './src/renderer/mocks/fs.ts'),
-        fs: path.resolve(__dirname, './src/renderer/mocks/fs.ts'),
         vue: 'vue/dist/vue.esm-bundler.js',
         fyo: path.resolve(__dirname, './fyo'),
         src: path.resolve(__dirname, './src'),
