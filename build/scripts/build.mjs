@@ -14,7 +14,9 @@ import auditBooksConfig from '../electron-builder-config.mjs';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(dirname, '..', '..');
 const buildDirPath = path.normalize(path.join(root, 'dist_electron', 'build'));
-const packageDirPath = path.normalize(path.join(root, 'dist_electron', 'bundled'));
+const packageDirPath = path.normalize(
+  path.join(root, 'dist_electron', 'bundled')
+);
 const mainFileName = 'main.js';
 const commonConfig = getMainProcessCommonConfig(root);
 
@@ -53,7 +55,9 @@ function updatePaths() {
   fs.mkdirSync(buildDirPath, { recursive: true });
   fs.rmSync(packageDirPath, { recursive: true, force: true });
   fs.mkdirSync(packageDirPath, { recursive: true });
-  fs.mkdirSync(path.normalize(path.join(buildDirPath, 'node_modules')), { recursive: true });
+  fs.mkdirSync(path.normalize(path.join(buildDirPath, 'node_modules')), {
+    recursive: true,
+  });
 }
 
 async function buildMainProcessSource() {
@@ -79,7 +83,13 @@ async function buildRendererProcessSource() {
     plugins: [tailwindcss(), vue()],
     resolve: {
       alias: {
-        '@libsql/client': path.join(root, 'src', 'renderer', 'mocks', 'libsql-client.ts'),
+        '@libsql/client': path.join(
+          root,
+          'src',
+          'renderer',
+          'mocks',
+          'libsql-client.ts'
+        ),
         'fs/promises': path.join(root, 'src', 'renderer', 'mocks', 'fs.ts'),
         fs: path.join(root, 'src', 'renderer', 'mocks', 'fs.ts'),
         vue: 'vue/dist/vue.esm-bundler.js',
@@ -107,9 +117,12 @@ async function buildRendererProcessSource() {
  * - Main file is updated to the bundled main process JS file.
  */
 function copyPackageJson() {
-  const packageJsonText = fs.readFileSync(path.normalize(path.join(root, 'package.json')), {
-    encoding: 'utf-8',
-  });
+  const packageJsonText = fs.readFileSync(
+    path.normalize(path.join(root, 'package.json')),
+    {
+      encoding: 'utf-8',
+    }
+  );
 
   const packageJson = JSON.parse(packageJsonText);
   const keys = [
@@ -181,8 +194,13 @@ async function packageApp() {
   // the signing pipeline and does not download winCodeSign (which requires symlink
   // creation rights on Windows that are only available in Developer Mode or as admin).
   if (!shouldSign && buildOptions.config.win) {
-    const { sign, certificateSubjectName, signDlls, rfc3161TimeStampServer, ...winRest } =
-      buildOptions.config.win;
+    const {
+      sign,
+      certificateSubjectName,
+      signDlls,
+      rfc3161TimeStampServer,
+      ...winRest
+    } = buildOptions.config.win;
     buildOptions = {
       ...buildOptions,
       config: { ...buildOptions.config, win: winRest },

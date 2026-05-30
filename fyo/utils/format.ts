@@ -88,7 +88,9 @@ function formatDatetime(value: unknown, fyo: Fyo): string {
     return '';
   }
 
-  const formattedDatetime = dateTime.format(`${translateDateFormat(dateFormat)} HH:mm:ss`);
+  const formattedDatetime = dateTime.format(
+    `${translateDateFormat(dateFormat)} HH:mm:ss`
+  );
 
   if (value === 'Invalid DateTime') {
     return '';

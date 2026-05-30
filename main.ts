@@ -26,9 +26,6 @@ export class Main {
   HEIGHT = process.platform === 'win32' ? 826 : 800;
 
   constructor() {
-    app.disableHardwareAcceleration();
-    app.commandLine.appendSwitch('disable-gpu');
-    app.commandLine.appendSwitch('disable-gpu-sandbox');
     app.commandLine.appendSwitch('no-sandbox');
 
     this.icon = this.isDevelopment

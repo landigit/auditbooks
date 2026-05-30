@@ -134,13 +134,25 @@ export function getStockLedgerEntries(
       continue;
     }
 
-    if (item === '__proto__' || item === 'constructor' || item === 'prototype') {
+    if (
+      item === '__proto__' ||
+      item === 'constructor' ||
+      item === 'prototype'
+    ) {
       continue;
     }
-    if (location === '__proto__' || location === 'constructor' || location === 'prototype') {
+    if (
+      location === '__proto__' ||
+      location === 'constructor' ||
+      location === 'prototype'
+    ) {
       continue;
     }
-    if (batch === '__proto__' || batch === 'constructor' || batch === 'prototype') {
+    if (
+      batch === '__proto__' ||
+      batch === 'constructor' ||
+      batch === 'prototype'
+    ) {
       continue;
     }
 
@@ -251,16 +263,32 @@ export function getStockBalanceEntries(
     const batch = sle.batch || '';
     const serialNumber = showSerialNumbers ? sle.serialNumber : '';
 
-    if (sle.item === '__proto__' || sle.item === 'constructor' || sle.item === 'prototype') {
+    if (
+      sle.item === '__proto__' ||
+      sle.item === 'constructor' ||
+      sle.item === 'prototype'
+    ) {
       continue;
     }
-    if (sle.location === '__proto__' || sle.location === 'constructor' || sle.location === 'prototype') {
+    if (
+      sle.location === '__proto__' ||
+      sle.location === 'constructor' ||
+      sle.location === 'prototype'
+    ) {
       continue;
     }
-    if (batch === '__proto__' || batch === 'constructor' || batch === 'prototype') {
+    if (
+      batch === '__proto__' ||
+      batch === 'constructor' ||
+      batch === 'prototype'
+    ) {
       continue;
     }
-    if (serialNumber === '__proto__' || serialNumber === 'constructor' || serialNumber === 'prototype') {
+    if (
+      serialNumber === '__proto__' ||
+      serialNumber === 'constructor' ||
+      serialNumber === 'prototype'
+    ) {
       continue;
     }
 
@@ -280,12 +308,11 @@ export function getStockBalanceEntries(
     const batchSbe = Reflect.get(locSbe, batch);
 
     if (Reflect.get(batchSbe, serialNumber) == null) {
-      Reflect.set(batchSbe, serialNumber, getSBE(
-        sle.item,
-        sle.location,
-        batch,
-        serialNumber
-      ));
+      Reflect.set(
+        batchSbe,
+        serialNumber,
+        getSBE(sle.item, sle.location, batch, serialNumber)
+      );
     }
     const sbe = Reflect.get(batchSbe, serialNumber);
     const date = sle.date.valueOf();

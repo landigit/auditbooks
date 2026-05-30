@@ -48,7 +48,11 @@ export abstract class Report extends Observable<RawValue> {
   get filterMap() {
     const filterMap: Record<string, RawValue> = Object.create(null);
     for (const { fieldname } of this.filters) {
-      if (fieldname === '__proto__' || fieldname === 'constructor' || fieldname === 'prototype') {
+      if (
+        fieldname === '__proto__' ||
+        fieldname === 'constructor' ||
+        fieldname === 'prototype'
+      ) {
         continue;
       }
       const value = this.get(fieldname);

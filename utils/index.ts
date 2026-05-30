@@ -138,14 +138,16 @@ export function deepEqual(a: any, b: any): boolean {
     if (Array.isArray(a)) {
       length = a.length;
       if (length !== b.length) return false;
-      for (i = length; i-- !== 0; ) if (!deepEqual(Reflect.get(a, i), Reflect.get(b, i))) return false;
+      for (i = length; i-- !== 0; )
+        if (!deepEqual(Reflect.get(a, i), Reflect.get(b, i))) return false;
       return true;
     }
     keys = Object.keys(a);
     length = keys.length;
     if (length !== Object.keys(b).length) return false;
     for (i = length; i-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b, Reflect.get(keys, i))) return false;
+      if (!Object.prototype.hasOwnProperty.call(b, Reflect.get(keys, i)))
+        return false;
     for (i = length; i-- !== 0; ) {
       const key = Reflect.get(keys, i);
       if (!deepEqual(Reflect.get(a, key), Reflect.get(b, key))) return false;
@@ -301,7 +303,11 @@ export function removeAtIndex<T>(array: T[], index: number): T[] {
  */
 export const assertIsType = <T>(_value: unknown): _value is T => true;
 
-const PROTOTYPE_POLLUTION_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+const PROTOTYPE_POLLUTION_KEYS = new Set([
+  '__proto__',
+  'constructor',
+  'prototype',
+]);
 
 export function safeGet<T = any>(obj: any, key: any): T | undefined {
   if (obj === null || obj === undefined) {
@@ -322,4 +328,3 @@ export function safeSet(obj: any, key: any, value: any): boolean {
   }
   return Reflect.set(obj, key, value);
 }
-

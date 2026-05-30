@@ -258,7 +258,10 @@ async function getSalesInvoices(
       `Creating Sales Invoices, ${d} out of ${dates.length}`,
       safeParseInt(d) / dates.length
     );
-    const customer = Reflect.get(customers, Math.floor(Math.random() * customers.length));
+    const customer = Reflect.get(
+      customers,
+      Math.floor(Math.random() * customers.length)
+    );
 
     const doc = fyo.doc.getNewDoc(
       ModelNameEnum.SalesInvoice,
@@ -277,7 +280,10 @@ async function getSalesInvoices(
      */
     const numItems = Math.ceil(Math.random() * 5);
     for (let i = 0; i < numItems; i++) {
-      const item = Reflect.get(salesItems, Math.floor(Math.random() * salesItems.length));
+      const item = Reflect.get(
+        salesItems,
+        Math.floor(Math.random() * salesItems.length)
+      );
       if ((doc.items ?? []).find((i) => i.item === item.name)) {
         continue;
       }
@@ -376,8 +382,14 @@ async function getSalesPurchaseInvoices(
             continue;
           }
 
-          if (Reflect.get(acc, item.item as string) == null) Reflect.set(acc, item.item as string, 0);
-          Reflect.set(acc, item.item as string, (Reflect.get(acc, item.item as string) as number) + (item.quantity as number));
+          if (Reflect.get(acc, item.item as string) == null)
+            Reflect.set(acc, item.item as string, 0);
+          Reflect.set(
+            acc,
+            item.item as string,
+            (Reflect.get(acc, item.item as string) as number) +
+              (item.quantity as number)
+          );
         }
 
         return acc;
@@ -390,7 +402,8 @@ async function getSalesPurchaseInvoices(
      */
     Object.keys(itemGrouped).forEach((name) => {
       const quantity = Reflect.get(itemGrouped, name);
-      if (Reflect.get(purchaseQty, name) == null) Reflect.set(purchaseQty, name, 0);
+      if (Reflect.get(purchaseQty, name) == null)
+        Reflect.set(purchaseQty, name, 0);
       let prevQty = Reflect.get(purchaseQty, name) as number;
 
       if (prevQty <= quantity) {

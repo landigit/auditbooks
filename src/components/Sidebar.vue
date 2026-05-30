@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="py-2 h-full flex justify-between flex-col bg-sidebar relative"
-  >
+  <div class="py-2 h-full flex justify-between flex-col bg-sidebar relative">
     <div class="window-no-drag">
       <!-- Company name -->
       <div

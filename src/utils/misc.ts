@@ -162,7 +162,10 @@ export function getCreateFiltersFromListViewFilters(filters: QueryFilter) {
   const createFilters: Record<string, string | number | boolean | null> = {};
 
   for (const key in filters) {
-    let value: (typeof filters)[string] | undefined | number = Reflect.get(filters, key);
+    let value: (typeof filters)[string] | undefined | number = Reflect.get(
+      filters,
+      key
+    );
 
     if (Array.isArray(value) && value[0] === 'in' && Array.isArray(value[1])) {
       value = value[1].filter((v) => v !== 'Both')[0];

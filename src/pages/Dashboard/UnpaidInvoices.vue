@@ -169,7 +169,12 @@ const getCounts = async (
     filters: {
       cancelled: false,
       submitted: true,
-      date: ['<=', toDate.format('YYYY-MM-DD'), '>=', fromDate.format('YYYY-MM-DD')],
+      date: [
+        '<=',
+        toDate.format('YYYY-MM-DD'),
+        '>=',
+        fromDate.format('YYYY-MM-DD'),
+      ],
     },
   });
 

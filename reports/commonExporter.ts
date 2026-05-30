@@ -92,8 +92,15 @@ function getJsonData(report: Report): string {
     for (let c = 0; c < row.cells.length; c++) {
       const col = Reflect.get(columns, c);
       const { label } = col;
-      const cell = getValueFromCell(Reflect.get(row.cells, c), displayPrecision);
-      if (label === '__proto__' || label === 'constructor' || label === 'prototype') {
+      const cell = getValueFromCell(
+        Reflect.get(row.cells, c),
+        displayPrecision
+      );
+      if (
+        label === '__proto__' ||
+        label === 'constructor' ||
+        label === 'prototype'
+      ) {
         continue;
       }
       Reflect.set(rowObj, label, cell);
@@ -106,7 +113,11 @@ function getJsonData(report: Report): string {
    * Set filter map
    */
   for (const { fieldname } of report.filters) {
-    if (fieldname === '__proto__' || fieldname === 'constructor' || fieldname === 'prototype') {
+    if (
+      fieldname === '__proto__' ||
+      fieldname === 'constructor' ||
+      fieldname === 'prototype'
+    ) {
       continue;
     }
     const value = report.get(fieldname);
@@ -150,7 +161,10 @@ function convertReportToCSVMatrix(report: Report): unknown[][] {
 
     const csvrow: unknown[] = [];
     for (let c = 0; c < row.cells.length; c++) {
-      const cell = getValueFromCell(Reflect.get(row.cells, c), displayPrecision);
+      const cell = getValueFromCell(
+        Reflect.get(row.cells, c),
+        displayPrecision
+      );
       csvrow.push(cell);
     }
 

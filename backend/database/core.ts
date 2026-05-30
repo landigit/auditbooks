@@ -91,6 +91,14 @@ export default class DatabaseCore extends DatabaseBase {
       schema: { ...schemaExports, ...relationsExports },
     });
     await this.client.execute('PRAGMA foreign_keys=ON');
+    if (this.dbPath !== ':memory:') {
+      try {
+        await this.client.execute('PRAGMA journal_mode=WAL');
+        await this.client.execute('PRAGMA synchronous=NORMAL');
+      } catch (err) {
+        console.error('Failed to configure SQLite optimization pragmas:', err);
+      }
+    }
   }
 
   async close() {
@@ -836,12 +844,16 @@ export default class DatabaseCore extends DatabaseBase {
     tableFields: TargetField[]
   ) {
     for (const field of tableFields) {
-      Reflect.set(fieldValueMap, field.fieldname, await this.getAll(field.target, {
-        fields: ['*'],
-        filters: { parent: parentName },
-        orderBy: 'idx',
-        order: 'asc',
-      }));
+      Reflect.set(
+        fieldValueMap,
+        field.fieldname,
+        await this.getAll(field.target, {
+          fields: ['*'],
+          filters: { parent: parentName },
+          orderBy: 'idx',
+          order: 'asc',
+        })
+      );
     }
   }
 
@@ -910,7 +922,9 @@ export default class DatabaseCore extends DatabaseBase {
       (f) => !f.computed && f.fieldtype !== 'Table'
     );
     for (const field of fields) {
-      const value = Reflect.get(fieldValueMap, field.fieldname) as RawValue | undefined;
+      const value = Reflect.get(fieldValueMap, field.fieldname) as
+        | RawValue
+        | undefined;
       if (value === undefined) {
         continue;
       }

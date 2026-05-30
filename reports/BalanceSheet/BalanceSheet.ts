@@ -34,7 +34,11 @@ export class BalanceSheet extends AccountReport {
     const accountTree = await this._getAccountTree(rangeGroupedMap);
 
     for (const name of Object.keys(accountTree)) {
-      if (name === '__proto__' || name === 'constructor' || name === 'prototype') {
+      if (
+        name === '__proto__' ||
+        name === 'constructor' ||
+        name === 'prototype'
+      ) {
         continue;
       }
       const node = Reflect.get(accountTree, name);

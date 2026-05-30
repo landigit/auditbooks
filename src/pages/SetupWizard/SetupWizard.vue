@@ -46,7 +46,7 @@
           class="w-24 border border-border"
           @click="cancel"
           >{{ t`Cancel` }}</Button
-         >
+        >
         <Button
           v-if="store.isDevelopment && !loading"
           class="w-24 ml-auto mr-4 border border-border"

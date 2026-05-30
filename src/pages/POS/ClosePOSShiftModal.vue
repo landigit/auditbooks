@@ -40,15 +40,22 @@
             @click="emit('toggleModal', 'ShiftClose', false)"
           >
             <slot>
-              <p class="uppercase text-lg text-indicator-red-text font-semibold">
+              <p
+                class="uppercase text-lg text-indicator-red-text font-semibold"
+              >
                 {{ t`Cancel` }}
               </p>
             </slot>
           </Button>
 
-          <Button class="w-full py-5 bg-indicator-green-bg" @click="handleSubmit">
+          <Button
+            class="w-full py-5 bg-indicator-green-bg"
+            @click="handleSubmit"
+          >
             <slot>
-              <p class="uppercase text-lg text-indicator-green-text font-semibold">
+              <p
+                class="uppercase text-lg text-indicator-green-text font-semibold"
+              >
                 {{ t`Submit` }}
               </p>
             </slot>

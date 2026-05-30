@@ -1318,7 +1318,11 @@ export async function getPricingRule(
       if (!Reflect.get(itemQuantity, item.item)) {
         Reflect.set(itemQuantity, item.item, item.quantity ?? 0);
       } else {
-        Reflect.set(itemQuantity, item.item, (Reflect.get(itemQuantity, item.item) ?? 0) + (item.quantity ?? 0));
+        Reflect.set(
+          itemQuantity,
+          item.item,
+          (Reflect.get(itemQuantity, item.item) ?? 0) + (item.quantity ?? 0)
+        );
       }
     }
 
@@ -1615,8 +1619,9 @@ export async function validateCouponCode(
     !(coupon[0].minAmount as Money).isZero()
   ) {
     throw new ValidationError(
-      t`The Grand Total must exceed ${(coupon[0].minAmount as Money).float
-        } to apply the coupon ${value}.`
+      t`The Grand Total must exceed ${
+        (coupon[0].minAmount as Money).float
+      } to apply the coupon ${value}.`
     );
   }
 
@@ -1625,8 +1630,9 @@ export async function validateCouponCode(
     !(coupon[0].maxAmount as Money).isZero()
   ) {
     throw new ValidationError(
-      t`The Grand Total must be less than ${(coupon[0].maxAmount as Money).float
-        } to apply this coupon.`
+      t`The Grand Total must be less than ${
+        (coupon[0].maxAmount as Money).float
+      } to apply this coupon.`
     );
   }
 
@@ -1655,7 +1661,7 @@ export async function validateLoyaltyProgram(
   if (
     (loyaltyProgram[0]?.maximumUse as number) > 0 &&
     (loyaltyProgram[0]?.used as number) >=
-    (loyaltyProgram[0]?.maximumUse as number)
+      (loyaltyProgram[0]?.maximumUse as number)
   ) {
     return;
   }

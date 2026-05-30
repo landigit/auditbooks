@@ -88,7 +88,10 @@ import { useAppStore } from './stores/app';
 
 function setErrorHandlers(app: VueApp) {
   window.onerror = (message, source, lineno, colno, error) => {
-    if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
+    if (
+      typeof message === 'string' &&
+      message.includes('ResizeObserver loop')
+    ) {
       return;
     }
     error = error ?? new Error('triggered in window.onerror');

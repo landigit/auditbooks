@@ -44,7 +44,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
 <style scoped>
 .dialog-overlay {
-  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 120ms ease-out;
 }
 .dialog-overlay[data-state='open'] {
   opacity: 1;
@@ -52,11 +52,10 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 }
 .dialog-overlay[data-state='closed'] {
   opacity: 0;
-  backdrop-filter: blur(0px);
 }
 
 .dialog-content {
-  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), opacity 120ms ease-out;
 }
 .dialog-content[data-state='open'] {
   opacity: 1;
@@ -64,6 +63,6 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 }
 .dialog-content[data-state='closed'] {
   opacity: 0;
-  transform: translate(-50%, calc(-50% + 16px)) scale(0.95);
+  transform: translate(-50%, calc(-50% + 8px)) scale(0.98);
 }
 </style>

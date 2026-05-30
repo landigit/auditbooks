@@ -9,6 +9,22 @@ const client = createClient({
   url: 'file:drizzle/db/demo.db',
 });
 
+// Configure pragmas for performance optimization (skip during testing to prevent SQLITE_BUSY concurrent lock errors)
+if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
+  (async () => {
+    try {
+      await client.execute('PRAGMA foreign_keys=ON');
+      await client.execute('PRAGMA journal_mode=WAL');
+      await client.execute('PRAGMA synchronous=NORMAL');
+    } catch (err) {
+      console.error(
+        'Failed to configure SQLite client optimization pragmas:',
+        err
+      );
+    }
+  })();
+}
+
 // Create the Drizzle database instance with pre-registered schemas and relationships.
 export const db = drizzle(client, {
   schema: { ...schema, ...relations },

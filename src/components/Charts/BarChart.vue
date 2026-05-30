@@ -263,10 +263,11 @@ const xy = computed<[number, number[]][]>(() =>
 const min = computed(() => Math.min(...props.points.flat(), 0));
 const max = computed(() => Math.max(...props.points.flat(), 0));
 
-const axis = computed(() =>
-  `M ${props.axisPadding + props.left} ${props.axisPadding} V ${
-    props.viewBoxHeight - props.axisPadding - props.bottom
-  } H ${viewBoxWidth.value - props.axisPadding}`
+const axis = computed(
+  () =>
+    `M ${props.axisPadding + props.left} ${props.axisPadding} V ${
+      props.viewBoxHeight - props.axisPadding - props.bottom
+    } H ${viewBoxWidth.value - props.axisPadding}`
 );
 
 const padding = computed(() => props.axisPadding + props.pointsPadding);
@@ -305,9 +306,7 @@ interface RectInfo {
 }
 
 const rects = computed<RectInfo[][]>(() =>
-  xy.value.map(([x, yValues], i) =>
-    yValues.map((y, j) => getRect(x, y, i, j))
-  )
+  xy.value.map(([x, yValues], i) => yValues.map((y, j) => getRect(x, y, i, j)))
 );
 
 const positiveRects = computed(() =>
@@ -376,7 +375,9 @@ function yScalerLocation(i: number): number {
 function yScalerValue(i: number): string {
   const minVal = hMin.value;
   const maxVal = hMax.value;
-  return props.formatY((i * (maxVal - minVal)) / props.yLabelDivisions + minVal);
+  return props.formatY(
+    (i * (maxVal - minVal)) / props.yLabelDivisions + minVal
+  );
 }
 
 function getRandomColor(): string {

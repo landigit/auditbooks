@@ -115,15 +115,17 @@ export class Converter {
 
       if (Array.isArray(rawValue)) {
         const parentSchemaName = (field as TargetField).target;
-        Reflect.set(docValueMap, fieldname, rawValue.map((rv) =>
-          this.#toDocValueMap(parentSchemaName, rv)
-        ));
+        Reflect.set(
+          docValueMap,
+          fieldname,
+          rawValue.map((rv) => this.#toDocValueMap(parentSchemaName, rv))
+        );
       } else {
-        Reflect.set(docValueMap, fieldname, Converter.toDocValue(
-          rawValue,
-          field,
-          this.fyo
-        ));
+        Reflect.set(
+          docValueMap,
+          fieldname,
+          Converter.toDocValue(rawValue, field, this.fyo)
+        );
       }
     }
 
@@ -141,19 +143,26 @@ export class Converter {
       if (Array.isArray(docValue)) {
         const parentSchemaName = (field as TargetField).target;
 
-        Reflect.set(rawValueMap, fieldname, docValue.map((value) => {
-          if (value instanceof Doc) {
-            return this.#toRawValueMap(parentSchemaName, value.getValidDict());
-          }
+        Reflect.set(
+          rawValueMap,
+          fieldname,
+          docValue.map((value) => {
+            if (value instanceof Doc) {
+              return this.#toRawValueMap(
+                parentSchemaName,
+                value.getValidDict()
+              );
+            }
 
-          return this.#toRawValueMap(parentSchemaName, value);
-        }));
+            return this.#toRawValueMap(parentSchemaName, value);
+          })
+        );
       } else {
-        Reflect.set(rawValueMap, fieldname, Converter.toRawValue(
-          docValue,
-          field,
-          this.fyo
-        ));
+        Reflect.set(
+          rawValueMap,
+          fieldname,
+          Converter.toRawValue(docValue, field, this.fyo)
+        );
       }
     }
 

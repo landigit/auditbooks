@@ -138,7 +138,10 @@ async function replaceDatabaseCore(
   const normalizedOldDbPath = path.normalize(path.resolve(oldDbPath));
   const baseDir = path.dirname(normalizedOldDbPath);
 
-  if (!normalizedNewDbPath.startsWith(baseDir) || !normalizedOldDbPath.startsWith(baseDir)) {
+  if (
+    !normalizedNewDbPath.startsWith(baseDir) ||
+    !normalizedOldDbPath.startsWith(baseDir)
+  ) {
     throw new Error('Path traversal detected: invalid database path');
   }
 
@@ -163,8 +166,16 @@ async function copyData(
   const schemaMap = destDm.getSchemaMap();
   await destClient.execute('PRAGMA foreign_keys=OFF');
   await copySingleValues(sourceClient, destClient, schemaMap);
-  await copyParty(sourceClient, destClient, Reflect.get(schemaMap, ModelNameEnum.Party)!);
-  await copyItem(sourceClient, destClient, Reflect.get(schemaMap, ModelNameEnum.Item)!);
+  await copyParty(
+    sourceClient,
+    destClient,
+    Reflect.get(schemaMap, ModelNameEnum.Party)!
+  );
+  await copyItem(
+    sourceClient,
+    destClient,
+    Reflect.get(schemaMap, ModelNameEnum.Item)!
+  );
   await copyChildTables(sourceClient, destClient, schemaMap);
   await copyOtherTables(sourceClient, destClient, schemaMap);
   await copyTransactionalTables(sourceClient, destClient, schemaMap);
@@ -261,7 +272,14 @@ async function copyOtherTables(
 
   for (const sn of schemaNames) {
     const values = await selectAll(sourceClient, sn);
-    await copyValues(destClient, sn, values, [], {}, Reflect.get(schemaMap, sn));
+    await copyValues(
+      destClient,
+      sn,
+      values,
+      [],
+      {},
+      Reflect.get(schemaMap, sn)
+    );
   }
 }
 
@@ -452,7 +470,10 @@ async function getCountryCode(client: Client) {
 
 function notNullify(map: any, schema: Schema) {
   for (const field of schema.fields) {
-    if (!field.required || !getIsNullOrUndef(Reflect.get(map, field.fieldname))) {
+    if (
+      !field.required ||
+      !getIsNullOrUndef(Reflect.get(map, field.fieldname))
+    ) {
       continue;
     }
 

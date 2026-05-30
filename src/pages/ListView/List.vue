@@ -9,10 +9,11 @@
         class="flex flex-col min-h-full"
       >
         <!-- Title Row -->
-        <div
-          class="flex items-center sticky top-0 bg-canvas z-10"
-        >
-          <div v-if="!isSelectionMode" class="w-8 text-end me-2 text-description">
+        <div class="flex items-center sticky top-0 bg-canvas z-10">
+          <div
+            v-if="!isSelectionMode"
+            class="w-8 text-end me-2 text-description"
+          >
             #
           </div>
           <div v-else class="w-8 flex justify-end me-2">
@@ -75,7 +76,9 @@
                 gap="1rem"
                 class="cursor-pointer text-main flex-1 h-row-mid"
                 :column-count="columns.length"
-                @click="isSelectionMode ? null : emit('openDoc', String(row.name))"
+                @click="
+                  isSelectionMode ? null : emit('openDoc', String(row.name))
+                "
               >
                 <ListCell
                   v-for="(column, c) in columns"

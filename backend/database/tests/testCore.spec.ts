@@ -76,9 +76,13 @@ describe('DatabaseCore Tests', () => {
         const dbColType = Reflect.get(sqliteTypeMap, field.fieldtype);
 
         expect(column.name).toBe(field.fieldname);
-        
+
         const expectedTypes: string[] = [dbColType];
-        if (dbColType === 'datetime' || dbColType === 'date' || dbColType === 'time') {
+        if (
+          dbColType === 'datetime' ||
+          dbColType === 'date' ||
+          dbColType === 'time'
+        ) {
           expectedTypes.push('numeric', 'text');
         }
         if (dbColType === 'boolean') {
@@ -213,7 +217,9 @@ describe('DatabaseCore Tests', () => {
     expect(firstRow.email).toBe(null);
 
     for (const key in metaValues) {
-      expect(Reflect.get(firstRow, key)).toBe(Reflect.get(metaValues, key as BaseMetaKey));
+      expect(Reflect.get(firstRow, key)).toBe(
+        Reflect.get(metaValues, key as BaseMetaKey)
+      );
     }
 
     const email = 'john@thoe.com';
@@ -266,7 +272,9 @@ describe('DatabaseCore Tests', () => {
     await db.insert(schemaName, cTwo);
     rows = await db.getAll(schemaName, { fields: ['*'] });
     const cs = [cOne, cTwo].sort((a, b) => a.name.localeCompare(b.name));
-    const sortedRows = [...rows].sort((a, b) => (a.name as string).localeCompare(b.name as string));
+    const sortedRows = [...rows].sort((a, b) =>
+      (a.name as string).localeCompare(b.name as string)
+    );
     expect(rows.length).toBe(2);
 
     for (const i in cs) {
@@ -400,7 +408,9 @@ describe('DatabaseCore Tests', () => {
 
     for (const i in rows) {
       for (const key in Reflect.get(rows, i)) {
-        expect(Reflect.get(Reflect.get(rows, i), key)).toBe(Reflect.get(Reflect.get(items, i), key));
+        expect(Reflect.get(Reflect.get(rows, i), key)).toBe(
+          Reflect.get(Reflect.get(items, i), key)
+        );
       }
     }
 

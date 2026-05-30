@@ -67,26 +67,27 @@ onUnmounted(() => {
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 120ms ease-out;
 }
 
 .inner {
-  transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), opacity 120ms ease-out;
 }
 
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
-  backdrop-filter: blur(0px);
 }
 
 .v-enter-from .inner,
 .v-leave-to .inner {
-  transform: translateY(16px) scale(0.95);
+  transform: translateY(8px) scale(0.98);
+  opacity: 0;
 }
 
 .v-enter-to .inner,
 .v-leave-from .inner {
   transform: translateY(0px) scale(1);
+  opacity: 1;
 }
 </style>

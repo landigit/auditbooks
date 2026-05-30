@@ -128,7 +128,10 @@ const updateAspectRatio = () => {
 const setData = async () => {
   const { periodList, fromDate, toDate } = getDatesAndPeriodList(period.value);
 
-  const res = await fyo.db.getCashflow(fromDate.format('YYYY-MM-DD'), toDate.format('YYYY-MM-DD'));
+  const res = await fyo.db.getCashflow(
+    fromDate.format('YYYY-MM-DD'),
+    toDate.format('YYYY-MM-DD')
+  );
   const dataMap = getMapFromList(res, 'yearmonth');
   data.value = periodList.map((p) => {
     const key = p.format('YYYY-MM');

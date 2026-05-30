@@ -345,7 +345,10 @@ async function createDefaultNumberSeries(fyo: Fyo) {
     );
 
     const defaultKey = Reflect.get(numberSeriesDefaultsMap, schemaName);
-    if (!defaultKey || (fyo.singles.Defaults && Reflect.get(fyo.singles.Defaults, defaultKey))) {
+    if (
+      !defaultKey ||
+      (fyo.singles.Defaults && Reflect.get(fyo.singles.Defaults, defaultKey))
+    ) {
       continue;
     }
 
@@ -417,4 +420,3 @@ async function createDefaultPaymentMethods(bankName: string, fyo: Fyo) {
     await checkAndCreateDoc(ModelNameEnum.PaymentMethod, pm, fyo);
   }
 }
-

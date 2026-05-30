@@ -61,7 +61,11 @@ export abstract class BaseGSTR extends Report {
       const reportRow: ReportRow = { cells: [] };
 
       for (const { fieldname, fieldtype, width } of this.columns) {
-        if (fieldname === '__proto__' || fieldname === 'constructor' || fieldname === 'prototype') {
+        if (
+          fieldname === '__proto__' ||
+          fieldname === 'constructor' ||
+          fieldname === 'prototype'
+        ) {
           continue;
         }
         const align = isNumeric(fieldtype) ? 'right' : 'left';
@@ -90,7 +94,11 @@ export abstract class BaseGSTR extends Report {
     return gstrRows.filter((row) => {
       let allow = true;
       if (this.place) {
-        if (this.place === '__proto__' || this.place === 'constructor' || this.place === 'prototype') {
+        if (
+          this.place === '__proto__' ||
+          this.place === 'constructor' ||
+          this.place === 'prototype'
+        ) {
           allow = false;
         } else {
           allow &&= Reflect.get(codeStateMap, this.place) === row.place;
@@ -174,7 +182,11 @@ export abstract class BaseGSTR extends Report {
     let inState = false;
     if (gstin) {
       const code = gstin.slice(0, 2);
-      if (code !== '__proto__' && code !== 'constructor' && code !== 'prototype') {
+      if (
+        code !== '__proto__' &&
+        code !== 'constructor' &&
+        code !== 'prototype'
+      ) {
         inState = codeStateMap[code] === place;
       }
     }
@@ -241,15 +253,17 @@ export abstract class BaseGSTR extends Report {
 
   getFilters(): Field[] {
     const transferTypeMap = this.transferTypeMap;
-    const options = Object.keys(transferTypeMap).map((k) => {
-      if (k === '__proto__' || k === 'constructor' || k === 'prototype') {
-        return { value: k, label: '' };
-      }
-      return {
-        value: k,
-        label: Reflect.get(transferTypeMap, k),
-      };
-    }).filter(opt => opt.label !== '');
+    const options = Object.keys(transferTypeMap)
+      .map((k) => {
+        if (k === '__proto__' || k === 'constructor' || k === 'prototype') {
+          return { value: k, label: '' };
+        }
+        return {
+          value: k,
+          label: Reflect.get(transferTypeMap, k),
+        };
+      })
+      .filter((opt) => opt.label !== '');
 
     return [
       {
@@ -264,15 +278,21 @@ export abstract class BaseGSTR extends Report {
         label: t`Place`,
         placeholder: t`Place`,
         fieldname: 'place',
-        options: Object.keys(codeStateMap).map((code) => {
-          if (code === '__proto__' || code === 'constructor' || code === 'prototype') {
-            return { value: code, label: '' };
-          }
-          return {
-            value: code,
-            label: Reflect.get(codeStateMap, code),
-          };
-        }).filter(opt => opt.label !== ''),
+        options: Object.keys(codeStateMap)
+          .map((code) => {
+            if (
+              code === '__proto__' ||
+              code === 'constructor' ||
+              code === 'prototype'
+            ) {
+              return { value: code, label: '' };
+            }
+            return {
+              value: code,
+              label: Reflect.get(codeStateMap, code),
+            };
+          })
+          .filter((opt) => opt.label !== ''),
       },
       {
         fieldtype: 'Date',

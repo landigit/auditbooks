@@ -38,7 +38,9 @@
         @mouseover="
           emit(
             'change',
-            thetasAndStarts.length === 1 && thetasAndStarts[0] ? thetasAndStarts[0][0] : null
+            thetasAndStarts.length === 1 && thetasAndStarts[0]
+              ? thetasAndStarts[0][0]
+              : null
           )
         "
       />

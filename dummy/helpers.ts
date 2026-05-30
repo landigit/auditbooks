@@ -64,4 +64,3 @@ export function getRandomDates(count: number, months: number): Date[] {
 
   return dates;
 }
-

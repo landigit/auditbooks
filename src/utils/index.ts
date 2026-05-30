@@ -45,36 +45,34 @@ export function stringifyCircular(
 }
 
 export function fuzzyMatch(input: string, target: string) {
-  const keywordLetters = [...input];
-  const candidateLetters = [...target];
+  const inputLen = input.length;
+  const targetLen = target.length;
 
-  let keywordLetter = keywordLetters.shift();
-  let candidateLetter = candidateLetters.shift();
-
-  let isMatch = true;
+  let i = 0;
+  let j = 0;
   let distance = 0;
 
-  while (keywordLetter && candidateLetter) {
-    if (keywordLetter === candidateLetter) {
-      keywordLetter = keywordLetters.shift();
-    } else if (keywordLetter.toLowerCase() === candidateLetter.toLowerCase()) {
-      keywordLetter = keywordLetters.shift();
+  while (i < inputLen && j < targetLen) {
+    const inputChar = input[i];
+    const targetChar = target[j];
+
+    if (inputChar === targetChar) {
+      i++;
+    } else if (inputChar.toLowerCase() === targetChar.toLowerCase()) {
+      i++;
       distance += 0.5;
     } else {
       distance += 1;
     }
-
-    candidateLetter = candidateLetters.shift();
+    j++;
   }
 
-  if (keywordLetter !== undefined) {
-    distance = Number.MAX_SAFE_INTEGER;
-    isMatch = false;
-  } else {
-    distance += candidateLetters.length;
+  if (i < inputLen) {
+    return { isMatch: false, distance: Number.MAX_SAFE_INTEGER };
   }
 
-  return { isMatch, distance };
+  distance += targetLen - j;
+  return { isMatch: true, distance };
 }
 
 export function convertPesaValuesToFloat(obj: Record<string, unknown>) {

@@ -657,6 +657,8 @@ export class Search {
       this._setIntermediate([]);
     }
 
+    const inputParts = input ? input.split(' ').filter(Boolean) : [];
+
     /**
      * Create the suggestion list.
      */
@@ -683,9 +685,9 @@ export class Search {
 
     for (const key of keys) {
       const keywords = groupedKeywords[key] ?? [];
-      this._pushDocSearchItems(keywords, array, input);
+      this._pushDocSearchItems(keywords, array, inputParts);
       if (key === '0') {
-        this._pushNonDocSearchItems(array, input);
+        this._pushNonDocSearchItems(array, inputParts);
       }
     }
 
@@ -693,8 +695,12 @@ export class Search {
     return array;
   }
 
-  _pushDocSearchItems(keywords: Keyword[], array: SearchItems, input?: string) {
-    if (!input) {
+  _pushDocSearchItems(
+    keywords: Keyword[],
+    array: SearchItems,
+    inputParts: string[]
+  ) {
+    if (inputParts.length === 0) {
       return;
     }
 
@@ -702,26 +708,26 @@ export class Search {
       return;
     }
 
-    const subArray = this._getSubSortedArray(keywords, input);
+    const subArray = this._getSubSortedArray(keywords, inputParts);
     array.push(...subArray);
   }
 
-  _pushNonDocSearchItems(array: SearchItems, input?: string) {
+  _pushNonDocSearchItems(array: SearchItems, inputParts: string[]) {
     const filtered = this._nonDocSearchList.filter(
       (si) => this.filters.groupFilters[si.group]
     );
-    const subArray = this._getSubSortedArray(filtered, input);
+    const subArray = this._getSubSortedArray(filtered, inputParts);
     array.push(...subArray);
   }
 
   _getSubSortedArray(
     items: (SearchItem | Keyword)[],
-    input?: string
+    inputParts: string[]
   ): SearchItems {
     const subArray: { item: SearchItems[number]; distance: number }[] = [];
 
     for (const item of items) {
-      const subArrayItem = this._getSubArrayItem(item, input);
+      const subArrayItem = this._getSubArrayItem(item, inputParts);
       if (!subArrayItem) {
         continue;
       }
@@ -735,26 +741,29 @@ export class Search {
 
   _getSubArrayItem(
     item: SearchItem | Keyword,
-    input?: string
+    inputParts: string[]
   ): { item: SearchItems[number]; distance: number } | null {
     if (isSearchItem(item)) {
-      return this._getSubArrayItemFromSearchItem(item, input);
+      return this._getSubArrayItemFromSearchItem(item, inputParts);
     }
 
-    if (!input) {
+    if (inputParts.length === 0) {
       return null;
     }
 
-    return this._getSubArrayItemFromKeyword(item, input);
+    return this._getSubArrayItemFromKeyword(item, inputParts);
   }
 
-  _getSubArrayItemFromSearchItem(item: SearchItem, input?: string) {
-    if (!input) {
+  _getSubArrayItemFromSearchItem(item: SearchItem, inputParts: string[]) {
+    if (inputParts.length === 0) {
       return { item, distance: 0 };
     }
 
     const values = this._getValueListFromSearchItem(item).filter(Boolean);
-    const { isMatch, distance } = this._getMatchAndDistance(input, values);
+    const { isMatch, distance } = this._getMatchAndDistanceParts(
+      inputParts,
+      values
+    );
 
     if (!isMatch) {
       return null;
@@ -767,9 +776,12 @@ export class Search {
     return [label, group];
   }
 
-  _getSubArrayItemFromKeyword(item: Keyword, input: string) {
+  _getSubArrayItemFromKeyword(item: Keyword, inputParts: string[]) {
     const values = this._getValueListFromKeyword(item).filter(Boolean);
-    const { isMatch, distance } = this._getMatchAndDistance(input, values);
+    const { isMatch, distance } = this._getMatchAndDistanceParts(
+      inputParts,
+      values
+    );
 
     if (!isMatch) {
       return null;
@@ -787,12 +799,19 @@ export class Search {
   }
 
   _getMatchAndDistance(input: string, values: string[]) {
+    return this._getMatchAndDistanceParts(
+      input.split(' ').filter(Boolean),
+      values
+    );
+  }
+
+  _getMatchAndDistanceParts(inputParts: string[], values: string[]) {
     /**
      * All the parts should match with something.
      */
 
     let distance = Number.MAX_SAFE_INTEGER;
-    for (const part of input.split(' ').filter(Boolean)) {
+    for (const part of inputParts) {
       const match = this._getInternalMatch(part, values);
       if (!match.isMatch) {
         return { isMatch: false, distance: Number.MAX_SAFE_INTEGER };

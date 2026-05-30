@@ -88,9 +88,7 @@ export async function unlinkIfExists(filePath: unknown) {
         if (i === 11) {
           throw err;
         }
-        await new Promise((resolve) =>
-          setTimeout(resolve, 100 + i * 100)
-        );
+        await new Promise((resolve) => setTimeout(resolve, 100 + i * 100));
       }
     }
   }

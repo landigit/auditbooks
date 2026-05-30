@@ -200,8 +200,10 @@ export class DatabaseManager extends DatabaseDemuxBase {
       throw new DatabaseError(`invalid bespoke db function ${method}`);
     }
 
-    const queryFunction: BespokeFunction =
-      Reflect.get(BespokeQueries, method as keyof BespokeFunction);
+    const queryFunction: BespokeFunction = Reflect.get(
+      BespokeQueries,
+      method as keyof BespokeFunction
+    );
     return await queryFunction(this.db!, ...args);
   }
 

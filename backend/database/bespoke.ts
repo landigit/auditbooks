@@ -334,9 +334,9 @@ export class BespokeQueries {
     const docItemsMap: Record<string, ReturnDocItem> = {};
     const batchesMap:
       | Record<
-        string,
-        { quantity: number; serialNumbers?: string[] | undefined }
-      >
+          string,
+          { quantity: number; serialNumbers?: string[] | undefined }
+        >
       | undefined = {};
 
     for (const item of docItems) {
@@ -410,9 +410,9 @@ export class BespokeQueries {
     const returnBalanceItems: Record<string, ReturnDocItem> | undefined = {};
     const balanceBatchQtyMap:
       | Record<
-        string,
-        { quantity: number; serialNumbers: string[] | undefined }
-      >
+          string,
+          { quantity: number; serialNumbers: string[] | undefined }
+        >
       | undefined = {};
 
     for (const row in docItemsMap) {
@@ -446,8 +446,14 @@ export class BespokeQueries {
 
       if (docItemHasBatch && docItem.batches) {
         for (const batch in docItem.batches) {
-          const docItemSerialNumbers = Reflect.get(docItem.batches, batch).serialNumbers;
-          const itemSerialNumbers = Reflect.get(docItem.batches, batch).serialNumbers;
+          const docItemSerialNumbers = Reflect.get(
+            docItem.batches,
+            batch
+          ).serialNumbers;
+          const itemSerialNumbers = Reflect.get(
+            docItem.batches,
+            batch
+          ).serialNumbers;
           let balanceSerialNumbers: string[] | undefined;
 
           if (docItemSerialNumbers && itemSerialNumbers) {
@@ -457,7 +463,9 @@ export class BespokeQueries {
             );
           }
 
-          const ItemQty = Math.abs(Reflect.get(docItem.batches, batch).quantity);
+          const ItemQty = Math.abs(
+            Reflect.get(docItem.batches, batch).quantity
+          );
           let balanceQty = safeParseFloat(-ItemQty);
 
           if (!returnedDocItem || !returnedDocItem?.batches) {
@@ -523,9 +531,9 @@ export class BespokeQueries {
       })
       .from(salesInvoice)
       .where(and(...conditions))) as {
-        name: string;
-        returnAgainst: string | null;
-      }[];
+      name: string;
+      returnAgainst: string | null;
+    }[];
 
     if (!invoices.length) {
       return;
@@ -579,8 +587,12 @@ export class BespokeQueries {
         const sign = Reflect.get(invoiceSignMap, ref.referenceName) ?? 1;
         const signedAmount = Number(row.amount) * sign;
 
-        Reflect.set(transactedAmounts, row.paymentMethod,
-          (Reflect.get(transactedAmounts, row.paymentMethod) ?? 0) + signedAmount);
+        Reflect.set(
+          transactedAmounts,
+          row.paymentMethod,
+          (Reflect.get(transactedAmounts, row.paymentMethod) ?? 0) +
+            signedAmount
+        );
       }
     }
 

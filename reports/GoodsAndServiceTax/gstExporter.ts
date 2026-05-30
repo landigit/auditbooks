@@ -313,7 +313,11 @@ async function generateB2clData(
       : ModelNameEnum.PurchaseInvoice;
 
   for (const row of report.gstrRows ?? []) {
-    if (row.place === '__proto__' || row.place === 'constructor' || row.place === 'prototype') {
+    if (
+      row.place === '__proto__' ||
+      row.place === 'constructor' ||
+      row.place === 'prototype'
+    ) {
       continue;
     }
     const invRecord: B2CLInvRecord = {
@@ -381,7 +385,11 @@ function generateB2csData(report: BaseGSTR): B2CSInvRecord[] {
   const b2cs: B2CSInvRecord[] = [];
 
   for (const row of report.gstrRows ?? []) {
-    if (row.place === '__proto__' || row.place === 'constructor' || row.place === 'prototype') {
+    if (
+      row.place === '__proto__' ||
+      row.place === 'constructor' ||
+      row.place === 'prototype'
+    ) {
       continue;
     }
     const invRecord: B2CSInvRecord = {

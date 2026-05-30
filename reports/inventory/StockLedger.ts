@@ -204,7 +204,11 @@ export class StockLedger extends Report {
 
     for (const col of columns) {
       const fieldnameStr = col.fieldname;
-      if (fieldnameStr === '__proto__' || fieldnameStr === 'constructor' || fieldnameStr === 'prototype') {
+      if (
+        fieldnameStr === '__proto__' ||
+        fieldnameStr === 'constructor' ||
+        fieldnameStr === 'prototype'
+      ) {
         continue;
       }
 

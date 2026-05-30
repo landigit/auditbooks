@@ -200,17 +200,29 @@ export const uom = sqliteTable('UOM', {
   modified: numeric().notNull(),
 });
 
-export const uomConversionItem = sqliteTable('UOMConversionItem', {
-  name: text().primaryKey().notNull(),
-  uom: text()
-    .notNull()
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  conversionFactor: real().default(1).notNull(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const uomConversionItem = sqliteTable(
+  'UOMConversionItem',
+  {
+    name: text().primaryKey().notNull(),
+    uom: text()
+      .notNull()
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    conversionFactor: real().default(1).notNull(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('UOMConversionItem_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
 export const loyaltyProgram = sqliteTable('LoyaltyProgram', {
   name: text().primaryKey().notNull(),
@@ -259,16 +271,25 @@ export const loyaltyPointEntry = sqliteTable('LoyaltyPointEntry', {
   modified: numeric().notNull(),
 });
 
-export const collectionRulesItems = sqliteTable('CollectionRulesItems', {
-  name: text().primaryKey().notNull(),
-  tierName: text(),
-  collectionFactor: real(),
-  minimumTotalSpent: text(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const collectionRulesItems = sqliteTable(
+  'CollectionRulesItems',
+  {
+    name: text().primaryKey().notNull(),
+    tierName: text(),
+    collectionFactor: real(),
+    minimumTotalSpent: text(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('CollectionRulesItems_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
 export const payment = sqliteTable('Payment', {
   name: text().primaryKey().notNull(),
@@ -334,16 +355,22 @@ export const paymentMethod = sqliteTable('PaymentMethod', {
   modified: numeric().notNull(),
 });
 
-export const paymentFor = sqliteTable('PaymentFor', {
-  name: text().primaryKey().notNull(),
-  referenceType: text().notNull(),
-  referenceName: text().notNull(),
-  amount: text().notNull(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const paymentFor = sqliteTable(
+  'PaymentFor',
+  {
+    name: text().primaryKey().notNull(),
+    referenceType: text().notNull(),
+    referenceName: text().notNull(),
+    amount: text().notNull(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('PaymentFor_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const journalEntry = sqliteTable('JournalEntry', {
   name: text().primaryKey().notNull(),
@@ -368,21 +395,30 @@ export const journalEntry = sqliteTable('JournalEntry', {
   cancelled: numeric().notNull(),
 });
 
-export const journalEntryAccount = sqliteTable('JournalEntryAccount', {
-  name: text().primaryKey().notNull(),
-  account: text()
-    .notNull()
-    .references(() => account.name, {
-      onDelete: 'restrict',
-      onUpdate: 'cascade',
-    }),
-  debit: text(),
-  credit: text(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const journalEntryAccount = sqliteTable(
+  'JournalEntryAccount',
+  {
+    name: text().primaryKey().notNull(),
+    account: text()
+      .notNull()
+      .references(() => account.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    debit: text(),
+    credit: text(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('JournalEntryAccount_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
 export const itemEnquiry = sqliteTable('ItemEnquiry', {
   name: text().primaryKey().notNull(),
@@ -419,17 +455,26 @@ export const couponCode = sqliteTable('CouponCode', {
   modified: numeric().notNull(),
 });
 
-export const appliedCouponCodes = sqliteTable('AppliedCouponCodes', {
-  name: text().primaryKey().notNull(),
-  coupons: text().references(() => couponCode.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const appliedCouponCodes = sqliteTable(
+  'AppliedCouponCodes',
+  {
+    name: text().primaryKey().notNull(),
+    coupons: text().references(() => couponCode.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('AppliedCouponCodes_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
 export const priceList = sqliteTable('PriceList', {
   name: text().primaryKey().notNull(),
@@ -442,21 +487,30 @@ export const priceList = sqliteTable('PriceList', {
   modified: numeric().notNull(),
 });
 
-export const priceListItem = sqliteTable('PriceListItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  unit: text().references(() => uom.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  rate: text().notNull(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const priceListItem = sqliteTable(
+  'PriceListItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    unit: text().references(() => uom.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    rate: text().notNull(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('PriceListItem_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const pricingRule = sqliteTable('PricingRule', {
   name: text().primaryKey().notNull(),
@@ -501,36 +555,57 @@ export const pricingRule = sqliteTable('PricingRule', {
   modified: numeric().notNull(),
 });
 
-export const pricingRuleItem = sqliteTable('PricingRuleItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  unit: text().references(() => uom.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const pricingRuleItem = sqliteTable(
+  'PricingRuleItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    unit: text().references(() => uom.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('PricingRuleItem_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
-export const pricingRuleDetail = sqliteTable('PricingRuleDetail', {
-  name: text().primaryKey().notNull(),
-  referenceName: text().references(() => pricingRule.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  referenceItem: text().references(() => item.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const pricingRuleDetail = sqliteTable(
+  'PricingRuleDetail',
+  {
+    name: text().primaryKey().notNull(),
+    referenceName: text().references(() => pricingRule.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    referenceItem: text().references(() => item.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('PricingRuleDetail_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
 export const tax = sqliteTable('Tax', {
   name: text().primaryKey().notNull(),
@@ -540,44 +615,56 @@ export const tax = sqliteTable('Tax', {
   modified: numeric().notNull(),
 });
 
-export const taxDetail = sqliteTable('TaxDetail', {
-  name: text().primaryKey().notNull(),
-  account: text()
-    .notNull()
-    .references(() => account.name, {
+export const taxDetail = sqliteTable(
+  'TaxDetail',
+  {
+    name: text().primaryKey().notNull(),
+    account: text()
+      .notNull()
+      .references(() => account.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    paymentAccount: text('payment_account').references(() => account.name, {
       onDelete: 'restrict',
       onUpdate: 'cascade',
     }),
-  paymentAccount: text('payment_account').references(() => account.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  rate: real().notNull(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+    rate: real().notNull(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('TaxDetail_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
-export const taxSummary = sqliteTable('TaxSummary', {
-  name: text().primaryKey().notNull(),
-  account: text()
-    .notNull()
-    .references(() => account.name, {
+export const taxSummary = sqliteTable(
+  'TaxSummary',
+  {
+    name: text().primaryKey().notNull(),
+    account: text()
+      .notNull()
+      .references(() => account.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    fromAccount: text('from_account').references(() => account.name, {
       onDelete: 'restrict',
       onUpdate: 'cascade',
     }),
-  fromAccount: text('from_account').references(() => account.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  rate: real().notNull(),
-  amount: text().notNull(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+    rate: real().notNull(),
+    amount: text().notNull(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('TaxSummary_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const location = sqliteTable('Location', {
   name: text().primaryKey().notNull(),
@@ -640,40 +727,58 @@ export const stockMovement = sqliteTable('StockMovement', {
   cancelled: numeric().notNull(),
 });
 
-export const stockMovementItem = sqliteTable('StockMovementItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  fromLocation: text().references(() => location.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  toLocation: text().references(() => location.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  transferUnit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  transferQuantity: real().default(1).notNull(),
-  unit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  batch: text().references(() => batch.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  serialNumber: text(),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  rate: text().notNull(),
-  amount: text(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const stockMovementItem = sqliteTable(
+  'StockMovementItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    fromLocation: text().references(() => location.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    toLocation: text().references(() => location.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    transferUnit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferQuantity: real().default(1).notNull(),
+    unit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    batch: text().references(() => batch.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    serialNumber: text(),
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    rate: text().notNull(),
+    amount: text(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('StockMovementItem_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
 export const batch = sqliteTable('Batch', {
   name: text().primaryKey().notNull(),
@@ -710,23 +815,29 @@ export const customForm = sqliteTable('CustomForm', {
   modified: numeric().notNull(),
 });
 
-export const customField = sqliteTable('CustomField', {
-  name: text().primaryKey().notNull(),
-  label: text().notNull(),
-  fieldname: text().notNull(),
-  fieldtype: text().default('Data').notNull(),
-  isRequired: numeric().default('0'),
-  default: text(),
-  section: text().default('Default'),
-  tab: text().default('Custom'),
-  options: text(),
-  target: text(),
-  references: text(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const customField = sqliteTable(
+  'CustomField',
+  {
+    name: text().primaryKey().notNull(),
+    label: text().notNull(),
+    fieldname: text().notNull(),
+    fieldtype: text().default('Data').notNull(),
+    isRequired: numeric().default('0'),
+    default: text(),
+    section: text().default('Default'),
+    tab: text().default('Custom'),
+    options: text(),
+    target: text(),
+    references: text(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('CustomField_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const posProfile = sqliteTable('POSProfile', {
   name: text().primaryKey(),
@@ -1019,136 +1130,187 @@ export const salesQuote = sqliteTable('SalesQuote', {
   cancelled: numeric().notNull(),
 });
 
-export const salesInvoiceItem = sqliteTable('SalesInvoiceItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  itemCode: text(),
-  description: text(),
-  rate: text().notNull(),
-  transferUnit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  transferQuantity: real().default(1).notNull(),
-  unit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  batch: text().references(() => batch.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  account: text()
-    .notNull()
-    .references(() => account.name, {
+export const salesInvoiceItem = sqliteTable(
+  'SalesInvoiceItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    itemCode: text(),
+    description: text(),
+    rate: text().notNull(),
+    transferUnit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferQuantity: real().default(1).notNull(),
+    unit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    batch: text().references(() => batch.name, {
       onDelete: 'restrict',
       onUpdate: 'cascade',
     }),
-  tax: text().references(() => tax.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  amount: text(),
-  setItemDiscountAmount: numeric().default('0'),
-  itemDiscountAmount: text(),
-  itemDiscountPercent: real(),
-  hsnCode: integer(),
-  stockNotTransferred: real(),
-  isFreeItem: numeric().default('0'),
-  pricingRule: text(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    account: text()
+      .notNull()
+      .references(() => account.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    tax: text().references(() => tax.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    amount: text(),
+    setItemDiscountAmount: numeric().default('0'),
+    itemDiscountAmount: text(),
+    itemDiscountPercent: real(),
+    hsnCode: integer(),
+    stockNotTransferred: real(),
+    isFreeItem: numeric().default('0'),
+    pricingRule: text(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('SalesInvoiceItem_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
-export const purchaseInvoiceItem = sqliteTable('PurchaseInvoiceItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  itemCode: text(),
-  description: text(),
-  rate: text().notNull(),
-  transferUnit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  transferQuantity: real().default(1).notNull(),
-  unit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  batch: text().references(() => batch.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  account: text()
-    .notNull()
-    .references(() => account.name, {
+export const purchaseInvoiceItem = sqliteTable(
+  'PurchaseInvoiceItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    itemCode: text(),
+    description: text(),
+    rate: text().notNull(),
+    transferUnit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferQuantity: real().default(1).notNull(),
+    unit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    batch: text().references(() => batch.name, {
       onDelete: 'restrict',
       onUpdate: 'cascade',
     }),
-  tax: text().references(() => tax.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  amount: text(),
-  setItemDiscountAmount: numeric().default('0'),
-  itemDiscountAmount: text(),
-  itemDiscountPercent: real(),
-  hsnCode: integer(),
-  stockNotTransferred: real(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    account: text()
+      .notNull()
+      .references(() => account.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    tax: text().references(() => tax.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    amount: text(),
+    setItemDiscountAmount: numeric().default('0'),
+    itemDiscountAmount: text(),
+    itemDiscountPercent: real(),
+    hsnCode: integer(),
+    stockNotTransferred: real(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('PurchaseInvoiceItem_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
-export const salesQuoteItem = sqliteTable('SalesQuoteItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  itemCode: text(),
-  description: text(),
-  rate: text().notNull(),
-  transferUnit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  transferQuantity: real().default(1).notNull(),
-  unit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  batch: text().references(() => batch.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  account: text()
-    .notNull()
-    .references(() => account.name, {
+export const salesQuoteItem = sqliteTable(
+  'SalesQuoteItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    itemCode: text(),
+    description: text(),
+    rate: text().notNull(),
+    transferUnit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferQuantity: real().default(1).notNull(),
+    unit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    batch: text().references(() => batch.name, {
       onDelete: 'restrict',
       onUpdate: 'cascade',
     }),
-  tax: text().references(() => tax.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  amount: text(),
-  setItemDiscountAmount: numeric().default('0'),
-  itemDiscountAmount: text(),
-  itemDiscountPercent: real(),
-  hsnCode: integer(),
-  stockNotTransferred: real(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    account: text()
+      .notNull()
+      .references(() => account.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    tax: text().references(() => tax.name, {
+      onDelete: 'restrict',
+      onUpdate: 'cascade',
+    }),
+    amount: text(),
+    setItemDiscountAmount: numeric().default('0'),
+    itemDiscountAmount: text(),
+    itemDiscountPercent: real(),
+    hsnCode: integer(),
+    stockNotTransferred: real(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('SalesQuoteItem_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const shipment = sqliteTable(
   'Shipment',
@@ -1195,42 +1357,57 @@ export const shipment = sqliteTable(
   ]
 );
 
-export const shipmentItem = sqliteTable('ShipmentItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  location: text()
-    .notNull()
-    .references(() => location.name, {
+export const shipmentItem = sqliteTable(
+  'ShipmentItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    location: text()
+      .notNull()
+      .references(() => location.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferUnit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferQuantity: real().default(1).notNull(),
+    unit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    batch: text().references(() => batch.name, {
       onDelete: 'restrict',
       onUpdate: 'cascade',
     }),
-  transferUnit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  transferQuantity: real().default(1).notNull(),
-  unit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  batch: text().references(() => batch.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  serialNumber: text(),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  rate: text().notNull(),
-  amount: text(),
-  itemDiscountAmount: text(),
-  itemDiscountPercent: real(),
-  description: text(),
-  hsnCode: integer(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+    serialNumber: text(),
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    rate: text().notNull(),
+    amount: text(),
+    itemDiscountAmount: text(),
+    itemDiscountPercent: real(),
+    description: text(),
+    hsnCode: integer(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('ShipmentItem_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const purchaseReceipt = sqliteTable(
   'PurchaseReceipt',
@@ -1277,65 +1454,95 @@ export const purchaseReceipt = sqliteTable(
   ]
 );
 
-export const purchaseReceiptItem = sqliteTable('PurchaseReceiptItem', {
-  name: text().primaryKey().notNull(),
-  item: text()
-    .notNull()
-    .references(() => item.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  location: text()
-    .notNull()
-    .references(() => location.name, {
+export const purchaseReceiptItem = sqliteTable(
+  'PurchaseReceiptItem',
+  {
+    name: text().primaryKey().notNull(),
+    item: text()
+      .notNull()
+      .references(() => item.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    location: text()
+      .notNull()
+      .references(() => location.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferUnit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    transferQuantity: real().default(1).notNull(),
+    unit: text()
+      .default('Unit')
+      .references(() => uom.name, {
+        onDelete: 'restrict',
+        onUpdate: 'cascade',
+      }),
+    batch: text().references(() => batch.name, {
       onDelete: 'restrict',
       onUpdate: 'cascade',
     }),
-  transferUnit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  transferQuantity: real().default(1).notNull(),
-  unit: text()
-    .default('Unit')
-    .references(() => uom.name, { onDelete: 'restrict', onUpdate: 'cascade' }),
-  batch: text().references(() => batch.name, {
-    onDelete: 'restrict',
-    onUpdate: 'cascade',
-  }),
-  serialNumber: text(),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  rate: text().notNull(),
-  amount: text(),
-  itemDiscountAmount: text(),
-  itemDiscountPercent: real(),
-  description: text(),
-  hsnCode: integer(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+    serialNumber: text(),
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    rate: text().notNull(),
+    amount: text(),
+    itemDiscountAmount: text(),
+    itemDiscountPercent: real(),
+    description: text(),
+    hsnCode: integer(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('PurchaseReceiptItem_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
-export const closingAmounts = sqliteTable('ClosingAmounts', {
-  name: text().primaryKey().notNull(),
-  paymentMethod: text().notNull(),
-  openingAmount: text(),
-  closingAmount: text(),
-  expectedAmount: text(),
-  differenceAmount: text(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const closingAmounts = sqliteTable(
+  'ClosingAmounts',
+  {
+    name: text().primaryKey().notNull(),
+    paymentMethod: text().notNull(),
+    openingAmount: text(),
+    closingAmount: text(),
+    expectedAmount: text(),
+    differenceAmount: text(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('ClosingAmounts_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
-export const closingCash = sqliteTable('ClosingCash', {
-  name: text().primaryKey().notNull(),
-  denomination: text().notNull(),
-  count: integer().default(0).notNull(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const closingCash = sqliteTable(
+  'ClosingCash',
+  {
+    name: text().primaryKey().notNull(),
+    denomination: text().notNull(),
+    count: integer().default(0).notNull(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('ClosingCash_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const defaultCashDenominations = sqliteTable(
   'DefaultCashDenominations',
@@ -1346,28 +1553,46 @@ export const defaultCashDenominations = sqliteTable(
     parent: text().notNull(),
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
-  }
+  },
+  (table) => [
+    index('DefaultCashDenominations_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
 );
 
-export const openingAmounts = sqliteTable('OpeningAmounts', {
-  name: text().primaryKey().notNull(),
-  paymentMethod: text().notNull(),
-  amount: text(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const openingAmounts = sqliteTable(
+  'OpeningAmounts',
+  {
+    name: text().primaryKey().notNull(),
+    paymentMethod: text().notNull(),
+    amount: text(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('OpeningAmounts_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
-export const openingCash = sqliteTable('OpeningCash', {
-  name: text().primaryKey().notNull(),
-  denomination: text().notNull(),
-  count: integer().default(0).notNull(),
-  idx: integer().notNull(),
-  parent: text().notNull(),
-  parentSchemaName: text().notNull(),
-  parentFieldname: text().notNull(),
-});
+export const openingCash = sqliteTable(
+  'OpeningCash',
+  {
+    name: text().primaryKey().notNull(),
+    denomination: text().notNull(),
+    count: integer().default(0).notNull(),
+    idx: integer().notNull(),
+    parent: text().notNull(),
+    parentSchemaName: text().notNull(),
+    parentFieldname: text().notNull(),
+  },
+  (table) => [
+    index('OpeningCash_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
 export const patchRun = sqliteTable('PatchRun', {
   name: text().primaryKey().notNull(),
@@ -1471,136 +1696,181 @@ export const party = sqliteTable('Party', {
   gstin: text(),
 });
 
-export const cashDenominations = sqliteTable('CashDenominations', {
-  name: text().primaryKey().notNull(),
-  created: text().notNull(),
-  modified: text().notNull(),
-  createdBy: text().notNull(),
-  modifiedBy: text().notNull(),
-  idx: integer().default(0),
-  parent: text(),
-  parentSchemaName: text(),
-  parentFieldname: text(),
-  denomination: real().notNull(),
-});
+export const cashDenominations = sqliteTable(
+  'CashDenominations',
+  {
+    name: text().primaryKey().notNull(),
+    created: text().notNull(),
+    modified: text().notNull(),
+    createdBy: text().notNull(),
+    modifiedBy: text().notNull(),
+    idx: integer().default(0),
+    parent: text(),
+    parentSchemaName: text(),
+    parentFieldname: text(),
+    denomination: real().notNull(),
+  },
+  (table) => [
+    index('CashDenominations_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
-export const invoice = sqliteTable('Invoice', {
-  name: text().primaryKey().notNull(),
-  created: text().notNull(),
-  modified: text().notNull(),
-  createdBy: text().notNull(),
-  modifiedBy: text().notNull(),
-  idx: integer().default(0),
-  parent: text(),
-  parentSchemaName: text(),
-  parentFieldname: text(),
-  account: text().notNull(),
-  date: text().notNull(),
-  priceList: text(),
-  netTotal: real(),
-  baseGrandTotal: real(),
-  grandTotal: real(),
-  setDiscountAmount: integer().default(0),
-  discountAmount: real(),
-  discountPercent: real(),
-  entryCurrency: text().default('Party'),
-  currency: text(),
-  exchangeRate: real().default(1),
-  discountAfterTax: integer().default(0),
-  makeAutoPayment: integer().default(0),
-  outstandingAmount: real(),
-  terms: text(),
-  isReturned: integer().default(0),
-  isFullyReturned: integer().default(0),
-  isSyncedWithErp: integer().default(0),
-});
+export const invoice = sqliteTable(
+  'Invoice',
+  {
+    name: text().primaryKey().notNull(),
+    created: text().notNull(),
+    modified: text().notNull(),
+    createdBy: text().notNull(),
+    modifiedBy: text().notNull(),
+    idx: integer().default(0),
+    parent: text(),
+    parentSchemaName: text(),
+    parentFieldname: text(),
+    account: text().notNull(),
+    date: text().notNull(),
+    priceList: text(),
+    netTotal: real(),
+    baseGrandTotal: real(),
+    grandTotal: real(),
+    setDiscountAmount: integer().default(0),
+    discountAmount: real(),
+    discountPercent: real(),
+    entryCurrency: text().default('Party'),
+    currency: text(),
+    exchangeRate: real().default(1),
+    discountAfterTax: integer().default(0),
+    makeAutoPayment: integer().default(0),
+    outstandingAmount: real(),
+    terms: text(),
+    isReturned: integer().default(0),
+    isFullyReturned: integer().default(0),
+    isSyncedWithErp: integer().default(0),
+  },
+  (table) => [
+    index('Invoice_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
-export const invoiceItem = sqliteTable('InvoiceItem', {
-  name: text().primaryKey().notNull(),
-  created: text().notNull(),
-  modified: text().notNull(),
-  createdBy: text().notNull(),
-  modifiedBy: text().notNull(),
-  idx: integer().default(0),
-  parent: text(),
-  parentSchemaName: text(),
-  parentFieldname: text(),
-  item: text().notNull(),
-  itemCode: text(),
-  description: text(),
-  rate: real().notNull(),
-  transferUnit: text().default('Unit'),
-  transferQuantity: real().default(1).notNull(),
-  qty: real().default(1),
-  unit: text().default('Unit'),
-  batch: text(),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  account: text().notNull(),
-  tax: text(),
-  amount: real(),
-  setItemDiscountAmount: integer().default(0),
-  itemDiscountAmount: real(),
-  itemDiscountPercent: real(),
-  itemDiscountedTotal: real(),
-  itemTaxedTotal: real(),
-  hsnCode: integer(),
-  stockNotTransferred: real(),
-});
+export const invoiceItem = sqliteTable(
+  'InvoiceItem',
+  {
+    name: text().primaryKey().notNull(),
+    created: text().notNull(),
+    modified: text().notNull(),
+    createdBy: text().notNull(),
+    modifiedBy: text().notNull(),
+    idx: integer().default(0),
+    parent: text(),
+    parentSchemaName: text(),
+    parentFieldname: text(),
+    item: text().notNull(),
+    itemCode: text(),
+    description: text(),
+    rate: real().notNull(),
+    transferUnit: text().default('Unit'),
+    transferQuantity: real().default(1).notNull(),
+    qty: real().default(1),
+    unit: text().default('Unit'),
+    batch: text(),
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    account: text().notNull(),
+    tax: text(),
+    amount: real(),
+    setItemDiscountAmount: integer().default(0),
+    itemDiscountAmount: real(),
+    itemDiscountPercent: real(),
+    itemDiscountedTotal: real(),
+    itemTaxedTotal: real(),
+    hsnCode: integer(),
+    stockNotTransferred: real(),
+  },
+  (table) => [
+    index('InvoiceItem_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
-export const posShiftAmounts = sqliteTable('POSShiftAmounts', {
-  name: text().primaryKey().notNull(),
-  created: text().notNull(),
-  modified: text().notNull(),
-  createdBy: text().notNull(),
-  modifiedBy: text().notNull(),
-  idx: integer().default(0),
-  parent: text(),
-  parentSchemaName: text(),
-  parentFieldname: text(),
-  paymentMethod: text().notNull(),
-});
+export const posShiftAmounts = sqliteTable(
+  'POSShiftAmounts',
+  {
+    name: text().primaryKey().notNull(),
+    created: text().notNull(),
+    modified: text().notNull(),
+    createdBy: text().notNull(),
+    modifiedBy: text().notNull(),
+    idx: integer().default(0),
+    parent: text(),
+    parentSchemaName: text(),
+    parentFieldname: text(),
+    paymentMethod: text().notNull(),
+  },
+  (table) => [
+    index('POSShiftAmounts_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
 
-export const stockTransfer = sqliteTable('StockTransfer', {
-  name: text().primaryKey().notNull(),
-  created: text().notNull(),
-  modified: text().notNull(),
-  createdBy: text().notNull(),
-  modifiedBy: text().notNull(),
-  idx: integer().default(0),
-  parent: text(),
-  parentSchemaName: text(),
-  parentFieldname: text(),
-  party: text().notNull(),
-  date: text().notNull(),
-  grandTotal: real(),
-  terms: text(),
-  isReturned: integer().default(0),
-});
+export const stockTransfer = sqliteTable(
+  'StockTransfer',
+  {
+    name: text().primaryKey().notNull(),
+    created: text().notNull(),
+    modified: text().notNull(),
+    createdBy: text().notNull(),
+    modifiedBy: text().notNull(),
+    idx: integer().default(0),
+    parent: text(),
+    parentSchemaName: text(),
+    parentFieldname: text(),
+    party: text().notNull(),
+    date: text().notNull(),
+    grandTotal: real(),
+    terms: text(),
+    isReturned: integer().default(0),
+  },
+  (table) => [
+    index('StockTransfer_parent_idx').on(table.parent, table.parentSchemaName),
+  ]
+);
 
-export const stockTransferItem = sqliteTable('StockTransferItem', {
-  name: text().primaryKey().notNull(),
-  created: text().notNull(),
-  modified: text().notNull(),
-  createdBy: text().notNull(),
-  modifiedBy: text().notNull(),
-  idx: integer().default(0),
-  parent: text(),
-  parentSchemaName: text(),
-  parentFieldname: text(),
-  item: text().notNull(),
-  location: text().notNull(),
-  transferUnit: text().default('Unit'),
-  transferQuantity: real().default(1).notNull(),
-  unit: text().default('Unit'),
-  batch: text(),
-  serialNumber: text(),
-  quantity: real().default(1).notNull(),
-  unitConversionFactor: real().default(1).notNull(),
-  rate: real().notNull(),
-  amount: real(),
-  itemDiscountAmount: real(),
-  itemDiscountPercent: real(),
-  description: text(),
-  hsnCode: integer(),
-});
+export const stockTransferItem = sqliteTable(
+  'StockTransferItem',
+  {
+    name: text().primaryKey().notNull(),
+    created: text().notNull(),
+    modified: text().notNull(),
+    createdBy: text().notNull(),
+    modifiedBy: text().notNull(),
+    idx: integer().default(0),
+    parent: text(),
+    parentSchemaName: text(),
+    parentFieldname: text(),
+    item: text().notNull(),
+    location: text().notNull(),
+    transferUnit: text().default('Unit'),
+    transferQuantity: real().default(1).notNull(),
+    unit: text().default('Unit'),
+    batch: text(),
+    serialNumber: text(),
+    quantity: real().default(1).notNull(),
+    unitConversionFactor: real().default(1).notNull(),
+    rate: real().notNull(),
+    amount: real(),
+    itemDiscountAmount: real(),
+    itemDiscountPercent: real(),
+    description: text(),
+    hsnCode: integer(),
+  },
+  (table) => [
+    index('StockTransferItem_parent_idx').on(
+      table.parent,
+      table.parentSchemaName
+    ),
+  ]
+);
