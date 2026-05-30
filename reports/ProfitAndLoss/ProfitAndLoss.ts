@@ -34,12 +34,16 @@ export class ProfitAndLoss extends AccountReport {
     const accountTree = await this._getAccountTree(rangeGroupedMap);
 
     for (const name of Object.keys(accountTree)) {
-      const { rootType } = accountTree[name];
+      if (name === '__proto__' || name === 'constructor' || name === 'prototype') {
+        continue;
+      }
+      const node = Reflect.get(accountTree, name);
+      const { rootType } = node;
       if (this.rootTypes.includes(rootType)) {
         continue;
       }
 
-      delete accountTree[name];
+      Reflect.deleteProperty(accountTree, name);
     }
 
     /**

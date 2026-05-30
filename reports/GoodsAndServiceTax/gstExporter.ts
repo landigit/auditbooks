@@ -313,6 +313,9 @@ async function generateB2clData(
       : ModelNameEnum.PurchaseInvoice;
 
   for (const row of report.gstrRows ?? []) {
+    if (row.place === '__proto__' || row.place === 'constructor' || row.place === 'prototype') {
+      continue;
+    }
     const invRecord: B2CLInvRecord = {
       inum: row.invNo,
       idt: dayjs(row.invDate).format('dd-MM-yyyy'),
@@ -355,9 +358,10 @@ async function generateB2clData(
       invRecord.itms.push(itemRecord);
     });
 
-    const stateRecord = b2cl.find((b) => b.pos === stateCodeMap[row.place]);
+    const stateCode = Reflect.get(stateCodeMap, row.place);
+    const stateRecord = b2cl.find((b) => b.pos === stateCode);
     const stateInvoiceRecord: B2CLStateInvoiceRecord = {
-      pos: stateCodeMap[row.place],
+      pos: stateCode,
       inv: [],
     };
 
@@ -377,9 +381,12 @@ function generateB2csData(report: BaseGSTR): B2CSInvRecord[] {
   const b2cs: B2CSInvRecord[] = [];
 
   for (const row of report.gstrRows ?? []) {
+    if (row.place === '__proto__' || row.place === 'constructor' || row.place === 'prototype') {
+      continue;
+    }
     const invRecord: B2CSInvRecord = {
       sply_ty: row.inState ? 'INTRA' : 'INTER',
-      pos: stateCodeMap[row.place],
+      pos: Reflect.get(stateCodeMap, row.place),
       typ: 'OE',
       txval: row.taxVal,
       rt: row.rate,

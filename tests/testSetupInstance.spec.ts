@@ -1,7 +1,6 @@
 import { assertDoesNotThrow } from 'backend/database/tests/helpers';
 import dayjs from 'dayjs';
 import setupInstance from 'src/setup/setupInstance';
-import { SetupWizardOptions } from 'src/setup/types';
 import { describe, expect, test, afterAll } from 'vitest';
 import { getValueMapFromList } from 'utils';
 import {
@@ -37,8 +36,8 @@ describe('Setup Instance Tests', () => {
     const singlesMap = getValueMapFromList(setupSingles, 'fieldname', 'value');
 
     for (const field of setupFields) {
-      let dbValue = singlesMap[field];
-      const optionsValue = setupOptions[field as keyof SetupWizardOptions];
+      let dbValue = Reflect.get(singlesMap, field);
+      const optionsValue = Reflect.get(setupOptions, field);
 
       if (dbValue instanceof Date) {
         dbValue = dayjs(dbValue).format('YYYY-MM-DD');

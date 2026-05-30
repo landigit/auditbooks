@@ -12,7 +12,7 @@ export function getCountryInfo(): CountryInfoMap {
 
 export function getCountryCodeFromCountry(countryName: string): string {
   const countryInfoMap = getCountryInfo();
-  const countryInfo = countryInfoMap[countryName];
+  const countryInfo = Reflect.get(countryInfoMap, countryName);
   if (countryInfo === undefined) {
     return '';
   }

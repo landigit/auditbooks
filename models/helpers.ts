@@ -53,6 +53,18 @@ import {
   generateBatchForItem,
 } from './inventory/helpers';
 
+function escapeHtml(str: unknown): string {
+  if (typeof str !== 'string') {
+    return String(str ?? '');
+  }
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export function getQuoteActions(
   fyo: Fyo,
   schemaName: ModelNameEnum.SalesQuote
@@ -104,19 +116,20 @@ export async function getItemQtyMap(doc: SalesInvoice): Promise<ItemQtyMap> {
   });
 
   for (const row of stockBalance) {
-    if (!itemQtyMap[row.item]) {
-      itemQtyMap[row.item] = { availableQty: 0 };
+    if (!Reflect.get(itemQtyMap, row.item)) {
+      Reflect.set(itemQtyMap, row.item, { availableQty: 0 });
     }
+
+    const itemData = Reflect.get(itemQtyMap, row.item);
 
     if (row.batch) {
-      itemQtyMap[row.item][row.batch] = row.balanceQuantity;
+      Reflect.set(itemData, row.batch, row.balanceQuantity);
     }
 
-    itemQtyMap[row.item].availableQty += row.balanceQuantity;
+    itemData.availableQty += row.balanceQuantity;
   }
   return itemQtyMap;
 }
-
 export async function getItemVisibility(fyo: Fyo): Promise<ItemVisibility> {
   const posProfileName = fyo.singles.POSSettings?.posProfile as string;
   const enableERPNextSync = fyo.singles.AccountingSettings?.enableERPNextSync;
@@ -356,7 +369,7 @@ export function getTransactionStatusColumn(): ColumnConfig {
       const label = getStatusText(status);
 
       return {
-        template: `<Badge class="text-xs" color="${color}">${label}</Badge>`,
+        template: `<Badge class="text-xs" color="${escapeHtml(color)}">${escapeHtml(label)}</Badge>`,
         metadata: {
           status,
           color,
@@ -378,7 +391,7 @@ export function getLeadStatusColumn(): ColumnConfig {
       const label = getStatusTextOfLead(status);
 
       return {
-        template: `<Badge class="text-xs" color="${color}">${label}</Badge>`,
+        template: `<Badge class="text-xs" color="${escapeHtml(color)}">${escapeHtml(label)}</Badge>`,
       };
     },
   };
@@ -578,7 +591,7 @@ export function getSerialNumberStatusColumn(): ColumnConfig {
       const label = getSerialNumberStatusText(status);
 
       return {
-        template: `<Badge class="text-xs" color="${color}">${label}</Badge>`,
+        template: `<Badge class="text-xs" color="${escapeHtml(color)}">${escapeHtml(label)}</Badge>`,
       };
     },
   };
@@ -620,7 +633,7 @@ export function getPriceListStatusColumn(): ColumnConfig {
       }
 
       return {
-        template: `<Badge class="text-xs" color="gray">${status}</Badge>`,
+        template: `<Badge class="text-xs" color="gray">${escapeHtml(status)}</Badge>`,
       };
     },
   };
@@ -640,7 +653,7 @@ export function getIsDocEnabledColumn(): ColumnConfig {
       }
 
       return {
-        template: `<Badge class="text-xs" color="${color}">${status}</Badge>`,
+        template: `<Badge class="text-xs" color="${escapeHtml(color)}">${escapeHtml(status)}</Badge>`,
       };
     },
   };
@@ -683,7 +696,7 @@ export async function getExchangeRate({
       data: string;
       rates: Record<string, number>;
     };
-    exchangeRate = data.rates[toCurrency];
+    exchangeRate = Reflect.get(data.rates, toCurrency);
   } catch (error) {
     exchangeRate ??= 1;
   }
@@ -713,7 +726,7 @@ export function isCredit(rootType: AccountRootType) {
 }
 
 export function getNumberSeries(schemaName: string, fyo: Fyo) {
-  const numberSeriesKey = numberSeriesDefaultsMap[schemaName];
+  const numberSeriesKey = Reflect.get(numberSeriesDefaultsMap, schemaName);
   if (!numberSeriesKey) {
     return undefined;
   }
@@ -735,7 +748,7 @@ export function getDocStatusListColumn(): ColumnConfig {
       const label = getStatusText(status);
 
       return {
-        template: `<Badge class="text-xs" color="${color}">${label}</Badge>`,
+        template: `<Badge class="text-xs" color="${escapeHtml(color)}">${escapeHtml(label)}</Badge>`,
         metadata: {
           status,
           color,
@@ -757,7 +770,7 @@ export function getLoyaltyProgramStatusColumn(): ColumnConfig {
       const label = getLoyaltyProgramStatusText(status);
 
       return {
-        template: `<Badge class="text-xs" color="${color}">${label}</Badge>`,
+        template: `<Badge class="text-xs" color="${escapeHtml(color)}">${escapeHtml(label)}</Badge>`,
         metadata: {
           status,
           color,
@@ -1157,29 +1170,28 @@ export async function validateQty(
     return;
   }
 
-  if (!itemQtyMap[itemName] || itemQtyMap[itemName].availableQty === 0) {
+  const itemMapData = Reflect.get(itemQtyMap, itemName);
+  if (!itemMapData || itemMapData.availableQty === 0) {
     throw new ValidationError(t`Item ${itemName} has Zero Quantity`);
   }
 
   if (item.batch) {
+    const batchQty = Reflect.get(itemMapData, item.batch as string) ?? 0;
     if (
-      (existingItems && !itemQtyMap[itemName]) ||
-      itemQtyMap[itemName][item.batch as string] <
-        (existingItems[0]?.quantity as number)
+      (existingItems && !itemMapData) ||
+      batchQty < (existingItems[0]?.quantity as number)
     ) {
       throw new ValidationError(
-        t`Item ${itemName} only has ${
-          itemQtyMap[itemName][item.batch as string]
-        } Quantity in batch ${item.batch as string}`
+        t`Item ${itemName} only has ${batchQty} Quantity in batch ${item.batch as string}`
       );
     }
   } else {
     if (
-      (existingItems && !itemQtyMap[itemName]) ||
-      itemQtyMap[itemName].availableQty < (existingItems[0]?.quantity as number)
+      (existingItems && !itemMapData) ||
+      itemMapData.availableQty < (existingItems[0]?.quantity as number)
     ) {
       throw new ValidationError(
-        t`Item ${itemName} only has ${itemQtyMap[itemName].availableQty} Quantity`
+        t`Item ${itemName} only has ${itemMapData.availableQty} Quantity`
       );
     }
   }
@@ -1303,17 +1315,17 @@ export async function getPricingRule(
     for (const item of doc.items) {
       if (!item?.item) continue;
 
-      if (!itemQuantity[item.item]) {
-        itemQuantity[item.item] = item.quantity ?? 0;
+      if (!Reflect.get(itemQuantity, item.item)) {
+        Reflect.set(itemQuantity, item.item, item.quantity ?? 0);
       } else {
-        itemQuantity[item.item] += item.quantity ?? 0;
+        Reflect.set(itemQuantity, item.item, (Reflect.get(itemQuantity, item.item) ?? 0) + (item.quantity ?? 0));
       }
     }
 
     const filtered = filterPricingRules(
       doc as SalesInvoice,
       pricingRuleDocsForItem,
-      itemQuantity[item.item as string],
+      Reflect.get(itemQuantity, item.item as string),
       item.amount as Money
     );
 
@@ -1603,9 +1615,8 @@ export async function validateCouponCode(
     !(coupon[0].minAmount as Money).isZero()
   ) {
     throw new ValidationError(
-      t`The Grand Total must exceed ${
-        (coupon[0].minAmount as Money).float
-      } to apply the coupon ${value}.`
+      t`The Grand Total must exceed ${(coupon[0].minAmount as Money).float
+        } to apply the coupon ${value}.`
     );
   }
 
@@ -1614,9 +1625,8 @@ export async function validateCouponCode(
     !(coupon[0].maxAmount as Money).isZero()
   ) {
     throw new ValidationError(
-      t`The Grand Total must be less than ${
-        (coupon[0].maxAmount as Money).float
-      } to apply this coupon.`
+      t`The Grand Total must be less than ${(coupon[0].maxAmount as Money).float
+        } to apply this coupon.`
     );
   }
 
@@ -1645,7 +1655,7 @@ export async function validateLoyaltyProgram(
   if (
     (loyaltyProgram[0]?.maximumUse as number) > 0 &&
     (loyaltyProgram[0]?.used as number) >=
-      (loyaltyProgram[0]?.maximumUse as number)
+    (loyaltyProgram[0]?.maximumUse as number)
   ) {
     return;
   }
@@ -1742,7 +1752,7 @@ export function roundFreeItemQty(
   quantity: number,
   roundingMethod: 'round' | 'floor' | 'ceil'
 ): number {
-  return Math[roundingMethod](quantity);
+  return Reflect.get(Math, roundingMethod)(quantity);
 }
 
 export async function isLoyaltyProgramExpiredAndMaxed(

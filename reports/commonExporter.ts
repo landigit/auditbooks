@@ -61,7 +61,7 @@ function getJsonData(report: Report): string {
   const exportObject: JSONExport = {
     columns: [],
     rows: [],
-    filters: {},
+    filters: Object.create(null),
     timestamp: '',
     reportName: '',
     softwareName: '',
@@ -88,11 +88,15 @@ function getJsonData(report: Report): string {
       continue;
     }
 
-    const rowObj: Record<string, unknown> = {};
+    const rowObj: Record<string, unknown> = Object.create(null);
     for (let c = 0; c < row.cells.length; c++) {
-      const { label } = columns[c];
-      const cell = getValueFromCell(row.cells[c], displayPrecision);
-      rowObj[label] = cell;
+      const col = Reflect.get(columns, c);
+      const { label } = col;
+      const cell = getValueFromCell(Reflect.get(row.cells, c), displayPrecision);
+      if (label === '__proto__' || label === 'constructor' || label === 'prototype') {
+        continue;
+      }
+      Reflect.set(rowObj, label, cell);
     }
 
     exportObject.rows.push(rowObj);
@@ -102,12 +106,15 @@ function getJsonData(report: Report): string {
    * Set filter map
    */
   for (const { fieldname } of report.filters) {
+    if (fieldname === '__proto__' || fieldname === 'constructor' || fieldname === 'prototype') {
+      continue;
+    }
     const value = report.get(fieldname);
     if (getIsNullOrUndef(value)) {
       continue;
     }
 
-    exportObject.filters[fieldname] = String(value);
+    Reflect.set(exportObject.filters, fieldname, String(value));
   }
 
   /**
@@ -143,7 +150,7 @@ function convertReportToCSVMatrix(report: Report): unknown[][] {
 
     const csvrow: unknown[] = [];
     for (let c = 0; c < row.cells.length; c++) {
-      const cell = getValueFromCell(row.cells[c], displayPrecision);
+      const cell = getValueFromCell(Reflect.get(row.cells, c), displayPrecision);
       csvrow.push(cell);
     }
 

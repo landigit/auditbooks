@@ -162,7 +162,7 @@ export function getCreateFiltersFromListViewFilters(filters: QueryFilter) {
   const createFilters: Record<string, string | number | boolean | null> = {};
 
   for (const key in filters) {
-    let value: (typeof filters)[string] | undefined | number = filters[key];
+    let value: (typeof filters)[string] | undefined | number = Reflect.get(filters, key);
 
     if (Array.isArray(value) && value[0] === 'in' && Array.isArray(value[1])) {
       value = value[1].filter((v) => v !== 'Both')[0];
@@ -172,7 +172,7 @@ export function getCreateFiltersFromListViewFilters(filters: QueryFilter) {
       continue;
     }
 
-    createFilters[key] = value;
+    Reflect.set(createFilters, key, value);
   }
 
   return createFilters;
@@ -184,13 +184,14 @@ export function getIsMac() {
 
 export async function getReport(name: keyof typeof reports) {
   const appStore = useAppStore();
-  const cachedReport = appStore.reports[name];
+  const cachedReport = Reflect.get(appStore.reports, name);
   if (cachedReport) {
     return cachedReport;
   }
 
-  const report = new reports[name](fyo);
+  const ReportClass = Reflect.get(reports, name);
+  const report = new ReportClass(fyo);
   await report.initialize();
-  appStore.reports[name] = report;
+  Reflect.set(appStore.reports, name, report);
   return report;
 }

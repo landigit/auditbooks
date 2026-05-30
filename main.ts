@@ -26,6 +26,11 @@ export class Main {
   HEIGHT = process.platform === 'win32' ? 826 : 800;
 
   constructor() {
+    app.disableHardwareAcceleration();
+    app.commandLine.appendSwitch('disable-gpu');
+    app.commandLine.appendSwitch('disable-gpu-sandbox');
+    app.commandLine.appendSwitch('no-sandbox');
+
     this.icon = this.isDevelopment
       ? path.resolve('./build/icon.png')
       : path.join(__dirname, 'icons', '512x512.png');
@@ -130,9 +135,13 @@ export class Main {
       this.mainWindow.webContents.on(
         'console-message',
         (_event, level, message, line, sourceId) => {
+          if (message.includes('ResizeObserver loop')) {
+            return;
+          }
           const levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
+          const levelName = Reflect.get(levels, level) || 'LOG';
           console.log(
-            `[Renderer ${levels[level] || 'LOG'}] ${message} (${sourceId}:${line})`
+            `[Renderer ${levelName}] ${message} (${sourceId}:${line})`
           );
         }
       );

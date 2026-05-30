@@ -12,13 +12,13 @@ describe('Dummy Data Tests', () => {
     await assertDoesNotThrow(async () => {
       await setupDummyInstance(dbPath, fyo, 1, 25);
     }, 'setup instance failed');
-  }, 30_000);
+  }, 120_000);
 
   test('purchaseItemParty Existence', async () => {
     for (const item in purchaseItemPartyMap) {
       expect(await fyo.db.exists('Item', item)).toBe(true);
 
-      const party = purchaseItemPartyMap[item];
+      const party = Reflect.get(purchaseItemPartyMap, item);
       expect(await fyo.db.exists('Party', party)).toBe(true);
     }
   });

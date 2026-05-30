@@ -59,14 +59,18 @@ export async function getShipmentCOGSAmountFromSLEs(
     date: ['<=', date.toISOString()],
   });
 
-  const q: Queues = {};
+  const q: Queues = Object.create(null);
   for (const sle of rawSles) {
     const i = sle.item;
     const l = sle.location;
     const b = sle.batch ?? '-';
 
-    q[i] ??= {};
-    q[i][l] ??= {};
+    if (i === '__proto__' || i === 'constructor' || i === 'prototype') continue;
+    if (l === '__proto__' || l === 'constructor' || l === 'prototype') continue;
+    if (b === '__proto__' || b === 'constructor' || b === 'prototype') continue;
+
+    q[i] ??= Object.create(null);
+    q[i][l] ??= Object.create(null);
     q[i][l][b] ??= new StockQueue();
 
     const sq = q[i][l][b];
@@ -116,7 +120,7 @@ export function getStockLedgerEntries(
   const stockQueues: Record<
     Item,
     Record<Location, Record<Batch, StockQueue>>
-  > = {};
+  > = Object.create(null);
 
   for (const sle of rawSLEs) {
     const name = safeParseInt(sle.name);
@@ -130,11 +134,30 @@ export function getStockLedgerEntries(
       continue;
     }
 
-    stockQueues[item] ??= {};
-    stockQueues[item][location] ??= {};
-    stockQueues[item][location][batch] ??= new StockQueue();
+    if (item === '__proto__' || item === 'constructor' || item === 'prototype') {
+      continue;
+    }
+    if (location === '__proto__' || location === 'constructor' || location === 'prototype') {
+      continue;
+    }
+    if (batch === '__proto__' || batch === 'constructor' || batch === 'prototype') {
+      continue;
+    }
 
-    const q = stockQueues[item][location][batch];
+    if (Reflect.get(stockQueues, item) == null) {
+      Reflect.set(stockQueues, item, Object.create(null));
+    }
+    const itemQ = Reflect.get(stockQueues, item);
+
+    if (Reflect.get(itemQ, location) == null) {
+      Reflect.set(itemQ, location, Object.create(null));
+    }
+    const locQ = Reflect.get(itemQ, location);
+
+    if (Reflect.get(locQ, batch) == null) {
+      Reflect.set(locQ, batch, new StockQueue());
+    }
+    const q = Reflect.get(locQ, batch);
     const initialValue = q.value;
 
     let incomingRate: number | null;
@@ -200,7 +223,7 @@ export function getStockBalanceEntries(
   const sbeMap: Record<
     Item,
     Record<Location, Record<Batch, Record<string, StockBalanceEntry>>>
-  > = {};
+  > = Object.create(null);
 
   const fromDate = filters.fromDate ? Date.parse(filters.fromDate) : null;
   const toDate = filters.toDate ? Date.parse(filters.toDate) : null;
@@ -228,19 +251,46 @@ export function getStockBalanceEntries(
     const batch = sle.batch || '';
     const serialNumber = showSerialNumbers ? sle.serialNumber : '';
 
-    sbeMap[sle.item] ??= {};
-    sbeMap[sle.item][sle.location] ??= {};
-    sbeMap[sle.item][sle.location][batch] ??= {};
-    sbeMap[sle.item][sle.location][batch][serialNumber] ??= getSBE(
-      sle.item,
-      sle.location,
-      batch,
-      serialNumber
-    );
+    if (sle.item === '__proto__' || sle.item === 'constructor' || sle.item === 'prototype') {
+      continue;
+    }
+    if (sle.location === '__proto__' || sle.location === 'constructor' || sle.location === 'prototype') {
+      continue;
+    }
+    if (batch === '__proto__' || batch === 'constructor' || batch === 'prototype') {
+      continue;
+    }
+    if (serialNumber === '__proto__' || serialNumber === 'constructor' || serialNumber === 'prototype') {
+      continue;
+    }
+
+    if (Reflect.get(sbeMap, sle.item) == null) {
+      Reflect.set(sbeMap, sle.item, Object.create(null));
+    }
+    const itemSbe = Reflect.get(sbeMap, sle.item);
+
+    if (Reflect.get(itemSbe, sle.location) == null) {
+      Reflect.set(itemSbe, sle.location, Object.create(null));
+    }
+    const locSbe = Reflect.get(itemSbe, sle.location);
+
+    if (Reflect.get(locSbe, batch) == null) {
+      Reflect.set(locSbe, batch, Object.create(null));
+    }
+    const batchSbe = Reflect.get(locSbe, batch);
+
+    if (Reflect.get(batchSbe, serialNumber) == null) {
+      Reflect.set(batchSbe, serialNumber, getSBE(
+        sle.item,
+        sle.location,
+        batch,
+        serialNumber
+      ));
+    }
+    const sbe = Reflect.get(batchSbe, serialNumber);
     const date = sle.date.valueOf();
 
     if (fromDate && date < fromDate) {
-      const sbe = sbeMap[sle.item][sle.location][batch][serialNumber];
       updateOpeningBalances(sbe, sle);
       continue;
     }
@@ -249,7 +299,6 @@ export function getStockBalanceEntries(
       continue;
     }
 
-    const sbe = sbeMap[sle.item][sle.location][batch][serialNumber];
     updateCurrentBalances(sbe, sle);
   }
 

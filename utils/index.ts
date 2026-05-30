@@ -13,19 +13,19 @@ export function getValueMapFromList<T, K extends keyof T, V extends keyof T>(
   if (filterUndefined) {
     list = list.filter(
       (f) =>
-        (f[valueKey] as unknown) !== undefined &&
-        (f[key] as unknown) !== undefined
+        (Reflect.get(f as any, valueKey) as unknown) !== undefined &&
+        (Reflect.get(f as any, key) as unknown) !== undefined
     );
   }
 
   return list.reduce(
     (acc, f) => {
-      const keyValue = String(f[key]);
-      const value = f[valueKey];
-      acc[keyValue] = value;
+      const keyValue = String(Reflect.get(f as any, key));
+      const value = Reflect.get(f as any, valueKey);
+      Reflect.set(acc, keyValue, value);
       return acc;
     },
-    {} as Record<string, T[V]>
+    Object.create(null) as Record<string, T[V]>
   );
 }
 
@@ -47,14 +47,14 @@ export function getMapFromList<T, K extends keyof T>(
    * Do not convert function to use copies of T
    * instead of references.
    */
-  const acc: Record<string, T> = {};
+  const acc: Record<string, T> = Object.create(null);
   for (const t of list) {
-    const key = t[name];
+    const key = Reflect.get(t as any, name);
     if (key === undefined) {
       continue;
     }
 
-    acc[String(key)] = t;
+    Reflect.set(acc, String(key), t);
   }
   return acc;
 }
@@ -64,29 +64,29 @@ export function getDefaultMapFromList<T, K extends keyof T, D>(
   defaultValue: D,
   name?: K
 ): Record<string, D> {
-  const acc: Record<string, D> = {};
+  const acc: Record<string, D> = Object.create(null);
   if (typeof list[0] === 'string') {
     for (const l of list as string[]) {
-      acc[l] = defaultValue;
+      Reflect.set(acc, l, defaultValue);
     }
 
     return acc;
   }
 
   if (!name) {
-    return {};
+    return Object.create(null);
   }
 
   for (const l of list as T[]) {
-    const key = String(l[name]);
-    acc[key] = defaultValue;
+    const key = String(Reflect.get(l as any, name));
+    Reflect.set(acc, key, defaultValue);
   }
 
   return acc;
 }
 
 export function getListFromMap<T>(map: Record<string, T>): T[] {
-  return Object.keys(map).map((n) => map[n]);
+  return Object.keys(map).map((n) => Reflect.get(map, n));
 }
 
 export function getIsNullOrUndef(value: unknown): value is null | undefined {
@@ -121,10 +121,10 @@ export function camelCase(str: string): string {
 
 export function invertMap(map: Record<string, string>): Record<string, string> {
   const keys = Object.keys(map);
-  const inverted: Record<string, string> = {};
+  const inverted: Record<string, string> = Object.create(null);
   for (const key of keys) {
-    const val = map[key];
-    inverted[val] = key;
+    const val = Reflect.get(map, key);
+    Reflect.set(inverted, val, key);
   }
 
   return inverted;
@@ -138,17 +138,17 @@ export function deepEqual(a: any, b: any): boolean {
     if (Array.isArray(a)) {
       length = a.length;
       if (length !== b.length) return false;
-      for (i = length; i-- !== 0; ) if (!deepEqual(a[i], b[i])) return false;
+      for (i = length; i-- !== 0; ) if (!deepEqual(Reflect.get(a, i), Reflect.get(b, i))) return false;
       return true;
     }
     keys = Object.keys(a);
     length = keys.length;
     if (length !== Object.keys(b).length) return false;
     for (i = length; i-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
+      if (!Object.prototype.hasOwnProperty.call(b, Reflect.get(keys, i))) return false;
     for (i = length; i-- !== 0; ) {
-      const key = keys[i];
-      if (!deepEqual(a[key], b[key])) return false;
+      const key = Reflect.get(keys, i);
+      if (!deepEqual(Reflect.get(a, key), Reflect.get(b, key))) return false;
     }
     return true;
   }
@@ -180,10 +180,10 @@ export function changeKeys<T>(
   source: Record<string, T>,
   keyMap: Record<string, string | undefined>
 ) {
-  const dest: Record<string, T> = {};
+  const dest: Record<string, T> = Object.create(null);
   for (const key of Object.keys(source)) {
-    const newKey = keyMap[key] ?? key;
-    dest[newKey] = source[key];
+    const newKey = Reflect.get(keyMap, key) ?? key;
+    Reflect.set(dest, newKey, Reflect.get(source, key));
   }
 
   return dest;
@@ -193,12 +193,12 @@ export function deleteKeys<T>(
   source: Record<string, T>,
   keysToDelete: string[]
 ) {
-  const dest: Record<string, T> = {};
+  const dest: Record<string, T> = Object.create(null);
   for (const key of Object.keys(source)) {
     if (keysToDelete.includes(key)) {
       continue;
     }
-    dest[key] = source[key];
+    Reflect.set(dest, key, Reflect.get(source, key));
   }
 
   return dest;
@@ -267,19 +267,19 @@ export function joinMapLists<A, B>(
   const mapB = getMapFromList(listB, keyB);
 
   const keyListA = listA
-    .map((i) => i[keyA])
+    .map((i) => Reflect.get(i as any, keyA))
     .filter((k) => (k as unknown as string) in mapB);
 
   const keyListB = listB
-    .map((i) => i[keyB])
+    .map((i) => Reflect.get(i as any, keyB))
     .filter((k) => (k as unknown as string) in mapA);
 
   const keys = new Set([keyListA, keyListB].flat().sort());
 
   const joint: (A & B)[] = [];
   for (const k of keys) {
-    const a = mapA[k as unknown as string];
-    const b = mapB[k as unknown as string];
+    const a = Reflect.get(mapA, k as unknown as string);
+    const b = Reflect.get(mapB, k as unknown as string);
     const c = { ...a, ...b };
 
     joint.push(c);
@@ -300,3 +300,26 @@ export function removeAtIndex<T>(array: T[], index: number): T[] {
  * Asserts that `value` is of type T. Use with care.
  */
 export const assertIsType = <T>(_value: unknown): _value is T => true;
+
+const PROTOTYPE_POLLUTION_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+export function safeGet<T = any>(obj: any, key: any): T | undefined {
+  if (obj === null || obj === undefined) {
+    return undefined;
+  }
+  if (PROTOTYPE_POLLUTION_KEYS.has(String(key))) {
+    return undefined;
+  }
+  return Reflect.get(obj, key) as T;
+}
+
+export function safeSet(obj: any, key: any, value: any): boolean {
+  if (obj === null || obj === undefined) {
+    return false;
+  }
+  if (PROTOTYPE_POLLUTION_KEYS.has(String(key))) {
+    return false;
+  }
+  return Reflect.set(obj, key, value);
+}
+

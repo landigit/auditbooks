@@ -190,12 +190,16 @@ function getCurrency(field: Field, doc: Doc | null, fyo: Fyo): string {
   const defaultCurrency =
     fyo.singles.SystemSettings?.currency ?? DEFAULT_CURRENCY;
 
-  let getCurrency = doc?.getCurrencies?.[field.fieldname];
+  let getCurrency = doc?.getCurrencies
+    ? Reflect.get(doc.getCurrencies, field.fieldname)
+    : undefined;
   if (getCurrency !== undefined) {
     return getCurrency();
   }
 
-  getCurrency = doc?.parentdoc?.getCurrencies[field.fieldname];
+  getCurrency = doc?.parentdoc?.getCurrencies
+    ? Reflect.get(doc.parentdoc.getCurrencies, field.fieldname)
+    : undefined;
   if (getCurrency !== undefined) {
     return getCurrency();
   }

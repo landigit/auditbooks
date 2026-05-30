@@ -6,7 +6,7 @@ import * as relations from './relations';
 
 // Initialize the LibSQL client pointing to our local SQLite database.
 const client = createClient({
-  url: 'file:demo6.db',
+  url: 'file:drizzle/db/demo.db',
 });
 
 // Create the Drizzle database instance with pre-registered schemas and relationships.

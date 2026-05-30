@@ -1,4 +1,4 @@
-import { computed, inject, Ref } from 'vue';
+import { computed, inject, Ref, unref } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { Field, FieldTypeEnum } from 'schemas/types';
 import { evaluateReadOnly, evaluateRequired } from 'src/utils/doc';
@@ -40,8 +40,9 @@ export function useBaseControl(
   const injectedDoc = inject<unknown>('doc', undefined);
 
   const doc = computed<Doc | undefined>(() => {
-    if (injectedDoc instanceof Doc) {
-      return injectedDoc;
+    const unwrapped = unref(injectedDoc);
+    if (unwrapped instanceof Doc) {
+      return unwrapped;
     }
     return undefined;
   });

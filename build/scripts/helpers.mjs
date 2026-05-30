@@ -51,9 +51,15 @@ export const excludeVendorFromSourceMap = {
         return;
       }
 
+      const resolvedPath = path.normalize(path.resolve(args.path));
+      const baseDir = path.normalize(path.resolve('node_modules'));
+      if (!resolvedPath.startsWith(baseDir)) {
+        throw new Error('Path traversal detected: invalid node_modules path');
+      }
+
       return {
         contents:
-          fs.readFileSync(args.path, 'utf8') +
+          fs.readFileSync(resolvedPath, 'utf8') +
           '\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==',
         loader: 'default',
       };

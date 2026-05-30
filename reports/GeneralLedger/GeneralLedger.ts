@@ -120,8 +120,11 @@ export class GeneralLedger extends LedgerReport {
       const align = col.align ?? 'left';
       const width = col.width ?? 1;
       const fieldname = col.fieldname;
+      if (fieldname === '__proto__' || fieldname === 'constructor' || fieldname === 'prototype') {
+        continue;
+      }
 
-      let value = entry[fieldname as keyof LedgerEntry];
+      let value = Reflect.get(entry, fieldname as keyof LedgerEntry);
       const rawValue = value;
       if (value === null || value === undefined) {
         value = '';
@@ -238,16 +241,19 @@ export class GeneralLedger extends LedgerReport {
   }
 
   _getQueryFilters(): QueryFilter {
-    const filters: QueryFilter = {};
+    const filters: QueryFilter = Object.create(null);
     const stringFilters = ['account', 'party', 'referenceName'];
 
     for (const sf of stringFilters) {
-      const value = this[sf];
+      if (sf === '__proto__' || sf === '__proto__' || sf === 'constructor' || sf === 'prototype') {
+        continue;
+      }
+      const value = Reflect.get(this, sf);
       if (value === undefined) {
         continue;
       }
 
-      filters[sf] = value as string;
+      Reflect.set(filters, sf, value as string);
     }
 
     if (this.referenceType !== 'All') {

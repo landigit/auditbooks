@@ -20,6 +20,8 @@
 
 <script setup lang="ts">
 import { inject, watch, onUnmounted } from 'vue';
+
+defineOptions({ inheritAttrs: false });
 import { shortcutsKey } from 'src/utils/injectionKeys';
 
 // Define Props

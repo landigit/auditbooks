@@ -46,35 +46,41 @@ export abstract class Report extends Observable<RawValue> {
   }
 
   get filterMap() {
-    const filterMap: Record<string, RawValue> = {};
+    const filterMap: Record<string, RawValue> = Object.create(null);
     for (const { fieldname } of this.filters) {
+      if (fieldname === '__proto__' || fieldname === 'constructor' || fieldname === 'prototype') {
+        continue;
+      }
       const value = this.get(fieldname);
       if (getIsNullOrUndef(value)) {
         continue;
       }
 
-      filterMap[fieldname] = value;
+      Reflect.set(filterMap, fieldname, value);
     }
 
     return filterMap;
   }
 
   async set(key: string, value: DocValue, callPostSet = true) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      return;
+    }
     const field = this.filters.find((f) => f.fieldname === key);
     if (field === undefined) {
       return;
     }
 
     value = Converter.toRawValue(value, field, this.fyo);
-    const prevValue = this[key];
+    const prevValue = Reflect.get(this, key);
     if (prevValue === value) {
       return;
     }
 
     if (getIsNullOrUndef(value)) {
-      delete this[key];
+      Reflect.deleteProperty(this, key);
     } else {
-      this[key] = value;
+      Reflect.set(this, key, value);
     }
 
     if (callPostSet) {

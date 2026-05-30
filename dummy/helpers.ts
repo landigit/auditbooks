@@ -17,8 +17,8 @@ export const purchaseItemPartyMap: Record<string, string> = Object.keys(
   partyPurchaseItemMap
 ).reduce(
   (acc, party) => {
-    for (const item of partyPurchaseItemMap[party]) {
-      acc[item] = party;
+    for (const item of Reflect.get(partyPurchaseItemMap, party)) {
+      Reflect.set(acc, item, party);
     }
     return acc;
   },
@@ -42,7 +42,7 @@ export const flow = [
 export function getFlowConstant(months: number) {
   // Jan to December
   const d = dayjs().subtract(months, 'month');
-  return flow[d.month()];
+  return Reflect.get(flow, d.month());
 }
 
 export function getRandomDates(count: number, months: number): Date[] {

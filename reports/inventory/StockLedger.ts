@@ -107,7 +107,7 @@ export class StockLedger extends Report {
 
     let i = 0;
     for (let idx = 0; idx < rawData.length; idx++) {
-      const row = rawData[idx];
+      const row = Reflect.get(rawData, idx);
       if (this.item && row.item !== this.item) {
         continue;
       }
@@ -156,6 +156,9 @@ export class StockLedger extends Report {
     const groups: Map<string, ComputedStockLedgerEntry[]> = new Map();
     for (const row of rawData) {
       const key = row[groupBy];
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        continue;
+      }
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -200,7 +203,12 @@ export class StockLedger extends Report {
     }
 
     for (const col of columns) {
-      const fieldname = col.fieldname as keyof ComputedStockLedgerEntry;
+      const fieldnameStr = col.fieldname;
+      if (fieldnameStr === '__proto__' || fieldnameStr === 'constructor' || fieldnameStr === 'prototype') {
+        continue;
+      }
+
+      const fieldname = fieldnameStr as keyof ComputedStockLedgerEntry;
       const fieldtype = col.fieldtype;
 
       const rawValue = row[fieldname] as RawValue;

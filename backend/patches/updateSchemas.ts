@@ -134,17 +134,25 @@ async function replaceDatabaseCore(
   // Small delay to allow Windows to fully release file handles after close()
   await new Promise((resolve) => setTimeout(resolve, 300));
 
+  const normalizedNewDbPath = path.normalize(path.resolve(newDbPath));
+  const normalizedOldDbPath = path.normalize(path.resolve(oldDbPath));
+  const baseDir = path.dirname(normalizedOldDbPath);
+
+  if (!normalizedNewDbPath.startsWith(baseDir) || !normalizedOldDbPath.startsWith(baseDir)) {
+    throw new Error('Path traversal detected: invalid database path');
+  }
+
   // Delete all old database files (main, wal, shm)
-  await unlinkIfExists(oldDbPath);
-  await unlinkIfExists(oldDbPath + '-wal');
-  await unlinkIfExists(oldDbPath + '-shm');
+  await unlinkIfExists(normalizedOldDbPath);
+  await unlinkIfExists(normalizedOldDbPath + '-wal');
+  await unlinkIfExists(normalizedOldDbPath + '-shm');
 
   // Delete any temporary wal/shm files before renaming
-  await unlinkIfExists(newDbPath + '-wal');
-  await unlinkIfExists(newDbPath + '-shm');
+  await unlinkIfExists(normalizedNewDbPath + '-wal');
+  await unlinkIfExists(normalizedNewDbPath + '-shm');
 
-  await fs.rename(newDbPath, oldDbPath);
-  await dm._connect(oldDbPath);
+  await fs.rename(normalizedNewDbPath, normalizedOldDbPath);
+  await dm._connect(normalizedOldDbPath);
 }
 
 async function copyData(
@@ -155,20 +163,20 @@ async function copyData(
   const schemaMap = destDm.getSchemaMap();
   await destClient.execute('PRAGMA foreign_keys=OFF');
   await copySingleValues(sourceClient, destClient, schemaMap);
-  await copyParty(sourceClient, destClient, schemaMap[ModelNameEnum.Party]!);
-  await copyItem(sourceClient, destClient, schemaMap[ModelNameEnum.Item]!);
+  await copyParty(sourceClient, destClient, Reflect.get(schemaMap, ModelNameEnum.Party)!);
+  await copyItem(sourceClient, destClient, Reflect.get(schemaMap, ModelNameEnum.Item)!);
   await copyChildTables(sourceClient, destClient, schemaMap);
   await copyOtherTables(sourceClient, destClient, schemaMap);
   await copyTransactionalTables(sourceClient, destClient, schemaMap);
   await copyLedgerEntries(
     sourceClient,
     destClient,
-    schemaMap[ModelNameEnum.AccountingLedgerEntry]!
+    Reflect.get(schemaMap, ModelNameEnum.AccountingLedgerEntry)!
   );
   await copyNumberSeries(
     sourceClient,
     destClient,
-    schemaMap[ModelNameEnum.NumberSeries]!
+    Reflect.get(schemaMap, ModelNameEnum.NumberSeries)!
   );
   await destClient.execute('PRAGMA foreign_keys=ON');
 }
@@ -253,7 +261,7 @@ async function copyOtherTables(
 
   for (const sn of schemaNames) {
     const values = await selectAll(sourceClient, sn);
-    await copyValues(destClient, sn, values, [], {}, schemaMap[sn]);
+    await copyValues(destClient, sn, values, [], {}, Reflect.get(schemaMap, sn));
   }
 }
 
@@ -282,7 +290,7 @@ async function copyTransactionalTables(
       }
 
       if (!v.numberSeries) {
-        v.numberSeries = defaultNumberSeriesMap[sn];
+        v.numberSeries = Reflect.get(defaultNumberSeriesMap, sn);
       }
 
       if (v.customer) {
@@ -299,7 +307,7 @@ async function copyTransactionalTables(
       values,
       [],
       childTableColumnMap,
-      schemaMap[sn]
+      Reflect.get(schemaMap, sn)
     );
   }
 }
@@ -310,7 +318,7 @@ async function copyChildTables(
   schemaMap: SchemaMap
 ) {
   const childSchemaNames = Object.keys(schemaMap).filter(
-    (sn) => schemaMap[sn]?.isChild
+    (sn) => Reflect.get(schemaMap, sn)?.isChild
   );
 
   for (const sn of childSchemaNames) {
@@ -321,7 +329,7 @@ async function copyChildTables(
       values,
       [],
       childTableColumnMap,
-      schemaMap[sn]
+      Reflect.get(schemaMap, sn)
     );
   }
 }
@@ -370,7 +378,7 @@ async function copySingleValues(
   schemaMap: SchemaMap
 ) {
   const singleSchemaNames = Object.keys(schemaMap).filter(
-    (k) => schemaMap[k]?.isSingle
+    (k) => Reflect.get(schemaMap, k)?.isSingle
   );
 
   const placeholders = singleSchemaNames.map(() => '?').join(', ');
@@ -380,7 +388,14 @@ async function copySingleValues(
   });
   const singleValues = singleValuesRes.rows;
 
-  await copyValues(destClient, ModelNameEnum.SingleValue, singleValues);
+  await copyValues(
+    destClient,
+    ModelNameEnum.SingleValue,
+    singleValues,
+    [],
+    {},
+    Reflect.get(schemaMap, ModelNameEnum.SingleValue)!
+  );
 }
 
 async function copyValues(
@@ -437,7 +452,7 @@ async function getCountryCode(client: Client) {
 
 function notNullify(map: any, schema: Schema) {
   for (const field of schema.fields) {
-    if (!field.required || !getIsNullOrUndef(map[field.fieldname])) {
+    if (!field.required || !getIsNullOrUndef(Reflect.get(map, field.fieldname))) {
       continue;
     }
 
@@ -445,15 +460,15 @@ function notNullify(map: any, schema: Schema) {
       case FieldTypeEnum.Float:
       case FieldTypeEnum.Int:
       case FieldTypeEnum.Check:
-        map[field.fieldname] = 0;
+        Reflect.set(map, field.fieldname, 0);
         break;
       case FieldTypeEnum.Currency:
-        map[field.fieldname] = '0.00000000000';
+        Reflect.set(map, field.fieldname, '0.00000000000');
         break;
       case FieldTypeEnum.Table:
         continue;
       default:
-        map[field.fieldname] = '';
+        Reflect.set(map, field.fieldname, '');
     }
   }
 }
@@ -464,7 +479,7 @@ function deleteOldKeys(map: any, newKeys: string[]) {
       continue;
     }
 
-    delete map[key];
+    Reflect.deleteProperty(map, key);
   }
 }
 

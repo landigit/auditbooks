@@ -79,7 +79,7 @@ export class SetupWizard extends Doc {
 
         const countryInfo = getCountryInfo();
         const fyStart =
-          countryInfo[this.country as string]?.fiscal_year_start ?? '';
+          Reflect.get(countryInfo, this.country as string)?.fiscal_year_start ?? '';
         return getFiscalYear(fyStart, true);
       },
       dependsOn: ['country', 'fiscalYearEnd'],
@@ -103,7 +103,7 @@ export class SetupWizard extends Doc {
 
         const countryInfo = getCountryInfo();
         const fyEnd =
-          countryInfo[this.country as string]?.fiscal_year_end ?? '';
+          Reflect.get(countryInfo, this.country as string)?.fiscal_year_end ?? '';
         return getFiscalYear(fyEnd, false);
       },
       dependsOn: ['country', 'fiscalYearStart'],
@@ -116,7 +116,7 @@ export class SetupWizard extends Doc {
         }
 
         const countryInfo = getCountryInfo();
-        const { code } = countryInfo[country] ?? {};
+        const { code } = Reflect.get(countryInfo, country) ?? {};
         if (!code) {
           return;
         }
@@ -142,7 +142,7 @@ export class SetupWizard extends Doc {
         }
 
         const countryInfo = getCountryInfo();
-        const code = countryInfo[country]?.code;
+        const code = Reflect.get(countryInfo, country)?.code;
         if (!code) {
           return;
         }

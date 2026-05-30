@@ -85,9 +85,12 @@ export abstract class AccountReport extends LedgerReport {
   }
 
   getTotalNode(rootNodes: AccountTreeNode[], name: string): AccountListNode {
-    const accountTree: Tree = {};
+    const accountTree: Tree = Object.create(null);
     for (const rootNode of rootNodes) {
-      accountTree[rootNode.name] = rootNode;
+      if (rootNode.name === '__proto__' || rootNode.name === 'constructor' || rootNode.name === 'prototype') {
+        continue;
+      }
+      Reflect.set(accountTree, rootNode.name, rootNode);
     }
     const leafNodes = getListOfLeafNodes(accountTree) as AccountTreeNode[];
 
@@ -164,13 +167,13 @@ export abstract class AccountReport extends LedgerReport {
           continue;
         }
 
-        if (!this.accountMap?.[entry.account]) {
+        if (!this.accountMap || !Reflect.get(this.accountMap, entry.account)) {
           await this._setAndReturnAccountMap(true);
         }
 
         const totalBalance = valueMap.get(key)?.balance ?? 0;
         const balance = (entry.debit ?? 0) - (entry.credit ?? 0);
-        const rootType = this.accountMap![entry.account]?.rootType;
+        const rootType = Reflect.get(this.accountMap!, entry.account)?.rootType;
 
         if (isCredit(rootType)) {
           valueMap.set(key, { balance: totalBalance - balance });
@@ -260,7 +263,7 @@ export abstract class AccountReport extends LedgerReport {
       ];
     }
 
-    const months: number = monthsMap[this.periodicity];
+    const months: number = Reflect.get(monthsMap, this.periodicity);
     const dateRanges: DateRange[] = [
       {
         toDate,
@@ -293,7 +296,7 @@ export abstract class AccountReport extends LedgerReport {
 
     if (this.basedOn === 'Until Date') {
       toDate = dayjs(this.toDate!).add(1, 'day').format('YYYY-MM-DD')!;
-      const months = monthsMap[this.periodicity] * Math.max(this.count ?? 1, 1);
+      const months = Reflect.get(monthsMap, this.periodicity) * Math.max(this.count ?? 1, 1);
       fromDate = dayjs(this.toDate!).subtract(months, 'month').format('YYYY-MM-DD')!;
     } else {
       const fy = await getFiscalEndpoints(
@@ -385,8 +388,8 @@ export abstract class AccountReport extends LedgerReport {
           fieldtype: 'Int',
           fieldname: 'count',
           minvalue: 1,
-          placeholder: t`Number of ${periodNameMap[this.periodicity]}`,
-          label: t`Number of ${periodNameMap[this.periodicity]}`,
+          placeholder: t`Number of ${Reflect.get(periodNameMap, this.periodicity)}`,
+          label: t`Number of ${Reflect.get(periodNameMap, this.periodicity)}`,
           required: true,
         },
       ] as Field[];
@@ -483,7 +486,9 @@ const monthsMap: Record<Periodicity, number> = {
 
 function setPruneFlagOnAccountTreeNodes(accountTree: AccountTree) {
   for (const account of Object.values(accountTree)) {
-    account.prune = true;
+    if (account) {
+      account.prune = true;
+    }
   }
 }
 
@@ -492,21 +497,28 @@ function setValueMapOnAccountTreeNodes(
   rangeGroupedMap: AccountNameValueMapMap
 ) {
   for (const name of rangeGroupedMap.keys()) {
-    if (!accountTree[name]) {
+    if (name === '__proto__' || name === 'constructor' || name === 'prototype') {
+      continue;
+    }
+    if (!Reflect.get(accountTree, name)) {
       continue;
     }
 
     const valueMap = rangeGroupedMap.get(name)!;
-    accountTree[name].valueMap = valueMap;
-    accountTree[name].prune = false;
+    const node = Reflect.get(accountTree, name);
+    node.valueMap = valueMap;
+    node.prune = false;
 
     /**
      * Set the update the parent account values recursively
      * also prevent pruning of the parent accounts.
      */
-    let parentAccountName: string | null = accountTree[name].parentAccount;
+    let parentAccountName: string | null = node.parentAccount;
 
     while (parentAccountName !== null) {
+      if (parentAccountName === '__proto__' || parentAccountName === 'constructor' || parentAccountName === 'prototype') {
+        break;
+      }
       parentAccountName = updateParentAccountWithChildValues(
         accountTree,
         parentAccountName,
@@ -521,17 +533,30 @@ function updateParentAccountWithChildValues(
   parentAccountName: string,
   valueMap: ValueMap
 ): string {
-  const parentAccount = accountTree[parentAccountName];
+  if (parentAccountName === '__proto__' || parentAccountName === 'constructor' || parentAccountName === 'prototype') {
+    return '';
+  }
+  const parentAccount = Reflect.get(accountTree, parentAccountName);
+  if (!parentAccount) {
+    return '';
+  }
   parentAccount.prune = false;
   parentAccount.valueMap ??= new Map();
 
   for (const key of valueMap.keys()) {
     const value = parentAccount.valueMap.get(key);
     const childValue = valueMap.get(key);
-    const map: Record<string, number> = {};
+    const map: Record<string, number> = Object.create(null);
 
-    for (const key of Object.keys(childValue!)) {
-      map[key] = (value?.[key] ?? 0) + (childValue?.[key] ?? 0);
+    if (childValue) {
+      for (const key of Object.keys(childValue)) {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          continue;
+        }
+        const vVal = value ? Reflect.get(value, key) : undefined;
+        const cvVal = childValue ? Reflect.get(childValue, key) : undefined;
+        Reflect.set(map, key, (vVal ?? 0) + (cvVal ?? 0));
+      }
     }
     parentAccount.valueMap.set(key, map);
   }
@@ -543,13 +568,21 @@ function setChildrenOnAccountTreeNodes(accountTree: AccountTree) {
   const parentNodes: Set<string> = new Set();
 
   for (const name of Object.keys(accountTree)) {
-    const ac = accountTree[name];
-    if (!ac.parentAccount) {
+    if (name === '__proto__' || name === 'constructor' || name === 'prototype') {
+      continue;
+    }
+    const ac = Reflect.get(accountTree, name);
+    if (!ac || !ac.parentAccount) {
       continue;
     }
 
-    accountTree[ac.parentAccount].children ??= [];
-    accountTree[ac.parentAccount].children!.push(ac);
+    if (ac.parentAccount === '__proto__' || ac.parentAccount === 'constructor' || ac.parentAccount === 'prototype') {
+      continue;
+    }
+
+    const parentNode = Reflect.get(accountTree, ac.parentAccount);
+    parentNode.children ??= [];
+    parentNode.children.push(ac);
 
     parentNodes.add(ac.parentAccount);
   }
@@ -557,26 +590,39 @@ function setChildrenOnAccountTreeNodes(accountTree: AccountTree) {
 
 function deleteNonRootAccountTreeNodes(accountTree: AccountTree) {
   for (const name of Object.keys(accountTree)) {
-    const ac = accountTree[name];
-    if (!ac.parentAccount) {
+    if (name === '__proto__' || name === 'constructor' || name === 'prototype') {
+      continue;
+    }
+    const ac = Reflect.get(accountTree, name);
+    if (!ac || !ac.parentAccount) {
       continue;
     }
 
-    delete accountTree[name];
+    Reflect.deleteProperty(accountTree, name);
   }
 }
 
 function pruneAccountTree(accountTree: AccountTree) {
   for (const root of Object.keys(accountTree)) {
-    if (accountTree[root].prune) {
-      delete accountTree[root];
+    if (root === '__proto__' || root === 'constructor' || root === 'prototype') {
+      continue;
+    }
+    const node = Reflect.get(accountTree, root);
+    if (node && node.prune) {
+      Reflect.deleteProperty(accountTree, root);
     }
   }
 
   for (const root of Object.keys(accountTree)) {
-    accountTree[root].children = getPrunedChildren(
-      accountTree[root].children ?? []
-    );
+    if (root === '__proto__' || root === 'constructor' || root === 'prototype') {
+      continue;
+    }
+    const node = Reflect.get(accountTree, root);
+    if (node) {
+      node.children = getPrunedChildren(
+        node.children ?? []
+      );
+    }
   }
 }
 

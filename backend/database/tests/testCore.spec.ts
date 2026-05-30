@@ -54,7 +54,7 @@ describe('DatabaseCore Tests', () => {
   test('Post Migrate TableInfo', async () => {
     const db = await getDb();
     for (const schemaName in schemaMap) {
-      const schema = schemaMap[schemaName] as Schema;
+      const schema = Reflect.get(schemaMap, schemaName) as Schema;
       const fieldMap = getMapFromList(schema.fields, 'fieldname');
       const columnsRes = await db.client!.execute(
         `pragma table_info("${schemaName}")`
@@ -72,12 +72,12 @@ describe('DatabaseCore Tests', () => {
       expect(columns.length).toBe(columnCount);
 
       for (const column of columns) {
-        const field = fieldMap[column.name];
-        const dbColType = sqliteTypeMap[field.fieldtype];
+        const field = Reflect.get(fieldMap, column.name);
+        const dbColType = Reflect.get(sqliteTypeMap, field.fieldtype);
 
         expect(column.name).toBe(field.fieldname);
         
-        const expectedTypes = [dbColType];
+        const expectedTypes: string[] = [dbColType];
         if (dbColType === 'datetime' || dbColType === 'date' || dbColType === 'time') {
           expectedTypes.push('numeric', 'text');
         }
@@ -129,7 +129,7 @@ describe('DatabaseCore Tests', () => {
       'default'
     );
     for (const row of rows) {
-      expect(row.value).toBe(defaultMap[row.fieldname as string]);
+      expect(row.value).toBe(Reflect.get(defaultMap, row.fieldname as string));
     }
 
     let localeRow = rows.find((r) => r.fieldname === 'locale');
@@ -179,7 +179,7 @@ describe('DatabaseCore Tests', () => {
     expect(svl.length).toBe(2);
     for (const sv of svl) {
       expect(sv.parent).toBe('SystemSettings');
-      expect(sv.value).toBe(({ locale, dateFormat } as any)[sv.fieldname]);
+      expect(sv.value).toBe(Reflect.get({ locale, dateFormat }, sv.fieldname));
     }
 
     const svlMap = await db.get('SystemSettings');
@@ -213,7 +213,7 @@ describe('DatabaseCore Tests', () => {
     expect(firstRow.email).toBe(null);
 
     for (const key in metaValues) {
-      expect(firstRow[key]).toBe(metaValues[key as BaseMetaKey]);
+      expect(Reflect.get(firstRow, key)).toBe(Reflect.get(metaValues, key as BaseMetaKey));
     }
 
     const email = 'john@thoe.com';
@@ -242,8 +242,8 @@ describe('DatabaseCore Tests', () => {
     expect(firstRow.phone).toBe(phone);
 
     for (const key in metaValues) {
-      const val = firstRow[key];
-      const expected = metaValues[key as BaseMetaKey];
+      const val = Reflect.get(firstRow, key);
+      const expected = Reflect.get(metaValues, key);
       if (key !== 'modified') {
         expect(val).toBe(expected);
       } else {
@@ -265,14 +265,14 @@ describe('DatabaseCore Tests', () => {
     expect((await db.getAll(schemaName, { fields: ['*'] })).length).toBe(1);
     await db.insert(schemaName, cTwo);
     rows = await db.getAll(schemaName, { fields: ['*'] });
-    expect(rows.length).toBe(2);
-
     const cs = [cOne, cTwo].sort((a, b) => a.name.localeCompare(b.name));
     const sortedRows = [...rows].sort((a, b) => (a.name as string).localeCompare(b.name as string));
+    expect(rows.length).toBe(2);
+
     for (const i in cs) {
-      for (const k in cs[i]) {
-        const val = (cs as any)[i][k];
-        expect(sortedRows?.[i]?.[k]).toBe(val);
+      for (const k in Reflect.get(cs, i)) {
+        const val = Reflect.get(Reflect.get(cs, i), k);
+        expect(Reflect.get(Reflect.get(sortedRows || [], i), k)).toBe(val);
       }
     }
 
@@ -344,12 +344,12 @@ describe('DatabaseCore Tests', () => {
 
     let fvMap = await db.get(SalesInvoice, invoice.name as string);
     for (const key in invoice) {
-      let expected = invoice[key];
+      let expected = Reflect.get(invoice, key);
       if (typeof expected === 'boolean') {
         expected = +expected;
       }
 
-      expect(fvMap[key]).toBe(expected);
+      expect(Reflect.get(fvMap, key)).toBe(expected);
     }
 
     expect((fvMap.items as unknown[])?.length).toBe(0);
@@ -379,7 +379,7 @@ describe('DatabaseCore Tests', () => {
     expect(ct[0].parentFieldname).toBe('items');
     expect(ct[0].parentSchemaName).toBe(SalesInvoice);
     for (const key in items[0]) {
-      expect(ct[0][key]).toBe(items[0][key]);
+      expect(Reflect.get(ct[0], key)).toBe(Reflect.get(items[0], key));
     }
 
     items.push({
@@ -399,8 +399,8 @@ describe('DatabaseCore Tests', () => {
     expect(rows.length).toBe(2);
 
     for (const i in rows) {
-      for (const key in rows[i]) {
-        expect(rows[i][key]).toBe(items[i][key]);
+      for (const key in Reflect.get(rows, i)) {
+        expect(Reflect.get(Reflect.get(rows, i), key)).toBe(Reflect.get(Reflect.get(items, i), key));
       }
     }
 

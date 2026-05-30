@@ -169,7 +169,7 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async exists(schemaName: string, name?: string): Promise<boolean> {
-    const schema = this.schemaMap[schemaName] as Schema;
+    const schema = Reflect.get(this.schemaMap, schemaName) as Schema;
     if (schema.isSingle) {
       return this.#singleExists(schemaName);
     }
@@ -198,7 +198,7 @@ export default class DatabaseCore extends DatabaseBase {
     fieldValueMap: FieldValueMap
   ): Promise<FieldValueMap> {
     // insert parent
-    if (this.schemaMap[schemaName]!.isSingle) {
+    if (Reflect.get(this.schemaMap, schemaName)!.isSingle) {
       await this.#updateSingleValues(schemaName, fieldValueMap);
     } else {
       await this.#insertOne(schemaName, fieldValueMap);
@@ -214,7 +214,7 @@ export default class DatabaseCore extends DatabaseBase {
     name = '',
     fields?: string | string[]
   ): Promise<FieldValueMap> {
-    const schema = this.schemaMap[schemaName] as Schema;
+    const schema = Reflect.get(this.schemaMap, schemaName) as Schema;
     if (!schema.isSingle && !name) {
       throw new ValueError('name is mandatory');
     }
@@ -256,7 +256,7 @@ export default class DatabaseCore extends DatabaseBase {
     schemaName: string,
     options: GetAllOptions = {}
   ): Promise<FieldValueMap[]> {
-    const schema = this.schemaMap[schemaName] as Schema;
+    const schema = Reflect.get(this.schemaMap, schemaName) as Schema;
     if (schema === undefined) {
       throw new NotFoundError(`schema ${schemaName} not found`);
     }
@@ -440,7 +440,7 @@ export default class DatabaseCore extends DatabaseBase {
 
   async update(schemaName: string, fieldValueMap: FieldValueMap) {
     // update parent
-    if (this.schemaMap[schemaName]!.isSingle) {
+    if (Reflect.get(this.schemaMap, schemaName)!.isSingle) {
       await this.#updateSingleValues(schemaName, fieldValueMap);
     } else {
       await this.#updateOne(schemaName, fieldValueMap);
@@ -451,7 +451,7 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async delete(schemaName: string, name: string) {
-    const schema = this.schemaMap[schemaName] as Schema;
+    const schema = Reflect.get(this.schemaMap, schemaName) as Schema;
     if (schema.isSingle) {
       await this.#deleteSingle(schemaName, name);
       return;
@@ -564,7 +564,7 @@ export default class DatabaseCore extends DatabaseBase {
   #getFiltersArray(filters: QueryFilter) {
     const filtersArray = [];
     for (const field in filters) {
-      const value = filters[field];
+      const value = Reflect.get(filters, field);
 
       let operator: string | number = '=';
       let comparisonValue = value as string | number | (string | number)[];
@@ -600,7 +600,7 @@ export default class DatabaseCore extends DatabaseBase {
 
   async #getColumnDiff(schemaName: string): Promise<ColumnDiff> {
     const tableColumns = await this.#getTableColumns(schemaName);
-    const validFields = this.schemaMap[schemaName]!.fields.filter(
+    const validFields = Reflect.get(this.schemaMap, schemaName)!.fields.filter(
       (f) => !f.computed
     );
     const diff: ColumnDiff = { added: [], removed: [] };
@@ -625,7 +625,7 @@ export default class DatabaseCore extends DatabaseBase {
   async #getNewForeignKeys(schemaName: string): Promise<Field[]> {
     const foreignKeys = await this.#getForeignKeys(schemaName);
     const newForeignKeys: Field[] = [];
-    const schema = this.schemaMap[schemaName] as Schema;
+    const schema = Reflect.get(this.schemaMap, schemaName) as Schema;
     for (const field of schema.fields) {
       if (
         field.fieldtype === 'Link' &&
@@ -646,7 +646,7 @@ export default class DatabaseCore extends DatabaseBase {
       return;
     }
 
-    const columnType = this.typeMap[field.fieldtype];
+    const columnType = Reflect.get(this.typeMap, field.fieldtype);
     if (!columnType) {
       return;
     }
@@ -693,7 +693,7 @@ export default class DatabaseCore extends DatabaseBase {
   async #alterTable({ schemaName, diff, newForeignKeys }: AlterConfig) {
     if (diff.added.length) {
       for (const field of diff.added) {
-        const columnType = this.typeMap[field.fieldtype];
+        const columnType = Reflect.get(this.typeMap, field.fieldtype);
         if (!columnType) continue;
 
         let sqliteType = 'TEXT';
@@ -732,7 +732,7 @@ export default class DatabaseCore extends DatabaseBase {
 
   async #createTable(schemaName: string, tableName?: string) {
     tableName ??= schemaName;
-    const fields = this.schemaMap[schemaName]!.fields.filter(
+    const fields = Reflect.get(this.schemaMap, schemaName)!.fields.filter(
       (f) => !f.computed
     );
     return await this.#runCreateTableQuery(tableName, fields);
@@ -758,7 +758,7 @@ export default class DatabaseCore extends DatabaseBase {
     const existingFields = res.rows.map((row: any) => row.fieldname as string);
 
     const nonExtant: NonExtantConfig['nonExtant'] = [];
-    const fields = this.schemaMap[singleSchemaName]?.fields ?? [];
+    const fields = Reflect.get(this.schemaMap, singleSchemaName)?.fields ?? [];
     for (const { fieldname, default: value } of fields) {
       if (existingFields.includes(fieldname) || value === undefined) {
         continue;
@@ -836,12 +836,12 @@ export default class DatabaseCore extends DatabaseBase {
     tableFields: TargetField[]
   ) {
     for (const field of tableFields) {
-      fieldValueMap[field.fieldname] = await this.getAll(field.target, {
+      Reflect.set(fieldValueMap, field.fieldname, await this.getAll(field.target, {
         fields: ['*'],
         filters: { parent: parentName },
         orderBy: 'idx',
         order: 'asc',
-      });
+      }));
     }
   }
 
@@ -881,7 +881,7 @@ export default class DatabaseCore extends DatabaseBase {
       fieldValueMap.name = getRandomString();
     }
 
-    const fields = this.schemaMap[schemaName]!.fields.filter(
+    const fields = Reflect.get(this.schemaMap, schemaName)!.fields.filter(
       (f) => f.fieldtype !== FieldTypeEnum.Table && !f.computed
     );
 
@@ -890,10 +890,11 @@ export default class DatabaseCore extends DatabaseBase {
     const args: any[] = [];
 
     for (const { fieldname } of fields) {
-      if (fieldValueMap[fieldname] !== undefined) {
+      const val = Reflect.get(fieldValueMap, fieldname);
+      if (val !== undefined) {
         columns.push(`"${fieldname}"`);
         placeholders.push('?');
-        args.push(fieldValueMap[fieldname]);
+        args.push(val);
       }
     }
 
@@ -905,11 +906,11 @@ export default class DatabaseCore extends DatabaseBase {
     singleSchemaName: string,
     fieldValueMap: FieldValueMap
   ) {
-    const fields = this.schemaMap[singleSchemaName]!.fields.filter(
+    const fields = Reflect.get(this.schemaMap, singleSchemaName)!.fields.filter(
       (f) => !f.computed && f.fieldtype !== 'Table'
     );
     for (const field of fields) {
-      const value = fieldValueMap[field.fieldname] as RawValue | undefined;
+      const value = Reflect.get(fieldValueMap, field.fieldname) as RawValue | undefined;
       if (value === undefined) {
         continue;
       }
@@ -1006,10 +1007,10 @@ export default class DatabaseCore extends DatabaseBase {
     }
 
     for (const schemaName of update) {
-      const fields = this.schemaMap[schemaName]!.fields;
+      const fields = Reflect.get(this.schemaMap, schemaName)!.fields;
       const defaultValues: FieldValueMap = fields.reduce((acc, f) => {
         if (f.default !== undefined) {
-          acc[f.fieldname] = f.default;
+          Reflect.set(acc, f.fieldname, f.default);
         }
 
         return acc;
@@ -1031,13 +1032,13 @@ export default class DatabaseCore extends DatabaseBase {
   async #updateOne(schemaName: string, fieldValueMap: FieldValueMap) {
     const updateMap = { ...fieldValueMap };
     delete updateMap.name;
-    const schema = this.schemaMap[schemaName] as Schema;
+    const schema = Reflect.get(this.schemaMap, schemaName) as Schema;
 
     for (const { fieldname, fieldtype, computed } of schema.fields) {
       if (fieldtype !== FieldTypeEnum.Table && !computed) {
         continue;
       }
-      delete updateMap[fieldname];
+      Reflect.deleteProperty(updateMap, fieldname);
     }
 
     const setClauses: string[] = [];
@@ -1063,7 +1064,7 @@ export default class DatabaseCore extends DatabaseBase {
     isUpdate: boolean
   ) {
     let parentName = fieldValueMap.name as string;
-    if (this.schemaMap[schemaName]?.isSingle) {
+    if (Reflect.get(this.schemaMap, schemaName)?.isSingle) {
       parentName = schemaName;
     }
 
@@ -1072,7 +1073,7 @@ export default class DatabaseCore extends DatabaseBase {
     for (const field of tableFields) {
       const added: string[] = [];
 
-      const tableFieldValue = fieldValueMap[field.fieldname] as
+      const tableFieldValue = Reflect.get(fieldValueMap, field.fieldname) as
         | FieldValueMap[]
         | undefined
         | null;
@@ -1102,7 +1103,7 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   #getTableFields(schemaName: string): TargetField[] {
-    return this.schemaMap[schemaName]!.fields.filter(
+    return Reflect.get(this.schemaMap, schemaName)!.fields.filter(
       (f) => f.fieldtype === FieldTypeEnum.Table
     ) as TargetField[];
   }

@@ -340,35 +340,38 @@ export class BespokeQueries {
       | undefined = {};
 
     for (const item of docItems) {
-      if (docItemsMap[item.item]) {
+      const existingDocItem = Reflect.get(docItemsMap, item.item);
+      if (existingDocItem) {
         if (item.batch) {
           let serialNumbers: string[] | undefined;
 
-          if (!docItemsMap[item.item].batches![item.batch]) {
-            docItemsMap[item.item].batches![item.batch] = {
+          const batches = existingDocItem.batches!;
+          const batchInfo = Reflect.get(batches, item.batch);
+          if (!batchInfo) {
+            Reflect.set(batches, item.batch, {
               quantity: item.quantity,
               serialNumbers,
-            };
+            });
           } else {
-            docItemsMap[item.item].batches![item.batch] = {
-              quantity: (docItemsMap[item.item].batches![item.batch].quantity +=
-                item.quantity),
+            batchInfo.quantity += item.quantity;
+            Reflect.set(batches, item.batch, {
+              quantity: batchInfo.quantity,
               serialNumbers,
-            };
+            });
           }
         } else {
-          docItemsMap[item.item].quantity += item.quantity;
+          existingDocItem.quantity += item.quantity;
         }
 
         if (item.serialNumber) {
           const serialNumbers: string[] = [];
 
-          if (docItemsMap[item.item].serialNumbers) {
-            serialNumbers.push(...(docItemsMap[item.item].serialNumbers ?? []));
+          if (existingDocItem.serialNumbers) {
+            serialNumbers.push(...(existingDocItem.serialNumbers ?? []));
           }
 
           serialNumbers.push(...item.serialNumber.split('\n'));
-          docItemsMap[item.item].serialNumbers = serialNumbers;
+          existingDocItem.serialNumbers = serialNumbers;
         }
         continue;
       }
@@ -379,10 +382,10 @@ export class BespokeQueries {
           serialNumbers = item.serialNumber.split('\n');
         }
 
-        batchesMap[item.batch] = {
+        Reflect.set(batchesMap, item.batch, {
           serialNumbers,
           quantity: item.quantity,
-        };
+        });
       }
 
       let serialNumbers: string[] | undefined = undefined;
@@ -391,11 +394,11 @@ export class BespokeQueries {
         serialNumbers = item.serialNumber.split('\n');
       }
 
-      docItemsMap[item.item] = {
+      Reflect.set(docItemsMap, item.item, {
         serialNumbers,
         batches: batchesMap,
         quantity: item.quantity,
-      };
+      });
     }
     return docItemsMap;
   }
@@ -414,9 +417,9 @@ export class BespokeQueries {
 
     for (const row in docItemsMap) {
       const balanceSerialNumbersMap: string[] | undefined = [];
-      let balanceQty = safeParseFloat(-docItemsMap[row].quantity);
-      const docItem = docItemsMap[row];
-      const returnedDocItem = returnedItemsMap[row];
+      let balanceQty = safeParseFloat(-Reflect.get(docItemsMap, row).quantity);
+      const docItem = Reflect.get(docItemsMap, row);
+      const returnedDocItem = Reflect.get(returnedItemsMap, row);
       const docItemHasBatch = !!Object.keys(docItem.batches ?? {}).length;
 
       if (returnedItemsMap) {
@@ -426,10 +429,10 @@ export class BespokeQueries {
           }
 
           balanceQty = -(
-            Math.abs(balanceQty) + returnedItemsMap[item].quantity
+            Math.abs(balanceQty) + Reflect.get(returnedItemsMap, item).quantity
           );
 
-          const returnedItem = returnedItemsMap[item];
+          const returnedItem = Reflect.get(returnedItemsMap, item);
 
           if (docItem.serialNumbers && returnedItem.serialNumbers) {
             for (const serialNumber of docItem.serialNumbers) {
@@ -443,8 +446,8 @@ export class BespokeQueries {
 
       if (docItemHasBatch && docItem.batches) {
         for (const batch in docItem.batches) {
-          const docItemSerialNumbers = docItem.batches[batch].serialNumbers;
-          const itemSerialNumbers = docItem.batches[batch].serialNumbers;
+          const docItemSerialNumbers = Reflect.get(docItem.batches, batch).serialNumbers;
+          const itemSerialNumbers = Reflect.get(docItem.batches, batch).serialNumbers;
           let balanceSerialNumbers: string[] | undefined;
 
           if (docItemSerialNumbers && itemSerialNumbers) {
@@ -454,40 +457,40 @@ export class BespokeQueries {
             );
           }
 
-          const ItemQty = Math.abs(docItem.batches[batch].quantity);
+          const ItemQty = Math.abs(Reflect.get(docItem.batches, batch).quantity);
           let balanceQty = safeParseFloat(-ItemQty);
 
           if (!returnedDocItem || !returnedDocItem?.batches) {
             continue;
           }
 
-          const returnedItem = returnedDocItem?.batches[batch];
+          const returnedItem = Reflect.get(returnedDocItem?.batches, batch);
 
           if (!returnedItem) {
-            balanceBatchQtyMap[batch] = {
+            Reflect.set(balanceBatchQtyMap, batch, {
               quantity: balanceQty,
               serialNumbers: balanceSerialNumbers,
-            };
+            });
             continue;
           }
 
           balanceQty = -(
             Math.abs(safeParseFloat(-ItemQty)) -
-            Math.abs(returnedDocItem.batches[batch].quantity)
+            Math.abs(Reflect.get(returnedDocItem.batches, batch).quantity)
           );
 
-          balanceBatchQtyMap[batch] = {
+          Reflect.set(balanceBatchQtyMap, batch, {
             quantity: balanceQty,
             serialNumbers: balanceSerialNumbers,
-          };
+          });
         }
       }
 
-      returnBalanceItems[row] = {
+      Reflect.set(returnBalanceItems, row, {
         quantity: balanceQty,
         batches: balanceBatchQtyMap,
         serialNumbers: balanceSerialNumbersMap,
-      };
+      });
     }
 
     return returnBalanceItems;
@@ -531,7 +534,7 @@ export class BespokeQueries {
     const sinvNames = invoices.map((row) => row.name);
     const invoiceSignMap = invoices.reduce<Record<string, number>>(
       (map, inv) => {
-        map[inv.name] = inv.returnAgainst ? -1 : 1;
+        Reflect.set(map, inv.name, inv.returnAgainst ? -1 : 1);
         return map;
       },
       {}
@@ -573,11 +576,11 @@ export class BespokeQueries {
         .where(eq(paymentFor.parent, row.name))) as { referenceName: string }[];
 
       for (const ref of paymentRefs) {
-        const sign = invoiceSignMap[ref.referenceName] ?? 1;
+        const sign = Reflect.get(invoiceSignMap, ref.referenceName) ?? 1;
         const signedAmount = Number(row.amount) * sign;
 
-        transactedAmounts[row.paymentMethod] =
-          (transactedAmounts[row.paymentMethod] ?? 0) + signedAmount;
+        Reflect.set(transactedAmounts, row.paymentMethod,
+          (Reflect.get(transactedAmounts, row.paymentMethod) ?? 0) + signedAmount);
       }
     }
 

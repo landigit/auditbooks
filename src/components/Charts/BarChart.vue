@@ -4,6 +4,7 @@
       ref="chartSvg"
       :viewBox="`0 0 ${viewBoxWidth} ${viewBoxHeight}`"
       xmlns="http://www.w3.org/2000/svg"
+      class="w-full h-auto"
     >
       <!-- x Grid Lines -->
       <path

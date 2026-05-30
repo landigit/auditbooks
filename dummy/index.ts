@@ -188,7 +188,7 @@ async function getPayments(fyo: Fyo, invoices: Invoice[]) {
     doc.paymentType = invoice.isSales ? 'Receive' : 'Pay';
     doc.paymentMethod = 'Cash';
     doc.date = dayjs(invoice.date as Date)
-      .add(1, 'year')
+      .add(15, 'day')
       .toDate();
     if (doc.paymentType === 'Receive') {
       doc.account = 'Debtors';
@@ -252,13 +252,13 @@ async function getSalesInvoices(
    */
 
   for (let d = 0; d < dates.length; d++) {
-    const date = dates[d];
+    const date = Reflect.get(dates, d);
 
     notifier?.(
       `Creating Sales Invoices, ${d} out of ${dates.length}`,
       safeParseInt(d) / dates.length
     );
-    const customer = customers[Math.floor(Math.random() * customers.length)];
+    const customer = Reflect.get(customers, Math.floor(Math.random() * customers.length));
 
     const doc = fyo.doc.getNewDoc(
       ModelNameEnum.SalesInvoice,
@@ -277,7 +277,7 @@ async function getSalesInvoices(
      */
     const numItems = Math.ceil(Math.random() * 5);
     for (let i = 0; i < numItems; i++) {
-      const item = salesItems[Math.floor(Math.random() * salesItems.length)];
+      const item = Reflect.get(salesItems, Math.floor(Math.random() * salesItems.length));
       if ((doc.items ?? []).find((i) => i.item === item.name)) {
         continue;
       }
@@ -295,7 +295,7 @@ async function getSalesInvoices(
         quantity = Math.ceil(Math.random() * 3);
       }
 
-      let fc = flow[date.getMonth()];
+      let fc = Reflect.get(flow, date.getMonth());
       if (baseCount < 500) {
         fc += 1;
       }
@@ -346,8 +346,9 @@ async function getSalesPurchaseInvoices(
     })
     .reduce(
       (acc, item) => {
-        acc[item.key] ??= [];
-        acc[item.key].push(item.si);
+        if (Reflect.get(acc, item.key) == null) Reflect.set(acc, item.key, []);
+        const list = Reflect.get(acc, item.key) as SalesInvoice[];
+        list.push(item.si);
         return acc;
       },
       {} as Record<string, SalesInvoice[]>
@@ -368,15 +369,15 @@ async function getSalesPurchaseInvoices(
     /**
      * Group items by name to get the total quantity used in a month.
      */
-    const itemGrouped = dateGrouped[key].reduce(
+    const itemGrouped = Reflect.get(dateGrouped, key).reduce(
       (acc, si) => {
         for (const item of si.items!) {
           if (item.item === 'Dry-Cleaning') {
             continue;
           }
 
-          acc[item.item as string] ??= 0;
-          acc[item.item as string] += item.quantity as number;
+          if (Reflect.get(acc, item.item as string) == null) Reflect.set(acc, item.item as string, 0);
+          Reflect.set(acc, item.item as string, (Reflect.get(acc, item.item as string) as number) + (item.quantity as number));
         }
 
         return acc;
@@ -388,22 +389,23 @@ async function getSalesPurchaseInvoices(
      * Set order quantity for the first of the month.
      */
     Object.keys(itemGrouped).forEach((name) => {
-      const quantity = itemGrouped[name];
-      purchaseQty[name] ??= 0;
-      let prevQty = purchaseQty[name];
+      const quantity = Reflect.get(itemGrouped, name);
+      if (Reflect.get(purchaseQty, name) == null) Reflect.set(purchaseQty, name, 0);
+      let prevQty = Reflect.get(purchaseQty, name) as number;
 
       if (prevQty <= quantity) {
         prevQty = quantity - prevQty;
       }
 
-      purchaseQty[name] = Math.ceil(prevQty / 10) * 10;
+      Reflect.set(purchaseQty, name, Math.ceil(prevQty / 10) * 10);
     });
 
     const supplierGrouped = Object.keys(itemGrouped).reduce(
       (acc, item) => {
-        const supplier = purchaseItemPartyMap[item];
-        acc[supplier] ??= [];
-        acc[supplier].push(item);
+        const supplier = Reflect.get(purchaseItemPartyMap, item);
+        if (Reflect.get(acc, supplier) == null) Reflect.set(acc, supplier, []);
+        const list = Reflect.get(acc, supplier) as string[];
+        list.push(item);
 
         return acc;
       },
@@ -430,9 +432,9 @@ async function getSalesPurchaseInvoices(
       /**
        * For each item create a row
        */
-      for (const item of supplierGrouped[supplier]) {
+      for (const item of Reflect.get(supplierGrouped, supplier)) {
         await doc.append('items', {});
-        const quantity = purchaseQty[item];
+        const quantity = Reflect.get(purchaseQty, item) as number;
         await doc.items!.at(-1)!.set({ item, quantity });
       }
 
@@ -465,7 +467,7 @@ async function getNonSalesPurchaseInvoices(
     const date = temp.date(1).toDate();
 
     for (const name in periodic) {
-      if (months % periodic[name] !== 0) {
+      if (months % Reflect.get(periodic, name) !== 0) {
         continue;
       }
 
@@ -477,14 +479,14 @@ async function getNonSalesPurchaseInvoices(
         false
       ) as PurchaseInvoice;
 
-      const party = purchaseItemPartyMap[name];
+      const party = Reflect.get(purchaseItemPartyMap, name);
       await doc.set('party', party);
       if (!doc.account) {
         doc.account = 'Creditors';
       }
       await doc.append('items', {});
       const row = doc.items!.at(-1)!;
-      const item = itemMap[name];
+      const item = Reflect.get(itemMap, name);
 
       let quantity = 1;
       let rate = item.rate;
@@ -536,9 +538,9 @@ async function syncAndSubmit(docs: Doc[], notifier?: Notifier) {
 
   const total = docs.length;
   for (let i = 0; i < docs.length; i++) {
-    const doc = docs[i];
+    const doc = Reflect.get(docs, i);
     notifier?.(
-      `Syncing ${nameMap[doc.schemaName]}, ${i} out of ${total}`,
+      `Syncing ${Reflect.get(nameMap, doc.schemaName)}, ${i} out of ${total}`,
       safeParseInt(i) / total
     );
     await doc.sync();

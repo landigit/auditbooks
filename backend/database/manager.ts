@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { DatabaseError } from 'fyo/utils/errors';
 import path from 'path';
+import pkg from '../../package.json';
 import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
 import { getMapFromList } from 'utils/index';
 import { Version } from 'utils/version';
@@ -73,30 +74,33 @@ export class DatabaseManager extends DatabaseDemuxBase {
       await this.db!.migrate();
     }
 
-    await this.#executeMigration();
+    await this.#executeMigration(isFirstRun);
   }
 
-  async #executeMigration() {
-    const isFirstRun = await this.#getIsFirstRun();
+  async #executeMigration(isFirstRun?: boolean) {
+    isFirstRun ??= await this.#getIsFirstRun();
     let version = '0.0.0';
 
     if (isFirstRun) {
       try {
-        const pkgPath = path.join(process.cwd(), 'package.json');
-        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
         version = pkg.version || '0.37.8';
       } catch {
         version = '0.37.8';
       }
 
       try {
+        const now = new Date().toISOString();
         await this.db!.client!.execute({
-          sql: `INSERT OR REPLACE INTO "SingleValue" (name, parent, fieldname, value) VALUES (?, ?, ?, ?)`,
+          sql: `INSERT OR REPLACE INTO "SingleValue" (name, parent, fieldname, value, createdBy, modifiedBy, created, modified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           args: [
             `SystemSettings.version`,
             'SystemSettings',
             'version',
             version,
+            '__SYSTEM__',
+            '__SYSTEM__',
+            now,
+            now,
           ],
         });
       } catch (err) {
@@ -150,7 +154,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
      */
     const filtered = patches
       .filter((p) => {
-        const exec = runPatchesMap[p.name];
+        const exec = Reflect.get(runPatchesMap, p.name);
         if (!exec && Version.lte(version, p.version)) {
           return true;
         }
@@ -179,7 +183,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     }
 
     // @ts-ignore
-    const response = await this.db[method](...args);
+    const response = await Reflect.get(this.db, method).call(this.db, ...args);
     if (method === 'close') {
       delete this.db;
     }
@@ -197,7 +201,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     }
 
     const queryFunction: BespokeFunction =
-      BespokeQueries[method as keyof BespokeFunction];
+      Reflect.get(BespokeQueries, method as keyof BespokeFunction);
     return await queryFunction(this.db!, ...args);
   }
 
@@ -256,12 +260,17 @@ export class DatabaseManager extends DatabaseDemuxBase {
       fileName = fileName.slice(0, -6);
     }
 
-    const backupFolder = path.join(path.dirname(dbPath), 'backups');
+    const resolvedDbPath = path.normalize(path.resolve(dbPath));
+    const baseDir = path.dirname(resolvedDbPath);
+    const backupFolder = path.normalize(path.resolve(baseDir, 'backups'));
+    if (!backupFolder.startsWith(baseDir)) {
+      throw new Error('Path traversal detected');
+    }
     const date = new Date().toISOString().split('T')[0];
     const version = await this.#getAppVersion();
     const backupFile = `${fileName}_${version}_${date}.books.db`;
     fs.mkdirSync(backupFolder, { recursive: true });
-    return path.join(backupFolder, backupFile);
+    return path.normalize(path.resolve(backupFolder, backupFile));
   }
 
   async #getAppVersion(): Promise<string> {

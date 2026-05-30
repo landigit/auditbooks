@@ -124,10 +124,7 @@ async function handleResult(result) {
 }
 
 function runElectron() {
-  const args = ['--inspect=5858'];
-  if (process.platform === 'linux') {
-    args.push('--no-sandbox');
-  }
+  const args = ['--inspect=5858', '--disable-gpu', '--disable-gpu-sandbox'];
   const electronProcess = $$`npx electron ${args} ${path.join(
     root,
     'dist_electron',

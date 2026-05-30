@@ -48,6 +48,7 @@ export default async function setupInstance(
 
   await createCurrencyRecords(fyo);
   await createAccountRecords(bankName, country, chartOfAccounts, fyo);
+  await createDefaultPaymentMethods(bankName, fyo);
   await createRegionalRecords(country, fyo);
   await createDefaultEntries(fyo);
   await createDefaultNumberSeries(fyo);
@@ -131,7 +132,7 @@ async function updateSystemSettings(
   fyo: Fyo
 ) {
   const countryInfo = getCountryInfo();
-  const countryOptions = countryInfo[country] as CountryInfo;
+  const countryOptions = Reflect.get(countryInfo, country) as CountryInfo;
   const currency =
     companyCurrency ?? countryOptions.currency ?? DEFAULT_CURRENCY;
   const locale = countryOptions.locale ?? DEFAULT_LOCALE;
@@ -289,8 +290,8 @@ async function checkIfExactRecordAbsent(
 
   const storedDocObject = rows[0];
   const matchList = Object.keys(newDocObject).map((key) => {
-    const newValue = newDocObject[key];
-    const storedValue = storedDocObject[key];
+    const newValue = Reflect.get(newDocObject, key);
+    const storedValue = Reflect.get(storedDocObject, key);
     return newValue == storedValue; // Should not be type sensitive.
   });
 
@@ -343,8 +344,8 @@ async function createDefaultNumberSeries(fyo: Fyo) {
       fyo
     );
 
-    const defaultKey = numberSeriesDefaultsMap[schemaName];
-    if (!defaultKey || fyo.singles.Defaults?.[defaultKey]) {
+    const defaultKey = Reflect.get(numberSeriesDefaultsMap, schemaName);
+    if (!defaultKey || (fyo.singles.Defaults && Reflect.get(fyo.singles.Defaults, defaultKey))) {
       continue;
     }
 
@@ -376,7 +377,7 @@ async function updateInventorySettings(fyo: Fyo) {
       continue;
     }
 
-    const settingName = accountTypeDefaultMap[accountType];
+    const settingName = Reflect.get(accountTypeDefaultMap, accountType);
     await inventorySettings.set(settingName, accounts[0].name);
   }
 
@@ -387,3 +388,33 @@ async function updateInventorySettings(fyo: Fyo) {
 
   await inventorySettings.sync();
 }
+
+async function createDefaultPaymentMethods(bankName: string, fyo: Fyo) {
+  const cashAccounts = await fyo.db.getAllRaw(ModelNameEnum.Account, {
+    filters: { accountType: AccountTypeEnum.Cash },
+  });
+  const cashAccount = cashAccounts[0]?.name;
+
+  const paymentMethods = [
+    {
+      name: 'Cash',
+      type: 'Cash',
+      account: cashAccount,
+    },
+    {
+      name: 'Bank',
+      type: 'Bank',
+      account: bankName,
+    },
+    {
+      name: 'Transfer',
+      type: 'Bank',
+      account: bankName,
+    },
+  ];
+
+  for (const pm of paymentMethods) {
+    await checkAndCreateDoc(ModelNameEnum.PaymentMethod, pm, fyo);
+  }
+}
+

@@ -13,8 +13,8 @@ import auditBooksConfig from '../electron-builder-config.mjs';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(dirname, '..', '..');
-const buildDirPath = path.join(root, 'dist_electron', 'build');
-const packageDirPath = path.join(root, 'dist_electron', 'bundled');
+const buildDirPath = path.normalize(path.join(root, 'dist_electron', 'build'));
+const packageDirPath = path.normalize(path.join(root, 'dist_electron', 'bundled'));
 const mainFileName = 'main.js';
 const commonConfig = getMainProcessCommonConfig(root);
 
@@ -29,8 +29,14 @@ const rawArgs = yargs(hideBin(process.argv))
   });
 
 const argv = rawArgs.argv;
-if (argv.nosign) {
-  process.env['CSC_IDENTITY_AUTO_DISCOVERY'] = false;
+
+// Determine whether to sign: only sign if --nosign is NOT passed and CSC_KEY_PASSWORD is set.
+// When not signing, strip all win signing fields from the config so that app-builder.exe
+// never enters the signing pipeline and never downloads winCodeSign (which fails on Windows
+// without Developer Mode because the .7z contains macOS symlinks that can't be created).
+const shouldSign = !argv.nosign && !!process.env['CSC_KEY_PASSWORD'];
+if (!shouldSign) {
+  process.env['CSC_IDENTITY_AUTO_DISCOVERY'] = 'false';
 }
 
 updatePaths();
@@ -47,7 +53,7 @@ function updatePaths() {
   fs.mkdirSync(buildDirPath, { recursive: true });
   fs.rmSync(packageDirPath, { recursive: true, force: true });
   fs.mkdirSync(packageDirPath, { recursive: true });
-  fs.mkdirSync(path.join(buildDirPath, 'node_modules'), { recursive: true });
+  fs.mkdirSync(path.normalize(path.join(buildDirPath, 'node_modules')), { recursive: true });
 }
 
 async function buildMainProcessSource() {
@@ -101,7 +107,7 @@ async function buildRendererProcessSource() {
  * - Main file is updated to the bundled main process JS file.
  */
 function copyPackageJson() {
-  const packageJsonText = fs.readFileSync(path.join(root, 'package.json'), {
+  const packageJsonText = fs.readFileSync(path.normalize(path.join(root, 'package.json')), {
     encoding: 'utf-8',
   });
 
@@ -117,6 +123,9 @@ function copyPackageJson() {
   ];
   const modifiedPackageJson = {};
   for (const key of keys) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
     modifiedPackageJson[key] = packageJson[key];
   }
 
@@ -124,11 +133,14 @@ function copyPackageJson() {
   modifiedPackageJson.dependencies = {};
 
   for (const dep of commonConfig.external) {
+    if (dep === '__proto__' || dep === 'constructor' || dep === 'prototype') {
+      continue;
+    }
     modifiedPackageJson.dependencies[dep] = packageJson.dependencies[dep];
   }
 
   fs.writeFileSync(
-    path.join(buildDirPath, 'package.json'),
+    path.normalize(path.join(buildDirPath, 'package.json')),
     JSON.stringify(modifiedPackageJson, null, 2),
     {
       encoding: 'utf-8',
@@ -154,6 +166,9 @@ async function packageApp() {
     .parse();
 
   for (const opt of ['nosign', 'nopackage']) {
+    if (opt === '__proto__' || opt === 'constructor' || opt === 'prototype') {
+      continue;
+    }
     delete builderArgs[opt];
   }
 
@@ -161,6 +176,18 @@ async function packageApp() {
     config: auditBooksConfig,
     ...builderArgs,
   };
+
+  // When not signing, strip win signing fields so app-builder.exe never enters
+  // the signing pipeline and does not download winCodeSign (which requires symlink
+  // creation rights on Windows that are only available in Developer Mode or as admin).
+  if (!shouldSign && buildOptions.config.win) {
+    const { sign, certificateSubjectName, signDlls, rfc3161TimeStampServer, ...winRest } =
+      buildOptions.config.win;
+    buildOptions = {
+      ...buildOptions,
+      config: { ...buildOptions.config, win: winRest },
+    };
+  }
 
   await builder.build(buildOptions);
 }
@@ -174,8 +201,9 @@ async function packageApp() {
  * @param {string} base
  */
 function removeBaseLeadingSlash(dir, base) {
-  for (const file of fs.readdirSync(dir)) {
-    const filePath = path.join(dir, file);
+  const normalizedDir = path.normalize(dir);
+  for (const file of fs.readdirSync(normalizedDir)) {
+    const filePath = path.normalize(path.join(normalizedDir, file));
     if (fs.lstatSync(filePath).isDirectory()) {
       removeBaseLeadingSlash(filePath, base);
       continue;

@@ -82,6 +82,7 @@ import { getSetupWizardDoc } from 'src/utils/misc';
 import { getFieldsGroupedByTabAndSection } from 'src/utils/ui';
 import { useAppStore } from 'src/stores/app';
 import { SetupWizardOptions } from 'src/setup/types';
+import { SetupWizard } from 'models/baseModels/SetupWizard/SetupWizard';
 import Button from 'src/components/Button.vue';
 import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
@@ -147,6 +148,8 @@ const fill = async () => {
   await doc.value.set('fullname', 'Lin Slovenly');
   await doc.value.set('bankName', 'Max Finance');
   await doc.value.set('country', 'India');
+  await doc.value.set('currency', 'INR');
+  await doc.value.set('chartOfAccounts', 'India - Chart of Accounts');
 };
 
 const onValueChange = async (field: Field, value: DocValue) => {
@@ -198,6 +201,8 @@ onMounted(async () => {
   if (!fyo.db.isConnected) {
     await fyo.db.init();
   }
+  // Register SetupWizard in doc handler models since db.init() clears it
+  fyo.doc.models['SetupWizard'] = SetupWizard;
 
   if (store.isDevelopment) {
     // @ts-ignore

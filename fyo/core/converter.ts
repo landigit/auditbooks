@@ -103,27 +103,27 @@ export class Converter {
   }
 
   #toDocValueMap(schemaName: string, rawValueMap: RawValueMap): DocValueMap {
-    const fieldValueMap = this.db.fieldMap[schemaName];
+    const fieldValueMap = Reflect.get(this.db.fieldMap, schemaName);
     const docValueMap: DocValueMap = {};
 
     for (const fieldname in rawValueMap) {
-      const field = fieldValueMap[fieldname];
-      const rawValue = rawValueMap[fieldname];
+      const field = Reflect.get(fieldValueMap, fieldname);
+      const rawValue = Reflect.get(rawValueMap, fieldname);
       if (!field) {
         continue;
       }
 
       if (Array.isArray(rawValue)) {
         const parentSchemaName = (field as TargetField).target;
-        docValueMap[fieldname] = rawValue.map((rv) =>
+        Reflect.set(docValueMap, fieldname, rawValue.map((rv) =>
           this.#toDocValueMap(parentSchemaName, rv)
-        );
+        ));
       } else {
-        docValueMap[fieldname] = Converter.toDocValue(
+        Reflect.set(docValueMap, fieldname, Converter.toDocValue(
           rawValue,
           field,
           this.fyo
-        );
+        ));
       }
     }
 
@@ -131,29 +131,29 @@ export class Converter {
   }
 
   #toRawValueMap(schemaName: string, docValueMap: DocValueMap): RawValueMap {
-    const fieldValueMap = this.db.fieldMap[schemaName];
+    const fieldValueMap = Reflect.get(this.db.fieldMap, schemaName);
     const rawValueMap: RawValueMap = {};
 
     for (const fieldname in docValueMap) {
-      const field = fieldValueMap[fieldname];
-      const docValue = docValueMap[fieldname];
+      const field = Reflect.get(fieldValueMap, fieldname);
+      const docValue = Reflect.get(docValueMap, fieldname);
 
       if (Array.isArray(docValue)) {
         const parentSchemaName = (field as TargetField).target;
 
-        rawValueMap[fieldname] = docValue.map((value) => {
+        Reflect.set(rawValueMap, fieldname, docValue.map((value) => {
           if (value instanceof Doc) {
             return this.#toRawValueMap(parentSchemaName, value.getValidDict());
           }
 
           return this.#toRawValueMap(parentSchemaName, value);
-        });
+        }));
       } else {
-        rawValueMap[fieldname] = Converter.toRawValue(
+        Reflect.set(rawValueMap, fieldname, Converter.toRawValue(
           docValue,
           field,
           this.fyo
-        );
+        ));
       }
     }
 

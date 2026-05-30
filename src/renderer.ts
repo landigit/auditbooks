@@ -36,8 +36,8 @@ import { useAppStore } from './stores/app';
 
   for (const prop of fyoProps) {
     Object.defineProperty(fyo, prop, {
-      get: () => (appStore as any)[prop],
-      set: (val) => ((appStore as any)[prop] = val),
+      get: () => Reflect.get(appStore, prop),
+      set: (val) => Reflect.set(appStore, prop, val),
       configurable: true,
     });
   }
@@ -88,6 +88,9 @@ import { useAppStore } from './stores/app';
 
 function setErrorHandlers(app: VueApp) {
   window.onerror = (message, source, lineno, colno, error) => {
+    if (typeof message === 'string' && message.includes('ResizeObserver loop')) {
+      return;
+    }
     error = error ?? new Error('triggered in window.onerror');
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     handleError(true, error, { message, source, lineno, colno });

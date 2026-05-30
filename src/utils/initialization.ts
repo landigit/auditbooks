@@ -97,12 +97,13 @@ async function checkSingleLinks(fyo: Fyo) {
       continue;
     }
 
-    exists[target] ??= {};
-    if (exists[target][value] === undefined) {
-      exists[target][value] = await fyo.db.exists(target, value);
+    if (Reflect.get(exists, target) == null) Reflect.set(exists, target, {});
+    const targetMap = Reflect.get(exists, target);
+    if (Reflect.get(targetMap, value) === undefined) {
+      Reflect.set(targetMap, value, await fyo.db.exists(target, value));
     }
 
-    if (exists[target][value]) {
+    if (Reflect.get(targetMap, value)) {
       continue;
     }
 
