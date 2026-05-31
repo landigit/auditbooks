@@ -84,8 +84,8 @@
     />
 
     <KeyboardModal
-      v-slot="{}"
       v-if="selectedItemField && selectedItemRow && selectedItemRow.name"
+      v-slot="{}"
       :open-modal="openKeyboardModal || false"
       :modal-status="openKeyboardModal || false"
       :selected-item-field="selectedItemField"

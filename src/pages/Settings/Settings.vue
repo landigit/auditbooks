@@ -258,7 +258,7 @@ const sync = async () => {
         label: t`Yes`,
         isPrimary: true,
         // @ts-ignore
-        action: ipc.reloadWindow.bind(ipc),
+        action: appIpc.reloadWindow.bind(ipc),
       },
       {
         label: t`No`,

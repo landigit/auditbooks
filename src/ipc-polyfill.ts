@@ -1,8 +1,15 @@
 import type { IPC } from 'utils/ipc/types';
 import { IPC_ACTIONS } from 'utils/messages';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { open, save, message } from '@tauri-apps/plugin-dialog';
+import { open as openShell } from '@tauri-apps/plugin-shell';
+import { type as osType, version as osVersion } from '@tauri-apps/plugin-os';
 
-// Only polyfill if we're not running in Electron where window.ipc is already set
-if (typeof window !== 'undefined' && !window.ipc) {
+const isTauri =
+  typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+
+// Polyfill for Tauri and Browser where window.appIpc might exist as a Tauri internal function
+if (typeof window !== 'undefined') {
   const BACKEND_URL = 'http://localhost:6970/api/ipc';
 
   // Helper to route IPC calls to our lightweight local HTTP backend
@@ -90,24 +97,36 @@ if (typeof window !== 'undefined' && !window.ipc) {
   };
 
   const webIpc: IPC = {
-    desktop: false,
+    desktop: isTauri,
     reloadWindow() {
       window.location.reload();
     },
     minimizeWindow() {
-      console.log('minimizeWindow (stub)');
+      if (isTauri) {
+        getCurrentWindow().minimize();
+      }
     },
     toggleMaximize() {
-      console.log('toggleMaximize (stub)');
+      if (isTauri) {
+        getCurrentWindow().toggleMaximize();
+      }
     },
-    isMaximized() {
-      return Promise.resolve(false);
+    async isMaximized() {
+      if (isTauri) {
+        return await getCurrentWindow().isMaximized();
+      }
+      return false;
     },
-    isFullscreen() {
-      return Promise.resolve(false);
+    async isFullscreen() {
+      if (isTauri) {
+        return await getCurrentWindow().isFullscreen();
+      }
+      return false;
     },
     closeWindow() {
-      console.log('closeWindow (stub)');
+      if (isTauri) {
+        getCurrentWindow().close();
+      }
     },
     async getCreds() {
       return callBackend(IPC_ACTIONS.GET_CREDS);
@@ -122,33 +141,43 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return callBackend(IPC_ACTIONS.INIT_SCHEDULER, [time]);
     },
     async selectFile(options: any) {
+      if (isTauri) {
+        const filePaths = await open({
+          multiple: true,
+          filters: options?.filters,
+        });
+        return filePaths as string[] | null;
+      }
       return callBackend(IPC_ACTIONS.SELECT_FILE, [options]);
     },
     async getSaveFilePath(options: any) {
-      const defaultPath = options?.defaultPath || '';
-      if (
-        defaultPath.toLowerCase().endsWith('.pdf') ||
-        defaultPath.toLowerCase().includes('.pdf')
-      ) {
-        return { canceled: false, filePath: defaultPath };
+      if (isTauri) {
+        const filePath = await save({
+          filters: options?.filters,
+          defaultPath: options?.defaultPath,
+        });
+        return { canceled: filePath === null, filePath };
       }
-
-      const defaultName = defaultPath.replace('.db', '') || 'company';
-      const name = window.prompt('Enter company/file name:', defaultName);
-      if (!name) return { canceled: true, filePath: undefined };
-      const safeName = name
-        .replace(/\.books\.db$/i, '')
-        .replace(/\.books$/i, '')
-        .replace(/\.db$/i, '')
-        .replace(/[^a-zA-Z0-9 ._-]/g, '_');
-      const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [
-        safeName,
-      ]);
-      return { canceled: false, filePath: resolvedPath };
+      return callBackend(IPC_ACTIONS.GET_SAVE_FILEPATH, [options]);
     },
-    async getOpenFilePath(_options: any) {
-      // In web dev mode, open a real browser file picker for .db files,
-      // upload the selected file to the backend, and return its server path.
+    async getOpenFilePath(options: any) {
+      if (isTauri) {
+        const selected = await open({
+          multiple: false,
+          filters: options?.filters,
+        });
+        if (selected) {
+          return {
+            canceled: false,
+            filePaths: [selected as string],
+            filePath: selected as string,
+            name: (selected as string).split(/[\\/]/).pop(),
+            success: true,
+          };
+        }
+        return { canceled: true, filePaths: [], filePath: null };
+      }
+      // Web fallback
       return new Promise<any>((resolve) => {
         const input = document.createElement('input');
         input.type = 'file';
@@ -202,10 +231,17 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return callBackend(IPC_ACTIONS.CHECK_DB_ACCESS, [filePath]);
     },
     async checkForUpdates() {
-      console.log('checkForUpdates (stub)');
+      // Stub for Tauri updater
+      console.log(
+        'checkForUpdates (Tauri plugin updater can be integrated here)'
+      );
     },
     openLink(link: string) {
-      window.open(link, '_blank');
+      if (isTauri) {
+        openShell(link);
+      } else {
+        window.open(link, '_blank');
+      }
     },
     async deleteFile(filePath: string) {
       return callBackendWrapped(IPC_ACTIONS.DELETE_FILE, [filePath]);
@@ -214,33 +250,16 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return callBackend(IPC_ACTIONS.SAVE_DATA, [data, savePath]);
     },
     showItemInFolder(filePath: string) {
-      console.log('showItemInFolder (stub):', filePath);
+      console.log('showItemInFolder:', filePath);
     },
     async makePDF(
       html: string,
-      savePath: string,
-      width: number,
-      height: number
+      _savePath: string,
+      _width: number,
+      _height: number
     ) {
-      const base64Data = await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [
-        html,
-        savePath,
-        width,
-        height,
-      ]);
-      if (base64Data) {
-        const link = document.createElement('a');
-        link.href = `data:application/pdf;base64,${base64Data}`;
-        const fileName =
-          savePath.split(/[\\/]/).pop()?.replace('.db', '') || 'document.pdf';
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-      return true;
-    },
-    async printDocument(html: string, _width: number, _height: number) {
+      // In Tauri, use window.print() or specialized plugins.
+      // Currently simulating PDF by using window.print()
       const iframe = document.createElement('iframe');
       iframe.style.position = 'fixed';
       iframe.style.width = '0';
@@ -254,7 +273,6 @@ if (typeof window !== 'undefined' && !window.ipc) {
         doc.write(html);
         doc.close();
 
-        // Wait for styles/fonts to resolve
         await new Promise((resolve) => setTimeout(resolve, 500));
         iframe.contentWindow?.focus();
         iframe.contentWindow?.print();
@@ -263,8 +281,10 @@ if (typeof window !== 'undefined' && !window.ipc) {
       setTimeout(() => {
         document.body.removeChild(iframe);
       }, 1000);
-
       return true;
+    },
+    async printDocument(html: string, __width: number, __height: number) {
+      return this.makePDF(html, '', _width, _height);
     },
     async getDbList() {
       return callBackend(IPC_ACTIONS.GET_DB_LIST);
@@ -273,6 +293,13 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [companyName]);
     },
     async getEnv() {
+      if (isTauri) {
+        return {
+          isDevelopment: process.env.NODE_ENV === 'development',
+          platform: osType(),
+          version: osVersion(),
+        };
+      }
       return {
         isDevelopment: true,
         platform: 'browser',
@@ -280,26 +307,24 @@ if (typeof window !== 'undefined' && !window.ipc) {
       };
     },
     openExternalUrl(url: string) {
-      window.open(url, '_blank');
+      this.openLink(url);
     },
     async showError(title: string, content: string) {
-      alert(`${title}: ${content}`);
+      if (isTauri) {
+        await message(content, { title, kind: 'error' });
+      } else {
+        alert(`${title}: ${content}`);
+      }
     },
     async sendError(body: string) {
-      console.error('sendError (stub):', body);
+      console.error('sendError:', body);
     },
     async sendAPIRequest(endpoint: string, options: any) {
       return callBackend(IPC_ACTIONS.SEND_API_REQUEST, [endpoint, options]);
     },
-    registerMainProcessErrorListener() {
-      // no-op in browser: no main process events to relay
-    },
-    registerTriggerFrontendActionListener() {
-      // no-op in browser
-    },
-    registerConsoleLogListener() {
-      // no-op in browser
-    },
+    registerMainProcessErrorListener() {},
+    registerTriggerFrontendActionListener() {},
+    registerConsoleLogListener() {},
     readDocFile(relPath: string) {
       return callBackend(IPC_ACTIONS.READ_DOC_FILE, [relPath]);
     },
@@ -329,5 +354,5 @@ if (typeof window !== 'undefined' && !window.ipc) {
     store: storeInstance,
   };
 
-  (window as any).ipc = webIpc;
+  (window as any).appIpc = webIpc;
 }

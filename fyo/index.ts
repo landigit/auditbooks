@@ -38,7 +38,7 @@ export class Fyo {
   T = T;
 
   errors = errors;
-  isElectron: boolean;
+  isDesktop: boolean;
 
   pesa: MoneyMaker;
 
@@ -60,7 +60,7 @@ export class Fyo {
 
   constructor(conf: FyoConfig = {}) {
     this.isTest = conf.isTest ?? false;
-    this.isElectron = conf.isElectron ?? true;
+    this.isDesktop = conf.isDesktop ?? true;
 
     this.auth = new AuthHandler(this, conf.AuthDemux);
     this.db = new DatabaseHandler(this, conf.DatabaseDemux);
@@ -74,7 +74,7 @@ export class Fyo {
     });
 
     this.telemetry = new TelemetryManager(this);
-    this.config = new Config(this.isElectron && !this.isTest);
+    this.config = new Config(this.isDesktop && !this.isTest);
   }
 
   get initialized() {
@@ -105,11 +105,11 @@ export class Fyo {
     return format(value, field, doc ?? null, this);
   }
 
-  setIsElectron() {
+  setisDesktop() {
     try {
-      this.isElectron = !!window?.ipc;
+      this.isDesktop = !!(window as any)?.appIpc;
     } catch {
-      this.isElectron = false;
+      this.isDesktop = false;
     }
   }
 

@@ -23,7 +23,7 @@ import { Schema } from 'schemas/types';
 import { handleErrorWithDialog } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import router from 'src/router';
-import { assertIsType } from 'utils/index';
+import { assertIsType, safeGet, safeSet } from 'utils/index';
 import { SelectFileOptions } from 'utils/types';
 import { RouteLocationRaw } from 'vue-router';
 import { useAppStore } from 'src/stores/app';
@@ -226,25 +226,33 @@ export function getGroupedActionsForDoc(doc?: Doc): ActionGroup[] {
         ac.group = '';
       }
 
-      acc[ac.group] ??= {
-        group: ac.group,
-        label: ac.label ?? '',
-        type: ac.type ?? 'secondary',
-        actions: [],
-      };
+      const existing = safeGet(acc, ac.group);
+      if (!existing) {
+        safeSet(acc, ac.group, {
+          group: ac.group,
+          label: ac.label ?? '',
+          type: ac.type ?? 'secondary',
+          actions: [],
+        });
+      }
 
-      acc[ac.group].actions.push(ac);
+      const val = safeGet<ActionGroup>(acc, ac.group);
+      if (val) {
+        val.actions.push(ac);
+      }
       return acc;
     },
-    {} as Record<string, ActionGroup>
+    Object.create(null) as Record<string, ActionGroup>
   );
 
   const grouped = Object.keys(actionsMap)
     .filter(Boolean)
     .sort()
-    .map((k) => actionsMap[k]);
+    .map((k) => safeGet<ActionGroup>(actionsMap, k));
 
-  return [grouped, actionsMap['']].flat().filter(Boolean);
+  return [grouped, safeGet<ActionGroup>(actionsMap, '')]
+    .flat()
+    .filter(Boolean) as ActionGroup[];
 }
 
 function getViewActions(doc: Doc): Action[] {
@@ -394,7 +402,7 @@ export function getFormRoute(
   schemaName: string,
   name: string
 ): RouteLocationRaw {
-  const route = fyo.models[schemaName]
+  const route = safeGet(fyo.models, schemaName)
     ?.getListViewSettings(fyo)
     ?.formRoute?.(name);
 
@@ -485,7 +493,7 @@ export async function selectTextFile(filters?: SelectFileOptions['filters']) {
     filters,
   };
   const { success, canceled, filePath, data, name } =
-    await ipc.selectFile(options);
+    await appIpc.selectFile(options);
 
   if (canceled || !success) {
     showToast({
@@ -698,7 +706,11 @@ async function showSubmitOrSyncDialog(doc: Doc, type: 'submit' | 'sync') {
 
   const yesAction = async () => {
     try {
-      await doc[type]();
+      if (type === 'submit') {
+        await doc.submit();
+      } else if (type === 'sync') {
+        await doc.sync();
+      }
     } catch (error) {
       await handleErrorWithDialog(error, doc);
       return false;
@@ -773,11 +785,14 @@ function getDocSubmitMessage(doc: Doc): string {
 
 function showActionToast(doc: Doc, type: 'sync' | 'cancel' | 'delete') {
   const label = getDocReferenceLabel(doc);
-  const message = {
-    sync: t`${label} saved`,
-    cancel: t`${label} cancelled`,
-    delete: t`${label} deleted`,
-  }[type];
+  let message = '';
+  if (type === 'sync') {
+    message = t`${label} saved`;
+  } else if (type === 'cancel') {
+    message = t`${label} cancelled`;
+  } else if (type === 'delete') {
+    message = t`${label} deleted`;
+  }
 
   showToast({ type: 'success', message, duration: 'short' });
 }
@@ -1021,13 +1036,13 @@ export function showExportInFolder(message: string, filePath: string) {
     actionText: t`Open Folder`,
     type: 'success',
     action: () => {
-      ipc.showItemInFolder(filePath);
+      appIpc.showItemInFolder(filePath);
     },
   });
 }
 
 export async function deleteDb(filePath: string) {
-  const { error } = await ipc.deleteFile(filePath);
+  const { error } = await appIpc.deleteFile(filePath);
 
   if (error?.code === 'EBUSY') {
     await showDialog({
@@ -1056,7 +1071,7 @@ export async function deleteDb(filePath: string) {
 }
 
 export async function getSelectedFilePath() {
-  return ipc.getOpenFilePath({
+  return appIpc.getOpenFilePath({
     title: t`Select file`,
     properties: ['openFile'],
     filters: [{ name: 'SQLite DB File', extensions: ['db'] }],
@@ -1064,7 +1079,7 @@ export async function getSelectedFilePath() {
 }
 
 export async function getSavePath(name: string, extention: string) {
-  const response = await ipc.getSaveFilePath({
+  const response = await appIpc.getSaveFilePath({
     title: t`Select folder`,
     defaultPath: `${name}.${extention}`,
   });

@@ -161,7 +161,7 @@ const updateCouponCode = async (value: string | Event) => {
       value = (value.target as HTMLInputElement).value;
     }
 
-    couponCode.value = value as string;
+    couponCode.value = value;
     const appliedCouponCodes = fyo.doc.getNewDoc(
       ModelNameEnum.AppliedCouponCodes
     );

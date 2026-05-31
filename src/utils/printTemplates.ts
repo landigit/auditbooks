@@ -461,7 +461,7 @@ export async function getPathAndMakePDF(
     }
 
     const html = constructPrintDocument(innerHTML, font);
-    const success = await ipc.makePDF(html, savePath, width, height);
+    const success = await appIpc.makePDF(html, savePath, width, height);
     if (success) {
       showExportInFolder(t`Save as PDF Successful`, savePath);
     } else {
@@ -469,7 +469,7 @@ export async function getPathAndMakePDF(
     }
   } else {
     const html = constructPrintDocument(innerHTML, font);
-    const success = await ipc.printDocument(html, width, height);
+    const success = await appIpc.printDocument(html, width, height);
     if (success) {
       showToast({ message: t`Print Successful`, type: 'success' });
     } else {
@@ -539,7 +539,7 @@ function getAllCSSAsStyleElem() {
 }
 
 export async function updatePrintTemplates(fyo: Fyo) {
-  const templateFiles = await ipc.getTemplates(
+  const templateFiles = await appIpc.getTemplates(
     fyo.singles.PrintSettings?.posPrintWidth
   );
   const existingTemplates = (await fyo.db.getAll(ModelNameEnum.PrintTemplate, {

@@ -110,7 +110,7 @@ export default class DatabaseCore extends DatabaseBase {
         sql: `SELECT value FROM "SingleValue" WHERE fieldname = 'countryCode' AND parent = 'SystemSettings' LIMIT 1`,
         args: [],
       });
-      query = res.rows as any[];
+      query = res.rows;
     } catch {
       // Database not initialized and no countryCode passed
     }
@@ -286,7 +286,7 @@ export default class DatabaseCore extends DatabaseBase {
     const allTableFields: TargetField[] = this.#getTableFields(schemaName);
     const allTableFieldNames: string[] = allTableFields.map((f) => f.fieldname);
     const tableFields: TargetField[] = allTableFields.filter((f) =>
-      fields!.includes(f.fieldname)
+      fields.includes(f.fieldname)
     );
     const nonTableFieldNames: string[] = fields.filter(
       (f) => !allTableFieldNames.includes(f)
@@ -498,7 +498,7 @@ export default class DatabaseCore extends DatabaseBase {
 
     try {
       const res = await this.client!.execute({ sql: sqlStr, args });
-      return res.rows as any[];
+      return res.rows;
     } catch (err) {
       return [];
     }

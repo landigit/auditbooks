@@ -4,7 +4,7 @@ import { syncDocumentsToERPNext } from 'src/utils/erpnextSync';
 import { useAppStore } from 'src/stores/app';
 
 export default function registerIpcRendererListeners() {
-  ipc.registerMainProcessErrorListener((...args: unknown[]) => {
+  appIpc.registerMainProcessErrorListener((...args: unknown[]) => {
     const [, error, more_] = args;
     let more = more_ as Record<string, unknown> | undefined;
     if (!(error instanceof Error)) {
@@ -27,11 +27,11 @@ export default function registerIpcRendererListeners() {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  ipc.registerTriggerFrontendActionListener(async () => {
+  appIpc.registerTriggerFrontendActionListener(async () => {
     await syncDocumentsToERPNext(fyo);
   });
 
-  ipc.registerConsoleLogListener((_, ...stuff: unknown[]) => {
+  appIpc.registerConsoleLogListener((_, ...stuff: unknown[]) => {
     const store = useAppStore();
     if (!store.isDevelopment) {
       return;

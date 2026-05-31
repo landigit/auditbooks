@@ -155,7 +155,7 @@ const updateLoyaltyPoints = async (newValue: number) => {
       throw new Error(t`Points must be greater than 0`);
     }
 
-    emit('setLoyaltyPoints', sinvDoc.loyaltyPoints as number);
+    emit('setLoyaltyPoints', sinvDoc.loyaltyPoints);
 
     validationError.value = false;
   } catch (error) {

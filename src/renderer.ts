@@ -50,7 +50,7 @@ import { useAppStore } from './stores/app';
   appStore.language = language || 'English';
 
   registerIpcRendererListeners();
-  const { isDevelopment, platform, version } = await ipc.getEnv();
+  const { isDevelopment, platform, version } = await appIpc.getEnv();
 
   appStore.isDevelopment = isDevelopment;
   appStore.appVersion = version;

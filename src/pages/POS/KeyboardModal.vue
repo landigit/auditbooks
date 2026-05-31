@@ -245,7 +245,7 @@ const updateSelectedValue = () => {
   ) {
     selectedValue.value = props.selectedItemRow[
       props.selectedItemField as keyof SalesInvoiceItem
-    ] as unknown as string;
+    ] as string;
   }
 };
 
@@ -264,7 +264,7 @@ const saveSelectedItem = async () => {
       ModelNameEnum.Currency
     ) {
       props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
-        fyo.pesa(Number(selectedValue.value)) as any;
+        fyo.pesa(Number(selectedValue.value));
 
       if (props.selectedItemField === 'rate') {
         props.selectedItemRow.setRate = fyo.pesa(Number(selectedValue.value));
@@ -297,7 +297,7 @@ const saveSelectedItem = async () => {
       }
     } else {
       props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
-        Number(selectedValue.value) as any;
+        Number(selectedValue.value);
 
       if (props.selectedItemField === 'itemDiscountPercent') {
         if (Number(selectedValue.value) > 100) {

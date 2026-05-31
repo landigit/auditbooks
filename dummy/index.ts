@@ -187,9 +187,7 @@ async function getPayments(fyo: Fyo, invoices: Invoice[]) {
     doc.party = invoice.party;
     doc.paymentType = invoice.isSales ? 'Receive' : 'Pay';
     doc.paymentMethod = 'Cash';
-    doc.date = dayjs(invoice.date as Date)
-      .add(15, 'day')
-      .toDate();
+    doc.date = dayjs(invoice.date).add(15, 'day').toDate();
     if (doc.paymentType === 'Receive') {
       doc.account = 'Debtors';
       doc.paymentAccount = 'Cash';
@@ -346,14 +344,14 @@ async function getSalesPurchaseInvoices(
    */
   const dateGrouped = salesInvoices
     .map((si) => {
-      const date = dayjs(si.date as Date);
+      const date = dayjs(si.date);
       const key = `${date.year()}-${String(date.month() + 1).padStart(2, '0')}`;
       return { key, si };
     })
     .reduce(
       (acc, item) => {
         if (Reflect.get(acc, item.key) == null) Reflect.set(acc, item.key, []);
-        const list = Reflect.get(acc, item.key) as SalesInvoice[];
+        const list = Reflect.get(acc, item.key);
         list.push(item.si);
         return acc;
       },
@@ -387,8 +385,7 @@ async function getSalesPurchaseInvoices(
           Reflect.set(
             acc,
             item.item as string,
-            (Reflect.get(acc, item.item as string) as number) +
-              (item.quantity as number)
+            Reflect.get(acc, item.item as string) + (item.quantity as number)
           );
         }
 
@@ -404,7 +401,7 @@ async function getSalesPurchaseInvoices(
       const quantity = Reflect.get(itemGrouped, name);
       if (Reflect.get(purchaseQty, name) == null)
         Reflect.set(purchaseQty, name, 0);
-      let prevQty = Reflect.get(purchaseQty, name) as number;
+      let prevQty = Reflect.get(purchaseQty, name);
 
       if (prevQty <= quantity) {
         prevQty = quantity - prevQty;
@@ -417,7 +414,7 @@ async function getSalesPurchaseInvoices(
       (acc, item) => {
         const supplier = Reflect.get(purchaseItemPartyMap, item);
         if (Reflect.get(acc, supplier) == null) Reflect.set(acc, supplier, []);
-        const list = Reflect.get(acc, supplier) as string[];
+        const list = Reflect.get(acc, supplier);
         list.push(item);
 
         return acc;
@@ -447,7 +444,7 @@ async function getSalesPurchaseInvoices(
        */
       for (const item of Reflect.get(supplierGrouped, supplier)) {
         await doc.append('items', {});
-        const quantity = Reflect.get(purchaseQty, item) as number;
+        const quantity = Reflect.get(purchaseQty, item);
         await doc.items!.at(-1)!.set({ item, quantity });
       }
 

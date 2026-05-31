@@ -1,9 +1,4 @@
-import {
-  Cashflow,
-  TopExpenses,
-  TotalCreditAndDebit,
-  TotalOutstanding,
-} from 'utils/db/types';
+import { Cashflow, TopExpenses, TotalCreditAndDebit } from 'utils/db/types';
 import { ModelNameEnum } from '../../models/types';
 import DatabaseCore from './core';
 import { BespokeFunction } from './types';
@@ -104,7 +99,7 @@ export class BespokeQueries {
       )
       .limit(1);
 
-    return (result[0] || {}) as TotalOutstanding;
+    return result[0] || {};
   }
 
   static async getCashflow(db: DatabaseCore, fromDate: string, toDate: string) {
@@ -555,9 +550,7 @@ export class BespokeQueries {
       })
       .from(paymentFor)
       .where(inArray(paymentFor.referenceName, sinvNames));
-    const paymentEntryNames = paymentEntryNamesRes.map(
-      (doc) => doc.parent as string
-    );
+    const paymentEntryNames = paymentEntryNamesRes.map((doc) => doc.parent);
 
     if (!paymentEntryNames.length) {
       return;

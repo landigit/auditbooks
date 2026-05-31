@@ -45,7 +45,7 @@ export async function sendError(errorLogObj: ErrorLog) {
     console.log('sendError', body);
   }
 
-  await ipc.sendError(JSON.stringify(body));
+  await appIpc.sendError(JSON.stringify(body));
 }
 
 function getToastProps(errorLogObj: ErrorLog) {
@@ -157,7 +157,7 @@ export async function showErrorDialog(title?: string, content?: string) {
   // To be used for  show stopper errors
   title ??= t`Error`;
   content ??= t`Something has gone terribly wrong. Please check the console and raise an issue.`;
-  await ipc.showError(title, content);
+  await appIpc.showError(title, content);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -206,8 +206,11 @@ function getFeatureFlags(): string[] {
 
     return Object.entries(doc as Doc).reduce(
       (acc, [key, value]) => {
-        const fieldsArray = safeGet(fyo.schemaMap, docName)?.fields ?? [];
-        const fieldsMap = new Map(fieldsArray.map((f) => [f.fieldname, f]));
+        const fieldsArray = (safeGet(fyo.schemaMap, docName)?.fields ??
+          []) as any[];
+        const fieldsMap = new Map(
+          fieldsArray.map((f: any) => [f.fieldname, f])
+        );
 
         const field = fieldsMap.get(key);
         if (
@@ -295,7 +298,7 @@ function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
 
 export function reportIssue(errorLogObj?: ErrorLog) {
   const urlQuery = getIssueUrlQuery(errorLogObj);
-  ipc.openExternalUrl(urlQuery);
+  appIpc.openExternalUrl(urlQuery);
 }
 
 function getErrorLabel(error: Error) {

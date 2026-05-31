@@ -1,4 +1,3 @@
-import { mock } from 'bun:test';
 // @ts-ignore
 import { JSDOM } from 'jsdom';
 import pkg from '../package.json';
@@ -11,25 +10,14 @@ const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
 (global as any).document = dom.window.document;
 (global as any).history = dom.window.history;
 (global as any).navigator = dom.window.navigator;
-
-// Mock Electron using Bun's native module mocking
-mock.module('electron', () => ({
-  app: {
-    getPath: () => '/tmp',
-    getVersion: () => pkg.version,
-  },
-  ipcRenderer: {
-    on: () => {},
-    send: () => {},
-    invoke: () => {},
-  },
-}));
+(global as any).location = dom.window.location;
 
 // Mock global ipc object
 (global as any).ipc = {
-  getEnv: async () => ({
-    isDevelopment: true,
-    platform: 'linux',
-    version: pkg.version,
-  }),
+  getEnv: () =>
+    Promise.resolve({
+      isDevelopment: true,
+      platform: 'linux',
+      version: pkg.version,
+    }),
 };

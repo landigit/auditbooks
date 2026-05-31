@@ -126,7 +126,7 @@ const selectImage = async () => {
   };
 
   // @ts-ignore
-  const { name, success, data } = await ipc.selectFile(options);
+  const { name, success, data } = await appIpc.selectFile(options);
 
   if (!success) {
     return;

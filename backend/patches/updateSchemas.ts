@@ -27,7 +27,7 @@ const defaultNumberSeriesMap = {
 async function selectAll(client: BunSqliteClient, tableName: string) {
   try {
     const res = await client.execute(`SELECT * FROM "${tableName}"`);
-    return res.rows as any[];
+    return res.rows;
   } catch {
     return [];
   }
@@ -46,7 +46,7 @@ async function batchInsert(
     const placeholders = Object.keys(val)
       .map(() => '?')
       .join(', ');
-    const args = Object.values(val) as any[];
+    const args = Object.values(val);
     await client.execute({
       sql: `INSERT INTO "${tableName}" (${columns}) VALUES (${placeholders})`,
       args,
@@ -64,7 +64,7 @@ async function execute(dm: DatabaseManager) {
     sql: `SELECT value FROM "SingleValue" WHERE fieldname = 'version' LIMIT 1`,
     args: [],
   });
-  const version = (versionRes.rows[0] as any)?.value;
+  const version = versionRes.rows[0]?.value;
 
   /**
    * Versions after this should have the new schemas
@@ -416,7 +416,7 @@ async function copySingleValues(
     singleValues,
     [],
     {},
-    Reflect.get(schemaMap, ModelNameEnum.SingleValue)!
+    Reflect.get(schemaMap, ModelNameEnum.SingleValue)
   );
 }
 
@@ -462,7 +462,7 @@ async function getCountryCode(client: BunSqliteClient) {
       sql: `SELECT value FROM "SingleValue" WHERE fieldname = 'country' LIMIT 1`,
       args: [],
     });
-    const country = (countryRes.rows[0] as any)?.value;
+    const country = countryRes.rows[0]?.value;
     if (!country) {
       return '';
     }

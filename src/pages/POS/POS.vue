@@ -348,10 +348,7 @@ watch(
 onMounted(async () => {
   await setItems();
   await loadPOSProfile();
-  itemVisibilityValue.value = (await getItemVisibility(fyo)) as
-    | 'Inventory Items'
-    | 'ERP Sync Items'
-    | 'Non-Inventory Items';
+  itemVisibilityValue.value = await getItemVisibility(fyo);
 });
 
 onActivated(async () => {
@@ -517,7 +514,7 @@ async function onQuickQtyKeyUp(e: KeyboardEvent) {
 
     const existingItems = (sinvDoc.value.items || []).filter(
       (invoiceItem) =>
-        (invoiceItem as InvoiceItem).item === row!.item &&
+        (invoiceItem as InvoiceItem).item === row.item &&
         !(invoiceItem as InvoiceItem).isFreeItem
     ) as InvoiceItem[];
 
@@ -576,10 +573,10 @@ async function loadPOSProfile() {
     return;
   }
 
-  posProfile.value = (await fyo.doc.getDoc(
+  posProfile.value = await fyo.doc.getDoc(
     ModelNameEnum.POSProfile,
     posProfileName as string
-  )) as POSProfile;
+  );
 }
 
 async function handleItemSearch(searchTerm: string, addItemState?: boolean) {

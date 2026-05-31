@@ -129,12 +129,12 @@ const loadContent = async () => {
 
     let content = '';
     try {
-      content = await ipc.readDocFile(relPath);
+      content = await appIpc.readDocFile(relPath);
     } catch (e) {
       // Try fallback if file not found
       if (relPath !== 'docs/introduction.md') {
         relPath = 'docs/introduction.md';
-        content = await ipc.readDocFile(relPath);
+        content = await appIpc.readDocFile(relPath);
       } else {
         throw e;
       }
@@ -217,7 +217,7 @@ const loadContent = async () => {
             cleanSrc = docDir + cleanSrc;
           }
 
-          const dataUrl = await ipc.readDocData(cleanSrc);
+          const dataUrl = await appIpc.readDocData(cleanSrc);
           processedContent = processedContent.replace(
             fullMatch,
             `![${alt}](${dataUrl})`

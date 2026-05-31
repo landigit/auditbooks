@@ -1004,7 +1004,7 @@ export class Search {
   ) {
     // Set individual field values
     for (const fn of searchable.fields) {
-      let value = safeGet(map, fn) as string | undefined;
+      let value = safeGet(map, fn);
       const field = this.fyo.getField(searchable.schemaName, fn);
 
       const { options } = field as OptionField;

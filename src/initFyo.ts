@@ -5,5 +5,5 @@ import { Fyo } from 'fyo';
  * testing purposes a separate instance of fyo should be initialized.
  */
 
-export const fyo = new Fyo({ isTest: false, isElectron: true });
-export const ipc = (window as any).ipc;
+export const fyo = new Fyo({ isTest: false });
+export const ipc = (window as any).appIpc;

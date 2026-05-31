@@ -2,15 +2,15 @@ import { AuthDemuxBase } from 'utils/auth/types';
 import { Creds } from 'utils/types';
 
 export class AuthDemux extends AuthDemuxBase {
-  #isElectron = false;
-  constructor(isElectron: boolean) {
+  #isDesktop = false;
+  constructor(isDesktop: boolean) {
     super();
-    this.#isElectron = isElectron;
+    this.#isDesktop = isDesktop;
   }
 
   async getCreds(): Promise<Creds> {
-    if (this.#isElectron) {
-      return await ipc.getCreds();
+    if (this.#isDesktop) {
+      return await appIpc.getCreds();
     } else {
       return { errorLogUrl: '', tokenString: '', telemetryUrl: '' };
     }

@@ -3,10 +3,10 @@ import type { IPC } from 'utils/ipc/types';
 
 export class Config {
   config: Map<string, unknown> | IPC['store'];
-  constructor(isElectron: boolean) {
+  constructor(isDesktop: boolean) {
     this.config = new Map();
-    if (isElectron) {
-      this.config = ipc.store;
+    if (isDesktop) {
+      this.config = appIpc.store;
     }
   }
 

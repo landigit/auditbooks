@@ -2,7 +2,7 @@ import type { IPC } from 'utils/ipc/types';
 import Vue, { VNode } from 'vue';
 
 declare global {
-  const ipc: IPC;
+  const appIpc: IPC;
   namespace JSX {
     type Element = VNode;
     type ElementClass = Vue;
@@ -13,6 +13,6 @@ declare global {
   }
 
   interface Window {
-    ipc: IPC;
+    appIpc: IPC;
   }
 }

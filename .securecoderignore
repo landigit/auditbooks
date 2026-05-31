@@ -15,7 +15,6 @@
 *build.*
 *_build.*
 **/*_build.*
-**/dist_electron/**
 **/node_modules/**
 
 # --- Test files (enabled by default) ---

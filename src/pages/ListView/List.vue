@@ -199,7 +199,7 @@ const columns = computed(() => {
         return fieldname;
       }
 
-      return fyo.getField(props.schemaName, fieldname as string);
+      return fyo.getField(props.schemaName, fieldname);
     })
     .filter(Boolean);
 });

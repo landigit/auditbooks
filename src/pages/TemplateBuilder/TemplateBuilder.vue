@@ -601,7 +601,7 @@ const sync = async () => {
   try {
     await activeDoc.sync();
   } catch (errorVal) {
-    await handleErrorWithDialog(errorVal, activeDoc as any);
+    await handleErrorWithDialog(errorVal, activeDoc);
   }
 };
 
@@ -611,7 +611,7 @@ const initialize = async () => {
     hints.value = getPrintTemplatePropHints(doc.value.type, fyo);
   }
 
-  focusOrSelectFormControl(doc.value as any, nameField.value, false);
+  focusOrSelectFormControl(doc.value, nameField.value, false);
 
   if (!doc.value?.template) {
     await doc.value?.set('template', baseTemplate);
@@ -630,7 +630,7 @@ const actions = computed(() => {
     return [];
   }
 
-  const acts = getActionsForDoc(doc.value as any);
+  const acts = getActionsForDoc(doc.value);
   acts.push({
     label: t`Print Settings`,
     group: t`View`,

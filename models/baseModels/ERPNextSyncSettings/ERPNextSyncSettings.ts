@@ -59,7 +59,7 @@ export class ERPNextSyncSettings extends Doc {
           duration: 'very_long',
         });
         await initERPNSync(this.fyo);
-        ipc.reloadWindow();
+        appIpc.reloadWindow();
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
@@ -82,7 +82,7 @@ export class ERPNextSyncSettings extends Doc {
     } else if (ch.changed === 'syncDataToServer') {
       try {
         await syncDocumentsToERPNext(this.fyo);
-        ipc.reloadWindow();
+        appIpc.reloadWindow();
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);

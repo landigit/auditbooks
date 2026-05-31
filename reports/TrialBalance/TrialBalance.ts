@@ -135,8 +135,8 @@ export class TrialBalance extends AccountReport {
       await this.setDefaultFilters();
     }
 
-    const toDate = dayjs(this.toDate!);
-    const fromDate = dayjs(this.fromDate!);
+    const toDate = dayjs(this.toDate);
+    const fromDate = dayjs(this.fromDate);
 
     return [
       {

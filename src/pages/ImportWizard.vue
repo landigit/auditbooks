@@ -796,7 +796,7 @@ const saveTemplate = async (): Promise<void> => {
   }
 
   // @ts-ignore
-  await ipc.saveData(template, filePath);
+  await appIpc.saveData(template, filePath);
 };
 
 const preImportValidations = async (): Promise<boolean> => {
@@ -888,7 +888,7 @@ const importData = async (): Promise<void> => {
       }
       doneCount += 1;
 
-      success.value.push(doc.name!);
+      success.value.push(doc.name);
       successOldName.value.push(oldName);
     } catch (error) {
       if (error instanceof Error) {

@@ -286,7 +286,7 @@ export class StockTransferItem extends TransferItem {
             );
 
             if (invoiceItem?.serialNumber) {
-              return invoiceItem.serialNumber as string;
+              return invoiceItem.serialNumber;
             }
 
             const serialNumbers = await getExistingActiveSerialNumbersForItem(

@@ -27,7 +27,7 @@ export function getTestSchemaMap(): {
     JournalEntry: JournalEntry as any as SchemaStub,
     JournalEntryAccount: JournalEntryAccount as any as SchemaStub,
     Party: Party as any as SchemaStub,
-    Customer: Customer as any as SchemaStub,
+    Customer: Customer,
   };
 
   const regionalSchemaMap: RegionalSchemaMap = {

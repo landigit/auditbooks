@@ -54,7 +54,7 @@ export default async function setupInstance(
   await createDefaultNumberSeries(fyo);
   await updateInventorySettings(fyo);
 
-  if (fyo.isElectron) {
+  if (!fyo.isTest) {
     const { updatePrintTemplates } = await import('src/utils/printTemplates');
     await updatePrintTemplates(fyo);
   }

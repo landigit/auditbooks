@@ -5,9 +5,7 @@ import { defineConfig } from 'vite';
 
 /**
  * This vite config file is used only for dev mode, i.e.
- * to create a serve build modules of the source code
- * which will be rendered by electron.
- *
+ * to create a serve build modules of the source code.
  * For building the project, vite is used programmatically
  * see build/scripts/build.mjs for this.
  */
@@ -20,12 +18,14 @@ export default () => {
   }
 
   return defineConfig({
+    clearScreen: false,
+    envPrefix: ['VITE_', 'TAURI_ENV_*'],
     server: {
       host,
       port,
       strictPort: true,
       watch: {
-        ignored: ['**/node_modules/**', '**/dist_electron/**'],
+        ignored: ['**/node_modules/**', '**/src-tauri/**'],
       },
     },
     build: {
@@ -53,9 +53,7 @@ export default () => {
         },
       },
     },
-    optimizeDeps: {
-      exclude: ['electron'],
-    },
+
     root: path.resolve(__dirname, './src'),
     plugins: [
       tailwindcss(),

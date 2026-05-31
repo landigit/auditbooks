@@ -310,7 +310,7 @@ onDeactivated(() => {
 
 // --- Methods ---
 function openDocs() {
-  ipc.openLink('https://landigit.com/auditbooks/' + docsPathMap.Search);
+  appIpc.openLink('https://landigit.com/auditbooks/' + docsPathMap.Search);
 }
 
 function getShortcuts() {

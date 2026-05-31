@@ -169,7 +169,7 @@ const handleDocumentation = async ({ key, documentation }: ListItem) => {
       );
       router.push(`/help/${path}`);
     } else {
-      ipc.openLink(documentation);
+      appIpc.openLink(documentation);
     }
   }
 

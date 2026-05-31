@@ -17,8 +17,8 @@ export function getTestSetupWizardOptions(): SetupWizardOptions {
     email: 'test@testmyfantasy.com',
     bankName: 'Test Bank of Scriptia',
     currency: 'INR',
-    fiscalYearStart: dayjs(getFiscalYear('04-01', true)!).format('YYYY-MM-DD')!,
-    fiscalYearEnd: dayjs(getFiscalYear('04-01', false)!).format('YYYY-MM-DD')!,
+    fiscalYearStart: dayjs(getFiscalYear('04-01', true)).format('YYYY-MM-DD'),
+    fiscalYearEnd: dayjs(getFiscalYear('04-01', false)).format('YYYY-MM-DD'),
     chartOfAccounts: 'India - Chart of Accounts',
   };
 }
@@ -47,7 +47,7 @@ export function getTestFyo(): Fyo {
     DatabaseDemux: DatabaseManager,
     AuthDemux: DummyAuthDemux,
     isTest: true,
-    isElectron: false,
+    isDesktop: false,
   });
 }
 

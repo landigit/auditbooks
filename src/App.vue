@@ -132,7 +132,7 @@ async function setDesk(filePath: string): Promise<void> {
   activeScreen.value = Screen.Desk;
   await setDeskRoute();
   await fyo.telemetry.start(true);
-  await ipc.checkForUpdates();
+  await appIpc.checkForUpdates();
   appStore.dbPath = filePath;
   appStore.companyName = (await fyo.getValue(
     ModelNameEnum.AccountingSettings,
@@ -148,7 +148,7 @@ function newDatabase() {
 
 async function fileSelected(filePath: string): Promise<void> {
   fyo.config.set('lastSelectedFilePath', filePath);
-  if (filePath !== ':memory:' && !(await ipc.checkDbAccess(filePath))) {
+  if (filePath !== ':memory:' && !(await appIpc.checkDbAccess(filePath))) {
     await showDialog({
       title: t`Cannot open file`,
       type: 'error',
@@ -171,7 +171,7 @@ async function setupComplete(
   setupWizardOptions: SetupWizardOptions
 ): Promise<void> {
   const companyName = setupWizardOptions.companyName;
-  const filePath = await ipc.getDbDefaultPath(companyName);
+  const filePath = await appIpc.getDbDefaultPath(companyName);
   await setupInstance(filePath, setupWizardOptions, fyo);
   fyo.config.set('lastSelectedFilePath', filePath);
   await setDesk(filePath);
@@ -212,7 +212,7 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
     try {
       await registerInstanceToERPNext(fyo);
       await updateERPNSyncSettings(fyo);
-      await ipc.initScheduler(
+      await appIpc.initScheduler(
         `${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`
       );
     } catch (error) {

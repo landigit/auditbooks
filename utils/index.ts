@@ -134,7 +134,7 @@ export function deepEqual(a: any, b: any): boolean {
   if (a === b) return true;
   if (a && b && typeof a === 'object' && typeof b === 'object') {
     if (a.constructor !== b.constructor) return false;
-    let length, i, keys;
+    let length, i;
     if (Array.isArray(a)) {
       length = a.length;
       if (length !== b.length) return false;
@@ -142,7 +142,7 @@ export function deepEqual(a: any, b: any): boolean {
         if (!deepEqual(Reflect.get(a, i), Reflect.get(b, i))) return false;
       return true;
     }
-    keys = Object.keys(a);
+    const keys = Object.keys(a);
     length = keys.length;
     if (length !== Object.keys(b).length) return false;
     for (i = length; i-- !== 0; )
@@ -280,8 +280,8 @@ export function joinMapLists<A, B>(
 
   const joint: (A & B)[] = [];
   for (const k of keys) {
-    const a = Reflect.get(mapA, k as unknown as string);
-    const b = Reflect.get(mapB, k as unknown as string);
+    const a = Reflect.get(mapA, k);
+    const b = Reflect.get(mapB, k);
     const c = { ...a, ...b };
 
     joint.push(c);

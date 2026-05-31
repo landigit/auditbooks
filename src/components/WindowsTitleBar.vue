@@ -1,6 +1,7 @@
 <template>
   <div
-    v-if="isDesktop"
+    v-if="false"
+    data-tauri-drag-region
     class="relative window-drag flex items-center border-b bg-canvas text-main border-border"
     style="height: 28px"
   >
@@ -48,20 +49,20 @@ defineProps<{
   companyName?: string;
 }>();
 
-const isDesktop = typeof ipc !== 'undefined' ? ipc.desktop : false;
+const isDesktop = typeof appIpc !== 'undefined' ? appIpc.desktop : false;
 const isMax = ref(false);
 const isFullscreen = ref(false);
 
-const minimizeWindow = () => ipc.minimizeWindow();
+const minimizeWindow = () => appIpc.minimizeWindow();
 const toggleMaximize = async () => {
-  await ipc.toggleMaximize();
+  await appIpc.toggleMaximize();
   getIsMaximized();
 };
-const closeWindow = () => ipc.closeWindow();
+const closeWindow = () => appIpc.closeWindow();
 
 const getIsMaximized = async () => {
   try {
-    isMax.value = (await ipc.isMaximized()) as boolean;
+    isMax.value = (await appIpc.isMaximized()) as boolean;
   } catch (error) {
     console.error(error);
   }
@@ -69,7 +70,7 @@ const getIsMaximized = async () => {
 
 const getIsFullscreen = async () => {
   try {
-    isFullscreen.value = (await ipc.isFullscreen()) as boolean;
+    isFullscreen.value = (await appIpc.isFullscreen()) as boolean;
   } catch (error) {
     console.error(error);
   }

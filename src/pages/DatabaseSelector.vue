@@ -249,7 +249,7 @@ const formatDate = (isoDate: string) => {
 };
 
 const setFiles = async () => {
-  const dbList = (await ipc.getDbList()) || [];
+  const dbList = (await appIpc.getDbList()) || [];
   files.value = dbList.sort(
     (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
   );

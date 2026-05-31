@@ -300,10 +300,10 @@ export abstract class AccountReport extends LedgerReport {
     let fromDate: string;
 
     if (this.basedOn === 'Until Date') {
-      toDate = dayjs(this.toDate!).add(1, 'day').format('YYYY-MM-DD')!;
+      toDate = dayjs(this.toDate).add(1, 'day').format('YYYY-MM-DD')!;
       const months =
         Reflect.get(monthsMap, this.periodicity) * Math.max(this.count ?? 1, 1);
-      fromDate = dayjs(this.toDate!)
+      fromDate = dayjs(this.toDate)
         .subtract(months, 'month')
         .format('YYYY-MM-DD')!;
     } else {

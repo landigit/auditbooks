@@ -206,7 +206,7 @@ export async function saveExportData(
   filePath: string,
   message?: string
 ) {
-  await ipc.saveData(data, filePath);
+  await appIpc.saveData(data, filePath);
   message ??= t`Export Successful`;
   showExportInFolder(message, filePath);
 }

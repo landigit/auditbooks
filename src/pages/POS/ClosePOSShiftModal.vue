@@ -231,7 +231,7 @@ const handleSubmit = async () => {
 
     await fyo.singles.POSSettings?.setAndSync('isShiftOpen', false);
     emit('toggleModal', 'ShiftClose');
-    ipc.reloadWindow();
+    appIpc.reloadWindow();
   } catch (error) {
     return showToast({
       type: 'error',

@@ -1724,7 +1724,7 @@ export abstract class Invoice extends Transactional {
         date: new Date(j.date!),
         submitted: !!j.submitted,
         cancelled: !!j.cancelled,
-        amount: this.fyo.pesa(j.amount!),
+        amount: this.fyo.pesa(j.amount),
       }))
       .sort((a, b) => a.date.valueOf() - b.date.valueOf());
   }

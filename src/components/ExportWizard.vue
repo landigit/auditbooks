@@ -261,7 +261,7 @@ async function saveExportData(data: string) {
     return;
   }
 
-  await ipc.saveData(data, filePath);
+  await appIpc.saveData(data, filePath);
   fyo.telemetry.log(Verb.Exported, props.schemaName, {
     extension: exportFormat.value,
   });
