@@ -56,22 +56,30 @@ const component = computed(() => {
 });
 
 const clear = () => {
-  const input = controlRef.value?.$refs?.input;
-  if (input instanceof HTMLInputElement) {
-    input.value = '';
+  if (typeof controlRef.value?.clear === 'function') {
+    controlRef.value.clear();
+  } else {
+    const input = controlRef.value?.$refs?.input;
+    if (input instanceof HTMLInputElement) {
+      input.value = '';
+    }
   }
 };
 
 const select = () => {
-  controlRef.value?.$refs?.input?.select();
+  if (typeof controlRef.value?.select === 'function') {
+    controlRef.value.select();
+  } else {
+    controlRef.value?.$refs?.input?.select?.();
+  }
 };
 
 const focus = () => {
-  controlRef.value?.focus();
+  controlRef.value?.focus?.();
 };
 
 const getInput = () => {
-  return controlRef.value?.$refs?.input;
+  return controlRef.value?.getInput?.() ?? controlRef.value?.$refs?.input;
 };
 
 defineExpose({

@@ -221,8 +221,10 @@ const setPageIndices = ({ start, end }: { start: number; end: number }) => {
 };
 
 const updateData = async (filterObj?: Record<string, unknown>) => {
-  const baseFilters = structuredClone(toRaw(props.filters));
-  const activeFilters = structuredClone({ ...baseFilters, ...filterObj });
+  const baseFilters = JSON.parse(JSON.stringify(toRaw(props.filters)));
+  const activeFilters = JSON.parse(
+    JSON.stringify({ ...baseFilters, ...filterObj })
+  );
 
   let statusFilter: [string, string] | undefined;
 

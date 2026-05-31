@@ -14,12 +14,13 @@
         <div
           v-for="df in tableFields"
           :key="df.fieldname"
-          class="flex px-2 h-row-mid"
+          class="flex h-row-mid w-full"
           :class="[
+            headerCellClass,
             df.sub_label
               ? 'flex-col items-center text-center'
               : isNumeric(df)
-                ? 'ms-auto items-center'
+                ? 'justify-end items-center'
                 : 'items-center',
           ]"
         >
@@ -28,13 +29,14 @@
             {{ df.sub_label }}
           </p>
         </div>
+        <div v-if="canEditRow" class="flex h-row-mid w-full" />
       </Row>
 
       <!-- Data Rows -->
       <div
         v-if="value"
         class="overflow-auto custom-scroll custom-scroll-thumb1"
-        :style="{ 'max-height': maxHeight }"
+        :style="{ 'max-height': maxHeight, 'scrollbar-gutter': 'stable' }"
       >
         <TableRow
           v-for="(row, idx) of value"
@@ -148,6 +150,10 @@ const ratio = computed(() => {
     return baseRatio.concat(0.3);
   }
   return baseRatio;
+});
+
+const headerCellClass = computed(() => {
+  return props.size === 'small' ? 'px-2' : 'px-3';
 });
 
 const tableFields = computed(() => {

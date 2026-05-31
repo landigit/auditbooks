@@ -7,6 +7,7 @@
       v-if="!isReadOnly"
       :model-value="dateValue"
       :placeholder="inputPlaceholder"
+      :size="size"
       @update:model-value="handleDateChange"
     />
     <div

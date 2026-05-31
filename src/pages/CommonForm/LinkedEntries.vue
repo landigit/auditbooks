@@ -4,17 +4,15 @@
   >
     <!-- Page Header -->
     <div
-      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-surface"
+      class="relative flex items-center justify-center px-4 h-row-largest sticky top-0 bg-surface border-b border-border"
       style="z-index: 1"
     >
-      <div class="flex items-center justify-between w-full">
-        <Button :icon="true" @click="emit('close')">
-          <lucide-icon name="x" class="w-4 h-4" />
-        </Button>
-        <p class="text-xl font-semibold text-description">
-          {{ t`Linked Entries` }}
-        </p>
-      </div>
+      <Button :icon="true" class="absolute left-4" @click="emit('close')">
+        <lucide-icon name="x" class="w-4 h-4" />
+      </Button>
+      <p class="text-xl font-semibold text-description">
+        {{ t`Linked Entries` }}
+      </p>
     </div>
 
     <!-- Loading Spinner -->

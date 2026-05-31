@@ -24,14 +24,14 @@
     <!-- Filters -->
     <div
       v-if="report && report.filters.length"
-      class="grid grid-cols-5 gap-4 p-4 border-b border-border"
+      class="grid grid-cols-5 gap-4 p-4 border-b border-border items-end"
     >
       <FormControl
         v-for="field in report.filters"
         :key="field.fieldname + '-filter'"
         :border="true"
-        size="small"
-        :class="[field.fieldtype === 'Check' ? 'self-end' : '']"
+        size="large"
+        :class="[field.fieldtype === 'Check' ? 'h-10 flex items-center' : '']"
         :show-label="true"
         :df="field"
         :value="report.get(field.fieldname)"

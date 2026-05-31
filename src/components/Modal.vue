@@ -71,7 +71,9 @@ onUnmounted(() => {
 }
 
 .inner {
-  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), opacity 120ms ease-out;
+  transition:
+    transform 120ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 120ms ease-out;
 }
 
 .v-enter-from,

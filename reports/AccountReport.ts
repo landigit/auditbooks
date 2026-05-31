@@ -192,8 +192,8 @@ export abstract class AccountReport extends LedgerReport {
   }
 
   async _getAccountTree(rangeGroupedMap: AccountNameValueMapMap) {
-    const accountTree = structuredClone(
-      await this._setAndReturnAccountMap()
+    const accountTree = JSON.parse(
+      JSON.stringify(await this._setAndReturnAccountMap())
     ) as AccountTree;
 
     setPruneFlagOnAccountTreeNodes(accountTree);

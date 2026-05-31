@@ -38,7 +38,7 @@
       <PageHeaderNavGroup />
       <h1
         v-if="title"
-        class="text-xl font-semibold select-none whitespace-nowrap text-main"
+        class="text-xl font-semibold select-none whitespace-nowrap text-main leading-none"
       >
         {{ title }}
       </h1>

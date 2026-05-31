@@ -112,7 +112,7 @@ export function useBaseControl(
   });
 
   const borderClasses = computed<string>(() => {
-    if (!props.border) {
+    if ((props.border as any) === 'false' || !props.border) {
       return '';
     }
     const border = 'border border-border';

@@ -5,10 +5,16 @@ import { Calendar } from 'src/components/ui';
 import { Popover, PopoverContent, PopoverTrigger } from 'src/components/ui';
 import { cn } from 'src/utils/cn';
 
-const props = defineProps<{
-  modelValue?: Date | null;
-  placeholder?: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    modelValue?: Date | null;
+    placeholder?: string;
+    size?: string;
+  }>(),
+  {
+    size: 'large',
+  }
+);
 
 const emits = defineEmits<{
   'update:modelValue': [value: Date | null];
@@ -34,6 +40,13 @@ const value = computed({
     emits('update:modelValue', d);
   },
 });
+
+const sizeClasses = computed(() => {
+  if (props.size === 'small') {
+    return 'px-2 py-1 h-8';
+  }
+  return 'px-3 py-2 h-10';
+});
 </script>
 
 <template>
@@ -43,7 +56,8 @@ const value = computed({
         variant="outline"
         :class="
           cn(
-            'w-full flex items-center justify-between px-3 py-1.5 text-left font-normal bg-surface border border-border rounded hover:bg-surface-hover transition-colors focus:ring-2 focus:ring-indicator-green-bg outline-none h-9',
+            'w-full flex items-center justify-between text-left font-normal bg-surface border border-border rounded hover:bg-surface-hover transition-colors focus:ring-2 focus:ring-indicator-green-bg outline-none',
+            sizeClasses,
             !modelValue && 'text-description'
           )
         "

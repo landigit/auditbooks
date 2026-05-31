@@ -272,7 +272,7 @@ function getCancelAction(doc: Doc): Action {
   return {
     label: t`Cancel`,
     component: {
-      template: '<span class="text-indicator-red-text">{{ t`Cancel` }}</span>',
+      template: '<span class="text-red-500">{{ t`Cancel` }}</span>',
     },
     condition: (doc: Doc) => doc.canCancel,
     async action() {
@@ -285,7 +285,7 @@ function getDeleteAction(doc: Doc): Action {
   return {
     label: t`Delete`,
     component: {
-      template: '<span class="text-indicator-red-text">{{ t`Delete` }}</span>',
+      template: '<span class="text-red-500">{{ t`Delete` }}</span>',
     },
     condition: (doc: Doc) => doc.canDelete,
     async action() {

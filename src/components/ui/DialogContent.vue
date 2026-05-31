@@ -55,7 +55,9 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 }
 
 .dialog-content {
-  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), opacity 120ms ease-out;
+  transition:
+    transform 120ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 120ms ease-out;
 }
 .dialog-content[data-state='open'] {
   opacity: 1;
