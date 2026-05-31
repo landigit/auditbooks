@@ -1,4 +1,4 @@
-import { ModelNameEnum } from '../../models/types';
+import { ModelNameEnum } from '../../src/models/types';
 import { DatabaseManager } from '../database/manager';
 import { getDefaultMetaFieldValueMap } from '../helpers';
 

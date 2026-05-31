@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { docsNavigation, DocNode } from 'src/utils/docsNavigation';
+import { docsNavigation, DocNode } from 'src/utils/api/docsNavigation';
 
 const router = useRouter();
 const route = useRoute();

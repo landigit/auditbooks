@@ -76,13 +76,13 @@ import { Money } from 'pesa';
 import { OpeningAmounts } from 'models/inventory/Point of Sale/OpeningAmounts';
 import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
 import { fyo } from 'src/initFyo';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { t } from 'fyo';
 import {
   validateClosingAmounts,
   transferPOSCashAndWriteOff,
   getPOSOpeningShiftDoc,
-} from 'src/utils/pos';
+} from 'src/utils/api/pos';
 import { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
 import { ForbiddenError } from 'fyo/utils/errors';
 

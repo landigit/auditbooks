@@ -11,8 +11,8 @@ import {
 } from 'src/components/ui';
 import Button from './Button.vue';
 import LucideIcon from './LucideIcon.vue';
-import { getIconConfig } from 'src/utils/interactive';
-import type { DialogButton, ToastType } from 'src/utils/types';
+import { getIconConfig } from 'src/utils/api/interactive.js';
+import type { DialogButton, ToastType } from 'src/utils/api/types.js';
 
 const props = defineProps({
   type: { type: String as PropType<ToastType>, default: 'info' },

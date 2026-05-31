@@ -56,11 +56,11 @@ import { AccountTypeEnum } from 'models/baseModels/Account/types';
 import { ModelNameEnum } from 'models/types';
 import LineChart from 'src/components/Charts/LineChart.vue';
 import { fyo } from 'src/initFyo';
-import { formatXLabels, getYMax } from 'src/utils/chart';
-import { getDatesAndPeriodList } from 'src/utils/misc';
+import { formatXLabels, getYMax } from 'src/utils/api/chart.js';
+import { getDatesAndPeriodList } from 'src/utils/api/misc.js';
 import PeriodSelector from './PeriodSelector.vue';
-import { getMapFromList } from 'utils/index';
-import { PeriodKey } from 'src/utils/types';
+import { getMapFromList } from 'src/utils/core/index';
+import { PeriodKey } from 'src/utils/api/types.js';
 
 // Define Props
 const props = withDefaults(

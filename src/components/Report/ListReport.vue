@@ -73,8 +73,8 @@
 </template>
 <script setup lang="ts">
 import { ref, computed, inject } from 'vue';
-import { isNumeric } from 'src/utils';
-import { languageDirectionKey } from 'src/utils/injectionKeys';
+import { isNumeric } from 'src/utils/api/index.js';
+import { languageDirectionKey } from 'src/utils/api/injectionKeys.js';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 import Paginator from '../Paginator.vue';

@@ -35,7 +35,7 @@ import { ref, computed, nextTick, onMounted } from 'vue';
 import { isPesa } from 'fyo/utils';
 import { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
-import { safeParsePesa } from 'utils/index';
+import { safeParsePesa } from 'src/utils/core/index';
 import {
   BaseControlProps,
   useBaseControl,

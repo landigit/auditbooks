@@ -74,7 +74,7 @@ import Cashflow from './Cashflow.vue';
 import Expenses from './Expenses.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import ProfitAndLoss from './ProfitAndLoss.vue';
-import { PeriodKey } from 'src/utils/types';
+import { PeriodKey } from 'src/utils/api/types.js';
 
 // State definition
 const period = ref<PeriodKey | ''>('This Year');

@@ -8,7 +8,7 @@ import {
   ScrollAreaThumb,
   ScrollAreaViewport,
 } from 'reka-ui';
-import { cn } from 'src/utils/cn';
+import { cn } from 'src/utils/api/cn';
 
 const props = withDefaults(
   defineProps<ScrollAreaRootProps & { class?: HTMLAttributes['class'] }>(),

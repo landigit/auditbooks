@@ -1,4 +1,4 @@
-import type { Field, FieldType, RawValue } from '../../schemas/types';
+import type { Field, FieldType, RawValue } from '../../src/schemas/types';
 import type DatabaseCore from './core';
 import type { DatabaseManager } from './manager';
 

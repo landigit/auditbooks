@@ -17,7 +17,7 @@ import {
   CalendarCellTrigger,
   useForwardPropsEmits,
 } from 'reka-ui';
-import { cn } from 'src/utils/cn';
+import { cn } from 'src/utils/api/cn';
 
 const props = defineProps<
   CalendarRootProps & { class?: HTMLAttributes['class'] }

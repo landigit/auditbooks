@@ -84,7 +84,7 @@ import { marked } from 'marked';
 import PageHeader from 'src/components/PageHeader.vue';
 import Button from 'src/components/Button.vue';
 import LucideIcon from 'src/components/LucideIcon.vue';
-import { ipc } from 'src/initFyo';
+
 
 const route = useRoute();
 const router = useRouter();

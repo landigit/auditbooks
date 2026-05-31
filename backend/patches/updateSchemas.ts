@@ -1,10 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { changeKeys, deleteKeys, getIsNullOrUndef, invertMap } from 'utils';
-import { getCountryCodeFromCountry } from 'utils/misc';
-import { Version } from 'utils/version';
-import { ModelNameEnum } from '../../models/types';
-import { FieldTypeEnum, Schema, SchemaMap } from '../../schemas/types';
+import { changeKeys, deleteKeys, getIsNullOrUndef, invertMap } from 'src/utils/core';
+import { getCountryCodeFromCountry } from 'src/utils/core/misc';
+import { Version } from 'src/utils/core/version';
+import { ModelNameEnum } from '../../src/models/types';
+import { FieldTypeEnum, Schema, SchemaMap } from '../../src/schemas/types';
 import { DatabaseManager } from '../database/manager';
 import { BunSqliteClient } from '../database/core';
 import { unlinkIfExists } from '../helpers';
@@ -127,10 +127,10 @@ async function replaceDatabaseCore(
   // Flush WAL to main db file and release all locks before closing
   try {
     await dm.db!.client?.execute('PRAGMA wal_checkpoint(TRUNCATE)');
-  } catch {}
+  } catch { }
   try {
     await destDm.db!.client?.execute('PRAGMA wal_checkpoint(TRUNCATE)');
-  } catch {}
+  } catch { }
 
   await dm.db!.close();
   await destDm.db!.close();

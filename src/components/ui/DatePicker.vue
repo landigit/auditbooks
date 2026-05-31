@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { DateFormatter, CalendarDate } from '@internationalized/date';
 import { Calendar } from 'src/components/ui';
 import { Popover, PopoverContent, PopoverTrigger } from 'src/components/ui';
-import { cn } from 'src/utils/cn';
+import { cn } from 'src/utils/api/cn';
 
 const props = withDefaults(
   defineProps<{

@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "auditbooks",
-  "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "productName": "Auditbooks",
+  "version": "0.37.9",
+  "identifier": "com.landigit.auditbooks",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://127.0.0.1:6969",
@@ -26,7 +26,13 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "externalBin": ["bin/backend"],
+    "externalBin": [
+      "bin/backend"
+    ],
+    "resources": [
+      "../books",
+      "../translations"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

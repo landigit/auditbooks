@@ -278,11 +278,11 @@ import { t } from 'fyo';
 import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { Money } from 'pesa';
 import { DiscountType } from '../types';
-import { validateSerialNumberCount } from 'src/utils/pos';
+import { validateSerialNumberCount } from 'src/utils/api/pos';
 import { getItemVisibility, validateQty } from 'models/helpers';
 import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { ModelNameEnum } from 'models/types';
 import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
 

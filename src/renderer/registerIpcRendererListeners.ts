@@ -1,6 +1,6 @@
 import { handleError } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
-import { syncDocumentsToERPNext } from 'src/utils/erpnextSync';
+import { syncDocumentsToERPNext } from 'src/utils/api/erpnextSync';
 import { useAppStore } from 'src/stores/app';
 
 export default function registerIpcRendererListeners() {

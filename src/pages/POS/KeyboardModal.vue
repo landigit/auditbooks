@@ -173,7 +173,7 @@ import Button from 'src/components/Button.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { ValidationError } from 'fyo/utils/errors';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { validateQty } from 'models/helpers';
 import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
 import { fyo } from 'src/initFyo';

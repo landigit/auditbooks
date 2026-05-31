@@ -1,12 +1,12 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { UnknownMap } from 'utils/types';
-import { generateCSV, parseCSV } from '../utils/csvParser';
+import { generateCSV, parseCSV } from '../src/utils/core/csvParser';
 import {
   getIndexFormat,
   getWhitespaceSanitized,
   schemaTranslateables,
-} from '../utils/translationHelpers';
+} from '../src/utils/core/translationHelpers';
 
 /* eslint-disable no-console, @typescript-eslint/no-floating-promises */
 
@@ -281,7 +281,7 @@ function pushTStringsFromSchema(
 }
 
 async function getSchemaTStrings() {
-  const root = path.resolve(__dirname, '../schemas');
+  const root = path.resolve(__dirname, '../src/schemas');
   const fileList = await getFileList(root, ['tests', 'regional'], /\.json$/);
   return await getTStringsFromJsonFileList(fileList);
 }

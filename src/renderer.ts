@@ -1,6 +1,6 @@
 import './ipc-polyfill';
-import { CUSTOM_EVENTS } from 'utils/messages';
-import { UnexpectedLogObject } from 'utils/types';
+import { CUSTOM_EVENTS } from 'src/utils/core/messages';
+import { UnexpectedLogObject } from 'src/utils/core/types';
 import { App as VueApp, createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
@@ -11,8 +11,8 @@ import { fyo } from './initFyo';
 import { outsideClickDirective } from './renderer/helpers';
 import registerIpcRendererListeners from './renderer/registerIpcRendererListeners';
 import router from './router';
-import { stringifyCircular } from './utils';
-import { setLanguageMap } from './utils/language';
+import { stringifyCircular } from './utils/api';
+import { setLanguageMap } from './utils/api/language';
 import { useAppStore } from './stores/app';
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises

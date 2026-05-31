@@ -86,10 +86,10 @@ import { Dayjs } from 'dayjs';
 import { ModelNameEnum } from 'models/types';
 import MouseFollower from 'src/components/MouseFollower.vue';
 import { fyo } from 'src/initFyo';
-import { getDatesAndPeriodList } from 'src/utils/misc';
-import { PeriodKey } from 'src/utils/types';
-import { routeTo } from 'src/utils/ui';
-import { safeParseFloat } from 'utils/index';
+import { getDatesAndPeriodList } from 'src/utils/api/misc.js';
+import { PeriodKey } from 'src/utils/api/types.js';
+import { routeTo } from 'src/utils/api/ui.js';
+import { safeParseFloat } from 'src/utils/core/index';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
 

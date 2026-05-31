@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { t } from 'fyo';
-import { convertFileToDataURL } from 'src/utils/misc';
+import { convertFileToDataURL } from 'src/utils/api/misc.js';
 import {
   BaseControlProps,
   useBaseControl,

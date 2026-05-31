@@ -86,13 +86,13 @@ import PageHeader from 'src/components/PageHeader.vue';
 
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
-import { shortcutsKey } from 'src/utils/injectionKeys';
+import { shortcutsKey } from 'src/utils/api/injectionKeys.js';
 import {
   docsPathMap,
   getCreateFiltersFromListViewFilters,
-} from 'src/utils/misc';
-import { getFormRoute, routeTo } from 'src/utils/ui';
-import { QueryFilter } from 'utils/db/types';
+} from 'src/utils/api/misc.js';
+import { getFormRoute, routeTo } from 'src/utils/api/ui.js';
+import { QueryFilter } from 'src/utils/db/types.js';
 import { useAppStore } from 'src/stores/app';
 import List from './List.vue';
 import { Money } from 'pesa';

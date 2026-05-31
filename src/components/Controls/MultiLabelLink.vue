@@ -16,8 +16,8 @@ import { ref, watch, onMounted, computed } from 'vue';
 import { t } from 'fyo';
 import Badge from 'src/components/Badge.vue';
 import { fyo } from 'src/initFyo';
-import { fuzzyMatch } from 'src/utils';
-import { getCreateFiltersFromListViewFilters } from 'src/utils/misc';
+import { fuzzyMatch } from 'src/utils/api/index.js';
+import { getCreateFiltersFromListViewFilters } from 'src/utils/api/misc.js';
 import { markRaw } from 'vue';
 import AutoComplete from './AutoComplete.vue';
 import {
@@ -212,7 +212,7 @@ const openNewDoc = async () => {
   }
   const name = linkValue.value || fyo.doc.getTemporaryName(schema);
   const filters = await getCreateFilters();
-  const { openQuickEdit } = await import('src/utils/ui');
+  const { openQuickEdit } = await import('src/utils/api/ui.js');
 
   const newDoc = fyo.doc.getNewDoc(schemaName, { name, ...filters });
   openQuickEdit({ doc: newDoc });

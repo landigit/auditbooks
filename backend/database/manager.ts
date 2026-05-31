@@ -2,10 +2,10 @@ import fs from 'fs';
 import { DatabaseError } from 'fyo/utils/errors';
 import path from 'path';
 import pkg from '../../package.json';
-import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
-import { getMapFromList } from 'utils/index';
-import { Version } from 'utils/version';
-import { getSchemas } from '../../schemas';
+import { DatabaseDemuxBase, DatabaseMethod } from 'src/utils/db/types';
+import { getMapFromList } from 'src/utils/core/index';
+import { Version } from 'src/utils/core/version';
+import { getSchemas } from '../../src/schemas';
 import { databaseMethodSet, unlinkIfExists } from '../helpers';
 import patches from '../patches';
 import { BespokeQueries } from './bespoke';
@@ -61,7 +61,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
       this.rawCustomFields = (await this.db?.getAll(
         'CustomField'
       )) as RawCustomField[];
-    } catch {}
+    } catch { }
   }
 
   async #migrate(): Promise<void> {

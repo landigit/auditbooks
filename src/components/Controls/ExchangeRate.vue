@@ -48,7 +48,7 @@
 </template>
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { safeParseFloat } from 'utils/index';
+import { safeParseFloat } from 'src/utils/core/index';
 
 const props = defineProps({
   disabled: { type: Boolean, default: false },

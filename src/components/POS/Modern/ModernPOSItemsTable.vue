@@ -83,7 +83,7 @@
 import { computed } from 'vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Row from 'src/components/Row.vue';
-import { isNumeric } from 'src/utils';
+import { isNumeric } from 'src/utils/api';
 import { t } from 'fyo';
 import { Field } from 'schemas/types';
 import { POSItem } from '../types';

@@ -51,23 +51,23 @@ import SetupWizard from './pages/SetupWizard/SetupWizard.vue';
 import setupInstance from './setup/setupInstance';
 import { SetupWizardOptions } from './setup/types';
 import './styles/index.css';
-import { connectToDatabase, dbErrorActionSymbols } from './utils/db';
-import { initializeInstance } from './utils/initialization';
-import * as injectionKeys from './utils/injectionKeys';
-import { showDialog, showToast } from './utils/interactive';
-import { setLanguageMap } from './utils/language';
-import { updateConfigFiles } from './utils/misc';
-import { updatePrintTemplates } from './utils/printTemplates';
-import { Search } from './utils/search';
-import { Shortcuts } from './utils/shortcuts';
-import { routeTo } from './utils/ui';
-import { useKeys } from './utils/vueUtils';
+import { connectToDatabase, dbErrorActionSymbols } from './utils/api/db.js';
+import { initializeInstance } from './utils/api/initialization.js';
+import * as injectionKeys from './utils/api/injectionKeys.js';
+import { showDialog, showToast } from './utils/api/interactive.js';
+import { setLanguageMap } from './utils/api/language.js';
+import { updateConfigFiles } from './utils/api/misc.js';
+import { updatePrintTemplates } from './utils/api/printTemplates.js';
+import { Search } from './utils/api/search.js';
+import { Shortcuts } from './utils/api/shortcuts.js';
+import { routeTo, getSavePath } from './utils/api/ui.js';
+import { useKeys } from './utils/api/vueUtils.js';
 import { useAppStore } from './stores/app';
-import { setTheme, setFont } from 'src/utils/theme';
+import { setTheme, setFont } from 'src/utils/api/theme.js';
 import {
   registerInstanceToERPNext,
   updateERPNSyncSettings,
-} from './utils/erpnextSync';
+} from './utils/api/erpnextSync.js';
 import { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
 import { ErrorLogEnum } from 'fyo/telemetry/types';
 
@@ -171,7 +171,11 @@ async function setupComplete(
   setupWizardOptions: SetupWizardOptions
 ): Promise<void> {
   const companyName = setupWizardOptions.companyName;
-  const filePath = await appIpc.getDbDefaultPath(companyName);
+  const { filePath, canceled } = await getSavePath(companyName, 'db');
+  if (canceled || !filePath) {
+    activeScreen.value = Screen.DatabaseSelector;
+    return;
+  }
   await setupInstance(filePath, setupWizardOptions, fyo);
   fyo.config.set('lastSelectedFilePath', filePath);
   await setDesk(filePath);

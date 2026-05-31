@@ -69,7 +69,7 @@ import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { t } from 'fyo';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { ModelNameEnum } from 'models/types';
 import Int from 'src/components/Controls/Int.vue';
 import LucideIcon from 'src/components/LucideIcon.vue';

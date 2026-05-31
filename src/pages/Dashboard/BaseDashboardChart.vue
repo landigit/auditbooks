@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { PeriodKey } from 'src/utils/types';
+import { PeriodKey } from 'src/utils/api/types';
 
 // Define Props
 const props = withDefaults(

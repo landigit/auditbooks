@@ -8,8 +8,8 @@ import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoi
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { ModelNameEnum } from 'models/types';
 import setupInstance from 'src/setup/setupInstance';
-import { getMapFromList, safeParseInt } from 'utils';
-import { getFiscalYear } from 'utils/misc';
+import { getMapFromList, safeParseInt } from 'src/utils/core';
+import { getFiscalYear } from 'src/utils/core/misc';
 import {
   flow,
   getFlowConstant,

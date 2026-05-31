@@ -50,7 +50,7 @@ import { ValueError } from 'fyo/utils/errors';
 import Button from 'src/components/Button.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import TwoColumnForm from 'src/components/TwoColumnForm.vue';
-import { shortcutsKey } from 'src/utils/injectionKeys';
+import { shortcutsKey } from 'src/utils/api/injectionKeys';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 

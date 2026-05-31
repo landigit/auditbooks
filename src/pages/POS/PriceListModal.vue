@@ -70,7 +70,7 @@ import { inject } from 'vue';
 import { t } from 'fyo';
 import Modal from 'src/components/Modal.vue';
 import Button from 'src/components/Button.vue';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import Link from 'src/components/Controls/Link.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 

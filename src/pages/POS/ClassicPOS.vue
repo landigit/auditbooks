@@ -376,7 +376,7 @@
 import { ref, computed } from 'vue';
 import { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
-import { getItem } from 'src/utils/pos';
+import { getItem } from 'src/utils/api/pos.js';
 import AlertModal from './AlertModal.vue';
 import PaymentModal from './PaymentModal.vue';
 import Button from 'src/components/Button.vue';

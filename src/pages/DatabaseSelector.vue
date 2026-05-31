@@ -206,14 +206,14 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 import { fyo } from 'src/initFyo';
-import { showDialog } from 'src/utils/interactive';
-import { updateConfigFiles } from 'src/utils/misc';
+import { showDialog } from 'src/utils/api/interactive';
+import { updateConfigFiles } from 'src/utils/api/misc';
 import {
   deleteDb as deleteDbFile,
   getSavePath,
   getSelectedFilePath,
-} from 'src/utils/ui';
-import type { ConfigFilesWithModified } from 'utils/types';
+} from 'src/utils/api/ui';
+import type { ConfigFilesWithModified } from 'src/utils/core/types';
 import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
 import Loading from 'src/components/Loading.vue';
 import LucideIcon from 'src/components/LucideIcon.vue';

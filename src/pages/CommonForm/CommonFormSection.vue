@@ -71,7 +71,7 @@ import { Doc } from 'fyo/model/doc';
 import { Field } from 'schemas/types';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import Table from 'src/components/Controls/Table.vue';
-import { focusOrSelectFormControl } from 'src/utils/ui';
+import { focusOrSelectFormControl } from 'src/utils/api/ui';
 
 // Define Props
 const props = withDefaults(

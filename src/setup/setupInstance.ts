@@ -20,12 +20,12 @@ import { createRegionalRecords } from 'src/regional';
 import {
   initializeInstance,
   setCurrencySymbols,
-} from 'src/utils/initialization';
+} from 'src/utils/api/initialization';
 import { useAppStore } from 'src/stores/app';
-import { getRandomString } from 'utils';
-import { getDefaultLocations, getDefaultUOMs } from 'utils/defaults';
-import { getCountryCodeFromCountry, getCountryInfo } from 'utils/misc';
-import { CountryInfo } from 'utils/types';
+import { getRandomString } from 'src/utils/core';
+import { getDefaultLocations, getDefaultUOMs } from 'src/utils/core/defaults';
+import { getCountryCodeFromCountry, getCountryInfo } from 'src/utils/core/misc';
+import { CountryInfo } from 'src/utils/core/types';
 import { CreateCOA } from './createCOA';
 import { SetupWizardOptions } from './types';
 
@@ -40,7 +40,7 @@ export default async function setupInstance(
   try {
     appStore = useAppStore();
     appStore.skipTelemetryLogging = true;
-  } catch {}
+  } catch { }
   await initializeDatabase(dbPath, country, fyo);
   await updateSystemSettings(setupWizardOptions, fyo);
   await updateAccountingSettings(setupWizardOptions, fyo);
@@ -55,7 +55,7 @@ export default async function setupInstance(
   await updateInventorySettings(fyo);
 
   if (!fyo.isTest) {
-    const { updatePrintTemplates } = await import('src/utils/printTemplates');
+    const { updatePrintTemplates } = await import('src/utils/api/printTemplates');
     await updatePrintTemplates(fyo);
   }
 

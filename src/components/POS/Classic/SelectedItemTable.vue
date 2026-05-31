@@ -46,7 +46,7 @@
 import { computed, inject } from 'vue';
 import Row from 'src/components/Row.vue';
 import SelectedItemRow from './SelectedItemRow.vue';
-import { isNumeric } from 'src/utils';
+import { isNumeric } from 'src/utils/api/index.js';
 import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { Field } from 'schemas/types';

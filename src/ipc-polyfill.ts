@@ -1,5 +1,5 @@
-import type { IPC } from 'utils/ipc/types';
-import { IPC_ACTIONS } from 'utils/messages';
+import type { IPC } from 'src/utils/ipc/types';
+import { IPC_ACTIONS } from 'src/utils/core/messages';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { open, save, message } from '@tauri-apps/plugin-dialog';
 import { open as openShell } from '@tauri-apps/plugin-shell';
@@ -284,7 +284,7 @@ if (typeof window !== 'undefined') {
       return true;
     },
     async printDocument(html: string, __width: number, __height: number) {
-      return this.makePDF(html, '', _width, _height);
+      return this.makePDF(html, '', __width, __height);
     },
     async getDbList() {
       return callBackend(IPC_ACTIONS.GET_DB_LIST);
@@ -322,9 +322,9 @@ if (typeof window !== 'undefined') {
     async sendAPIRequest(endpoint: string, options: any) {
       return callBackend(IPC_ACTIONS.SEND_API_REQUEST, [endpoint, options]);
     },
-    registerMainProcessErrorListener() {},
-    registerTriggerFrontendActionListener() {},
-    registerConsoleLogListener() {},
+    registerMainProcessErrorListener() { },
+    registerTriggerFrontendActionListener() { },
+    registerConsoleLogListener() { },
     readDocFile(relPath: string) {
       return callBackend(IPC_ACTIONS.READ_DOC_FILE, [relPath]);
     },

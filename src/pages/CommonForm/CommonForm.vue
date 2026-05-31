@@ -193,10 +193,10 @@ import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import StatusPill from 'src/components/StatusPill.vue';
-import { getErrorMessage } from 'src/utils';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { docsPathMap } from 'src/utils/misc';
-import { ActionGroup, DocRef, UIGroupedFields } from 'src/utils/types';
+import { getErrorMessage } from 'src/utils/api/index.js';
+import { shortcutsKey } from 'src/utils/api/injectionKeys.js';
+import { docsPathMap } from 'src/utils/api/misc.js';
+import { ActionGroup, DocRef, UIGroupedFields } from 'src/utils/api/types.js';
 import {
   commonDocSubmit,
   commonDocSync,
@@ -206,8 +206,8 @@ import {
   getGroupedActionsForDoc,
   isPrintable as isPrintableFn,
   routeTo,
-} from 'src/utils/ui';
-import { useDocShortcuts } from 'src/utils/vueUtils';
+} from 'src/utils/api/ui.js';
+import { useDocShortcuts } from 'src/utils/api/vueUtils.js';
 import { useAppStore } from 'src/stores/app';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';

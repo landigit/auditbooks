@@ -1,6 +1,6 @@
 import { FieldTypeEnum, RawValue, Schema } from 'schemas/types';
 import { describe, expect, test } from 'bun:test';
-import { getMapFromList, getValueMapFromList, sleep } from 'utils';
+import { getMapFromList, getValueMapFromList, sleep } from 'src/utils/core';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap } from '../../helpers';
 import DatabaseCore from '../core';
 import { FieldValueMap, SqliteTableInfo } from '../types';

@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { PrintTemplateHint } from 'src/utils/printTemplates';
+import { PrintTemplateHint } from 'src/utils/api/printTemplates';
 
 type HintRow = {
   key: string;

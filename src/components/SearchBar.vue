@@ -190,15 +190,15 @@
 <script setup lang="ts">
 // --- Imports ---
 import { fyo } from 'src/initFyo';
-import { getBgTextColorClass } from 'src/utils/colors';
-import { searcherKey, shortcutsKey } from 'src/utils/injectionKeys';
-import { docsPathMap } from 'src/utils/misc';
+import { getBgTextColorClass } from 'src/utils/api/colors.js';
+import { searcherKey, shortcutsKey } from 'src/utils/api/injectionKeys.js';
+import { docsPathMap } from 'src/utils/api/misc.js';
 import {
   SearchGroup,
   SearchItems,
   getGroupLabelMap,
   searchGroups,
-} from 'src/utils/search';
+} from 'src/utils/api/search.js';
 import { useAppStore } from 'src/stores/app';
 import {
   ref,

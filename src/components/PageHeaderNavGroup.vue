@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { ref, inject, onActivated, onDeactivated } from 'vue';
 import { useRouter } from 'vue-router';
-import { shortcutsKey } from 'src/utils/injectionKeys';
+import { shortcutsKey } from 'src/utils/api/injectionKeys.js';
 import SearchBar from './SearchBar.vue';
 import { useAppStore } from 'src/stores/app';
 

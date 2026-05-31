@@ -47,8 +47,8 @@ import {
 } from '@vue/compiler-dom';
 import { Verb } from 'fyo/telemetry/types';
 import ErrorBoundary from 'src/components/ErrorBoundary.vue';
-import { getPathAndMakePDF } from 'src/utils/printTemplates';
-import { PrintValues } from 'src/utils/types';
+import { getPathAndMakePDF } from 'src/utils/api/printTemplates.js';
+import { PrintValues } from 'src/utils/api/types.js';
 import ScaledContainer from './ScaledContainer.vue';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';

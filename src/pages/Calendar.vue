@@ -4,8 +4,8 @@ import { Calendar as CalendarUI } from 'src/components/ui';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
 import { CalendarDate } from '@internationalized/date';
-import { routeTo } from 'src/utils/ui';
-import { getFormRoute } from 'src/utils/ui';
+import { routeTo } from 'src/utils/api/ui';
+import { getFormRoute } from 'src/utils/api/ui';
 import Badge from 'src/components/Badge.vue';
 
 const today = new Date();

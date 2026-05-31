@@ -75,7 +75,7 @@ import { Doc } from 'fyo/model/doc';
 import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
-import { DropdownItem } from 'src/utils/types';
+import { DropdownItem } from 'src/utils/api/types';
 import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 
 // --- Props & Emits ---

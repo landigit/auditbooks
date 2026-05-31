@@ -66,9 +66,9 @@ import PageHeader from 'src/components/PageHeader.vue';
 import { handleErrorWithDialog } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
-import { getPrintTemplatePropValues } from 'src/utils/printTemplates';
-import { PrintValues } from 'src/utils/types';
-import { getFormRoute, openSettings, routeTo } from 'src/utils/ui';
+import { getPrintTemplatePropValues } from 'src/utils/api/printTemplates.js';
+import { PrintValues } from 'src/utils/api/types.js';
+import { getFormRoute, openSettings, routeTo } from 'src/utils/api/ui.js';
 import { useAppStore } from 'src/stores/app';
 import PrintContainer from '../TemplateBuilder/PrintContainer.vue';
 

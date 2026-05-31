@@ -2,7 +2,7 @@ import { db } from './client';
 import * as schema from './schema';
 import { getTableConfig } from 'drizzle-orm/sqlite-core';
 import { eq, and, desc, asc, SQL } from 'drizzle-orm';
-import { safeGet, safeSet } from '../../utils/index';
+import { safeGet, safeSet } from '../../src/utils/core/index';
 
 // Pre-build a case-insensitive map of table names (both camelCase and PascalCase) to Drizzle table objects.
 const tables: Record<string, any> = Object.create(null);

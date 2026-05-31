@@ -163,10 +163,10 @@ import Check from 'src/components/Controls/Check.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Select from 'src/components/Controls/Select.vue';
 import PageHeader from 'src/components/PageHeader.vue';
-import { getReport } from 'src/utils/misc';
-import { getPathAndMakePDF } from 'src/utils/printTemplates';
+import { getReport } from 'src/utils/api/misc.js';
+import { getPathAndMakePDF } from 'src/utils/api/printTemplates.js';
 import { useAppStore } from 'src/stores/app';
-import { paperSizeMap, printSizes } from 'src/utils/ui';
+import { paperSizeMap, printSizes } from 'src/utils/api/ui.js';
 import ScaledContainer from '../TemplateBuilder/ScaledContainer.vue';
 
 // Define Props

@@ -22,7 +22,7 @@
 import { inject, watch, onUnmounted } from 'vue';
 
 defineOptions({ inheritAttrs: false });
-import { shortcutsKey } from 'src/utils/injectionKeys';
+import { shortcutsKey } from 'src/utils/api/injectionKeys';
 
 // Define Props
 const props = withDefaults(

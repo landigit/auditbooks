@@ -13,7 +13,7 @@
 <script setup lang="ts">
 // --- Imports ---
 import { computed } from 'vue';
-import { getShortcutKeyMap } from 'src/utils/ui';
+import { getShortcutKeyMap } from 'src/utils/api/ui';
 import { useAppStore } from 'src/stores/app';
 
 // --- Props & Emits ---

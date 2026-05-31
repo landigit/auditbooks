@@ -8,7 +8,7 @@ import {
   DialogPortal,
   useForwardPropsEmits,
 } from 'reka-ui';
-import { cn } from 'src/utils/cn';
+import { cn } from 'src/utils/api/cn';
 
 const props = defineProps<
   DialogContentProps & { class?: HTMLAttributes['class'] }
@@ -32,7 +32,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       v-bind="forwarded"
       :class="
         cn(
-          'fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg gap-4 border border-border bg-surface p-6 shadow-2xl sm:rounded-lg dialog-content',
+          'fixed inset-0 m-auto h-fit z-50 grid w-full max-w-lg gap-4 border border-border bg-surface p-6 shadow-2xl sm:rounded-lg dialog-content',
           props.class
         )
       "
@@ -44,27 +44,51 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
 <style scoped>
 .dialog-overlay {
-  transition: opacity 120ms ease-out;
-}
-.dialog-overlay[data-state='open'] {
-  opacity: 1;
   backdrop-filter: blur(6px);
 }
+.dialog-overlay[data-state='open'] {
+  animation: fadeIn 120ms ease-out forwards;
+}
 .dialog-overlay[data-state='closed'] {
-  opacity: 0;
+  animation: fadeOut 120ms ease-in forwards;
 }
 
-.dialog-content {
-  transition:
-    transform 120ms cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 120ms ease-out;
-}
 .dialog-content[data-state='open'] {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  animation: dialogIn 120ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .dialog-content[data-state='closed'] {
-  opacity: 0;
-  transform: translate(-50%, calc(-50% + 8px)) scale(0.98);
+  animation: dialogOut 120ms ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+}
+
+@keyframes dialogOut {
+  from {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
 }
 </style>

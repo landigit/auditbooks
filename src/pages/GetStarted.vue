@@ -72,8 +72,8 @@ import { DocValue } from 'fyo/core/types';
 import Button from 'src/components/Button.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
-import { getGetStartedConfig } from 'src/utils/getStartedConfig';
-import { GetStartedConfigItem } from 'src/utils/types';
+import { getGetStartedConfig } from 'src/utils/api/getStartedConfig';
+import { GetStartedConfigItem } from 'src/utils/api/types';
 import LucideIcon from 'src/components/LucideIcon.vue';
 
 type ListItem = GetStartedConfigItem['items'][number];

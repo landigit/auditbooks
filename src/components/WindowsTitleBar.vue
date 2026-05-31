@@ -49,7 +49,7 @@ defineProps<{
   companyName?: string;
 }>();
 
-const isDesktop = typeof appIpc !== 'undefined' ? appIpc.desktop : false;
+
 const isMax = ref(false);
 const isFullscreen = ref(false);
 

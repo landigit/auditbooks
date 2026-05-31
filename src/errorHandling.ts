@@ -2,15 +2,15 @@ import { t } from 'fyo';
 import type { Doc } from 'fyo/model/doc';
 import { BaseError } from 'fyo/utils/errors';
 import { ErrorLog } from 'fyo/utils/types';
-import { showDialog } from 'src/utils/interactive';
-import { truncate } from 'src/utils';
+import { showDialog } from 'src/utils/api/interactive';
+import { truncate } from 'src/utils/api';
 import { fyo } from './initFyo';
 import router from './router';
-import { getErrorMessage, stringifyCircular } from './utils';
-import type { DialogOptions, ToastOptions } from './utils/types';
+import { getErrorMessage, stringifyCircular } from './utils/api';
+import type { DialogOptions, ToastOptions } from './utils/api/types';
 import { ModelNameEnum } from 'models/types';
 import { useAppStore } from './stores/app';
-import { safeGet, safeSet } from 'utils/index';
+import { safeGet, safeSet } from 'src/utils/core/index';
 
 function shouldNotStore(error: Error) {
   const shouldLog = (error as BaseError).shouldStore ?? true;
@@ -95,7 +95,7 @@ export async function handleError(
 
   if (notifyUser) {
     const toastProps = getToastProps(errorLogObj);
-    const { showToast } = await import('src/utils/interactive');
+    const { showToast } = await import('src/utils/api/interactive');
     showToast(toastProps);
   }
 }
@@ -249,12 +249,12 @@ function getFeatureFlags(): string[] {
 
   return sections.length
     ? [
-        '<details>',
-        '<summary><strong>Feature Flags</strong></summary>',
-        '',
-        ...sections,
-        '</details>',
-      ]
+      '<details>',
+      '<summary><strong>Feature Flags</strong></summary>',
+      '',
+      ...sections,
+      '</details>',
+    ]
     : [];
 }
 

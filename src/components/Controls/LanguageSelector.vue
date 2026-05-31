@@ -13,7 +13,7 @@ import { DEFAULT_LANGUAGE } from 'fyo/utils/consts';
 import { OptionField } from 'schemas/types';
 import { t } from 'fyo';
 import { fyo } from 'src/initFyo';
-import { languageCodeMap, setLanguageMap } from 'src/utils/language';
+import { languageCodeMap, setLanguageMap } from 'src/utils/api/language.js';
 import AutoComplete from './AutoComplete.vue';
 
 const props = defineProps({

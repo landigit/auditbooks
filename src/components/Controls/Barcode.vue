@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from 'vue';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 

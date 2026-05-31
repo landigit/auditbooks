@@ -1,8 +1,8 @@
 import { computed, inject, Ref, unref } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { Field, FieldTypeEnum } from 'schemas/types';
-import { evaluateReadOnly, evaluateRequired } from 'src/utils/doc';
-import { getIsNullOrUndef } from 'utils/index';
+import { evaluateReadOnly, evaluateRequired } from 'src/utils/api/doc';
+import { getIsNullOrUndef } from 'src/utils/core/index';
 
 export function isNumeric(fieldtype: any): boolean {
   if (fieldtype && typeof fieldtype !== 'string') {

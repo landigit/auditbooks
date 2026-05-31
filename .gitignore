@@ -1,9 +1,16 @@
 .DS_Store
 node_modules
-# npm lock file — project uses yarn, this file must not be committed
+# Lock files — project uses Bun, these files must not be committed
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
 /dist
+/src-tauri/target
+/src-tauri/bin/
 /notebook
+/scratch
 /.agents/
 *books/
 

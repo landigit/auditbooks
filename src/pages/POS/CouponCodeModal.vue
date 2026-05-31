@@ -105,7 +105,7 @@ import { ref, computed, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
 import Link from 'src/components/Controls/Link.vue';
 import { ModelNameEnum } from 'models/types';

@@ -46,9 +46,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from 'vue';
-import { getIconConfig } from 'src/utils/interactive';
-import { ToastDuration, ToastType } from 'src/utils/types';
-import { toastDurationMap } from 'src/utils/ui';
+import { getIconConfig } from 'src/utils/api/interactive.js';
+import { ToastDuration, ToastType } from 'src/utils/api/types.js';
+import { toastDurationMap } from 'src/utils/api/ui.js';
 import LucideIcon from './LucideIcon.vue';
 
 // Define Props

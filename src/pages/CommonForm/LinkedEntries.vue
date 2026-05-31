@@ -170,10 +170,10 @@ import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
-import { getBgTextColorClass } from 'src/utils/colors';
-import { getLinkedEntries } from 'src/utils/doc';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { getFormRoute, routeTo } from 'src/utils/ui';
+import { getBgTextColorClass } from 'src/utils/api/colors';
+import { getLinkedEntries } from 'src/utils/api/doc';
+import { shortcutsKey } from 'src/utils/api/injectionKeys';
+import { getFormRoute, routeTo } from 'src/utils/api/ui';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 

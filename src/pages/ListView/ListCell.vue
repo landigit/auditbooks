@@ -10,7 +10,7 @@ import { computed, onMounted } from 'vue';
 import { ColumnConfig, RenderData } from 'fyo/model/types';
 import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
-import { isNumeric } from 'src/utils';
+import { isNumeric } from 'src/utils/api';
 
 type Column = ColumnConfig | Field;
 

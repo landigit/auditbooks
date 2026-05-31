@@ -46,7 +46,7 @@
 // --- Imports ---
 import { ref, onMounted } from 'vue';
 import { t } from 'fyo';
-import { ShortcutKey } from 'src/utils/ui';
+import { ShortcutKey } from 'src/utils/api/ui.js';
 import FormHeader from './FormHeader.vue';
 import ShortcutKeys from './ShortcutKeys.vue';
 

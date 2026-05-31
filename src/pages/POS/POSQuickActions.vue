@@ -132,7 +132,7 @@ import { ref, computed } from 'vue';
 import { fyo } from 'src/initFyo';
 import { Payment } from 'models/baseModels/Payment/Payment';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { t } from 'fyo';
 
 // Define Props

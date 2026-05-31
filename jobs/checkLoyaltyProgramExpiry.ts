@@ -1,5 +1,5 @@
 import { DatabaseManager } from '../backend/database/manager';
-import { ModelNameEnum } from '../models/types';
+import { ModelNameEnum } from '../src/models/types';
 
 export async function checkLoyaltyProgramExpiry() {
   const dm = new DatabaseManager();

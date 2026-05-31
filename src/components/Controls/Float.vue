@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import Base from './Base.vue';
 import { BaseControlProps } from 'src/composables/useBaseControl';
-import { safeParseFloat } from 'utils/index';
+import { safeParseFloat } from 'src/utils/core/index';
 
 const props = defineProps<BaseControlProps>();
 

@@ -15,8 +15,12 @@ pub fn run() {
                 )?;
             }
             
+            use tauri::Manager;
+            let resource_dir = app.path().resource_dir().unwrap();
+
             use tauri_plugin_shell::ShellExt;
-            let sidecar_command = app.shell().sidecar("backend").unwrap();
+            let sidecar_command = app.shell().sidecar("backend").unwrap()
+                .env("APP_RESOURCE_DIR", resource_dir.to_string_lossy().to_string());
             let (mut rx, _child) = sidecar_command
                 .spawn()
                 .expect("Failed to spawn sidecar");

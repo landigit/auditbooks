@@ -1,4 +1,4 @@
-import { IPC } from 'utils/ipc/types';
+import { IPC } from 'src/utils/ipc/types';
 
 declare global {
   const appIpc: IPC;

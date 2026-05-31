@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
-import { routeTo } from 'src/utils/ui';
+import { routeTo } from 'src/utils/api/ui';
 import { t } from 'fyo';
 
 // Define Emits

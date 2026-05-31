@@ -28,7 +28,7 @@
 import { ref, computed } from 'vue';
 import { t } from 'fyo';
 import Dropdown from 'src/components/Dropdown.vue';
-import { PeriodKey } from 'src/utils/types';
+import { PeriodKey } from 'src/utils/api/types';
 
 // Define Props
 const props = withDefaults(

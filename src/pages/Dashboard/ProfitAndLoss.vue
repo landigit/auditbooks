@@ -35,12 +35,12 @@
 import { ref, computed, watch, onActivated } from 'vue';
 import BarChart from 'src/components/Charts/BarChart.vue';
 import { fyo } from 'src/initFyo';
-import { formatXLabels, getYMax, getYMin } from 'src/utils/chart';
-import { getDatesAndPeriodList } from 'src/utils/misc';
-import { getValueMapFromList } from 'utils';
+import { formatXLabels, getYMax, getYMin } from 'src/utils/api/chart.js';
+import { getDatesAndPeriodList } from 'src/utils/api/misc.js';
+import { getValueMapFromList } from 'src/utils/core/index.js';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
-import { PeriodKey } from 'src/utils/types';
+import { PeriodKey } from 'src/utils/api/types.js';
 
 // Define Props
 const props = withDefaults(

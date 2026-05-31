@@ -76,7 +76,7 @@
 import { ref, computed, provide, nextTick, getCurrentInstance } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import Row from 'src/components/Row.vue';
-import { getErrorMessage } from 'src/utils';
+import { getErrorMessage } from 'src/utils/api/index.js';
 import Button from '../Button.vue';
 import FormControl from './FormControl.vue';
 

@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
-import { getFiscalYear } from 'utils/misc';
+import { getFiscalYear } from 'src/utils/core/misc';
 import { beforeAll, afterAll } from 'bun:test';
 
 export function getTestSetupWizardOptions(): SetupWizardOptions {

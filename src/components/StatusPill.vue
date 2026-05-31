@@ -14,7 +14,7 @@ import { Party } from 'models/baseModels/Party/Party';
 import { LoyaltyProgram } from 'models/baseModels/LoyaltyProgram/LoyaltyProgram';
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
-import { getBgTextColorClass } from 'src/utils/colors';
+import { getBgTextColorClass } from 'src/utils/api/colors';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 

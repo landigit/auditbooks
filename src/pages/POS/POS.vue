@@ -145,11 +145,11 @@ import ModernPOS from './ModernPOS.vue';
 import ClassicPOS from './ClassicPOS.vue';
 import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive.js';
 import { Item } from 'models/baseModels/Item/Item';
 import { Shipment } from 'models/inventory/Shipment';
-import { routeTo, toggleSidebar } from 'src/utils/ui';
-import { shortcutsKey } from 'src/utils/injectionKeys';
+import { routeTo, toggleSidebar } from 'src/utils/api/ui.js';
+import { shortcutsKey } from 'src/utils/api/injectionKeys.js';
 import PageHeader from 'src/components/PageHeader.vue';
 import {
   computed,
@@ -175,7 +175,7 @@ import {
   getTotalQuantity,
   getTotalTaxedAmount,
   validateIsPosSettingsSet,
-} from 'src/utils/pos';
+} from 'src/utils/api/pos.js';
 import {
   validateQty,
   getItemQtyMap,

@@ -80,10 +80,10 @@ import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
 import { fyo } from 'src/initFyo';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { t } from 'fyo';
 import { ValidationError } from 'fyo/utils/errors';
-import { getPOSOpeningShiftDoc } from 'src/utils/pos';
+import { getPOSOpeningShiftDoc } from 'src/utils/api/pos';
 import { useRouter } from 'vue-router';
 
 // Define Emits

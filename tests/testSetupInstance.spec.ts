@@ -2,7 +2,7 @@ import { assertDoesNotThrow } from 'backend/database/tests/helpers';
 import dayjs from 'dayjs';
 import setupInstance from 'src/setup/setupInstance';
 import { describe, expect, test, afterAll } from 'bun:test';
-import { getValueMapFromList } from 'utils';
+import { getValueMapFromList } from 'src/utils/core';
 import {
   getTestDbPath,
   getTestFyo,

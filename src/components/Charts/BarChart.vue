@@ -138,7 +138,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onDeactivated } from 'vue';
-import { prefixFormat } from 'src/utils/chart';
+import { prefixFormat } from 'src/utils/api/chart';
 import { Tooltip } from 'src/components/ui';
 
 interface ColorOption {

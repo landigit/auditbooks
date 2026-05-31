@@ -113,8 +113,8 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { getOptionList } from 'fyo/utils';
 import { FieldTypeEnum } from 'schemas/types';
 import Dropdown from 'src/components/Dropdown.vue';
-import { fuzzyMatch } from 'src/utils';
-import { getFormRoute, routeTo } from 'src/utils/ui';
+import { fuzzyMatch } from 'src/utils/api/index.js';
+import { getFormRoute, routeTo } from 'src/utils/api/ui.js';
 import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 import QuickView from '../QuickView.vue';
 import {

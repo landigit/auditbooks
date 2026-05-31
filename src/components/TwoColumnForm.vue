@@ -55,8 +55,8 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import FormControl from 'src/components/Controls/FormControl.vue';
-import { getErrorMessage } from 'src/utils';
-import { evaluateHidden } from 'src/utils/doc';
+import { getErrorMessage } from 'src/utils/api/index.js';
+import { evaluateHidden } from 'src/utils/api/doc.js';
 import Table from './Controls/Table.vue';
 import { Field } from 'schemas/types';
 import { DocValue } from 'fyo/core/types';

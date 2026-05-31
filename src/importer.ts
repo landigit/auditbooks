@@ -13,8 +13,8 @@ import {
   Schema,
   TargetField,
 } from 'schemas/types';
-import { generateCSV, parseCSV } from 'utils/csvParser';
-import { getValueMapFromList } from 'utils/index';
+import { generateCSV, parseCSV } from 'src/utils/core/csvParser';
+import { getValueMapFromList } from 'src/utils/core/index';
 
 export type TemplateField = Field & TemplateFieldProps;
 
@@ -27,10 +27,10 @@ type TemplateFieldProps = {
 
 type ValueMatrixItem =
   | {
-      value: DocValue;
-      rawValue?: RawValue;
-      error?: boolean;
-    }
+    value: DocValue;
+    rawValue?: RawValue;
+    error?: boolean;
+  }
   | { value?: DocValue; rawValue: RawValue; error?: boolean };
 
 type ValueMatrix = ValueMatrixItem[][];
@@ -193,10 +193,10 @@ export class Importer {
         tf: this.templateFieldsMap.get(key ?? ''),
       }))
       .filter(({ key, tf }) => !!key && !!tf) as {
-      key: string;
-      index: number;
-      tf: TemplateField;
-    }[];
+        key: string;
+        index: number;
+        tf: TemplateField;
+      }[];
 
     const cellErrors = [];
     for (let i = 0; i < this.valueMatrix.length; i++) {

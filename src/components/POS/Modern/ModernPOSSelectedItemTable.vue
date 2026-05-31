@@ -44,7 +44,7 @@
 import { computed, inject } from 'vue';
 import Row from 'src/components/Row.vue';
 import ModernPOSSelectedItemRow from './ModernPOSSelectedItemRow.vue';
-import { isNumeric } from 'src/utils';
+import { isNumeric } from 'src/utils/api/index.js';
 import { t } from 'fyo';
 import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';

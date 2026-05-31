@@ -54,13 +54,13 @@ import {
   Schema,
   SchemaMap,
   TargetField,
-} from '../../schemas/types';
+} from '../../src/schemas/types';
 import {
   getIsNullOrUndef,
   getRandomString,
   getValueMapFromList,
-} from '../../utils';
-import { DatabaseBase, GetAllOptions, QueryFilter } from '../../utils/db/types';
+} from '../../src/utils/core';
+import { DatabaseBase, GetAllOptions, QueryFilter } from '../../src/utils/db/types';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap, SYSTEM } from '../helpers';
 import {
   AlterConfig,

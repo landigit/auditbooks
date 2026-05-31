@@ -67,7 +67,7 @@ if (-not $env:GH_TOKEN) {
     Write-Warning "GH_TOKEN is not set. Publishing might fail."
 }
 
-bun run build --win --publish=always
+bun run scripts/publish-tauri.ts
 
 Write-Host "Publish complete."
 Set-Location $currentPath

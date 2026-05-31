@@ -81,14 +81,14 @@ import AttachImage from 'src/components/Controls/AttachImage.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import TwoColumnForm from 'src/components/TwoColumnForm.vue';
 import { fyo } from 'src/initFyo';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { DocRef } from 'src/utils/types';
+import { shortcutsKey } from 'src/utils/api/injectionKeys';
+import { DocRef } from 'src/utils/api/types';
 import {
   commonDocSubmit,
   commonDocSync,
   focusOrSelectFormControl,
-} from 'src/utils/ui';
-import { useDocShortcuts } from 'src/utils/vueUtils';
+} from 'src/utils/api/ui';
+import { useDocShortcuts } from 'src/utils/api/vueUtils';
 import { useAppStore } from 'src/stores/app';
 
 // Define Props

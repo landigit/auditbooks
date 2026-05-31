@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { TemplateFile } from 'utils/types';
+import { TemplateFile } from 'src/utils/core/types';
 
 export async function getTemplates(posTemplateWidth?: number) {
   const paths = await getPrintTemplatePaths();
@@ -53,14 +53,14 @@ async function getPrintTemplatePaths(): Promise<{
       root = path.join(currentDir, '..', '..', `templates`);
       const files = await fs.readdir(root);
       return { files, root };
-    } catch {}
+    } catch { }
   }
 
   try {
     root = path.join(process.cwd(), `templates`);
     const files = await fs.readdir(root);
     return { files, root };
-  } catch {}
+  } catch { }
 
   return null;
 }

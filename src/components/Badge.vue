@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getBgTextColorClass } from 'src/utils/colors';
+import { getBgTextColorClass } from 'src/utils/api/colors';
 
 // Define Props
 const props = withDefaults(

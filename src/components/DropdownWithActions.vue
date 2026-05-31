@@ -22,7 +22,7 @@ import { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
 import Button from 'src/components/Button.vue';
 import Dropdown from 'src/components/Dropdown.vue';
-import { DropdownItem } from 'src/utils/types';
+import { DropdownItem } from 'src/utils/api/types';
 
 // Define Props
 const props = withDefaults(

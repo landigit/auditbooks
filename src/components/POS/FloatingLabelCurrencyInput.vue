@@ -33,7 +33,7 @@ import {
   BaseControlProps,
   useBaseControl,
 } from 'src/composables/useBaseControl';
-import { safeParsePesa } from 'utils/index';
+import { safeParsePesa } from 'src/utils/core/index';
 import { isPesa } from 'fyo/utils';
 import { fyo } from 'src/initFyo';
 import { Money } from 'pesa';

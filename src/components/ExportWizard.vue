@@ -101,10 +101,10 @@ import {
   getExportFields,
   getExportTableFields,
   getJsonExportData,
-} from 'src/utils/export';
-import { ExportField, ExportFormat, ExportTableField } from 'src/utils/types';
-import { getSavePath, showExportInFolder } from 'src/utils/ui';
-import { QueryFilter } from 'utils/db/types';
+} from 'src/utils/api/export.js';
+import { ExportField, ExportFormat, ExportTableField } from 'src/utils/api/types.js';
+import { getSavePath, showExportInFolder } from 'src/utils/api/ui.js';
+import { QueryFilter } from 'src/utils/db/types.js';
 import Button from './Button.vue';
 import Check from './Controls/Check.vue';
 import Int from './Controls/Int.vue';

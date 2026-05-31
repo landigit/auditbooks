@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { RTL_LANGUAGES } from 'fyo/utils/consts';
-import { Theme } from 'src/utils/theme';
+import { Theme } from 'src/utils/api/theme';
 import { ref, computed, reactive } from 'vue';
 import type { HistoryState } from 'vue-router';
 import type { reports as reportsMap } from 'reports/index';

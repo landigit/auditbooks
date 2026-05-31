@@ -5,7 +5,7 @@
 <script setup lang="ts">
 import { ref, inject, computed, watch } from 'vue';
 import { fyo } from 'src/initFyo';
-import { fuzzyMatch } from 'src/utils';
+import { fuzzyMatch } from 'src/utils/api/index.js';
 import Link from './Link.vue';
 import { BaseControlProps } from 'src/composables/useBaseControl';
 

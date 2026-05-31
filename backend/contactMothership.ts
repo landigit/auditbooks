@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Creds } from 'utils/types';
+import { Creds } from 'src/utils/core/types';
 
 export function getUrlAndTokenString(): Creds {
   const inProduction = process.env.NODE_ENV === 'production';

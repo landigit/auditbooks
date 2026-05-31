@@ -246,7 +246,7 @@ import Text from 'src/components/Controls/Text.vue';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { validateSerialNumberCount } from 'src/utils/pos';
+import { validateSerialNumberCount } from 'src/utils/api/pos';
 
 const props = defineProps({
   row: { type: SalesInvoiceItem, required: true },

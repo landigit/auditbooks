@@ -1,7 +1,7 @@
 import { constants } from 'fs';
 import fs from 'fs/promises';
-import { DatabaseMethod } from 'utils/db/types';
-import { CUSTOM_EVENTS } from 'utils/messages';
+import { DatabaseMethod } from 'src/utils/db/types';
+import { CUSTOM_EVENTS } from 'src/utils/core/messages';
 import { DatabaseColumnType } from './database/types';
 
 export const sqliteTypeMap: Record<string, DatabaseColumnType> = {

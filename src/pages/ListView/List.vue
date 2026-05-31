@@ -138,8 +138,8 @@ import Row from 'src/components/Row.vue';
 import { ScrollArea } from 'src/components/ui';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
-import { isNumeric } from 'src/utils';
-import { QueryFilter } from 'utils/db/types';
+import { isNumeric } from 'src/utils/api/index.js';
+import { QueryFilter } from 'src/utils/db/types.js';
 import ListCell from './ListCell.vue';
 
 // Define Props

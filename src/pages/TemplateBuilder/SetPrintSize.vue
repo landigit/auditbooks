@@ -50,7 +50,7 @@ import Button from 'src/components/Button.vue';
 import Float from 'src/components/Controls/Float.vue';
 import Select from 'src/components/Controls/Select.vue';
 import FormHeader from 'src/components/FormHeader.vue';
-import { paperSizeMap, printSizes } from 'src/utils/ui';
+import { paperSizeMap, printSizes } from 'src/utils/api/ui';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
 

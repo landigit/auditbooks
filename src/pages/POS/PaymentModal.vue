@@ -234,7 +234,7 @@ import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { fyo } from 'src/initFyo';
 import { isPesa } from 'fyo/utils';
 import { ModelNameEnum } from 'models/types';
-import { showToast } from 'src/utils/interactive';
+import { showToast } from 'src/utils/api/interactive';
 import { t } from 'fyo';
 
 // Define Emits

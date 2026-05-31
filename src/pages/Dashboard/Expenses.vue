@@ -55,12 +55,12 @@
 <script setup lang="ts">
 import { ref, computed, watch, onActivated, onDeactivated } from 'vue';
 import { fyo } from 'src/initFyo';
-import { truncate } from 'src/utils';
-import { getDatesAndPeriodList } from 'src/utils/misc';
+import { truncate } from 'src/utils/api/index.js';
+import { getDatesAndPeriodList } from 'src/utils/api/misc.js';
 import DonutChart from '../../components/Charts/DonutChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
-import { PeriodKey } from 'src/utils/types';
+import { PeriodKey } from 'src/utils/api/types.js';
 
 // Define Props
 const props = withDefaults(

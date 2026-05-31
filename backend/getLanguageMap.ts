@@ -13,8 +13,8 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { parseCSV } from 'utils/csvParser';
-import { LanguageMap } from 'utils/types';
+import { parseCSV } from 'src/utils/core/csvParser';
+import { LanguageMap } from 'src/utils/core/types';
 
 const VALENTINES_DAY = 1644796800000;
 
@@ -146,7 +146,11 @@ async function getLastUpdated(code: string): Promise<Date> {
 }
 
 async function getTranslationFilePath(code: string) {
-  let filePath = path.join(process.cwd(), `translations/${code}.csv`);
+  const cwd = process.cwd();
+  const resourceDir = process.env.APP_RESOURCE_DIR;
+  let filePath = resourceDir
+    ? path.join(resourceDir, `translations/${code}.csv`)
+    : path.join(cwd, `translations/${code}.csv`);
 
   const exists = await Bun.file(filePath).exists();
   if (!exists) {

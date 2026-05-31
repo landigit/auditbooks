@@ -223,16 +223,16 @@ import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import ShortcutKeys from 'src/components/ShortcutKeys.vue';
 import { handleErrorWithDialog } from 'src/errorHandling';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { showDialog, showToast } from 'src/utils/interactive';
-import { docsPathMap } from 'src/utils/misc';
+import { shortcutsKey } from 'src/utils/api/injectionKeys.js';
+import { showDialog, showToast } from 'src/utils/api/interactive.js';
+import { docsPathMap } from 'src/utils/api/misc.js';
 import {
   PrintTemplateHint,
   baseTemplate,
   getPrintTemplatePropHints,
   getPrintTemplatePropValues,
-} from 'src/utils/printTemplates';
-import { PrintValues } from 'src/utils/types';
+} from 'src/utils/api/printTemplates.js';
+import { PrintValues } from 'src/utils/api/types.js';
 import {
   ShortcutKey,
   focusOrSelectFormControl,
@@ -241,9 +241,9 @@ import {
   getSavePath,
   openSettings,
   selectTextFile,
-} from 'src/utils/ui';
-import { useDocShortcuts } from 'src/utils/vueUtils';
-import { getMapFromList } from 'utils/index';
+} from 'src/utils/api/ui.js';
+import { useDocShortcuts } from 'src/utils/api/vueUtils.js';
+import { getMapFromList } from 'src/utils/core/index';
 import { useAppStore } from 'src/stores/app';
 import PrintContainer from './PrintContainer.vue';
 import SetPrintSize from './SetPrintSize.vue';

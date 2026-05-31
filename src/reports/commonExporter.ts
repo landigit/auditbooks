@@ -1,0 +1,212 @@
+import { t } from 'fyo';
+import { Action } from 'fyo/model/types';
+import { Verb } from 'fyo/telemetry/types';
+import { getSavePath, showExportInFolder } from 'src/utils/api/ui';
+import { getIsNullOrUndef } from 'src/utils/core';
+import { generateCSV } from 'src/utils/core/csvParser';
+import { Report } from './Report';
+import { ExportExtention, ReportCell } from './types';
+import { useAppStore } from 'src/stores/app';
+
+interface JSONExport {
+  columns: { fieldname: string; label: string }[];
+  rows: Record<string, unknown>[];
+  filters: Record<string, string>;
+  timestamp: string;
+  reportName: string;
+  softwareName: string;
+  softwareVersion: string;
+}
+
+export default function getCommonExportActions(report: Report): Action[] {
+  const exportExtention = ['csv', 'json'] as ExportExtention[];
+
+  return exportExtention.map((ext) => ({
+    group: t`Export`,
+    label: ext.toUpperCase(),
+    type: 'primary',
+    action: async () => {
+      await exportReport(ext, report);
+    },
+  }));
+}
+
+async function exportReport(extention: ExportExtention, report: Report) {
+  const { filePath, canceled } = await getSavePath(
+    report.reportName,
+    extention
+  );
+
+  if (canceled || !filePath) {
+    return;
+  }
+
+  let data = '';
+
+  if (extention === 'csv') {
+    data = getCsvData(report);
+  } else if (extention === 'json') {
+    data = getJsonData(report);
+  }
+
+  if (!data.length) {
+    return;
+  }
+
+  await saveExportData(data, filePath);
+  report.fyo.telemetry.log(Verb.Exported, report.reportName, { extention });
+}
+
+function getJsonData(report: Report): string {
+  const exportObject: JSONExport = {
+    columns: [],
+    rows: [],
+    filters: Object.create(null),
+    timestamp: '',
+    reportName: '',
+    softwareName: '',
+    softwareVersion: '',
+  };
+
+  const columns = report.columns;
+  const displayPrecision =
+    (report.fyo.singles.SystemSettings?.displayPrecision as number) ?? 2;
+
+  /**
+   * Set columns as list of fieldname, label
+   */
+  exportObject.columns = columns.map(({ fieldname, label }) => ({
+    fieldname,
+    label,
+  }));
+
+  /**
+   * Set rows as fieldname: value map
+   */
+  for (const row of report.reportData) {
+    if (row.isEmpty) {
+      continue;
+    }
+
+    const rowObj: Record<string, unknown> = Object.create(null);
+    for (let c = 0; c < row.cells.length; c++) {
+      const col = Reflect.get(columns, c);
+      const { label } = col;
+      const cell = getValueFromCell(
+        Reflect.get(row.cells, c),
+        displayPrecision
+      );
+      if (
+        label === '__proto__' ||
+        label === 'constructor' ||
+        label === 'prototype'
+      ) {
+        continue;
+      }
+      Reflect.set(rowObj, label, cell);
+    }
+
+    exportObject.rows.push(rowObj);
+  }
+
+  /**
+   * Set filter map
+   */
+  for (const { fieldname } of report.filters) {
+    if (
+      fieldname === '__proto__' ||
+      fieldname === 'constructor' ||
+      fieldname === 'prototype'
+    ) {
+      continue;
+    }
+    const value = report.get(fieldname);
+    if (getIsNullOrUndef(value)) {
+      continue;
+    }
+
+    Reflect.set(exportObject.filters, fieldname, String(value));
+  }
+
+  /**
+   * Metadata
+   */
+  const appStore = useAppStore();
+  exportObject.timestamp = new Date().toISOString();
+  exportObject.reportName = report.reportName;
+  exportObject.softwareName = 'Auditbooks';
+  exportObject.softwareVersion = appStore.appVersion;
+
+  return JSON.stringify(exportObject);
+}
+
+export function getCsvData(report: Report): string {
+  const csvMatrix = convertReportToCSVMatrix(report);
+  return generateCSV(csvMatrix);
+}
+
+function convertReportToCSVMatrix(report: Report): unknown[][] {
+  const displayPrecision =
+    (report.fyo.singles.SystemSettings?.displayPrecision as number) ?? 2;
+  const reportData = report.reportData;
+  const columns = report.columns;
+
+  const csvdata: unknown[][] = [];
+  csvdata.push(columns.map((c) => c.label));
+  for (const row of reportData) {
+    if (row.isEmpty) {
+      csvdata.push(Array(row.cells.length).fill(''));
+      continue;
+    }
+
+    const csvrow: unknown[] = [];
+    for (let c = 0; c < row.cells.length; c++) {
+      const cell = getValueFromCell(
+        Reflect.get(row.cells, c),
+        displayPrecision
+      );
+      csvrow.push(cell);
+    }
+
+    csvdata.push(csvrow);
+  }
+
+  return csvdata;
+}
+
+function getValueFromCell(cell: ReportCell, displayPrecision: number) {
+  const rawValue = cell.rawValue;
+
+  if (rawValue instanceof Date) {
+    return rawValue.toISOString();
+  }
+
+  if (typeof rawValue === 'number') {
+    const value = rawValue.toFixed(displayPrecision);
+
+    /**
+     * remove insignificant zeroes
+     */
+    if (value.endsWith('0'.repeat(displayPrecision))) {
+      return value.slice(0, -displayPrecision - 1);
+    }
+
+    return value;
+  }
+
+  if (getIsNullOrUndef(cell)) {
+    return '';
+  }
+
+  return rawValue;
+}
+
+export async function saveExportData(
+  data: string,
+  filePath: string,
+  message?: string
+) {
+  await appIpc.saveData(data, filePath);
+  message ??= t`Export Successful`;
+  showExportInFolder(message, filePath);
+}

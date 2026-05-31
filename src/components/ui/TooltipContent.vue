@@ -6,7 +6,7 @@ import {
   TooltipPortal,
   useForwardPropsEmits,
 } from 'reka-ui';
-import { cn } from 'src/utils/cn';
+import { cn } from 'src/utils/api/cn';
 
 defineOptions({
   inheritAttrs: false,

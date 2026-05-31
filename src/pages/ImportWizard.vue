@@ -393,9 +393,9 @@ import PageHeader from 'src/components/PageHeader.vue';
 import { Importer, TemplateField, getColumnLabel } from 'src/importer';
 import { fyo } from 'src/initFyo';
 import { t } from 'fyo';
-import { showDialog } from 'src/utils/interactive';
-import { docsPathMap } from 'src/utils/misc';
-import { getSavePath, selectTextFile } from 'src/utils/ui';
+import { showDialog } from 'src/utils/api/interactive.js';
+import { docsPathMap } from 'src/utils/api/misc.js';
+import { getSavePath, selectTextFile } from 'src/utils/api/ui.js';
 import { useAppStore } from 'src/stores/app';
 import Loading from '../components/Loading.vue';
 

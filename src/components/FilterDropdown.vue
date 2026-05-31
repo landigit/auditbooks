@@ -149,12 +149,12 @@
 import { ref, computed } from 'vue';
 import { Field, FieldTypeEnum } from 'schemas/types';
 import { fyo } from 'src/initFyo';
-import { getRandomString } from 'utils';
+import { getRandomString } from 'src/utils/core/index.js';
 import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
 import { Popover, PopoverTrigger, PopoverContent } from 'src/components/ui';
-import { QueryFilter } from 'utils/db/types';
+import { QueryFilter } from 'src/utils/db/types.js';
 import { t } from 'fyo';
 
 // --- Types ---

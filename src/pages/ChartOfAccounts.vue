@@ -130,10 +130,10 @@ import { isCredit } from 'models/helpers';
 import { ModelNameEnum } from 'models/types';
 import PageHeader from 'src/components/PageHeader.vue';
 import { fyo } from 'src/initFyo';
-import { languageDirectionKey } from 'src/utils/injectionKeys';
-import { docsPathMap } from 'src/utils/misc';
-import { openQuickEdit, commongDocDelete } from 'src/utils/ui';
-import { getMapFromList, removeAtIndex } from 'utils/index';
+import { languageDirectionKey } from 'src/utils/api/injectionKeys.js';
+import { docsPathMap } from 'src/utils/api/misc.js';
+import { openQuickEdit, commongDocDelete } from 'src/utils/api/ui.js';
+import { getMapFromList, removeAtIndex } from 'src/utils/core/index';
 import { useAppStore } from 'src/stores/app';
 import Button from '../components/Button.vue';
 import { handleErrorWithDialog } from '../errorHandling';
@@ -141,7 +141,7 @@ import LucideIcon from 'src/components/LucideIcon.vue';
 import { AccountRootType, AccountType } from 'models/baseModels/Account/types';
 import { TreeViewSettings } from 'fyo/model/types';
 import { Doc } from 'fyo/model/doc';
-import { showDialog } from 'src/utils/interactive';
+import { showDialog } from 'src/utils/api/interactive.js';
 
 type AccountItem = {
   name: string;
