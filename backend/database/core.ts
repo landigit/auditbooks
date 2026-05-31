@@ -1,6 +1,50 @@
 import { getDbError, NotFoundError, ValueError } from 'fyo/utils/errors';
-import { createClient, Client } from '@libsql/client';
-import { drizzle, LibSQLDatabase } from 'drizzle-orm/libsql';
+import { Database } from 'bun:sqlite';
+import { drizzle, type BunSQLiteDatabase } from 'drizzle-orm/bun-sqlite';
+
+export class BunSqliteClient {
+  db: Database;
+
+  constructor(dbPath: string) {
+    this.db = new Database(dbPath);
+  }
+
+  async execute(
+    stmt: string | { sql: string; args?: any[] }
+  ): Promise<{ rows: any[]; rowsAffected: number }> {
+    let sql: string;
+    let args: any[] = [];
+    if (typeof stmt === 'string') {
+      sql = stmt;
+    } else {
+      sql = stmt.sql;
+      args = stmt.args ?? [];
+    }
+
+    const query = this.db.prepare(sql);
+    try {
+      const trimmed = sql.trim().toLowerCase();
+      const isSelectOrPragma =
+        trimmed.startsWith('select') ||
+        trimmed.startsWith('pragma') ||
+        trimmed.startsWith('show') ||
+        trimmed.startsWith('explain');
+      if (isSelectOrPragma) {
+        const rows = query.all(...args);
+        return { rows, rowsAffected: 0 };
+      } else {
+        const res = query.run(...args);
+        return { rows: [], rowsAffected: res.changes };
+      }
+    } finally {
+      query.finalize();
+    }
+  }
+
+  close() {
+    this.db.close();
+  }
+}
 import * as schemaExports from '../../drizzle/db/schema';
 import * as relationsExports from '../../drizzle/db/relations';
 import {
@@ -44,8 +88,8 @@ import {
  */
 
 export default class DatabaseCore extends DatabaseBase {
-  client?: Client;
-  drizzleDb?: LibSQLDatabase<any>;
+  client?: BunSqliteClient;
+  drizzleDb?: BunSQLiteDatabase<any>;
   typeMap = sqliteTypeMap;
   dbPath: string;
   schemaMap: SchemaMap = {};
@@ -75,7 +119,8 @@ export default class DatabaseCore extends DatabaseBase {
       countryCode = query[0].value;
     }
 
-    await db.close();
+    // Commented out db.close() to prevent closing connection globally for this file path
+    // await db.close();
     return countryCode;
   }
 
@@ -84,10 +129,8 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async connect() {
-    const url =
-      this.dbPath === ':memory:' ? 'file::memory:' : `file:${this.dbPath}`;
-    this.client = createClient({ url });
-    this.drizzleDb = drizzle(this.client, {
+    this.client = new BunSqliteClient(this.dbPath);
+    this.drizzleDb = drizzle(this.client.db, {
       schema: { ...schemaExports, ...relationsExports },
     });
     await this.client.execute('PRAGMA foreign_keys=ON');
@@ -236,7 +279,7 @@ export default class DatabaseCore extends DatabaseBase {
       fields = [fields];
     }
 
-    if (fields === undefined) {
+    if (fields === undefined || fields === null) {
       fields = schema.fields.filter((f) => !f.computed).map((f) => f.fieldname);
     }
 
@@ -297,23 +340,34 @@ export default class DatabaseCore extends DatabaseBase {
       const conditions: string[] = [];
 
       for (const [field, operator, val] of filtersArray) {
-        if (operator === 'in') {
+        if (operator === 'in' || operator === 'not in') {
           const valArray = Array.isArray(val) ? val : [val];
           const hasNull = valArray.includes(null);
           const nonNulls = valArray.filter((v) => v !== null);
+          const sqlOp = operator.toUpperCase(); // "IN" or "NOT IN"
 
           if (nonNulls.length > 0) {
             const placeholders = nonNulls.map(() => '?').join(', ');
             if (hasNull) {
-              conditions.push(
-                `("${field}" IN (${placeholders}) OR "${field}" IS NULL)`
-              );
+              if (sqlOp === 'IN') {
+                conditions.push(
+                  `("${field}" IN (${placeholders}) OR "${field}" IS NULL)`
+                );
+              } else {
+                conditions.push(
+                  `("${field}" NOT IN (${placeholders}) AND "${field}" IS NOT NULL)`
+                );
+              }
             } else {
-              conditions.push(`"${field}" IN (${placeholders})`);
+              conditions.push(`"${field}" ${sqlOp} (${placeholders})`);
             }
             args.push(...nonNulls);
           } else if (hasNull) {
-            conditions.push(`"${field}" IS NULL`);
+            if (sqlOp === 'IN') {
+              conditions.push(`"${field}" IS NULL`);
+            } else {
+              conditions.push(`"${field}" IS NOT NULL`);
+            }
           }
         } else if (val === null && (operator === '=' || operator === 'is')) {
           conditions.push(`"${field}" IS NULL`);
@@ -365,23 +419,34 @@ export default class DatabaseCore extends DatabaseBase {
       const conditions: string[] = [];
 
       for (const [field, operator, val] of filtersArray) {
-        if (operator === 'in') {
+        if (operator === 'in' || operator === 'not in') {
           const valArray = Array.isArray(val) ? val : [val];
           const hasNull = valArray.includes(null);
           const nonNulls = valArray.filter((v) => v !== null);
+          const sqlOp = operator.toUpperCase(); // "IN" or "NOT IN"
 
           if (nonNulls.length > 0) {
             const placeholders = nonNulls.map(() => '?').join(', ');
             if (hasNull) {
-              conditions.push(
-                `("${field}" IN (${placeholders}) OR "${field}" IS NULL)`
-              );
+              if (sqlOp === 'IN') {
+                conditions.push(
+                  `("${field}" IN (${placeholders}) OR "${field}" IS NULL)`
+                );
+              } else {
+                conditions.push(
+                  `("${field}" NOT IN (${placeholders}) AND "${field}" IS NOT NULL)`
+                );
+              }
             } else {
-              conditions.push(`"${field}" IN (${placeholders})`);
+              conditions.push(`"${field}" ${sqlOp} (${placeholders})`);
             }
             args.push(...nonNulls);
           } else if (hasNull) {
-            conditions.push(`"${field}" IS NULL`);
+            if (sqlOp === 'IN') {
+              conditions.push(`"${field}" IS NULL`);
+            } else {
+              conditions.push(`"${field}" IS NOT NULL`);
+            }
           }
         } else if (val === null && (operator === '=' || operator === 'is')) {
           conditions.push(`"${field}" IS NULL`);

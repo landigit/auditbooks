@@ -2,9 +2,9 @@
 
 set -e
 
-# Check pnpm version
-PNPM_VERSION=$(pnpm --version)
-echo "Current pnpm version: $PNPM_VERSION"
+# Check bun version
+BUN_VERSION=$(bun --version)
+echo "Current bun version: $BUN_VERSION"
 
 # Source secrets
 source .env.publish
@@ -27,7 +27,7 @@ echo $TELEMETRY_URL >> log_creds.txt
 
 
 # Install Dependencies
-pnpm install
+bun install
 
 # Set .env and build
 export GH_TOKEN=$GH_TOKEN &&
@@ -35,6 +35,6 @@ export GH_TOKEN=$GH_TOKEN &&
  export APPLE_ID=$APPLE_ID &&
  export APPLE_TEAM_ID=$APPLE_TEAM_ID &&
  export APPLE_APP_SPECIFIC_PASSWORD=$APPLE_APP_SPECIFIC_PASSWORD &&
- pnpm build --mac --publish=always
+ bun run build --mac --publish=always
 
 cd ../books

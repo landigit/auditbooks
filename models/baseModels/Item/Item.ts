@@ -15,23 +15,23 @@ import { Money } from 'pesa';
 import { AccountRootTypeEnum, AccountTypeEnum } from '../Account/types';
 
 interface UOMConversionItem {
-  name: string;
-  uom: string;
-  conversionFactor: number;
+  name?: string;
+  uom?: string;
+  conversionFactor?: number;
 }
 
 export class Item extends Doc {
-  itemCode?: string;
-  trackItem?: boolean;
-  itemType?: 'Product' | 'Service';
-  for?: 'Purchases' | 'Sales' | 'Both';
-  hasBatch?: boolean;
-  batchSeries?: string;
-  itemGroup?: string;
-  hsnCode?: number;
-  hasSerialNumber?: boolean;
-  serialNumberSeries?: string;
-  datafromErp?: boolean;
+  declare itemCode?: string;
+  declare trackItem?: boolean;
+  declare itemType?: 'Product' | 'Service';
+  declare for?: 'Purchases' | 'Sales' | 'Both';
+  declare hasBatch?: boolean;
+  declare batchSeries?: string;
+  declare itemGroup?: string;
+  declare hsnCode?: number;
+  declare hasSerialNumber?: boolean;
+  declare serialNumberSeries?: string;
+  declare datafromErp?: boolean;
   uomConversions: UOMConversionItem[] = [];
 
   formulas: FormulaMap = {
@@ -88,8 +88,8 @@ export class Item extends Doc {
     const latestByUom = new Map<string, UOMConversionItem>();
 
     this.uomConversions.forEach((item) => {
-      if (item.conversionFactor > 0) {
-        latestByUom.set(item.uom, item);
+      if (item.conversionFactor! > 0) {
+        latestByUom.set(item.uom!, item);
       }
     });
 

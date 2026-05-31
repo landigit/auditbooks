@@ -1,5 +1,5 @@
 import { ConfigMap } from 'fyo/core/types';
-import type { IPC } from 'main/preload';
+import type { IPC } from 'utils/ipc/types';
 
 export class Config {
   config: Map<string, unknown> | IPC['store'];

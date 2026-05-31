@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import { getMapFromList } from 'utils';
 import {
   addMetaFields,
@@ -83,9 +83,11 @@ describe('Schema Builder Tests', () => {
   });
 
   test('Schema Equality with App Schemas Abstract', () => {
-    expect(abstractCombined.Account).toEqual(appSchemaMap.Account);
-    expect(abstractCombined.JournalEntry).toEqual(appSchemaMap.JournalEntry);
-    expect(abstractCombined.JournalEntryAccount).toEqual(
+    expect(abstractCombined.Account as any).toEqual(appSchemaMap.Account);
+    expect(abstractCombined.JournalEntry as any).toEqual(
+      appSchemaMap.JournalEntry
+    );
+    expect(abstractCombined.JournalEntryAccount as any).toEqual(
       appSchemaMap.JournalEntryAccount
     );
     expect(abstractCombined.Customer).not.toEqual(appSchemaMap.Customer);

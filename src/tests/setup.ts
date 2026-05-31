@@ -1,23 +1,24 @@
-import { vi } from 'vitest';
+import { mock } from 'bun:test';
+import pkg from '../../package.json';
 
 // Mock electron
-vi.mock('electron', () => ({
+mock.module('electron', () => ({
   app: {
-    getPath: vi.fn().mockReturnValue('/tmp'),
-    getVersion: vi.fn().mockReturnValue('0.37.3'),
+    getPath: () => '/tmp',
+    getVersion: () => pkg.version,
   },
   ipcRenderer: {
-    on: vi.fn(),
-    send: vi.fn(),
-    invoke: vi.fn(),
+    on: () => {},
+    send: () => {},
+    invoke: async () => {},
   },
 }));
 
 // Mock global ipc object if used
 (global as any).ipc = {
-  getEnv: vi.fn().mockResolvedValue({
+  getEnv: async () => ({
     isDevelopment: true,
     platform: 'linux',
-    version: '0.37.3',
+    version: pkg.version,
   }),
 };

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "ignoreDeprecations": "5.0",
-    "target": "ESNext",
-    "module": "es2022",
+    "target": "es2022",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -19,7 +19,7 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": ["vite/client", "vitest/globals"],
+    "types": ["vite/client", "bun-types"],
     "baseUrl": ".",
     "paths": {
       "src/*": ["src/*"],
@@ -34,7 +34,7 @@
       "utils/*": ["utils/*"],
       "dummy/*": ["dummy/*"]
     },
-    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   },
   "ts-node": {
     "files": true
@@ -50,8 +50,6 @@
     "patches/**/*.js",
     "reports/**/*.ts",
     "accounting/**/*.ts",
-    "scripts/**/*.ts",
-    "main/**/*.ts",
     "regional/**/*.ts",
     "utils/**/*.ts",
     "tests/**/*.ts",
@@ -61,5 +59,5 @@
     "*.config.mjs",
     "*.config.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "main/**", "main.ts", "build/**"]
 }

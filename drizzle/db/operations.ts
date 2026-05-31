@@ -2,17 +2,18 @@ import { db } from './client';
 import * as schema from './schema';
 import { getTableConfig } from 'drizzle-orm/sqlite-core';
 import { eq, and, desc, asc, SQL } from 'drizzle-orm';
+import { safeGet, safeSet } from '../../utils/index';
 
 // Pre-build a case-insensitive map of table names (both camelCase and PascalCase) to Drizzle table objects.
-const tables: Record<string, any> = {};
+const tables: Record<string, any> = Object.create(null);
 
 for (const [key, val] of Object.entries(schema)) {
   if (val && typeof val === 'object') {
     try {
       const config = getTableConfig(val as any);
       if (config && config.name) {
-        Reflect.set(tables, config.name.toLowerCase(), val);
-        Reflect.set(tables, key.toLowerCase(), val);
+        safeSet(tables, config.name.toLowerCase(), val);
+        safeSet(tables, key.toLowerCase(), val);
       }
     } catch (e) {
       // Not a Drizzle table object (e.g. relations or other exports), skip
@@ -25,7 +26,7 @@ for (const [key, val] of Object.entries(schema)) {
  * Supports both SQL table name (e.g. "SalesInvoice") and schema export name (e.g. "salesInvoice").
  */
 export function getTable(name: string) {
-  const table = Reflect.get(tables, name.toLowerCase());
+  const table = safeGet(tables, name.toLowerCase());
   if (!table) {
     throw new Error(`Table "${name}" not found in Drizzle schema.`);
   }
@@ -96,8 +97,16 @@ export async function listRows(
   const conditions: SQL[] = [];
   if (options.filters) {
     for (const [colName, val] of Object.entries(options.filters)) {
-      if (colName in table) {
-        conditions.push(eq(Reflect.get(table, colName), val));
+      if (
+        colName !== '__proto__' &&
+        colName !== 'constructor' &&
+        colName !== 'prototype' &&
+        colName in table
+      ) {
+        const col = safeGet(table, colName);
+        if (col) {
+          conditions.push(eq(col, val));
+        }
       }
     }
   }
@@ -109,9 +118,17 @@ export async function listRows(
   // Dynamically apply sorting
   if (options.orderBy) {
     const { column, direction } = options.orderBy;
-    if (column in table) {
+    if (
+      column !== '__proto__' &&
+      column !== 'constructor' &&
+      column !== 'prototype' &&
+      column in table
+    ) {
       const orderFn = direction === 'desc' ? desc : asc;
-      query = query.orderBy(orderFn(Reflect.get(table, column))) as any;
+      const col = safeGet(table, column);
+      if (col) {
+        query = query.orderBy(orderFn(col)) as any;
+      }
     }
   }
 

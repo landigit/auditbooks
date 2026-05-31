@@ -14,20 +14,20 @@ import { createDiscountAccount } from 'src/setup/setupInstance';
 import { getCountryInfo } from 'utils/misc';
 
 export class AccountingSettings extends Doc {
-  enableDiscounting?: boolean;
-  enableInventory?: boolean;
-  enablePriceList?: boolean;
-  enableLead?: boolean;
-  enableCouponCode?: boolean;
-  enableFormCustomization?: boolean;
-  enableInvoiceReturns?: boolean;
-  enableLoyaltyProgram?: boolean;
-  enablePricingRule?: boolean;
-  enaenableItemEnquiry?: boolean;
-  enableERPNextSync?: boolean;
-  enablePointOfSaleWithOutInventory?: boolean;
-  enablePartialPayment?: boolean;
-  enableitemGroup?: boolean;
+  declare enableDiscounting?: boolean;
+  declare enableInventory?: boolean;
+  declare enablePriceList?: boolean;
+  declare enableLead?: boolean;
+  declare enableCouponCode?: boolean;
+  declare enableFormCustomization?: boolean;
+  declare enableInvoiceReturns?: boolean;
+  declare enableLoyaltyProgram?: boolean;
+  declare enablePricingRule?: boolean;
+  declare enaenableItemEnquiry?: boolean;
+  declare enableERPNextSync?: boolean;
+  declare enablePointOfSaleWithOutInventory?: boolean;
+  declare enablePartialPayment?: boolean;
+  declare enableitemGroup?: boolean;
 
   static filters: FiltersMap = {
     writeOffAccount: () => ({

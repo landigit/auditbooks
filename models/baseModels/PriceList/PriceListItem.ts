@@ -5,10 +5,10 @@ import type { Money } from 'pesa';
 import type { PriceList } from './PriceList';
 
 export class PriceListItem extends Doc {
-  item?: string;
-  unit?: string;
-  rate?: Money;
-  parentdoc?: PriceList;
+  declare item?: string;
+  declare unit?: string;
+  declare rate?: Money;
+  declare parentdoc?: PriceList;
 
   formulas: FormulaMap = {
     unit: {

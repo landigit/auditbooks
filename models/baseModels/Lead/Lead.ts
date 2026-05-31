@@ -14,7 +14,7 @@ import {
 import { ModelNameEnum } from 'models/types';
 
 export class Lead extends Doc {
-  status?: LeadStatus;
+  declare status?: LeadStatus;
 
   validations: ValidationMap = {
     email: validateEmail,

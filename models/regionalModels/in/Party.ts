@@ -4,10 +4,10 @@ import { GSTType } from './types';
 import { PartyRole } from 'models/baseModels/Party/types';
 
 export class Party extends BaseParty {
-  gstin?: string;
-  role?: PartyRole;
-  gstType?: GSTType;
-  loyaltyProgram?: string;
+  declare gstin?: string;
+  declare role?: PartyRole;
+  declare gstType?: GSTType;
+  declare loyaltyProgram?: string;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   async beforeSync() {

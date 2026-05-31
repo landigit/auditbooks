@@ -3,7 +3,7 @@ import {
   assertThrows,
 } from 'backend/database/tests/helpers';
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,
@@ -82,7 +82,7 @@ describe('Inventory', () => {
     expect(parseInt(sle.name)).toBe(1);
     expect(sle.item).toBe(itemMap.Ink.name);
     expect(parseFloat(sle.rate)).toBe(rate);
-    expect(sle.quantity).toBe(quantity);
+    expect(parseFloat(sle.quantity)).toBe(quantity);
     expect(sle.location).toBe(locationMap.LocationOne);
     expect(await fyo.db.getStockQuantity(itemMap.Ink.name)).toBe(quantity);
   });
@@ -118,9 +118,9 @@ describe('Inventory', () => {
       expect(parseFloat(sle.rate)).toBe(rate);
 
       if (sle.location === locationMap.LocationOne) {
-        expect(sle.quantity).toBe(-quantity);
+        expect(parseFloat(sle.quantity)).toBe(-quantity);
       } else if (sle.location === locationMap.LocationTwo) {
-        expect(sle.quantity).toBe(quantity);
+        expect(parseFloat(sle.quantity)).toBe(quantity);
       } else {
         throw new Error('Unexpected location in SLE');
       }
@@ -160,7 +160,7 @@ describe('Inventory', () => {
     expect(new Date(sle.date).toString()).not.toBe('Invalid Date');
     expect(sle.item).toBe(itemMap.Ink.name);
     expect(parseFloat(sle.rate)).toBe(rate);
-    expect(sle.quantity).toBe(-quantity);
+    expect(parseFloat(sle.quantity)).toBe(-quantity);
     expect(sle.location).toBe(locationMap.LocationTwo);
     expect(await fyo.db.getStockQuantity(itemMap.Ink.name)).toBe(0);
   });

@@ -56,8 +56,8 @@ export function getCOAList() {
 }
 
 export class SetupWizard extends Doc {
-  fiscalYearEnd?: Date;
-  fiscalYearStart?: Date;
+  declare fiscalYearEnd?: Date;
+  declare fiscalYearStart?: Date;
 
   formulas: FormulaMap = {
     fiscalYearStart: {

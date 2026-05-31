@@ -19,7 +19,7 @@ import { Money } from 'pesa';
 import { LedgerPosting } from '../../Transactional/LedgerPosting';
 
 export class JournalEntry extends Transactional {
-  accounts?: Doc[];
+  declare accounts?: Doc[];
 
   async getPosting() {
     const posting: LedgerPosting = new LedgerPosting(this, this.fyo);

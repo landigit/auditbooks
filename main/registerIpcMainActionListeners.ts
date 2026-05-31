@@ -59,7 +59,7 @@ export default function registerIpcMainActionListeners(main: Main) {
       const backupPath = path.join(dbsPath, 'backups');
       await fs.mkdir(backupPath, { recursive: true });
 
-      let dbFilePath = path.join(dbsPath, `${companyName}.books.db`);
+      let dbFilePath = path.join(dbsPath, `${companyName}.db`);
 
       if (
         await fs
@@ -77,10 +77,7 @@ export default function registerIpcMainActionListeners(main: Main) {
         if (option.response === 1) {
           const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '');
 
-          dbFilePath = path.join(
-            dbsPath,
-            `${companyName}_${timestamp}.books.db`
-          );
+          dbFilePath = path.join(dbsPath, `${companyName}_${timestamp}.db`);
 
           await dialog.showMessageBox({
             type: 'info',

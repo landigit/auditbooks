@@ -4,10 +4,10 @@ import { getSerialNumberStatusColumn } from 'models/helpers';
 import { SerialNumberStatus } from './types';
 
 export class SerialNumber extends Doc {
-  name?: string;
-  item?: string;
-  description?: string;
-  status?: SerialNumberStatus;
+  declare name?: string;
+  declare item?: string;
+  declare description?: string;
+  declare status?: SerialNumberStatus;
 
   static getListViewSettings(): ListViewSettings {
     return {

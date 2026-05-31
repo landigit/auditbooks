@@ -1,5 +1,3 @@
-import { constants } from 'fs';
-import fs from 'fs/promises';
 import { ConfigFile } from 'fyo/core/types';
 import { Main } from 'main';
 import config from 'utils/config';
@@ -12,11 +10,7 @@ export async function setAndGetCleanedConfigFiles() {
 
   const cleanedFileMap: Map<string, ConfigFile> = new Map();
   for (const file of files) {
-    const exists = await fs
-      .access(file.dbPath, constants.W_OK)
-      .then(() => true)
-      .catch(() => false);
-
+    const exists = await Bun.file(file.dbPath).exists();
     if (!file.companyName) {
       continue;
     }
@@ -37,12 +31,16 @@ export async function setAndGetCleanedConfigFiles() {
 export async function getConfigFilesWithModified(files: ConfigFile[]) {
   const filesWithModified: ConfigFilesWithModified[] = [];
   for (const { dbPath, id, companyName, openCount } of files) {
-    const { mtime } = await fs.stat(dbPath);
+    let targetPath = dbPath;
+    const bunFile = Bun.file(targetPath);
+    const lastModified = bunFile.lastModified;
+    const modifiedDate =
+      lastModified !== undefined ? new Date(lastModified) : new Date();
     filesWithModified.push({
       id,
-      dbPath,
+      dbPath: targetPath,
       companyName,
-      modified: mtime.toISOString(),
+      modified: modifiedDate.toISOString(),
       openCount,
     });
   }

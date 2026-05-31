@@ -13,41 +13,41 @@ import { ValidationError } from 'fyo/utils/errors';
 import { t } from 'fyo';
 
 export class PricingRule extends Doc {
-  isEnabled?: boolean;
-  title?: string;
-  appliedItems?: PricingRuleItem[];
-  discountType?: 'Price Discount' | 'Product Discount';
+  declare isEnabled?: boolean;
+  declare title?: string;
+  declare appliedItems?: PricingRuleItem[];
+  declare discountType?: 'Price Discount' | 'Product Discount';
 
-  priceDiscountType?: 'rate' | 'percentage' | 'amount';
-  discountRate?: Money;
-  discountPercentage?: number;
-  discountAmount?: Money;
+  declare priceDiscountType?: 'rate' | 'percentage' | 'amount';
+  declare discountRate?: Money;
+  declare discountPercentage?: number;
+  declare discountAmount?: Money;
 
-  isCouponCodeBased?: boolean;
+  declare isCouponCodeBased?: boolean;
 
-  forPriceList?: string;
+  declare forPriceList?: string;
 
-  freeItem?: string;
-  freeItemQuantity?: number;
-  freeItemUnit?: string;
-  roundFreeItemQty?: number;
-  roundingMethod?: string;
+  declare freeItem?: string;
+  declare freeItemQuantity?: number;
+  declare freeItemUnit?: string;
+  declare roundFreeItemQty?: number;
+  declare roundingMethod?: string;
 
-  isRecursive?: boolean;
-  recurseEvery?: number;
-  recurseOver?: number;
+  declare isRecursive?: boolean;
+  declare recurseEvery?: number;
+  declare recurseOver?: number;
 
-  minQuantity?: number;
-  maxQuantity?: number;
+  declare minQuantity?: number;
+  declare maxQuantity?: number;
 
-  minAmount?: Money;
-  maxAmount?: Money;
+  declare minAmount?: Money;
+  declare maxAmount?: Money;
 
-  validFrom?: Date;
-  validTo?: Date;
+  declare validFrom?: Date;
+  declare validTo?: Date;
 
-  thresholdForSuggestion?: number;
-  priority?: number;
+  declare thresholdForSuggestion?: number;
+  declare priority?: number;
 
   get isDiscountTypeIsPriceDiscount() {
     return this.discountType === 'Price Discount';

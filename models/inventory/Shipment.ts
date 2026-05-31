@@ -9,7 +9,7 @@ import { ShipmentItem } from './ShipmentItem';
 import { StockTransfer } from './StockTransfer';
 
 export class Shipment extends StockTransfer {
-  items?: ShipmentItem[];
+  declare items?: ShipmentItem[];
 
   static getListViewSettings(): ListViewSettings {
     return {

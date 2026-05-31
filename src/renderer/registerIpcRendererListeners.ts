@@ -4,27 +4,27 @@ import { syncDocumentsToERPNext } from 'src/utils/erpnextSync';
 import { useAppStore } from 'src/stores/app';
 
 export default function registerIpcRendererListeners() {
-  ipc.registerMainProcessErrorListener(
-    (_, error: unknown, more?: Record<string, unknown>) => {
-      if (!(error instanceof Error)) {
-        throw error;
-      }
-
-      if (!more) {
-        more = {};
-      }
-
-      if (typeof more !== 'object') {
-        more = { more };
-      }
-
-      more.isMainProcess = true;
-      more.notifyUser ??= true;
-
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleError(true, error, more, !!more.notifyUser);
+  ipc.registerMainProcessErrorListener((...args: unknown[]) => {
+    const [, error, more_] = args;
+    let more = more_ as Record<string, unknown> | undefined;
+    if (!(error instanceof Error)) {
+      throw error;
     }
-  );
+
+    if (!more) {
+      more = {};
+    }
+
+    if (typeof more !== 'object') {
+      more = { more };
+    }
+
+    more.isMainProcess = true;
+    more.notifyUser ??= true;
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    handleError(true, error, more, !!more.notifyUser);
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   ipc.registerTriggerFrontendActionListener(async () => {

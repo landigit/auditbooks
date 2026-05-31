@@ -26,12 +26,12 @@ import {
 import { MovementType, MovementTypeEnum } from './types';
 
 export class StockMovement extends Transfer {
-  name?: string;
-  date?: Date;
-  numberSeries?: string;
-  movementType?: MovementType;
-  items?: StockMovementItem[];
-  amount?: Money;
+  declare name?: string;
+  declare date?: Date;
+  declare numberSeries?: string;
+  declare movementType?: MovementType;
+  declare items?: StockMovementItem[];
+  declare amount?: Money;
 
   override get isTransactional(): boolean {
     return false;

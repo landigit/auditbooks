@@ -5,12 +5,12 @@ import { ModelNameEnum } from 'models/types';
 import { Fyo } from 'fyo';
 
 export class PrintTemplate extends Doc {
-  name?: string;
-  type?: string;
-  width?: number;
-  height?: number;
-  template?: string;
-  isCustom?: boolean;
+  declare name?: string;
+  declare type?: string;
+  declare width?: number;
+  declare height?: number;
+  declare template?: string;
+  declare isCustom?: boolean;
 
   override get canDelete(): boolean {
     if (this.isCustom === false) {

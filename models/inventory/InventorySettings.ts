@@ -3,16 +3,16 @@ import { FiltersMap, ReadOnlyMap } from 'fyo/model/types';
 import { AccountTypeEnum } from 'models/baseModels/Account/types';
 
 export class InventorySettings extends Doc {
-  defaultLocation?: string;
-  stockInHand?: string;
-  stockReceivedButNotBilled?: string;
-  costOfGoodsSold?: string;
-  enableBarcodes?: boolean;
-  enableBatches?: boolean;
-  enableSerialNumber?: boolean;
-  enableUomConversions?: boolean;
-  enableStockReturns?: boolean;
-  enablePointOfSale?: boolean;
+  declare defaultLocation?: string;
+  declare stockInHand?: string;
+  declare stockReceivedButNotBilled?: string;
+  declare costOfGoodsSold?: string;
+  declare enableBarcodes?: boolean;
+  declare enableBatches?: boolean;
+  declare enableSerialNumber?: boolean;
+  declare enableUomConversions?: boolean;
+  declare enableStockReturns?: boolean;
+  declare enablePointOfSale?: boolean;
 
   static filters: FiltersMap = {
     stockInHand: () => ({

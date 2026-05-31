@@ -11,6 +11,7 @@ import {
 } from 'fyo/utils/errors';
 import { Field, FieldType, FieldTypeEnum, NumberField } from 'schemas/types';
 import { fyo } from 'src/initFyo';
+import { safeGet, safeSet } from 'utils/index';
 
 export function stringifyCircular(
   obj: unknown,
@@ -77,12 +78,12 @@ export function fuzzyMatch(input: string, target: string) {
 
 export function convertPesaValuesToFloat(obj: Record<string, unknown>) {
   Object.keys(obj).forEach((key) => {
-    const value = obj[key];
+    const value = safeGet(obj, key);
     if (!isPesa(value)) {
       return;
     }
 
-    obj[key] = value.float;
+    safeSet(obj, key, value.float);
   });
 }
 
@@ -99,7 +100,7 @@ export function getErrorMessage(e: Error, doc?: Doc): string {
     return errorMessage;
   }
 
-  const label = fyo.db.schemaMap[schemaName]?.label ?? schemaName;
+  const label = safeGet(fyo.db.schemaMap, schemaName)?.label ?? schemaName;
   if (e instanceof LinkValidationError) {
     return t`${label} ${name} is linked with existing records.`;
   } else if (e instanceof DuplicateEntryError) {

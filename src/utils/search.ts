@@ -5,7 +5,7 @@ import { reports } from 'reports';
 import { OptionField } from 'schemas/types';
 import { createFilters, routeFilters } from 'src/utils/filters';
 import { GetAllOptions } from 'utils/db/types';
-import { safeParseFloat } from 'utils/index';
+import { safeParseFloat, safeGet, safeSet } from 'utils/index';
 import { RouteLocationRaw } from 'vue-router';
 import { fuzzyMatch } from '.';
 import { getFormRoute, routeTo } from './ui';
@@ -377,7 +377,7 @@ export class Search {
       Docs: true,
       Recent: true,
     },
-    schemaFilters: {},
+    schemaFilters: Object.create(null),
     skipTables: false,
     skipTransactions: false,
   };
@@ -394,8 +394,8 @@ export class Search {
 
   constructor(fyo: Fyo) {
     this.fyo = fyo;
-    this.keywords = {};
-    this.searchables = {};
+    this.keywords = Object.create(null);
+    this.searchables = Object.create(null);
     this._nonDocSearchList = getNonDocSearchList(fyo);
   }
 
@@ -518,6 +518,14 @@ export class Search {
   }
 
   set(filterName: string, value: boolean) {
+    if (
+      filterName === '__proto__' ||
+      filterName === 'constructor' ||
+      filterName === 'prototype'
+    ) {
+      return;
+    }
+
     /**
      * When a filter is set, intermediate is reset
      * this way the groups are rebuild with the filters
@@ -527,21 +535,21 @@ export class Search {
     if (filterName in this.filters.groupFilters) {
       this.filters.groupFilters[filterName as SearchGroup] = value;
     } else if (filterName in this.searchables) {
-      this.filters.schemaFilters[filterName] = value;
+      safeSet(this.filters.schemaFilters, filterName, value);
       this.filters.skipTables = this.skipTables;
       this.filters.skipTransactions = this.skipTransactions;
     } else if (filterName === 'skipTables') {
       Object.values(this.searchables)
         .filter(({ isChild }) => isChild)
         .forEach(({ schemaName }) => {
-          this.filters.schemaFilters[schemaName] = !value;
+          safeSet(this.filters.schemaFilters, schemaName, !value);
         });
       this.filters.skipTables = value;
     } else if (filterName === 'skipTransactions') {
       Object.values(this.searchables)
         .filter(({ isSubmittable }) => isSubmittable)
         .forEach(({ schemaName }) => {
-          this.filters.schemaFilters[schemaName] = !value;
+          safeSet(this.filters.schemaFilters, schemaName, !value);
         });
       this.filters.skipTransactions = value;
     }
@@ -561,7 +569,7 @@ export class Search {
   _setFilterDefaults() {
     const totalChildKeywords = Object.values(this.searchables)
       .filter((s) => s.isChild)
-      .map((s) => this.keywords[s.schemaName]?.length ?? 0)
+      .map((s) => safeGet(this.keywords, s.schemaName)?.length ?? 0)
       .reduce((a, b) => a + b, 0);
 
     if (totalChildKeywords > 2_000) {
@@ -571,7 +579,13 @@ export class Search {
 
   _setSchemaFilters() {
     for (const name in this.searchables) {
-      this.filters.schemaFilters[name] = true;
+      if (
+        name !== '__proto__' &&
+        name !== 'constructor' &&
+        name !== 'prototype'
+      ) {
+        safeSet(this.filters.schemaFilters, name, true);
+      }
     }
   }
 
@@ -592,7 +606,10 @@ export class Search {
 
       const maps = await this.fyo.db.getAllRaw(searchable.schemaName, options);
       this._setKeywords(maps, searchable);
-      this.searchables[searchable.schemaName].needsUpdate = false;
+      const s = safeGet(this.searchables, searchable.schemaName);
+      if (s) {
+        s.needsUpdate = false;
+      }
     }
   }
 
@@ -871,8 +888,13 @@ export class Search {
     const keywords: Keyword[] = [];
     const schemaNames = Object.keys(this.keywords);
     for (const sn of schemaNames) {
-      const searchable = this.searchables[sn];
-      if (!this.filters.schemaFilters[sn] || !this.filters.groupFilters.Docs) {
+      const searchable = safeGet(this.searchables, sn);
+      if (!searchable) continue;
+
+      if (
+        !safeGet(this.filters.schemaFilters, sn) ||
+        !this.filters.groupFilters.Docs
+      ) {
         continue;
       }
 
@@ -883,7 +905,10 @@ export class Search {
       if (searchable.isSubmittable && this.filters.skipTransactions) {
         continue;
       }
-      keywords.push(...this.keywords[sn]);
+      const kws = safeGet<Keyword[]>(this.keywords, sn);
+      if (kws) {
+        keywords.push(...kws);
+      }
     }
 
     const grouped: Record<string, Keyword[]> = {};
@@ -900,7 +925,10 @@ export class Search {
   _setSearchables() {
     for (const schemaName of Object.keys(this.fyo.schemaMap)) {
       const schema = this.fyo.schemaMap[schemaName];
-      if (!schema?.keywordFields?.length || this.searchables[schemaName]) {
+      if (
+        !schema?.keywordFields?.length ||
+        safeGet(this.searchables, schemaName)
+      ) {
         continue;
       }
 
@@ -914,14 +942,14 @@ export class Search {
         meta.push('submitted', 'cancelled');
       }
 
-      this.searchables[schemaName] = {
+      safeSet(this.searchables, schemaName, {
         schemaName,
         fields,
         meta,
         isChild: !!schema.isChild,
         isSubmittable: !!schema.isSubmittable,
         needsUpdate: true,
-      };
+      });
     }
   }
 
@@ -932,11 +960,17 @@ export class Search {
 
     for (const { schemaName } of Object.values(this.searchables)) {
       this.fyo.doc.observer.on(`sync:${schemaName}`, () => {
-        this.searchables[schemaName].needsUpdate = true;
+        const searchable = safeGet(this.searchables, schemaName);
+        if (searchable) {
+          searchable.needsUpdate = true;
+        }
       });
 
       this.fyo.doc.observer.on(`delete:${schemaName}`, () => {
-        this.searchables[schemaName].needsUpdate = true;
+        const searchable = safeGet(this.searchables, schemaName);
+        if (searchable) {
+          searchable.needsUpdate = true;
+        }
       });
     }
 
@@ -948,13 +982,16 @@ export class Search {
       return;
     }
 
-    this.keywords[searchable.schemaName] = [];
+    safeSet(this.keywords, searchable.schemaName, []);
+
+    const kwList = safeGet<Keyword[]>(this.keywords, searchable.schemaName);
+    if (!kwList) return;
 
     for (const map of maps) {
       const keyword: Keyword = { values: [], meta: {}, priority: 0 };
       this._setKeywordValues(map, searchable, keyword);
       this._setMeta(map, searchable, keyword);
-      this.keywords[searchable.schemaName].push(keyword);
+      kwList.push(keyword);
     }
 
     this._setPriority(searchable);
@@ -967,7 +1004,7 @@ export class Search {
   ) {
     // Set individual field values
     for (const fn of searchable.fields) {
-      let value = map[fn] as string | undefined;
+      let value = safeGet(map, fn) as string | undefined;
       const field = this.fyo.getField(searchable.schemaName, fn);
 
       const { options } = field as OptionField;
@@ -982,23 +1019,25 @@ export class Search {
   _setMeta(map: RawValueMap, searchable: Searchable, keyword: Keyword) {
     // Set the meta map
     for (const fn of searchable.meta) {
-      const meta = map[fn];
+      const meta = safeGet(map, fn);
       if (typeof meta === 'number') {
-        keyword.meta[fn] = Boolean(meta);
+        safeSet(keyword.meta, fn, Boolean(meta));
       } else if (typeof meta === 'string') {
-        keyword.meta[fn] = meta;
+        safeSet(keyword.meta, fn, meta);
       }
     }
 
-    keyword.meta.schemaName = searchable.schemaName;
+    safeSet(keyword.meta, 'schemaName', searchable.schemaName);
     if (keyword.meta.parent) {
       keyword.values.unshift(keyword.meta.parent as string);
     }
   }
 
   _setPriority(searchable: Searchable) {
-    const keywords = this.keywords[searchable.schemaName] ?? [];
-    const basePriority = this.priorityMap[searchable.schemaName] ?? 0;
+    const keywords =
+      safeGet<Keyword[]>(this.keywords, searchable.schemaName) ?? [];
+    const basePriority =
+      safeGet<number>(this.priorityMap, searchable.schemaName) ?? 0;
 
     for (const k of keywords) {
       k.priority += basePriority;

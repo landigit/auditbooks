@@ -3,19 +3,19 @@ import type { Transfer } from './Transfer';
 import type { Money } from 'pesa';
 
 export class TransferItem extends Doc {
-  item?: string;
+  declare item?: string;
 
-  unit?: string;
-  transferUnit?: string;
-  quantity?: number;
-  transferQuantity?: number;
-  unitConversionFactor?: number;
+  declare unit?: string;
+  declare transferUnit?: string;
+  declare quantity?: number;
+  declare transferQuantity?: number;
+  declare unitConversionFactor?: number;
 
-  rate?: Money;
-  amount?: Money;
+  declare rate?: Money;
+  declare amount?: Money;
 
-  batch?: string;
-  serialNumber?: string;
+  declare batch?: string;
+  declare serialNumber?: string;
 
-  parentdoc?: Transfer;
+  declare parentdoc?: Transfer;
 }

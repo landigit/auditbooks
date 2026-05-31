@@ -4,7 +4,7 @@ import { InvoiceItem } from '../InvoiceItem/InvoiceItem';
 import { validateCouponCode } from 'models/helpers';
 
 export class AppliedCouponCodes extends InvoiceItem {
-  coupons?: string;
+  declare coupons?: string;
 
   validations: ValidationMap = {
     coupons: async (value: DocValue) => {

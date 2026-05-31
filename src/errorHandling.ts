@@ -10,6 +10,7 @@ import { getErrorMessage, stringifyCircular } from './utils';
 import type { DialogOptions, ToastOptions } from './utils/types';
 import { ModelNameEnum } from 'models/types';
 import { useAppStore } from './stores/app';
+import { safeGet, safeSet } from 'utils/index';
 
 function shouldNotStore(error: Error) {
   const shouldLog = (error as BaseError).shouldStore ?? true;
@@ -198,11 +199,14 @@ export function getErrorHandledSync<T extends (...args: any[]) => any>(
 
 function getFeatureFlags(): string[] {
   const getBooleanFields = (docName: string) => {
-    const doc = fyo.singles[docName];
+    const doc = safeGet(fyo.singles, docName);
+    if (!doc) {
+      return {};
+    }
 
     return Object.entries(doc as Doc).reduce(
       (acc, [key, value]) => {
-        const fieldsArray = fyo.schemaMap[docName]?.fields ?? [];
+        const fieldsArray = safeGet(fyo.schemaMap, docName)?.fields ?? [];
         const fieldsMap = new Map(fieldsArray.map((f) => [f.fieldname, f]));
 
         const field = fieldsMap.get(key);
@@ -211,11 +215,11 @@ function getFeatureFlags(): string[] {
           !field?.hidden &&
           !key.startsWith('_')
         ) {
-          acc[key] = value;
+          safeSet(acc, key, value);
         }
         return acc;
       },
-      {} as Record<string, boolean>
+      Object.create(null) as Record<string, boolean>
     );
   };
 

@@ -1,5 +1,4 @@
 import { DatabaseManager } from 'backend/database/manager';
-import { config } from 'dotenv';
 import { Fyo } from 'fyo';
 import { DummyAuthDemux } from 'fyo/tests/helpers';
 import dayjs from 'dayjs';
@@ -7,7 +6,7 @@ import dayjs from 'dayjs';
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
 import { getFiscalYear } from 'utils/misc';
-import { beforeAll, afterAll } from 'vitest';
+import { beforeAll, afterAll } from 'bun:test';
 
 export function getTestSetupWizardOptions(): SetupWizardOptions {
   return {
@@ -25,7 +24,6 @@ export function getTestSetupWizardOptions(): SetupWizardOptions {
 }
 
 export function getTestDbPath(dbPath?: string) {
-  config();
   return dbPath ?? process.env.TEST_DB_PATH ?? ':memory:';
 }
 

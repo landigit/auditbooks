@@ -11,8 +11,12 @@ export async function getTemplates(posTemplateWidth?: number) {
   const templates: TemplateFile[] = [];
   for (const file of paths.files) {
     const filePath = path.join(paths.root, file);
-    const template = await fs.readFile(filePath, 'utf-8');
-    const { mtime } = await fs.stat(filePath);
+    const bunFile = Bun.file(filePath);
+    const template = await bunFile.text();
+    const lastModified = bunFile.lastModified;
+    const modifiedDate =
+      lastModified !== undefined ? new Date(lastModified) : new Date();
+
     const width =
       file?.split('-')[1]?.split('.')[0] === 'POS'
         ? (posTemplateWidth ?? 0)
@@ -22,7 +26,7 @@ export async function getTemplates(posTemplateWidth?: number) {
     templates.push({
       template,
       file,
-      modified: mtime.toISOString(),
+      modified: modifiedDate.toISOString(),
       width,
       height,
     });
@@ -35,19 +39,36 @@ async function getPrintTemplatePaths(): Promise<{
   files: string[];
   root: string;
 } | null> {
-  let root = path.join(process.resourcesPath, `../templates`);
+  let root = '';
 
-  try {
-    const files = await fs.readdir(root);
-    return { files, root };
-  } catch {
-    root = path.join(__dirname, '..', '..', `templates`);
+  if (process.resourcesPath) {
+    try {
+      root = path.join(process.resourcesPath, `../templates`);
+      const files = await fs.readdir(root);
+      return { files, root };
+    } catch {}
+  }
+
+  // Support both CommonJS (__dirname) and Bun ESM (import.meta.dir)
+  const currentDir =
+    typeof __dirname !== 'undefined'
+      ? __dirname
+      : typeof (import.meta as any).dir !== 'undefined'
+        ? (import.meta as any).dir
+        : null;
+  if (currentDir) {
+    try {
+      root = path.join(currentDir, '..', '..', `templates`);
+      const files = await fs.readdir(root);
+      return { files, root };
+    } catch {}
   }
 
   try {
+    root = path.join(process.cwd(), `templates`);
     const files = await fs.readdir(root);
     return { files, root };
-  } catch {
-    return null;
-  }
+  } catch {}
+
+  return null;
 }

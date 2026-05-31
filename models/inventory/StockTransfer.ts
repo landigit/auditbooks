@@ -32,16 +32,16 @@ import { getShipmentCOGSAmountFromSLEs } from 'reports/inventory/helpers';
 import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
 
 export abstract class StockTransfer extends Transfer {
-  name?: string;
-  date?: Date;
-  party?: string;
-  terms?: string;
-  attachment?: Attachment;
-  grandTotal?: Money;
-  backReference?: string;
-  items?: StockTransferItem[];
-  isReturned?: boolean;
-  returnAgainst?: string;
+  declare name?: string;
+  declare date?: Date;
+  declare party?: string;
+  declare terms?: string;
+  declare attachment?: Attachment;
+  declare grandTotal?: Money;
+  declare backReference?: string;
+  declare items?: StockTransferItem[];
+  declare isReturned?: boolean;
+  declare returnAgainst?: string;
 
   get isSales() {
     return this.schemaName === ModelNameEnum.Shipment;

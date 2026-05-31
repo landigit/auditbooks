@@ -4,14 +4,14 @@ import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 
 export class AccountingLedgerEntry extends Doc {
-  date?: string | Date;
-  account?: string;
-  party?: string;
-  debit?: Money;
-  credit?: Money;
-  referenceType?: string;
-  referenceName?: string;
-  reverted?: boolean;
+  declare date?: string | Date;
+  declare account?: string;
+  declare party?: string;
+  declare debit?: Money;
+  declare credit?: Money;
+  declare referenceType?: string;
+  declare referenceName?: string;
+  declare reverted?: boolean;
 
   async revert() {
     if (this.reverted) {

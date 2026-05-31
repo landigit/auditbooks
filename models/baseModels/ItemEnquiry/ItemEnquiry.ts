@@ -2,11 +2,11 @@ import { Doc } from 'fyo/model/doc';
 import { ListViewSettings } from 'fyo/model/types';
 
 export class ItemEnquiry extends Doc {
-  item?: string;
-  customer?: string;
-  contact?: string;
-  description?: string;
-  similarProduct?: string;
+  declare item?: string;
+  declare customer?: string;
+  declare contact?: string;
+  declare description?: string;
+  declare similarProduct?: string;
 
   static override getListViewSettings(): ListViewSettings {
     return {

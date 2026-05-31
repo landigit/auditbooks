@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,
@@ -6,7 +6,6 @@ import {
 } from 'tests/helpers';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { Payment } from 'models/baseModels/Payment/Payment';
-import { Money } from 'pesa';
 import { ModelNameEnum } from 'models/types';
 
 const fyo = getTestFyo();
@@ -82,11 +81,10 @@ describe('Point of Sale', () => {
 
     await paymentDocTwo.sync();
 
-    const transactedAmountAfterTxn: Record<string, Money> | undefined =
-      await fyo.db.getPOSTransactedAmount(
-        new Date('2023-01-01'),
-        new Date('2023-01-02')
-      );
+    const transactedAmountAfterTxn = (await fyo.db.getPOSTransactedAmount(
+      new Date('2023-01-01'),
+      new Date('2023-01-02')
+    )) as unknown as Record<string, number> | undefined;
 
     expect(transactedAmountAfterTxn).toBeDefined();
 

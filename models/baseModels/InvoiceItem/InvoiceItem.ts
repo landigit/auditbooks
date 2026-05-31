@@ -36,34 +36,34 @@ import {
 import { QueryFilter } from 'utils/db/types';
 
 export abstract class InvoiceItem extends Doc {
-  item?: string;
-  account?: string;
-  amount?: Money;
-  parentdoc?: Invoice;
-  rate?: Money;
+  declare item?: string;
+  declare account?: string;
+  declare amount?: Money;
+  declare parentdoc?: Invoice;
+  declare rate?: Money;
 
-  description?: string;
-  hsnCode?: number;
+  declare description?: string;
+  declare hsnCode?: number;
 
-  unit?: string;
-  transferUnit?: string;
-  quantity?: number;
-  transferQuantity?: number;
-  qty?: number;
-  unitConversionFactor?: number;
-  batch?: string;
-  serialNumber?: string;
+  declare unit?: string;
+  declare transferUnit?: string;
+  declare quantity?: number;
+  declare transferQuantity?: number;
+  declare qty?: number;
+  declare unitConversionFactor?: number;
+  declare batch?: string;
+  declare serialNumber?: string;
 
-  tax?: string;
-  stockNotTransferred?: number;
+  declare tax?: string;
+  declare stockNotTransferred?: number;
 
-  setItemDiscountAmount?: boolean;
-  itemDiscountAmount?: Money;
-  itemDiscountPercent?: number;
-  itemDiscountedTotal?: Money;
-  itemTaxedTotal?: Money;
+  declare setItemDiscountAmount?: boolean;
+  declare itemDiscountAmount?: Money;
+  declare itemDiscountPercent?: number;
+  declare itemDiscountedTotal?: Money;
+  declare itemTaxedTotal?: Money;
 
-  isFreeItem?: boolean;
+  declare isFreeItem?: boolean;
 
   get isSales() {
     return (

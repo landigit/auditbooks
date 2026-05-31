@@ -1,47 +1,42 @@
-import Bree from 'bree';
-import path from 'path';
 import main from 'main';
+import { checkLoyaltyProgramExpiry } from '../jobs/checkLoyaltyProgramExpiry';
 
-let bree: Bree;
+let erpSyncIntervalId: any = null;
+let loyaltyIntervalId: any = null;
+
+function parseIntervalToMs(interval: string): number {
+  const num = parseInt(interval, 10);
+  if (isNaN(num)) return 3600000; // default to 1 hour
+  if (interval.includes('minute')) return num * 60 * 1000;
+  if (interval.includes('hour')) return num * 60 * 60 * 1000;
+  if (interval.includes('day')) return num * 24 * 60 * 60 * 1000;
+  return num * 1000; // default to seconds if no unit is recognized
+}
 
 export async function initScheduler(interval: string) {
-  const jobsRoot = path.join(__dirname, '..', '..', 'jobs');
-
-  if (bree) {
-    await bree.stop();
+  if (erpSyncIntervalId) {
+    clearInterval(erpSyncIntervalId);
+  }
+  if (loyaltyIntervalId) {
+    clearInterval(loyaltyIntervalId);
   }
 
-  bree = new Bree({
-    root: jobsRoot,
-    defaultExtension: 'ts',
-    jobs: [
-      {
-        name: 'triggerErpNextSync',
-        interval: interval,
-        worker: {
-          workerData: {
-            useTsNode: true,
-          },
-        },
-      },
-      {
-        name: 'checkLoyaltyProgramExpiry',
-        interval: '24 hours',
-        worker: {
-          workerData: {
-            useTsNode: true,
-          },
-        },
-      },
-    ],
-    worker: {
-      argv: ['--require', 'ts-node/register'],
-    },
-  });
+  const erpMs = parseIntervalToMs(interval);
 
-  bree.on('worker created', () => {
+  // ERPNext Sync Trigger
+  erpSyncIntervalId = setInterval(() => {
     main.mainWindow?.webContents.send('trigger-erpnext-sync');
-  });
+  }, erpMs);
 
-  await bree.start();
+  // Loyalty Program Expiry Check (Runs every 24 hours)
+  const checkExpiry = async () => {
+    try {
+      await checkLoyaltyProgramExpiry();
+    } catch (err) {
+      console.error('Failed to run checkLoyaltyProgramExpiry:', err);
+    }
+  };
+
+  await checkExpiry();
+  loyaltyIntervalId = setInterval(checkExpiry, 24 * 60 * 60 * 1000);
 }

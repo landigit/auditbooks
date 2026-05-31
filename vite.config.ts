@@ -29,6 +29,8 @@ export default () => {
       },
     },
     build: {
+      outDir: path.resolve(__dirname, './dist'),
+      emptyOutDir: true,
       target: 'esnext',
       sourcemap: true,
       chunkSizeWarningLimit: 1000,
@@ -65,6 +67,7 @@ export default () => {
       }),
     ],
     resolve: {
+      dedupe: ['@codemirror/state', '@codemirror/view', '@codemirror/language'],
       alias: {
         vue: 'vue/dist/vue.esm-bundler.js',
         fyo: path.resolve(__dirname, './fyo'),

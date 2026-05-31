@@ -1,6 +1,5 @@
 import chokidar from 'chokidar';
 import esbuild from 'esbuild';
-import { $ } from 'execa';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getMainProcessCommonConfig } from './helpers.mjs';
@@ -12,7 +11,7 @@ process.env['VITE_PORT'] = 6969;
 
 /**
  * This script does several things:
- * 1. Runs the vite server in dev mode `pnpmvite` (unless --no-renderer is passed)
+ * 1. Runs the vite server in dev mode `bunx vite` (unless --no-renderer is passed)
  * 2. Runs a file watcher for the main processes
  * 3. Builds the main process on file changes
  * 4. Runs electron which loads renderer using vite server url
@@ -23,20 +22,22 @@ process.env['VITE_PORT'] = 6969;
  */
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(dirname, '..', '..');
-const $$ = $({ stdio: 'inherit' });
 let isReload = false;
 
 /**
- * @type {null | import('execa').ExecaChildProcess<string>}
+ * @type {null | import('bun').Subprocess}
  */
 let electronProcess = null;
 
 console.log(`running Auditbooks in dev mode\nroot: ${root}`);
 
 /**
- * @type {import('execa').ExecaChildProcess<string>}
+ * @type {import('bun').Subprocess}
  */
-const viteProcess = $$`pnpm vite`;
+const viteProcess = Bun.spawn(['bunx', 'vite'], {
+  stdout: 'inherit',
+  stderr: 'inherit',
+});
 /**
  * Create esbuild context that is used
  * to [re]build the main process code
@@ -80,7 +81,7 @@ const terminate = async () => {
 process.on('SIGINT', terminate);
 process.on('SIGTERM', terminate);
 if (viteProcess) {
-  viteProcess.on('close', terminate);
+  viteProcess.exited.then(terminate);
 }
 
 /**
@@ -125,15 +126,22 @@ async function handleResult(result) {
 
 function runElectron() {
   const args = ['--inspect=5858', '--disable-gpu', '--disable-gpu-sandbox'];
-  const electronProcess = $$`npx electron ${args} ${path.join(
-    root,
-    'dist_electron',
-    'dev',
-    'main.js'
-  )}`;
+  const electronProcess = Bun.spawn(
+    [
+      'npx',
+      'electron',
+      ...args,
+      path.join(root, 'dist_electron', 'dev', 'main.js'),
+    ],
+    {
+      stdout: 'inherit',
+      stderr: 'inherit',
+    }
+  );
 
-  electronProcess.on('close', async () => {
+  electronProcess.exited.then(async () => {
     if (isReload) {
+      isReload = false; // Reset reload flag
       return;
     }
 

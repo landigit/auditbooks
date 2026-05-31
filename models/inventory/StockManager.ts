@@ -14,11 +14,11 @@ export class StockManager {
    * single Stock Movement entry.
    */
 
-  items: StockManagerItem[];
-  details: SMDetails;
+  declare items: StockManagerItem[];
+  declare details: SMDetails;
 
-  isCancelled: boolean;
-  fyo: Fyo;
+  declare isCancelled: boolean;
+  declare fyo: Fyo;
 
   constructor(details: SMDetails, isCancelled: boolean, fyo: Fyo) {
     this.items = [];
@@ -217,20 +217,20 @@ class StockManagerItem {
    * 7. Insert Stock Ledger Entry
    */
 
-  date: Date;
-  item: string;
-  rate: Money;
-  quantity: number;
-  referenceName: string;
-  referenceType: string;
-  fromLocation?: string;
-  toLocation?: string;
-  batch?: string;
-  serialNumber?: string;
+  declare date: Date;
+  declare item: string;
+  declare rate: Money;
+  declare quantity: number;
+  declare referenceName: string;
+  declare referenceType: string;
+  declare fromLocation?: string;
+  declare toLocation?: string;
+  declare batch?: string;
+  declare serialNumber?: string;
 
-  stockLedgerEntries?: StockLedgerEntry[];
+  declare stockLedgerEntries?: StockLedgerEntry[];
 
-  fyo: Fyo;
+  declare fyo: Fyo;
 
   constructor(details: SMIDetails, fyo: Fyo) {
     this.date = details.date;

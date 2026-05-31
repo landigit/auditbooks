@@ -10,10 +10,10 @@ import { Doc } from 'fyo/model/doc';
 import { Party } from '../Party/Party';
 
 export class SalesQuote extends Invoice {
-  items?: SalesQuoteItem[];
-  party?: string;
-  name?: string;
-  referenceType?:
+  declare items?: SalesQuoteItem[];
+  declare party?: string;
+  declare name?: string;
+  declare referenceType?:
     | ModelNameEnum.SalesInvoice
     | ModelNameEnum.PurchaseInvoice
     | ModelNameEnum.Lead;

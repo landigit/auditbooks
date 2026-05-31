@@ -1,4 +1,4 @@
-import { IPC } from 'main/preload';
+import { IPC } from 'utils/ipc/types';
 
 declare global {
   const ipc: IPC;

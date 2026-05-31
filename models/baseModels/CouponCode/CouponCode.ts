@@ -14,15 +14,15 @@ import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 import { ApplicableCouponCodes } from '../Invoice/types';
 
 export class CouponCode extends Doc {
-  name?: string;
-  couponName?: string;
-  pricingRule?: string;
+  declare name?: string;
+  declare couponName?: string;
+  declare pricingRule?: string;
 
-  validFrom?: Date;
-  validTo?: Date;
+  declare validFrom?: Date;
+  declare validTo?: Date;
 
-  minAmount?: Money;
-  maxAmount?: Money;
+  declare minAmount?: Money;
+  declare maxAmount?: Money;
 
   removeUnusedCoupons(coupons: ApplicableCouponCodes[], sinvDoc: SalesInvoice) {
     if (!coupons.length) {

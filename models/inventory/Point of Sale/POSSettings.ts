@@ -6,21 +6,21 @@ import {
 } from 'models/baseModels/Account/types';
 
 export class POSSettings extends Doc {
-  isShiftOpen?: boolean;
-  inventory?: string;
-  cashAccount?: string;
-  writeOffAccount?: string;
-  weightEnabledBarcode?: boolean;
-  checkDigits?: number;
-  itemCodeDigits?: number;
-  itemWeightDigits?: number;
-  defaultAccount?: string;
-  itemVisibility?: string;
-  itemVisibilityERP?: 'ERP Sync Items';
-  posUI?: 'Classic' | 'Modern';
-  canChangeRate?: boolean;
-  canEditDiscount?: boolean;
-  ignorePricingRule?: boolean;
+  declare isShiftOpen?: boolean;
+  declare inventory?: string;
+  declare cashAccount?: string;
+  declare writeOffAccount?: string;
+  declare weightEnabledBarcode?: boolean;
+  declare checkDigits?: number;
+  declare itemCodeDigits?: number;
+  declare itemWeightDigits?: number;
+  declare defaultAccount?: string;
+  declare itemVisibility?: string;
+  declare itemVisibilityERP?: 'ERP Sync Items';
+  declare posUI?: 'Classic' | 'Modern';
+  declare canChangeRate?: boolean;
+  declare canEditDiscount?: boolean;
+  declare ignorePricingRule?: boolean;
 
   static filters: FiltersMap = {
     cashAccount: () => ({

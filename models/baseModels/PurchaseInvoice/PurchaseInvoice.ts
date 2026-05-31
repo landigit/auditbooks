@@ -8,7 +8,7 @@ import { PurchaseInvoiceItem } from '../PurchaseInvoiceItem/PurchaseInvoiceItem'
 import { createBatch } from 'models/inventory/helpers';
 
 export class PurchaseInvoice extends Invoice {
-  items?: PurchaseInvoiceItem[];
+  declare items?: PurchaseInvoiceItem[];
 
   async beforeSubmit(): Promise<void> {
     await super.beforeSubmit();

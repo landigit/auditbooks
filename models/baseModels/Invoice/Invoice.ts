@@ -59,9 +59,9 @@ import { PricingRuleItem } from '../PricingRuleItem/PricingRuleItem';
 import { getLinkedEntries } from 'src/utils/doc';
 
 export type TaxDetail = {
-  account: string;
+  account?: string;
   payment_account?: string;
-  rate: number;
+  rate?: number;
 };
 
 export type ReturnedItemData =
@@ -72,46 +72,46 @@ export type ReturnedItemData =
     };
 
 export type InvoiceTaxItem = {
-  details: TaxDetail;
+  details?: TaxDetail;
   exchangeRate?: number;
-  fullAmount: Money;
-  taxAmount: Money;
+  fullAmount?: Money;
+  taxAmount?: Money;
 };
 
 export abstract class Invoice extends Transactional {
   _taxes: Record<string, Tax> = {};
-  taxes?: TaxSummary[];
+  declare taxes?: TaxSummary[];
 
-  items?: InvoiceItem[];
-  coupons?: AppliedCouponCodes[];
-  party?: string;
-  account?: string;
-  currency?: string;
-  priceList?: string;
-  netTotal?: Money;
-  grandTotal?: Money;
-  baseGrandTotal?: Money;
-  outstandingAmount?: Money;
-  exchangeRate?: number;
-  setDiscountAmount?: boolean;
-  discountAmount?: Money;
-  discountPercent?: number;
-  loyaltyPoints?: number;
-  availableLoyaltyPoints?: number;
-  discountAfterTax?: boolean;
-  stockNotTransferred?: number;
-  loyaltyProgram?: string;
-  backReference?: string;
-  submitted?: boolean;
-  cancelled?: boolean;
-  makeAutoPayment?: boolean;
-  makeAutoStockTransfer?: boolean;
+  declare items?: InvoiceItem[];
+  declare coupons?: AppliedCouponCodes[];
+  declare party?: string;
+  declare account?: string;
+  declare currency?: string;
+  declare priceList?: string;
+  declare netTotal?: Money;
+  declare grandTotal?: Money;
+  declare baseGrandTotal?: Money;
+  declare outstandingAmount?: Money;
+  declare exchangeRate?: number;
+  declare setDiscountAmount?: boolean;
+  declare discountAmount?: Money;
+  declare discountPercent?: number;
+  declare loyaltyPoints?: number;
+  declare availableLoyaltyPoints?: number;
+  declare discountAfterTax?: boolean;
+  declare stockNotTransferred?: number;
+  declare loyaltyProgram?: string;
+  declare backReference?: string;
+  declare submitted?: boolean;
+  declare cancelled?: boolean;
+  declare makeAutoPayment?: boolean;
+  declare makeAutoStockTransfer?: boolean;
 
-  isReturned?: boolean;
-  returnAgainst?: string;
-  isFullyReturned?: boolean;
+  declare isReturned?: boolean;
+  declare returnAgainst?: string;
+  declare isFullyReturned?: boolean;
 
-  pricingRuleDetail?: PricingRuleDetail[];
+  declare pricingRuleDetail?: PricingRuleDetail[];
 
   get isSales() {
     return (
@@ -449,7 +449,7 @@ export abstract class Invoice extends Transactional {
             details,
             exchangeRate: this.exchangeRate ?? 1,
             fullAmount: amount,
-            taxAmount: amount.mul(details.rate / 100),
+            taxAmount: amount.mul(details.rate! / 100),
           };
 
           taxItems.push(taxItem);
@@ -464,22 +464,22 @@ export abstract class Invoice extends Transactional {
     const taxes: Record<
       string,
       {
-        account: string;
-        rate: number;
-        amount: Money;
+        account?: string;
+        rate?: number;
+        amount?: Money;
       }
     > = {};
 
     for (const { details, taxAmount } of await this.getTaxItems()) {
-      const account = details.account;
+      const account = details!.account!;
 
       taxes[account] ??= {
         account,
-        rate: details.rate,
+        rate: details!.rate,
         amount: this.fyo.pesa(0),
       };
 
-      taxes[account].amount = taxes[account].amount.add(taxAmount);
+      taxes[account].amount = taxes[account].amount!.add(taxAmount!);
     }
 
     type Summary = (typeof taxes)[string] & { idx: number };
@@ -487,7 +487,7 @@ export abstract class Invoice extends Transactional {
     let idx = 0;
     for (const account in taxes) {
       const tax = taxes[account];
-      if (tax.amount.isZero()) {
+      if (tax.amount!.isZero()) {
         continue;
       }
 
@@ -505,7 +505,7 @@ export abstract class Invoice extends Transactional {
     const taxArr = await this.getTaxSummary();
     return taxArr
       .map(({ amount }) => amount)
-      .reduce((a, b) => a.add(b), this.fyo.pesa(0));
+      .reduce((a, b) => a!.add(b!), this.fyo.pesa(0));
   }
 
   async getTax(tax: string) {
@@ -1712,19 +1712,19 @@ export abstract class Invoice extends Transactional {
       fields: ['name', 'date', 'submitted', 'cancelled'],
       filters: { name: ['in', paymentFors.map((p) => p.parent)] },
     })) as {
-      name: string;
-      date: string;
-      submitted: number;
-      cancelled: number;
+      name?: string;
+      date?: string;
+      submitted?: number;
+      cancelled?: number;
     }[];
 
     return joinMapLists(payments, paymentFors, 'name', 'parent')
       .map((j) => ({
         name: j.name,
-        date: new Date(j.date),
+        date: new Date(j.date!),
         submitted: !!j.submitted,
         cancelled: !!j.cancelled,
-        amount: this.fyo.pesa(j.amount),
+        amount: this.fyo.pesa(j.amount!),
       }))
       .sort((a, b) => a.date.valueOf() - b.date.valueOf());
   }
@@ -1739,33 +1739,33 @@ export abstract class Invoice extends Transactional {
       fields: ['name', 'date', 'submitted', 'cancelled'],
       filters: { backReference: this.name! },
     })) as {
-      name: string;
-      date: string;
-      submitted: number;
-      cancelled: number;
+      name?: string;
+      date?: string;
+      submitted?: number;
+      cancelled?: number;
     }[];
 
     const itemSchemaName = schemaName + 'Item';
     const transferItems = (await this.fyo.db.getAllRaw(itemSchemaName, {
       fields: ['parent', 'quantity', 'location', 'amount'],
       filters: {
-        parent: ['in', transfers.map((t) => t.name)],
+        parent: ['in', transfers.map((t) => t.name!)],
         item: ['in', this.items!.map((i) => i.item!)],
       },
     })) as {
-      parent: string;
-      quantity: number;
-      location: string;
-      amount: string;
+      parent?: string;
+      quantity?: number;
+      location?: string;
+      amount?: string;
     }[];
 
     return joinMapLists(transfers, transferItems, 'name', 'parent')
       .map((j) => ({
         name: j.name,
-        date: new Date(j.date),
+        date: new Date(j.date!),
         submitted: !!j.submitted,
         cancelled: !!j.cancelled,
-        amount: this.fyo.pesa(j.amount),
+        amount: this.fyo.pesa(j.amount!),
         location: j.location,
         quantity: j.quantity,
       }))

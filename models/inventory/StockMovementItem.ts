@@ -20,24 +20,24 @@ import { MovementTypeEnum } from './types';
 import { Doc } from 'fyo/model/doc';
 
 export class StockMovementItem extends TransferItem {
-  name?: string;
-  item?: string;
-  fromLocation?: string;
-  toLocation?: string;
+  declare name?: string;
+  declare item?: string;
+  declare fromLocation?: string;
+  declare toLocation?: string;
 
-  unit?: string;
-  transferUnit?: string;
-  quantity?: number;
-  transferQuantity?: number;
-  unitConversionFactor?: number;
+  declare unit?: string;
+  declare transferUnit?: string;
+  declare quantity?: number;
+  declare transferQuantity?: number;
+  declare unitConversionFactor?: number;
 
-  rate?: Money;
-  amount?: Money;
+  declare rate?: Money;
+  declare amount?: Money;
 
-  batch?: string;
-  serialNumber?: string;
+  declare batch?: string;
+  declare serialNumber?: string;
 
-  parentdoc?: StockMovement;
+  declare parentdoc?: StockMovement;
 
   get isIssue() {
     return this.parentdoc?.movementType === MovementTypeEnum.MaterialIssue;

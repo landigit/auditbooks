@@ -111,19 +111,19 @@ git clone https://github.com/landigit/auditbooks.git
 cd auditbooks
 
 # install dependencies
-yarn
+bun install
 ```
 
 To run Auditbooks in development mode (with hot reload, etc):
 
 ```bash
 # start the electron app
-pnpmdev
+bun run dev
 ```
 
 **Note: First Boot**
 
-When you run `pnpmdev` electron will run immediately but the UI will take a
+When you run `bun run dev` electron will run immediately but the UI will take a
 couple of seconds to render this because of how dev mode works. Each file is
 individually served by the dev server. And there are many files that have to be
 sent.
@@ -142,7 +142,7 @@ To build Auditbooks and create an installer:
 
 ```bash
 # start the electron app
-pnpmbuild
+bun run build
 ```
 
 **Note: Build Target**
@@ -151,7 +151,7 @@ architecture. To build for other environments (example: for linux from a windows
 computer) check the _Building_ section at
 [electron.build/cli](https://www.electron.build/cli).
 
-So to build for linux you could use the `--linux` flag like so: `pnpmbuild --linux`.
+So to build for linux you could use the `--linux` flag like so: `bun run build --linux`.
 
 ## Want to Just Try Out or Contribute?
 

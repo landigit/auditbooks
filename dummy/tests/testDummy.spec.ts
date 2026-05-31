@@ -1,6 +1,6 @@
 import { assertDoesNotThrow } from 'backend/database/tests/helpers';
 import { purchaseItemPartyMap } from 'dummy/helpers';
-import { describe, expect, test, afterAll } from 'vitest';
+import { describe, expect, test, afterAll } from 'bun:test';
 import { getTestDbPath, getTestFyo } from 'tests/helpers';
 import { setupDummyInstance } from '..';
 

@@ -1,5 +1,5 @@
 import { FieldTypeEnum, RawValue, Schema } from 'schemas/types';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import { getMapFromList, getValueMapFromList, sleep } from 'utils';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap } from '../../helpers';
 import DatabaseCore from '../core';
@@ -133,7 +133,9 @@ describe('DatabaseCore Tests', () => {
       'default'
     );
     for (const row of rows) {
-      expect(row.value).toBe(Reflect.get(defaultMap, row.fieldname as string));
+      expect(row.value as any).toBe(
+        Reflect.get(defaultMap, row.fieldname as string)
+      );
     }
 
     let localeRow = rows.find((r) => r.fieldname === 'locale');

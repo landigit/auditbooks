@@ -20,9 +20,9 @@ export function getMainProcessCommonConfig(root) {
     platform: 'node',
     target: 'node20',
     external: [
-      '@libsql/client',
+      'bun:sqlite',
       'drizzle-orm',
-      'drizzle-orm/libsql',
+      'drizzle-orm/bun-sqlite',
       'drizzle-orm/sqlite-core',
       'drizzle-orm/relations',
       'electron',

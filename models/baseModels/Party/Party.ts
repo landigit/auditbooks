@@ -17,12 +17,12 @@ import { ModelNameEnum } from 'models/types';
 import { isLoyaltyProgramExpiredAndMaxed } from 'models/helpers';
 
 export class Party extends Doc {
-  role?: PartyRole;
-  party?: string;
-  fromLead?: string;
-  defaultAccount?: string;
-  loyaltyPoints?: number;
-  outstandingAmount?: Money;
+  declare role?: PartyRole;
+  declare party?: string;
+  declare fromLead?: string;
+  declare defaultAccount?: string;
+  declare loyaltyPoints?: number;
+  declare outstandingAmount?: Money;
   async updateOutstandingAmount() {
     /**
      * If Role === "Both" then outstanding Amount
@@ -81,15 +81,15 @@ export class Party extends Doc {
         customer: this.name as string,
       },
     })) as {
-      name: string;
-      loyaltyPoints: number;
-      expiryDate: Date;
-      postingDate: Date;
+      name?: string;
+      loyaltyPoints?: number;
+      expiryDate?: Date;
+      postingDate?: Date;
     }[];
 
     const totalLoyaltyPoints = data.reduce((total, entry) => {
-      if (entry.expiryDate > entry.postingDate) {
-        return total + entry.loyaltyPoints;
+      if (entry.expiryDate! > entry.postingDate!) {
+        return total + entry.loyaltyPoints!;
       }
 
       return total;

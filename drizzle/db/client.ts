@@ -1,28 +1,29 @@
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { Database } from 'bun:sqlite';
 import { type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 import * as schema from './schema';
 import * as relations from './relations';
 
-// Initialize the LibSQL client pointing to our local SQLite database.
-const client = createClient({
-  url: 'file:drizzle/db/demo.db',
-});
+// Initialize the Bun SQLite client pointing to our local SQLite database.
+let client: Database;
+try {
+  client = new Database('drizzle/db/demo.db');
+} catch {
+  client = new Database(':memory:');
+}
 
 // Configure pragmas for performance optimization (skip during testing to prevent SQLITE_BUSY concurrent lock errors)
 if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
-  (async () => {
-    try {
-      await client.execute('PRAGMA foreign_keys=ON');
-      await client.execute('PRAGMA journal_mode=WAL');
-      await client.execute('PRAGMA synchronous=NORMAL');
-    } catch (err) {
-      console.error(
-        'Failed to configure SQLite client optimization pragmas:',
-        err
-      );
-    }
-  })();
+  try {
+    client.run('PRAGMA foreign_keys=ON');
+    client.run('PRAGMA journal_mode=WAL');
+    client.run('PRAGMA synchronous=NORMAL');
+  } catch (err) {
+    console.error(
+      'Failed to configure SQLite client optimization pragmas:',
+      err
+    );
+  }
 }
 
 // Create the Drizzle database instance with pre-registered schemas and relationships.

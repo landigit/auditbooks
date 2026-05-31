@@ -6,7 +6,7 @@ import { Version } from 'utils/version';
 import { ModelNameEnum } from '../../models/types';
 import { FieldTypeEnum, Schema, SchemaMap } from '../../schemas/types';
 import { DatabaseManager } from '../database/manager';
-import { Client } from '@libsql/client';
+import { BunSqliteClient } from '../database/core';
 import { unlinkIfExists } from '../helpers';
 
 const ignoreColumns = ['keywords'];
@@ -24,7 +24,7 @@ const defaultNumberSeriesMap = {
   [ModelNameEnum.SalesQuote]: 'SQUOT-',
 } as Record<ModelNameEnum, string>;
 
-async function selectAll(client: Client, tableName: string) {
+async function selectAll(client: BunSqliteClient, tableName: string) {
   try {
     const res = await client.execute(`SELECT * FROM "${tableName}"`);
     return res.rows as any[];
@@ -33,7 +33,11 @@ async function selectAll(client: Client, tableName: string) {
   }
 }
 
-async function batchInsert(client: Client, tableName: string, values: any[]) {
+async function batchInsert(
+  client: BunSqliteClient,
+  tableName: string,
+  values: any[]
+) {
   if (values.length === 0) return;
   for (const val of values) {
     const columns = Object.keys(val)
@@ -159,8 +163,8 @@ async function replaceDatabaseCore(
 }
 
 async function copyData(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   destDm: DatabaseManager
 ) {
   const schemaMap = destDm.getSchemaMap();
@@ -193,8 +197,8 @@ async function copyData(
 }
 
 async function copyNumberSeries(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schema: Schema
 ) {
   const values = await selectAll(sourceClient, ModelNameEnum.NumberSeries);
@@ -238,8 +242,8 @@ async function copyNumberSeries(
 }
 
 async function copyLedgerEntries(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schema: Schema
 ) {
   const values = await selectAll(
@@ -257,8 +261,8 @@ async function copyLedgerEntries(
 }
 
 async function copyOtherTables(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schemaMap: SchemaMap
 ) {
   const schemaNames = [
@@ -284,8 +288,8 @@ async function copyOtherTables(
 }
 
 async function copyTransactionalTables(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schemaMap: SchemaMap
 ) {
   const schemaNames = [
@@ -331,8 +335,8 @@ async function copyTransactionalTables(
 }
 
 async function copyChildTables(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schemaMap: SchemaMap
 ) {
   const childSchemaNames = Object.keys(schemaMap).filter(
@@ -353,8 +357,8 @@ async function copyChildTables(
 }
 
 async function copyItem(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schema: Schema
 ) {
   const values = await selectAll(sourceClient, ModelNameEnum.Item);
@@ -366,8 +370,8 @@ async function copyItem(
 }
 
 async function copyParty(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schema: Schema
 ) {
   const values = await selectAll(sourceClient, ModelNameEnum.Party);
@@ -391,8 +395,8 @@ async function copyParty(
 }
 
 async function copySingleValues(
-  sourceClient: Client,
-  destClient: Client,
+  sourceClient: BunSqliteClient,
+  destClient: BunSqliteClient,
   schemaMap: SchemaMap
 ) {
   const singleSchemaNames = Object.keys(schemaMap).filter(
@@ -417,7 +421,7 @@ async function copySingleValues(
 }
 
 async function copyValues(
-  destClient: Client,
+  destClient: BunSqliteClient,
   destTableName: string,
   values: any[],
   keysToDelete: string[] = [],
@@ -452,7 +456,7 @@ async function getDestinationDM(sourceDbPath: string, countryCode: string) {
   return dm;
 }
 
-async function getCountryCode(client: Client) {
+async function getCountryCode(client: BunSqliteClient) {
   try {
     const countryRes = await client.execute({
       sql: `SELECT value FROM "SingleValue" WHERE fieldname = 'country' LIMIT 1`,

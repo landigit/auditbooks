@@ -7,10 +7,10 @@ import {
 } from 'models/helpers';
 
 export class PriceList extends Doc {
-  isEnabled?: boolean;
-  isSales?: boolean;
-  isPurchase?: boolean;
-  priceListItem?: PriceListItem[];
+  declare isEnabled?: boolean;
+  declare isSales?: boolean;
+  declare isPurchase?: boolean;
+  declare priceListItem?: PriceListItem[];
 
   static getListViewSettings(): ListViewSettings {
     return {

@@ -3,15 +3,15 @@ import { ListViewSettings } from 'fyo/model/types';
 import { Money } from 'pesa';
 
 export class StockLedgerEntry extends Doc {
-  date?: Date;
-  item?: string;
-  rate?: Money;
-  quantity?: number;
-  location?: string;
-  referenceName?: string;
-  referenceType?: string;
-  batch?: string;
-  serialNumber?: string;
+  declare date?: Date;
+  declare item?: string;
+  declare rate?: Money;
+  declare quantity?: number;
+  declare location?: string;
+  declare referenceName?: string;
+  declare referenceType?: string;
+  declare batch?: string;
+  declare serialNumber?: string;
 
   static override getListViewSettings(): ListViewSettings {
     return {

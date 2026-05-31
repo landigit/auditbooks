@@ -16,7 +16,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pnpmset version 10.33.2
+          bun set version 10.33.2
           yarn
 
       - name: Set Error Log Creds
@@ -41,8 +41,8 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: true
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          pnpmset version 10.33.2
-          pnpmbuild --mac --publish always
+          bun set version 10.33.2
+          bun build --mac --publish always
 
       - name: Tar files
         run: tar -cvf dist-macOS.tar dist_electron
@@ -66,7 +66,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pnpmset version 10.33.2
+          bun set version 10.33.2
           yarn
 
       - name: Set Error Log Creds
@@ -91,8 +91,8 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: true
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          pnpmset version 10.33.2
-          pnpmbuild --mac --publish always
+          bun set version 10.33.2
+          bun build --mac --publish always
 
       - name: Tar files
         run: tar -cvf dist-macOS-arm.tar dist_electron
@@ -116,7 +116,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pnpmset version 10.33.2
+          bun set version 10.33.2
           yarn
 
       - name: Set Error Log Creds
@@ -135,8 +135,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          pnpmset version 10.33.2
-          pnpmbuild --linux --publish always
+          bun set version 10.33.2
+          bun build --linux --publish always
 
       - name: Tar files
         run: tar -cvf dist-linux.tar dist_electron
@@ -182,7 +182,7 @@ jobs:
           WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
           WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: pnpmbuild --win --publish always
+        run: bun build --win --publish always
 
       - name: Tar files
         run: tar -cvf dist-windows.tar dist_electron

@@ -9,7 +9,7 @@ import { Fyo } from 'fyo';
 import { ModelNameEnum } from 'models/types';
 
 export class PurchaseReceipt extends StockTransfer {
-  items?: PurchaseReceiptItem[];
+  declare items?: PurchaseReceiptItem[];
 
   static getListViewSettings(): ListViewSettings {
     return {

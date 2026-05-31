@@ -1,7 +1,7 @@
 import { InventorySettings } from 'models/inventory/InventorySettings';
 import { StockTransfer } from 'models/inventory/StockTransfer';
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, beforeAll } from 'bun:test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,
@@ -568,13 +568,13 @@ describe('Stock Transfer', () => {
     for (const ale of returnShpmAles) {
       if (ale.account === 'Stock In Hand') {
         expect(fyo.pesa(ale.debit as string).float).toBe(
-          shpmReturn.grandTotal?.float
+          shpmReturn.grandTotal?.float!
         );
       }
 
       if (ale.account === 'Cost of Goods Sold') {
         expect(fyo.pesa(ale.credit as string).float).toBe(
-          shpmReturn.grandTotal?.float
+          shpmReturn.grandTotal?.float!
         );
       }
     }
@@ -727,13 +727,13 @@ describe('Stock Transfer', () => {
     for (const ale of returnPrecAles) {
       if (ale.account === 'Stock In Hand') {
         expect(fyo.pesa(ale.credit as string).float).toBe(
-          precReturn.grandTotal?.float
+          precReturn.grandTotal?.float!
         );
       }
 
       if (ale.account === 'Stock Received But Not Billed') {
         expect(fyo.pesa(ale.debit as string).float).toBe(
-          precReturn.grandTotal?.float
+          precReturn.grandTotal?.float!
         );
       }
     }

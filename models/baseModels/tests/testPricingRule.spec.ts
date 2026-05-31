@@ -1,5 +1,5 @@
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,
@@ -176,7 +176,7 @@ describe('Pricing Rule', () => {
     expect(sinv.pricingRuleDetail![0].referenceName).toBe(
       pricingRuleMap[0].name
     );
-    expect(sinv.items![0].rate!.float).toBe(pricingRuleMap[0].discountRate);
+    expect(sinv.items![0].rate!.float).toBe(pricingRuleMap[0].discountRate!);
   });
 
   test('pricing rule is not applied when item qty is < min qty', async () => {
@@ -219,7 +219,7 @@ describe('Pricing Rule', () => {
     expect(sinv.pricingRuleDetail![0].referenceName).toBe(
       pricingRuleMap[0].name
     );
-    expect(sinv.items![0].rate!.float).toBe(pricingRuleMap[0].discountRate);
+    expect(sinv.items![0].rate!.float).toBe(pricingRuleMap[0].discountRate!);
   });
 
   test('Pricing Rule is not applied when item amount is < min amount', async () => {
@@ -488,7 +488,7 @@ describe('Pricing Rule', () => {
     await sinv.sync();
 
     expect(sinv.items![1].isFreeItem).toBe(true);
-    expect(sinv.items![1].rate!.float).toBe(pricingRuleMap[1].freeItemRate);
+    expect(sinv.items![1].rate!.float).toBe(pricingRuleMap[1].freeItemRate!);
     expect(sinv.items![1].quantity).toBe(pricingRuleMap[1].freeItemQuantity);
   });
 
@@ -518,7 +518,7 @@ describe('Pricing Rule', () => {
     await sinv.sync();
 
     expect(sinv.items![1].isFreeItem).toBe(true);
-    expect(sinv.items![1].rate!.float).toBe(pricingRuleMap[1].freeItemRate);
+    expect(sinv.items![1].rate!.float).toBe(pricingRuleMap[1].freeItemRate!);
     expect(sinv.items![1].quantity).toBe(2); // floor(5/2) = 2
   });
 

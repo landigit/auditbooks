@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="isDesktop"
     class="relative window-drag flex items-center border-b bg-canvas text-main border-border"
     style="height: 28px"
   >
@@ -47,6 +48,7 @@ defineProps<{
   companyName?: string;
 }>();
 
+const isDesktop = typeof ipc !== 'undefined' ? ipc.desktop : false;
 const isMax = ref(false);
 const isFullscreen = ref(false);
 

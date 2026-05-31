@@ -11,7 +11,6 @@
  * takes place only if a new update has been pushed.
  */
 
-import { constants } from 'fs';
 import fs from 'fs/promises';
 import path from 'path';
 import { parseCSV } from 'utils/csvParser';
@@ -70,7 +69,7 @@ async function getContentsIfExists(code: string): Promise<string> {
     return '';
   }
 
-  return await fs.readFile(filePath, { encoding: 'utf-8' });
+  return await Bun.file(filePath).text();
 }
 
 async function fetchAndStoreFile(code: string, date?: Date) {
@@ -148,22 +147,30 @@ async function getLastUpdated(code: string): Promise<Date> {
 
 async function getTranslationFilePath(code: string) {
   let filePath = path.join(
-    process.resourcesPath,
+    process.resourcesPath || '',
     `../translations/${code}.csv`
   );
 
-  try {
-    await fs.access(filePath, constants.R_OK);
-  } catch {
+  const exists = await Bun.file(filePath).exists();
+  if (!exists) {
     /**
-     * This will be used for in Development mode
+     * This will be used in Development mode
      */
-    filePath = path.join(__dirname, `../../translations/${code}.csv`);
+    const currentDir =
+      typeof __dirname !== 'undefined'
+        ? __dirname
+        : typeof (import.meta as any).dir !== 'undefined'
+          ? (import.meta as any).dir
+          : null;
+    if (currentDir) {
+      filePath = path.join(currentDir, `../../translations/${code}.csv`);
+    } else {
+      filePath = path.join(process.cwd(), `translations/${code}.csv`);
+    }
   }
 
-  try {
-    await fs.access(filePath, constants.R_OK);
-  } catch {
+  const secondExists = await Bun.file(filePath).exists();
+  if (!secondExists) {
     return '';
   }
 
@@ -182,7 +189,7 @@ async function storeFile(code: string, contents: string) {
 
   const dirname = path.dirname(filePath);
   await fs.mkdir(dirname, { recursive: true });
-  await fs.writeFile(filePath, contents, { encoding: 'utf-8' });
+  await Bun.write(filePath, contents);
 }
 
 async function errorHandledFetch(url: string) {

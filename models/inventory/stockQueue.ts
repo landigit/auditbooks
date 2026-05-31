@@ -1,8 +1,8 @@
 export class StockQueue {
-  quantity: number;
-  value: number;
-  queue: { rate: number; quantity: number }[];
-  movingAverage: number;
+  declare quantity: number;
+  declare value: number;
+  declare queue: { rate: number; quantity: number }[];
+  declare movingAverage: number;
 
   constructor() {
     this.value = 0;

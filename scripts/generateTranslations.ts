@@ -115,11 +115,11 @@ function printHelp() {
   if (shouldPrint) {
     console.log(
       `Usage: ` +
-        `\tpnpmscript:translate\n` +
-        `\tpnpmscript:translate -h\n` +
-        `\tpnpmscript:translate -l [language_code]\n` +
+        `\tbun scripts/generateTranslations.ts\n` +
+        `\tbun scripts/generateTranslations.ts -h\n` +
+        `\tbun scripts/generateTranslations.ts -l [language_code]\n` +
         `\n` +
-        `Example: $ pnpmscript:translate -l de\n` +
+        `Example: $ bun scripts/generateTranslations.ts -l de\n` +
         `\n` +
         `Description:\n` +
         `\tPassing a language code will create a '.csv' file in\n` +

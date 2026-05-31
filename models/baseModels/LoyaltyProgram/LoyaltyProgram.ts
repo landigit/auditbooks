@@ -6,11 +6,11 @@ import { CollectionRulesItems } from '../CollectionRulesItems/CollectionRulesIte
 import { getLoyaltyProgramStatusColumn } from '../../helpers';
 
 export class LoyaltyProgram extends Doc {
-  collectionRules?: CollectionRulesItems[];
-  expiryDuration?: number;
-  maximumUse?: number;
-  used?: number;
-  status?: 'Active' | 'Expired' | 'Disabled' | 'Maxed';
+  declare collectionRules?: CollectionRulesItems[];
+  declare expiryDuration?: number;
+  declare maximumUse?: number;
+  declare used?: number;
+  declare status?: 'Active' | 'Expired' | 'Disabled' | 'Maxed';
 
   validations: ValidationMap = {
     used: (value: DocValue) => {

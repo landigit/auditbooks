@@ -5,8 +5,8 @@ import type { TransferItem } from './TransferItem';
 import { createSerialNumbers } from './helpers';
 
 export abstract class Transfer extends Transactional {
-  date?: Date;
-  items?: TransferItem[];
+  declare date?: Date;
+  declare items?: TransferItem[];
 
   async beforeSubmit(): Promise<void> {
     await super.beforeSubmit();

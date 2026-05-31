@@ -146,7 +146,7 @@ function getCompletionsFromHints(hints: Record<string, unknown>) {
       return null;
     }
 
-    const node = syntaxTree(context.state).resolveInner(context.pos);
+    const node = syntaxTree(context.state as any).resolveInner(context.pos);
     const aptLocation = ['ScriptAttributeValue', 'SingleExpression'];
 
     if (!aptLocation.includes(node.name)) {

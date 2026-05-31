@@ -14,9 +14,9 @@ import { QueryFilter } from 'utils/db/types';
 import { AccountRootType, AccountRootTypeEnum, AccountType } from './types';
 
 export class Account extends Doc {
-  rootType?: AccountRootType;
-  accountType?: AccountType;
-  parentAccount?: string;
+  declare rootType?: AccountRootType;
+  declare accountType?: AccountType;
+  declare parentAccount?: string;
 
   get isDebit() {
     if (this.rootType === AccountRootTypeEnum.Asset) {

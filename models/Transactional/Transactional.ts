@@ -20,7 +20,7 @@ import { LedgerPosting } from './LedgerPosting';
  */
 
 export abstract class Transactional extends Doc {
-  date?: Date;
+  declare date?: Date;
 
   get isTransactional() {
     return true;

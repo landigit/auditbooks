@@ -6,52 +6,52 @@ import { PartyRoleEnum } from '../Party/types';
 
 export class Defaults extends Doc {
   // Auto Payments
-  salesPaymentAccount?: string;
-  purchasePaymentAccount?: string;
+  declare salesPaymentAccount?: string;
+  declare purchasePaymentAccount?: string;
 
   // Auto Stock Transfer
-  shipmentLocation?: string;
-  purchaseReceiptLocation?: string;
+  declare shipmentLocation?: string;
+  declare purchaseReceiptLocation?: string;
 
   // Number Series
-  salesQuoteNumberSeries?: string;
-  salesInvoiceNumberSeries?: string;
-  purchaseInvoiceNumberSeries?: string;
-  journalEntryNumberSeries?: string;
-  paymentNumberSeries?: string;
-  stockMovementNumberSeries?: string;
-  shipmentNumberSeries?: string;
-  purchaseReceiptNumberSeries?: string;
+  declare salesQuoteNumberSeries?: string;
+  declare salesInvoiceNumberSeries?: string;
+  declare purchaseInvoiceNumberSeries?: string;
+  declare journalEntryNumberSeries?: string;
+  declare paymentNumberSeries?: string;
+  declare stockMovementNumberSeries?: string;
+  declare shipmentNumberSeries?: string;
+  declare purchaseReceiptNumberSeries?: string;
 
   // Terms
-  salesInvoiceTerms?: string;
-  purchaseInvoiceTerms?: string;
-  shipmentTerms?: string;
-  purchaseReceiptTerms?: string;
+  declare salesInvoiceTerms?: string;
+  declare purchaseInvoiceTerms?: string;
+  declare shipmentTerms?: string;
+  declare purchaseReceiptTerms?: string;
 
   // Print Templates
-  salesQuotePrintTemplate?: string;
-  salesInvoicePrintTemplate?: string;
-  posPrintTemplate?: string;
-  purchaseInvoicePrintTemplate?: string;
-  journalEntryPrintTemplate?: string;
-  paymentPrintTemplate?: string;
-  shipmentPrintTemplate?: string;
-  purchaseReceiptPrintTemplate?: string;
-  stockMovementPrintTemplate?: string;
+  declare salesQuotePrintTemplate?: string;
+  declare salesInvoicePrintTemplate?: string;
+  declare posPrintTemplate?: string;
+  declare purchaseInvoicePrintTemplate?: string;
+  declare journalEntryPrintTemplate?: string;
+  declare paymentPrintTemplate?: string;
+  declare shipmentPrintTemplate?: string;
+  declare purchaseReceiptPrintTemplate?: string;
+  declare stockMovementPrintTemplate?: string;
 
   // Point of Sale
-  posCashDenominations?: DefaultCashDenominations[];
-  posCustomer?: string;
+  declare posCashDenominations?: DefaultCashDenominations[];
+  declare posCustomer?: string;
 
   //Buttons
-  saveButtonColour?: string;
-  submitButtonColour?: string;
-  cancelButtonColour?: string;
-  heldButtonColour?: string;
-  returnButtonColour?: string;
-  payButtonColour?: string;
-  payAndPrintButtonColour?: string;
+  declare saveButtonColour?: string;
+  declare submitButtonColour?: string;
+  declare cancelButtonColour?: string;
+  declare heldButtonColour?: string;
+  declare returnButtonColour?: string;
+  declare payButtonColour?: string;
+  declare payAndPrintButtonColour?: string;
 
   static commonFilters = {
     // Auto Payments

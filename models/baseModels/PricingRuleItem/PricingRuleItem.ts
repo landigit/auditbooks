@@ -3,8 +3,8 @@ import { FormulaMap } from 'fyo/model/types';
 import { ModelNameEnum } from 'models/types';
 
 export class PricingRuleItem extends Doc {
-  item?: string;
-  unit?: string;
+  declare item?: string;
+  declare unit?: string;
 
   formulas: FormulaMap = {
     unit: {

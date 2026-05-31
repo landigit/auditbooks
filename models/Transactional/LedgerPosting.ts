@@ -21,12 +21,12 @@ import { TransactionType } from './types';
  */
 
 export class LedgerPosting {
-  fyo: Fyo;
-  refDoc: Transactional;
-  entries: AccountingLedgerEntry[];
-  creditMap: Record<string, AccountingLedgerEntry>;
-  debitMap: Record<string, AccountingLedgerEntry>;
-  reverted: boolean;
+  declare fyo: Fyo;
+  declare refDoc: Transactional;
+  declare entries: AccountingLedgerEntry[];
+  declare creditMap: Record<string, AccountingLedgerEntry>;
+  declare debitMap: Record<string, AccountingLedgerEntry>;
+  declare reverted: boolean;
 
   constructor(refDoc: Transactional, fyo: Fyo) {
     this.fyo = fyo;

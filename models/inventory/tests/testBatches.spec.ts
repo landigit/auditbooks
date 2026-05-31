@@ -1,6 +1,6 @@
 import { assertThrows } from 'backend/database/tests/helpers';
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,

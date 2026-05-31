@@ -4,9 +4,9 @@ import { OpeningCash } from './OpeningCash';
 import { ListViewSettings } from 'fyo/model/types';
 
 export class POSOpeningShift extends Doc {
-  openingAmounts?: OpeningAmounts[];
-  openingCash?: OpeningCash[];
-  openingDate?: Date;
+  declare openingAmounts?: OpeningAmounts[];
+  declare openingCash?: OpeningCash[];
+  declare openingDate?: Date;
 
   get openingCashAmount() {
     if (!this.openingCash) {

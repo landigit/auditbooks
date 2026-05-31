@@ -8,11 +8,11 @@ import { FieldTypeEnum, Schema } from 'schemas/types';
 import { Invoice } from '../Invoice/Invoice';
 
 export class TaxSummary extends Doc {
-  account?: string;
-  from_account?: string;
-  rate?: number;
-  amount?: Money;
-  parentdoc?: Invoice;
+  declare account?: string;
+  declare from_account?: string;
+  declare rate?: number;
+  declare amount?: Money;
+  declare parentdoc?: Invoice;
 
   get exchangeRate() {
     return this.parentdoc?.exchangeRate ?? 1;

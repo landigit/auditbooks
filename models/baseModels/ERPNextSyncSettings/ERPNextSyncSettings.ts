@@ -4,23 +4,23 @@ import { initERPNSync, syncDocumentsToERPNext } from 'src/utils/erpnextSync';
 import { ErrorLogEnum } from 'fyo/telemetry/types';
 
 export class ERPNextSyncSettings extends Doc {
-  deviceID?: string;
-  instanceName?: string;
-  baseURL?: string;
-  authToken?: string;
-  integrationAppVersion?: string;
-  isEnabled?: boolean;
-  initialSyncData?: boolean;
+  declare deviceID?: string;
+  declare instanceName?: string;
+  declare baseURL?: string;
+  declare authToken?: string;
+  declare integrationAppVersion?: string;
+  declare isEnabled?: boolean;
+  declare initialSyncData?: boolean;
 
-  dataSyncInterval?: string;
-  syncDataFromServer?: boolean;
-  syncDataToServer?: boolean;
+  declare dataSyncInterval?: string;
+  declare syncDataFromServer?: boolean;
+  declare syncDataToServer?: boolean;
 
-  registerInstance?: string;
-  syncSettings?: string;
-  syncDataToERPNext?: string;
-  fetchFromERPNextQueue?: string;
-  clearSyncedDocsFromErpNextSyncQueue?: string;
+  declare registerInstance?: string;
+  declare syncSettings?: string;
+  declare syncDataToERPNext?: string;
+  declare fetchFromERPNextQueue?: string;
+  declare clearSyncedDocsFromErpNextSyncQueue?: string;
 
   hidden: HiddenMap = {
     syncPriceList: () => {

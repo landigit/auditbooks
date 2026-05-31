@@ -2,8 +2,8 @@ import { Doc } from 'fyo/model/doc';
 import { HiddenMap, ListViewSettings } from 'fyo/model/types';
 
 export class ERPNextSyncQueue extends Doc {
-  referenceType?: string;
-  documentName?: string;
+  declare referenceType?: string;
+  declare documentName?: string;
 
   hidden: HiddenMap = {
     name: () => true,

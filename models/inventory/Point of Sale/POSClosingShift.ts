@@ -4,10 +4,10 @@ import { ClosingCash } from './ClosingCash';
 import { Doc } from 'fyo/model/doc';
 
 export class POSClosingShift extends Doc {
-  closingAmounts?: ClosingAmounts[];
-  closingCash?: ClosingCash[];
-  closingDate?: Date;
-  openingShift?: string;
+  declare closingAmounts?: ClosingAmounts[];
+  declare closingCash?: ClosingCash[];
+  declare closingDate?: Date;
+  declare openingShift?: string;
 
   get closingCashAmount() {
     if (!this.closingCash) {

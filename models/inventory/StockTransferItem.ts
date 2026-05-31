@@ -20,28 +20,28 @@ import {
 } from './helpers';
 
 export class StockTransferItem extends TransferItem {
-  item?: string;
-  location?: string;
+  declare item?: string;
+  declare location?: string;
 
-  unit?: string;
-  transferUnit?: string;
-  quantity?: number;
-  transferQuantity?: number;
-  unitConversionFactor?: number;
+  declare unit?: string;
+  declare transferUnit?: string;
+  declare quantity?: number;
+  declare transferQuantity?: number;
+  declare unitConversionFactor?: number;
 
-  itemDiscountAmount?: Money;
-  itemDiscountPercent?: number;
+  declare itemDiscountAmount?: Money;
+  declare itemDiscountPercent?: number;
 
-  rate?: Money;
-  amount?: Money;
+  declare rate?: Money;
+  declare amount?: Money;
 
-  description?: string;
-  hsnCode?: number;
+  declare description?: string;
+  declare hsnCode?: number;
 
-  batch?: string;
-  serialNumber?: string;
+  declare batch?: string;
+  declare serialNumber?: string;
 
-  parentdoc?: StockTransfer;
+  declare parentdoc?: StockTransfer;
 
   get isSales() {
     return this.schemaName === ModelNameEnum.ShipmentItem;

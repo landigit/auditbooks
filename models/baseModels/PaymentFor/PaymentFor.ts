@@ -9,10 +9,12 @@ import { PartyRoleEnum } from '../Party/types';
 import { Payment } from '../Payment/Payment';
 
 export class PaymentFor extends Doc {
-  parentdoc?: Payment | undefined;
-  referenceType?: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice;
-  referenceName?: string;
-  amount?: Money;
+  declare parentdoc?: Payment | undefined;
+  declare referenceType?:
+    | ModelNameEnum.SalesInvoice
+    | ModelNameEnum.PurchaseInvoice;
+  declare referenceName?: string;
+  declare amount?: Money;
 
   formulas: FormulaMap = {
     referenceType: {

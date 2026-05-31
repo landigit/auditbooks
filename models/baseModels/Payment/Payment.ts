@@ -33,16 +33,18 @@ import { PaymentMethod } from '../PaymentMethod/PaymentMethod';
 type AccountTypeMap = Record<AccountTypeEnum, string[] | undefined>;
 
 export class Payment extends Transactional {
-  taxes?: TaxSummary[];
-  party?: string;
-  amount?: Money;
-  writeoff?: Money;
-  paymentType?: PaymentType;
-  paymentMethod?: string;
-  referenceType?: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice;
-  for?: PaymentFor[];
-  _accountsMap?: AccountTypeMap;
-  initialAmount?: Money;
+  declare taxes?: TaxSummary[];
+  declare party?: string;
+  declare amount?: Money;
+  declare writeoff?: Money;
+  declare paymentType?: PaymentType;
+  declare paymentMethod?: string;
+  declare referenceType?:
+    | ModelNameEnum.SalesInvoice
+    | ModelNameEnum.PurchaseInvoice;
+  declare for?: PaymentFor[];
+  declare _accountsMap?: AccountTypeMap;
+  declare initialAmount?: Money;
 
   async paymentMethodDoc() {
     return (await this.loadAndGetLink('paymentMethod')) as PaymentMethod;
@@ -252,10 +254,10 @@ export class Payment extends Transactional {
       Record<
         string,
         {
-          account: string;
-          from_account: string;
-          rate: number;
-          amount: Money;
+          account?: string;
+          from_account?: string;
+          rate?: number;
+          amount?: Money;
         }
       >
     > = {};
@@ -286,22 +288,25 @@ export class Payment extends Transactional {
         taxAmount,
         exchangeRate,
       } of await refDoc.getTaxItems()) {
+        if (!details) {
+          continue;
+        }
         const { account, payment_account } = details;
         if (!payment_account) {
           continue;
         }
 
         taxes[payment_account] ??= {};
-        taxes[payment_account][account] ??= {
+        taxes[payment_account][account!] ??= {
           account: payment_account,
           from_account: account,
           rate: details.rate,
           amount: this.fyo.pesa(0),
         };
 
-        taxes[payment_account][account].amount = taxes[payment_account][
-          account
-        ].amount.add(taxAmount.mul(exchangeRate ?? 1));
+        taxes[payment_account][account!].amount = taxes[payment_account][
+          account!
+        ].amount!.add(taxAmount!.mul(exchangeRate ?? 1));
       }
     }
 
@@ -311,7 +316,7 @@ export class Payment extends Transactional {
     for (const payment_account in taxes) {
       for (const account in taxes[payment_account]) {
         const tax = taxes[payment_account][account];
-        if (tax.amount.isZero()) {
+        if (tax.amount!.isZero()) {
           continue;
         }
 
@@ -541,7 +546,7 @@ export class Payment extends Transactional {
 
     return taxArr
       .map(({ amount }) => amount)
-      .reduce((a, b) => a.add(b), this.fyo.pesa(0));
+      .reduce((a, b) => a!.add(b!), this.fyo.pesa(0));
   }
 
   async _getAccountsMap(): Promise<AccountTypeMap> {
