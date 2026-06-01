@@ -5,8 +5,8 @@ description = "Simple book-keeping app for everyone"
 authors = ["Landigit Agency"]
 license = "AGPL-3.0-only"
 repository = "https://github.com/landigit/auditbooks"
-edition = "2021"
-rust-version = "1.77.2"
+edition = "2024"
+rust-version = "1.85.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -27,6 +27,22 @@ tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
 tauri-plugin-shell = "2"
 tauri-plugin-os = "2"
+tauri-plugin-http = "2"
+tauri-plugin-sql = { version = "2", features = ["sqlite"] }
+tauri-plugin-process = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"
+
+# ── Release profile: smaller binary, faster startup ──────────────────────────
+[profile.release]
+opt-level     = "s"   # optimise for size (use 3 for pure speed)
+lto           = true  # link-time optimisation across crates
+codegen-units = 1     # single unit → better inter-procedural opt
+strip         = true  # strip debug symbols (≈20-30% smaller binary)
+panic         = "abort" # remove panic-unwind code
+
+# ── Dev profile: fast incremental rebuilds ───────────────────────────────────
+[profile.dev]
+incremental = true
+opt-level   = 0

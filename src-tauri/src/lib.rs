@@ -1,11 +1,19 @@
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
-        // .plugin(tauri_plugin_updater::Builder::new().build())
+    let builder = tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_sql::Builder::default().build());
+
+    // Updater is desktop-only (not available on Android / iOS)
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    let builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
+
+    builder
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -14,24 +22,6 @@ pub fn run() {
                         .build(),
                 )?;
             }
-            
-            use tauri::Manager;
-            let resource_dir = app.path().resource_dir().unwrap();
-
-            use tauri_plugin_shell::ShellExt;
-            let sidecar_command = app.shell().sidecar("backend").unwrap()
-                .env("APP_RESOURCE_DIR", resource_dir.to_string_lossy().to_string());
-            let (mut rx, _child) = sidecar_command
-                .spawn()
-                .expect("Failed to spawn sidecar");
-            
-            tauri::async_runtime::spawn(async move {
-                while let Some(event) = rx.recv().await {
-                    if let tauri_plugin_shell::process::CommandEvent::Stdout(line) = event {
-                        println!("sidecar: {}", String::from_utf8_lossy(&line));
-                    }
-                }
-            });
 
             Ok(())
         })

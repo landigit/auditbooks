@@ -6,15 +6,17 @@
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://127.0.0.1:6969",
-    "beforeDevCommand": "bun run scripts/build-sidecar.ts && bun run dev:web",
+    "beforeDevCommand": "bun run dev:web",
     "beforeBuildCommand": "bun run build"
   },
   "app": {
     "windows": [
       {
         "title": "Auditbooks",
-        "width": 800,
-        "height": 600,
+        "width": 1280,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
         "resizable": true,
         "fullscreen": false
       }
@@ -26,7 +28,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "resources": ["../books", "../translations"],
+    "resources": ["../books", "../translations", "../templates"],
     "icon": [
       "icons/desktop/32x32.png",
       "icons/desktop/128x128.png",
@@ -42,6 +44,14 @@
     },
     "android": {
       "debugApplicationIdSuffix": ".debug"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "RWSOcHuzUD0ktuLw/5UjkhegRW1UqIIWbrTfZCLv3K+sWcOV25XcG6pI",
+      "endpoints": [
+        "https://github.com/landigit/auditbooks/releases/latest/download/latest.json"
+      ]
     }
   }
 }

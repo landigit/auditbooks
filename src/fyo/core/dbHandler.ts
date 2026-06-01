@@ -1,10 +1,9 @@
-import { SingleValue } from 'backend/database/types';
 import { Fyo } from 'fyo';
 import { DatabaseDemux } from 'fyo/demux/db';
 import { ValueError } from 'fyo/utils/errors';
 import Observable from 'fyo/utils/observable';
 import { translateSchema } from 'fyo/utils/translation';
-import { Field, RawValue, SchemaMap } from 'schemas/types';
+import { Field, RawValue, SchemaMap, SingleValue } from 'schemas/types';
 import { getMapFromList } from 'src/utils/core';
 import {
   Cashflow,

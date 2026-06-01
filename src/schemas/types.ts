@@ -136,3 +136,24 @@ export interface SchemaStub extends Partial<Schema> {
 }
 export type SchemaMap = Record<string, Schema | undefined>;
 export type SchemaStubMap = Record<string, SchemaStub>;
+
+export type SingleValue<T = RawValue> = {
+  fieldname: string;
+  parent: string;
+  value: T;
+}[];
+
+export type RawCustomField = {
+  parent: string;
+  label: string;
+  fieldname: string;
+  fieldtype: FieldType;
+  isRequired?: boolean;
+  section?: string;
+  tab?: string;
+  options?: string;
+  target?: string;
+  references?: string;
+  default?: string;
+};
+

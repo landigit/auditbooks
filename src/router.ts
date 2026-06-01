@@ -1,5 +1,3 @@
-import Dashboard from 'src/pages/Dashboard/Dashboard.vue';
-import GetStarted from 'src/pages/GetStarted.vue';
 import type { HistoryState } from 'vue-router';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { useAppStore } from './stores/app';
@@ -7,11 +5,11 @@ import { useAppStore } from './stores/app';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: Dashboard,
+    component: () => import('src/pages/Dashboard/Dashboard.vue'),
   },
   {
     path: '/get-started',
-    component: GetStarted,
+    component: () => import('src/pages/GetStarted.vue'),
   },
   {
     path: `/edit/:schemaName/:name`,

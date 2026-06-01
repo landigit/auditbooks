@@ -1,4 +1,3 @@
-import { RawCustomField } from 'backend/database/types';
 import { getListFromMap, getMapFromList } from 'src/utils/core';
 import regionalSchemas from './regional';
 import { appSchemas, coreSchemas, metaSchemas } from './schemas';
@@ -11,6 +10,7 @@ import type {
   SchemaStub,
   SchemaStubMap,
   TargetField,
+  RawCustomField,
 } from './types';
 
 const NAME_FIELD = {

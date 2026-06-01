@@ -18,6 +18,7 @@ export default () => {
   }
 
   return defineConfig({
+    base: './',
     clearScreen: false,
     envPrefix: ['VITE_', 'TAURI_ENV_*'],
     server: {
@@ -33,18 +34,32 @@ export default () => {
       emptyOutDir: true,
       target: 'esnext',
       sourcemap: true,
+      minify: 'esbuild',
+      cssMinify: true,
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('vue') || id.includes('router')) {
+              if (id.includes('vue') || id.includes('vue-router')) {
                 return 'vendor-vue';
               }
               if (id.includes('codemirror') || id.includes('lezer')) {
                 return 'vendor-editor';
               }
-              if (id.includes('luxon') || id.includes('pesa')) {
+              if (id.includes('kysely')) {
+                return 'vendor-kysely';
+              }
+              if (id.includes('reka-ui') || id.includes('reka')) {
+                return 'vendor-ui';
+              }
+              if (id.includes('pinia')) {
+                return 'vendor-pinia';
+              }
+              if (id.includes('dayjs')) {
+                return 'vendor-dayjs';
+              }
+              if (id.includes('pesa') || id.includes('luxon')) {
                 return 'vendor-utils';
               }
               return 'vendor';

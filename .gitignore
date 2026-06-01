@@ -19,7 +19,9 @@ pnpm-lock.yaml
 .env.publish
 .env.local
 .env.*.local
-logs/
+
+# Tauri signing key — NEVER commit the private key
+.tauri-signing-key
 
 # Log files
 npm-debug.log*

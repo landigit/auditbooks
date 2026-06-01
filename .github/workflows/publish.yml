@@ -1,194 +1,75 @@
 name: Publish
 
-on: workflow_dispatch
+# Trigger manually from GitHub Actions tab OR automatically on version tag push
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*' # e.g. v0.37.9, v1.0.0
 
 jobs:
-  build-macos:
-    runs-on: macos-15-intel
-    steps:
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.22.2'
+  # ─── Build for each platform ──────────────────────────────────────────────
 
-      - name: Checkout Books
-        uses: actions/checkout@v4
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-2022
+            target: x86_64-pc-windows-msvc
+            os-name: windows
+          - platform: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            os-name: linux
+          - platform: macos-latest
+            target: aarch64-apple-darwin
+            os-name: macos-arm
+          - platform: macos-13
+            target: x86_64-apple-darwin
+            os-name: macos-intel
 
-      - name: Install Dependencies
-        run: |
-          bun set version 10.33.2
-          yarn
-
-      - name: Set Error Log Creds
-        env:
-          ERR_LOG_KEY: ${{ secrets.ERR_LOG_KEY }}
-          ERR_LOG_URL: ${{ secrets.ERR_LOG_URL }}
-          ERR_LOG_SECRET: ${{ secrets.ERR_LOG_SECRET }}
-          TELEMETRY_URL: ${{ secrets.TELEMETRY_URL }}
-        run: |
-          echo $ERR_LOG_KEY > log_creds.txt
-          echo $ERR_LOG_SECRET >> log_creds.txt
-          echo $ERR_LOG_URL >> log_creds.txt
-          echo $TELEMETRY_URL >> log_creds.txt
-
-      - name: Run build
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          CSC_IDENTITY_AUTO_DISCOVERY: true
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          bun set version 10.33.2
-          bun build --mac --publish always
-
-      - name: Tar files
-        run: tar -cvf dist-macOS.tar dist_electron
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-macOS
-          path: dist-macOS.tar
-
-  build-macos-arm:
-    runs-on: macos-latest
-    steps:
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.22.2'
-
-      - name: Checkout Books
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: |
-          bun set version 10.33.2
-          yarn
-
-      - name: Set Error Log Creds
-        env:
-          ERR_LOG_KEY: ${{ secrets.ERR_LOG_KEY }}
-          ERR_LOG_URL: ${{ secrets.ERR_LOG_URL }}
-          ERR_LOG_SECRET: ${{ secrets.ERR_LOG_SECRET }}
-          TELEMETRY_URL: ${{ secrets.TELEMETRY_URL }}
-        run: |
-          echo $ERR_LOG_KEY > log_creds.txt
-          echo $ERR_LOG_SECRET >> log_creds.txt
-          echo $ERR_LOG_URL >> log_creds.txt
-          echo $TELEMETRY_URL >> log_creds.txt
-
-      - name: Run build
-        env:
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          CSC_IDENTITY_AUTO_DISCOVERY: true
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          bun set version 10.33.2
-          bun build --mac --publish always
-
-      - name: Tar files
-        run: tar -cvf dist-macOS-arm.tar dist_electron
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-macOS-arm
-          path: dist-macOS-arm.tar
-
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.22.2'
-
-      - name: Checkout Books
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: |
-          bun set version 10.33.2
-          yarn
-
-      - name: Set Error Log Creds
-        env:
-          ERR_LOG_KEY: ${{ secrets.ERR_LOG_KEY }}
-          ERR_LOG_URL: ${{ secrets.ERR_LOG_URL }}
-          ERR_LOG_SECRET: ${{ secrets.ERR_LOG_SECRET }}
-          TELEMETRY_URL: ${{ secrets.TELEMETRY_URL }}
-        run: |
-          echo $ERR_LOG_KEY > log_creds.txt
-          echo $ERR_LOG_SECRET >> log_creds.txt
-          echo $ERR_LOG_URL >> log_creds.txt
-          echo $TELEMETRY_URL >> log_creds.txt
-
-      - name: Run build
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          bun set version 10.33.2
-          bun build --linux --publish always
-
-      - name: Tar files
-        run: tar -cvf dist-linux.tar dist_electron
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-linux
-          path: dist-linux.tar
-
-  build-windows:
-    runs-on: windows-2022
-    defaults:
-      run:
-        shell: bash
+    runs-on: ${{ matrix.platform }}
 
     steps:
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22.22.2'
-
-      - name: Checkout Books
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: yarn
-
-      - name: Set Error Log Creds
-        env:
-          ERR_LOG_KEY: ${{ secrets.ERR_LOG_KEY }}
-          ERR_LOG_URL: ${{ secrets.ERR_LOG_URL }}
-          ERR_LOG_SECRET: ${{ secrets.ERR_LOG_SECRET }}
-          TELEMETRY_URL: ${{ secrets.TELEMETRY_URL }}
-        run: |
-          echo $ERR_LOG_KEY > log_creds.txt
-          echo $ERR_LOG_SECRET >> log_creds.txt
-          echo $ERR_LOG_URL >> log_creds.txt
-          echo $TELEMETRY_URL >> log_creds.txt
-
-      - name: Run build
-        env:
-          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: bun build --win --publish always
-
-      - name: Tar files
-        run: tar -cvf dist-windows.tar dist_electron
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          name: dist-windows
-          path: dist-windows.tar
+          bun-version: latest
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install Linux dependencies
+        if: matrix.os-name == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libsoup-3.0-dev \
+            libjavascriptcoregtk-4.1-dev
+
+      - name: Install frontend dependencies
+        run: bun install
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          tagName: v__VERSION__ # auto-replaced with version from tauri.conf.json
+          releaseName: 'Auditbooks v__VERSION__'
+          releaseBody: |
+            See the full changelog in CHANGELOG.md
+          releaseDraft: true # creates a Draft — you review & publish manually
+          prerelease: false
+          args: --target ${{ matrix.target }}
