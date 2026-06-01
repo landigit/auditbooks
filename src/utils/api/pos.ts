@@ -123,8 +123,9 @@ async function validateSinvItems(
 
     if (item.quantity > itemQtyMap[item.item as string].availableQty) {
       throw new ValidationError(
-        t`Insufficient Quantity. Item ${item.item as string} has only ${itemQtyMap[item.item as string].availableQty
-          } quantities available. you selected ${item.quantity}`
+        t`Insufficient Quantity. Item ${item.item as string} has only ${
+          itemQtyMap[item.item as string].availableQty
+        } quantities available. you selected ${item.quantity}`
       );
     }
   }
@@ -212,7 +213,7 @@ export function validateClosingAmounts(posShiftDoc: POSClosingShift) {
         );
       }
     });
-  } catch (error) { }
+  } catch (error) {}
 }
 
 export async function transferPOSCashAndWriteOff(

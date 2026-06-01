@@ -84,8 +84,9 @@ export class CustomField extends Doc {
       );
       if (cf) {
         throw new ValueError(
-          this.fyo.t`Fieldname ${value} already used for Custom Field ${(cf.idx ?? 0) + 1
-            }`
+          this.fyo.t`Fieldname ${value} already used for Custom Field ${
+            (cf.idx ?? 0) + 1
+          }`
         );
       }
     },

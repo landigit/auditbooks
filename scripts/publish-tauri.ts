@@ -22,18 +22,21 @@ console.log('Building Tauri application...');
 await $`bun run build:tauri`;
 
 // 3. Find built files
-const releaseDir = path.join(import.meta.dir, '../src-tauri/target/release/bundle');
+const releaseDir = path.join(
+  import.meta.dir,
+  '../src-tauri/target/release/bundle'
+);
 const msiDir = path.join(releaseDir, 'msi');
 const nsisDir = path.join(releaseDir, 'nsis');
 
 const filesToUpload: string[] = [];
 
 if (fs.existsSync(msiDir)) {
-  const msiFiles = fs.readdirSync(msiDir).filter(f => f.endsWith('.msi'));
+  const msiFiles = fs.readdirSync(msiDir).filter((f) => f.endsWith('.msi'));
   for (const f of msiFiles) filesToUpload.push(path.join(msiDir, f));
 }
 if (fs.existsSync(nsisDir)) {
-  const nsisFiles = fs.readdirSync(nsisDir).filter(f => f.endsWith('.exe'));
+  const nsisFiles = fs.readdirSync(nsisDir).filter((f) => f.endsWith('.exe'));
   for (const f of nsisFiles) filesToUpload.push(path.join(nsisDir, f));
 }
 
@@ -46,14 +49,17 @@ console.log('Files to upload:', filesToUpload);
 
 // 4. Create/Get GitHub Release
 const headers = {
-  'Authorization': `Bearer ${token}`,
-  'Accept': 'application/vnd.github+json',
+  Authorization: `Bearer ${token}`,
+  Accept: 'application/vnd.github+json',
   'X-GitHub-Api-Version': '2022-11-28',
 };
 
 async function getOrCreateRelease() {
   console.log(`Checking if release for tag ${tag} exists...`);
-  let res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`, { headers });
+  let res = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/releases/tags/${tag}`,
+    { headers }
+  );
   if (res.status === 200) {
     const data: any = await res.json();
     console.log(`Found existing release: ${data.id}`);
@@ -91,13 +97,16 @@ try {
   // Delete existing assets with same name if any
   if (release.assets && release.assets.length > 0) {
     for (const asset of release.assets) {
-      const fileNamesToUpload = filesToUpload.map(f => path.basename(f));
+      const fileNamesToUpload = filesToUpload.map((f) => path.basename(f));
       if (fileNamesToUpload.includes(asset.name)) {
         console.log(`Deleting existing asset ${asset.name} (${asset.id})...`);
-        await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/assets/${asset.id}`, {
-          method: 'DELETE',
-          headers,
-        });
+        await fetch(
+          `https://api.github.com/repos/${owner}/${repo}/releases/assets/${asset.id}`,
+          {
+            method: 'DELETE',
+            headers,
+          }
+        );
       }
     }
   }
@@ -107,15 +116,18 @@ try {
     const fileName = path.basename(filePath);
     console.log(`Uploading ${fileName}...`);
     const fileData = fs.readFileSync(filePath);
-    const uploadRes = await fetch(`${uploadBaseUrl}?name=${encodeURIComponent(fileName)}`, {
-      method: 'POST',
-      headers: {
-        ...headers,
-        'Content-Type': 'application/octet-stream',
-        'Content-Length': fileData.length.toString(),
-      },
-      body: fileData,
-    });
+    const uploadRes = await fetch(
+      `${uploadBaseUrl}?name=${encodeURIComponent(fileName)}`,
+      {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': fileData.length.toString(),
+        },
+        body: fileData,
+      }
+    );
 
     if (uploadRes.ok) {
       console.log(`Successfully uploaded ${fileName}`);

@@ -315,8 +315,9 @@ export class StockMovementItem extends TransferItem {
 
       if (item.length < 1)
         throw new ValidationError(
-          t`Transfer Unit ${value as string} is not applicable for Item ${this.item
-            }`
+          t`Transfer Unit ${value as string} is not applicable for Item ${
+            this.item
+          }`
         );
     },
   };

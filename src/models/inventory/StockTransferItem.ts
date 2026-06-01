@@ -299,7 +299,7 @@ export class StockTransferItem extends TransferItem {
               return serialNumbers;
             }
           }
-        } catch (error) { }
+        } catch (error) {}
 
         return undefined;
       },
@@ -320,8 +320,9 @@ export class StockTransferItem extends TransferItem {
 
       if (item.length < 1)
         throw new ValidationError(
-          this.fyo.t`Transfer Unit ${value as string
-            } is not applicable for Item ${this.item}`
+          this.fyo.t`Transfer Unit ${
+            value as string
+          } is not applicable for Item ${this.item}`
         );
     },
   };

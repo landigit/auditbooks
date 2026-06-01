@@ -153,9 +153,16 @@ import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { reportIssue } from 'src/errorHandling';
 import { fyo } from 'src/initFyo';
-import { languageDirectionKey, shortcutsKey } from 'src/utils/api/injectionKeys.js';
+import {
+  languageDirectionKey,
+  shortcutsKey,
+} from 'src/utils/api/injectionKeys.js';
 import { getSidebarConfig } from 'src/utils/api/sidebarConfig.js';
-import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/api/types.js';
+import {
+  SidebarConfig,
+  SidebarItem,
+  SidebarRoot,
+} from 'src/utils/api/types.js';
 import { routeTo, toggleSidebar } from 'src/utils/api/ui.js';
 import { useAppStore } from 'src/stores/app';
 import Icon from './Icon.vue';

@@ -1,7 +1,5 @@
-import { IPC } from 'src/utils/ipc/types';
-
 declare global {
-  const appIpc: IPC;
+  const appIpc: import('src/utils/ipc/types').IPC;
 }
 
 declare module '*.vue' {

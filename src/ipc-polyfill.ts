@@ -322,9 +322,9 @@ if (typeof window !== 'undefined') {
     async sendAPIRequest(endpoint: string, options: any) {
       return callBackend(IPC_ACTIONS.SEND_API_REQUEST, [endpoint, options]);
     },
-    registerMainProcessErrorListener() { },
-    registerTriggerFrontendActionListener() { },
-    registerConsoleLogListener() { },
+    registerMainProcessErrorListener() {},
+    registerTriggerFrontendActionListener() {},
+    registerConsoleLogListener() {},
     readDocFile(relPath: string) {
       return callBackend(IPC_ACTIONS.READ_DOC_FILE, [relPath]);
     },

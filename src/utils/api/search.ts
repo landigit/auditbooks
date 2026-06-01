@@ -91,10 +91,10 @@ function getCreateList(fyo: Fyo): SearchItem[] {
     ModelNameEnum.JournalEntry,
     ...(hasInventory
       ? [
-        ModelNameEnum.Shipment,
-        ModelNameEnum.PurchaseReceipt,
-        ModelNameEnum.StockMovement,
-      ]
+          ModelNameEnum.Shipment,
+          ModelNameEnum.PurchaseReceipt,
+          ModelNameEnum.StockMovement,
+        ]
       : []),
   ].map(
     (schemaName) =>

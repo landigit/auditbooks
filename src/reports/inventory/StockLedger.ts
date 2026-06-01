@@ -385,14 +385,14 @@ export class StockLedger extends Report {
       },
       ...(this.hasBatches
         ? ([
-          {
-            fieldtype: 'Link',
-            target: 'Batch',
-            placeholder: t`Batch`,
-            label: t`Batch`,
-            fieldname: 'batch',
-          },
-        ] as Field[])
+            {
+              fieldtype: 'Link',
+              target: 'Batch',
+              placeholder: t`Batch`,
+              label: t`Batch`,
+              fieldname: 'batch',
+            },
+          ] as Field[])
         : []),
       {
         fieldtype: 'Date',

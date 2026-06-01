@@ -19,63 +19,26 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": [
-      "vite/client",
-      "bun-types"
-    ],
+    "types": ["vite/client", "bun-types"],
     "baseUrl": ".",
     "paths": {
-      "src/*": [
-        "src/*"
-      ],
-      "fyo": [
-        "src/fyo"
-      ],
-      "fyo/*": [
-        "src/fyo/*"
-      ],
-      "schemas": [
-        "src/schemas"
-      ],
-      "schemas/*": [
-        "src/schemas/*"
-      ],
-      "backend/*": [
-        "backend/*"
-      ],
-      "regional/*": [
-        "regional/*"
-      ],
-      "fixtures/*": [
-        "fixtures/*"
-      ],
-      "reports": [
-        "src/reports"
-      ],
-      "reports/*": [
-        "src/reports/*"
-      ],
-      "models": [
-        "src/models"
-      ],
-      "models/*": [
-        "src/models/*"
-      ],
-      "utils": [
-        "src/utils/core"
-      ],
-      "utils/*": [
-        "src/utils/core/*"
-      ],
-      "dummy/*": [
-        "dummy/*"
-      ]
+      "src/*": ["src/*"],
+      "fyo": ["src/fyo"],
+      "fyo/*": ["src/fyo/*"],
+      "schemas": ["src/schemas"],
+      "schemas/*": ["src/schemas/*"],
+      "backend/*": ["backend/*"],
+      "regional/*": ["regional/*"],
+      "fixtures/*": ["fixtures/*"],
+      "reports": ["src/reports"],
+      "reports/*": ["src/reports/*"],
+      "models": ["src/models"],
+      "models/*": ["src/models/*"],
+      "utils": ["src/utils/core"],
+      "utils/*": ["src/utils/core/*"],
+      "dummy/*": ["dummy/*"]
     },
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
-    ]
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   },
   "ts-node": {
     "files": true
@@ -100,8 +63,5 @@
     "*.config.mjs",
     "*.config.js"
   ],
-  "exclude": [
-    "node_modules",
-    "src-tauri/**"
-  ]
+  "exclude": ["node_modules", "src-tauri/**"]
 }

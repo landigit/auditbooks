@@ -85,7 +85,6 @@ import PageHeader from 'src/components/PageHeader.vue';
 import Button from 'src/components/Button.vue';
 import LucideIcon from 'src/components/LucideIcon.vue';
 
-
 const route = useRoute();
 const router = useRouter();
 useAppStore();

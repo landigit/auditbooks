@@ -329,9 +329,9 @@ export class BespokeQueries {
     const docItemsMap: Record<string, ReturnDocItem> = {};
     const batchesMap:
       | Record<
-        string,
-        { quantity: number; serialNumbers?: string[] | undefined }
-      >
+          string,
+          { quantity: number; serialNumbers?: string[] | undefined }
+        >
       | undefined = {};
 
     for (const item of docItems) {
@@ -405,9 +405,9 @@ export class BespokeQueries {
     const returnBalanceItems: Record<string, ReturnDocItem> | undefined = {};
     const balanceBatchQtyMap:
       | Record<
-        string,
-        { quantity: number; serialNumbers: string[] | undefined }
-      >
+          string,
+          { quantity: number; serialNumbers: string[] | undefined }
+        >
       | undefined = {};
 
     for (const row in docItemsMap) {
@@ -526,9 +526,9 @@ export class BespokeQueries {
       })
       .from(salesInvoice)
       .where(and(...conditions))) as {
-        name: string;
-        returnAgainst: string | null;
-      }[];
+      name: string;
+      returnAgainst: string | null;
+    }[];
 
     if (!invoices.length) {
       return;
@@ -584,7 +584,7 @@ export class BespokeQueries {
           transactedAmounts,
           row.paymentMethod,
           (Reflect.get(transactedAmounts, row.paymentMethod) ?? 0) +
-          signedAmount
+            signedAmount
         );
       }
     }

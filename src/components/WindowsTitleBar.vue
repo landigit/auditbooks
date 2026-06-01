@@ -49,7 +49,6 @@ defineProps<{
   companyName?: string;
 }>();
 
-
 const isMax = ref(false);
 const isFullscreen = ref(false);
 

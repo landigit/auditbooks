@@ -40,7 +40,7 @@ export default async function setupInstance(
   try {
     appStore = useAppStore();
     appStore.skipTelemetryLogging = true;
-  } catch { }
+  } catch {}
   await initializeDatabase(dbPath, country, fyo);
   await updateSystemSettings(setupWizardOptions, fyo);
   await updateAccountingSettings(setupWizardOptions, fyo);
@@ -55,7 +55,8 @@ export default async function setupInstance(
   await updateInventorySettings(fyo);
 
   if (!fyo.isTest) {
-    const { updatePrintTemplates } = await import('src/utils/api/printTemplates');
+    const { updatePrintTemplates } =
+      await import('src/utils/api/printTemplates');
     await updatePrintTemplates(fyo);
   }
 

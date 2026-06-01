@@ -1,90 +1,98 @@
 <template>
-  <div v-if="tableFields?.length">
+  <div v-if="tableFields?.length" class="w-full overflow-hidden">
     <div v-if="showLabel" class="text-description text-sm mb-1">
       {{ df.label }}
     </div>
 
-    <div :class="border ? 'border border-border rounded-md' : ''">
-      <!-- Title Row -->
-      <Row
-        :ratio="ratio"
-        class="border-b border-border px-2 text-description w-full items-center"
-      >
-        <div class="flex items-center ps-2">#</div>
-        <div
-          v-for="df in tableFields"
-          :key="df.fieldname"
-          class="flex h-row-mid w-full"
-          :class="[
-            headerCellClass,
-            df.sub_label
-              ? 'flex-col items-center text-center'
-              : isNumeric(df)
-                ? 'justify-end items-center'
-                : 'items-center',
-          ]"
-        >
-          <span>{{ df.label }}</span>
-          <p v-if="df.sub_label" class="text-xs">
-            {{ df.sub_label }}
-          </p>
-        </div>
-        <div v-if="canEditRow" class="flex h-row-mid w-full" />
-      </Row>
-
-      <!-- Data Rows -->
+    <div class="overflow-x-auto w-full custom-scroll custom-scroll-thumb1">
       <div
-        v-if="value"
-        class="overflow-auto custom-scroll custom-scroll-thumb1"
-        :style="{ 'max-height': maxHeight, 'scrollbar-gutter': 'stable' }"
+        :class="
+          border
+            ? 'border border-border rounded-md min-w-[650px] sm:min-w-0'
+            : ''
+        "
       >
-        <TableRow
-          v-for="(row, idx) of value"
-          ref="tableRowRefs"
-          :key="row.name"
-          :class="idx < value.length - 1 ? 'border-b border-border' : ''"
-          v-bind="{ row, tableFields, size, ratio, isNumeric }"
-          :read-only="isReadOnly"
-          :can-edit-row="canEditRow"
-          @remove="removeRow(row)"
-          @change="
-            (field: any, value: any) => $emit('row-change', field, value, df)
-          "
-        />
-      </div>
-
-      <!-- Add Row and Row Count -->
-      <Row
-        v-if="!isReadOnly"
-        :ratio="ratio"
-        class="text-description cursor-pointer px-2 w-full h-row-mid items-center focus:outline-none focus:ring-1 focus:ring-main"
-        :class="value.length > 0 ? 'border-t border-border' : ''"
-        tabindex="0"
-        @click="addRow"
-        @keydown.enter="addRow"
-      >
-        <div class="flex items-center ps-1">
-          <lucide-icon name="plus" class="w-4 h-4 text-description" />
-        </div>
-        <div
-          class="flex justify-between px-2"
-          :style="`grid-column: 2 / ${ratio.length + 1}`"
+        <!-- Title Row -->
+        <Row
+          :ratio="ratio"
+          class="border-b border-border px-2 text-description w-full items-center"
         >
-          <p>
-            {{ t`Add Row` }}
-          </p>
-          <p
-            v-if="
-              value &&
-              maxRowsBeforeOverflow &&
-              value.length > maxRowsBeforeOverflow
-            "
-            class="text-end px-2"
+          <div class="flex items-center ps-2">#</div>
+          <div
+            v-for="df in tableFields"
+            :key="df.fieldname"
+            class="flex h-row-mid w-full"
+            :class="[
+              headerCellClass,
+              df.sub_label
+                ? 'flex-col items-center text-center'
+                : isNumeric(df)
+                  ? 'justify-end items-center'
+                  : 'items-center',
+            ]"
           >
-            {{ t`${value.length} rows` }}
-          </p>
+            <span>{{ df.label }}</span>
+            <p v-if="df.sub_label" class="text-xs">
+              {{ df.sub_label }}
+            </p>
+          </div>
+          <div v-if="canEditRow" class="flex h-row-mid w-full" />
+        </Row>
+
+        <!-- Data Rows -->
+        <div
+          v-if="value"
+          class="overflow-auto custom-scroll custom-scroll-thumb1"
+          :style="{ 'max-height': maxHeight, 'scrollbar-gutter': 'stable' }"
+        >
+          <TableRow
+            v-for="(row, idx) of value"
+            ref="tableRowRefs"
+            :key="row.name"
+            :class="idx < value.length - 1 ? 'border-b border-border' : ''"
+            v-bind="{ row, tableFields, size, ratio, isNumeric }"
+            :read-only="isReadOnly"
+            :can-edit-row="canEditRow"
+            @remove="removeRow(row)"
+            @change="
+              (field: any, value: any) => $emit('row-change', field, value, df)
+            "
+          />
         </div>
-      </Row>
+
+        <!-- Add Row and Row Count -->
+        <Row
+          v-if="!isReadOnly"
+          :ratio="ratio"
+          class="text-description cursor-pointer px-2 w-full h-row-mid items-center focus:outline-none focus:ring-1 focus:ring-main"
+          :class="value.length > 0 ? 'border-t border-border' : ''"
+          tabindex="0"
+          @click="addRow"
+          @keydown.enter="addRow"
+        >
+          <div class="flex items-center ps-1">
+            <lucide-icon name="plus" class="w-4 h-4 text-description" />
+          </div>
+          <div
+            class="flex justify-between px-2"
+            :style="`grid-column: 2 / ${ratio.length + 1}`"
+          >
+            <p>
+              {{ t`Add Row` }}
+            </p>
+            <p
+              v-if="
+                value &&
+                maxRowsBeforeOverflow &&
+                value.length > maxRowsBeforeOverflow
+              "
+              class="text-end px-2"
+            >
+              {{ t`${value.length} rows` }}
+            </p>
+          </div>
+        </Row>
+      </div>
     </div>
   </div>
 </template>

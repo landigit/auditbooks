@@ -102,7 +102,11 @@ import {
   getExportTableFields,
   getJsonExportData,
 } from 'src/utils/api/export.js';
-import { ExportField, ExportFormat, ExportTableField } from 'src/utils/api/types.js';
+import {
+  ExportField,
+  ExportFormat,
+  ExportTableField,
+} from 'src/utils/api/types.js';
 import { getSavePath, showExportInFolder } from 'src/utils/api/ui.js';
 import { QueryFilter } from 'src/utils/db/types.js';
 import Button from './Button.vue';

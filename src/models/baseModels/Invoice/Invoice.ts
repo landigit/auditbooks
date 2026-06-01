@@ -67,9 +67,9 @@ export type TaxDetail = {
 export type ReturnedItemData =
   | number
   | {
-    quantity?: number;
-    batches?: Record<string, number>;
-  };
+      quantity?: number;
+      batches?: Record<string, number>;
+    };
 
 export type InvoiceTaxItem = {
   details?: TaxDetail;
@@ -257,16 +257,18 @@ export abstract class Invoice extends Transactional {
       const totalAvailablePoints = currentPoints + pointsToBeEarned;
       if ((this.loyaltyPoints as number) > totalAvailablePoints) {
         throw new ValidationError(
-          t`${this.party as string
-            } only has ${currentPoints} points (${pointsToBeEarned} will be earned from this transaction)`
+          t`${
+            this.party as string
+          } only has ${currentPoints} points (${pointsToBeEarned} will be earned from this transaction)`
         );
       }
     } else if (
       (this.loyaltyPoints as number) > (partyDoc?.loyaltyPoints || 0)
     ) {
       throw new ValidationError(
-        t`${this.party as string} only has ${partyDoc.loyaltyPoints as number
-          } points`
+        t`${this.party as string} only has ${
+          partyDoc.loyaltyPoints as number
+        } points`
       );
     }
 
@@ -1860,8 +1862,9 @@ export abstract class Invoice extends Transactional {
 
       if (roundFreeItemQuantity <= 0) {
         throw new ValidationError(
-          t`Free item "${pricingRuleDoc.freeItem as string
-            }" was not added due to zero
+          t`Free item "${
+            pricingRuleDoc.freeItem as string
+          }" was not added due to zero
            quantity`
         );
       }

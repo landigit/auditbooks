@@ -249,12 +249,12 @@ function getFeatureFlags(): string[] {
 
   return sections.length
     ? [
-      '<details>',
-      '<summary><strong>Feature Flags</strong></summary>',
-      '',
-      ...sections,
-      '</details>',
-    ]
+        '<details>',
+        '<summary><strong>Feature Flags</strong></summary>',
+        '',
+        ...sections,
+        '</details>',
+      ]
     : [];
 }
 

@@ -13,7 +13,11 @@ import {
   Schema,
   TargetField,
 } from 'schemas/types';
-import { getIsNullOrUndef, getMapFromList, getRandomString } from 'src/utils/core';
+import {
+  getIsNullOrUndef,
+  getMapFromList,
+  getRandomString,
+} from 'src/utils/core';
 import { markRaw, reactive } from 'vue';
 import { isPesa } from '../utils/index';
 import { getDbSyncError } from './errorHelpers';
@@ -771,7 +775,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       throw new ConflictError(
         this.fyo
           .t`${this.schema.label} ${this.name} has been modified after loading please reload entry.` +
-        ` ${dbModified}, ${docModified}`
+          ` ${dbModified}, ${docModified}`
       );
     }
   }
@@ -1125,18 +1129,18 @@ export class Doc extends Observable<DocValue | Doc[]> {
    */
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  async change(_ch: ChangeArg) { }
-  async validate() { }
-  async beforeSync() { }
-  async afterSync() { }
-  async beforeSubmit() { }
-  async afterSubmit() { }
-  async beforeRename() { }
-  async afterRename() { }
-  async beforeCancel() { }
-  async afterCancel() { }
-  async beforeDelete() { }
-  async afterDelete() { }
+  async change(_ch: ChangeArg) {}
+  async validate() {}
+  async beforeSync() {}
+  async afterSync() {}
+  async beforeSubmit() {}
+  async afterSubmit() {}
+  async beforeRename() {}
+  async afterRename() {}
+  async beforeCancel() {}
+  async afterCancel() {}
+  async beforeDelete() {}
+  async afterDelete() {}
 
   formulas: FormulaMap = {};
   validations: ValidationMap = {};

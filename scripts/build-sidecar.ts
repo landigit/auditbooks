@@ -10,12 +10,19 @@ const version = pkg.version;
 console.log(`Syncing version ${version} from package.json...`);
 
 // Update tauri.conf.json
-const tauriConfPath = path.join(import.meta.dir, '../src-tauri/tauri.conf.json');
+const tauriConfPath = path.join(
+  import.meta.dir,
+  '../src-tauri/tauri.conf.json'
+);
 if (fs.existsSync(tauriConfPath)) {
   const tauriConf = JSON.parse(fs.readFileSync(tauriConfPath, 'utf8'));
   if (tauriConf.version !== version) {
     tauriConf.version = version;
-    fs.writeFileSync(tauriConfPath, JSON.stringify(tauriConf, null, 2) + '\n', 'utf8');
+    fs.writeFileSync(
+      tauriConfPath,
+      JSON.stringify(tauriConf, null, 2) + '\n',
+      'utf8'
+    );
     console.log(`Updated tauri.conf.json version to ${version}`);
   }
 }
@@ -24,13 +31,15 @@ if (fs.existsSync(tauriConfPath)) {
 const cargoTomlPath = path.join(import.meta.dir, '../src-tauri/Cargo.toml');
 if (fs.existsSync(cargoTomlPath)) {
   let cargoToml = fs.readFileSync(cargoTomlPath, 'utf8');
-  const updatedCargoToml = cargoToml.replace(/^version\s*=\s*"[^"]*"/m, `version = "${version}"`);
+  const updatedCargoToml = cargoToml.replace(
+    /^version\s*=\s*"[^"]*"/m,
+    `version = "${version}"`
+  );
   if (cargoToml !== updatedCargoToml) {
     fs.writeFileSync(cargoTomlPath, updatedCargoToml, 'utf8');
     console.log(`Updated Cargo.toml version to ${version}`);
   }
 }
-
 
 const targetTripleMap: Record<string, string> = {
   'win32-x64': 'x86_64-pc-windows-msvc',

@@ -150,8 +150,9 @@ export async function cancelDocWithPrompt(doc: Doc) {
     const paymentList = [...new Set(query.map(({ parent }) => parent))];
 
     if (paymentList.length === 1) {
-      detail = t`This action is permanent and will cancel the following payment: ${paymentList[0] as string
-        }`;
+      detail = t`This action is permanent and will cancel the following payment: ${
+        paymentList[0] as string
+      }`;
     } else if (paymentList.length > 1) {
       detail = t`This action is permanent and will cancel the following payments: ${paymentList.join(
         ', '

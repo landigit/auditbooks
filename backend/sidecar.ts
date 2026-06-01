@@ -51,7 +51,10 @@ async function writeConfig(config: AppConfig): Promise<void> {
   await fs.writeFile(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
 }
 
-async function upsertDbInConfig(dbPath: string, companyName?: string): Promise<void> {
+async function upsertDbInConfig(
+  dbPath: string,
+  companyName?: string
+): Promise<void> {
   const config = await readConfig();
   const normalized = path.normalize(dbPath).toLowerCase();
   const existing = config.files.find(
@@ -153,7 +156,10 @@ const server = Bun.serve({
           case IPC_ACTIONS.DB_CREATE: {
             const dbPath = args[0] as string;
             const countryCode = args[1];
-            const code = await databaseManager.createNewDatabase(dbPath, countryCode);
+            const code = await databaseManager.createNewDatabase(
+              dbPath,
+              countryCode
+            );
             // Register in persistent config so it shows up in DB list always
             await upsertDbInConfig(dbPath);
             result = { data: code };
@@ -164,7 +170,10 @@ const server = Bun.serve({
             const dbPath = args[0] as string;
             const countryCode = args[1];
             try {
-              const code = await databaseManager.connectToDatabase(dbPath, countryCode);
+              const code = await databaseManager.connectToDatabase(
+                dbPath,
+                countryCode
+              );
               // Register in persistent config so it shows up in DB list always
               await upsertDbInConfig(dbPath);
               result = { data: code };
@@ -173,7 +182,9 @@ const server = Bun.serve({
                 err?.code === 'SQLITE_CORRUPT' ||
                 err?.message?.includes('malformed');
               if (isCorrupt) {
-                console.error(`[Dev Backend] DB is corrupt or malformed: ${dbPath}`);
+                console.error(
+                  `[Dev Backend] DB is corrupt or malformed: ${dbPath}`
+                );
                 throw Object.assign(
                   new Error(`Database file is corrupt or malformed: ${dbPath}`),
                   { code: 'SQLITE_CORRUPT' }
@@ -195,7 +206,10 @@ const server = Bun.serve({
           case IPC_ACTIONS.DB_BESPOKE: {
             const method = args[0];
             const methodArgs = args.slice(1);
-            const data = await databaseManager.callBespoke(method, ...methodArgs);
+            const data = await databaseManager.callBespoke(
+              method,
+              ...methodArgs
+            );
             result = { data };
             break;
           }
@@ -340,7 +354,8 @@ const server = Bun.serve({
                 if (!exists || file.size < 4096) continue;
                 addedPaths.add(normalized);
                 list.push({
-                  companyName: entry.companyName || path.basename(entry.dbPath, '.db'),
+                  companyName:
+                    entry.companyName || path.basename(entry.dbPath, '.db'),
                   dbPath: entry.dbPath,
                   modified: new Date(file.lastModified).toISOString(),
                 });
@@ -380,7 +395,9 @@ const server = Bun.serve({
             // The file name comes from defaultPath option (e.g. "MyCompany.db").
             const options = args[0] as { defaultPath?: string } | undefined;
             const defaultName = options?.defaultPath || 'company.db';
-            const safeName = path.basename(defaultName).replace(/[^a-zA-Z0-9._\- ]/g, '_');
+            const safeName = path
+              .basename(defaultName)
+              .replace(/[^a-zA-Z0-9._\- ]/g, '_');
             result = {
               data: {
                 canceled: false,
@@ -391,7 +408,9 @@ const server = Bun.serve({
           }
 
           case IPC_ACTIONS.GET_CREDS: {
-            result = { data: { errorLogUrl: '', tokenString: '', telemetryUrl: '' } };
+            result = {
+              data: { errorLogUrl: '', tokenString: '', telemetryUrl: '' },
+            };
             break;
           }
 

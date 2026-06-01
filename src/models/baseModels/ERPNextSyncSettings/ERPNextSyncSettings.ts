@@ -1,6 +1,9 @@
 import { Doc } from 'fyo/model/doc';
 import { ChangeArg, HiddenMap } from 'fyo/model/types';
-import { initERPNSync, syncDocumentsToERPNext } from 'src/utils/api/erpnextSync';
+import {
+  initERPNSync,
+  syncDocumentsToERPNext,
+} from 'src/utils/api/erpnextSync';
 import { ErrorLogEnum } from 'fyo/telemetry/types';
 
 export class ERPNextSyncSettings extends Doc {

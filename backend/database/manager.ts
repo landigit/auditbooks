@@ -61,7 +61,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
       this.rawCustomFields = (await this.db?.getAll(
         'CustomField'
       )) as RawCustomField[];
-    } catch { }
+    } catch {}
   }
 
   async #migrate(): Promise<void> {

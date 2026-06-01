@@ -60,7 +60,11 @@ import {
   getRandomString,
   getValueMapFromList,
 } from '../../src/utils/core';
-import { DatabaseBase, GetAllOptions, QueryFilter } from '../../src/utils/db/types';
+import {
+  DatabaseBase,
+  GetAllOptions,
+  QueryFilter,
+} from '../../src/utils/db/types';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap, SYSTEM } from '../helpers';
 import {
   AlterConfig,
