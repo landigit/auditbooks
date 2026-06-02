@@ -1,4 +1,4 @@
-import { DatabaseManager } from 'backend/database/manager';
+import { TauriDatabaseManager } from 'src/fyo/core/tauriDb';
 import { Fyo } from 'fyo';
 import { DummyAuthDemux } from 'fyo/tests/helpers';
 import dayjs from 'dayjs';
@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
 import { getFiscalYear } from 'src/utils/core/misc';
-import { beforeAll, afterAll } from 'bun:test';
+import { beforeAll, afterAll } from 'vite-plus/test';
 
 export function getTestSetupWizardOptions(): SetupWizardOptions {
   return {
@@ -44,7 +44,7 @@ export function getTestDbPath(dbPath?: string) {
 
 export function getTestFyo(): Fyo {
   return new Fyo({
-    DatabaseDemux: DatabaseManager,
+    DatabaseDemux: TauriDatabaseManager,
     AuthDemux: DummyAuthDemux,
     isTest: true,
     isDesktop: false,

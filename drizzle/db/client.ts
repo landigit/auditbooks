@@ -1,11 +1,11 @@
-import { drizzle } from 'drizzle-orm/bun-sqlite';
-import { Database } from 'bun:sqlite';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
 import { type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 import * as schema from './schema';
 import * as relations from './relations';
 
-// Initialize the Bun SQLite client pointing to our local SQLite database.
-let client: Database;
+// Initialize the SQLite client pointing to our local SQLite database.
+let client: Database.Database;
 try {
   client = new Database('drizzle/db/demo.db');
 } catch {
@@ -15,9 +15,9 @@ try {
 // Configure pragmas for performance optimization (skip during testing to prevent SQLITE_BUSY concurrent lock errors)
 if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
   try {
-    client.run('PRAGMA foreign_keys=ON');
-    client.run('PRAGMA journal_mode=WAL');
-    client.run('PRAGMA synchronous=NORMAL');
+    client.exec('PRAGMA foreign_keys=ON');
+    client.exec('PRAGMA journal_mode=WAL');
+    client.exec('PRAGMA synchronous=NORMAL');
   } catch (err) {
     console.error(
       'Failed to configure SQLite client optimization pragmas:',

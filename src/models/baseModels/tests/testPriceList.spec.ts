@@ -1,5 +1,5 @@
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vite-plus/test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,

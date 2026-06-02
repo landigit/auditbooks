@@ -4,12 +4,16 @@
  *  - src-tauri/tauri.conf.json
  *  - src-tauri/Cargo.toml
  *
- * Run: bun run scripts/sync-version.ts
+ * Run: pnpm run scripts/sync-version.ts
  */
 import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
 
-const root = join(import.meta.dir, '..');
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const root = join(__dirname, '..');
 
 // ── Read source of truth ──────────────────────────────────────────────────────
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf-8'));

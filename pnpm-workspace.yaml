@@ -1,0 +1,12 @@
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+  vue-demi: true
+
+overrides:
+  '@codemirror/state': '^6.6.0'
+  '@codemirror/view': '^6.43.0'
+  '@codemirror/language': '^6.12.3'
+  vite: 'npm:@voidzero-dev/vite-plus-core@latest'
+  vitest: 'npm:@voidzero-dev/vite-plus-test@latest'
+  esbuild: '0.28.0'

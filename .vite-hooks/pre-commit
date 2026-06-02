@@ -1,5 +1,6 @@
-bun run format
+pnpm lint
+pnpm run format
 git add .
-bun run test
-bun run build
+pnpm run test
+pnpm run build
 vp staged

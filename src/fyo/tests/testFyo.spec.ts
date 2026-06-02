@@ -1,6 +1,6 @@
 import { getRegionalModels, models } from 'models';
 import { getSchemas } from 'schemas';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vite-plus/test';
 import { getTestFyo } from 'tests/helpers';
 
 describe('Fyo Core Tests', () => {

@@ -2202,17 +2202,35 @@ export default () => {
     resolve: {
       dedupe: ['@codemirror/state', '@codemirror/view', '@codemirror/language'],
       alias: {
+        tests: path.resolve(__dirname, './tests'),
         vue: 'vue/dist/vue.esm-bundler.js',
         fyo: path.resolve(__dirname, './src/fyo'),
         src: path.resolve(__dirname, './src'),
         schemas: path.resolve(__dirname, './src/schemas'),
-        backend: path.resolve(__dirname, './backend'),
         models: path.resolve(__dirname, './src/models'),
         utils: path.resolve(__dirname, './src/utils/core'),
         regional: path.resolve(__dirname, './regional'),
         reports: path.resolve(__dirname, './src/reports'),
         dummy: path.resolve(__dirname, './dummy'),
         fixtures: path.resolve(__dirname, './fixtures'),
+      },
+    },
+    test: {
+      environment: 'jsdom',
+      root: path.resolve(__dirname),
+      alias: {
+        '@tauri-apps/plugin-sql': path.resolve(
+          __dirname,
+          './tests/shims/tauri-plugin-sql.ts'
+        ),
+        '@tauri-apps/plugin-fs': path.resolve(
+          __dirname,
+          './tests/shims/tauri-plugin-fs.ts'
+        ),
+        'better-sqlite3': path.resolve(
+          __dirname,
+          './tests/shims/better-sqlite3.ts'
+        ),
       },
     },
   });

@@ -1,9 +1,9 @@
-import { assertDoesNotThrow } from 'backend/database/tests/helpers';
+import { assertDoesNotThrow } from 'tests/testHelpers';
 import { readFileSync } from 'fs';
 import { ModelNameEnum } from 'models/types';
 import { join } from 'path';
 import { Importer } from 'src/importer';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vite-plus/test';
 import { closeTestFyo, getTestFyo, setupTestFyo } from './helpers';
 
 describe('Importer Tests', () => {

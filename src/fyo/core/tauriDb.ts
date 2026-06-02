@@ -24,6 +24,7 @@ import {
   getIsNullOrUndef,
   getRandomString,
   getValueMapFromList,
+  safeParseFloat,
 } from 'src/utils/core';
 import {
   DatabaseBase,
@@ -1466,7 +1467,6 @@ export class TauriBespokeQueries {
 
   static #getDocItemMap(docItems: any[]): Record<string, any> {
     const docItemsMap: Record<string, any> = {};
-    const batchesMap: Record<string, any> = {};
 
     for (const item of docItems) {
       const existingDocItem = Reflect.get(docItemsMap, item.item);
@@ -1477,34 +1477,55 @@ export class TauriBespokeQueries {
           if (!batchInfo) {
             Reflect.set(batches, item.batch, {
               quantity: item.quantity,
-              serialNumbers: item.serialNumber
-                ? item.serialNumber.split('\n')
-                : undefined,
+              serialNumbers: undefined,
             });
           } else {
             batchInfo.quantity += item.quantity;
+            Reflect.set(batches, item.batch, {
+              quantity: batchInfo.quantity,
+              serialNumbers: undefined,
+            });
           }
         } else {
           existingDocItem.quantity += item.quantity;
         }
+
+        if (item.serialNumber) {
+          const serialNumbers: string[] = [];
+
+          if (existingDocItem.serialNumbers) {
+            serialNumbers.push(...(existingDocItem.serialNumbers ?? []));
+          }
+
+          serialNumbers.push(...item.serialNumber.split('\n'));
+          existingDocItem.serialNumbers = serialNumbers;
+        }
         continue;
       }
 
+      const batchesMap: Record<string, any> = {};
       if (item.batch) {
+        let serialNumbers: string[] | undefined = undefined;
+        if (item.serialNumber) {
+          serialNumbers = item.serialNumber.split('\n');
+        }
+
         Reflect.set(batchesMap, item.batch, {
+          serialNumbers,
           quantity: item.quantity,
-          serialNumbers: item.serialNumber
-            ? item.serialNumber.split('\n')
-            : undefined,
         });
       }
 
+      let serialNumbers: string[] | undefined = undefined;
+
+      if (!item.batch && item.serialNumber) {
+        serialNumbers = item.serialNumber.split('\n');
+      }
+
       Reflect.set(docItemsMap, item.item, {
+        serialNumbers,
         batches: batchesMap,
         quantity: item.quantity,
-        serialNumbers: item.serialNumber
-          ? item.serialNumber.split('\n')
-          : undefined,
       });
     }
     return docItemsMap;
@@ -1515,36 +1536,87 @@ export class TauriBespokeQueries {
     returnedItemsMap: Record<string, any>
   ): Record<string, any> {
     const returnBalanceItems: Record<string, any> = {};
+
     for (const row in docItemsMap) {
+      const balanceSerialNumbersMap: string[] = [];
       const docItem = Reflect.get(docItemsMap, row);
       const returnedDocItem = Reflect.get(returnedItemsMap, row);
       const docItemHasBatch = !!Object.keys(docItem.batches ?? {}).length;
-      let balanceQty = -docItem.quantity;
+      let balanceQty = safeParseFloat(-docItem.quantity);
 
-      if (returnedDocItem) {
-        balanceQty = -(Math.abs(balanceQty) + returnedDocItem.quantity);
+      if (returnedItemsMap) {
+        for (const item in returnedItemsMap) {
+          if (docItemHasBatch && item !== row) {
+            continue;
+          }
+
+          balanceQty = -(
+            Math.abs(balanceQty) + Reflect.get(returnedItemsMap, item).quantity
+          );
+
+          const returnedItem = Reflect.get(returnedItemsMap, item);
+
+          if (docItem.serialNumbers && returnedItem.serialNumbers) {
+            for (const serialNumber of docItem.serialNumbers) {
+              if (!returnedItem.serialNumbers.includes(serialNumber)) {
+                balanceSerialNumbersMap.push(serialNumber);
+              }
+            }
+          }
+        }
       }
 
       const balanceBatchQtyMap: Record<string, any> = {};
       if (docItemHasBatch && docItem.batches) {
         for (const batch in docItem.batches) {
+          const docItemSerialNumbers = Reflect.get(
+            docItem.batches,
+            batch
+          ).serialNumbers;
+          const itemSerialNumbers = Reflect.get(
+            docItem.batches,
+            batch
+          ).serialNumbers;
+          let balanceSerialNumbers: string[] | undefined;
+
+          if (docItemSerialNumbers && itemSerialNumbers) {
+            balanceSerialNumbers = docItemSerialNumbers.filter(
+              (serialNumber: string) =>
+                itemSerialNumbers.indexOf(serialNumber) == -1
+            );
+          }
+
           const ItemQty = Math.abs(
             Reflect.get(docItem.batches, batch).quantity
           );
-          let balanceQty = -ItemQty;
+          let balanceQty = safeParseFloat(-ItemQty);
 
-          if (returnedDocItem && returnedDocItem.batches) {
-            const returnedItem = Reflect.get(returnedDocItem.batches, batch);
-            if (returnedItem) {
-              balanceQty = -(
-                Math.abs(balanceQty) - Math.abs(returnedItem.quantity)
-              );
-            }
+          if (!returnedDocItem || !returnedDocItem?.batches) {
+            Reflect.set(balanceBatchQtyMap, batch, {
+              quantity: balanceQty,
+              serialNumbers: balanceSerialNumbers,
+            });
+            continue;
           }
+
+          const returnedItem = Reflect.get(returnedDocItem?.batches, batch);
+
+          if (!returnedItem) {
+            Reflect.set(balanceBatchQtyMap, batch, {
+              quantity: balanceQty,
+              serialNumbers: balanceSerialNumbers,
+            });
+            continue;
+          }
+
+          balanceQty = -(
+            Math.abs(safeParseFloat(-ItemQty)) -
+            Math.abs(Reflect.get(returnedDocItem.batches, batch).quantity)
+          );
 
           Reflect.set(balanceBatchQtyMap, batch, {
             quantity: balanceQty,
-            serialNumbers: undefined,
+            serialNumbers: balanceSerialNumbers,
           });
         }
       }
@@ -1552,9 +1624,10 @@ export class TauriBespokeQueries {
       Reflect.set(returnBalanceItems, row, {
         quantity: balanceQty,
         batches: balanceBatchQtyMap,
-        serialNumbers: undefined,
+        serialNumbers: balanceSerialNumbersMap,
       });
     }
+
     return returnBalanceItems;
   }
 

@@ -3,13 +3,9 @@ import {
   addMetaFields,
   cleanSchemas,
   getAbstractCombinedSchemas,
-} from '../../../src/schemas';
-import SingleValue from '../../../src/schemas/core/SingleValue.json';
-import {
-  SchemaMap,
-  SchemaStub,
-  SchemaStubMap,
-} from '../../../src/schemas/types';
+} from 'src/schemas';
+import SingleValue from 'src/schemas/core/SingleValue.json';
+import { SchemaMap, SchemaStub, SchemaStubMap } from 'src/schemas/types';
 
 const Customer = {
   name: 'Customer',

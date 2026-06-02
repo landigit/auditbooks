@@ -1,7 +1,7 @@
 import { InventorySettings } from 'models/inventory/InventorySettings';
 import { StockTransfer } from 'models/inventory/StockTransfer';
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test, beforeAll } from 'bun:test';
+import { describe, expect, test, beforeAll } from 'vite-plus/test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,
@@ -9,10 +9,7 @@ import {
 } from 'tests/helpers';
 import { getALEs, getItem, getSLEs, getStockTransfer } from './helpers';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import {
-  assertThrows,
-  assertDoesNotThrow,
-} from 'backend/database/tests/helpers';
+import { assertThrows, assertDoesNotThrow } from 'tests/testHelpers';
 import { PurchaseReceipt } from '../PurchaseReceipt';
 import { Shipment } from '../Shipment';
 import { MovementTypeEnum } from '../types';

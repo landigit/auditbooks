@@ -1,5 +1,5 @@
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vite-plus/test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,
@@ -8,10 +8,7 @@ import {
 import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 import { Payment } from '../Payment/Payment';
 import { PaymentTypeEnum } from '../Payment/types';
-import {
-  assertDoesNotThrow,
-  assertThrows,
-} from 'backend/database/tests/helpers';
+import { assertDoesNotThrow, assertThrows } from 'tests/testHelpers';
 import { PurchaseInvoice } from '../PurchaseInvoice/PurchaseInvoice';
 
 const fyo = getTestFyo();

@@ -1,9 +1,6 @@
-import {
-  assertDoesNotThrow,
-  assertThrows,
-} from 'backend/database/tests/helpers';
+import { assertDoesNotThrow, assertThrows } from 'tests/testHelpers';
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vite-plus/test';
 import {
   closeTestFyoAfterAll,
   getTestFyo,

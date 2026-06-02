@@ -1,6 +1,6 @@
-import { assertThrows } from 'backend/database/tests/helpers';
+import { assertThrows } from 'tests/testHelpers';
 import Observable from 'fyo/utils/observable';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vite-plus/test';
 
 enum ObsEvent {
   A = 'event-a',

@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from 'bun:test';
+import { describe, expect, it, beforeEach } from 'vite-plus/test';
 import { useAppStore } from 'src/stores/app';
 import { setActivePinia, createPinia } from 'pinia';
 

@@ -1,5 +1,5 @@
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vite-plus/test';
 import { getItem } from './helpers';
 import {
   closeTestFyoAfterAll,
@@ -7,10 +7,7 @@ import {
   setupTestFyoBeforeAll,
 } from 'tests/helpers';
 import { MovementTypeEnum } from '../types';
-import {
-  assertDoesNotThrow,
-  assertThrows,
-} from 'backend/database/tests/helpers';
+import { assertDoesNotThrow, assertThrows } from 'tests/testHelpers';
 import { StockMovement } from '../StockMovement';
 
 const fyo = getTestFyo();

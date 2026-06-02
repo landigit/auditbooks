@@ -1,6 +1,6 @@
-import { assertDoesNotThrow } from 'backend/database/tests/helpers';
+import { assertDoesNotThrow } from 'tests/testHelpers';
 import { purchaseItemPartyMap } from 'dummy/helpers';
-import { describe, expect, test, afterAll } from 'bun:test';
+import { describe, expect, test, afterAll } from 'vite-plus/test';
 import { getTestDbPath, getTestFyo } from 'tests/helpers';
 import { setupDummyInstance } from '..';
 
