@@ -330,7 +330,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
       }
       break;
 
-    case ModelNameEnum.PriceList:
+    case ModelNameEnum.PriceList: {
       (newDoc as Doc).priceListItem = [];
       const uniqueKeys = new Set<string>();
 
@@ -353,8 +353,9 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
         }
       }
       break;
+    }
 
-    case ModelNameEnum.PricingRule:
+    case ModelNameEnum.PricingRule: {
       const itemSet = new Set<string>();
 
       (newDoc as Doc).appliedItems = (
@@ -383,6 +384,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
         docItemSet.has(`${row.item as string}::${row.unit as string}`)
       );
       break;
+    }
   }
 }
 
@@ -391,7 +393,7 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
     fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
   const isInitialSync = !initialSyncData;
   switch (doc.doctype) {
-    case ModelNameEnum.Item:
+    case ModelNameEnum.Item: {
       if (!doc.unit) {
         throw new ValidationError(`Item missing required field: unit`);
       }
@@ -467,9 +469,10 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
         }
       }
       return;
+    }
 
     case 'Customer':
-    case 'Supplier':
+    case 'Supplier': {
       const isAddressExists = await fyo.db.exists(
         ModelNameEnum.Address,
         doc.address as string
@@ -483,6 +486,7 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
       }
 
       return;
+    }
 
     case ModelNameEnum.SalesInvoice:
       return await preSyncSalesInvoice(fyo, doc as SalesInvoice);

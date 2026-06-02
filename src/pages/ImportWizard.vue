@@ -795,7 +795,6 @@ const saveTemplate = async (): Promise<void> => {
     return;
   }
 
-  // @ts-ignore
   await appIpc.saveData(template, filePath);
 };
 
@@ -970,8 +969,7 @@ const selectFile = async (): Promise<void> => {
 // Lifecycles
 onMounted(() => {
   if (store.isDevelopment) {
-    // @ts-ignore
-    window.iw = {
+    (window as any).iw = {
       showColumnPicker,
       complete,
       success,

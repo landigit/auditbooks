@@ -6,7 +6,7 @@ import { CUSTOM_EVENTS } from './messages';
 import { CountryInfoMap, UnexpectedLogObject } from './types';
 
 export function getCountryInfo(): CountryInfoMap {
-  // @ts-ignore
+  // @ts-expect-error
   return countryInfo as CountryInfoMap;
 }
 

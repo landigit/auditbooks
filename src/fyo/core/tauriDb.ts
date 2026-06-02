@@ -1785,6 +1785,7 @@ export function createKyselyInstance(tauriDb: Database) {
                 return { rows: results };
               },
               async *streamQuery() {
+                yield* [];
                 throw new Error('Streaming is not supported');
               },
             };

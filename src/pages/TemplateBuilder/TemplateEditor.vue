@@ -13,7 +13,6 @@ import {
 } from '@codemirror/language';
 import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView, ViewUpdate } from '@codemirror/view';
-// @ts-ignore
 import { tags } from '@lezer/highlight';
 import { basicSetup } from 'codemirror';
 import { useAppStore } from 'src/stores/app';
@@ -125,7 +124,7 @@ onMounted(() => {
   }
 
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.te = {
       editorState,
       view,

@@ -165,7 +165,7 @@ onActivated(async () => {
   }
 
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.rep = {
       loading,
       report,

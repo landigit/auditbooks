@@ -271,7 +271,6 @@ const canShowBarcode = computed<boolean>(() => {
     return false;
   }
 
-  // @ts-ignore
   return typeof doc.value?.addItem === 'function';
 });
 
@@ -476,8 +475,7 @@ onBeforeMount(() => {
 
 onMounted(async () => {
   if (store.isDevelopment) {
-    // @ts-ignore
-    window.cf = {
+    (window as any).cf = {
       errors,
       activeTab,
       groupedFields,

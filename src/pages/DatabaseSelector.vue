@@ -353,7 +353,7 @@ onMounted(async () => {
   await setFiles();
 
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.ds = {
       truncate,
       formatDate,

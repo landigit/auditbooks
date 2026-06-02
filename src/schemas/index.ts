@@ -79,7 +79,7 @@ function deepFreeze(schemaMap: SchemaMap) {
   for (const schemaName in schemaMap) {
     Object.freeze(schemaMap[schemaName]);
     for (const key in schemaMap[schemaName]) {
-      // @ts-ignore
+      // @ts-expect-error
       Object.freeze(schemaMap[schemaName][key]);
     }
 

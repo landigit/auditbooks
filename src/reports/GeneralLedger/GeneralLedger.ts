@@ -249,12 +249,7 @@ export class GeneralLedger extends LedgerReport {
     const stringFilters = ['account', 'party', 'referenceName'];
 
     for (const sf of stringFilters) {
-      if (
-        sf === '__proto__' ||
-        sf === '__proto__' ||
-        sf === 'constructor' ||
-        sf === 'prototype'
-      ) {
+      if (sf === '__proto__' || sf === 'constructor' || sf === 'prototype') {
         continue;
       }
       const value = Reflect.get(this, sf);

@@ -1342,11 +1342,9 @@ export abstract class Invoice extends Transactional {
 
       return !this.autoStockTransferLocation;
     },
-    setDiscountAmount: () => true || !this.enableDiscounting,
-    discountAmount: () =>
-      true || !(this.enableDiscounting && !!this.setDiscountAmount),
-    discountPercent: () =>
-      true || !(this.enableDiscounting && !this.setDiscountAmount),
+    setDiscountAmount: () => true,
+    discountAmount: () => true,
+    discountPercent: () => true,
     discountAfterTax: () => !this.enableDiscounting,
     taxes: () => !this.taxes?.length,
     baseGrandTotal: () =>

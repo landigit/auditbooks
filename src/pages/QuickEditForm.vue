@@ -257,7 +257,7 @@ onMounted(async () => {
   await initialize();
 
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.qef = {
       doc,
       titleField,

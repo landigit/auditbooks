@@ -57,7 +57,7 @@ const customRenderer = computed(() => {
   const { render } = props.column as ColumnConfig;
 
   if (!render) {
-    return;
+    return null;
   }
 
   return render(props.row);

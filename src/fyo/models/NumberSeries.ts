@@ -2,7 +2,7 @@ import { Doc } from 'fyo/model/doc';
 import { ReadOnlyMap, ValidationMap } from 'fyo/model/types';
 import { ValidationError } from 'fyo/utils/errors';
 
-const invalidNumberSeries = /[/\=\?\&\%]/;
+const invalidNumberSeries = /[/=?&%]/;
 
 function getPaddedName(prefix: string, next: number, padZeros: number): string {
   return prefix + next.toString().padStart(padZeros ?? 4, '0');

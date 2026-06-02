@@ -187,13 +187,11 @@ export async function assertThrows(
   try {
     await func();
     threw = false;
-  } catch {
-  } finally {
-    if (!threw) {
-      throw new assert.AssertionError({
-        message: `Missing expected exception${message ? `: ${message}` : ''}`,
-      });
-    }
+  } catch {}
+  if (!threw) {
+    throw new assert.AssertionError({
+      message: `Missing expected exception${message ? `: ${message}` : ''}`,
+    });
   }
 }
 

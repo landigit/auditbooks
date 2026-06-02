@@ -338,20 +338,18 @@ export class BespokeQueries {
       const existingDocItem = Reflect.get(docItemsMap, item.item);
       if (existingDocItem) {
         if (item.batch) {
-          let serialNumbers: string[] | undefined;
-
           const batches = existingDocItem.batches!;
           const batchInfo = Reflect.get(batches, item.batch);
           if (!batchInfo) {
             Reflect.set(batches, item.batch, {
               quantity: item.quantity,
-              serialNumbers,
+              serialNumbers: undefined,
             });
           } else {
             batchInfo.quantity += item.quantity;
             Reflect.set(batches, item.batch, {
               quantity: batchInfo.quantity,
-              serialNumbers,
+              serialNumbers: undefined,
             });
           }
         } else {

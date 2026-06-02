@@ -205,7 +205,7 @@ onMounted(async () => {
   fyo.doc.models['SetupWizard'] = SetupWizard;
 
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.sw = {
       docOrNull,
       errors,

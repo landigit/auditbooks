@@ -546,7 +546,7 @@ function getDisplayTransferQuantity() {
     return transferQty;
   }
 
-  const hasValidQuantity = transferQty && transferQty;
+  const hasValidQuantity = !!transferQty;
 
   if (props.row.isReturn && hasValidQuantity) {
     return -Math.abs(transferQty);

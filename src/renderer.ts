@@ -142,9 +142,9 @@ function setOnWindow(isDevelopment: boolean) {
     return;
   }
 
-  // @ts-ignore
+  // @ts-expect-error
   window.router = router;
-  // @ts-ignore
+  // @ts-expect-error
   window.fyo = fyo;
 }
 

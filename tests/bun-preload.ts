@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { JSDOM } from 'jsdom';
 import pkg from '../package.json';
 

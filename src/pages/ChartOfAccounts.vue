@@ -552,7 +552,7 @@ onMounted(async () => {
 onActivated(async () => {
   await fetchAccounts();
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.coa = {
       isAllCollapsed,
       isAllExpanded,

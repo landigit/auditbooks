@@ -292,7 +292,7 @@ defineExpose({ open });
 // --- Lifecycle ---
 onMounted(() => {
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.search = { open, close, searcher };
   }
 

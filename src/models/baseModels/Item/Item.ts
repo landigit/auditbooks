@@ -193,7 +193,7 @@ export class Item extends Doc {
       }
 
       const series = (value as string).trim();
-      const invalidChars = /[/\=\?\&\%]/;
+      const invalidChars = /[/=?&%]/;
 
       if (invalidChars.test(series)) {
         throw new ValidationError(
@@ -208,7 +208,7 @@ export class Item extends Doc {
       }
 
       const series = (value as string).trim();
-      const invalidChars = /[/\=\?\&\%]/;
+      const invalidChars = /[/=?&%]/;
 
       if (invalidChars.test(series)) {
         throw new ValidationError(

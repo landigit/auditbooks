@@ -325,7 +325,7 @@ onMounted(async () => {
   setScale();
 
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.rpv = {
       start,
       limit,

@@ -125,7 +125,6 @@ const selectImage = async () => {
     filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
   };
 
-  // @ts-ignore
   const { name, success, data } = await appIpc.selectFile(options);
 
   if (!success) {

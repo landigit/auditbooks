@@ -155,7 +155,7 @@ const thetasAndStarts = computed<[number, number, number][]>(() => {
     }))
     .filter(({ filterOut }) => filterOut);
 
-  const starts = [...thetas.map(({ value }) => value)];
+  const starts = thetas.map(({ value }) => value);
   starts.forEach((_, i) => {
     starts[i] += starts[i - 1] ?? 0;
   });

@@ -257,7 +257,7 @@ const sync = async () => {
       {
         label: t`Yes`,
         isPrimary: true,
-        // @ts-ignore
+        // @ts-expect-error
         action: appIpc.reloadWindow.bind(ipc),
       },
       {
@@ -289,7 +289,7 @@ const onValueChange = async (field: Field, value: DocValue) => {
 // Lifecycles
 onMounted(() => {
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.settings = {
       errors,
       activeTab,

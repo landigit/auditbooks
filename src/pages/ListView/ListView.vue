@@ -259,7 +259,7 @@ onActivated(() => {
   store.docsPath = docsPathMap[props.schemaName] ?? docsPathMap.Entries ?? '';
 
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.lv = {
       listConfig,
       openExportModal,

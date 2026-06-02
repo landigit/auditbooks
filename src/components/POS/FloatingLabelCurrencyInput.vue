@@ -68,6 +68,7 @@ const currency = computed<string | undefined>(() => {
   if (props.value) {
     return (props.value as Money).getCurrency();
   }
+  return undefined;
 });
 
 const round = (v: unknown) => {

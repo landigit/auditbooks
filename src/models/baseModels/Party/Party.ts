@@ -208,7 +208,7 @@ export class Party extends Doc {
             query: {
               schemaName: 'PurchaseInvoice',
               values: {
-                // @ts-ignore
+                // @ts-expect-error
                 party: partyDoc.name!,
               },
             },
@@ -241,7 +241,7 @@ export class Party extends Doc {
             query: {
               schemaName: 'SalesInvoice',
               values: {
-                // @ts-ignore
+                // @ts-expect-error
                 party: partyDoc.name!,
               },
             },

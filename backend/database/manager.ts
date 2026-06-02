@@ -182,7 +182,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return;
     }
 
-    // @ts-ignore
+    // @ts-expect-error
     const response = await Reflect.get(this.db, method).call(this.db, ...args);
     if (method === 'close') {
       delete this.db;

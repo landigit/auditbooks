@@ -312,7 +312,7 @@ const applyChangesShortcut = computed(() => {
 });
 
 const view = computed<EditorView | null>(() => {
-  // @ts-ignore
+  // @ts-expect-error
   const v = templateEditor.value?.view;
   if (v instanceof EditorView) {
     return v;
@@ -688,7 +688,7 @@ const setShortcuts = () => {
 onMounted(async () => {
   await initialize();
   if (store.isDevelopment) {
-    // @ts-ignore
+    // @ts-expect-error
     window.tb = {
       doc,
       context,

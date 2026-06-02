@@ -49,7 +49,7 @@ export function showToast(options: ToastOptions) {
 function fragmentMountComponent(app: App<Element>) {
   const fragment = document.createDocumentFragment();
 
-  // @ts-ignore
+  // @ts-expect-error
   app.mount(fragment);
   document.body.append(fragment);
 }

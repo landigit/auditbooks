@@ -50,7 +50,7 @@ onActivated(() => {
   shortcuts?.shift.set(COMPONENT_NAME, ['Backspace'], () => {
     backlink.value?.click();
   });
-  // @ts-ignore
+  // @ts-expect-error
   window.ng = { backlink };
 });
 
