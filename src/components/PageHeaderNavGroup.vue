@@ -62,12 +62,6 @@ onDeactivated(() => {
 <style scoped>
 @reference "../styles/index.css";
 .nav-link {
-  @apply flex items-center bg-canvas-muted px-3 transition-colors duration-150 ease-out;
-}
-.nav-link:hover {
-  @apply bg-surface-hover;
-}
-.nav-link:active {
-  @apply scale-95 transition-transform duration-75;
+  @apply flex items-center bg-canvas-muted px-3;
 }
 </style>
