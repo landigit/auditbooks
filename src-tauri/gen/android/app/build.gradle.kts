@@ -24,6 +24,17 @@ android {
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
         versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
     }
+    signingConfigs {
+        create("release") {
+            val keystoreFile = project.rootProject.file("../../../auditbooks-key.jks")
+            if (keystoreFile.exists() && System.getenv("ANDROID_KEYSTORE_PASSWORD") != null) {
+                storeFile = keystoreFile
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS") ?: "auditbooks-alias"
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD") ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         getByName("debug") {
             applicationIdSuffix = ".debug"
@@ -31,7 +42,8 @@ android {
             isDebuggable = true
             isJniDebuggable = true
             isMinifyEnabled = false
-            packaging {                jniLibs.keepDebugSymbols.add("*/arm64-v8a/*.so")
+            packaging {
+                jniLibs.keepDebugSymbols.add("*/arm64-v8a/*.so")
                 jniLibs.keepDebugSymbols.add("*/armeabi-v7a/*.so")
                 jniLibs.keepDebugSymbols.add("*/x86/*.so")
                 jniLibs.keepDebugSymbols.add("*/x86_64/*.so")
@@ -44,6 +56,10 @@ android {
                     .plus(getDefaultProguardFile("proguard-android-optimize.txt"))
                     .toList().toTypedArray()
             )
+            val keystoreFile = project.rootProject.file("../../../auditbooks-key.jks")
+            if (keystoreFile.exists() && System.getenv("ANDROID_KEYSTORE_PASSWORD") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     kotlinOptions {
@@ -51,6 +67,16 @@ android {
     }
     buildFeatures {
         buildConfig = true
+    }
+    applicationVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.api.ApkVariantOutput
+            val abi = output.filters.find { it.filterType == "ABI" }?.identifier ?: "universal"
+            // Use environment variables to determine signing status
+            val signedSuffix = if (System.getenv("ANDROID_KEYSTORE_PASSWORD") != null) "signed" else "unsigned"
+            output.outputFileName = "Auditbooks-${variant.versionName}-${abi}-${variant.buildType.name}-${signedSuffix}.apk"
+        }
     }
 }
 

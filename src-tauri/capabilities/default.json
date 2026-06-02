@@ -21,9 +21,6 @@
       "identifier": "http:default",
       "allow": [{ "url": "https://**" }, { "url": "http://**" }]
     },
-    "updater:default",
-    "process:default",
-    "process:allow-restart",
     "core:window:allow-toggle-maximize",
     "core:window:allow-minimize",
     "core:window:allow-close",

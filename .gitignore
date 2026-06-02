@@ -13,6 +13,8 @@ pnpm-lock.yaml
 /scratch
 /.agents/
 *books/
+/src-tauri/gen/
+
 
 # local env files
 .env
