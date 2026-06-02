@@ -113,9 +113,11 @@ const loadContent = async () => {
       relPath = 'getting-started';
     }
 
-    // Strip legacy books/ prefix
+    // Strip legacy books/ or /books/ prefix
     if (relPath.startsWith('books/')) {
       relPath = relPath.substring(6);
+    } else if (relPath.startsWith('/books/')) {
+      relPath = relPath.substring(7);
     }
 
     // Ensure docs/ prefix

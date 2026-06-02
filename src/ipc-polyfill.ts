@@ -765,22 +765,65 @@ if (typeof window !== 'undefined') {
       if (isTauri) {
         try {
           const decodedPath = decodeURIComponent(relPath);
-          const resourcePath = await resolveResource(`books/${decodedPath}`);
+          const cleanPath = decodedPath.replace(/^\/+/, '');
+          const resourcePath = await resolveResource(`books/${cleanPath}`);
+          console.log(
+            `[Tauri] Attempting to read doc file at: ${resourcePath}`
+          );
           return await readTextFile(resourcePath);
         } catch (e) {
-          console.error('Error reading doc file:', e);
+          // Fallback to absolute file reading if resolveResource fails in dev
+          try {
+            const decodedPath = decodeURIComponent(relPath);
+            const cleanPath = decodedPath.replace(/^\/+/, '');
+            // Try standard relative load from local files if Tauri resource resolution hits a snag
+            console.log(
+              `[Tauri Fallback] Trying local resource: books/${cleanPath}`
+            );
+            const appDir = await appDataDir(); // Roaming appData directory
+            const cargoManifestDir = 'D:\\Zafar\\books'; // Hardcoded workspace path as robust dev fallback
+            const possiblePaths = [
+              await join(cargoManifestDir, 'books', cleanPath),
+              await join(appDir, 'books', cleanPath),
+              await join(appDir, '..', 'books', cleanPath),
+              await join(appDir, '..', 'Auditbooks', 'books', cleanPath),
+            ];
+            for (const tPath of possiblePaths) {
+              console.log(`[Tauri Fallback] Checking path: ${tPath}`);
+              if (await exists(tPath)) {
+                console.log(`[Tauri Fallback] Found file at: ${tPath}`);
+                return await readTextFile(tPath);
+              }
+            }
+          } catch (innerError) {
+            console.error(
+              '[Tauri Fallback] Error in fallback load:',
+              innerError
+            );
+          }
           throw e;
         }
       }
-      return callBackend(IPC_ACTIONS.READ_DOC_FILE, [relPath]);
+      // Web fallback
+      try {
+        const response = await fetch(`http://localhost:6969/books/${relPath}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.text();
+      } catch (e) {
+        console.error('Error fetching doc file in web fallback:', e);
+        throw e;
+      }
     },
     async readDocData(relPath: string) {
       if (isTauri) {
         try {
           const decodedPath = decodeURIComponent(relPath);
-          const resourcePath = await resolveResource(`books/${decodedPath}`);
+          const cleanPath = decodedPath.replace(/^\/+/, '');
+          const resourcePath = await resolveResource(`books/${cleanPath}`);
           const content = await readFile(resourcePath);
-          const ext = decodedPath.split('.').pop()?.toLowerCase();
+          const ext = cleanPath.split('.').pop()?.toLowerCase();
           const mime =
             ext === 'png'
               ? 'image/png'
@@ -796,11 +839,67 @@ if (typeof window !== 'undefined') {
           const base64 = btoa(binary);
           return `data:${mime};base64,${base64}`;
         } catch (e) {
-          console.error('Error reading doc data:', e);
+          console.error('[Tauri] Error reading doc data:', e);
+          // Fallback to absolute file reading if resolveResource fails in dev
+          try {
+            const decodedPath = decodeURIComponent(relPath);
+            const cleanPath = decodedPath.replace(/^\/+/, '');
+            const appDir = await appDataDir();
+            const cargoManifestDir = 'D:\\Zafar\\books';
+            const possiblePaths = [
+              await join(cargoManifestDir, 'books', cleanPath),
+              await join(appDir, 'books', cleanPath),
+              await join(appDir, '..', 'books', cleanPath),
+              await join(appDir, '..', 'Auditbooks', 'books', cleanPath),
+            ];
+            for (const tPath of possiblePaths) {
+              console.log(`[Tauri Data Fallback] Checking path: ${tPath}`);
+              if (await exists(tPath)) {
+                console.log(`[Tauri Data Fallback] Found file at: ${tPath}`);
+                const content = await readFile(tPath);
+                const ext = cleanPath.split('.').pop()?.toLowerCase();
+                const mime =
+                  ext === 'png'
+                    ? 'image/png'
+                    : ext === 'jpg' || ext === 'jpeg'
+                      ? 'image/jpeg'
+                      : 'application/octet-stream';
+                let binary = '';
+                const bytes = new Uint8Array(content);
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                  binary += String.fromCharCode(bytes[i]);
+                }
+                const base64 = btoa(binary);
+                return `data:${mime};base64,${base64}`;
+              }
+            }
+          } catch (innerError) {
+            console.error(
+              '[Tauri Data Fallback] Error in fallback load:',
+              innerError
+            );
+          }
           throw e;
         }
       }
-      return callBackend(IPC_ACTIONS.READ_DOC_DATA, [relPath]);
+      // Web fallback
+      try {
+        const response = await fetch(`http://localhost:6969/books/${relPath}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const blob = await response.blob();
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } catch (e) {
+        console.error('Error fetching doc data in web fallback:', e);
+        throw e;
+      }
     },
     db: {
       async getSchema() {

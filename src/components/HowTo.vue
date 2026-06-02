@@ -23,6 +23,6 @@ const props = withDefaults(defineProps<HowToProps>(), {
 });
 
 const openHelpLink = () => {
-  (window as any).ipc?.openLink(props.link);
+  (window as any).appIpc?.openLink(props.link);
 };
 </script>

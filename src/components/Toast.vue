@@ -1,18 +1,12 @@
 <template>
-  <Teleport to="#toast-container">
-    <Transition
-      enter-active-class="transition-all duration-150 ease-out"
-      enter-from-class="opacity-0 translate-y-2 scale-95"
-      enter-to-class="opacity-100 translate-y-0 scale-100"
-      leave-active-class="transition-all duration-100 ease-in"
-      leave-from-class="opacity-100 translate-y-0 scale-100"
-      leave-to-class="opacity-0 translate-y-2 scale-95"
-    >
-      <div
-        v-if="open"
-        class="inner text-main shadow-lg px-3 py-2 flex items-center mb-3 w-toast z-30 bg-surface rounded-lg border border-border"
+  <ToastProvider>
+    <Teleport to="#toast-container">
+      <ToastRoot
+        v-model:open="open"
+        class="text-main shadow-lg px-3 py-2 flex items-center mb-3 w-toast z-30 bg-surface rounded-lg border border-border data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=move]:translate-x-[var(--reka-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-transform data-[swipe=end]:animate-out"
         :class="[config.containerBorder]"
         style="pointer-events: auto"
+        @update:open="onOpenChange"
       >
         <LucideIcon
           :name="config.iconName"
@@ -20,10 +14,13 @@
           :class="config.iconColor"
         />
         <div :class="actionText ? 'cursor-pointer' : ''" @click="actionClicked">
-          <p class="text-base">{{ message }}</p>
-          <button v-if="actionText" class="text-sm text-muted hover:text-main">
+          <ToastTitle class="text-base font-semibold">{{ message }}</ToastTitle>
+          <ToastDescription
+            v-if="actionText"
+            class="text-sm text-muted hover:text-main"
+          >
             {{ actionText }}
-          </button>
+          </ToastDescription>
         </div>
         <div class="ms-auto flex items-center">
           <LucideIcon
@@ -32,20 +29,30 @@
             class="animate-spin h-4 w-4 text-description"
           />
 
-          <LucideIcon
-            v-else
-            name="x"
-            class="w-4 h-4 ms-auto text-description cursor-pointer hover:text-main"
-            @click="closeToast"
-          />
+          <ToastClose v-else as-child>
+            <LucideIcon
+              name="x"
+              class="w-4 h-4 ms-auto text-description cursor-pointer hover:text-main"
+              @click="closeToast"
+            />
+          </ToastClose>
         </div>
-      </div>
-    </Transition>
-  </Teleport>
+      </ToastRoot>
+      <ToastViewport />
+    </Teleport>
+  </ToastProvider>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import {
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastRoot,
+  ToastTitle,
+  ToastViewport,
+} from 'reka-ui';
 import { getIconConfig } from 'src/utils/api/interactive.js';
 import { ToastDuration, ToastType } from 'src/utils/api/types.js';
 import { toastDurationMap } from 'src/utils/api/ui.js';
@@ -80,15 +87,21 @@ const closeToast = () => {
   open.value = false;
 };
 
+const onOpenChange = (value: boolean) => {
+  if (!value) {
+    closeToast();
+  }
+};
+
 const actionClicked = () => {
   props.action();
   closeToast();
 };
 
 // Lifecycles
-onMounted(async () => {
+onMounted(() => {
+  open.value = true;
   const durationVal = toastDurationMap[props.duration];
-  await nextTick(() => (open.value = true));
   if (durationVal !== Infinity) {
     setTimeout(closeToast, durationVal);
   }

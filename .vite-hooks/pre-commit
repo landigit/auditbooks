@@ -1,6 +1,5 @@
-pnpm lint
-pnpm run format
-git add .
+pnpm check
+pnpm format
 pnpm run test
 pnpm run build
 vp staged
