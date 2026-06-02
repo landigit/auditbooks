@@ -1,6 +1,6 @@
 import { DatabaseManager } from '../database/manager';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// oxlint-disable-next-line @typescript-eslint/no-unused-vars
 async function execute(_dm: DatabaseManager) {
   /**
    * Execute function will receive the DatabaseManager which is to be used

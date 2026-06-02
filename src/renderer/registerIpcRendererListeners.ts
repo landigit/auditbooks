@@ -22,11 +22,11 @@ export default function registerIpcRendererListeners() {
     more.isMainProcess = true;
     more.notifyUser ??= true;
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     handleError(true, error, more, !!more.notifyUser);
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // oxlint-disable-next-line @typescript-eslint/no-misused-promises
   appIpc.registerTriggerFrontendActionListener(async () => {
     await syncDocumentsToERPNext(fyo);
   });
@@ -38,7 +38,7 @@ export default function registerIpcRendererListeners() {
     }
 
     if (store.isDevelopment) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log(...stuff);
     }
   });
@@ -46,7 +46,7 @@ export default function registerIpcRendererListeners() {
   document.addEventListener('visibilitychange', () => {
     const { visibilityState } = document;
     if (visibilityState === 'visible' && !fyo.telemetry.started) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      // oxlint-disable-next-line @typescript-eslint/no-floating-promises
       fyo.telemetry.start();
     }
 

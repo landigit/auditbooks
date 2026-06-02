@@ -36,13 +36,13 @@ tauri-plugin-updater = "2"
 
 # ── Release profile: smaller binary, faster startup ──────────────────────────
 [profile.release]
-opt-level     = "s"   # optimise for size (use 3 for pure speed)
-lto           = true  # link-time optimisation across crates
-codegen-units = 1     # single unit → better inter-procedural opt
-strip         = true  # strip debug symbols (≈20-30% smaller binary)
-panic         = "abort" # remove panic-unwind code
+opt-level = "s" # optimise for size (use 3 for pure speed)
+lto = true # link-time optimisation across crates
+codegen-units = 1 # single unit → better inter-procedural opt
+strip = true # strip debug symbols (≈20-30% smaller binary)
+panic = "abort" # remove panic-unwind code
 
 # ── Dev profile: fast incremental rebuilds ───────────────────────────────────
 [profile.dev]
 incremental = true
-opt-level   = 0
+opt-level = 0

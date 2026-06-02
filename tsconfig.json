@@ -19,7 +19,7 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": ["vite/client", "bun-types"],
+    "types": ["vite-plus/client", "bun-types"],
     "baseUrl": ".",
     "paths": {
       "src/*": ["src/*"],

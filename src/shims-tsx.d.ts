@@ -7,7 +7,7 @@ declare global {
     type Element = VNode;
     type ElementClass = Vue;
     interface IntrinsicElements {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
       [elem: string]: any;
     }
   }

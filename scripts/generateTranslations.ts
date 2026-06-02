@@ -8,7 +8,7 @@ import {
   schemaTranslateables,
 } from '../src/utils/core/translationHelpers';
 
-/* eslint-disable no-console, @typescript-eslint/no-floating-promises */
+/* oxlint-disable no-console, @typescript-eslint/no-floating-promises */
 
 const translationsFolder = path.resolve(__dirname, '..', 'translations');
 const PATTERN = /(?<!\w)t`([^`]+)`/g;

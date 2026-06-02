@@ -31,7 +31,7 @@ import { Money } from 'pesa';
 type FieldMap = Record<string, Record<string, Field>>;
 
 export class DatabaseHandler extends DatabaseBase {
-  /* eslint-disable @typescript-eslint/no-floating-promises */
+  /* oxlint-disable @typescript-eslint/no-floating-promises */
   #fyo: Fyo;
   converter: Converter;
   #demux: DatabaseDemuxBase;

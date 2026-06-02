@@ -2,3 +2,4 @@ bun run format
 git add .
 bun run test
 bun run build
+vp staged

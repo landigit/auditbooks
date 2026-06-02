@@ -4,7 +4,7 @@ import { openSettings, routeTo } from './ui';
 import { GetStartedConfigItem } from './types';
 
 export function getGetStartedConfig(): GetStartedConfigItem[] {
-  /* eslint-disable @typescript-eslint/no-misused-promises */
+  /* oxlint-disable @typescript-eslint/no-misused-promises */
   return [
     {
       label: t`Organisation`,
