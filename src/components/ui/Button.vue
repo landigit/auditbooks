@@ -22,10 +22,11 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const variants = {
-  default: 'bg-indicator-blue-text text-white hover:bg-indicator-blue-text/90',
+  default: 'bg-button-primary-bg text-button-primary-text hover:opacity-90',
   destructive: 'bg-error text-white hover:bg-error/90',
   outline: 'border border-border bg-surface hover:bg-surface-hover text-main',
-  secondary: 'bg-canvas-muted text-main hover:bg-canvas-muted/80',
+  secondary:
+    'bg-button-secondary-bg text-button-secondary-text hover:bg-button-secondary-bg/80',
   ghost: 'hover:bg-surface-hover text-main',
   link: 'text-indicator-blue-text underline-offset-4 hover:underline',
 };

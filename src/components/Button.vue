@@ -1,16 +1,18 @@
 <template>
-  <button
-    class="rounded-md flex justify-center items-center text-sm"
+  <ShadcnButton
+    :variant="resolvedVariant"
+    :size="resolvedSize"
     :disabled="disabled"
-    :class="_class"
+    :class="computedClasses"
     v-bind="$attrs"
   >
     <slot></slot>
-  </button>
+  </ShadcnButton>
 </template>
 
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue';
+import ShadcnButton from './ui/Button.vue';
 
 // Define Props
 const props = withDefaults(
@@ -32,19 +34,23 @@ const props = withDefaults(
 
 const attrs = useAttrs();
 
-// Computed classes
-const _class = computed(() => {
+const resolvedVariant = computed(() => {
+  if (!props.background) return 'ghost';
+  return props.type === 'primary' ? 'default' : 'secondary';
+});
+
+const resolvedSize = computed(() => {
+  if (!props.padding) return 'sm';
+  return props.icon ? 'sm' : 'default';
+});
+
+const computedClasses = computed(() => {
   const customClass = attrs.class;
   const hasHeightOrPadding =
     typeof customClass === 'string' &&
     (/\bh-\d+/.test(customClass) || /\bpy-\d+/.test(customClass));
 
   return {
-    'opacity-50 cursor-not-allowed pointer-events-none': props.disabled,
-    'text-button-primary-text': props.type === 'primary',
-    'bg-button-primary-bg': props.type === 'primary' && props.background,
-    'text-button-secondary-text': props.type !== 'primary',
-    'bg-button-secondary-bg': props.type !== 'primary' && props.background,
     'h-8': props.background && !hasHeightOrPadding,
     'px-3': props.padding && props.icon,
     'px-6': props.padding && !props.icon,

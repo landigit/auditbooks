@@ -110,6 +110,14 @@
           "label": "Red Hat Text"
         },
         {
+          "value": "Figtree",
+          "label": "Figtree"
+        },
+        {
+          "value": "Nunito Sans",
+          "label": "Nunito Sans"
+        },
+        {
           "value": "Times New Roman",
           "label": "Times New Roman"
         },

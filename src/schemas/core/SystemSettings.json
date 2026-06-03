@@ -172,6 +172,14 @@
         {
           "label": "Red Hat Text",
           "value": "RedHatText"
+        },
+        {
+          "label": "Figtree",
+          "value": "Figtree"
+        },
+        {
+          "label": "Nunito Sans",
+          "value": "NunitoSans"
         }
       ],
       "default": "GoogleSansFlex",

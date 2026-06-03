@@ -1,4 +1,4 @@
-import './ipc-polyfill';
+import 'src/utils/ipc/tauriIpc';
 import { CUSTOM_EVENTS } from 'src/utils/core/messages';
 import { UnexpectedLogObject } from 'src/utils/core/types';
 import { App as VueApp, createApp } from 'vue';

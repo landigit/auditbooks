@@ -37,18 +37,17 @@ export function setTheme(theme: Theme): void {
 }
 
 export function setFont(font: string | undefined): void {
-  const allowedFonts = ['Inter', 'GoogleSansFlex', 'RedHatText'];
-
-  if (!font || !allowedFonts.includes(font)) {
-    font = 'GoogleSansFlex';
-  }
+  const fontName = font || 'GoogleSansFlex';
+  // if (fontName === 'NunitoSans') {
+  //   fontName = 'Nunito Sans';
+  // }
 
   // Update the CSS variable for Tailwind
-  document.documentElement.style.setProperty('--app-font', font);
+  document.documentElement.style.setProperty('--app-font', fontName);
 
   // Also apply directly to the app container
   const appElement = document.getElementById('app');
   if (appElement) {
-    appElement.style.fontFamily = font;
+    appElement.style.fontFamily = fontName;
   }
 }

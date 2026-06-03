@@ -125,11 +125,12 @@ const selectImage = async () => {
     filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
   };
 
-  const { name, success, data } = await appIpc.selectFile(options);
+  const res = await appIpc.selectFile(options);
 
-  if (!success) {
+  if (!res || !res.success) {
     return;
   }
+  const { name, data } = res;
   const extension = name.split('.').at(-1);
   const type = (extension && mime_types[extension]) || 'image/png';
   const dataURL = await getDataURL(type, data);
