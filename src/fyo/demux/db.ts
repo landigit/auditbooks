@@ -30,7 +30,7 @@ export class DatabaseDemux extends DatabaseDemuxBase {
     }
 
     return (await this.#handleDBCall(async () => {
-      return await appIpc.db.getSchema();
+      return await (window as any).appIpc.db.getSchema();
     })) as SchemaMap;
   }
 
@@ -43,7 +43,7 @@ export class DatabaseDemux extends DatabaseDemuxBase {
     }
 
     return (await this.#handleDBCall(async () => {
-      return appIpc.db.create(dbPath, countryCode);
+      return (window as any).appIpc.db.create(dbPath, countryCode);
     })) as string;
   }
 
@@ -56,7 +56,7 @@ export class DatabaseDemux extends DatabaseDemuxBase {
     }
 
     return (await this.#handleDBCall(async () => {
-      return appIpc.db.connect(dbPath, countryCode);
+      return (window as any).appIpc.db.connect(dbPath, countryCode);
     })) as string;
   }
 
@@ -66,7 +66,7 @@ export class DatabaseDemux extends DatabaseDemuxBase {
     }
 
     return await this.#handleDBCall(async () => {
-      return await appIpc.db.call(method, ...args);
+      return await (window as any).appIpc.db.call(method, ...args);
     });
   }
 
@@ -76,7 +76,7 @@ export class DatabaseDemux extends DatabaseDemuxBase {
     }
 
     return await this.#handleDBCall(async () => {
-      return await appIpc.db.bespoke(method, ...args);
+      return await (window as any).appIpc.db.bespoke(method, ...args);
     });
   }
 }

@@ -10,6 +10,7 @@
         class="bg-transparent"
         :class="[inputClasses, containerClasses]"
         :type="inputType"
+        :inputmode="isNumeric(df) ? 'decimal' : undefined"
         :value="value"
         :placeholder="inputPlaceholder"
         :readonly="isReadOnly"

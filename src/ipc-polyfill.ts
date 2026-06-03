@@ -39,6 +39,19 @@ async function getAppDataDir(): Promise<string> {
   return await join(parent, 'Auditbooks');
 }
 
+// Safe resource resolver supporting both dev resources and parent resources bundled under _up_/ prefix
+async function safeResolveResource(relPath: string): Promise<string> {
+  try {
+    return await resolveResource(relPath);
+  } catch (e) {
+    try {
+      return await resolveResource(`_up_/${relPath}`);
+    } catch {
+      throw e;
+    }
+  }
+}
+
 interface KnownDb {
   id: string;
   companyName: string;
@@ -149,7 +162,7 @@ function getMapFromCsv(csv: string): LanguageMap {
 
 async function getTranslationFilePath(code: string): Promise<string> {
   try {
-    return await resolveResource(`translations/${code}.csv`);
+    return await safeResolveResource(`translations/${code}.csv`);
   } catch {
     return '';
   }
@@ -336,21 +349,70 @@ if (typeof window !== 'undefined') {
     }
   }
 
-  // Basic localStorage store implementation
+  // Store instance utilizing tauri-plugin-store if running in Tauri, fallback to localStorage in browser
+  let store: any = null;
+  const storeCache = new Map<string, any>();
+
+  if (isTauri) {
+    import('@tauri-apps/plugin-store')
+      .then(async ({ LazyStore }) => {
+        try {
+          store = new LazyStore('settings.json');
+          // Pre-load keys to cache
+          // Under Tauri store v2, we can fetch all or specific entries. Let's load the configuration.
+          // We'll read key values dynamically on demand or query settings.
+        } catch (err) {
+          console.error('Failed to load @tauri-apps/plugin-store:', err);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load @tauri-apps/plugin-store package:', err);
+      });
+  }
+
   const storeInstance = {
     get(key: string) {
+      if (isTauri) {
+        // Retrieve synchronously from the cache if available.
+        if (storeCache.has(key)) {
+          return storeCache.get(key);
+        }
+        // Asynchronously sync for future reads
+        if (store) {
+          store.get(key).then((val: any) => {
+            if (val !== undefined) {
+              storeCache.set(key, val);
+            }
+          });
+        }
+      }
       const val = localStorage.getItem(`config:${key}`);
       if (val === null) return undefined;
       try {
-        return JSON.parse(val);
+        const parsed = JSON.parse(val);
+        if (isTauri) storeCache.set(key, parsed);
+        return parsed;
       } catch {
+        if (isTauri) storeCache.set(key, val);
         return val;
       }
     },
     set(key: string, value: any) {
+      if (isTauri) {
+        storeCache.set(key, value);
+        if (store) {
+          store.set(key, value).then(() => store.save());
+        }
+      }
       localStorage.setItem(`config:${key}`, JSON.stringify(value));
     },
     delete(key: string) {
+      if (isTauri) {
+        storeCache.delete(key);
+        if (store) {
+          store.delete(key).then(() => store.save());
+        }
+      }
       localStorage.removeItem(`config:${key}`);
     },
   };
@@ -362,29 +424,67 @@ if (typeof window !== 'undefined') {
     },
     minimizeWindow() {
       if (isTauri) {
-        getCurrentWindow().minimize();
+        try {
+          const platform = osType();
+          if (platform !== 'android' && platform !== 'ios') {
+            getCurrentWindow().minimize();
+          }
+        } catch (e) {
+          console.warn('Window minimize is not supported on this platform:', e);
+        }
       }
     },
     toggleMaximize() {
       if (isTauri) {
-        getCurrentWindow().toggleMaximize();
+        try {
+          const platform = osType();
+          if (platform !== 'android' && platform !== 'ios') {
+            getCurrentWindow().toggleMaximize();
+          }
+        } catch (e) {
+          console.warn(
+            'Window maximize toggle is not supported on this platform:',
+            e
+          );
+        }
       }
     },
     async isMaximized() {
       if (isTauri) {
-        return await getCurrentWindow().isMaximized();
+        try {
+          const platform = osType();
+          if (platform !== 'android' && platform !== 'ios') {
+            return await getCurrentWindow().isMaximized();
+          }
+        } catch (e) {
+          console.warn('isMaximized is not supported on this platform:', e);
+        }
       }
       return false;
     },
     async isFullscreen() {
       if (isTauri) {
-        return await getCurrentWindow().isFullscreen();
+        try {
+          const platform = osType();
+          if (platform !== 'android' && platform !== 'ios') {
+            return await getCurrentWindow().isFullscreen();
+          }
+        } catch (e) {
+          console.warn('isFullscreen is not supported on this platform:', e);
+        }
       }
       return false;
     },
     closeWindow() {
       if (isTauri) {
-        getCurrentWindow().close();
+        try {
+          const platform = osType();
+          if (platform !== 'android' && platform !== 'ios') {
+            getCurrentWindow().close();
+          }
+        } catch (e) {
+          console.warn('Window close is not supported on this platform:', e);
+        }
       }
     },
     async getCreds() {
@@ -407,7 +507,7 @@ if (typeof window !== 'undefined') {
     async getTemplates(posTemplateWidth?: number) {
       if (isTauri) {
         try {
-          const templatesDir = await resolveResource('templates');
+          const templatesDir = await safeResolveResource('templates');
           if (await exists(templatesDir)) {
             const { readDir } = await import('@tauri-apps/plugin-fs');
             const entries = await readDir(templatesDir);
@@ -766,7 +866,7 @@ if (typeof window !== 'undefined') {
         try {
           const decodedPath = decodeURIComponent(relPath);
           const cleanPath = decodedPath.replace(/^\/+/, '');
-          const resourcePath = await resolveResource(`books/${cleanPath}`);
+          const resourcePath = await safeResolveResource(`books/${cleanPath}`);
           console.log(
             `[Tauri] Attempting to read doc file at: ${resourcePath}`
           );
@@ -781,10 +881,9 @@ if (typeof window !== 'undefined') {
               `[Tauri Fallback] Trying local resource: books/${cleanPath}`
             );
             const appDir = await appDataDir(); // Roaming appData directory
-            const cargoManifestDir = 'D:\\Zafar\\books'; // Hardcoded workspace path as robust dev fallback
             const possiblePaths = [
-              await join(cargoManifestDir, 'books', cleanPath),
               await join(appDir, 'books', cleanPath),
+              await join(appDir, '_up_', 'books', cleanPath),
               await join(appDir, '..', 'books', cleanPath),
               await join(appDir, '..', 'Auditbooks', 'books', cleanPath),
             ];
@@ -821,7 +920,7 @@ if (typeof window !== 'undefined') {
         try {
           const decodedPath = decodeURIComponent(relPath);
           const cleanPath = decodedPath.replace(/^\/+/, '');
-          const resourcePath = await resolveResource(`books/${cleanPath}`);
+          const resourcePath = await safeResolveResource(`books/${cleanPath}`);
           const content = await readFile(resourcePath);
           const ext = cleanPath.split('.').pop()?.toLowerCase();
           const mime =
@@ -845,10 +944,9 @@ if (typeof window !== 'undefined') {
             const decodedPath = decodeURIComponent(relPath);
             const cleanPath = decodedPath.replace(/^\/+/, '');
             const appDir = await appDataDir();
-            const cargoManifestDir = 'D:\\Zafar\\books';
             const possiblePaths = [
-              await join(cargoManifestDir, 'books', cleanPath),
               await join(appDir, 'books', cleanPath),
+              await join(appDir, '_up_', 'books', cleanPath),
               await join(appDir, '..', 'books', cleanPath),
               await join(appDir, '..', 'Auditbooks', 'books', cleanPath),
             ];

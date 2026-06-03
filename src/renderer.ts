@@ -83,7 +83,11 @@ import { useAppStore } from './stores/app';
     },
   });
 
-  await fyo.telemetry.logOpened();
+  try {
+    await fyo.telemetry.logOpened();
+  } catch (err) {
+    console.error('Failed to log telemetry open event:', err);
+  }
   app.mount('#app');
 })();
 

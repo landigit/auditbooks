@@ -9,6 +9,7 @@
       class="text-end"
       :class="[inputClasses, containerClasses]"
       :type="inputType"
+      inputmode="decimal"
       :value="round(value)"
       :placeholder="inputPlaceholder"
       :readonly="isReadOnly"

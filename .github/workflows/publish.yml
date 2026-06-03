@@ -34,10 +34,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: '24.16.0'
+
+      - name: Set pnpm version
+        run: pnpm set version 11.5.1
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -57,10 +60,10 @@ jobs:
             libjavascriptcoregtk-4.1-dev
 
       - name: Install frontend dependencies
-        run: bun install
+        run: pnpm install
 
       - name: Sync version
-        run: bun run scripts/sync-version.ts
+        run: pnpm run scripts/sync-version.ts
 
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0

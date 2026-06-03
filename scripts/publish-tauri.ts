@@ -1,4 +1,4 @@
-import { $ } from 'bun';
+import { $ } from 'pnpm';
 import fs from 'fs';
 import path from 'path';
 
@@ -19,7 +19,7 @@ const repo = 'auditbooks';
 
 // 2. Build tauri app
 console.log('Building Tauri application...');
-await $`bun run build:tauri`;
+await $`pnpm run build:tauri`;
 
 // 3. Find built files
 const releaseDir = path.join(

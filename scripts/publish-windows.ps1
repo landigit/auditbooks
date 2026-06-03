@@ -1,9 +1,9 @@
 # Publish script for Windows
 $ErrorActionPreference = "Stop"
 
-# Check bun version
-$bunVersion = (bun --version).Trim()
-Write-Host "Current bun version: $bunVersion"
+# Check pnpm version
+$pnpmVersion = (pnpm --version).Trim()
+Write-Host "Current pnpm version: $pnpmVersion"
 
 # Source secrets from .env.publish if it exists
 $envPublishPaths = @(".env.publish", ".agents/.env.publish")
@@ -58,7 +58,7 @@ $creds | Out-File -FilePath "log_creds.txt" -Encoding ascii
 
 # Install Dependencies
 Write-Host "Installing dependencies..."
-bun install
+pnpm install
 
 # Build and Publish
 Write-Host "Starting build and publish for Windows..."
@@ -67,7 +67,7 @@ if (-not $env:GH_TOKEN) {
     Write-Warning "GH_TOKEN is not set. Publishing might fail."
 }
 
-bun run scripts/publish-tauri.ts
+pnpm run scripts/publish-tauri.ts
 
 Write-Host "Publish complete."
 Set-Location $currentPath

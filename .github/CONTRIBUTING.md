@@ -3,8 +3,8 @@
 If you are a Auditbooks user and want to contribute to improving it _without
 writing code_, there are several things you can do:
 
-- **Inform us of issues** you face while using Auditbooks by [raising issues](https://github.com/frappe/books/issues/new).
-- **Add a language** you would like to use Auditbooks in by [contributing translation](https://github.com/frappe/books/wiki/Contributing-Translations).
+- **Inform us of issues** you face while using Auditbooks by [raising issues](https://github.com/landigit/auditbooks/issues/new).
+- **Add a language** you would like to use Auditbooks in by [contributing translation](https://github.com/landigit/auditbooks/wiki/Contributing-Translations).
 - **Share your thoughts** on Auditbooks by joining our [Telegram group](https://t.me/Auditbooks).
 - **Use Auditbooks** for your accounting requirements and tell people about it.
 

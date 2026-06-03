@@ -1,6 +1,6 @@
 <template>
   <ToastProvider>
-    <Teleport to="#toast-container">
+    <Teleport :to="teleportTarget">
       <ToastRoot
         v-model:open="open"
         class="text-main shadow-lg px-3 py-2 flex items-center mb-3 w-toast z-30 bg-surface rounded-lg border border-border data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=move]:translate-x-[var(--reka-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-transform data-[swipe=end]:animate-out"
@@ -81,6 +81,12 @@ const open = ref(false);
 // Computed Properties
 const config = computed(() => getIconConfig(props.type));
 const isPersistent = computed(() => props.duration === 'very_long');
+const teleportTarget = computed(() => {
+  return typeof document !== 'undefined' &&
+    document.getElementById('toast-container')
+    ? '#toast-container'
+    : 'body';
+});
 
 // Methods
 const closeToast = () => {

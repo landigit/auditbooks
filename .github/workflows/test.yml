@@ -17,19 +17,19 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: '22.22.2'
+          node-version: '24.22.2'
 
-      - name: Set bun version
-        run: bun set version 10.33.2
+      - name: Set pnpm version
+        run: pnpm set version 10.33.2
 
       - name: Checkout Books
         uses: actions/checkout@v4
 
       - name: Install Dependencies
-        run: yarn
+        run: pnpm
 
       - name: Run Tests
-        run: bun test
+        run: pnpm test
 
   setup_and_uitest:
     runs-on: macos-latest
@@ -37,19 +37,19 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: '22.22.2'
+          node-version: '24.16.0'
 
-      - name: Set bun version
-        run: bun set version 10.33.2
+      - name: Set pnpm version
+        run: pnpm set version 11.5.1
 
-      - name: Checkout Books
+      - name: Checkout Auditbooks
         uses: actions/checkout@v4
 
       - name: Install Dependencies
-        run: yarn
+        run: pnpm
 
       - name: Build Source Files
-        run: bun build --nosign --nopackage
+        run: pnpm build --nosign --nopackage
 
       - name: Run UI Tests
-        run: bun uitest
+        run: pnpm uitest

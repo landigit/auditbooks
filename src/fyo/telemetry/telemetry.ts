@@ -108,9 +108,13 @@ export class TelemetryManager {
       return;
     }
 
-    const { telemetryUrl, tokenString } = await this.fyo.auth.getCreds();
-    this.url = telemetryUrl;
-    this.token = tokenString;
+    try {
+      const { telemetryUrl, tokenString } = await this.fyo.auth.getCreds();
+      this.url = telemetryUrl;
+      this.token = tokenString;
+    } catch (err) {
+      console.warn('Failed to set telemetry credentials:', err);
+    }
   }
 
   private getTelemtryData(

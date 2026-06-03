@@ -10,7 +10,7 @@ export class AuthDemux extends AuthDemuxBase {
 
   async getCreds(): Promise<Creds> {
     if (this.#isDesktop) {
-      return await appIpc.getCreds();
+      return await (window as any).appIpc.getCreds();
     } else {
       return { errorLogUrl: '', tokenString: '', telemetryUrl: '' };
     }

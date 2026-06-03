@@ -6,7 +6,7 @@ export class Config {
   constructor(isDesktop: boolean) {
     this.config = new Map();
     if (isDesktop) {
-      this.config = appIpc.store;
+      this.config = (window as any).appIpc?.store || new Map();
     }
   }
 
