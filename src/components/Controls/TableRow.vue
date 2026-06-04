@@ -58,7 +58,7 @@
       :background="false"
       @click="openRowQuickEdit"
     >
-      <lucide-icon name="edit" class="w-4 h-4 text-description" />
+      <lucide-icon name="pencil" class="w-4 h-4 text-description" />
     </Button>
 
     <!-- Error Display -->

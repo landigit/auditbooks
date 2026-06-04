@@ -42,11 +42,7 @@
             />
             <div
               class="ms-2 text-lg"
-              :class="
-                isGroupActive(group) && !group.items
-                  ? 'text-main'
-                  : 'text-muted'
-              "
+              :class="isGroupActive(group) ? 'text-main' : 'text-muted'"
             >
               {{ group.label }}
             </div>
@@ -75,7 +71,7 @@
     </div>
 
     <!-- Report Issue and DB Switcher -->
-    <div class="window-no-drag flex flex-col gap-2 py-2 px-4">
+    <div class="window-no-drag flex flex-col gap-2 pt-2 pb-4 px-4">
       <button
         class="flex text-sm text-description hover:text-main gap-1 items-center"
         @click="openDocumentation"
@@ -127,14 +123,15 @@
         </p>
       </button>
 
-      <p
+      <button
         v-if="showDevMode"
-        class="absolute bottom-0 start-0 text-xs text-description select-none cursor-pointer m-5"
+        class="flex text-xs text-description hover:text-main gap-1 items-center mt-1"
         @click="showDevMode = false"
         title="Open dev tools with Ctrl+Shift+I"
       >
-        dev mode
-      </p>
+        <LucideIcon name="terminal" class="h-3.5 w-3.5 flex-shrink-0" />
+        <p>dev mode</p>
+      </button>
     </div>
 
     <!-- Hide Sidebar Button -->

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface"
+    class="page-header px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-canvas"
     :class="[
       border ? 'border-b border-border' : '',
       store.platform !== 'Windows' ? 'window-drag' : '',
@@ -8,11 +8,11 @@
   >
     <Transition
       enter-active-class="transition-all duration-150 ease-out"
-      enter-from-class="opacity-0 w-0 !mr-0 !border-r-0"
-      enter-to-class="opacity-100 w-[var(--w-trafficlights)] mr-4 border-r border-border"
+      enter-from-class="opacity-0 w-0 !me-0 !border-e-0"
+      enter-to-class="opacity-100 w-[var(--w-trafficlights)] me-4 border-e border-border"
       leave-active-class="transition-all duration-150 ease-in"
-      leave-from-class="opacity-100 w-[var(--w-trafficlights)] mr-4 border-r border-border"
-      leave-to-class="opacity-0 w-0 !mr-0 !border-r-0"
+      leave-from-class="opacity-100 w-[var(--w-trafficlights)] me-4 border-e border-border"
+      leave-to-class="opacity-0 w-0 !me-0 !border-e-0"
       class="border-none"
     >
       <div
@@ -21,7 +21,7 @@
           store.platform === 'Mac' &&
           store.languageDirection !== 'rtl'
         "
-        class="h-full w-tl"
+        class="h-full w-[var(--w-trafficlights)]"
         :class="spacerClass"
       />
     </Transition>
@@ -37,10 +37,9 @@
       <!-- Nav Group -->
       <PageHeaderNavGroup />
       <h1
-        v-if="title"
         class="text-xl font-semibold select-none whitespace-nowrap text-main leading-none"
       >
-        {{ title }}
+        {{ title || '' }}
       </h1>
 
       <!-- Left Slot -->
@@ -101,8 +100,4 @@ const spacerClass = computed(() => {
 });
 </script>
 
-<style scoped>
-.w-tl {
-  width: var(--w-trafficlights);
-}
-</style>
+<style scoped></style>

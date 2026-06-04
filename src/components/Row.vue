@@ -30,7 +30,7 @@ const style = computed(() => {
   }
   if (props.ratio.length) {
     obj['grid-template-columns'] = props.ratio
-      .map((r) => `minmax(0, ${r}fr)`)
+      .map((r) => (r === 0.3 ? 'minmax(40px, 0.3fr)' : `minmax(0, ${r}fr)`))
       .join(' ');
   }
   if (props.gridTemplateColumns) {

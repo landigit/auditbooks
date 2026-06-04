@@ -3,6 +3,7 @@
     <!-- Search Bar Button -->
     <Button
       class="px-3 py-2 rounded-r-none bg-canvas-muted"
+      style="transition: none !important"
       :padding="false"
       @click="open"
     >
@@ -44,8 +45,10 @@
           v-for="(si, i) in suggestions"
           :key="`${i}-${si.label}`"
           :data-index="`search-suggestion-${i}`"
-          class="hover:bg-surface-hover cursor-pointer"
-          :class="idx === i ? 'border-main bg-surface-hover border-s-4' : ''"
+          class="hover:bg-surface-hover cursor-pointer border-s-4"
+          :class="
+            idx === i ? 'border-main bg-surface-hover' : 'border-transparent'
+          "
           @click="select(i)"
         >
           <!-- Search List Item -->
@@ -54,10 +57,7 @@
             style="height: var(--h-row-mid)"
           >
             <div class="flex items-center">
-              <p
-                :class="idx === i ? 'text-main' : 'text-description'"
-                :style="idx === i ? 'margin-left: -4px' : ''"
-              >
+              <p :class="idx === i ? 'text-main' : 'text-description'">
                 {{ si.label }}
               </p>
               <p
@@ -92,7 +92,7 @@
               :key="g"
               class="border border-border px-1 py-0.5 rounded-lg"
               :class="getGroupFilterButtonClass(g)"
-              @click="searcher!.set(g, !searcher!.filters.groupFilters[g])"
+              @click="toggleGroupFilter(g)"
             >
               {{ groupLabelMap[g] }}
             </button>
@@ -113,8 +113,8 @@
               v-for="s in ['skipTables', 'skipTransactions'] as const"
               :key="s"
               class="border border-border px-1 py-0.5 rounded-lg"
-              :class="{ 'bg-surface-hover': searcher?.filters[s] }"
-              @click="searcher?.set(s, !searcher?.filters[s])"
+              :class="{ 'bg-surface-hover': isSkipFilterActive(s) }"
+              @click="toggleSkipFilter(s)"
             >
               {{
                 s === 'skipTables' ? t`Skip Child Tables` : t`Skip Transactions`
@@ -123,21 +123,13 @@
           </div>
 
           <!-- Schema Name Filters -->
-          <div class="flex mt-1 gap-1 text-indicator-blue-text flex-wrap">
+          <div class="flex mt-1 gap-1 flex-wrap">
             <button
               v-for="sf in schemaFilters"
               :key="sf.value"
-              class="border px-1 py-0.5 rounded-lg border-indicator-blue-bg whitespace-nowrap"
-              :class="{
-                'bg-indicator-blue-bg':
-                  searcher?.filters.schemaFilters[sf.value],
-              }"
-              @click="
-                searcher?.set(
-                  sf.value,
-                  !searcher?.filters.schemaFilters[sf.value]
-                )
-              "
+              class="border px-1 py-0.5 rounded-lg whitespace-nowrap"
+              :class="getSchemaFilterClass(sf.value)"
+              @click="toggleSchemaFilter(sf.value)"
             >
               {{ sf.label }}
             </button>
@@ -158,17 +150,17 @@
             </button>
           </div>
 
-          <p v-if="searcher?.numSearches" class="ms-auto">
-            {{ t`${suggestions.length} out of ${searcher.numSearches}` }}
+          <p v-if="numSearches" class="ms-auto">
+            {{ t`${suggestions.length} out of ${numSearches}` }}
           </p>
 
           <div
-            v-if="(searcher?.numSearches ?? 0) > 50"
+            v-if="numSearches > 50"
             class="border border-border rounded flex justify-self-end ms-2"
           >
             <template
               v-for="c in allowedLimits.filter(
-                (c) => c < (searcher?.numSearches ?? 0) || c === -1
+                (c) => c < numSearches || c === -1
               )"
               :key="c + '-count'"
             >
@@ -190,7 +182,7 @@
 <script setup lang="ts">
 // --- Imports ---
 import { fyo } from 'src/initFyo';
-import { getBgTextColorClass } from 'src/utils/api/colors.js';
+import { getBgTextColorClass, getColorClass } from 'src/utils/api/colors.js';
 import { searcherKey, shortcutsKey } from 'src/utils/api/injectionKeys.js';
 import { docsPathMap } from 'src/utils/api/misc.js';
 import {
@@ -200,6 +192,7 @@ import {
   searchGroups,
 } from 'src/utils/api/search.js';
 import { useAppStore } from 'src/stores/app';
+import { useRouter } from 'vue-router';
 import {
   ref,
   computed,
@@ -208,6 +201,7 @@ import {
   onMounted,
   onActivated,
   onDeactivated,
+  triggerRef,
 } from 'vue';
 import Button from './Button.vue';
 import Modal from './Modal.vue';
@@ -221,6 +215,7 @@ type SchemaFilters = { value: string; label: string; index: number }[];
 const searcher = inject(searcherKey);
 const shortcuts = inject(shortcutsKey);
 const store = useAppStore();
+const router = useRouter();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 const idx = ref(0);
@@ -310,7 +305,15 @@ onDeactivated(() => {
 
 // --- Methods ---
 function openDocs() {
-  appIpc.openLink('https://landigit.com/auditbooks/' + docsPathMap.Search);
+  try {
+    close();
+    router.push({
+      name: 'Help',
+      params: { path: docsPathMap.Search?.split('/') || [] },
+    });
+  } catch (error) {
+    console.error('Error opening internal help:', error);
+  }
 }
 
 function getShortcuts() {
@@ -402,17 +405,101 @@ function scrollToHighlighted(): void {
 }
 
 function getGroupFilterButtonClass(g: SearchGroup): string {
-  if (!searcher?.value) {
+  try {
+    if (!searcher?.value) {
+      return '';
+    }
+
+    const isOn = searcher.value.filters.groupFilters[g];
+    const color = groupColorMap.value[g];
+    const borderClass =
+      getColorClass(color, 'border') || `border-indicator-${color}-bg`;
+
+    if (isOn) {
+      return `${getBgTextColorClass(color)} ${borderClass}`;
+    }
+
+    const textClass =
+      getColorClass(color, 'text') || `text-indicator-${color}-text`;
+    return `${textClass} ${borderClass}`;
+  } catch (e) {
     return '';
   }
+}
 
-  const isOn = searcher.value.filters.groupFilters[g];
-  const color = groupColorMap.value[g];
-  if (isOn) {
-    return `${getBgTextColorClass(color)} border-indicator-${color}-bg`;
+// --- Reactivity & Filter Helpers ---
+const numSearches = computed(() => {
+  try {
+    return searcher?.value?.numSearches ?? 0;
+  } catch (e) {
+    return 0;
   }
+});
 
-  return `text-indicator-${color}-text border-indicator-${color}-bg`;
+function isSkipFilterActive(s: 'skipTables' | 'skipTransactions'): boolean {
+  try {
+    return !!searcher?.value?.filters?.[s];
+  } catch (e) {
+    return false;
+  }
+}
+
+function isSchemaFilterActive(sf: string): boolean {
+  try {
+    return !!searcher?.value?.filters?.schemaFilters?.[sf];
+  } catch (e) {
+    return false;
+  }
+}
+
+function getSchemaFilterClass(sf: string): string {
+  try {
+    const isActive = isSchemaFilterActive(sf);
+    const borderClass = 'border-indicator-blue-bg';
+
+    if (isActive) {
+      return `${getBgTextColorClass('blue')} ${borderClass}`;
+    }
+
+    // Inactive text should be blue (resolved semantically to submitted status text)
+    const textClass = getColorClass('blue', 'text'); // text-indicator-submitted-text
+    return `${textClass} ${borderClass}`;
+  } catch (e) {
+    return 'text-indicator-submitted-text border-indicator-blue-bg';
+  }
+}
+
+function toggleGroupFilter(g: SearchGroup) {
+  try {
+    if (!searcher?.value) return;
+    const isOn = searcher.value.filters.groupFilters[g];
+    searcher.value.set(g, !isOn);
+    triggerRef(searcher);
+  } catch (error) {
+    console.error('Error toggling group filter:', error);
+  }
+}
+
+function toggleSkipFilter(s: 'skipTables' | 'skipTransactions') {
+  try {
+    if (!searcher?.value) return;
+    const isOn = searcher.value.filters[s];
+    searcher.value.set(s, !isOn);
+    triggerRef(searcher);
+  } catch (error) {
+    console.error('Error toggling skip filter:', error);
+  }
+}
+
+function toggleSchemaFilter(sf: string) {
+  try {
+    if (!searcher?.value) return;
+    const isOn = searcher.value.filters.schemaFilters[sf];
+    searcher.value.set(sf, !isOn);
+    triggerRef(searcher);
+  } catch (error) {
+    console.error('Error toggling schema filter:', error);
+  }
 }
 </script>
 

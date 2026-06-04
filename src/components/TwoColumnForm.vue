@@ -160,3 +160,24 @@ function setFormFields() {
   );
 }
 </script>
+
+<style scoped>
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .grid > .ps-4 {
+    padding-left: 1rem !important;
+    padding-bottom: 4px;
+  }
+
+  .grid > .pe-4 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+</style>

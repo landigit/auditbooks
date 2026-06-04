@@ -6,7 +6,7 @@
     <input
       v-show="showInput"
       ref="inputEl"
-      class="text-end"
+      class="text-right"
       :class="[inputClasses, containerClasses]"
       :type="inputType"
       inputmode="decimal"

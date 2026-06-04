@@ -686,7 +686,23 @@ export const tauriIpc: IPC = {
         const decodedPath = decodeURIComponent(relPath);
         const cleanPath = decodedPath.replace(/^\/+/, '');
         const appDir = await appDataDir();
+
+        let devSourcePaths: string[] = [];
+        try {
+          const resourcePath = await safeResolveResource(`books/${cleanPath}`);
+          const normalized = resourcePath.replace(/\\/g, '/');
+          const index = normalized.lastIndexOf('/src-tauri/');
+          if (index !== -1) {
+            const projectRoot = resourcePath.substring(0, index);
+            const devPath = await join(projectRoot, 'books', cleanPath);
+            devSourcePaths = [devPath];
+          }
+        } catch (err) {
+          console.error('[Tauri Fallback] Path resolution error:', err);
+        }
+
         const possiblePaths = [
+          ...devSourcePaths,
           await join(appDir, 'books', cleanPath),
           await join(appDir, '_up_', 'books', cleanPath),
           await join(appDir, '..', 'books', cleanPath),
@@ -697,6 +713,10 @@ export const tauriIpc: IPC = {
             return await readTextFile(tPath);
           }
         }
+        console.error(
+          '[Tauri Fallback] None of the fallback paths exist. Tried:',
+          possiblePaths
+        );
       } catch (innerError) {
         console.error('[Tauri Fallback] Error in fallback load:', innerError);
       }
@@ -729,7 +749,23 @@ export const tauriIpc: IPC = {
         const decodedPath = decodeURIComponent(relPath);
         const cleanPath = decodedPath.replace(/^\/+/, '');
         const appDir = await appDataDir();
+
+        let devSourcePaths: string[] = [];
+        try {
+          const resourcePath = await safeResolveResource(`books/${cleanPath}`);
+          const normalized = resourcePath.replace(/\\/g, '/');
+          const index = normalized.lastIndexOf('/src-tauri/');
+          if (index !== -1) {
+            const projectRoot = resourcePath.substring(0, index);
+            const devPath = await join(projectRoot, 'books', cleanPath);
+            devSourcePaths = [devPath];
+          }
+        } catch (err) {
+          console.error('[Tauri Fallback] Path resolution error:', err);
+        }
+
         const possiblePaths = [
+          ...devSourcePaths,
           await join(appDir, 'books', cleanPath),
           await join(appDir, '_up_', 'books', cleanPath),
           await join(appDir, '..', 'books', cleanPath),

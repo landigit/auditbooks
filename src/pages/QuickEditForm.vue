@@ -270,3 +270,18 @@ onMounted(async () => {
   setShortcuts();
 });
 </script>
+
+<style scoped>
+@media (max-width: 640px) {
+  .items-center.border-b.border-border {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+}
+</style>

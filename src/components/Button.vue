@@ -59,7 +59,7 @@ const computedClasses = computed(() => {
 </script>
 
 <style scoped>
-button:focus {
+button:active {
   filter: brightness(0.95);
 }
 </style>

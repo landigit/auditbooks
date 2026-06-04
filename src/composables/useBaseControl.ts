@@ -95,7 +95,7 @@ export function useBaseControl(
     const classes: string[] = [];
     classes.push(...baseInputClasses.value);
     if (props.textRight ?? isNumeric(props.df)) {
-      classes.push('text-end');
+      classes.push('text-right');
     }
     classes.push(sizeClasses.value);
     classes.push(inputReadOnlyClasses.value);

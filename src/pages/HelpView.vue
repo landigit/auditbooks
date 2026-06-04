@@ -282,6 +282,7 @@ watch(
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text-main);
 }
+
 .help-content :deep(h2) {
   font-size: 1.75rem;
   font-weight: 700;
@@ -289,6 +290,7 @@ watch(
   margin-bottom: 1.25rem;
   color: var(--color-text-main);
 }
+
 .help-content :deep(h3) {
   font-size: 1.375rem;
   font-weight: 600;
@@ -296,32 +298,38 @@ watch(
   margin-bottom: 1rem;
   color: var(--color-text-main);
 }
+
 .help-content :deep(p) {
   margin-bottom: 1.25rem;
   line-height: 1.75;
   color: var(--color-text-muted);
 }
+
 .help-content :deep(hr) {
   margin: 2.5rem 0;
   border: 0;
   border-top: 1px solid var(--color-border);
   opacity: 0.6;
 }
+
 .help-content :deep(ul) {
   list-style-type: disc;
   margin-bottom: 1.5rem;
   margin-left: 1.5rem;
   color: var(--color-text-muted);
 }
+
 .help-content :deep(ol) {
   list-style-type: decimal;
   margin-bottom: 1.5rem;
   margin-left: 1.5rem;
   color: var(--color-text-muted);
 }
+
 .help-content :deep(li) {
   margin-bottom: 0.625rem;
 }
+
 .help-content :deep(table) {
   width: 100%;
   margin-top: 2rem;
@@ -330,16 +338,19 @@ watch(
   border: 1px solid var(--color-border);
   font-size: 0.875rem;
 }
+
 .help-content :deep(th),
 .help-content :deep(td) {
   padding: 0.75rem;
   border: 1px solid var(--color-border);
   text-align: left;
 }
+
 .help-content :deep(th) {
   background-color: var(--color-surface-gray-1);
   font-weight: 700;
 }
+
 .help-content :deep(img) {
   max-width: 100%;
   height: auto;
@@ -354,6 +365,7 @@ watch(
   margin-left: auto;
   margin-right: auto;
 }
+
 .help-content :deep(code) {
   background-color: var(--color-surface-gray-1);
   padding: 0.2rem 0.4rem;
@@ -362,14 +374,17 @@ watch(
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   color: #d11141;
 }
+
 .help-content :deep(a) {
   color: var(--color-blue-600);
   text-decoration: none;
   font-weight: 500;
 }
+
 .help-content :deep(a:hover) {
   text-decoration: underline;
 }
+
 .help-content :deep(.help-alert) {
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -377,21 +392,55 @@ watch(
   border-radius: 0 0.5rem 0.5rem 0;
   border-left-width: 4px;
 }
+
 .help-content :deep(.alert-tip) {
   background-color: #f0fdf4;
   border-left-color: #22c55e;
+  color: #166534;
 }
+
 .help-content :deep(.alert-info) {
   background-color: #eff6ff;
   border-left-color: #3b82f6;
+  color: #1e40af;
 }
+
 .help-content :deep(.alert-warning) {
   background-color: #fffbeb;
   border-left-color: #f59e0b;
+  color: #854d0e;
 }
+
 .help-content :deep(.alert-important),
 .help-content :deep(.alert-caution) {
   background-color: #fef2f2;
   border-left-color: #ef4444;
+  color: #991b1b;
+}
+
+/* Dark Mode Overrides */
+.dark .help-content :deep(.alert-tip) {
+  background-color: rgba(34, 197, 94, 0.15);
+  border-left-color: #22c55e;
+  color: #bbf7d0;
+}
+
+.dark .help-content :deep(.alert-info) {
+  background-color: rgba(59, 130, 246, 0.15);
+  border-left-color: #3b82f6;
+  color: #bfdbfe;
+}
+
+.dark .help-content :deep(.alert-warning) {
+  background-color: rgba(245, 158, 11, 0.15);
+  border-left-color: #f59e0b;
+  color: #fef08a;
+}
+
+.dark .help-content :deep(.alert-important),
+.dark .help-content :deep(.alert-caution) {
+  background-color: rgba(239, 68, 68, 0.15);
+  border-left-color: #ef4444;
+  color: #fecaca;
 }
 </style>

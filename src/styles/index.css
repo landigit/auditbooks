@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=block');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=block');
 
 @font-face {
   font-family: 'Inter';
   font-weight: 100 900;
-  font-display: swap;
+  font-display: block;
   font-style: normal;
   src: url('../assets/fonts/Inter.var.woff2') format('woff2');
 }
@@ -12,7 +12,7 @@
 @font-face {
   font-family: 'GoogleSansFlex';
   font-weight: 100 900;
-  font-display: swap;
+  font-display: block;
   font-style: normal;
   src: url('../assets/fonts/GoogleSansFlex.Var.woff2') format('woff2');
 }
@@ -20,7 +20,7 @@
 @font-face {
   font-family: 'RedHatText';
   font-weight: 100 900;
-  font-display: swap;
+  font-display: block;
   font-style: normal;
   src: url('../assets/fonts/RedHatText-Var.woff2') format('woff2');
 }
@@ -285,10 +285,10 @@
   --color-indicator-indigo-text: white;
   --color-indicator-pink-bg: var(--color-pink-500);
   --color-indicator-pink-text: white;
-  --color-indicator-purple-bg: var(--color-purple-500);
-  --color-indicator-purple-text: white;
-  --color-indicator-teal-bg: var(--color-teal-500);
-  --color-indicator-teal-text: white;
+  --color-indicator-purple-bg: var(--color-purple-100);
+  --color-indicator-purple-text: var(--color-purple-700);
+  --color-indicator-teal-bg: var(--color-teal-100);
+  --color-indicator-teal-text: var(--color-teal-700);
 
   --color-button-primary-bg: var(--color-black);
   --color-button-primary-text: white;
@@ -391,8 +391,10 @@
     --color-indicator-blue-bg: var(--color-blue-600);
     --color-indicator-indigo-bg: var(--color-indigo-600);
     --color-indicator-pink-bg: var(--color-pink-600);
-    --color-indicator-purple-bg: var(--color-purple-600);
-    --color-indicator-teal-bg: var(--color-teal-600);
+    --color-indicator-purple-bg: var(--color-purple-900);
+    --color-indicator-purple-text: var(--color-purple-200);
+    --color-indicator-teal-bg: var(--color-teal-900);
+    --color-indicator-teal-text: var(--color-teal-200);
 
     --color-indicator-unpaid-bg: var(--color-orange-900);
     --color-indicator-unpaid-text: var(--color-orange-200);
@@ -823,4 +825,19 @@ input[type='number']::-webkit-inner-spin-button {
 
 .text-muted {
   color: var(--color-muted-foreground);
+}
+
+/* Disable transitions inside headers to keep theme swaps instant */
+.page-header,
+.page-header *,
+.form-header,
+.form-header * {
+  transition: none !important;
+}
+
+/* Globally disable all transitions during theme toggling to prevent transition lag/glitches */
+.theme-toggling,
+.theme-toggling * {
+  transition: none !important;
+  animation: none !important;
 }

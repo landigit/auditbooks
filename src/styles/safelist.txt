@@ -1,2 +1,2 @@
-bg-indicator-success-bg bg-indicator-unpaid-bg bg-indicator-error-bg bg-indicator-submitted-bg bg-indicator-draft-bg bg-indicator-yellow-bg
-text-indicator-success-text text-indicator-unpaid-text text-indicator-error-text text-indicator-submitted-text text-indicator-draft-text text-indicator-yellow-text
+bg-indicator-success-bg bg-indicator-unpaid-bg bg-indicator-error-bg bg-indicator-submitted-bg bg-indicator-draft-bg bg-indicator-yellow-bg bg-indicator-purple-bg bg-indicator-teal-bg
+text-indicator-success-text text-indicator-unpaid-text text-indicator-error-text text-indicator-submitted-text text-indicator-draft-text text-indicator-yellow-text text-indicator-purple-text text-indicator-teal-text

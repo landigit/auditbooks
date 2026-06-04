@@ -100,12 +100,26 @@ const theme = computed(() => appStore.theme);
 const languageDirection = computed(() => appStore.languageDirection);
 
 onMounted(async () => {
+  try {
+    document.documentElement.classList.add('theme-toggling');
+  } catch (err) {
+    console.error(err);
+  }
+
   await setInitialScreen();
   const themeSetting = (fyo.singles.SystemSettings?.theme as any) || 'auto';
   const fontSetting = fyo.singles.SystemSettings?.font;
   setTheme(themeSetting);
   setFont(fontSetting as string);
   appStore.theme = themeSetting;
+
+  setTimeout(() => {
+    try {
+      document.documentElement.classList.remove('theme-toggling');
+    } catch (err) {
+      console.error(err);
+    }
+  }, 100);
 });
 
 async function setInitialScreen(): Promise<void> {
@@ -293,6 +307,12 @@ async function showDbSelector(): Promise<void> {
 }
 
 async function toggleDarkMode() {
+  try {
+    document.documentElement.classList.add('theme-toggling');
+  } catch (err) {
+    console.error(err);
+  }
+
   const isCurrentlyDark = appStore.isDark;
 
   appStore.theme = isCurrentlyDark ? 'light' : 'dark';
@@ -302,5 +322,13 @@ async function toggleDarkMode() {
   const doc = await fyo.doc.getDoc('SystemSettings');
   await doc.set('theme', appStore.theme);
   await doc.sync();
+
+  setTimeout(() => {
+    try {
+      document.documentElement.classList.remove('theme-toggling');
+    } catch (err) {
+      console.error(err);
+    }
+  }, 50);
 }
 </script>

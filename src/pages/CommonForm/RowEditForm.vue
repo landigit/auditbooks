@@ -7,7 +7,9 @@
       class="sticky top-0 border-b border-border bg-surface"
       style="z-index: 1"
     >
-      <div class="flex items-center justify-between px-4 h-row-largest">
+      <div
+        class="flex items-center justify-between px-4 h-row-largest border-b border-border"
+      >
         <!-- Close Button -->
         <Button :icon="true" @click="emit('close')">
           <lucide-icon name="x" class="w-4 h-4" />
