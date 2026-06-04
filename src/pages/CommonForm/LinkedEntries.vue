@@ -29,7 +29,7 @@
     <!-- Linked Entry List -->
     <div
       v-else-if="sequence.length"
-      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2 border-t border-border"
+      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2"
     >
       <div
         v-for="sn of sequence"

@@ -4,7 +4,7 @@
   >
     <!-- Quick edit Tool bar -->
     <div
-      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-surface"
+      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-surface border-b border-border"
       style="z-index: 1"
     >
       <!-- Close Button  -->
@@ -29,7 +29,7 @@
     <!-- Name and image -->
     <div
       v-if="doc && (titleField || imageField)"
-      class="items-center border-b border-t border-border"
+      class="items-center border-b border-border"
       :class="imageField ? 'grid' : 'flex justify-center'"
       :style="{
         height: `calc(var(--h-row-mid) * ${!!imageField ? '2 + 1px' : '1'})`,

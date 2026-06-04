@@ -1,14 +1,14 @@
 <template>
-  <div class="py-2 h-full flex justify-between flex-col bg-sidebar relative">
+  <div class="h-full flex justify-between flex-col bg-sidebar relative">
     <div class="window-no-drag">
       <!-- Company name -->
       <div
-        class="px-4 flex flex-row items-center justify-between mb-4"
+        class="px-4 flex flex-row justify-between h-row-largest border-b border-border"
         :class="[
           store.platform !== 'Windows' ? 'window-drag' : '',
           store.platform === 'Mac' && languageDirection === 'ltr'
-            ? 'mt-10'
-            : 'mt-2',
+            ? 'pt-6 items-end pb-3'
+            : 'items-center',
         ]"
       >
         <h6
@@ -20,51 +20,55 @@
       </div>
 
       <!-- Sidebar Items -->
-      <div v-for="group in groups" :key="group.label" class="window-no-drag">
-        <div
-          class="px-4 flex items-center cursor-pointer hover:bg-surface-hover h-10"
-          :class="
-            isGroupActive(group) && !group.items
-              ? 'bg-sidebar-active-bg text-sidebar-active-text border-s-2 border-sidebar-active-border'
-              : 'text-muted'
-          "
-          @click="routeToSidebarItem(group)"
-        >
-          <component
-            :is="group.icon === 'calendar-range' ? 'LucideIcon' : Icon"
-            class="flex-shrink-0"
-            :name="group.icon"
-            :size="group.iconSize || '18'"
-            :height="group.iconHeight ?? 0"
-            :active="!!isGroupActive(group)"
-            :class="isGroupActive(group) && !group.items ? '-ms-1' : ''"
-          />
+      <div class="window-no-drag pt-2">
+        <div v-for="group in groups" :key="group.label" class="window-no-drag">
           <div
-            class="ms-2 text-lg"
+            class="px-4 flex items-center cursor-pointer hover:bg-surface-hover h-10"
             :class="
-              isGroupActive(group) && !group.items ? 'text-main' : 'text-muted'
-            "
-          >
-            {{ group.label }}
-          </div>
-        </div>
-
-        <!-- Expanded Group -->
-        <div v-if="group.items && isGroupActive(group)">
-          <div
-            v-for="item in group.items"
-            :key="item.label"
-            class="text-base h-10 ps-10 cursor-pointer flex items-center hover:bg-surface-hover"
-            :class="
-              isItemActive(item)
+              isGroupActive(group) && !group.items
                 ? 'bg-sidebar-active-bg text-sidebar-active-text border-s-2 border-sidebar-active-border'
                 : 'text-muted'
             "
-            @click="routeToSidebarItem(item)"
+            @click="routeToSidebarItem(group)"
           >
-            <p :style="isItemActive(item) ? 'margin-left: -4px' : ''">
-              {{ item.label }}
-            </p>
+            <component
+              :is="group.icon === 'calendar-range' ? 'LucideIcon' : Icon"
+              class="flex-shrink-0"
+              :name="group.icon"
+              :size="group.iconSize || '18'"
+              :height="group.iconHeight ?? 0"
+              :active="!!isGroupActive(group)"
+              :class="isGroupActive(group) && !group.items ? '-ms-1' : ''"
+            />
+            <div
+              class="ms-2 text-lg"
+              :class="
+                isGroupActive(group) && !group.items
+                  ? 'text-main'
+                  : 'text-muted'
+              "
+            >
+              {{ group.label }}
+            </div>
+          </div>
+
+          <!-- Expanded Group -->
+          <div v-if="group.items && isGroupActive(group)">
+            <div
+              v-for="item in group.items"
+              :key="item.label"
+              class="text-base h-10 ps-10 cursor-pointer flex items-center hover:bg-surface-hover"
+              :class="
+                isItemActive(item)
+                  ? 'bg-sidebar-active-bg text-sidebar-active-text border-s-2 border-sidebar-active-border'
+                  : 'text-muted'
+              "
+              @click="routeToSidebarItem(item)"
+            >
+              <p :style="isItemActive(item) ? 'margin-left: -4px' : ''">
+                {{ item.label }}
+              </p>
+            </div>
           </div>
         </div>
       </div>

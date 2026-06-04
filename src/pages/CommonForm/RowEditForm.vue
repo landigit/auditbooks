@@ -28,7 +28,6 @@
         </div>
       </div>
       <FormHeader
-        class="border-t border-border"
         :form-title="t`Row ${index + 1}`"
         :form-sub-title="fieldlabel"
       />

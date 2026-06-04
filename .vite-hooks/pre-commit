@@ -1,5 +1,5 @@
 pnpm check
-pnpm format
 pnpm run test
 pnpm run build
+vp format
 vp staged
