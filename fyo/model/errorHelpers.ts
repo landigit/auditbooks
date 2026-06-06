@@ -1,25 +1,25 @@
-import { Fyo } from 'fyo';
-import { DuplicateEntryError, NotFoundError } from 'fyo/utils/errors';
+import { Fyo } from "fyo";
+import { DuplicateEntryError, NotFoundError } from "fyo/utils/errors";
 import {
   DynamicLinkField,
   Field,
   FieldTypeEnum,
   TargetField,
-} from 'schemas/types';
-import { Doc } from './doc';
+} from "schemas/types";
+import { Doc } from "./doc";
 
 type NotFoundDetails = { label: string; value: string };
 
 export async function getDbSyncError(
   err: Error,
   doc: Doc,
-  fyo: Fyo
+  fyo: Fyo,
 ): Promise<Error> {
-  if (err.message.includes('UNIQUE constraint failed:')) {
+  if (err.message.includes("UNIQUE constraint failed:")) {
     return getDuplicateEntryError(err, doc);
   }
 
-  if (err.message.includes('FOREIGN KEY constraint failed')) {
+  if (err.message.includes("FOREIGN KEY constraint failed")) {
     return getNotFoundError(err, doc, fyo);
   }
   return err;
@@ -27,7 +27,7 @@ export async function getDbSyncError(
 
 function getDuplicateEntryError(
   err: Error,
-  doc: Doc
+  doc: Doc,
 ): Error | DuplicateEntryError {
   const matches = err.message.match(/UNIQUE constraint failed:\s(\w+)\.(\w+)$/);
   if (!matches) {
@@ -55,7 +55,7 @@ function getDuplicateEntryError(
 async function getNotFoundError(
   err: Error,
   doc: Doc,
-  fyo: Fyo
+  fyo: Fyo,
 ): Promise<NotFoundError> {
   const notFoundError = new NotFoundError(fyo.t`Cannot perform operation.`);
   notFoundError.stack = err.stack;
@@ -74,7 +74,7 @@ async function getNotFoundError(
 
 async function getNotFoundDetails(
   doc: Doc,
-  fyo: Fyo
+  fyo: Fyo,
 ): Promise<NotFoundDetails | null> {
   /**
    * Since 'FOREIGN KEY constraint failed' doesn't inform
@@ -95,7 +95,7 @@ async function getNotFoundDetails(
 async function getNotFoundDetailsIfDoesNotExists(
   field: Field,
   doc: Doc,
-  fyo: Fyo
+  fyo: Fyo,
 ): Promise<NotFoundDetails | null> {
   const value = doc.get(field.fieldname);
   if (field.fieldtype === FieldTypeEnum.Link && value) {
@@ -119,7 +119,7 @@ async function getNotFoundDetailsIfDoesNotExists(
 async function getNotFoundLinkDetails(
   field: TargetField,
   value: string,
-  fyo: Fyo
+  fyo: Fyo,
 ): Promise<NotFoundDetails | null> {
   const { target } = field;
   const exists = await fyo.db.exists(target, value);
@@ -134,7 +134,7 @@ async function getNotFoundDynamicLinkDetails(
   field: DynamicLinkField,
   value: string,
   fyo: Fyo,
-  doc: Doc
+  doc: Doc,
 ): Promise<NotFoundDetails | null> {
   const { references } = field;
   const target = doc.get(references);
@@ -152,7 +152,7 @@ async function getNotFoundDynamicLinkDetails(
 
 async function getNotFoundTableDetails(
   value: Doc[],
-  fyo: Fyo
+  fyo: Fyo,
 ): Promise<NotFoundDetails | null> {
   for (const childDoc of value) {
     const details = await getNotFoundDetails(childDoc, fyo);

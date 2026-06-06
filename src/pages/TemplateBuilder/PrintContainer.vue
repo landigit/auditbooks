@@ -1,57 +1,69 @@
 <template>
-  <ScaledContainer
-    ref="scaledContainer"
-    :scale="Math.max(scale, 0.1)"
-    :width="width"
-    :height="height"
-    :show-overflow="true"
-    class="mx-auto shadow-lg"
-  >
-    <ErrorBoundary
-      v-if="!error"
-      :propagate="false"
-      @error-captured="handleErrorCaptured"
+  <view v-if="!isLynx">
+    <ScaledContainer
+      ref="scaledContainer"
+      :scale="Math.max(scale, 0.1)"
+      :width="width"
+      :height="height"
+      :show-overflow="true"
+      class="mx-auto shadow-lg"
     >
-      <!-- Template -->
-      <component
-        :is="templateComponent"
-        class="flex-1 bg-surface"
-        :doc="values.doc"
-        :print="values.print"
-      />
-    </ErrorBoundary>
+      <ErrorBoundary
+        v-if="!error"
+        :propagate="false"
+        @error-captured="handleErrorCaptured"
+      >
+        <!-- Template -->
+        <component
+          :is="templateComponent"
+          class="flex-1 bg-surface"
+          :doc="values.doc"
+          :print="values.print"
+        />
+      </ErrorBoundary>
 
-    <!-- Compilation Error -->
-    <view
-      v-else
-      class="h-full bg-indicator-red-bg w-full text-2xl text-main flex flex-col gap-4"
-    >
-      <text class="text-4xl font-bold text-error p-4 border-b border-error">
-        {{ error.name }}
-      </text>
-      <text class="px-4 font-semibold">{{ error.message }}</text>
-      <pre v-if="error.detail" class="px-4 text-xl text-description">{{
-        error.detail
-      }}</pre>
+      <!-- Compilation Error -->
+      <view
+        v-else
+        class="h-full bg-indicator-red-bg w-full text-2xl text-main flex flex-col gap-4"
+      >
+        <text class="text-4xl font-bold text-error p-4 border-b border-error">
+          {{ error.name }}
+        </text>
+        <text class="px-4 font-semibold">{{ error.message }}</text>
+        <pre v-if="error.detail" class="px-4 text-xl text-description">{{
+          error.detail
+        }}</pre>
+      </view>
+    </ScaledContainer>
+  </view>
+  <view v-else class="Container dark">
+    <view class="Card">
+      <view class="Header">
+        <text class="Title">Print Container</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
+      </view>
     </view>
-  </ScaledContainer>
+  </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from "vue";
 import {
   compile as compilerCompile,
   CompilerError,
   generateCodeFrame,
   SourceLocation,
-} from '@vue/compiler-dom';
-import { Verb } from 'fyo/telemetry/types';
-import ErrorBoundary from 'src/components/ErrorBoundary.vue';
-import { getPathAndMakePDF } from 'src/utils/printTemplates';
-import { PrintValues } from 'src/utils/types';
-import ScaledContainer from './ScaledContainer.vue';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
+} from "@vue/compiler-dom";
+import { Verb } from "fyo/telemetry/types";
+import ErrorBoundary from "src/components/ErrorBoundary.vue";
+import { getPathAndMakePDF } from "src/utils/printTemplates";
+import { PrintValues } from "src/utils/types";
+import ScaledContainer from "./ScaledContainer.vue";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
 
 const baseSafeTemplate = `<main class="h-full w-full bg-surface">
   <text class="p-4 text-indicator-red-text">
@@ -74,7 +86,7 @@ const props = withDefaults(
     scale: 0.65,
     width: 21,
     height: 29.7,
-  }
+  },
 );
 
 // Template Refs
@@ -82,7 +94,7 @@ const scaledContainer = ref<InstanceType<typeof ScaledContainer> | null>(null);
 
 // Reactive State
 const error = ref<{ name: string; message: string; detail?: string } | null>(
-  null
+  null,
 );
 
 // Computed Properties
@@ -94,13 +106,13 @@ const templateComponent = computed(() => {
 
   return {
     template: templateHtml,
-    props: ['doc', 'print'],
+    props: ["doc", "print"],
     computed: {
       fyo() {
         return {};
       },
       platform() {
-        return '';
+        return "";
       },
     },
   };
@@ -112,7 +124,7 @@ const getCodeFrame = (loc: SourceLocation) => {
 };
 
 const onError = (compilerError: CompilerError) => {
-  const codeframe = compilerError.loc ? getCodeFrame(compilerError.loc) : '';
+  const codeframe = compilerError.loc ? getCodeFrame(compilerError.loc) : "";
 
   error.value = {
     name: t`Template Compilation Error`,
@@ -137,8 +149,8 @@ const handleErrorCaptured = (err: unknown) => {
 
   const message = err.message;
   let name = err.name;
-  let detail = '';
-  if (name === 'TypeError' && message.includes('Cannot read')) {
+  let detail = "";
+  if (name === "TypeError" && message.includes("Cannot read")) {
     name = t`Invalid Key Error`;
     detail = t`Please check Key Hints for valid key names`;
   }
@@ -148,7 +160,7 @@ const handleErrorCaptured = (err: unknown) => {
 
 const savePDF = async (name?: string, shouldPrint?: boolean) => {
   const innerHTML = scaledContainer.value?.$el.children[0].innerHTML;
-  if (typeof innerHTML !== 'string') {
+  if (typeof innerHTML !== "string") {
     return;
   }
 
@@ -158,7 +170,7 @@ const savePDF = async (name?: string, shouldPrint?: boolean) => {
     props.width,
     props.height,
     props.values.print.font as string,
-    shouldPrint
+    shouldPrint,
   );
 
   fyo.telemetry.log(Verb.Printed, props.printSchemaName);
@@ -174,7 +186,7 @@ watch(
   () => props.template,
   (value: string) => {
     compile(value);
-  }
+  },
 );
 
 // Lifecycles

@@ -14,14 +14,13 @@
     "build": "rsbuild build",
     "build:lynx": "rspeedy build",
     "type": "vue-tsc --noEmit",
-    "lint": "vp lint .",
-    "lint:fix": "vp lint . --fix && vp fmt .",
-    "format": "vp fmt .",
+    "lint": "rslint .",
+    "lint:fix": "rslint . --fix && prettier --write .",
+    "format": "prettier --write .",
     "test": "bun --bun rstest",
     "test:watch": "bun --bun rstest --watch",
-    "check": "bun run lint && bun run type",
-    "full-check": "bun run check && bun run test",
-    "prepare": "vp config"
+    "check": "bun run type && bun run lint",
+    "full-check": "bun run check && bun run test"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.4.2",
@@ -41,8 +40,7 @@
     "tailwind-merge": "3.5.0",
     "vue": "3.5.33",
     "vue-lynx": "0.4.0",
-    "vue-router": "4.6.4",
-    "vite": "npm:@voidzero-dev/vite-plus-core@latest"
+    "vue-router": "5"
   },
   "devDependencies": {
     "@codemirror/language": "^6.12.3",
@@ -53,6 +51,7 @@
     "@lynx-js/rspeedy": "^0.13.5",
     "@rsbuild/core": "^1.0.0",
     "@rsbuild/plugin-vue": "^1.2.6",
+    "@rslint/core": "^0.5.3",
     "@rstest/core": "^0.10.3",
     "@types/assert": "1.5.11",
     "@types/node": "20.19.39",
@@ -69,20 +68,19 @@
     "jsdom": "25.0.1",
     "playwright": "1.59.1",
     "postcss": "^8.5.15",
+    "prettier": "^3.3.0",
     "tailwindcss": "3.4.17",
     "tslib": "2.8.1",
     "tsx": "4.22.0",
     "typescript": "5.9.3",
+    "unplugin-vue-router": "^0.19.2",
     "vue-tsc": "2.2.12",
-    "yargs": "17.7.2",
-    "vite-plus": "latest"
+    "yargs": "17.7.2"
   },
   "overrides": {
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.43.0",
-    "@codemirror/language": "^6.12.3",
-    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+    "@codemirror/language": "^6.12.3"
   },
   "homepage": "https://landigit.com",
   "repository": {

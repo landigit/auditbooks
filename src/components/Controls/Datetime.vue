@@ -35,19 +35,19 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { computed, ref } from 'vue';
-import { fyo } from 'src/initFyo';
-import { DateTimePicker } from 'src/components/ui';
+import { computed, ref } from "vue";
+import { fyo } from "src/initFyo";
+import { DateTimePicker } from "src/components/ui";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 // --- Props & Emits ---
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -56,9 +56,9 @@ const props = withDefaults(defineProps<BaseControlProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
 }>();
 
 // --- State ---

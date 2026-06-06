@@ -1,20 +1,20 @@
-import type { IPC } from 'utils/ipc/types';
-import { IPC_ACTIONS } from 'utils/messages';
+import type { IPC } from "utils/ipc/types";
+import { IPC_ACTIONS } from "utils/messages";
 
 // Only polyfill if we're not running in Electron where window.ipc is already set
-if (typeof window !== 'undefined' && !window.ipc) {
-  const BACKEND_URL = 'http://localhost:6970/api/ipc';
+if (typeof window !== "undefined" && !window.ipc) {
+  const BACKEND_URL = "http://localhost:6970/api/ipc";
 
   // Helper to route IPC calls to our lightweight local HTTP backend
   async function callBackend(
     action: string,
-    args: unknown[] = []
+    args: unknown[] = [],
   ): Promise<any> {
     try {
       const response = await fetch(BACKEND_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ action, args }),
       });
@@ -35,13 +35,13 @@ if (typeof window !== 'undefined' && !window.ipc) {
   // Helper for action listeners expecting a BackendResponse structure: { data?: unknown, error?: unknown }
   async function callBackendWrapped(
     action: string,
-    args: unknown[] = []
+    args: unknown[] = [],
   ): Promise<any> {
     try {
       const response = await fetch(BACKEND_URL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ action, args }),
       });
@@ -52,7 +52,7 @@ if (typeof window !== 'undefined' && !window.ipc) {
         } catch {
           return {
             error: {
-              name: 'Error',
+              name: "Error",
               message: `HTTP error! status: ${response.status}`,
             },
           };
@@ -62,7 +62,7 @@ if (typeof window !== 'undefined' && !window.ipc) {
     } catch (error: any) {
       return {
         error: {
-          name: error.name || 'Error',
+          name: error.name || "Error",
           message: error.message || String(error),
           stack: error.stack,
         },
@@ -95,10 +95,10 @@ if (typeof window !== 'undefined' && !window.ipc) {
       window.location.reload();
     },
     minimizeWindow() {
-      console.log('minimizeWindow (stub)');
+      console.log("minimizeWindow (stub)");
     },
     toggleMaximize() {
-      console.log('toggleMaximize (stub)');
+      console.log("toggleMaximize (stub)");
     },
     isMaximized() {
       return Promise.resolve(false);
@@ -107,7 +107,7 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return Promise.resolve(false);
     },
     closeWindow() {
-      console.log('closeWindow (stub)');
+      console.log("closeWindow (stub)");
     },
     async getCreds() {
       return callBackend(IPC_ACTIONS.GET_CREDS);
@@ -125,22 +125,22 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return callBackend(IPC_ACTIONS.SELECT_FILE, [options]);
     },
     async getSaveFilePath(options: any) {
-      const defaultPath = options?.defaultPath || '';
+      const defaultPath = options?.defaultPath || "";
       if (
-        defaultPath.toLowerCase().endsWith('.pdf') ||
-        defaultPath.toLowerCase().includes('.pdf')
+        defaultPath.toLowerCase().endsWith(".pdf") ||
+        defaultPath.toLowerCase().includes(".pdf")
       ) {
         return { canceled: false, filePath: defaultPath };
       }
 
-      const defaultName = defaultPath.replace('.db', '') || 'company';
-      const name = window.prompt('Enter company/file name:', defaultName);
+      const defaultName = defaultPath.replace(".db", "") || "company";
+      const name = window.prompt("Enter company/file name:", defaultName);
       if (!name) return { canceled: true, filePath: undefined };
       const safeName = name
-        .replace(/\.books\.db$/i, '')
-        .replace(/\.books$/i, '')
-        .replace(/\.db$/i, '')
-        .replace(/[^a-zA-Z0-9 ._-]/g, '_');
+        .replace(/\.books\.db$/i, "")
+        .replace(/\.books$/i, "")
+        .replace(/\.db$/i, "")
+        .replace(/[^a-zA-Z0-9 ._-]/g, "_");
       const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [
         safeName,
       ]);
@@ -150,10 +150,10 @@ if (typeof window !== 'undefined' && !window.ipc) {
       // In web dev mode, open a real browser file picker for .db files,
       // upload the selected file to the backend, and return its server path.
       return new Promise<any>((resolve) => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.db';
-        input.style.display = 'none';
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".db";
+        input.style.display = "none";
         document.body.appendChild(input);
 
         input.onchange = async () => {
@@ -166,16 +166,16 @@ if (typeof window !== 'undefined' && !window.ipc) {
           try {
             const arrayBuffer = await file.arrayBuffer();
             const response = await fetch(
-              'http://localhost:6970/api/upload-db',
+              "http://localhost:6970/api/upload-db",
               {
-                method: 'POST',
-                headers: { 'X-File-Name': encodeURIComponent(file.name) },
+                method: "POST",
+                headers: { "X-File-Name": encodeURIComponent(file.name) },
                 body: arrayBuffer,
-              }
+              },
             );
             const result = await response.json();
             if (!response.ok || result.error) {
-              throw new Error(result.error || 'Upload failed');
+              throw new Error(result.error || "Upload failed");
             }
             resolve({
               canceled: false,
@@ -185,7 +185,7 @@ if (typeof window !== 'undefined' && !window.ipc) {
               success: true,
             });
           } catch (err) {
-            console.error('DB file upload failed:', err);
+            console.error("DB file upload failed:", err);
             resolve({ canceled: true, filePaths: [], filePath: null });
           }
         };
@@ -202,10 +202,10 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return callBackend(IPC_ACTIONS.CHECK_DB_ACCESS, [filePath]);
     },
     async checkForUpdates() {
-      console.log('checkForUpdates (stub)');
+      console.log("checkForUpdates (stub)");
     },
     openLink(link: string) {
-      window.open(link, '_blank');
+      window.open(link, "_blank");
     },
     async deleteFile(filePath: string) {
       return callBackendWrapped(IPC_ACTIONS.DELETE_FILE, [filePath]);
@@ -214,13 +214,13 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return callBackend(IPC_ACTIONS.SAVE_DATA, [data, savePath]);
     },
     showItemInFolder(filePath: string) {
-      console.log('showItemInFolder (stub):', filePath);
+      console.log("showItemInFolder (stub):", filePath);
     },
     async makePDF(
       html: string,
       savePath: string,
       width: number,
-      height: number
+      height: number,
     ) {
       const base64Data = await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [
         html,
@@ -229,10 +229,10 @@ if (typeof window !== 'undefined' && !window.ipc) {
         height,
       ]);
       if (base64Data) {
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = `data:application/pdf;base64,${base64Data}`;
         const fileName =
-          savePath.split(/[\\/]/).pop()?.replace('.db', '') || 'document.pdf';
+          savePath.split(/[\\/]/).pop()?.replace(".db", "") || "document.pdf";
         link.download = fileName;
         document.body.appendChild(link);
         link.click();
@@ -241,11 +241,11 @@ if (typeof window !== 'undefined' && !window.ipc) {
       return true;
     },
     async printDocument(html: string, _width: number, _height: number) {
-      const iframe = document.createElement('iframe');
-      iframe.style.position = 'fixed';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = 'none';
+      const iframe = document.createElement("iframe");
+      iframe.style.position = "fixed";
+      iframe.style.width = "0";
+      iframe.style.height = "0";
+      iframe.style.border = "none";
       document.body.appendChild(iframe);
 
       const doc = iframe.contentWindow?.document || iframe.contentDocument;
@@ -275,18 +275,18 @@ if (typeof window !== 'undefined' && !window.ipc) {
     async getEnv() {
       return {
         isDevelopment: true,
-        platform: 'browser',
-        version: '0.37.8',
+        platform: "browser",
+        version: "0.37.8",
       };
     },
     openExternalUrl(url: string) {
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     },
     async showError(title: string, content: string) {
       alert(`${title}: ${content}`);
     },
     async sendError(body: string) {
-      console.error('sendError (stub):', body);
+      console.error("sendError (stub):", body);
     },
     async sendAPIRequest(endpoint: string, options: any) {
       return callBackend(IPC_ACTIONS.SEND_API_REQUEST, [endpoint, options]);

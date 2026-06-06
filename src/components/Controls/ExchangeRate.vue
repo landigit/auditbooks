@@ -47,17 +47,17 @@
   </view>
 </template>
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { safeParseFloat } from 'utils/index';
+import { ref, computed } from "vue";
+import { safeParseFloat } from "utils/index";
 
 const props = defineProps({
   disabled: { type: Boolean, default: false },
-  fromCurrency: { type: String, default: 'USD' },
-  toCurrency: { type: String, default: 'INR' },
+  fromCurrency: { type: String, default: "USD" },
+  toCurrency: { type: String, default: "INR" },
   exchangeRate: { type: Number, default: 75 },
 });
 
-const emit = defineEmits(['change']);
+const emit = defineEmits(["change"]);
 
 const fromValue = ref(1);
 const isSwapped = ref(false);
@@ -93,12 +93,12 @@ function rightChange(e: Event) {
     exchangeRate = fromValue.value / value;
   }
 
-  emit('change', exchangeRate);
+  emit("change", exchangeRate);
 }
 </script>
 <style scoped>
 @reference "../../styles/index.css";
-input[type='number'] {
+input[type="number"] {
   @apply w-12 bg-transparent p-0.5;
 }
 

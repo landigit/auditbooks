@@ -18,8 +18,8 @@ withDefaults(
     formSubTitle?: string;
   }>(),
   {
-    formTitle: '',
-    formSubTitle: '',
-  }
+    formTitle: "",
+    formSubTitle: "",
+  },
 );
 </script>

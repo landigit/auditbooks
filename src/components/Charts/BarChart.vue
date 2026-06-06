@@ -53,7 +53,7 @@
           :x="xs[i - 1]"
           text-anchor="middle"
         >
-          {{ j % skipXLabel === 0 ? formatX(xLabels[i - 1] || '') : '' }}
+          {{ j % skipXLabel === 0 ? formatX(xLabels[i - 1] || "") : "" }}
         </text>
       </template>
 
@@ -126,10 +126,10 @@
     >
       <view class="flex flex-col justify-center items-center">
         <text>
-          {{ xi > -1 ? formatX(xLabels[xi] as string) : '' }}
+          {{ xi > -1 ? formatX(xLabels[xi] as string) : "" }}
         </text>
         <text class="font-semibold">
-          {{ yi > -1 && xi > -1 ? format(points[yi]?.[xi] as number) : '' }}
+          {{ yi > -1 && xi > -1 ? format(points[yi]?.[xi] as number) : "" }}
         </text>
       </view>
     </Tooltip>
@@ -137,9 +137,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onDeactivated } from 'vue';
-import { prefixFormat } from 'src/utils/chart';
-import { Tooltip } from 'src/components/ui';
+import { ref, computed, onDeactivated } from "vue";
+import { prefixFormat } from "src/utils/chart";
+import { Tooltip } from "src/components/ui";
 
 interface ColorOption {
   positive: string;
@@ -195,9 +195,9 @@ const props = withDefaults(
     pointsPadding: 40,
     xLabelOffset: 20,
     yLabelOffset: 0,
-    gridColor: 'currentColor',
-    zeroLineColor: 'currentColor',
-    axisColor: 'currentColor',
+    gridColor: "currentColor",
+    zeroLineColor: "currentColor",
+    axisColor: "currentColor",
     axisThickness: 1,
     gridThickness: 0.5,
     yMin: null,
@@ -206,7 +206,7 @@ const props = withDefaults(
     formatY: prefixFormat,
     formatX: (v: string) => v,
     fontSize: 22,
-    fontColor: 'currentColor',
+    fontColor: "currentColor",
     bottom: 0,
     width: 28,
     left: 65,
@@ -214,12 +214,12 @@ const props = withDefaults(
     extendGridX: -20,
     tooltipDispDistThreshold: 20,
     drawZeroLine: true,
-  }
+  },
 );
 
 const xi = ref(-1);
 const yi = ref(-1);
-const activeColor = ref('transparent');
+const activeColor = ref("transparent");
 const tooltip = ref<InstanceType<typeof Tooltip> | null>(null);
 
 onDeactivated(() => {
@@ -248,7 +248,7 @@ const xs = computed(() => {
         padding.value +
         props.left +
         (i * (viewBoxWidth.value - props.left - 2 * padding.value)) /
-          (cnt - 1 || 1)
+          (cnt - 1 || 1),
     );
 });
 
@@ -257,7 +257,7 @@ const z = computed(() => getViewBoxY(0));
 const ys = computed(() => props.points.map((pp) => pp.map(getViewBoxY)));
 
 const xy = computed<[number, number[]][]>(() =>
-  xs.value.map((x, i) => [x, ys.value.map((y) => y[i] ?? 0)])
+  xs.value.map((x, i) => [x, ys.value.map((y) => y[i] ?? 0)]),
 );
 
 const min = computed(() => Math.min(...props.points.flat(), 0));
@@ -267,7 +267,7 @@ const axis = computed(
   () =>
     `M ${props.axisPadding + props.left} ${props.axisPadding} V ${
       props.viewBoxHeight - props.axisPadding - props.bottom
-    } H ${viewBoxWidth.value - props.axisPadding}`
+    } H ${viewBoxWidth.value - props.axisPadding}`,
 );
 
 const padding = computed(() => props.axisPadding + props.pointsPadding);
@@ -285,7 +285,7 @@ const xGrid = computed(() => {
   const yScales = Array(props.yLabelDivisions + 1)
     .fill(0)
     .map((_, i) => yScalerLocation(i));
-  return yScales.map((y) => `M ${lo} ${y} H ${ro}`).join(' ');
+  return yScales.map((y) => `M ${lo} ${y} H ${ro}`).join(" ");
 });
 
 const zLine = computed(() => {
@@ -306,15 +306,15 @@ interface RectInfo {
 }
 
 const rects = computed<RectInfo[][]>(() =>
-  xy.value.map(([x, yValues], i) => yValues.map((y, j) => getRect(x, y, i, j)))
+  xy.value.map(([x, yValues], i) => yValues.map((y, j) => getRect(x, y, i, j))),
 );
 
 const positiveRects = computed(() =>
-  rects.value.flat().filter(({ isPositive }) => isPositive)
+  rects.value.flat().filter(({ isPositive }) => isPositive),
 );
 
 const negativeRects = computed(() =>
-  rects.value.flat().filter(({ isPositive }) => !isPositive)
+  rects.value.flat().filter(({ isPositive }) => !isPositive),
 );
 
 const hMin = computed(() => Math.min(props.yMin ?? min.value, 0));
@@ -353,10 +353,10 @@ function getRect(px: number, py: number, i: number, j: number): RectInfo {
 function getColor(j: number, isPositive: boolean): string {
   if (props.colors.length > 0) {
     const c = props.colors[j];
-    if (typeof c === 'string') {
+    if (typeof c === "string") {
       return c;
     }
-    if (c && typeof c === 'object') {
+    if (c && typeof c === "object") {
       return isPositive ? c.positive : c.negative;
     }
   }
@@ -376,7 +376,7 @@ function yScalerValue(i: number): string {
   const minVal = hMin.value;
   const maxVal = hMax.value;
   return props.formatY(
-    (i * (maxVal - minVal)) / props.yLabelDivisions + minVal
+    (i * (maxVal - minVal)) / props.yLabelDivisions + minVal,
   );
 }
 
@@ -384,7 +384,7 @@ function getRandomColor(): string {
   const rgb = Array(3)
     .fill(0)
     .map(() => Math.floor(Math.random() * 255))
-    .join(',');
+    .join(",");
   return `rgb(${rgb})`;
 }
 

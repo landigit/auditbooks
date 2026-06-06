@@ -1,11 +1,11 @@
-import { LanguageMap, UnknownMap } from 'utils/types';
+import { LanguageMap, UnknownMap } from "utils/types";
 import {
   getIndexFormat,
   getIndexList,
   getSnippets,
   getWhitespaceSanitized,
-} from '../../utils/translationHelpers';
-import { ValueError } from './errors';
+} from "../../utils/translationHelpers";
+import { ValueError } from "./errors";
 
 export type TranslationArgs = boolean | number | string;
 export type TranslationLiteral = TemplateStringsArray | TranslationArgs;
@@ -31,7 +31,7 @@ export class TranslationString {
   }
 
   private formatArg(arg: string | number | boolean) {
-    return String(arg ?? '');
+    return String(arg ?? "");
   }
 
   private translate() {
@@ -42,7 +42,7 @@ export class TranslationString {
       this.languageMap![indexFormat]?.translation ?? indexFormat;
 
     this.argList = getIndexList(translatedIndexFormat).map(
-      (i) => this.argList![i]
+      (i) => this.argList![i],
     );
     this.strList = getSnippets(translatedIndexFormat);
   }
@@ -51,8 +51,8 @@ export class TranslationString {
     if (!((this.args[0] as unknown) instanceof Array)) {
       throw new ValueError(
         `invalid args passed to TranslationString ${String(
-          this.args
-        )} of type ${typeof this.args[0]}`
+          this.args,
+        )} of type ${typeof this.args[0]}`,
       );
     }
 
@@ -65,8 +65,8 @@ export class TranslationString {
 
     return this.strList
       .map((s, i) => s + this.formatArg(this.argList![i]))
-      .join('')
-      .replace(/\s+/g, ' ')
+      .join("")
+      .replace(/\s+/g, " ")
       .trim();
   }
 
@@ -92,7 +92,7 @@ export function t(...args: TranslationLiteral[]): string {
 }
 
 export function setLanguageMapOnTranslationString(
-  languageMap: LanguageMap | undefined
+  languageMap: LanguageMap | undefined,
 ) {
   TranslationString.prototype.languageMap = languageMap;
 }
@@ -100,7 +100,7 @@ export function setLanguageMapOnTranslationString(
 export function translateSchema(
   map: UnknownMap | UnknownMap[],
   languageMap: LanguageMap,
-  translateables: string[]
+  translateables: string[],
 ) {
   if (Array.isArray(map)) {
     for (const item of map) {
@@ -109,28 +109,28 @@ export function translateSchema(
     return;
   }
 
-  if (typeof map !== 'object') {
+  if (typeof map !== "object") {
     return;
   }
 
   for (const key of Object.keys(map)) {
     const value = map[key];
     if (
-      typeof value === 'string' &&
+      typeof value === "string" &&
       translateables.includes(key) &&
       languageMap[value]?.translation
     ) {
       map[key] = languageMap[value].translation;
     }
 
-    if (typeof value !== 'object') {
+    if (typeof value !== "object") {
       continue;
     }
 
     translateSchema(
       value as UnknownMap | UnknownMap[],
       languageMap,
-      translateables
+      translateables,
     );
   }
 }

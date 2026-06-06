@@ -1,9 +1,11 @@
-import { defineConfig } from '@rsbuild/core';
-import { pluginVue } from '@rsbuild/plugin-vue';
-import path from 'path';
+import { defineConfig } from "@rsbuild/core";
+import { pluginVue } from "@rsbuild/plugin-vue";
+import path from "path";
+
+import VueRouterRspack from "unplugin-vue-router/rspack";
 
 let port = 6969;
-let host = '127.0.0.1'; // Changed from 0.0.0.0 — don't expose to LAN
+let host = "127.0.0.1"; // Changed from 0.0.0.0 — don't expose to LAN
 if (process.env.VITE_PORT && process.env.VITE_HOST) {
   port = Number(process.env.VITE_PORT);
   host = process.env.VITE_HOST;
@@ -11,10 +13,16 @@ if (process.env.VITE_PORT && process.env.VITE_HOST) {
 
 export default defineConfig({
   plugins: [
+    VueRouterRspack({
+      routesFolder: "src/pages",
+      extensions: [".vue"],
+      dts: "src/typed-router.d.ts",
+    }),
     pluginVue({
       vueLoaderOptions: {
         compilerOptions: {
-          isCustomElement: (tag) => ['view', 'text', 'image'].includes(tag),
+          isCustomElement: (tag) =>
+            ["view", "text", "image", "scroll-view"].includes(tag),
         },
       },
     }),
@@ -22,24 +30,24 @@ export default defineConfig({
 
   source: {
     entry: {
-      index: './src/renderer.ts',
+      index: "./src/renderer.ts",
     },
     alias: {
-      vue: 'vue/dist/vue.esm-bundler.js',
-      fyo: path.resolve(__dirname, './fyo'),
-      src: path.resolve(__dirname, './src'),
-      schemas: path.resolve(__dirname, './schemas'),
-      backend: path.resolve(__dirname, './backend'),
-      models: path.resolve(__dirname, './models'),
-      utils: path.resolve(__dirname, './utils'),
-      regional: path.resolve(__dirname, './regional'),
-      reports: path.resolve(__dirname, './reports'),
-      dummy: path.resolve(__dirname, './dummy'),
-      fixtures: path.resolve(__dirname, './fixtures'),
+      vue: "vue/dist/vue.esm-bundler.js",
+      fyo: path.resolve(__dirname, "./fyo"),
+      src: path.resolve(__dirname, "./src"),
+      schemas: path.resolve(__dirname, "./schemas"),
+      backend: path.resolve(__dirname, "./backend"),
+      models: path.resolve(__dirname, "./models"),
+      utils: path.resolve(__dirname, "./utils"),
+      regional: path.resolve(__dirname, "./regional"),
+      reports: path.resolve(__dirname, "./reports"),
+      dummy: path.resolve(__dirname, "./dummy"),
+      fixtures: path.resolve(__dirname, "./fixtures"),
     },
   },
   html: {
-    template: './src/index.html',
+    template: "./src/index.html",
   },
   server: {
     host,
@@ -48,32 +56,32 @@ export default defineConfig({
   },
   output: {
     distPath: {
-      root: 'dist',
+      root: "dist",
     },
     sourceMap: {
-      js: 'source-map',
+      js: "source-map",
       css: true,
     },
   },
   performance: {
     chunkSplit: {
-      strategy: 'custom',
+      strategy: "custom",
       splitChunks: {
         cacheGroups: {
           vue: {
-            name: 'vendor-vue',
+            name: "vendor-vue",
             test: /node_modules\/(vue|vue-router)/,
           },
           editor: {
-            name: 'vendor-editor',
+            name: "vendor-editor",
             test: /node_modules\/(codemirror|lezer)/,
           },
           utils: {
-            name: 'vendor-utils',
+            name: "vendor-utils",
             test: /node_modules\/(luxon|pesa)/,
           },
           vendor: {
-            name: 'vendor',
+            name: "vendor",
             test: /node_modules/,
           },
         },

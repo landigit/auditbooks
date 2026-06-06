@@ -1,29 +1,29 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { UnknownMap } from 'utils/types';
-import { generateCSV, parseCSV } from '../utils/csvParser';
+import fs from "fs/promises";
+import path from "path";
+import { UnknownMap } from "utils/types";
+import { generateCSV, parseCSV } from "../utils/csvParser";
 import {
   getIndexFormat,
   getWhitespaceSanitized,
   schemaTranslateables,
-} from '../utils/translationHelpers';
+} from "../utils/translationHelpers";
 
 /* oxlint-disable no-console, @typescript-eslint/no-floating-promises */
 
-const translationsFolder = path.resolve(__dirname, '..', 'translations');
+const translationsFolder = path.resolve(__dirname, "..", "translations");
 const PATTERN = /(?<!\w)t`([^`]+)`/g;
 
 type Content = { fileName: string; content: string };
 
 function shouldIgnore(p: string, ignoreList: string[]): boolean {
-  const name = p.split(path.sep).at(-1) ?? '';
+  const name = p.split(path.sep).at(-1) ?? "";
   return ignoreList.includes(name);
 }
 
 async function getFileList(
   root: string,
   ignoreList: string[],
-  extPattern = /\.(js|ts|vue)$/
+  extPattern = /\.(js|ts|vue)$/,
 ): Promise<string[]> {
   const contents: string[] = await fs.readdir(root);
   const files: string[] = [];
@@ -51,7 +51,7 @@ async function getFileContents(fileList: string[]): Promise<Content[]> {
   const contents: Content[] = [];
   const promises: Promise<void>[] = [];
   for (const fileName of fileList) {
-    const pr = fs.readFile(fileName, { encoding: 'utf-8' }).then((content) => {
+    const pr = fs.readFile(fileName, { encoding: "utf-8" }).then((content) => {
       contents.push({ fileName, content });
     });
     promises.push(pr);
@@ -61,7 +61,7 @@ async function getFileContents(fileList: string[]): Promise<Content[]> {
 }
 
 async function getAllTStringsMap(
-  contents: Content[]
+  contents: Content[],
 ): Promise<Map<string, string[]>> {
   const strings: Map<string, string[]> = new Map();
   const promises: Promise<void>[] = [];
@@ -96,7 +96,7 @@ function tStringFinder(content: string): string[] {
 
 function tStringsToArray(
   tMap: Map<string, string[]>,
-  tStrings: string[]
+  tStrings: string[],
 ): string[] {
   const tSet: Set<string> = new Set();
   for (const k of tMap.keys()) {
@@ -111,7 +111,7 @@ function tStringsToArray(
 }
 
 function printHelp() {
-  const shouldPrint = process.argv.findIndex((i) => i === '-h') !== -1;
+  const shouldPrint = process.argv.findIndex((i) => i === "-h") !== -1;
   if (shouldPrint) {
     console.log(
       `Usage: ` +
@@ -134,18 +134,18 @@ function printHelp() {
         `\n` +
         `Reference:\n` +
         `\tISO 693-1 codes: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes\n` +
-        `\tLocale identifier: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locale_identification_and_negotiation`
+        `\tLocale identifier: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locale_identification_and_negotiation`,
     );
   }
   return shouldPrint;
 }
 
 function getLanguageCode() {
-  const i = process.argv.findIndex((i) => i === '-l');
+  const i = process.argv.findIndex((i) => i === "-l");
   if (i === -1) {
-    return '';
+    return "";
   }
-  return process.argv[i + 1] ?? '';
+  return process.argv[i + 1] ?? "";
 }
 
 function getTranslationFilePath(languageCode: string) {
@@ -154,7 +154,7 @@ function getTranslationFilePath(languageCode: string) {
 
 async function regenerateTranslation(tArray: string[], path: string) {
   // Removes old strings, adds new strings
-  const storedCSV = await fs.readFile(path, { encoding: 'utf-8' });
+  const storedCSV = await fs.readFile(path, { encoding: "utf-8" });
   const storedMatrix = parseCSV(storedCSV);
 
   const map: Map<string, string[]> = new Map();
@@ -165,14 +165,14 @@ async function regenerateTranslation(tArray: string[], path: string) {
 
   const matrix = tArray.map((source) => {
     const stored = map.get(source) ?? [];
-    const translation = stored[0] ?? '';
-    const context = stored[1] ?? '';
+    const translation = stored[0] ?? "";
+    const context = stored[1] ?? "";
 
     return [source, translation, context];
   });
   const csv = generateCSV(matrix);
 
-  await fs.writeFile(path, csv, { encoding: 'utf-8' });
+  await fs.writeFile(path, csv, { encoding: "utf-8" });
   console.log(`\tregenerated: ${path}`);
 }
 
@@ -187,7 +187,7 @@ async function regenerateTranslations(languageCode: string, tArray: string[]) {
   // regenerate all translation files
   console.log(`Language code not passed, regenerating all translations.`);
   for (const filePath of await fs.readdir(translationsFolder)) {
-    if (!filePath.endsWith('.csv')) {
+    if (!filePath.endsWith(".csv")) {
       continue;
     }
 
@@ -205,30 +205,30 @@ async function writeTranslations(languageCode: string, tArray: string[]) {
 
     console.log(
       `Existing file found for '${languageCode}': ${path}\n` +
-        `regenerating it's translations.`
+        `regenerating it's translations.`,
     );
     regenerateTranslations(languageCode, tArray);
   } catch (err) {
-    if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
       throw err;
     }
 
-    const matrix = tArray.map((s) => [s, '', '']);
+    const matrix = tArray.map((s) => [s, "", ""]);
     const csv = generateCSV(matrix);
-    await fs.writeFile(path, csv, { encoding: 'utf-8' });
+    await fs.writeFile(path, csv, { encoding: "utf-8" });
     console.log(`Generated translation file for '${languageCode}': ${path}`);
   }
 }
 
 async function getTStringsFromJsonFileList(
-  fileList: string[]
+  fileList: string[],
 ): Promise<string[]> {
   const promises: Promise<void>[] = [];
   const schemaTStrings: string[][] = [];
 
   for (const filePath of fileList) {
     const promise = fs
-      .readFile(filePath, { encoding: 'utf8' })
+      .readFile(filePath, { encoding: "utf8" })
       .then((content) => {
         const schema = JSON.parse(content) as Record<string, unknown>;
         const tStrings: string[] = [];
@@ -249,7 +249,7 @@ async function getTStringsFromJsonFileList(
 function pushTStringsFromSchema(
   map: UnknownMap | UnknownMap[],
   array: string[],
-  translateables: string[]
+  translateables: string[],
 ) {
   if (Array.isArray(map)) {
     for (const item of map) {
@@ -258,31 +258,27 @@ function pushTStringsFromSchema(
     return;
   }
 
-  if (typeof map !== 'object') {
+  if (typeof map !== "object") {
     return;
   }
 
   for (const key of Object.keys(map)) {
     const value = map[key];
-    if (translateables.includes(key) && typeof value === 'string') {
+    if (translateables.includes(key) && typeof value === "string") {
       array.push(value);
     }
 
-    if (typeof value !== 'object') {
+    if (typeof value !== "object") {
       continue;
     }
 
-    pushTStringsFromSchema(
-      value as UnknownMap | UnknownMap[],
-      array,
-      translateables
-    );
+    pushTStringsFromSchema(value, array, translateables);
   }
 }
 
 async function getSchemaTStrings() {
-  const root = path.resolve(__dirname, '../schemas');
-  const fileList = await getFileList(root, ['tests', 'regional'], /\.json$/);
+  const root = path.resolve(__dirname, "../schemas");
+  const fileList = await getFileList(root, ["tests", "regional"], /\.json$/);
   return await getTStringsFromJsonFileList(fileList);
 }
 
@@ -291,8 +287,8 @@ async function run() {
     return;
   }
 
-  const root = path.resolve(__dirname, '..');
-  const ignoreList = ['node_modules', 'dist_electron', 'scripts'];
+  const root = path.resolve(__dirname, "..");
+  const ignoreList = ["node_modules", "dist_electron", "scripts"];
   const languageCode = getLanguageCode();
 
   console.log();
@@ -305,15 +301,15 @@ async function run() {
   try {
     await fs.stat(translationsFolder);
   } catch (err) {
-    if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
       throw err;
     }
 
     await fs.mkdir(translationsFolder);
   }
 
-  if (languageCode === '') {
-    regenerateTranslations('', tArray);
+  if (languageCode === "") {
+    regenerateTranslations("", tArray);
     return;
   }
 

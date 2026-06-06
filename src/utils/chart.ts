@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 export function prefixFormat(value: number): string {
   /*
@@ -17,7 +17,7 @@ export function prefixFormat(value: number): string {
   const ten = Math.floor(Math.log10(Math.abs(value)));
   const three = Math.floor(ten / 3);
   const num = Math.round(value / Math.pow(10, three * 3));
-  const suffix = ['', 'K', 'M', 'B', 'T', 'Q', 'P'][three];
+  const suffix = ["", "K", "M", "B", "T", "Q", "P"][three];
   return `${num} ${suffix}`;
 }
 
@@ -25,7 +25,7 @@ export function euclideanDistance(
   x1: number,
   y1: number,
   x2: number,
-  y2: number
+  y2: number,
 ): number {
   const dsq = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
   return Math.sqrt(dsq);
@@ -64,5 +64,5 @@ export function getYMin(points: number[][]): number {
 }
 
 export function formatXLabels(label: string) {
-  return dayjs(label).format('MMM YYYY');
+  return dayjs(label).format("MMM YYYY");
 }

@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed } from 'vue';
-import MouseFollower from './MouseFollower.vue';
+import { ref, computed } from "vue";
+import MouseFollower from "./MouseFollower.vue";
 
 // --- Props & Emits ---
 const props = defineProps<{
@@ -30,7 +30,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'resize', value: number): void;
+  (e: "resize", value: number): void;
 }>();
 
 // --- State ---
@@ -43,11 +43,11 @@ const resizing = ref(false);
 // --- Computed ---
 const value = computed(() => {
   let val = delta.value + xOnMouseDown.value;
-  if (typeof props.minX === 'number') {
+  if (typeof props.minX === "number") {
     val = Math.max(props.minX, val);
   }
 
-  if (typeof props.maxX === 'number') {
+  if (typeof props.maxX === "number") {
     val = Math.min(props.maxX, val);
   }
 
@@ -62,8 +62,8 @@ function onMouseDown(e: MouseEvent) {
   xOnMouseDown.value = props.initialX;
   setResizing(true);
 
-  document.addEventListener('mousemove', mouseMoveListener);
-  document.addEventListener('mouseup', mouseUpListener);
+  document.addEventListener("mousemove", mouseMoveListener);
+  document.addEventListener("mouseup", mouseUpListener);
 }
 
 function mouseUpListener(e: MouseEvent) {
@@ -72,19 +72,19 @@ function mouseUpListener(e: MouseEvent) {
   x.value = e.clientX;
   setResizing(false);
 
-  emit('resize', value.value);
+  emit("resize", value.value);
   removeListeners();
 }
 
 function mouseMoveListener(e: MouseEvent) {
   e.preventDefault();
   delta.value = x.value - e.clientX;
-  emit('resize', value.value);
+  emit("resize", value.value);
 }
 
 function removeListeners() {
-  document.removeEventListener('mousemove', mouseMoveListener);
-  document.removeEventListener('mouseup', mouseUpListener);
+  document.removeEventListener("mousemove", mouseMoveListener);
+  document.removeEventListener("mouseup", mouseUpListener);
 }
 
 function setResizing(val: boolean) {
@@ -92,9 +92,9 @@ function setResizing(val: boolean) {
 
   if (val) {
     delta.value = 0;
-    document.body.style.cursor = 'col-resize';
+    document.body.style.cursor = "col-resize";
   } else {
-    document.body.style.cursor = '';
+    document.body.style.cursor = "";
   }
 }
 </script>

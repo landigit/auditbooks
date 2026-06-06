@@ -1,6 +1,6 @@
-import { Fyo } from 'fyo';
-import { Noun, Telemetry, Verb } from './types';
-import { ModelNameEnum } from 'models/types';
+import { Fyo } from "fyo";
+import { Noun, Telemetry, Verb } from "./types";
+import { ModelNameEnum } from "models/types";
 
 /**
  * # Telemetry
@@ -33,8 +33,8 @@ const ignoreList: string[] = [
 ];
 
 export class TelemetryManager {
-  private url = '';
-  private token = '';
+  private url = "";
+  private token = "";
   private _started = false;
   fyo: Fyo;
 
@@ -55,9 +55,9 @@ export class TelemetryManager {
     await this.setCreds();
 
     if (isOpened) {
-      this.log(Verb.Opened, 'instance');
+      this.log(Verb.Opened, "instance");
     } else {
-      this.log(Verb.Resumed, 'instance');
+      this.log(Verb.Resumed, "instance");
     }
   }
 
@@ -66,7 +66,7 @@ export class TelemetryManager {
       return;
     }
 
-    this.log(Verb.Closed, 'instance');
+    this.log(Verb.Closed, "instance");
     this._started = false;
   }
 
@@ -82,7 +82,7 @@ export class TelemetryManager {
 
   async logOpened() {
     await this.setCreds();
-    this.sendBeacon(Verb.Opened, 'app');
+    this.sendBeacon(Verb.Opened, "app");
   }
 
   private sendBeacon(verb: Verb, noun: Noun, more?: Record<string, unknown>) {
@@ -116,17 +116,17 @@ export class TelemetryManager {
   private getTelemtryData(
     verb: Verb,
     noun: Noun,
-    more?: Record<string, unknown>
+    more?: Record<string, unknown>,
   ): Telemetry {
     const countryCode = this.fyo.singles.SystemSettings?.countryCode;
     return {
-      country: countryCode ?? '',
+      country: countryCode ?? "",
       language: this.fyo.language,
-      deviceId: this.fyo.deviceId || (this.fyo.config.get('deviceId') ?? '-'),
+      deviceId: this.fyo.deviceId || (this.fyo.config.get("deviceId") ?? "-"),
       instanceId: this.fyo.instanceId,
       version: this.fyo.appVersion,
       openCount: this.fyo.openCount,
-      timestamp: new Date().toISOString().replace('T', ' ').slice(0, -1),
+      timestamp: new Date().toISOString().replace("T", " ").slice(0, -1),
       platform: this.fyo.platform,
       verb,
       noun,

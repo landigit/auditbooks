@@ -45,11 +45,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue';
-import { getIconConfig } from 'src/utils/interactive';
-import { ToastDuration, ToastType } from 'src/utils/types';
-import { toastDurationMap } from 'src/utils/ui';
-import LucideIcon from './LucideIcon.vue';
+import { ref, computed, onMounted, nextTick } from "vue";
+import { getIconConfig } from "src/utils/interactive";
+import { ToastDuration, ToastType } from "src/utils/types";
+import { toastDurationMap } from "src/utils/ui";
+import LucideIcon from "./LucideIcon.vue";
 
 // Define Props
 const props = withDefaults(
@@ -62,10 +62,10 @@ const props = withDefaults(
   }>(),
   {
     action: () => {},
-    actionText: '',
-    type: 'info',
-    duration: 'long',
-  }
+    actionText: "",
+    type: "info",
+    duration: "long",
+  },
 );
 
 // Reactive State
@@ -73,7 +73,7 @@ const open = ref(false);
 
 // Computed Properties
 const config = computed(() => getIconConfig(props.type));
-const isPersistent = computed(() => props.duration === 'very_long');
+const isPersistent = computed(() => props.duration === "very_long");
 
 // Methods
 const closeToast = () => {

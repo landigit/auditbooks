@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue';
+import { type HTMLAttributes, computed } from "vue";
 import {
   PopoverContent,
   type PopoverContentProps,
   PopoverPortal,
   useForwardPropsEmits,
-} from 'reka-ui';
-import { cn } from 'src/utils/cn';
+} from "reka-ui";
+import { cn } from "src/utils/cn";
 
 defineOptions({
   inheritAttrs: false,
 });
 
 const props = withDefaults(
-  defineProps<PopoverContentProps & { class?: HTMLAttributes['class'] }>(),
+  defineProps<PopoverContentProps & { class?: HTMLAttributes["class"] }>(),
   {
-    align: 'center',
+    align: "center",
     sideOffset: 4,
-  }
+  },
 );
-const emits = defineEmits(['close']);
+const emits = defineEmits(["close"]);
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props;
@@ -37,7 +37,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       :class="
         cn(
           'z-50 min-w-[200px] rounded border border-border bg-surface p-4 text-main shadow-lg outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-          props.class
+          props.class,
         )
       "
     >

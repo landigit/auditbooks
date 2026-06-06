@@ -1,8 +1,8 @@
-import { Transactional } from 'models/Transactional/Transactional';
-import { StockManager } from './StockManager';
-import type { SMTransferDetails } from './types';
-import type { TransferItem } from './TransferItem';
-import { createSerialNumbers } from './helpers';
+import { Transactional } from "models/Transactional/Transactional";
+import { StockManager } from "./StockManager";
+import type { SMTransferDetails } from "./types";
+import type { TransferItem } from "./TransferItem";
+import { createSerialNumbers } from "./helpers";
 
 export abstract class Transfer extends Transactional {
   declare date?: Date;
@@ -36,7 +36,7 @@ export abstract class Transfer extends Transactional {
 
   _getStockManager(): StockManager {
     let date = this.date!;
-    if (typeof date === 'string') {
+    if (typeof date === "string") {
       date = new Date(date);
     }
 
@@ -47,7 +47,7 @@ export abstract class Transfer extends Transactional {
         referenceType: this.schemaName,
       },
       this.isCancelled,
-      this.fyo
+      this.fyo,
     );
   }
 

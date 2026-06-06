@@ -1,4 +1,4 @@
-import { VersionParts } from './types';
+import { VersionParts } from "./types";
 
 export class Version {
   /**
@@ -35,7 +35,7 @@ export class Version {
   }
 }
 
-const seq = ['major', 'minor', 'patch', 'beta'] as (keyof VersionParts)[];
+const seq = ["major", "minor", "patch", "beta"] as (keyof VersionParts)[];
 
 function compare(a: string, b: string, isInvalid: (x: number) => boolean) {
   const partsA = parseVersionString(a);
@@ -52,8 +52,8 @@ function compare(a: string, b: string, isInvalid: (x: number) => boolean) {
 }
 
 function parseVersionString(a: string): VersionParts {
-  const parts = a.split('-');
-  const nonbeta = parts[0].split('.').map((n) => parseFloat(n));
+  const parts = a.split("-");
+  const nonbeta = parts[0].split(".").map((n) => parseFloat(n));
 
   const versionParts: VersionParts = {
     major: nonbeta[0],
@@ -61,12 +61,12 @@ function parseVersionString(a: string): VersionParts {
     patch: nonbeta[2],
   };
 
-  const beta = parseFloat(parts[1]?.split('.')?.[1]);
+  const beta = parseFloat(parts[1]?.split(".")?.[1]);
   if (!Number.isNaN(beta)) {
     versionParts.beta = beta;
   }
 
-  if (Number.isNaN(beta) && parts[1]?.includes('beta')) {
+  if (Number.isNaN(beta) && parts[1]?.includes("beta")) {
     versionParts.beta = 0;
   }
 
@@ -76,23 +76,23 @@ function parseVersionString(a: string): VersionParts {
 function compareSingle(
   partsA: VersionParts,
   partsB: VersionParts,
-  key: keyof VersionParts
+  key: keyof VersionParts,
 ): number {
-  if (key !== 'beta') {
+  if (key !== "beta") {
     return partsA[key] - partsB[key];
   }
 
-  if (typeof partsA.beta === 'number' && typeof partsB.beta === 'number') {
+  if (typeof partsA.beta === "number" && typeof partsB.beta === "number") {
     return partsA.beta - partsB.beta;
   }
 
   // A is not in beta
-  if (partsA.beta === undefined && typeof partsB.beta === 'number') {
+  if (partsA.beta === undefined && typeof partsB.beta === "number") {
     return 1;
   }
 
   // B is not in beta
-  if (typeof partsA.beta === 'number' && partsB.beta === undefined) {
+  if (typeof partsA.beta === "number" && partsB.beta === undefined) {
     return -1;
   }
 

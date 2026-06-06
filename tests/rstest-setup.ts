@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-ts-comment */
 /**
  * tests/rstest-setup.ts
- * Global setup for all rstest suites — replaces tests/bun-preload.ts
+ * Global setup for all rstest suites — replaces tests/preload.ts
  */
-import { rs } from '@rstest/core';
-// @ts-ignore
-import { JSDOM } from 'jsdom';
-import pkg from '../package.json';
+import { rs } from "@rstest/core";
+// @ts-expect-error
+import { JSDOM } from "jsdom";
+import pkg from "../package.json";
 
 // ---------------------------------------------------------------------------
 // JSDOM browser environment (needed for Vue store / component tests)
 // ---------------------------------------------------------------------------
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
-  url: 'http://localhost',
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
+  url: "http://localhost",
 });
 (global as any).window = dom.window;
 (global as any).document = dom.window.document;
@@ -21,9 +22,9 @@ const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
 // ---------------------------------------------------------------------------
 // Mock 'electron' module
 // ---------------------------------------------------------------------------
-rs.mock('electron', () => ({
+rs.mock("electron", () => ({
   app: {
-    getPath: () => '/tmp',
+    getPath: () => "/tmp",
     getVersion: () => pkg.version,
   },
   ipcRenderer: {
@@ -39,7 +40,7 @@ rs.mock('electron', () => ({
 (global as any).ipc = {
   getEnv: async () => ({
     isDevelopment: true,
-    platform: 'linux',
+    platform: "linux",
     version: pkg.version,
   }),
 };

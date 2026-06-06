@@ -12,18 +12,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from 'vue';
-import { t } from 'fyo';
-import Badge from 'src/components/Badge.vue';
-import { fyo } from 'src/initFyo';
-import { fuzzyMatch } from 'src/utils';
-import { getCreateFiltersFromListViewFilters } from 'src/utils/misc';
-import { markRaw } from 'vue';
-import AutoComplete from './AutoComplete.vue';
+import { ref, watch, onMounted, computed } from "vue";
+import { t } from "fyo";
+import Badge from "src/components/Badge.vue";
+import { fyo } from "src/initFyo";
+import { fuzzyMatch } from "src/utils";
+import { getCreateFiltersFromListViewFilters } from "src/utils/misc";
+import { markRaw } from "vue";
+import AutoComplete from "./AutoComplete.vue";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 interface MultiLabelLinkProps extends BaseControlProps {
   thirdLink?: string;
@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<MultiLabelLinkProps>(), {
   showClearButton: false,
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -46,35 +46,35 @@ const props = withDefaults(defineProps<MultiLabelLinkProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
 }>();
 
 const autoCompleteRef = ref<any>(null);
-const linkValue = ref('');
+const linkValue = ref("");
 const results = ref<any[]>([]);
 
 const { doc } = useBaseControl(props, emit, ref(null));
 
 const setLinkValue = async (newValue?: any, isInput?: boolean) => {
   if (isInput) {
-    linkValue.value = newValue || '';
+    linkValue.value = newValue || "";
     return;
   }
 
   const value = newValue !== undefined ? newValue : props.value;
   const df = props.df as any;
   const { fieldname, target } = df ?? {};
-  const linkDisplayField = fyo.schemaMap[target ?? '']?.linkDisplayField;
+  const linkDisplayField = fyo.schemaMap[target ?? ""]?.linkDisplayField;
 
   if (!linkDisplayField) {
-    linkValue.value = (value as string) || '';
+    linkValue.value = (value as string) || "";
     return;
   }
 
   const linkDoc = await doc.value?.loadAndGetLink(fieldname);
-  linkValue.value = (linkDoc?.get(linkDisplayField) as string) ?? '';
+  linkValue.value = (linkDoc?.get(linkDisplayField) as string) ?? "";
 };
 
 watch(
@@ -82,7 +82,7 @@ watch(
   (newValue) => {
     setLinkValue(newValue);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -113,7 +113,7 @@ const getOptions = async () => {
 
   const fields = [
     ...new Set([
-      'name',
+      "name",
       props.secondaryLink,
       schema.titleField,
       (props.df as any).groupBy,
@@ -147,7 +147,7 @@ const getOptions = async () => {
   return results.value;
 };
 
-const getSuggestions = async (keyword = '') => {
+const getSuggestions = async (keyword = "") => {
   let options = await getOptions();
 
   if (keyword) {
@@ -190,7 +190,7 @@ const getCreateNewOption = () => {
       template:
         '<view class="flex items-center font-semibold">{{ t`Create` }}' +
         '<Badge color="blue" class="ms-2" v-if="isNewValue">{{ linkValue }}</Badge>' +
-        '</view>',
+        "</view>",
       setup() {
         const isNewValue = computed(() => {
           const suggestions = autoCompleteRef.value?.suggestions || [];
@@ -212,15 +212,15 @@ const openNewDoc = async () => {
   }
   const name = linkValue.value || fyo.doc.getTemporaryName(schema);
   const filters = await getCreateFilters();
-  const { openQuickEdit } = await import('src/utils/ui');
+  const { openQuickEdit } = await import("src/utils/ui");
 
   const newDoc = fyo.doc.getNewDoc(schemaName, { name, ...filters });
   openQuickEdit({ doc: newDoc });
 
-  newDoc.once('afterSync', () => {
+  newDoc.once("afterSync", () => {
     window.history.back();
     results.value = [];
-    emit('change', newDoc.name);
+    emit("change", newDoc.name);
   });
 };
 
@@ -261,8 +261,8 @@ const getFilters = async () => {
 };
 
 const clearValue = () => {
-  emit('change', '');
-  linkValue.value = '';
+  emit("change", "");
+  linkValue.value = "";
 };
 
 const focus = () => {

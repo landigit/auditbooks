@@ -1,17 +1,17 @@
-import { Doc } from 'fyo/model/doc';
-import { HiddenMap, ListsMap } from 'fyo/model/types';
-import { ValidationError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { Field } from 'schemas/types';
-import { getMapFromList } from 'utils/index';
-import { CustomField } from './CustomField';
+import { Doc } from "fyo/model/doc";
+import { HiddenMap, ListsMap } from "fyo/model/types";
+import { ValidationError } from "fyo/utils/errors";
+import { ModelNameEnum } from "models/types";
+import { Field } from "schemas/types";
+import { getMapFromList } from "utils/index";
+import { CustomField } from "./CustomField";
 
 export class CustomForm extends Doc {
   name?: string;
   customFields?: CustomField[];
 
   get parentSchema() {
-    return this.fyo.schemaMap[this.name ?? ''] ?? null;
+    return this.fyo.schemaMap[this.name ?? ""] ?? null;
   }
 
   get parentFields(): Record<string, Field> {
@@ -20,7 +20,7 @@ export class CustomForm extends Doc {
       return {};
     }
 
-    return getMapFromList(fields, 'fieldname');
+    return getMapFromList(fields, "fieldname");
   }
 
   static lists: ListsMap = {
@@ -54,16 +54,16 @@ export class CustomForm extends Doc {
   // oxlint-disable-next-line @typescript-eslint/require-await
   override async validate(): Promise<void> {
     for (const row of this.customFields ?? []) {
-      if (row.fieldtype === 'Select' || row.fieldtype === 'AutoComplete') {
+      if (row.fieldtype === "Select" || row.fieldtype === "AutoComplete") {
         this.validateOptions(row);
       }
     }
   }
 
   validateOptions(row: CustomField) {
-    const optionString = row.options ?? '';
+    const optionString = row.options ?? "";
     const options = optionString
-      .split('\n')
+      .split("\n")
       .map((s) => s.trim())
       .filter(Boolean);
 
@@ -72,7 +72,7 @@ export class CustomForm extends Doc {
     }
 
     throw new ValidationError(
-      `At least two options need to be set for the selected fieldtype`
+      `At least two options need to be set for the selected fieldtype`,
     );
   }
 }

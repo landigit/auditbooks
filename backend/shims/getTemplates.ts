@@ -1,6 +1,6 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { TemplateFile } from 'utils/types';
+import fs from "fs/promises";
+import path from "path";
+import { TemplateFile } from "utils/types";
 
 export async function getTemplates(posTemplateWidth?: number) {
   const paths = await getPrintTemplatePaths();
@@ -18,10 +18,10 @@ export async function getTemplates(posTemplateWidth?: number) {
       lastModified !== undefined ? new Date(lastModified) : new Date();
 
     const width =
-      file?.split('-')[1]?.split('.')[0] === 'POS'
+      file?.split("-")[1]?.split(".")[0] === "POS"
         ? (posTemplateWidth ?? 0)
         : 0;
-    const height = file?.split('-')[1]?.split('.')[0] === 'POS' ? 22 : 0;
+    const height = file?.split("-")[1]?.split(".")[0] === "POS" ? 22 : 0;
 
     templates.push({
       template,
@@ -39,7 +39,7 @@ async function getPrintTemplatePaths(): Promise<{
   files: string[];
   root: string;
 } | null> {
-  let root = '';
+  let root = "";
 
   if ((process as any).resourcesPath) {
     try {
@@ -50,14 +50,14 @@ async function getPrintTemplatePaths(): Promise<{
   }
 
   const currentDir =
-    typeof __dirname !== 'undefined'
+    typeof __dirname !== "undefined"
       ? __dirname
-      : typeof (import.meta as any).dir !== 'undefined'
+      : typeof (import.meta as any).dir !== "undefined"
         ? (import.meta as any).dir
         : null;
   if (currentDir) {
     try {
-      root = path.join(currentDir, '..', '..', `templates`);
+      root = path.join(currentDir, "..", "..", `templates`);
       const files = await fs.readdir(root);
       return { files, root };
     } catch {}

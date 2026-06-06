@@ -71,6 +71,7 @@ export interface IPC {
   };
 
   store: {
+    load?(): Promise<void>;
     get<K extends keyof ConfigMap>(key: K, defaultValue?: ConfigMap[K]): ConfigMap[K] | undefined;
     set<K extends keyof ConfigMap>(key: K, value: ConfigMap[K]): void;
     delete(key: keyof ConfigMap): void;

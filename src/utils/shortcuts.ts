@@ -1,6 +1,6 @@
-import { Keys } from 'utils/types';
-import { watch } from 'vue';
-import { getIsMac } from './misc';
+import { Keys } from "utils/types";
+import { watch } from "vue";
+import { getIsMac } from "./misc";
 
 interface ModMap {
   alt: boolean;
@@ -20,7 +20,7 @@ type ShortcutConfig = {
 
 type ShortcutMap = Map<Context, Map<string, ShortcutConfig>>;
 
-const mods: Readonly<Mod[]> = ['alt', 'ctrl', 'meta', 'repeat', 'shift'];
+const mods: Readonly<Mod[]> = ["alt", "ctrl", "meta", "repeat", "shift"];
 
 /**
  * Used to add shortcuts based on **context**.
@@ -118,7 +118,7 @@ export class Shortcuts {
     shortcut: string[],
     callback: ShortcutFunction,
     propagate = false,
-    removeIfSet = true
+    removeIfSet = true,
   ): void {
     const key = this.getKey(shortcut);
     if (!key) {
@@ -184,10 +184,10 @@ export class Shortcuts {
     const _modMap = modMap || this.modMap;
     this.modMap = {};
 
-    const shortcutString = shortcut.sort().join('+');
-    const modString = mods.filter((k) => _modMap[k]).join('+');
+    const shortcutString = shortcut.sort().join("+");
+    const modString = mods.filter((k) => _modMap[k]).join("+");
     if (shortcutString && modString) {
-      return modString + '+' + shortcutString;
+      return modString + "+" + shortcutString;
     }
 
     if (!modString) {
@@ -205,33 +205,33 @@ export class Shortcuts {
    * Shortcut Modifiers
    */
   get alt() {
-    this.modMap['alt'] = true;
+    this.modMap["alt"] = true;
     return this;
   }
 
   get ctrl() {
-    this.modMap['ctrl'] = true;
+    this.modMap["ctrl"] = true;
     return this;
   }
 
   get meta() {
-    this.modMap['meta'] = true;
+    this.modMap["meta"] = true;
     return this;
   }
 
   get shift() {
-    this.modMap['shift'] = true;
+    this.modMap["shift"] = true;
     return this;
   }
 
   get pmodShift() {
-    this.modMap['meta'] = true;
-    this.modMap['shift'] = true;
+    this.modMap["meta"] = true;
+    this.modMap["shift"] = true;
     return this;
   }
 
   get repeat() {
-    this.modMap['repeat'] = true;
+    this.modMap["repeat"] = true;
     return this;
   }
 

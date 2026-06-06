@@ -22,11 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 interface TextProps extends BaseControlProps {
   rows?: number;
@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<TextProps>(), {
   rows: 3,
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -45,9 +45,9 @@ const props = withDefaults(defineProps<TextProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
 }>();
 
 const inputRef = ref<HTMLTextAreaElement | null>(null);

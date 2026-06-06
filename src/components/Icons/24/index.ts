@@ -1,4 +1,4 @@
-import General from './general.vue';
+import General from "./general.vue";
 
 // prettier-ignore
 export default {

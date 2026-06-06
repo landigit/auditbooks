@@ -27,6 +27,6 @@ withDefaults(
   }>(),
   {
     active: false,
-  }
+  },
 );
 </script>

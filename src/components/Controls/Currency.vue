@@ -31,15 +31,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted } from 'vue';
-import { isPesa } from 'fyo/utils';
-import { Money } from 'pesa';
-import { fyo } from 'src/initFyo';
-import { safeParsePesa } from 'utils/index';
+import { ref, computed, nextTick, onMounted } from "vue";
+import { isPesa } from "fyo/utils";
+import { Money } from "pesa";
+import { fyo } from "src/initFyo";
+import { safeParsePesa } from "utils/index";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 interface CurrencyProps extends BaseControlProps {
   focusInput?: boolean;
@@ -49,7 +49,7 @@ const props = withDefaults(defineProps<CurrencyProps>(), {
   focusInput: false,
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -58,13 +58,13 @@ const props = withDefaults(defineProps<CurrencyProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
 }>();
 
 const showInput = ref(false);
-const currencySymbol = ref('');
+const currencySymbol = ref("");
 const inputEl = ref<HTMLInputElement | null>(null);
 
 const {
@@ -79,7 +79,7 @@ const {
 } = useBaseControl(props, emit, inputEl);
 
 // Since Float/Int overridden inputType, for Currency we want number
-const inputType = computed(() => 'number');
+const inputType = computed(() => "number");
 
 onMounted(() => {
   if (props.focusInput) {
@@ -103,7 +103,7 @@ const onFocus = (e: FocusEvent) => {
 
   target.select();
   showInput.value = true;
-  emit('focus', e);
+  emit("focus", e);
 };
 
 const round = (v: unknown) => {

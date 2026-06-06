@@ -17,20 +17,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { Tooltip, TooltipTrigger, TooltipContent } from 'src/components/ui';
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import { Tooltip, TooltipTrigger, TooltipContent } from "src/components/ui";
 
 const props = withDefaults(
   defineProps<{
     show?: boolean;
     offset?: number;
-    placement?: 'top' | 'right' | 'bottom' | 'left';
+    placement?: "top" | "right" | "bottom" | "left";
   }>(),
   {
     show: false,
     offset: 10,
-    placement: 'top',
-  }
+    placement: "top",
+  },
 );
 
 const x = ref(0);
@@ -45,20 +45,20 @@ watch(
   () => props.show,
   (isVisible) => {
     if (isVisible) {
-      window.addEventListener('mousemove', updateMousePosition);
+      window.addEventListener("mousemove", updateMousePosition);
     } else {
-      window.removeEventListener('mousemove', updateMousePosition);
+      window.removeEventListener("mousemove", updateMousePosition);
     }
-  }
+  },
 );
 
 onMounted(() => {
   if (props.show) {
-    window.addEventListener('mousemove', updateMousePosition);
+    window.addEventListener("mousemove", updateMousePosition);
   }
 });
 
 onUnmounted(() => {
-  window.removeEventListener('mousemove', updateMousePosition);
+  window.removeEventListener("mousemove", updateMousePosition);
 });
 </script>

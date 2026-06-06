@@ -19,7 +19,7 @@
   </svg>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
@@ -27,12 +27,12 @@ const props = withDefaults(
   }>(),
   {
     active: false,
-  }
+  },
 );
 
 const lightColor = computed(() => {
   return props.active
-    ? 'var(--icon-light-active)'
-    : 'var(--icon-light-passive)';
+    ? "var(--icon-light-active)"
+    : "var(--icon-light-passive)";
 });
 </script>

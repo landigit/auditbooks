@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 import {
   PopoverRoot,
   type PopoverRootEmits,
   type PopoverRootProps,
   useForwardPropsEmits,
-} from 'reka-ui';
+} from "reka-ui";
 
 const props = withDefaults(
   defineProps<PopoverRootProps & { open?: boolean }>(),
   {
     modal: false,
-  }
+  },
 );
 const emits = defineEmits<PopoverRootEmits>();
 
@@ -22,12 +22,12 @@ watch(
   () => props.open,
   (val) => {
     if (val !== undefined) isOpen.value = val;
-  }
+  },
 );
 
 const handleUpdateOpen = (val: boolean) => {
   isOpen.value = val;
-  emits('update:open', val);
+  emits("update:open", val);
 };
 </script>
 

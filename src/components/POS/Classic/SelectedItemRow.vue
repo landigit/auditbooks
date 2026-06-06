@@ -266,25 +266,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch, computed, onMounted, nextTick } from 'vue';
-import Currency from 'src/components/Controls/Currency.vue';
-import Float from 'src/components/Controls/Float.vue';
-import Int from 'src/components/Controls/Int.vue';
-import Link from 'src/components/Controls/Link.vue';
-import Text from 'src/components/Controls/Text.vue';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { Money } from 'pesa';
-import { DiscountType } from '../types';
-import { validateSerialNumberCount } from 'src/utils/pos';
-import { getItemVisibility, validateQty } from 'models/helpers';
-import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
-import { ModelNameEnum } from 'models/types';
-import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
+import { ref, inject, watch, computed, onMounted, nextTick } from "vue";
+import Currency from "src/components/Controls/Currency.vue";
+import Float from "src/components/Controls/Float.vue";
+import Int from "src/components/Controls/Int.vue";
+import Link from "src/components/Controls/Link.vue";
+import Text from "src/components/Controls/Text.vue";
+import AutoComplete from "src/components/Controls/AutoComplete.vue";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import { Money } from "pesa";
+import { DiscountType } from "../types";
+import { validateSerialNumberCount } from "src/utils/pos";
+import { getItemVisibility, validateQty } from "models/helpers";
+import { InvoiceItem } from "models/baseModels/InvoiceItem/InvoiceItem";
+import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { showToast } from "src/utils/interactive";
+import { ModelNameEnum } from "models/types";
+import { getExistingActiveSerialNumbersForItem } from "models/inventory/helpers";
 
 const props = defineProps({
   row: { type: SalesInvoiceItem, required: true },
@@ -296,21 +296,21 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-  'runSinvFormulas',
-  'applyPricingRule',
-  'selectedRow',
-  'setExpandedBatchId',
+  "runSinvFormulas",
+  "applyPricingRule",
+  "selectedRow",
+  "setExpandedBatchId",
 ]);
 
-const isDiscountingEnabled = inject('isDiscountingEnabled') as boolean;
-const itemSerialNumbers = inject('itemSerialNumbers') as {
+const isDiscountingEnabled = inject("isDiscountingEnabled") as boolean;
+const itemSerialNumbers = inject("itemSerialNumbers") as {
   [item: string]: string;
 };
 
 const isExapanded = ref(false);
 
 const availableQtyInBatch = ref(0);
-const itemVisibility = ref('');
+const itemVisibility = ref("");
 
 const profileDiscountSetting = ref<boolean | null>(null);
 const profileRateSetting = ref<boolean | null>(null);
@@ -320,11 +320,11 @@ const pendingTransferUnitChange = ref(false);
 const transferUnitChangeOldQty = ref(0);
 
 const isUOMConversionEnabled = computed(
-  () => !!fyo.singles.InventorySettings?.enableUomConversions
+  () => !!fyo.singles.InventorySettings?.enableUomConversions,
 );
 
 const hasSerialNumber = computed(
-  () => !!(props.row.links?.item && props.row.links?.item.hasSerialNumber)
+  () => !!(props.row.links?.item && props.row.links?.item.hasSerialNumber),
 );
 
 const isReadOnly = computed(() => props.row.isFreeItem);
@@ -335,7 +335,7 @@ const showAvlQuantityInBatch = computed(
       props.row.links?.item &&
       props.row.links?.item.hasBatch &&
       itemVisibility.value
-    )
+    ),
 );
 
 watch(
@@ -344,7 +344,7 @@ watch(
     if (newVal !== props.row.name) {
       isExapanded.value = false;
     }
-  }
+  },
 );
 
 watch(
@@ -353,10 +353,10 @@ watch(
     if (newBatch) {
       availableQtyInBatch.value = await getAvailableQtyInBatch();
       isExapanded.value = true;
-      emit('setExpandedBatchId', props.row.name);
+      emit("setExpandedBatchId", props.row.name);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -368,7 +368,7 @@ watch(
       transferUnitOptions.value = [];
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -383,7 +383,7 @@ watch(
     ) {
       await fetchSerialNumbers(false, true);
     }
-  }
+  },
 );
 
 watch(
@@ -411,7 +411,7 @@ watch(
     ) {
       await fetchSerialNumbers(false, false);
     }
-  }
+  },
 );
 
 watch(
@@ -426,12 +426,12 @@ watch(
       isMountedRef.value
     ) {
       delete itemSerialNumbers[props.row.item as string];
-      await props.row.set('serialNumber', '');
+      await props.row.set("serialNumber", "");
 
       pendingTransferUnitChange.value = true;
       transferUnitChangeOldQty.value = props.row.transferQuantity ?? 0;
     }
-  }
+  },
 );
 
 onMounted(async () => {
@@ -440,7 +440,7 @@ onMounted(async () => {
   if (posProfileName) {
     const profile = await fyo.doc.getDoc(
       ModelNameEnum.POSProfile,
-      posProfileName as string
+      posProfileName as string,
     );
 
     profileDiscountSetting.value =
@@ -469,16 +469,16 @@ onMounted(async () => {
 function toggleExpand() {
   if (isExapanded.value) {
     isExapanded.value = false;
-    emit('setExpandedBatchId', undefined);
+    emit("setExpandedBatchId", undefined);
   } else {
     isExapanded.value = true;
-    emit('setExpandedBatchId', props.row.name);
+    emit("setExpandedBatchId", props.row.name);
   }
 }
 
 function toggleExpandAndEmit() {
   toggleExpand();
-  emit('selectedRow', props.row);
+  emit("selectedRow", props.row);
 }
 
 function adjustQuantity(change: number) {
@@ -498,7 +498,7 @@ async function updateTransferUnitOptions() {
     return;
   }
 
-  const itemDoc = await fyo.doc.getDoc('Item', props.row.item as string);
+  const itemDoc = await fyo.doc.getDoc("Item", props.row.item as string);
 
   const conversions = (itemDoc?.uomConversions ?? []) as Array<{
     uom: string;
@@ -507,12 +507,12 @@ async function updateTransferUnitOptions() {
 
   const allowedUoms = new Set<string>();
 
-  if (typeof itemDoc?.unit === 'string') {
+  if (typeof itemDoc?.unit === "string") {
     allowedUoms.add(itemDoc.unit);
   }
 
   for (const c of conversions) {
-    if (typeof c.uom === 'string') {
+    if (typeof c.uom === "string") {
       allowedUoms.add(c.uom);
     }
   }
@@ -534,7 +534,7 @@ async function getAvailableQtyInBatch(): Promise<number> {
       undefined,
       undefined,
       undefined,
-      props.row.batch
+      props.row.batch,
     )) ?? 0
   );
 }
@@ -562,7 +562,7 @@ function isDiscountsReadOnly(isValidDiscount: boolean) {
 }
 
 async function setBatch(batch: string) {
-  props.row.set('batch', batch);
+  props.row.set("batch", batch);
   await getAvailableQtyInBatch();
 }
 
@@ -571,19 +571,19 @@ function setSerialNumber(serialNumber: string) {
     return;
   }
 
-  props.row.set('serialNumber', serialNumber);
+  props.row.set("serialNumber", serialNumber);
   itemSerialNumbers[props.row.item as string] = serialNumber;
 
   validateSerialNumberCount(
     serialNumber,
     Math.abs(props.row.quantity ?? 0),
-    props.row.item!
+    props.row.item!,
   );
 }
 
 async function fetchSerialNumbers(
   forceRefetch = false,
-  useDirectQuantity = false
+  useDirectQuantity = false,
 ) {
   if (!hasSerialNumber.value) {
     return;
@@ -606,7 +606,7 @@ async function fetchSerialNumbers(
 
   if (existingSerialNumbers && !forceRefetch) {
     const existingCount = existingSerialNumbers
-      .split('\n')
+      .split("\n")
       .filter((s) => s.trim()).length;
 
     if (existingCount === quantity) {
@@ -619,11 +619,11 @@ async function fetchSerialNumbers(
     const serialNumbers = await getExistingActiveSerialNumbersForItem(
       fyo,
       props.row.item as string,
-      quantity
+      quantity,
     );
 
     if (serialNumbers) {
-      await props.row.set('serialNumber', serialNumbers);
+      await props.row.set("serialNumber", serialNumbers);
       itemSerialNumbers[props.row.item as string] = serialNumbers;
     } else {
     }
@@ -636,18 +636,18 @@ function isRateReadOnly() {
 }
 
 function setItemDiscount(type: DiscountType, value: Money | number) {
-  if (type === 'percent') {
-    props.row.set('setItemDiscountAmount', false);
-    props.row.set('itemDiscountPercent', value as number);
+  if (type === "percent") {
+    props.row.set("setItemDiscountAmount", false);
+    props.row.set("itemDiscountPercent", value as number);
     return;
   }
-  props.row.set('setItemDiscountAmount', true);
-  props.row.set('itemDiscountAmount', value as Money);
+  props.row.set("setItemDiscountAmount", true);
+  props.row.set("itemDiscountAmount", value as Money);
 }
 
 function setRate(rate: Money) {
   props.row.setRate = rate;
-  emit('runSinvFormulas');
+  emit("runSinvFormulas");
 }
 
 async function setQuantity(quantity: number) {
@@ -659,20 +659,20 @@ async function setQuantity(quantity: number) {
 
   if (!props.row.isReturn && quantity <= 0) {
     showToast({
-      type: 'error',
-      message: 'Quantity must be greater than zero.',
-      duration: 'short',
+      type: "error",
+      message: "Quantity must be greater than zero.",
+      duration: "short",
     });
 
     quantity = props.row.quantity ?? 1;
   }
 
-  props.row.set('quantity', quantity);
+  props.row.set("quantity", quantity);
 
   const existingItems =
     (props.row.parentdoc as SalesInvoice).items?.filter(
       (invoiceItem: InvoiceItem) =>
-        invoiceItem.item === props.row.item && !invoiceItem.isFreeItem
+        invoiceItem.item === props.row.item && !invoiceItem.isFreeItem,
     ) ?? [];
 
   quantity = props.row.quantity ?? 1;
@@ -681,42 +681,42 @@ async function setQuantity(quantity: number) {
     await validateQty(
       props.row.parentdoc as SalesInvoice,
       props.row,
-      existingItems
+      existingItems,
     );
   } catch (error) {
-    props.row.set('quantity', quantity);
+    props.row.set("quantity", quantity);
 
     return showToast({
-      type: 'error',
+      type: "error",
       message: t`${error as string}`,
-      duration: 'short',
+      duration: "short",
     });
   }
 
   if (!props.row.isFreeItem) {
-    emit('applyPricingRule');
-    emit('runSinvFormulas');
+    emit("applyPricingRule");
+    emit("runSinvFormulas");
 
     if (!hasManualDiscount && !isPercentageDiscount) {
-      props.row.set('setItemDiscountAmount', false);
-      props.row.set('itemDiscountPercent', 0);
+      props.row.set("setItemDiscountAmount", false);
+      props.row.set("itemDiscountPercent", 0);
     }
 
     if (hasManualDiscount) {
-      props.row.set('setItemDiscountAmount', true);
-      props.row.set('itemDiscountAmount', manualDiscountAmount);
+      props.row.set("setItemDiscountAmount", true);
+      props.row.set("itemDiscountAmount", manualDiscountAmount);
     } else if (isPercentageDiscount) {
-      props.row.set('setItemDiscountAmount', false);
-      props.row.set('itemDiscountPercent', manualDiscountPercent);
+      props.row.set("setItemDiscountAmount", false);
+      props.row.set("itemDiscountPercent", manualDiscountPercent);
     }
   }
 }
 
 async function removeAddedItem(row: SalesInvoiceItem) {
-  props.row.parentdoc?.remove('items', row?.idx as number);
+  props.row.parentdoc?.remove("items", row?.idx as number);
   props.row.runFormulas();
   if (!row.isFreeItem) {
-    emit('applyPricingRule');
+    emit("applyPricingRule");
   }
 }
 </script>

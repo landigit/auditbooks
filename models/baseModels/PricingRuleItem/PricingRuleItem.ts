@@ -1,6 +1,6 @@
-import { Doc } from 'fyo/model/doc';
-import { FormulaMap } from 'fyo/model/types';
-import { ModelNameEnum } from 'models/types';
+import { Doc } from "fyo/model/doc";
+import { FormulaMap } from "fyo/model/types";
+import { ModelNameEnum } from "models/types";
 
 export class PricingRuleItem extends Doc {
   declare item?: string;
@@ -12,7 +12,7 @@ export class PricingRuleItem extends Doc {
         if (!this.item) {
           return;
         }
-        return this.fyo.getValue(ModelNameEnum.Item, this.item, 'unit');
+        return this.fyo.getValue(ModelNameEnum.Item, this.item, "unit");
       },
     },
   };

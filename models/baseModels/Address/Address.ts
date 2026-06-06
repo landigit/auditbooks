@@ -1,13 +1,13 @@
-import { t } from 'fyo';
-import { Doc } from 'fyo/model/doc';
+import { t } from "fyo";
+import { Doc } from "fyo/model/doc";
 import {
   EmptyMessageMap,
   FormulaMap,
   ListViewSettings,
   ListsMap,
-} from 'fyo/model/types';
-import { codeStateMap } from 'regional/in';
-import { getCountryInfo } from 'utils/misc';
+} from "fyo/model/types";
+import { codeStateMap } from "regional/in";
+import { getCountryInfo } from "utils/misc";
 
 export class Address extends Doc {
   formulas: FormulaMap = {
@@ -22,15 +22,15 @@ export class Address extends Doc {
           this.postalCode,
         ]
           .filter(Boolean)
-          .join(', ');
+          .join(", ");
       },
       dependsOn: [
-        'addressLine1',
-        'addressLine2',
-        'city',
-        'state',
-        'country',
-        'postalCode',
+        "addressLine1",
+        "addressLine2",
+        "city",
+        "state",
+        "country",
+        "postalCode",
       ],
     },
   };
@@ -39,7 +39,7 @@ export class Address extends Doc {
     state(doc?: Doc) {
       const country = doc?.country as string | undefined;
       switch (country) {
-        case 'India':
+        case "India":
           return Object.values(codeStateMap).sort();
         default:
           return [] as string[];
@@ -62,7 +62,7 @@ export class Address extends Doc {
 
   static override getListViewSettings(): ListViewSettings {
     return {
-      columns: ['name', 'addressLine1', 'city', 'state', 'country'],
+      columns: ["name", "addressLine1", "city", "state", "country"],
     };
   }
 }

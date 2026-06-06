@@ -1,21 +1,21 @@
-import { Fyo, t } from 'fyo';
-import { ValidationError } from 'fyo/utils/errors';
-import type { Invoice } from 'models/baseModels/Invoice/Invoice';
-import type { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
-import { ModelNameEnum } from 'models/types';
-import { SerialNumber } from './SerialNumber';
-import type { StockMovement } from './StockMovement';
-import type { StockMovementItem } from './StockMovementItem';
-import { StockTransfer } from './StockTransfer';
-import type { StockTransferItem } from './StockTransferItem';
-import { Transfer } from './Transfer';
-import { TransferItem } from './TransferItem';
-import type { SerialNumberStatus } from './types';
-import BatchSeries from 'fyo/models/BatchSeries';
-import SerialNumberSeries from 'fyo/models/SerialNumberSeries';
+import { Fyo, t } from "fyo";
+import { ValidationError } from "fyo/utils/errors";
+import type { Invoice } from "models/baseModels/Invoice/Invoice";
+import type { InvoiceItem } from "models/baseModels/InvoiceItem/InvoiceItem";
+import { ModelNameEnum } from "models/types";
+import { SerialNumber } from "./SerialNumber";
+import type { StockMovement } from "./StockMovement";
+import type { StockMovementItem } from "./StockMovementItem";
+import { StockTransfer } from "./StockTransfer";
+import type { StockTransferItem } from "./StockTransferItem";
+import { Transfer } from "./Transfer";
+import { TransferItem } from "./TransferItem";
+import type { SerialNumberStatus } from "./types";
+import BatchSeries from "fyo/models/BatchSeries";
+import SerialNumberSeries from "fyo/models/SerialNumberSeries";
 
 export async function validateBatch(
-  doc: StockMovement | StockTransfer | Invoice
+  doc: StockMovement | StockTransfer | Invoice,
 ) {
   if (doc.schemaName === ModelNameEnum.SalesQuote) {
     return;
@@ -32,13 +32,13 @@ export async function validateBatch(
         const hasBatch = await doc.fyo.getValue(
           ModelNameEnum.Item,
           row.item,
-          'hasBatch'
+          "hasBatch",
         );
 
         if (hasBatch) {
           const batchExists = await doc.fyo.db.exists(
             ModelNameEnum.Batch,
-            row.batch
+            row.batch,
           );
 
           if (!batchExists) {
@@ -55,7 +55,7 @@ export async function validateBatch(
 }
 
 async function validateItemRowBatch(
-  doc: StockMovementItem | StockTransferItem | InvoiceItem
+  doc: StockMovementItem | StockTransferItem | InvoiceItem,
 ) {
   const idx = doc.idx ?? 0;
   const item = doc.item;
@@ -64,14 +64,14 @@ async function validateItemRowBatch(
     return;
   }
 
-  const hasBatch = await doc.fyo.getValue(ModelNameEnum.Item, item, 'hasBatch');
+  const hasBatch = await doc.fyo.getValue(ModelNameEnum.Item, item, "hasBatch");
 
   if (!hasBatch && batch) {
     throw new ValidationError(
       [
         doc.fyo.t`Batch set for row ${idx + 1}.`,
         doc.fyo.t`Item ${item} is not a batched item`,
-      ].join(' ')
+      ].join(" "),
     );
   }
 
@@ -80,7 +80,7 @@ async function validateItemRowBatch(
       [
         doc.fyo.t`Batch not set for row ${idx + 1}.`,
         doc.fyo.t`Item ${item} is a batched item`,
-      ].join(' ')
+      ].join(" "),
     );
   }
 }
@@ -99,7 +99,7 @@ export async function validateSerialNumber(doc: StockMovement | StockTransfer) {
 }
 
 async function validateItemRowSerialNumber(
-  row: StockMovementItem | StockTransferItem
+  row: StockMovementItem | StockTransferItem,
 ) {
   if (row.parentdoc?.schemaName === ModelNameEnum.SalesQuote) {
     return;
@@ -114,7 +114,7 @@ async function validateItemRowSerialNumber(
   const hasSerialNumber = await row.fyo.getValue(
     ModelNameEnum.Item,
     item,
-    'hasSerialNumber'
+    "hasSerialNumber",
   );
 
   if (hasSerialNumber && !row.serialNumber) {
@@ -122,7 +122,7 @@ async function validateItemRowSerialNumber(
       [
         row.fyo.t`Serial Number not set for row ${idx + 1}.`,
         row.fyo.t`Serial Number is enabled for Item ${item}`,
-      ].join(' ')
+      ].join(" "),
     );
   }
 
@@ -131,12 +131,12 @@ async function validateItemRowSerialNumber(
       [
         row.fyo.t`Serial Number set for row ${idx + 1}.`,
         row.fyo.t`Serial Number is not enabled for Item ${item}`,
-      ].join(' ')
+      ].join(" "),
     );
   }
 
   const serialNumber = row.serialNumber;
-  if (!hasSerialNumber || typeof serialNumber !== 'string') {
+  if (!hasSerialNumber || typeof serialNumber !== "string") {
     return;
   }
 
@@ -147,7 +147,7 @@ async function validateItemRowSerialNumber(
     throw new ValidationError(
       t`Additional ${
         quantity - serialNumbers.length
-      } Serial Numbers required for ${quantity} quantity of ${item}.`
+      } Serial Numbers required for ${quantity} quantity of ${item}.`,
     );
   }
 
@@ -172,7 +172,7 @@ async function validateItemRowSerialNumber(
 
     const snDoc = await row.fyo.doc.getDoc(
       ModelNameEnum.SerialNumber,
-      serialNumber
+      serialNumber,
     );
 
     if (!(snDoc instanceof SerialNumber)) {
@@ -181,34 +181,34 @@ async function validateItemRowSerialNumber(
 
     if (snDoc.item !== item) {
       throw new ValidationError(
-        t`Serial Number ${serialNumber} does not belong to the item ${item}.`
+        t`Serial Number ${serialNumber} does not belong to the item ${item}.`,
       );
     }
 
-    const status = snDoc.status ?? 'Inactive';
+    const status = snDoc.status ?? "Inactive";
     const schemaName = row.parentSchemaName;
     const isReturn = !!row.parentdoc?.returnAgainst;
     const isSubmitted = !!row.parentdoc?.submitted;
 
     if (
-      schemaName === 'PurchaseReceipt' &&
-      status !== 'Inactive' &&
+      schemaName === "PurchaseReceipt" &&
+      status !== "Inactive" &&
       !isSubmitted &&
       !isReturn
     ) {
       throw new ValidationError(
-        t`Serial Number ${serialNumber} is not Inactive`
+        t`Serial Number ${serialNumber} is not Inactive`,
       );
     }
 
     if (
-      schemaName === 'Shipment' &&
-      status !== 'Active' &&
+      schemaName === "Shipment" &&
+      status !== "Active" &&
       !isSubmitted &&
       !isReturn
     ) {
       throw new ValidationError(
-        t`Serial Number ${serialNumber} is not Active.`
+        t`Serial Number ${serialNumber} is not Active.`,
       );
     }
   }
@@ -220,7 +220,7 @@ export function getSerialNumbers(serialNumber: string): string[] {
   }
 
   return serialNumber
-    .split('\n')
+    .split("\n")
     .map((s) => s.trim())
     .filter(Boolean);
 }
@@ -232,10 +232,10 @@ export function getSerialNumberFromDoc(doc: StockTransfer | StockMovement) {
 
   return doc.items
     .map((item) =>
-      getSerialNumbers(item.serialNumber ?? '').map((serialNumber) => ({
+      getSerialNumbers(item.serialNumber ?? "").map((serialNumber) => ({
         serialNumber,
         item,
-      }))
+      })),
     )
     .flat()
     .filter(Boolean);
@@ -245,9 +245,9 @@ export async function createSerialNumbers(doc: Transfer) {
   const items = doc.items ?? [];
   const serialNumberCreateList = items
     .map((item) => {
-      const serialNumbers = getSerialNumbers(item.serialNumber ?? '');
+      const serialNumbers = getSerialNumbers(item.serialNumber ?? "");
       return serialNumbers.map((serialNumber) => ({
-        item: item.item ?? '',
+        item: item.item ?? "",
         serialNumber,
         isIncoming: isSerialNumberIncoming(item),
       }));
@@ -265,8 +265,8 @@ export async function createSerialNumbers(doc: Transfer) {
       item,
     });
 
-    const status: SerialNumberStatus = 'Active';
-    await snDoc.set('status', status);
+    const status: SerialNumberStatus = "Active";
+    await snDoc.set("status", status);
     await snDoc.sync();
   }
 }
@@ -285,7 +285,7 @@ function isSerialNumberIncoming(item: TransferItem) {
 
 export async function canValidateSerialNumber(
   item: StockTransferItem | StockMovementItem,
-  serialNumber: string
+  serialNumber: string,
 ) {
   if (!isSerialNumberIncoming(item)) {
     return true;
@@ -297,7 +297,7 @@ export async function canValidateSerialNumber(
 export async function updateSerialNumbers(
   doc: StockTransfer | StockMovement,
   isCancel: boolean,
-  isReturn = false
+  isReturn = false,
 ) {
   for (const row of doc.items ?? []) {
     if (!row.serialNumber) {
@@ -312,11 +312,11 @@ export async function updateSerialNumbers(
 async function updateSerialNumberStatus(
   status: SerialNumberStatus,
   serialNumber: string,
-  fyo: Fyo
+  fyo: Fyo,
 ) {
   for (const name of getSerialNumbers(serialNumber)) {
     const doc = await fyo.doc.getDoc(ModelNameEnum.SerialNumber, name);
-    await doc.setAndSync('status', status);
+    await doc.setAndSync("status", status);
   }
 }
 
@@ -324,100 +324,100 @@ function getSerialNumberStatus(
   doc: StockTransfer | StockMovement,
   item: StockTransferItem | StockMovementItem,
   isCancel: boolean,
-  isReturn: boolean
+  isReturn: boolean,
 ): SerialNumberStatus {
   if (doc.schemaName === ModelNameEnum.Shipment) {
     if (isReturn) {
-      return isCancel ? 'Delivered' : 'Active';
+      return isCancel ? "Delivered" : "Active";
     }
-    return isCancel ? 'Active' : 'Delivered';
+    return isCancel ? "Active" : "Delivered";
   }
 
   if (doc.schemaName === ModelNameEnum.PurchaseReceipt) {
     if (isReturn) {
-      return isCancel ? 'Active' : 'Delivered';
+      return isCancel ? "Active" : "Delivered";
     }
-    return isCancel ? 'Inactive' : 'Active';
+    return isCancel ? "Inactive" : "Active";
   }
 
   return getSerialNumberStatusForStockMovement(
     doc as StockMovement,
     item,
-    isCancel
+    isCancel,
   );
 }
 
 function getSerialNumberStatusForStockMovement(
   doc: StockMovement,
   item: StockTransferItem | StockMovementItem,
-  isCancel: boolean
+  isCancel: boolean,
 ): SerialNumberStatus {
-  if (doc.movementType === 'MaterialIssue') {
-    return isCancel ? 'Active' : 'Delivered';
+  if (doc.movementType === "MaterialIssue") {
+    return isCancel ? "Active" : "Delivered";
   }
 
-  if (doc.movementType === 'MaterialReceipt') {
-    return isCancel ? 'Inactive' : 'Active';
+  if (doc.movementType === "MaterialReceipt") {
+    return isCancel ? "Inactive" : "Active";
   }
 
-  if (doc.movementType === 'MaterialTransfer') {
-    return 'Active';
+  if (doc.movementType === "MaterialTransfer") {
+    return "Active";
   }
 
   // MovementType is Manufacture
   if (item.fromLocation) {
-    return isCancel ? 'Active' : 'Delivered';
+    return isCancel ? "Active" : "Delivered";
   }
 
-  return isCancel ? 'Inactive' : 'Active';
+  return isCancel ? "Inactive" : "Active";
 }
 
 export async function generateSerialNumbersForItem(
   fyo: Fyo,
   item: string,
-  quantity: number
+  quantity: number,
 ): Promise<string> {
   if (!quantity || quantity <= 0) {
-    return '';
+    return "";
   }
 
   const hasSerialNumber = await fyo.getValue(
     ModelNameEnum.Item,
     item,
-    'hasSerialNumber'
+    "hasSerialNumber",
   );
 
   if (!hasSerialNumber) {
-    return '';
+    return "";
   }
 
   const serialNumberSeries = await fyo.getValue(
     ModelNameEnum.Item,
     item,
-    'serialNumberSeries'
+    "serialNumberSeries",
   );
 
-  if (!serialNumberSeries || typeof serialNumberSeries !== 'string') {
-    return '';
+  if (!serialNumberSeries || typeof serialNumberSeries !== "string") {
+    return "";
   }
 
   const seriesName = serialNumberSeries.trim();
   if (!seriesName) {
-    return '';
+    return "";
   }
 
   const exists = await fyo.db.exists(
     ModelNameEnum.SerialNumberSeries,
-    seriesName
+    seriesName,
   );
 
   if (!exists) {
-    return '';
+    return "";
   }
 
   const seriesDoc = (await fyo.doc.getDoc(
     ModelNameEnum.SerialNumberSeries,
-    seriesName
+    seriesName,
   )) as SerialNumberSeries;
 
   const serialNumbers: string[] = [];
@@ -437,7 +437,7 @@ export async function generateSerialNumbersForItem(
 
     const snExists = await fyo.db.exists(
       ModelNameEnum.SerialNumber,
-      serialNumber
+      serialNumber,
     );
 
     if (!snExists) {
@@ -446,22 +446,22 @@ export async function generateSerialNumbersForItem(
   }
 
   if (serialNumbers.length > 0) {
-    await seriesDoc.set('current', currentValue);
+    await seriesDoc.set("current", currentValue);
     await seriesDoc.sync();
   }
 
-  const result = serialNumbers.join('\n');
+  const result = serialNumbers.join("\n");
   return result;
 }
 
 async function getHighestSerialNumberForItem(
   fyo: Fyo,
   item: string,
-  seriesName: string
+  seriesName: string,
 ): Promise<number | null> {
   const serialNumbers = await fyo.db.getAllRaw(ModelNameEnum.SerialNumber, {
     filters: { item: item },
-    fields: ['name'],
+    fields: ["name"],
   });
 
   if (!serialNumbers || serialNumbers.length === 0) {
@@ -487,43 +487,43 @@ async function getHighestSerialNumberForItem(
 }
 
 function getPaddedName(prefix: string, next: number, padZeros: number): string {
-  return prefix + next.toString().padStart(padZeros ?? 4, '0');
+  return prefix + next.toString().padStart(padZeros ?? 4, "0");
 }
 
 export async function getExistingActiveSerialNumbersForItem(
   fyo: Fyo,
   item: string,
-  quantity: number
+  quantity: number,
 ): Promise<string> {
   if (!quantity || quantity <= 0) {
-    return '';
+    return "";
   }
 
   const hasSerialNumber = await fyo.getValue(
     ModelNameEnum.Item,
     item,
-    'hasSerialNumber'
+    "hasSerialNumber",
   );
 
   if (!hasSerialNumber) {
-    return '';
+    return "";
   }
 
   const stockLedgerEntries = (await fyo.db.getAllRaw(
     ModelNameEnum.StockLedgerEntry,
     {
-      fields: ['serialNumber', 'date', 'quantity'],
+      fields: ["serialNumber", "date", "quantity"],
       filters: {
         item: item,
-        serialNumber: ['!=', ''],
+        serialNumber: ["!=", ""],
       },
-      orderBy: ['date', 'created', 'name'],
-      order: 'asc',
-    }
+      orderBy: ["date", "created", "name"],
+      order: "asc",
+    },
   )) as { serialNumber: string; date: string; quantity: number }[];
 
   if (!stockLedgerEntries || stockLedgerEntries.length === 0) {
-    return '';
+    return "";
   }
 
   const serialNumberStockMap: Record<string, number> = {};
@@ -554,23 +554,23 @@ export async function getExistingActiveSerialNumbersForItem(
   }
 
   if (availableSerialNumbers.length === 0) {
-    return '';
+    return "";
   }
 
   const selectedSerialNumbers = availableSerialNumbers.slice(0, quantity);
 
-  return selectedSerialNumbers.join('\n');
+  return selectedSerialNumbers.join("\n");
 }
 
 export async function getSuggestedBatchName(
   fyo: Fyo,
-  itemName: string
+  itemName: string,
 ): Promise<string | undefined> {
   try {
     const batchSeries = await fyo.getValue(
       ModelNameEnum.Item,
       itemName,
-      'batchSeries'
+      "batchSeries",
     );
 
     if (!batchSeries) {
@@ -579,11 +579,11 @@ export async function getSuggestedBatchName(
 
     const seriesName = (batchSeries as string).trim();
 
-    const seriesExists = await fyo.db.exists('BatchSeries', seriesName);
+    const seriesExists = await fyo.db.exists("BatchSeries", seriesName);
 
     if (!seriesExists) {
       await fyo.doc
-        .getNewDoc('BatchSeries', {
+        .getNewDoc("BatchSeries", {
           name: seriesName,
           start: 1001,
           padZeros: 4,
@@ -593,14 +593,14 @@ export async function getSuggestedBatchName(
     }
 
     const batchSeriesDoc = (await fyo.doc.getDoc(
-      'BatchSeries',
-      seriesName
+      "BatchSeries",
+      seriesName,
     )) as BatchSeries;
 
     const padZeros = (batchSeriesDoc.padZeros as number) ?? 4;
 
     const existingBatches = (await fyo.db.getAllRaw(ModelNameEnum.Batch, {
-      fields: ['name'],
+      fields: ["name"],
       filters: { item: itemName },
     })) as { name: string }[];
 
@@ -612,7 +612,7 @@ export async function getSuggestedBatchName(
       for (const batch of existingBatches) {
         const batchName = batch.name;
         // Extract numeric part from batch name (handles names like "com-1001")
-        const numericPart = batchName.replace(seriesName, '');
+        const numericPart = batchName.replace(seriesName, "");
         const num = parseInt(numericPart, 10);
 
         if (!isNaN(num) && num > highestNumber) {
@@ -631,7 +631,7 @@ export async function getSuggestedBatchName(
 
     const batchName = `${seriesName}${nextNumber
       .toString()
-      .padStart(padZeros, '0')}`;
+      .padStart(padZeros, "0")}`;
 
     return batchName;
   } catch (error) {
@@ -642,7 +642,7 @@ export async function getSuggestedBatchName(
 export async function createBatch(
   fyo: Fyo,
   itemName: string,
-  batchName: string
+  batchName: string,
 ): Promise<boolean> {
   try {
     const batchExists = await fyo.db.exists(ModelNameEnum.Batch, batchName);
@@ -650,7 +650,7 @@ export async function createBatch(
       return true;
     }
 
-    const batchDoc = fyo.doc.getNewDoc('Batch', {
+    const batchDoc = fyo.doc.getNewDoc("Batch", {
       name: batchName,
       item: itemName,
     });
@@ -660,19 +660,19 @@ export async function createBatch(
     const batchSeries = await fyo.getValue(
       ModelNameEnum.Item,
       itemName,
-      'batchSeries'
+      "batchSeries",
     );
 
     if (batchSeries) {
       const seriesName = (batchSeries as string).trim();
       const batchSeriesDoc = (await fyo.doc.getDoc(
-        'BatchSeries',
-        seriesName
+        "BatchSeries",
+        seriesName,
       )) as BatchSeries;
 
       const num = parseInt(batchName, 10);
       if (!isNaN(num)) {
-        await batchSeriesDoc.set('current', num);
+        await batchSeriesDoc.set("current", num);
         await batchSeriesDoc.sync();
       }
     }
@@ -685,7 +685,7 @@ export async function createBatch(
 
 export async function generateBatchForItem(
   fyo: Fyo,
-  itemName: string
+  itemName: string,
 ): Promise<string | undefined> {
   const batchName = await getSuggestedBatchName(fyo, itemName);
   if (!batchName) {

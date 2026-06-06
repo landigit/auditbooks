@@ -1,41 +1,53 @@
 <template>
-  <view class="flex flex-col flex-1 bg-canvas">
-    <PageHeader :border="true" :title="t`Print View`">
-      <AutoComplete
-        v-if="templateList.length"
-        :df="{
-          fieldtype: 'AutoComplete',
-          fieldname: 'templateName',
-          label: t`Template Name`,
-          options: templateList.map((n) => ({ label: n, value: n })),
-        }"
-        input-class="text-base py-0 h-8"
-        class="w-40"
-        :border="true"
-        :value="templateName ?? ''"
-        @change="onTemplateNameChange"
-      />
-      <DropdownWithActions :actions="printActions" />
-    </PageHeader>
+  <view v-if="!isLynx">
+    <view class="flex flex-col flex-1 bg-canvas">
+      <PageHeader :border="true" :title="t`Print View`">
+        <AutoComplete
+          v-if="templateList.length"
+          :df="{
+            fieldtype: 'AutoComplete',
+            fieldname: 'templateName',
+            label: t`Template Name`,
+            options: templateList.map((n) => ({ label: n, value: n })),
+          }"
+          input-class="text-base py-0 h-8"
+          class="w-40"
+          :border="true"
+          :value="templateName ?? ''"
+          @change="onTemplateNameChange"
+        />
+        <DropdownWithActions :actions="printActions" />
+      </PageHeader>
 
-    <!-- Template Display Area -->
-    <view class="overflow-auto custom-scroll custom-scroll-thumb1 p-4">
-      <!-- Display Hints -->
-      <text v-if="helperMessage" class="text-sm text-muted">
-        {{ helperMessage }}
-      </text>
+      <!-- Template Display Area -->
+      <view class="overflow-auto custom-scroll custom-scroll-thumb1 p-4">
+        <!-- Display Hints -->
+        <text v-if="helperMessage" class="text-sm text-muted">
+          {{ helperMessage }}
+        </text>
 
-      <!-- Template Container -->
-      <PrintContainer
-        v-if="printProps"
-        ref="printContainer"
-        :print-schema-name="schemaName"
-        :template="printProps.template"
-        :values="printProps.values"
-        :scale="scale"
-        :width="templateDoc?.width"
-        :height="templateDoc?.height"
-      />
+        <!-- Template Container -->
+        <PrintContainer
+          v-if="printProps"
+          ref="printContainer"
+          :print-schema-name="schemaName"
+          :template="printProps.template"
+          :values="printProps.values"
+          :scale="scale"
+          :width="templateDoc?.width"
+          :height="templateDoc?.height"
+        />
+      </view>
+    </view>
+  </view>
+  <view v-else class="Container dark">
+    <view class="Card">
+      <view class="Header">
+        <text class="Title">Print View</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
+      </view>
     </view>
   </view>
 </template>
@@ -48,22 +60,22 @@ import {
   onActivated,
   onUnmounted,
   onDeactivated,
-} from 'vue';
-import { Doc } from 'fyo/model/doc';
-import { Action } from 'fyo/model/types';
-import { PrintTemplate } from 'models/baseModels/PrintTemplate';
-import { ModelNameEnum } from 'models/types';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
-import DropdownWithActions from 'src/components/DropdownWithActions.vue';
-import PageHeader from 'src/components/PageHeader.vue';
-import { handleErrorWithDialog } from 'src/errorHandling';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
-import { getPrintTemplatePropValues } from 'src/utils/printTemplates';
-import { PrintValues } from 'src/utils/types';
-import { getFormRoute, openSettings, routeTo } from 'src/utils/ui';
-import { useAppStore } from 'src/stores/app';
-import PrintContainer from '../TemplateBuilder/PrintContainer.vue';
+} from "vue";
+import { Doc } from "fyo/model/doc";
+import { Action } from "fyo/model/types";
+import { PrintTemplate } from "models/baseModels/PrintTemplate";
+import { ModelNameEnum } from "models/types";
+import AutoComplete from "src/components/Controls/AutoComplete.vue";
+import DropdownWithActions from "src/components/DropdownWithActions.vue";
+import PageHeader from "src/components/PageHeader.vue";
+import { handleErrorWithDialog } from "src/errorHandling";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import { getPrintTemplatePropValues } from "src/utils/printTemplates";
+import { PrintValues } from "src/utils/types";
+import { getFormRoute, openSettings, routeTo } from "src/utils/ui";
+import { useAppStore } from "src/stores/app";
+import PrintContainer from "../TemplateBuilder/PrintContainer.vue";
 
 // Define Props
 const props = defineProps<{
@@ -96,7 +108,7 @@ const helperMessage = computed(() => {
     return t`Please select a Print Template`;
   }
 
-  return '';
+  return "";
 });
 
 const printProps = computed(() => {
@@ -144,7 +156,7 @@ const actions = computed<Action[]>(() => {
       action: async () => {
         const route = getFormRoute(
           ModelNameEnum.PrintTemplate,
-          templateDocName
+          templateDocName,
         );
         await routeTo(route);
       },
@@ -192,9 +204,9 @@ const setScale = () => {
   scale.value = 1;
   const widthVal = (templateDoc.value?.width ?? 21) * 37.8;
   let containerWidth = 1024;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     containerWidth = window.innerWidth - 32;
-  } else if (typeof SystemInfo !== 'undefined') {
+  } else if (typeof SystemInfo !== "undefined") {
     containerWidth = SystemInfo.pixelWidth / SystemInfo.pixelRatio - 32;
   }
   if (store.showSidebar) {
@@ -214,7 +226,7 @@ const onTemplateNameChange = async (value: string | null) => {
   try {
     templateDoc.value = await fyo.doc.getDoc(
       ModelNameEnum.PrintTemplate,
-      templateName.value
+      templateName.value,
     );
   } catch (error) {
     await handleErrorWithDialog(error);
@@ -249,7 +261,7 @@ const setTemplateFromDefault = async () => {
     if (posProfileName) {
       const posProfile = await fyo.doc.getDoc(
         ModelNameEnum.POSProfile,
-        posProfileName
+        posProfileName,
       );
 
       if (posProfile.posPrintTemplate) {
@@ -260,7 +272,7 @@ const setTemplateFromDefault = async () => {
     templateNameVal = fyo.singles.Defaults?.get(defaultName);
   }
 
-  if (typeof templateNameVal !== 'string') {
+  if (typeof templateNameVal !== "string") {
     return;
   }
 
@@ -277,7 +289,7 @@ const initialize = async () => {
 
   if (doc.value) {
     values.value = await getPrintTemplatePropValues(
-      doc.value as unknown as Doc
+      doc.value as unknown as Doc,
     );
   }
 };
@@ -301,8 +313,8 @@ const savePDF = async (shouldPrint?: boolean) => {
 // Lifecycles
 onMounted(async () => {
   await initialize();
-  if (store.isDevelopment && typeof window !== 'undefined') {
-    // @ts-ignore
+  if (store.isDevelopment && typeof window !== "undefined") {
+    // @ts-expect-error
     window.pv = {
       doc,
       scale,

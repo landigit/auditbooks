@@ -18,23 +18,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from 'vue';
-import { showToast } from 'src/utils/interactive';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
+import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from "vue";
+import { showToast } from "src/utils/interactive";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
 
-const emit = defineEmits(['item-selected']);
+const emit = defineEmits(["item-selected"]);
 
 const scanner = ref<HTMLInputElement | null>(null);
 
 let timerId: ReturnType<typeof setTimeout> | null = null;
-let barcode = '';
-let cooldown = '';
+let barcode = "";
+let cooldown = "";
 
 function handleChange(e: Event) {
   const elem = e.target as HTMLInputElement;
   selectItem(elem.value);
-  elem.value = '';
+  elem.value = "";
 }
 
 async function selectItem(code: string) {
@@ -44,24 +44,24 @@ async function selectItem(code: string) {
   }
 
   cooldown = cleanBarcode;
-  setTimeout(() => (cooldown = ''), 100);
+  setTimeout(() => (cooldown = ""), 100);
 
-  const matchedItems = (await fyo.db.getAll('Item', {
+  const matchedItems = (await fyo.db.getAll("Item", {
     filters: { barcode: cleanBarcode },
-    fields: ['name'],
+    fields: ["name"],
   })) as { name: string }[];
 
   const itemName = matchedItems?.[0]?.name;
 
   if (itemName) {
     success(t`${itemName} quantity 1 added.`);
-    emit('item-selected', itemName);
+    emit("item-selected", itemName);
     return;
   }
 
   const isWeightEnabled = fyo.singles.POSSettings?.weightEnabledBarcode;
   const checkDigits = fyo.singles.POSSettings?.checkDigits as number;
-  const checkDigitsStr = checkDigits?.toString() || '';
+  const checkDigitsStr = checkDigits?.toString() || "";
 
   const itemCodeDigits = fyo.singles.POSSettings?.itemCodeDigits as number;
   const itemWeightDigits = fyo.singles.POSSettings?.itemWeightDigits as number;
@@ -80,13 +80,13 @@ async function selectItem(code: string) {
   const filters: Record<string, string> = {
     itemCode: cleanBarcode.slice(
       checkDigitsStr.length,
-      checkDigitsStr.length + itemCodeDigits
+      checkDigitsStr.length + itemCodeDigits,
     ),
   };
 
-  const fields = ['name', 'unit'];
+  const fields = ["name", "unit"];
 
-  const items = (await fyo.db.getAll('Item', { filters, fields })) || [];
+  const items = (await fyo.db.getAll("Item", { filters, fields })) || [];
   const { name, unit } = items[0] || {};
 
   if (!name) {
@@ -97,12 +97,12 @@ async function selectItem(code: string) {
     ? parseBarcode(
         cleanBarcode,
         unit as string,
-        checkDigitsStr.length + itemCodeDigits
+        checkDigitsStr.length + itemCodeDigits,
       )
     : 1;
 
   success(t`${name as string} quantity ${quantity} added.`);
-  emit('item-selected', name, quantity);
+  emit("item-selected", name, quantity);
 }
 
 function parseBarcode(bc: string, unitType: string, sliceDigit: number) {
@@ -111,20 +111,20 @@ function parseBarcode(bc: string, unitType: string, sliceDigit: number) {
   let itemQuantity = 0;
 
   switch (unitType) {
-    case 'Kg':
+    case "Kg":
       itemQuantity = Math.floor(weightRaw / 1000);
       break;
-    case 'Gram':
+    case "Gram":
       itemQuantity = weightRaw;
       break;
-    case 'Unit':
-    case 'Meter':
-    case 'Hour':
-    case 'Day':
+    case "Unit":
+    case "Meter":
+    case "Hour":
+    case "Day":
       itemQuantity = weightRaw;
       break;
     default:
-      throw new Error('Unknown unit type!');
+      throw new Error("Unknown unit type!");
   }
 
   return itemQuantity;
@@ -133,7 +133,7 @@ function parseBarcode(bc: string, unitType: string, sliceDigit: number) {
 async function scanListener(e: KeyboardEvent) {
   const { key, code } = e;
   const keyCode = Number(key);
-  const isEnter = code === 'Enter';
+  const isEnter = code === "Enter";
 
   if (Number.isNaN(keyCode) && !isEnter) {
     return;
@@ -148,7 +148,7 @@ async function scanListener(e: KeyboardEvent) {
   barcode += key;
   timerId = setTimeout(async () => {
     await setItemFromBarcode();
-    barcode = '';
+    barcode = "";
   }, 20);
 }
 
@@ -159,7 +159,7 @@ async function setItemFromBarcode() {
 
   await selectItem(barcode);
 
-  barcode = '';
+  barcode = "";
   clearTimer();
 }
 
@@ -173,26 +173,26 @@ function clearTimer() {
 }
 
 function error(message: string) {
-  showToast({ type: 'error', message });
+  showToast({ type: "error", message });
 }
 
 function success(message: string) {
-  showToast({ type: 'success', message });
+  showToast({ type: "success", message });
 }
 
 onMounted(() => {
-  document.addEventListener('keydown', scanListener);
+  document.addEventListener("keydown", scanListener);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', scanListener);
+  document.removeEventListener("keydown", scanListener);
 });
 
 onActivated(() => {
-  document.addEventListener('keydown', scanListener);
+  document.addEventListener("keydown", scanListener);
 });
 
 onDeactivated(() => {
-  document.removeEventListener('keydown', scanListener);
+  document.removeEventListener("keydown", scanListener);
 });
 </script>

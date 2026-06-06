@@ -1,5 +1,5 @@
-import { Fyo } from 'fyo';
-import { LynxDemux } from 'fyo/demux/dbLynx';
+import { Fyo } from "fyo";
+import { LynxDemux } from "fyo/demux/dbLynx";
 
 /**
  * Global fyo for the Lynx native app.
@@ -10,7 +10,7 @@ import { LynxDemux } from 'fyo/demux/dbLynx';
  */
 export const fyo = new Fyo({
   isTest: false,
-  isElectron: false,
+  isElectron: true,
   DatabaseDemux: LynxDemux,
 });
 

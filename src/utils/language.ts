@@ -1,52 +1,52 @@
-import { DEFAULT_LANGUAGE } from 'fyo/utils/consts';
-import { setLanguageMapOnTranslationString } from 'fyo/utils/translation';
-import { fyo } from 'src/initFyo';
-import { useAppStore } from 'src/stores/app';
+import { DEFAULT_LANGUAGE } from "fyo/utils/consts";
+import { setLanguageMapOnTranslationString } from "fyo/utils/translation";
+import { fyo } from "src/initFyo";
+import { useAppStore } from "src/stores/app";
 
 // Language: Language Code in books/translations
 export const languageCodeMap: Record<string, string> = {
-  Arabic: 'ar',
-  Catalan: 'ca-ES',
-  Danish: 'da',
-  Dutch: 'nl',
-  English: 'en',
-  French: 'fr',
-  German: 'de',
-  Gujarati: 'gu',
-  Hindi: 'hi',
-  Indonesian: 'id',
-  Korean: 'ko',
-  Nepali: 'np',
-  Persian: 'fa',
-  Portuguese: 'pt',
-  'Simplified Chinese': 'zh-CN',
-  'Traditional Chinese': 'zh-Hant',
-  Spanish: 'es',
-  Swedish: 'sv',
-  Albanian: 'sq',
-  Turkish: 'tr',
+  Arabic: "ar",
+  Catalan: "ca-ES",
+  Danish: "da",
+  Dutch: "nl",
+  English: "en",
+  French: "fr",
+  German: "de",
+  Gujarati: "gu",
+  Hindi: "hi",
+  Indonesian: "id",
+  Korean: "ko",
+  Nepali: "np",
+  Persian: "fa",
+  Portuguese: "pt",
+  "Simplified Chinese": "zh-CN",
+  "Traditional Chinese": "zh-Hant",
+  Spanish: "es",
+  Swedish: "sv",
+  Albanian: "sq",
+  Turkish: "tr",
 };
 
 export async function setLanguageMap(
   initLanguage?: string,
-  dontReload = false
+  dontReload = false,
 ) {
-  const oldLanguage = fyo.config.get('language') as string;
+  const oldLanguage = fyo.config.get("language") as string;
   initLanguage ??= oldLanguage;
   const { code, language, usingDefault } = getLanguageCode(
     initLanguage,
-    oldLanguage
+    oldLanguage,
   );
 
   let success = true;
-  if (code === 'en') {
+  if (code === "en") {
     setLanguageMapOnTranslationString(undefined);
   } else {
     success = await fetchAndSetLanguageMap(code);
   }
 
   if (success && !usingDefault) {
-    fyo.config.set('language', language);
+    fyo.config.set("language", language);
     const store = useAppStore();
     store.language = language;
   }
@@ -65,7 +65,7 @@ function getLanguageCode(initLanguage: string, oldLanguage: string) {
     language = DEFAULT_LANGUAGE;
     usingDefault = true;
   }
-  const code = languageCodeMap[language] ?? 'en';
+  const code = languageCodeMap[language] ?? "en";
   return { code, language, usingDefault };
 }
 
@@ -73,8 +73,8 @@ async function fetchAndSetLanguageMap(code: string) {
   const { success, message, languageMap } = await ipc.getLanguageMap(code);
 
   if (!success) {
-    const { showToast } = await import('src/utils/interactive');
-    showToast({ type: 'error', message });
+    const { showToast } = await import("src/utils/interactive");
+    showToast({ type: "error", message });
   } else {
     setLanguageMapOnTranslationString(languageMap);
     await fyo.db.translateSchemaMap(languageMap);

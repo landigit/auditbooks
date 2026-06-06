@@ -18,23 +18,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from 'vue';
-import { showToast } from 'src/utils/interactive';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
+import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from "vue";
+import { showToast } from "src/utils/interactive";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
 
-const emit = defineEmits(['item-selected']);
+const emit = defineEmits(["item-selected"]);
 
 const scanner = ref<HTMLInputElement | null>(null);
 
 let timerId: ReturnType<typeof setTimeout> | null = null;
-let barcode = '';
-let cooldown = '';
+let barcode = "";
+let cooldown = "";
 
 function handleChange(e: Event) {
   const elem = e.target as HTMLInputElement;
   selectItem(elem.value);
-  elem.value = '';
+  elem.value = "";
 }
 
 async function selectItem(code: string) {
@@ -52,11 +52,11 @@ async function selectItem(code: string) {
     return;
   }
   cooldown = cleanBarcode;
-  setTimeout(() => (cooldown = ''), 100);
+  setTimeout(() => (cooldown = ""), 100);
 
-  const items = (await fyo.db.getAll('Item', {
+  const items = (await fyo.db.getAll("Item", {
     filters: { barcode: cleanBarcode },
-    fields: ['name'],
+    fields: ["name"],
   })) as { name: string }[];
 
   const name = items?.[0]?.name;
@@ -66,7 +66,7 @@ async function selectItem(code: string) {
   }
 
   success(t`${name} quantity 1 added.`);
-  emit('item-selected', name);
+  emit("item-selected", name);
 }
 
 async function scanListener(e: KeyboardEvent) {
@@ -81,7 +81,7 @@ async function scanListener(e: KeyboardEvent) {
 
   const { key, code } = e;
   const keyCode = Number(key);
-  const isEnter = code === 'Enter';
+  const isEnter = code === "Enter";
 
   if (Number.isNaN(keyCode) && !isEnter) {
     return;
@@ -96,7 +96,7 @@ async function scanListener(e: KeyboardEvent) {
   barcode += key;
   timerId = setTimeout(async () => {
     await setItemFromBarcode();
-    barcode = '';
+    barcode = "";
   }, 20);
 }
 
@@ -107,7 +107,7 @@ async function setItemFromBarcode() {
 
   await selectItem(barcode);
 
-  barcode = '';
+  barcode = "";
   clearTimer();
 }
 
@@ -121,26 +121,26 @@ function clearTimer() {
 }
 
 function error(message: string) {
-  showToast({ type: 'error', message });
+  showToast({ type: "error", message });
 }
 
 function success(message: string) {
-  showToast({ type: 'success', message });
+  showToast({ type: "success", message });
 }
 
 onMounted(() => {
-  document.addEventListener('keydown', scanListener);
+  document.addEventListener("keydown", scanListener);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', scanListener);
+  document.removeEventListener("keydown", scanListener);
 });
 
 onActivated(() => {
-  document.addEventListener('keydown', scanListener);
+  document.addEventListener("keydown", scanListener);
 });
 
 onDeactivated(() => {
-  document.removeEventListener('keydown', scanListener);
+  document.removeEventListener("keydown", scanListener);
 });
 </script>

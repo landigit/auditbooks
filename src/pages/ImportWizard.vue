@@ -1,5 +1,5 @@
 <template>
-  <view class="flex flex-col overflow-hidden w-full">
+  <view v-if="!isLynx" class="flex flex-col overflow-hidden w-full">
     <!-- Header -->
     <PageHeader :title="t`Import Wizard`">
       <DropdownWithActions
@@ -76,15 +76,15 @@
           :class="fileName ? 'text-main font-semibold' : 'text-description'"
         >
           <text v-if="fileName" class="font-normal">{{ t`Selected` }} </text>
-          {{ helperMessage }}{{ fileName ? ',' : '' }}
+          {{ helperMessage }}{{ fileName ? "," : "" }}
           <text v-if="fileName" class="font-normal">
             {{ t`check values and click on` }} </text
-          >{{ ' ' }}<text v-if="fileName">{{ t`Import Data.` }}</text>
+          >{{ " " }}<text v-if="fileName">{{ t`Import Data.` }}</text>
           <text
             v-if="hasImporter && importer.valueMatrix.length > 0"
             class="font-normal"
             >{{
-              ' ' +
+              " " +
               (importer.valueMatrix.length === 2
                 ? t`${importer.valueMatrix.length} row added.`
                 : t`${importer.valueMatrix.length} rows added.`)
@@ -176,7 +176,7 @@
                 :title="getFieldTitle(val)"
                 :df="
                   importer.templateFieldsMap.get(
-                    importer.assignedTemplateFields[cidx]!
+                    importer.assignedTemplateFields[cidx]!,
                   )
                 "
                 size="small"
@@ -363,7 +363,385 @@
       </view>
     </Modal>
   </view>
+  <view v-else class="flex flex-col h-full bg-canvas">
+    <!-- Native Header -->
+    <PageHeader :title="t`Import Wizard`">
+      <view class="flex flex-row gap-2">
+        <view
+          v-if="hasImporter"
+          class="px-3 py-1.5 rounded-lg bg-surface border border-border cursor-pointer active:opacity-75"
+          @tap="() => importer.addRow()"
+        >
+          <text class="text-xs text-main font-semibold">+ Row</text>
+        </view>
+        <view
+          v-if="canImportData"
+          class="px-3 py-1.5 rounded-lg bg-blue-600 cursor-pointer active:opacity-75"
+          :class="
+            errorMessage.length > 0 || isMakingEntries ? 'opacity-50' : ''
+          "
+          @tap="importData"
+        >
+          <text class="text-xs text-white font-semibold">{{ t`Import` }}</text>
+        </view>
+      </view>
+    </PageHeader>
+
+    <!-- Content -->
+    <scroll-view
+      scroll-y="true"
+      class="flex-1"
+      style="height: 0; min-height: 0"
+    >
+      <view class="p-4 flex-col gap-4">
+        <!-- Schema Selector -->
+        <view class="bg-surface p-4 rounded-xl border border-border flex-col">
+          <text class="text-sm font-semibold text-description mb-2">{{
+            t`Select Schema Type`
+          }}</text>
+          <view class="flex-row flex-wrap gap-2">
+            <view
+              v-for="name of importableSchemaNames"
+              :key="name"
+              class="px-3 py-1.5 rounded-full border cursor-pointer active:opacity-85"
+              :class="
+                importType === name
+                  ? 'bg-blue-600 border-blue-600'
+                  : 'border-border bg-canvas-muted'
+              "
+              @tap="setImportType(name)"
+            >
+              <text
+                class="text-xs font-semibold"
+                :class="importType === name ? 'text-white' : 'text-main'"
+              >
+                {{ fyo.schemaMap[name]?.label ?? name }}
+              </text>
+            </view>
+          </view>
+        </view>
+
+        <!-- Actions panel -->
+        <view v-if="importType" class="flex-col gap-3">
+          <view
+            class="bg-surface p-4 rounded-xl border border-border flex-row justify-between items-center"
+          >
+            <view class="flex-col flex-1 mr-4">
+              <text class="text-sm font-bold text-main truncate">{{
+                fileName ? fileName : t`No file selected`
+              }}</text>
+              <text class="text-xs text-description mt-0.5">{{
+                helperMessage
+              }}</text>
+            </view>
+            <view
+              class="px-3 py-1.5 rounded-lg bg-blue-600 cursor-pointer active:opacity-80"
+              @tap="selectFile"
+            >
+              <text class="text-xs text-white font-semibold">{{
+                fileName ? t`Change File` : t`Select CSV`
+              }}</text>
+            </view>
+          </view>
+
+          <!-- Error Alert if any -->
+          <view
+            v-if="errorMessage"
+            class="p-4 rounded-xl bg-red-500/10 border border-red-500/20"
+          >
+            <text class="text-xs text-red-600 font-semibold">{{
+              errorMessage
+            }}</text>
+          </view>
+
+          <!-- Columns Pick Action -->
+          <view
+            v-if="hasImporter"
+            class="p-4 bg-surface border border-border rounded-xl flex-row justify-between items-center cursor-pointer active:bg-surface-hover"
+            @tap="showColumnPicker = true"
+          >
+            <text class="text-sm text-main font-semibold">{{
+              t`Pick Import Columns`
+            }}</text>
+            <text class="text-xs text-description"
+              >{{ numColumnsPicked }} fields selected</text
+            >
+          </view>
+
+          <!-- Column Mapping -->
+          <view
+            v-if="hasImporter && file"
+            class="bg-surface p-4 rounded-xl border border-border flex-col gap-3"
+          >
+            <text class="text-sm font-semibold text-description">{{
+              t`Map CSV Columns`
+            }}</text>
+            <view class="flex-col gap-3">
+              <view
+                v-for="index in columnIterator"
+                :key="index"
+                class="flex-col gap-1 border-b border-border/50 pb-3 last:border-b-0 last:pb-0"
+              >
+                <view class="flex-row justify-between items-center mb-1">
+                  <text class="text-xs font-bold text-main"
+                    >Column #{{ index + 1 }}</text
+                  >
+                  <text class="text-xs text-description italic">
+                    Sample:
+                    {{
+                      importer.valueMatrix[0]?.[index]?.rawValue != null
+                        ? String(importer.valueMatrix[0][index].rawValue)
+                        : "empty"
+                    }}
+                  </text>
+                </view>
+                <Select
+                  class="w-full"
+                  size="small"
+                  :border="true"
+                  :df="gridColumnTitleDf"
+                  :value="importer.assignedTemplateFields[index]!"
+                  @change="
+                    (value: string | null) =>
+                      importer.setTemplateField(index, value)
+                  "
+                />
+              </view>
+            </view>
+          </view>
+
+          <!-- Imported Rows Preview List -->
+          <view
+            v-if="hasImporter && importer.valueMatrix.length"
+            class="flex-col gap-2 mt-2"
+          >
+            <text class="text-sm font-semibold text-description mb-1">{{
+              t`Rows Preview`
+            }}</text>
+            <view
+              v-for="(row, ridx) of importer.valueMatrix"
+              :key="ridx"
+              class="bg-surface p-4 rounded-xl border border-border flex-col gap-2"
+            >
+              <view
+                class="flex-row justify-between items-center border-b border-border pb-2"
+              >
+                <text class="text-xs font-bold text-description"
+                  >Row #{{ ridx + 1 }}</text
+                >
+                <view
+                  class="px-2.5 py-1 rounded bg-red-500/10 border border-red-500/20 active:opacity-75 cursor-pointer"
+                  @tap="importer.removeRow(ridx)"
+                >
+                  <text class="text-[10px] text-red-600 font-semibold"
+                    >Delete</text
+                  >
+                </view>
+              </view>
+
+              <!-- Values display and inline editing -->
+              <view class="flex-col gap-3 pt-1">
+                <view
+                  v-for="(val, cidx) of row.slice(0, columnCount)"
+                  :key="cidx"
+                  class="flex-col gap-1"
+                >
+                  <view class="flex-row justify-between items-center">
+                    <text class="text-xs text-description">
+                      {{
+                        importer.assignedTemplateFields[cidx]
+                          ? importer.templateFieldsMap.get(
+                              importer.assignedTemplateFields[cidx],
+                            )?.label
+                          : "Unassigned"
+                      }}
+                    </text>
+                    <text
+                      v-if="val.error"
+                      class="text-[10px] text-red-500 font-bold"
+                    >
+                      Invalid value
+                    </text>
+                  </view>
+
+                  <!-- If the column is assigned, show editable input -->
+                  <FormControl
+                    v-if="importer.assignedTemplateFields[cidx]"
+                    :class="
+                      val.error ? 'border border-red-500/30 rounded-lg' : ''
+                    "
+                    :df="
+                      importer.templateFieldsMap.get(
+                        importer.assignedTemplateFields[cidx],
+                      )
+                    "
+                    size="small"
+                    :rows="1"
+                    :border="true"
+                    :value="val.error ? null : val.value"
+                    :read-only="false"
+                    @change="
+                      (value: DocValue) => {
+                        importer.valueMatrix[ridx][cidx]!.error = false;
+                        importer.valueMatrix[ridx][cidx]!.value = value;
+                      }
+                    "
+                  />
+                  <!-- Otherwise, show unassigned raw text input -->
+                  <view
+                    v-else
+                    class="px-3 py-2 rounded-lg bg-canvas-muted border border-border"
+                  >
+                    <text class="text-xs text-description truncate">
+                      {{
+                        val.value != null
+                          ? String(val.value)
+                          : val.rawValue != null
+                            ? String(val.rawValue)
+                            : ""
+                      }}
+                    </text>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- Native Columns Pick Dialog Overlay -->
+    <view
+      v-if="showColumnPicker"
+      class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-50 p-4"
+    >
+      <view
+        class="bg-canvas border border-border rounded-2xl w-full max-w-md p-4 flex-col max-h-[85vh]"
+      >
+        <text class="text-lg font-bold text-main mb-3">{{
+          t`Pick Import Columns`
+        }}</text>
+        <view class="border-b border-border mb-3" />
+
+        <scroll-view
+          scroll-y="true"
+          class="flex-1 mb-3"
+          style="height: 0; min-height: 0"
+        >
+          <view class="flex-col gap-4">
+            <view
+              v-for="[key, value] of columnPickerFieldsMap.entries()"
+              :key="key"
+              class="flex-col gap-1.5"
+            >
+              <text
+                class="text-xs font-bold text-description uppercase tracking-wider"
+              >
+                {{ key }}
+              </text>
+              <view
+                class="border border-border rounded-xl bg-surface p-3 flex-col gap-2.5"
+              >
+                <view
+                  v-for="tf of value"
+                  :key="tf.fieldKey"
+                  class="flex-row items-center justify-between"
+                >
+                  <view class="flex-row items-center gap-1.5 flex-1 mr-2">
+                    <text class="text-sm text-main">{{ tf.label }}</text>
+                    <text v-if="tf.required" class="text-red-500 font-bold"
+                      >*</text
+                    >
+                  </view>
+                  <Check
+                    :df="{
+                      fieldtype: 'Check',
+                      fieldname: tf.fieldname,
+                      label: '',
+                    }"
+                    :show-label="false"
+                    :read-only="tf.required"
+                    :value="importer.templateFieldsPicked.get(tf.fieldKey)"
+                    @change="(value: boolean) => pickColumn(tf.fieldKey, value)"
+                  />
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+
+        <view class="border-b border-border mb-3" />
+        <view class="flex-row justify-between items-center">
+          <text class="text-xs text-description">
+            {{ t`${numColumnsPicked} fields selected` }}
+          </text>
+          <view
+            class="px-4 py-2 rounded-lg bg-blue-600 cursor-pointer active:opacity-85"
+            @tap="showColumnPicker = false"
+          >
+            <text class="text-xs text-white font-semibold">{{ t`Done` }}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Import Completed Overlay Dialog -->
+    <view
+      v-if="complete"
+      class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-50 p-4"
+    >
+      <view
+        class="bg-surface border border-border rounded-2xl w-full max-w-sm p-4 flex-col"
+      >
+        <text class="text-lg font-bold text-main mb-3">{{
+          t`Import Complete`
+        }}</text>
+        <view class="border-b border-border mb-3" />
+
+        <!-- Success list -->
+        <view v-if="success.length" class="mb-3">
+          <text class="text-sm font-semibold text-emerald-600 mb-1"
+            >Success ({{ success.length }}):</text
+          >
+          <text class="text-xs text-main font-medium">{{
+            success.join(", ")
+          }}</text>
+        </view>
+
+        <!-- Failed list -->
+        <view v-if="failed.length" class="mb-3">
+          <text class="text-sm font-semibold text-red-600 mb-1"
+            >Failed ({{ failed.length }}):</text
+          >
+          <view v-for="f in failed" :key="f.name" class="mb-1">
+            <text class="text-xs text-red-600 font-bold">{{ f.name }}: </text>
+            <text class="text-xs text-description">{{ f.error.message }}</text>
+          </view>
+        </view>
+
+        <view class="border-b border-border mt-3 mb-3" />
+        <view class="flex-row justify-between">
+          <view
+            v-if="failed.length > 0"
+            class="px-3 py-1.5 rounded-lg bg-surface border border-border cursor-pointer active:opacity-75"
+            @tap="clearSuccessfullyImportedEntries"
+          >
+            <text class="text-xs text-main font-semibold">{{
+              t`Fix Failed`
+            }}</text>
+          </view>
+          <view
+            class="px-4 py-1.5 rounded-lg bg-blue-600 cursor-pointer active:opacity-85"
+            @tap="clear"
+          >
+            <text class="text-xs text-white font-semibold">{{ t`Done` }}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
+
 <script setup lang="ts">
 import {
   ref,
@@ -372,35 +750,35 @@ import {
   onMounted,
   onActivated,
   onDeactivated,
-} from 'vue';
-import { useRouter } from 'vue-router';
-import { DocValue } from 'fyo/core/types';
-import { Action } from 'fyo/model/types';
-import { Verb } from 'fyo/telemetry/types';
-import { ValidationError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { OptionField, RawValue, SelectOption } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import AutoComplete from 'src/components/Controls/AutoComplete.vue';
-import Check from 'src/components/Controls/Check.vue';
-import Data from 'src/components/Controls/Data.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import Select from 'src/components/Controls/Select.vue';
-import DropdownWithActions from 'src/components/DropdownWithActions.vue';
-import FormHeader from 'src/components/FormHeader.vue';
-import Modal from 'src/components/Modal.vue';
-import PageHeader from 'src/components/PageHeader.vue';
-import { Importer, TemplateField, getColumnLabel } from 'src/importer';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
-import { showDialog } from 'src/utils/interactive';
-import { docsPathMap } from 'src/utils/misc';
-import { getSavePath, selectTextFile } from 'src/utils/ui';
-import { useAppStore } from 'src/stores/app';
-import Loading from '../components/Loading.vue';
+} from "vue";
+import { isLynx } from "src/utils/interactive";
+import { DocValue } from "fyo/core/types";
+import { Action } from "fyo/model/types";
+import { Verb } from "fyo/telemetry/types";
+import { ValidationError } from "fyo/utils/errors";
+import { ModelNameEnum } from "models/types";
+import { OptionField, RawValue, SelectOption } from "schemas/types";
+import Button from "src/components/Button.vue";
+import AutoComplete from "src/components/Controls/AutoComplete.vue";
+import Check from "src/components/Controls/Check.vue";
+import Data from "src/components/Controls/Data.vue";
+import FormControl from "src/components/Controls/FormControl.vue";
+import Select from "src/components/Controls/Select.vue";
+import DropdownWithActions from "src/components/DropdownWithActions.vue";
+import FormHeader from "src/components/FormHeader.vue";
+import Modal from "src/components/Modal.vue";
+import PageHeader from "src/components/PageHeader.vue";
+import { Importer, TemplateField, getColumnLabel } from "src/importer";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import { showDialog } from "src/utils/interactive";
+import { docsPathMap } from "src/utils/misc";
+import { getSavePath, selectTextFile } from "src/utils/ui";
+import { useAppStore } from "src/stores/app";
+import Loading from "../components/Loading.vue";
+import router from "src/router";
 
-// Router & App Store
-const router = useRouter();
+// App Store
 const store = useAppStore();
 
 // Reactive State definitions
@@ -411,10 +789,10 @@ const successOldName = ref<string[]>([]);
 const failed = ref<{ name: string; error: Error }[]>([]);
 const file = ref<null | { name: string; filePath: string; text: string }>(null);
 const nullOrImporter = ref<any>(null);
-const importType = ref('');
+const importType = ref("");
 const isMakingEntries = ref(false);
 const percentLoading = ref(0);
-const messageLoading = ref('');
+const messageLoading = ref("");
 
 // Computed properties
 const gridTemplateColumn = computed(() => {
@@ -468,14 +846,14 @@ const requiredNotSelected = computed<string[]>(() => {
 
 const errorMessage = computed<string>(() => {
   if (duplicates.value.length) {
-    return t`Duplicate columns found: ${duplicates.value.join(', ')}`;
+    return t`Duplicate columns found: ${duplicates.value.join(", ")}`;
   }
 
   if (requiredNotSelected.value.length) {
-    return t`Required fields not selected: ${requiredNotSelected.value.join(', ')}`;
+    return t`Required fields not selected: ${requiredNotSelected.value.join(", ")}`;
   }
 
-  return '';
+  return "";
 });
 
 const canImportData = computed(() => {
@@ -505,7 +883,7 @@ const columnCount = computed(() => {
 
   return Math.min(
     importer.value.assignedTemplateFields.length,
-    importer.value.valueMatrix[0].length
+    importer.value.valueMatrix[0].length,
   );
 });
 
@@ -577,7 +955,7 @@ const importableSchemaNames = computed(() => {
       ModelNameEnum.StockMovement,
       ModelNameEnum.Shipment,
       ModelNameEnum.PurchaseReceipt,
-      ModelNameEnum.Location
+      ModelNameEnum.Location,
     );
   }
 
@@ -608,7 +986,7 @@ const actions = computed<Action[]>(() => {
   const pickColumnsAction = {
     label: t`Pick Import Columns`,
     component: {
-      template: '<text>{{ t`Pick Import Columns` }}</text>',
+      template: "<text>{{ t`Pick Import Columns` }}</text>",
     },
     action: () => (showColumnPicker.value = true),
   };
@@ -627,7 +1005,7 @@ const actions = computed<Action[]>(() => {
 
 const fileName = computed(() => {
   if (!file.value) {
-    return '';
+    return "";
   }
 
   return file.value.name;
@@ -637,7 +1015,7 @@ const helperMessage = computed(() => {
   if (!importType.value) {
     return t`Set an Import Type`;
   } else if (!fileName.value) {
-    return '';
+    return "";
   }
 
   return fileName.value;
@@ -655,8 +1033,8 @@ const gridColumnTitleDf = computed<OptionField>(() => {
   const options: SelectOption[] = [];
   if (!hasImporter.value) {
     return {
-      fieldname: 'col',
-      fieldtype: 'Select',
+      fieldname: "col",
+      fieldtype: "Select",
       options,
     } as OptionField;
   }
@@ -672,10 +1050,10 @@ const gridColumnTitleDf = computed<OptionField>(() => {
     options.push({ value: val, label });
   }
 
-  options.push({ value: '', label: t`None` });
+  options.push({ value: "", label: t`None` });
   return {
-    fieldname: 'col',
-    fieldtype: 'Select',
+    fieldname: "col",
+    fieldtype: "Select",
     options,
   } as OptionField;
 });
@@ -728,7 +1106,7 @@ const getFieldTitle = (vmi: {
     return t`No Value`;
   }
 
-  return title.join(', ');
+  return title.join(", ");
 };
 
 const pickColumn = (fieldKey: string, value: boolean): void => {
@@ -738,7 +1116,7 @@ const pickColumn = (fieldKey: string, value: boolean): void => {
   }
 
   const idx = importer.value.assignedTemplateFields.findIndex(
-    (f: any) => f === fieldKey
+    (f: any) => f === fieldKey,
   );
 
   if (idx >= 0) {
@@ -779,23 +1157,22 @@ const clear = (): void => {
   successOldName.value = [];
   failed.value = [];
   nullOrImporter.value = null;
-  importType.value = '';
+  importType.value = "";
   complete.value = false;
   isMakingEntries.value = false;
   percentLoading.value = 0;
-  messageLoading.value = '';
+  messageLoading.value = "";
 };
 
 const saveTemplate = async (): Promise<void> => {
   const template = importer.value.getCSVTemplate();
-  const templateName = importType.value + ' ' + t`Template`;
-  const { canceled, filePath } = await getSavePath(templateName, 'csv');
+  const templateName = importType.value + " " + t`Template`;
+  const { canceled, filePath } = await getSavePath(templateName, "csv");
 
   if (canceled || !filePath) {
     return;
   }
 
-  // @ts-ignore
   await ipc.saveData(template, filePath);
 };
 
@@ -804,7 +1181,7 @@ const preImportValidations = async (): Promise<boolean> => {
   if (errorMessage.value.length) {
     await showDialog({
       title,
-      type: 'error',
+      type: "error",
       detail: errorMessage.value,
     });
     return false;
@@ -814,8 +1191,8 @@ const preImportValidations = async (): Promise<boolean> => {
   if (cellErrors.length) {
     await showDialog({
       title,
-      type: 'error',
-      detail: t`Following cells have errors: ${cellErrors.join(', ')}.`,
+      type: "error",
+      detail: t`Following cells have errors: ${cellErrors.join(", ")}.`,
     });
     return false;
   }
@@ -824,10 +1201,10 @@ const preImportValidations = async (): Promise<boolean> => {
   if (absentLinks.length) {
     await showDialog({
       title,
-      type: 'error',
+      type: "error",
       detail: t`Following links do not exist: ${absentLinks
         .map((l: any) => `(${l.schemaLabel ?? l.schemaName}, ${l.name})`)
-        .join(', ')}.`,
+        .join(", ")}.`,
     });
     return false;
   }
@@ -843,7 +1220,7 @@ const askShouldSubmit = async (): Promise<boolean> => {
   let shouldSubmit = false;
   await showDialog({
     title: t`Submit entries?`,
-    type: 'info',
+    type: "info",
     details: t`Should entries be submitted after syncing?`,
     buttons: [
       {
@@ -880,7 +1257,7 @@ const importData = async (): Promise<void> => {
   let doneCount = 0;
   for (const doc of importer.value.docs) {
     setLoadingStatus(doneCount, importer.value.docs.length);
-    const oldName = doc.name ?? '';
+    const oldName = doc.name ?? "";
     try {
       await doc.sync();
       if (shouldSubmit) {
@@ -906,18 +1283,18 @@ const clearSuccessfullyImportedEntries = () => {
   const sName = importer.value.schemaName;
   const nameFieldKey = `${sName}.name`;
   const nameIndex = importer.value.assignedTemplateFields.findIndex(
-    (n: any) => n === nameFieldKey
+    (n: any) => n === nameFieldKey,
   );
 
   const failedEntriesValueMatrix = importer.value.valueMatrix.filter(
     (row: any) => {
       const value = row[nameIndex].value;
-      if (typeof value !== 'string') {
+      if (typeof value !== "string") {
         return false;
       }
 
       return !successOldName.value.includes(value);
-    }
+    },
   );
 
   setImportType(importType.value);
@@ -938,12 +1315,12 @@ const setLoadingStatus = (entriesMade: number, totalEntries: number): void => {
   percentLoading.value = entriesMade / totalEntries;
   messageLoading.value = isMakingEntries.value
     ? `${entriesMade} entries made out of ${totalEntries}...`
-    : '';
+    : "";
 };
 
 const selectFile = async (): Promise<void> => {
   const { text, name, filePath } = await selectTextFile([
-    { name: 'CSV', extensions: ['csv'] },
+    { name: "CSV", extensions: ["csv"] },
   ]);
 
   if (!text) {
@@ -955,7 +1332,7 @@ const selectFile = async (): Promise<void> => {
     await showDialog({
       title: t`Cannot read file`,
       detail: t`Bad import data, could not read file.`,
-      type: 'error',
+      type: "error",
     });
     return;
   }
@@ -969,8 +1346,8 @@ const selectFile = async (): Promise<void> => {
 
 // Lifecycles
 onMounted(() => {
-  if (store.isDevelopment && typeof window !== 'undefined') {
-    // @ts-ignore
+  if (store.isDevelopment && typeof window !== "undefined") {
+    // @ts-expect-error
     window.iw = {
       showColumnPicker,
       complete,
@@ -1007,11 +1384,11 @@ onMounted(() => {
 });
 
 onActivated(() => {
-  store.docsPath = docsPathMap.ImportWizard ?? '';
+  store.docsPath = docsPathMap.ImportWizard ?? "";
 });
 
 onDeactivated(() => {
-  store.docsPath = '';
+  store.docsPath = "";
   if (!complete.value) {
     return;
   }

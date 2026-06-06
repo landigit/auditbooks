@@ -59,19 +59,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { t } from 'fyo';
+import { ref, computed } from "vue";
+import { t } from "fyo";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
-import Row from 'src/components/Row.vue';
+} from "src/composables/useBaseControl";
+import { Popover, PopoverAnchor, PopoverContent } from "src/components/ui";
+import Row from "src/components/Row.vue";
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -80,9 +80,9 @@ const props = withDefaults(defineProps<BaseControlProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
 }>();
 
 const isShown = ref(false);
@@ -109,12 +109,12 @@ const selectedColorLabel = computed(() => {
 });
 
 const setColorValue = (val: string) => {
-  if (val.startsWith('var(')) {
+  if (val.startsWith("var(")) {
     triggerChange(val);
     return;
   }
-  if (!val.startsWith('#')) {
-    val = '#' + val;
+  if (!val.startsWith("#")) {
+    val = "#" + val;
   }
   if (/^#[0-9A-F]{6}$/i.test(val)) {
     triggerChange(val);

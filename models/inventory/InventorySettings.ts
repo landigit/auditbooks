@@ -1,6 +1,6 @@
-import { Doc } from 'fyo/model/doc';
-import { FiltersMap, ReadOnlyMap } from 'fyo/model/types';
-import { AccountTypeEnum } from 'models/baseModels/Account/types';
+import { Doc } from "fyo/model/doc";
+import { FiltersMap, ReadOnlyMap } from "fyo/model/types";
+import { AccountTypeEnum } from "models/baseModels/Account/types";
 
 export class InventorySettings extends Doc {
   declare defaultLocation?: string;
@@ -21,11 +21,11 @@ export class InventorySettings extends Doc {
     }),
     stockReceivedButNotBilled: () => ({
       isGroup: false,
-      accountType: AccountTypeEnum['Stock Received But Not Billed'],
+      accountType: AccountTypeEnum["Stock Received But Not Billed"],
     }),
     costOfGoodsSold: () => ({
       isGroup: false,
-      accountType: AccountTypeEnum['Cost of Goods Sold'],
+      accountType: AccountTypeEnum["Cost of Goods Sold"],
     }),
   };
 

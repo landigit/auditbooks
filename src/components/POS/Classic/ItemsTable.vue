@@ -48,26 +48,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import Row from 'src/components/Row.vue';
-import { isNumeric } from 'src/utils';
-import { Field } from 'schemas/types';
-import { POSItem } from '../types';
+import { computed } from "vue";
+import FormControl from "src/components/Controls/FormControl.vue";
+import Row from "src/components/Row.vue";
+import { isNumeric } from "src/utils";
+import { Field } from "schemas/types";
+import { POSItem } from "../types";
 
 const props = defineProps({
   items: Array,
   itemQtyMap: Object,
   itemVisibility: {
     type: String,
-    default: 'Inventory Items',
+    default: "Inventory Items",
   },
 });
 
-const emit = defineEmits(['addItem', 'updateValues']);
+const emit = defineEmits(["addItem", "updateValues"]);
 
 const ratio = computed(() => {
-  if (props.itemVisibility === 'ERP Sync Items') {
+  if (props.itemVisibility === "ERP Sync Items") {
     return [1, 1.5, 0.8];
   }
   return [1, 1, 1, 0.7];
@@ -76,35 +76,35 @@ const ratio = computed(() => {
 const tableFields = computed(() => {
   const fields = [
     {
-      fieldname: 'name',
-      fieldtype: 'Data',
-      label: 'Item',
-      placeholder: 'Item',
+      fieldname: "name",
+      fieldtype: "Data",
+      label: "Item",
+      placeholder: "Item",
       readOnly: true,
     },
     {
-      fieldname: 'rate',
-      label: 'Rate',
-      placeholder: 'Rate',
-      fieldtype: 'Currency',
+      fieldname: "rate",
+      label: "Rate",
+      placeholder: "Rate",
+      fieldtype: "Currency",
       readOnly: true,
     },
     {
-      fieldname: 'unit',
-      label: 'Unit',
-      placeholder: 'Unit',
-      fieldtype: 'Data',
-      target: 'UOM',
+      fieldname: "unit",
+      label: "Unit",
+      placeholder: "Unit",
+      fieldtype: "Data",
+      target: "UOM",
       readOnly: true,
     },
   ] as Field[];
 
-  if (props.itemVisibility !== 'ERP Sync Items') {
+  if (props.itemVisibility !== "ERP Sync Items") {
     fields.splice(2, 0, {
-      fieldname: 'availableQty',
-      label: 'Qty',
-      placeholder: 'Available Qty',
-      fieldtype: 'Float',
+      fieldname: "availableQty",
+      label: "Qty",
+      placeholder: "Available Qty",
+      fieldtype: "Float",
       readOnly: true,
     });
   }
@@ -113,7 +113,7 @@ const tableFields = computed(() => {
 });
 
 function handleChange(value: POSItem) {
-  emit('addItem', value);
-  emit('updateValues');
+  emit("addItem", value);
+  emit("updateValues");
 }
 </script>

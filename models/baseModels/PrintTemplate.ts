@@ -1,8 +1,8 @@
-import { Doc } from 'fyo/model/doc';
-import { SchemaMap } from 'schemas/types';
-import { ListsMap, ListViewSettings, ReadOnlyMap } from 'fyo/model/types';
-import { ModelNameEnum } from 'models/types';
-import { Fyo } from 'fyo';
+import { Doc } from "fyo/model/doc";
+import { SchemaMap } from "schemas/types";
+import { ListsMap, ListViewSettings, ReadOnlyMap } from "fyo/model/types";
+import { ModelNameEnum } from "models/types";
+import { Fyo } from "fyo";
 
 export class PrintTemplate extends Doc {
   declare name?: string;
@@ -24,16 +24,16 @@ export class PrintTemplate extends Doc {
     return {
       formRoute: (name) => `/template-builder/${name}`,
       columns: [
-        'name',
+        "name",
         {
           label: fyo.t`Type`,
-          fieldtype: 'AutoComplete',
-          fieldname: 'type',
+          fieldtype: "AutoComplete",
+          fieldname: "type",
           display(value) {
-            return fyo.schemaMap[value as string]?.label ?? '';
+            return fyo.schemaMap[value as string]?.label ?? "";
           },
         },
-        'isCustom',
+        "isCustom",
       ],
     };
   }

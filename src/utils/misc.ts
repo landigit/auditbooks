@@ -1,37 +1,37 @@
-import { Fyo } from 'fyo';
-import { ConfigFile } from 'fyo/core/types';
-import { translateSchema } from 'fyo/utils/translation';
-import dayjs, { Dayjs } from 'dayjs';
-import { SetupWizard } from 'models/baseModels/SetupWizard/SetupWizard';
-import { ModelNameEnum } from 'models/types';
-import { reports } from 'reports/index';
-import SetupWizardSchema from 'schemas/app/SetupWizard.json';
-import { Schema } from 'schemas/types';
-import { fyo } from 'src/initFyo';
-import { QueryFilter } from 'utils/db/types';
-import { schemaTranslateables } from 'utils/translationHelpers';
-import type { LanguageMap } from 'utils/types';
-import { PeriodKey } from './types';
-import { useAppStore } from 'src/stores/app';
+import { Fyo } from "fyo";
+import { ConfigFile } from "fyo/core/types";
+import { translateSchema } from "fyo/utils/translation";
+import dayjs, { Dayjs } from "dayjs";
+import { SetupWizard } from "models/baseModels/SetupWizard/SetupWizard";
+import { ModelNameEnum } from "models/types";
+import { reports } from "reports/index";
+import SetupWizardSchema from "schemas/app/SetupWizard.json";
+import { Schema } from "schemas/types";
+import { fyo } from "src/initFyo";
+import { QueryFilter } from "utils/db/types";
+import { schemaTranslateables } from "utils/translationHelpers";
+import type { LanguageMap } from "utils/types";
+import { PeriodKey } from "./types";
+import { useAppStore } from "src/stores/app";
 
 export function getDatesAndPeriodList(period: PeriodKey): {
   periodList: Dayjs[];
   fromDate: Dayjs;
   toDate: Dayjs;
 } {
-  const toDate: Dayjs = dayjs().add(1, 'day');
+  const toDate: Dayjs = dayjs().add(1, "day");
   let fromDate: Dayjs;
 
-  if (period === 'This Year') {
-    fromDate = toDate.subtract(12, 'month');
-  } else if (period === 'YTD') {
-    fromDate = dayjs().startOf('year');
-  } else if (period === 'This Quarter') {
-    fromDate = toDate.subtract(3, 'month');
-  } else if (period === 'This Month') {
-    fromDate = toDate.startOf('month');
+  if (period === "This Year") {
+    fromDate = toDate.subtract(12, "month");
+  } else if (period === "YTD") {
+    fromDate = dayjs().startOf("year");
+  } else if (period === "This Quarter") {
+    fromDate = toDate.subtract(3, "month");
+  } else if (period === "This Month") {
+    fromDate = toDate.startOf("month");
   } else {
-    fromDate = toDate.subtract(1, 'day');
+    fromDate = toDate.subtract(1, "day");
   }
 
   /**
@@ -39,9 +39,9 @@ export function getDatesAndPeriodList(period: PeriodKey): {
    */
   const periodList: Dayjs[] = [toDate];
   while (true) {
-    const nextDate = periodList.at(0)!.subtract(1, 'month');
+    const nextDate = periodList.at(0)!.subtract(1, "month");
     if (nextDate.valueOf() < fromDate.valueOf()) {
-      if (period === 'YTD') {
+      if (period === "YTD") {
         periodList.unshift(nextDate);
         break;
       }
@@ -69,16 +69,16 @@ export function getSetupWizardDoc(languageMap?: LanguageMap) {
     translateSchema(schema, languageMap, schemaTranslateables);
   }
   return fyo.doc.getNewDoc(
-    'SetupWizard',
+    "SetupWizard",
     {},
     false,
     schema as Schema,
-    SetupWizard
+    SetupWizard,
   );
 }
 
 export function updateConfigFiles(fyo: Fyo): ConfigFile {
-  const configFiles = fyo.config.get('files', []) as ConfigFile[];
+  const configFiles = fyo.config.get("files", []) as ConfigFile[];
 
   const companyName = fyo.singles.AccountingSettings!.companyName as string;
   const id = fyo.singles.SystemSettings!.instanceId as string;
@@ -97,46 +97,46 @@ export function updateConfigFiles(fyo: Fyo): ConfigFile {
     newFile = configFiles[fileIndex];
   }
 
-  fyo.config.set('files', configFiles);
+  fyo.config.set("files", configFiles);
   return newFile;
 }
 
 export const docsPathMap: Record<string, string | undefined> = {
   // Analytics
-  Dashboard: 'books/dashboard',
-  Reports: 'books/reports',
-  GeneralLedger: 'books/general-ledger',
-  ProfitAndLoss: 'books/profit-and-loss',
-  BalanceSheet: 'books/balance-sheet',
-  TrialBalance: 'books/trial-balance',
+  Dashboard: "books/dashboard",
+  Reports: "books/reports",
+  GeneralLedger: "books/general-ledger",
+  ProfitAndLoss: "books/profit-and-loss",
+  BalanceSheet: "books/balance-sheet",
+  TrialBalance: "books/trial-balance",
 
   // Transactions
-  [ModelNameEnum.SalesInvoice]: 'books/sales-invoices',
-  [ModelNameEnum.PurchaseInvoice]: 'books/purchase-invoices',
-  [ModelNameEnum.Payment]: 'books/payments',
-  [ModelNameEnum.JournalEntry]: 'books/journal-entries',
+  [ModelNameEnum.SalesInvoice]: "books/sales-invoices",
+  [ModelNameEnum.PurchaseInvoice]: "books/purchase-invoices",
+  [ModelNameEnum.Payment]: "books/payments",
+  [ModelNameEnum.JournalEntry]: "books/journal-entries",
 
   // Inventory
-  [ModelNameEnum.StockMovement]: 'books/stock-movement',
-  [ModelNameEnum.Shipment]: 'books/shipment',
-  [ModelNameEnum.PurchaseReceipt]: 'books/purchase-receipt',
-  StockLedger: 'books/stock-ledger',
-  StockBalance: 'books/stock-balance',
-  [ModelNameEnum.Batch]: 'books/batches',
+  [ModelNameEnum.StockMovement]: "books/stock-movement",
+  [ModelNameEnum.Shipment]: "books/shipment",
+  [ModelNameEnum.PurchaseReceipt]: "books/purchase-receipt",
+  StockLedger: "books/stock-ledger",
+  StockBalance: "books/stock-balance",
+  [ModelNameEnum.Batch]: "books/batches",
 
   // Entries
-  Entries: 'books/books',
-  [ModelNameEnum.Party]: 'books/party',
-  [ModelNameEnum.Item]: 'books/items',
-  [ModelNameEnum.Tax]: 'books/taxes',
-  [ModelNameEnum.PrintTemplate]: 'books/print-templates',
+  Entries: "books/books",
+  [ModelNameEnum.Party]: "books/party",
+  [ModelNameEnum.Item]: "books/items",
+  [ModelNameEnum.Tax]: "books/taxes",
+  [ModelNameEnum.PrintTemplate]: "books/print-templates",
 
   // Miscellaneous
-  Search: 'books/quick-search',
-  NumberSeries: 'books/number-series',
-  ImportWizard: 'books/import-wizard',
-  Settings: 'books/settings',
-  ChartOfAccounts: 'books/chart-of-accounts',
+  Search: "books/quick-search",
+  NumberSeries: "books/number-series",
+  ImportWizard: "books/import-wizard",
+  Settings: "books/settings",
+  ChartOfAccounts: "books/chart-of-accounts",
 };
 
 export async function getDataURL(type: string, data: Uint8Array) {
@@ -144,7 +144,7 @@ export async function getDataURL(type: string, data: Uint8Array) {
 
   return new Promise<string>((resolve) => {
     const fr = new FileReader();
-    fr.addEventListener('loadend', () => {
+    fr.addEventListener("loadend", () => {
       resolve(fr.result as string);
     });
 
@@ -164,11 +164,11 @@ export function getCreateFiltersFromListViewFilters(filters: QueryFilter) {
   for (const key in filters) {
     let value: (typeof filters)[string] | undefined | number = Reflect.get(
       filters,
-      key
+      key,
     );
 
-    if (Array.isArray(value) && value[0] === 'in' && Array.isArray(value[1])) {
-      value = value[1].filter((v) => v !== 'Both')[0];
+    if (Array.isArray(value) && value[0] === "in" && Array.isArray(value[1])) {
+      value = value[1].filter((v) => v !== "Both")[0];
     }
 
     if (value === undefined || Array.isArray(value)) {
@@ -182,7 +182,10 @@ export function getCreateFiltersFromListViewFilters(filters: QueryFilter) {
 }
 
 export function getIsMac() {
-  return navigator.userAgent.indexOf('Mac') !== -1;
+  if (typeof navigator === "undefined" || !navigator.userAgent) {
+    return false;
+  }
+  return navigator.userAgent.indexOf("Mac") !== -1;
 }
 
 export async function getReport(name: keyof typeof reports) {

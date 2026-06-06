@@ -1,139 +1,151 @@
 <template>
-  <view class="relative group">
-    <view
-      class="bg-surface p-1.5 rounded-md cursor-pointer"
-      @tap="toggleItemsView"
-    >
-      <LucideIcon
-        :name="tableView ? 'grid' : 'list'"
-        class="w-5 h-5 text-main"
-      />
-    </view>
-    <text
-      class="p-2 mb-2 w-20 absolute bottom-full left-1/2 transform -translate-x-1/2 text-center opacity-0 bg-surface text-main text-xs rounded-md transition-opacity duration-300 group-hover:opacity-100"
-    >
-      {{ tableView ? t`Grid View` : t`List View` }}
-    </text>
-  </view>
-
-  <view class="relative group">
-    <view
-      class="px-1.5 py-1 rounded-md bg-canvas-muted cursor-pointer"
-      @tap="emit('emitRouteToSinvList')"
-    >
-      <LucideIcon name="receipt-text" :size="21" class="text-main" />
+  <view v-if="!isLynx">
+    <view class="relative group">
+      <view
+        class="bg-surface p-1.5 rounded-md cursor-pointer"
+        @tap="toggleItemsView"
+      >
+        <LucideIcon
+          :name="tableView ? 'grid' : 'list'"
+          class="w-5 h-5 text-main"
+        />
+      </view>
+      <text
+        class="p-2 mb-2 w-20 absolute bottom-full left-1/2 transform -translate-x-1/2 text-center opacity-0 bg-surface text-main text-xs rounded-md transition-opacity duration-300 group-hover:opacity-100"
+      >
+        {{ tableView ? t`Grid View` : t`List View` }}
+      </text>
     </view>
 
-    <text
-      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 rounded-md opacity-0 bg-surface text-main text-xs text-center transition-opacity duration-300 group-hover:opacity-100"
-    >
-      {{ t`Sales Invoice List` }}
-    </text>
-  </view>
+    <view class="relative group">
+      <view
+        class="px-1.5 py-1 rounded-md bg-canvas-muted cursor-pointer"
+        @tap="emit('emitRouteToSinvList')"
+      >
+        <LucideIcon name="receipt-text" :size="21" class="text-main" />
+      </view>
 
-  <view
-    class="relative group"
-    :class="{
-      hidden:
-        !fyo.singles.AccountingSettings?.enableLoyaltyProgram ||
-        !loyaltyProgram,
-    }"
-  >
+      <text
+        class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 rounded-md opacity-0 bg-surface text-main text-xs text-center transition-opacity duration-300 group-hover:opacity-100"
+      >
+        {{ t`Sales Invoice List` }}
+      </text>
+    </view>
+
     <view
-      class="p-1 rounded-md bg-canvas-muted cursor-pointer"
+      class="relative group"
       :class="{
-        'bg-canvas-muted': loyaltyPoints,
-        'opacity-50 cursor-not-allowed':
-          !loyaltyPoints || !sinvDoc?.party || !sinvDoc?.items?.length,
+        hidden:
+          !fyo.singles.AccountingSettings?.enableLoyaltyProgram ||
+          !loyaltyProgram,
       }"
-      @tap="openLoyaltyModal"
     >
-      <LucideIcon name="ticket" :size="23" class="text-main" />
+      <view
+        class="p-1 rounded-md bg-canvas-muted cursor-pointer"
+        :class="{
+          'bg-canvas-muted': loyaltyPoints,
+          'opacity-50 cursor-not-allowed':
+            !loyaltyPoints || !sinvDoc?.party || !sinvDoc?.items?.length,
+        }"
+        @tap="openLoyaltyModal"
+      >
+        <LucideIcon name="ticket" :size="23" class="text-main" />
+      </view>
+
+      <text
+        class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-surface text-main text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      >
+        {{ t`Loyalty Program` }}
+      </text>
     </view>
 
-    <text
-      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-surface text-main text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-    >
-      {{ t`Loyalty Program` }}
-    </text>
-  </view>
-
-  <view
-    class="relative group"
-    :class="{
-      hidden: !fyo.singles.AccountingSettings?.enableCouponCode,
-    }"
-  >
     <view
-      class="p-0.5 rounded-md bg-canvas-muted cursor-pointer"
+      class="relative group"
       :class="{
-        'opacity-50 cursor-not-allowed':
-          !sinvDoc?.party || !sinvDoc?.items?.length,
+        hidden: !fyo.singles.AccountingSettings?.enableCouponCode,
       }"
-      @tap="openCouponModal"
     >
-      <LucideIcon name="tag" :size="25" class="text-main" />
+      <view
+        class="p-0.5 rounded-md bg-canvas-muted cursor-pointer"
+        :class="{
+          'opacity-50 cursor-not-allowed':
+            !sinvDoc?.party || !sinvDoc?.items?.length,
+        }"
+        @tap="openCouponModal"
+      >
+        <LucideIcon name="tag" :size="25" class="text-main" />
+      </view>
+      <text
+        class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-surface text-main text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      >
+        Coupon Code
+      </text>
+      <view
+        v-if="appliedCouponsCount !== 0"
+        class="h-4 w-4 p-2 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-indicator-green-bg text-indicator-green-text rounded-full flex items-center justify-center text-xs cursor-pointer"
+      >
+        {{ appliedCouponsCount }}
+      </view>
     </view>
-    <text
-      class="mb-2 p-2 w-28 absolute bottom-full left-1/2 transform -translate-x-1/2 bg-surface text-main text-xs rounded-md text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-    >
-      Coupon Code
-    </text>
+
     <view
-      v-if="appliedCouponsCount !== 0"
-      class="h-4 w-4 p-2 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-indicator-green-bg text-indicator-green-text rounded-full flex items-center justify-center text-xs cursor-pointer"
+      class="relative group"
+      :class="{
+        hidden: !fyo.singles.AccountingSettings?.enablePriceList,
+      }"
     >
-      {{ appliedCouponsCount }}
+      <view
+        class="p-1 rounded-md bg-canvas-muted cursor-pointer"
+        @tap="emit('toggleModal', 'PriceList')"
+      >
+        <LucideIcon name="layout-grid" :size="23" class="text-main" />
+      </view>
+
+      <text
+        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-surface text-main text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      >
+        Price List
+      </text>
+    </view>
+    <view
+      class="relative group"
+      :class="{
+        hidden: !fyo.singles.AccountingSettings?.enableItemEnquiry,
+      }"
+    >
+      <view
+        class="p-1 rounded-md bg-surface cursor-pointer"
+        @tap="emit('toggleModal', 'ItemEnquiry')"
+      >
+        <LucideIcon name="search" :size="24" class="text-main" />
+      </view>
+
+      <text
+        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-surface text-main text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      >
+        Item Enquiry
+      </text>
     </view>
   </view>
-
-  <view
-    class="relative group"
-    :class="{
-      hidden: !fyo.singles.AccountingSettings?.enablePriceList,
-    }"
-  >
-    <view
-      class="p-1 rounded-md bg-canvas-muted cursor-pointer"
-      @tap="emit('toggleModal', 'PriceList')"
-    >
-      <LucideIcon name="layout-grid" :size="23" class="text-main" />
+  <view v-else class="Container dark">
+    <view class="Card">
+      <view class="Header">
+        <text class="Title">P O S Quick Actions</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
+      </view>
     </view>
-
-    <text
-      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-surface text-main text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-    >
-      Price List
-    </text>
-  </view>
-  <view
-    class="relative group"
-    :class="{
-      hidden: !fyo.singles.AccountingSettings?.enableItemEnquiry,
-    }"
-  >
-    <view
-      class="p-1 rounded-md bg-surface cursor-pointer"
-      @tap="emit('toggleModal', 'ItemEnquiry')"
-    >
-      <LucideIcon name="search" :size="24" class="text-main" />
-    </view>
-
-    <text
-      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-surface text-main text-xs rounded-md p-2 w-28 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-    >
-      Item Enquiry
-    </text>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { fyo } from 'src/initFyo';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { showToast } from 'src/utils/interactive';
-import { t } from 'fyo';
+import { ref, computed } from "vue";
+import { fyo } from "src/initFyo";
+import { Payment } from "models/baseModels/Payment/Payment";
+import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { showToast } from "src/utils/interactive";
+import { t } from "fyo";
 
 // Define Props
 const props = withDefaults(
@@ -147,17 +159,17 @@ const props = withDefaults(
   {
     openAlertModal: false,
     loyaltyPoints: 0,
-    loyaltyProgram: '',
+    loyaltyProgram: "",
     appliedCouponsCount: 0,
     sinvDoc: undefined,
-  }
+  },
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: 'toggleView'): void;
-  (e: 'toggleModal', value: string): void;
-  (e: 'emitRouteToSinvList'): void;
+  (e: "toggleView"): void;
+  (e: "toggleModal", value: string): void;
+  (e: "emitRouteToSinvList"): void;
 }>();
 
 // Reactive State
@@ -185,11 +197,11 @@ const setTransferRefNo = (refValue: string) => {
 
 const toggleItemsView = () => {
   tableView.value = !tableView.value;
-  emit('toggleView');
+  emit("toggleView");
 };
 
 const showValidationToast = (action: string, isLoyalty = false) => {
-  let message = '';
+  let message = "";
 
   if (!props.sinvDoc?.items?.length) {
     message = t`Please add items`;
@@ -200,17 +212,17 @@ const showValidationToast = (action: string, isLoyalty = false) => {
   }
 
   showToast({
-    type: 'error',
+    type: "error",
     message: t`${message} before ${action}`,
   });
 };
 
 const openCouponModal = () => {
   if (!props.sinvDoc?.items?.length || !props.sinvDoc?.party) {
-    showValidationToast('applying coupon');
+    showValidationToast("applying coupon");
     return;
   }
-  emit('toggleModal', 'CouponCode');
+  emit("toggleModal", "CouponCode");
 };
 
 const openLoyaltyModal = () => {
@@ -219,10 +231,10 @@ const openLoyaltyModal = () => {
     !props.sinvDoc?.party ||
     !props.loyaltyPoints
   ) {
-    showValidationToast('applying loyalty points', true);
+    showValidationToast("applying loyalty points", true);
     return;
   }
-  emit('toggleModal', 'LoyaltyProgram');
+  emit("toggleModal", "LoyaltyProgram");
 };
 
 if (false) {

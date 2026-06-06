@@ -1,24 +1,24 @@
-import { Fyo, t } from 'fyo';
-import { Doc } from 'fyo/model/doc';
+import { Fyo, t } from "fyo";
+import { Doc } from "fyo/model/doc";
 
-import dayjs from 'dayjs';
-import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { ModelNameEnum } from 'models/types';
-import setupInstance from 'src/setup/setupInstance';
-import { getMapFromList, safeParseInt } from 'utils';
-import { getFiscalYear } from 'utils/misc';
+import dayjs from "dayjs";
+import { Invoice } from "models/baseModels/Invoice/Invoice";
+import { Payment } from "models/baseModels/Payment/Payment";
+import { PurchaseInvoice } from "models/baseModels/PurchaseInvoice/PurchaseInvoice";
+import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { ModelNameEnum } from "models/types";
+import setupInstance from "src/setup/setupInstance";
+import { getMapFromList, safeParseInt } from "utils";
+import { getFiscalYear } from "utils/misc";
 import {
   flow,
   getFlowConstant,
   getRandomDates,
   purchaseItemPartyMap,
-} from './helpers';
-import items from './items.json';
-import logo from './logo';
-import parties from './parties.json';
+} from "./helpers";
+import items from "./items.json";
+import logo from "./logo";
+import parties from "./parties.json";
 
 type Notifier = (stage: string, percent: number) => void;
 
@@ -27,21 +27,21 @@ export async function setupDummyInstance(
   fyo: Fyo,
   years = 1,
   baseCount = 1000,
-  notifier?: Notifier
+  notifier?: Notifier,
 ) {
   await fyo.purgeCache();
   notifier?.(fyo.t`Setting Up Instance`, -1);
   const options = {
     logo: null,
     companyName: "Flo's Clothes",
-    country: 'India',
-    fullname: 'Lin Florentine',
-    email: 'lin@flosclothes.com',
-    bankName: 'Supreme Bank',
-    currency: 'INR',
-    fiscalYearStart: getFiscalYear('04-01', true)!.toISOString(),
-    fiscalYearEnd: getFiscalYear('04-01', false)!.toISOString(),
-    chartOfAccounts: 'India - Chart of Accounts',
+    country: "India",
+    fullname: "Lin Florentine",
+    email: "lin@flosclothes.com",
+    bankName: "Supreme Bank",
+    currency: "INR",
+    fiscalYearStart: getFiscalYear("04-01", true)!.toISOString(),
+    fiscalYearEnd: getFiscalYear("04-01", false)!.toISOString(),
+    chartOfAccounts: "India - Chart of Accounts",
   };
   await setupInstance(dbPath, options, fyo);
   fyo.skipTelemetryLogging = true;
@@ -54,9 +54,9 @@ export async function setupDummyInstance(
 
   const instanceId = (await fyo.getValue(
     ModelNameEnum.SystemSettings,
-    'instanceId'
+    "instanceId",
   )) as string;
-  await fyo.singles.SystemSettings?.setAndSync('hideGetStarted', true);
+  await fyo.singles.SystemSettings?.setAndSync("hideGetStarted", true);
 
   fyo.skipTelemetryLogging = false;
   return { companyName: options.companyName, instanceId };
@@ -66,26 +66,26 @@ async function setOtherSettings(fyo: Fyo) {
   const doc = await fyo.doc.getDoc(ModelNameEnum.PrintSettings);
   const address = fyo.doc.getNewDoc(ModelNameEnum.Address);
   await address.setAndSync({
-    addressLine1: '1st Column, Fitzgerald Bridge',
-    city: 'Pune',
-    state: 'Maharashtra',
-    pos: 'Maharashtra',
-    postalCode: '411001',
-    country: 'India',
+    addressLine1: "1st Column, Fitzgerald Bridge",
+    city: "Pune",
+    state: "Maharashtra",
+    pos: "Maharashtra",
+    postalCode: "411001",
+    country: "India",
   });
 
   await doc.setAndSync({
-    color: '#F687B3',
-    template: 'Business',
+    color: "#F687B3",
+    template: "Business",
     displayLogo: true,
-    phone: '+91 8983-000418',
+    phone: "+91 8983-000418",
     logo,
     address: address.name,
   });
 
   const acc = await fyo.doc.getDoc(ModelNameEnum.AccountingSettings);
   await acc.setAndSync({
-    gstin: '27LIN180000A1Z5',
+    gstin: "27LIN180000A1Z5",
   });
 }
 
@@ -97,7 +97,7 @@ async function generateDynamicEntries(
   fyo: Fyo,
   years: number,
   baseCount: number,
-  notifier?: Notifier
+  notifier?: Notifier,
 ) {
   const salesInvoices = await getSalesInvoices(fyo, years, baseCount, notifier);
 
@@ -109,7 +109,7 @@ async function generateDynamicEntries(
   await syncAndSubmit(journalEntries, notifier);
 
   const invoices = ([salesInvoices, purchaseInvoices].flat() as Invoice[]).sort(
-    (a, b) => +(a.date as Date) - +(b.date as Date)
+    (a, b) => +(a.date as Date) - +(b.date as Date),
   );
   await syncAndSubmit(invoices, notifier);
 
@@ -126,25 +126,25 @@ async function getJournalEntries(fyo: Fyo, salesInvoices: SalesInvoice[]) {
     .percent(75)
     .clip(0);
 
-  const startDate = dayjs().subtract(5, 'month').toDate();
+  const startDate = dayjs().subtract(5, "month").toDate();
 
   // Bank Entry
   let doc = fyo.doc.getNewDoc(
     ModelNameEnum.JournalEntry,
     {
       date: startDate,
-      entryType: 'Bank Entry',
+      entryType: "Bank Entry",
     },
-    false
+    false,
   );
-  await doc.append('accounts', {
-    account: 'Supreme Bank',
+  await doc.append("accounts", {
+    account: "Supreme Bank",
     debit: amount,
     credit: fyo.pesa(0),
   });
 
-  await doc.append('accounts', {
-    account: 'Secured Loans',
+  await doc.append("accounts", {
+    account: "Secured Loans",
     credit: amount,
     debit: fyo.pesa(0),
   });
@@ -155,18 +155,18 @@ async function getJournalEntries(fyo: Fyo, salesInvoices: SalesInvoice[]) {
     ModelNameEnum.JournalEntry,
     {
       date: startDate,
-      entryType: 'Cash Entry',
+      entryType: "Cash Entry",
     },
-    false
+    false,
   );
-  await doc.append('accounts', {
-    account: 'Cash',
+  await doc.append("accounts", {
+    account: "Cash",
     debit: amount.percent(30),
     credit: fyo.pesa(0),
   });
 
-  await doc.append('accounts', {
-    account: 'Supreme Bank',
+  await doc.append("accounts", {
+    account: "Supreme Bank",
     credit: amount.percent(30),
     debit: fyo.pesa(0),
   });
@@ -185,26 +185,26 @@ async function getPayments(fyo: Fyo, invoices: Invoice[]) {
 
     const doc = fyo.doc.getNewDoc(ModelNameEnum.Payment, {}, false) as Payment;
     doc.party = invoice.party;
-    doc.paymentType = invoice.isSales ? 'Receive' : 'Pay';
-    doc.paymentMethod = 'Cash';
+    doc.paymentType = invoice.isSales ? "Receive" : "Pay";
+    doc.paymentMethod = "Cash";
     doc.date = dayjs(invoice.date as Date)
-      .add(15, 'day')
+      .add(15, "day")
       .toDate();
-    if (doc.paymentType === 'Receive') {
-      doc.account = 'Debtors';
-      doc.paymentAccount = 'Cash';
+    if (doc.paymentType === "Receive") {
+      doc.account = "Debtors";
+      doc.paymentAccount = "Cash";
     } else {
-      doc.account = 'Cash';
-      doc.paymentAccount = 'Creditors';
+      doc.account = "Cash";
+      doc.paymentAccount = "Creditors";
     }
     doc.amount = invoice.outstandingAmount;
 
     // Discount
     if (invoice.isSales && Math.random() < 0.05) {
-      await doc.set('writeOff', invoice.outstandingAmount?.percent(15));
+      await doc.set("writeOff", invoice.outstandingAmount?.percent(15));
     }
 
-    doc.push('for', {
+    doc.push("for", {
       referenceType: invoice.schemaName,
       referenceName: invoice.name,
       amount: invoice.outstandingAmount,
@@ -235,11 +235,11 @@ async function getSalesInvoices(
   fyo: Fyo,
   years: number,
   baseCount: number,
-  notifier?: Notifier
+  notifier?: Notifier,
 ) {
   const invoices: SalesInvoice[] = [];
-  const salesItems = items.filter((i) => i.for !== 'Purchases');
-  const customers = parties.filter((i) => i.role !== 'Supplier');
+  const salesItems = items.filter((i) => i.for !== "Purchases");
+  const customers = parties.filter((i) => i.role !== "Supplier");
 
   /**
    * Get certain number of entries for each month of the count
@@ -256,11 +256,11 @@ async function getSalesInvoices(
 
     notifier?.(
       `Creating Sales Invoices, ${d} out of ${dates.length}`,
-      safeParseInt(d) / dates.length
+      safeParseInt(d) / dates.length,
     );
     const customer = Reflect.get(
       customers,
-      Math.floor(Math.random() * customers.length)
+      Math.floor(Math.random() * customers.length),
     );
 
     const doc = fyo.doc.getNewDoc(
@@ -268,12 +268,12 @@ async function getSalesInvoices(
       {
         date,
       },
-      false
+      false,
     ) as SalesInvoice;
 
-    await doc.set('party', customer.name);
+    await doc.set("party", customer.name);
     if (!doc.account) {
-      doc.account = 'Debtors';
+      doc.account = "Debtors";
     }
     /**
      * Add `numItems` number of items to the invoice.
@@ -282,7 +282,7 @@ async function getSalesInvoices(
     for (let i = 0; i < numItems; i++) {
       const item = Reflect.get(
         salesItems,
-        Math.floor(Math.random() * salesItems.length)
+        Math.floor(Math.random() * salesItems.length),
       );
       if ((doc.items ?? []).find((i) => i.item === item.name)) {
         continue;
@@ -306,7 +306,7 @@ async function getSalesInvoices(
         fc += 1;
       }
       const rate = fyo.pesa(item.rate * (fc + 1)).clip(0);
-      await doc.append('items', {});
+      await doc.append("items", {});
       await doc.items!.at(-1)!.set({
         item: item.name,
         rate,
@@ -328,7 +328,7 @@ async function getSalesInvoices(
 async function getPurchaseInvoices(
   fyo: Fyo,
   years: number,
-  salesInvoices: SalesInvoice[]
+  salesInvoices: SalesInvoice[],
 ): Promise<PurchaseInvoice[]> {
   return [
     await getSalesPurchaseInvoices(fyo, salesInvoices),
@@ -338,7 +338,7 @@ async function getPurchaseInvoices(
 
 async function getSalesPurchaseInvoices(
   fyo: Fyo,
-  salesInvoices: SalesInvoice[]
+  salesInvoices: SalesInvoice[],
 ): Promise<PurchaseInvoice[]> {
   const invoices = [] as PurchaseInvoice[];
   /**
@@ -347,7 +347,7 @@ async function getSalesPurchaseInvoices(
   const dateGrouped = salesInvoices
     .map((si) => {
       const date = dayjs(si.date as Date);
-      const key = `${date.year()}-${String(date.month() + 1).padStart(2, '0')}`;
+      const key = `${date.year()}-${String(date.month() + 1).padStart(2, "0")}`;
       return { key, si };
     })
     .reduce(
@@ -357,7 +357,7 @@ async function getSalesPurchaseInvoices(
         list.push(item.si);
         return acc;
       },
-      {} as Record<string, SalesInvoice[]>
+      {} as Record<string, SalesInvoice[]>,
     );
 
   /**
@@ -378,7 +378,7 @@ async function getSalesPurchaseInvoices(
     const itemGrouped = Reflect.get(dateGrouped, key).reduce(
       (acc, si) => {
         for (const item of si.items!) {
-          if (item.item === 'Dry-Cleaning') {
+          if (item.item === "Dry-Cleaning") {
             continue;
           }
 
@@ -388,13 +388,13 @@ async function getSalesPurchaseInvoices(
             acc,
             item.item as string,
             (Reflect.get(acc, item.item as string) as number) +
-              (item.quantity as number)
+              (item.quantity as number),
           );
         }
 
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<string, number>,
     );
 
     /**
@@ -422,7 +422,7 @@ async function getSalesPurchaseInvoices(
 
         return acc;
       },
-      {} as Record<string, string[]>
+      {} as Record<string, string[]>,
     );
 
     /**
@@ -434,19 +434,19 @@ async function getSalesPurchaseInvoices(
         {
           date,
         },
-        false
+        false,
       ) as PurchaseInvoice;
 
-      await doc.set('party', supplier);
+      await doc.set("party", supplier);
       if (!doc.account) {
-        doc.account = 'Creditors';
+        doc.account = "Creditors";
       }
 
       /**
        * For each item create a row
        */
       for (const item of Reflect.get(supplierGrouped, supplier)) {
-        await doc.append('items', {});
+        await doc.append("items", {});
         const quantity = Reflect.get(purchaseQty, item) as number;
         await doc.items!.at(-1)!.set({ item, quantity });
       }
@@ -460,23 +460,23 @@ async function getSalesPurchaseInvoices(
 
 async function getNonSalesPurchaseInvoices(
   fyo: Fyo,
-  years: number
+  years: number,
 ): Promise<PurchaseInvoice[]> {
-  const purchaseItems = items.filter((i) => i.for !== 'Sales');
-  const itemMap = getMapFromList(purchaseItems, 'name');
+  const purchaseItems = items.filter((i) => i.for !== "Sales");
+  const itemMap = getMapFromList(purchaseItems, "name");
   const periodic: Record<string, number> = {
-    'Marketing - Video': 2,
-    'Social Ads': 1,
+    "Marketing - Video": 2,
+    "Social Ads": 1,
     Electricity: 1,
-    'Office Cleaning': 1,
-    'Office Rent': 1,
+    "Office Cleaning": 1,
+    "Office Rent": 1,
   };
   const invoices: SalesInvoice[] = [];
   for (let months = 0; months < years * 12; months++) {
     /**
      * All purchases on the first of the month.
      */
-    const temp = dayjs().subtract(months, 'month');
+    const temp = dayjs().subtract(months, "month");
     const date = temp.date(1).toDate();
 
     for (const name in periodic) {
@@ -489,23 +489,23 @@ async function getNonSalesPurchaseInvoices(
         {
           date,
         },
-        false
+        false,
       ) as PurchaseInvoice;
 
       const party = Reflect.get(purchaseItemPartyMap, name);
-      await doc.set('party', party);
+      await doc.set("party", party);
       if (!doc.account) {
-        doc.account = 'Creditors';
+        doc.account = "Creditors";
       }
-      await doc.append('items', {});
+      await doc.append("items", {});
       const row = doc.items!.at(-1)!;
       const item = Reflect.get(itemMap, name);
 
       let quantity = 1;
       let rate = item.rate;
-      if (name === 'Social Ads') {
+      if (name === "Social Ads") {
         quantity = Math.ceil(Math.random() * 200);
-      } else if (name !== 'Office Rent') {
+      } else if (name !== "Office Rent") {
         rate = rate * (Math.random() * 0.4 + 0.8);
       }
 
@@ -529,14 +529,14 @@ async function generateStaticEntries(fyo: Fyo) {
 
 async function generateItems(fyo: Fyo) {
   for (const item of items) {
-    const doc = fyo.doc.getNewDoc('Item', item, false);
+    const doc = fyo.doc.getNewDoc("Item", item, false);
     await doc.sync();
   }
 }
 
 async function generateParties(fyo: Fyo) {
   for (const party of parties) {
-    const doc = fyo.doc.getNewDoc('Party', party, false);
+    const doc = fyo.doc.getNewDoc("Party", party, false);
     await doc.sync();
   }
 }
@@ -554,7 +554,7 @@ async function syncAndSubmit(docs: Doc[], notifier?: Notifier) {
     const doc = Reflect.get(docs, i);
     notifier?.(
       `Syncing ${Reflect.get(nameMap, doc.schemaName)}, ${i} out of ${total}`,
-      safeParseInt(i) / total
+      safeParseInt(i) / total,
     );
     await doc.sync();
     await doc.submit();

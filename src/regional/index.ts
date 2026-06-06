@@ -1,8 +1,8 @@
-import { Fyo } from 'fyo';
-import { createIndianRecords } from './in/in';
+import { Fyo } from "fyo";
+import { createIndianRecords } from "./in/in";
 
 export async function createRegionalRecords(country: string, fyo: Fyo) {
-  if (country === 'India') {
+  if (country === "India") {
     await createIndianRecords(fyo);
   }
 

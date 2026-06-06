@@ -1,4 +1,4 @@
-import { IPC } from 'utils/ipc/types';
+import { IPC } from "utils/ipc/types";
 
 declare global {
   const ipc: IPC;
@@ -8,8 +8,8 @@ declare global {
   };
 }
 
-declare module '*.vue' {
-  import type { DefineComponent } from 'vue';
+declare module "*.vue" {
+  import type { DefineComponent } from "vue";
   // oxlint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
   const component: DefineComponent<{}, {}, any>;
   export default component;

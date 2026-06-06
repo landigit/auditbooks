@@ -1,19 +1,19 @@
-import { Fyo, t } from 'fyo';
+import { Fyo, t } from "fyo";
 import {
   Action,
   DefaultMap,
   FiltersMap,
   FormulaMap,
   ListViewSettings,
-} from 'fyo/model/types';
-import { ValidationError } from 'fyo/utils/errors';
-import { LedgerPosting } from 'models/Transactional/LedgerPosting';
-import { getDocStatusListColumn, getLedgerLinkAction } from 'models/helpers';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { SerialNumber } from './SerialNumber';
-import { StockMovementItem } from './StockMovementItem';
-import { Transfer } from './Transfer';
+} from "fyo/model/types";
+import { ValidationError } from "fyo/utils/errors";
+import { LedgerPosting } from "models/Transactional/LedgerPosting";
+import { getDocStatusListColumn, getLedgerLinkAction } from "models/helpers";
+import { ModelNameEnum } from "models/types";
+import { Money } from "pesa";
+import { SerialNumber } from "./SerialNumber";
+import { StockMovementItem } from "./StockMovementItem";
+import { Transfer } from "./Transfer";
 import {
   canValidateSerialNumber,
   createBatch,
@@ -22,8 +22,8 @@ import {
   updateSerialNumbers,
   validateBatch,
   validateSerialNumber,
-} from './helpers';
-import { MovementType, MovementTypeEnum } from './types';
+} from "./helpers";
+import { MovementType, MovementTypeEnum } from "./types";
 
 export class StockMovement extends Transfer {
   declare name?: string;
@@ -47,10 +47,10 @@ export class StockMovement extends Transfer {
       formula: () => {
         return this.items?.reduce(
           (acc, item) => acc.add(item.amount ?? 0),
-          this.fyo.pesa(0)
+          this.fyo.pesa(0),
         );
       },
-      dependsOn: ['items'],
+      dependsOn: ["items"],
     },
   };
 
@@ -80,13 +80,13 @@ export class StockMovement extends Transfer {
       const hasBatch = await this.fyo.getValue(
         ModelNameEnum.Item,
         item.item,
-        'hasBatch'
+        "hasBatch",
       );
 
       if (hasBatch) {
         const batchExists = await this.fyo.db.exists(
           ModelNameEnum.Batch,
-          item.batch
+          item.batch,
         );
 
         if (!batchExists) {
@@ -143,15 +143,15 @@ export class StockMovement extends Transfer {
 
     return {
       columns: [
-        'name',
+        "name",
         getDocStatusListColumn(),
-        'date',
+        "date",
         {
           label: fyo.t`Movement Type`,
-          fieldname: 'movementType',
-          fieldtype: 'Select',
+          fieldname: "movementType",
+          fieldtype: "Select",
           display(value): string {
-            return movementTypeMap[value as MovementTypeEnum] ?? '';
+            return movementTypeMap[value as MovementTypeEnum] ?? "";
           },
         },
       ],
@@ -199,11 +199,11 @@ export class StockMovement extends Transfer {
     if (item.batch) {
       const batchDoc = await this.fyo.doc.getDoc(
         ModelNameEnum.Batch,
-        item.batch
+        item.batch,
       );
       if (batchDoc && batchDoc.item !== name) {
         throw new ValidationError(
-          t`Batch ${item.batch} does not belong to Item ${name}`
+          t`Batch ${item.batch} does not belong to Item ${name}`,
         );
       }
     }
@@ -225,36 +225,36 @@ async function validateSerialNumberStatus(doc: StockMovement) {
 
     const snDoc = await doc.fyo.doc.getDoc(
       ModelNameEnum.SerialNumber,
-      serialNumber
+      serialNumber,
     );
 
     if (!(snDoc instanceof SerialNumber)) {
       continue;
     }
 
-    const status = snDoc.status ?? 'Inactive';
+    const status = snDoc.status ?? "Inactive";
 
-    if (doc.movementType === 'MaterialReceipt' && status !== 'Inactive') {
+    if (doc.movementType === "MaterialReceipt" && status !== "Inactive") {
       throw new ValidationError(
-        t`Non Inactive Serial Number ${serialNumber} cannot be used for Material Receipt`
+        t`Non Inactive Serial Number ${serialNumber} cannot be used for Material Receipt`,
       );
     }
 
-    if (doc.movementType === 'MaterialIssue' && status !== 'Active') {
+    if (doc.movementType === "MaterialIssue" && status !== "Active") {
       throw new ValidationError(
-        t`Non Active Serial Number ${serialNumber} cannot be used for Material Issue`
+        t`Non Active Serial Number ${serialNumber} cannot be used for Material Issue`,
       );
     }
 
-    if (doc.movementType === 'MaterialTransfer' && status !== 'Active') {
+    if (doc.movementType === "MaterialTransfer" && status !== "Active") {
       throw new ValidationError(
-        t`Non Active Serial Number ${serialNumber} cannot be used for Material Transfer`
+        t`Non Active Serial Number ${serialNumber} cannot be used for Material Transfer`,
       );
     }
 
-    if (item.fromLocation && status !== 'Active') {
+    if (item.fromLocation && status !== "Active") {
       throw new ValidationError(
-        t`Non Active Serial Number ${serialNumber} cannot be used as Manufacture raw material`
+        t`Non Active Serial Number ${serialNumber} cannot be used as Manufacture raw material`,
       );
     }
   }

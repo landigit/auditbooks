@@ -1,3 +1,3 @@
-import { InvoiceItem } from '../InvoiceItem/InvoiceItem';
+import { InvoiceItem } from "../InvoiceItem/InvoiceItem";
 
 export class PurchaseInvoiceItem extends InvoiceItem {}

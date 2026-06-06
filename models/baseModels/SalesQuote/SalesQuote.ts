@@ -1,13 +1,13 @@
-import { Fyo } from 'fyo';
-import { DocValueMap } from 'fyo/core/types';
-import { Action, FiltersMap, ListViewSettings } from 'fyo/model/types';
-import { ModelNameEnum } from 'models/types';
-import { getQuoteActions, getTransactionStatusColumn } from '../../helpers';
-import { Invoice } from '../Invoice/Invoice';
-import { SalesQuoteItem } from '../SalesQuoteItem/SalesQuoteItem';
-import { Defaults } from '../Defaults/Defaults';
-import { Doc } from 'fyo/model/doc';
-import { Party } from '../Party/Party';
+import { Fyo } from "fyo";
+import { DocValueMap } from "fyo/core/types";
+import { Action, FiltersMap, ListViewSettings } from "fyo/model/types";
+import { ModelNameEnum } from "models/types";
+import { getQuoteActions, getTransactionStatusColumn } from "../../helpers";
+import { Invoice } from "../Invoice/Invoice";
+import { SalesQuoteItem } from "../SalesQuoteItem/SalesQuoteItem";
+import { Defaults } from "../Defaults/Defaults";
+import { Doc } from "fyo/model/doc";
+import { Party } from "../Party/Party";
 
 export class SalesQuote extends Invoice {
   declare items?: SalesQuoteItem[];
@@ -32,7 +32,7 @@ export class SalesQuote extends Invoice {
 
     const schemaName = ModelNameEnum.SalesInvoice;
     const defaults = (this.fyo.singles.Defaults as Defaults) ?? {};
-    const terms = defaults.salesInvoiceTerms ?? '';
+    const terms = defaults.salesInvoiceTerms ?? "";
     const numberSeries = defaults.salesInvoiceNumberSeries ?? undefined;
 
     const data: DocValueMap = {
@@ -47,7 +47,7 @@ export class SalesQuote extends Invoice {
 
     const invoice = this.fyo.doc.getNewDoc(schemaName, data) as Invoice;
     for (const row of this.items ?? []) {
-      await invoice.append('items', row.getValidDict(false, true));
+      await invoice.append("items", row.getValidDict(false, true));
     }
 
     if (!invoice.items?.length) {
@@ -65,21 +65,21 @@ export class SalesQuote extends Invoice {
     await super.afterSubmit();
 
     if (this.referenceType == ModelNameEnum.Lead) {
-      const partyDoc = (await this.loadAndGetLink('party')) as Party;
+      const partyDoc = (await this.loadAndGetLink("party")) as Party;
 
-      await partyDoc.setAndSync('status', 'Quotation');
+      await partyDoc.setAndSync("status", "Quotation");
     }
   }
 
   static getListViewSettings(): ListViewSettings {
     return {
       columns: [
-        'name',
+        "name",
         getTransactionStatusColumn(),
-        'party',
-        'date',
-        'baseGrandTotal',
-        'outstandingAmount',
+        "party",
+        "date",
+        "baseGrandTotal",
+        "outstandingAmount",
       ],
     };
   }

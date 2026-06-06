@@ -17,12 +17,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue';
-import { Doc } from 'fyo/model/doc';
-import { Action } from 'fyo/model/types';
-import Button from 'src/components/Button.vue';
-import Dropdown from 'src/components/Dropdown.vue';
-import { DropdownItem } from 'src/utils/types';
+import { computed, inject } from "vue";
+import { Doc } from "fyo/model/doc";
+import { Action } from "fyo/model/types";
+import Button from "src/components/Button.vue";
+import Dropdown from "src/components/Dropdown.vue";
+import { DropdownItem } from "src/utils/types";
 
 // Define Props
 const props = withDefaults(
@@ -33,13 +33,13 @@ const props = withDefaults(
   }>(),
   {
     actions: () => [],
-    type: 'secondary',
+    type: "secondary",
     icon: true,
-  }
+  },
 );
 
 // Inject Doc
-const injectedDoc = inject<Doc | undefined>('doc', undefined);
+const injectedDoc = inject<Doc | undefined>("doc", undefined);
 
 // Computed Properties
 const doc = computed(() => {

@@ -1,22 +1,22 @@
-import { Fyo, t } from 'fyo';
-import { Doc } from 'fyo/model/doc';
+import { Fyo, t } from "fyo";
+import { Doc } from "fyo/model/doc";
 import {
   Action,
   DefaultMap,
   FiltersMap,
   HiddenMap,
   ListViewSettings,
-} from 'fyo/model/types';
+} from "fyo/model/types";
 import {
   getDocStatus,
   getLedgerLinkAction,
   getNumberSeries,
   getStatusText,
   statusColor,
-} from 'models/helpers';
-import { Transactional } from 'models/Transactional/Transactional';
-import { Money } from 'pesa';
-import { LedgerPosting } from '../../Transactional/LedgerPosting';
+} from "models/helpers";
+import { Transactional } from "models/Transactional/Transactional";
+import { Money } from "pesa";
+import { LedgerPosting } from "../../Transactional/LedgerPosting";
 
 export class JournalEntry extends Transactional {
   declare accounts?: Doc[];
@@ -56,7 +56,7 @@ export class JournalEntry extends Transactional {
   };
 
   static filters: FiltersMap = {
-    numberSeries: () => ({ referenceType: 'JournalEntry' }),
+    numberSeries: () => ({ referenceType: "JournalEntry" }),
   };
 
   static getActions(fyo: Fyo): Action[] {
@@ -66,14 +66,14 @@ export class JournalEntry extends Transactional {
   static getListViewSettings(): ListViewSettings {
     return {
       columns: [
-        'name',
+        "name",
         {
           label: t`Status`,
-          fieldname: 'status',
-          fieldtype: 'Select',
+          fieldname: "status",
+          fieldtype: "Select",
           render(doc) {
             const status = getDocStatus(doc);
-            const color = statusColor[status] ?? 'gray';
+            const color = statusColor[status] ?? "gray";
             const label = getStatusText(status);
 
             return {
@@ -81,9 +81,9 @@ export class JournalEntry extends Transactional {
             };
           },
         },
-        'date',
-        'entryType',
-        'referenceNumber',
+        "date",
+        "entryType",
+        "referenceNumber",
       ],
     };
   }

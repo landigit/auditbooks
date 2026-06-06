@@ -1,73 +1,73 @@
 import {
   AccountRootType,
   AccountRootTypeEnum,
-} from './baseModels/Account/types';
+} from "./baseModels/Account/types";
 import {
   Action,
   ColumnConfig,
   DocStatus,
   LeadStatus,
   RenderData,
-} from 'fyo/model/types';
-import { Fyo, t } from 'fyo';
-import { InvoiceStatus, ModelNameEnum } from './types';
+} from "fyo/model/types";
+import { Fyo, t } from "fyo";
+import { InvoiceStatus, ModelNameEnum } from "./types";
 
 import {
   ApplicableCouponCodes,
   ApplicablePricingRules,
-} from './baseModels/Invoice/types';
-import { AppliedCouponCodes } from './baseModels/AppliedCouponCodes/AppliedCouponCodes';
-import { CollectionRulesItems } from './baseModels/CollectionRulesItems/CollectionRulesItems';
-import { CouponCode } from './baseModels/CouponCode/CouponCode';
-import dayjs from 'dayjs';
-import { Doc } from 'fyo/model/doc';
-import { Invoice } from './baseModels/Invoice/Invoice';
-import { Lead } from './baseModels/Lead/Lead';
-import { LoyaltyProgram } from './baseModels/LoyaltyProgram/LoyaltyProgram';
-import { Money } from 'pesa';
-import { Party } from './baseModels/Party/Party';
-import { PricingRule } from './baseModels/PricingRule/PricingRule';
-import { Router } from 'vue-router';
-import { Item } from 'models/baseModels/Item/Item';
-import { SalesInvoice } from './baseModels/SalesInvoice/SalesInvoice';
-import { SalesQuote } from './baseModels/SalesQuote/SalesQuote';
-import { StockMovement } from './inventory/StockMovement';
-import { StockTransfer } from './inventory/StockTransfer';
-import { ValidationError } from 'fyo/utils/errors';
-import { isPesa } from 'fyo/utils';
-import { numberSeriesDefaultsMap } from './baseModels/Defaults/Defaults';
-import { safeParseFloat } from 'utils/index';
-import { PriceList } from './baseModels/PriceList/PriceList';
-import { InvoiceItem } from './baseModels/InvoiceItem/InvoiceItem';
-import { SalesInvoiceItem } from './baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { ItemQtyMap, ItemVisibility, POSItem } from 'src/components/POS/types';
-import { ValuationMethod } from './inventory/types';
+} from "./baseModels/Invoice/types";
+import { AppliedCouponCodes } from "./baseModels/AppliedCouponCodes/AppliedCouponCodes";
+import { CollectionRulesItems } from "./baseModels/CollectionRulesItems/CollectionRulesItems";
+import { CouponCode } from "./baseModels/CouponCode/CouponCode";
+import dayjs from "dayjs";
+import { Doc } from "fyo/model/doc";
+import { Invoice } from "./baseModels/Invoice/Invoice";
+import { Lead } from "./baseModels/Lead/Lead";
+import { LoyaltyProgram } from "./baseModels/LoyaltyProgram/LoyaltyProgram";
+import { Money } from "pesa";
+import { Party } from "./baseModels/Party/Party";
+import { PricingRule } from "./baseModels/PricingRule/PricingRule";
+import { Router } from "vue-router";
+import { Item } from "models/baseModels/Item/Item";
+import { SalesInvoice } from "./baseModels/SalesInvoice/SalesInvoice";
+import { SalesQuote } from "./baseModels/SalesQuote/SalesQuote";
+import { StockMovement } from "./inventory/StockMovement";
+import { StockTransfer } from "./inventory/StockTransfer";
+import { ValidationError } from "fyo/utils/errors";
+import { isPesa } from "fyo/utils";
+import { numberSeriesDefaultsMap } from "./baseModels/Defaults/Defaults";
+import { safeParseFloat } from "utils/index";
+import { PriceList } from "./baseModels/PriceList/PriceList";
+import { InvoiceItem } from "./baseModels/InvoiceItem/InvoiceItem";
+import { SalesInvoiceItem } from "./baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import { ItemQtyMap, ItemVisibility, POSItem } from "src/components/POS/types";
+import { ValuationMethod } from "./inventory/types";
 import {
   getRawStockLedgerEntries,
   getStockBalanceEntries,
   getStockLedgerEntries,
-} from 'reports/inventory/helpers';
-import { LoyaltyPointEntry } from './baseModels/LoyaltyPointEntry/LoyaltyPointEntry';
+} from "reports/inventory/helpers";
+import { LoyaltyPointEntry } from "./baseModels/LoyaltyPointEntry/LoyaltyPointEntry";
 import {
   generateSerialNumbersForItem,
   generateBatchForItem,
-} from './inventory/helpers';
+} from "./inventory/helpers";
 
 function escapeHtml(str: unknown): string {
-  if (typeof str !== 'string') {
-    return String(str ?? '');
+  if (typeof str !== "string") {
+    return String(str ?? "");
   }
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 export function getQuoteActions(
   fyo: Fyo,
-  schemaName: ModelNameEnum.SalesQuote
+  schemaName: ModelNameEnum.SalesQuote,
 ): Action[] {
   return [getMakeInvoiceAction(fyo, schemaName)];
 }
@@ -78,7 +78,7 @@ export function getLeadActions(fyo: Fyo): Action[] {
 
 export function getInvoiceActions(
   fyo: Fyo,
-  schemaName: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice
+  schemaName: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice,
 ): Action[] {
   return [
     getMakePaymentAction(fyo),
@@ -103,7 +103,7 @@ export async function getItemQtyMap(doc: SalesInvoice): Promise<ItemQtyMap> {
   if (posProfileName) {
     const posProfile = await doc.fyo.doc.getDoc(
       ModelNameEnum.POSProfile,
-      posProfileName as string
+      posProfileName as string,
     );
 
     inventoryLocation = posProfile?.inventory as string | undefined;
@@ -141,7 +141,7 @@ export async function getItemVisibility(fyo: Fyo): Promise<ItemVisibility> {
   if (posProfileName) {
     const posProfile = await fyo.doc.getDoc(
       ModelNameEnum.POSProfile,
-      posProfileName
+      posProfileName,
     );
     return posProfile?.itemVisibility as ItemVisibility;
   }
@@ -151,7 +151,7 @@ export async function getItemVisibility(fyo: Fyo): Promise<ItemVisibility> {
 
 export function getStockTransferActions(
   fyo: Fyo,
-  schemaName: ModelNameEnum.Shipment | ModelNameEnum.PurchaseReceipt
+  schemaName: ModelNameEnum.Shipment | ModelNameEnum.PurchaseReceipt,
 ): Action[] {
   return [
     getMakeInvoiceAction(fyo, schemaName),
@@ -163,7 +163,7 @@ export function getStockTransferActions(
 
 export function getMakeStockTransferAction(
   fyo: Fyo,
-  schemaName: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice
+  schemaName: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice,
 ): Action {
   let label = fyo.t`Shipment`;
   if (schemaName === ModelNameEnum.PurchaseInvoice) {
@@ -180,7 +180,7 @@ export function getMakeStockTransferAction(
         return;
       }
 
-      const { routeTo } = await import('src/utils/ui');
+      const { routeTo } = await import("src/utils/ui");
       const path = `/edit/${transfer.schemaName}/${transfer.name}`;
       await routeTo(path);
     },
@@ -192,7 +192,7 @@ export function getMakeInvoiceAction(
   schemaName:
     | ModelNameEnum.Shipment
     | ModelNameEnum.PurchaseReceipt
-    | ModelNameEnum.SalesQuote
+    | ModelNameEnum.SalesQuote,
 ): Action {
   let label = fyo.t`Sales Invoice`;
   if (schemaName === ModelNameEnum.PurchaseReceipt) {
@@ -215,7 +215,7 @@ export function getMakeInvoiceAction(
         return;
       }
 
-      const { routeTo } = await import('src/utils/ui');
+      const { routeTo } = await import("src/utils/ui");
       const path = `/edit/${invoice.schemaName}/${invoice.name}`;
       await routeTo(path);
     },
@@ -266,28 +266,28 @@ export function getMakePaymentAction(fyo: Fyo): Action {
         return;
       }
 
-      await payment?.set('referenceType', schemaName);
+      await payment?.set("referenceType", schemaName);
       const currentRoute = router.currentRoute.value.fullPath;
-      payment.once('afterSync', async () => {
+      payment.once("afterSync", async () => {
         await payment.submit();
         await doc.load();
         await router.push(currentRoute);
       });
 
-      const hideFields = ['party', 'for'];
+      const hideFields = ["party", "for"];
 
       if (!fyo.singles.AccountingSettings?.enableInvoiceReturns) {
-        hideFields.push('paymentType');
+        hideFields.push("paymentType");
       }
 
       if (doc.schemaName === ModelNameEnum.SalesInvoice) {
-        hideFields.push('account');
+        hideFields.push("account");
       } else {
-        hideFields.push('paymentAccount');
+        hideFields.push("paymentAccount");
       }
 
       await payment.runFormulas();
-      const { openQuickEdit } = await import('src/utils/ui');
+      const { openQuickEdit } = await import("src/utils/ui");
       await openQuickEdit({
         doc: payment,
         hideFields,
@@ -298,11 +298,11 @@ export function getMakePaymentAction(fyo: Fyo): Action {
 
 export function getLedgerLinkAction(fyo: Fyo, isStock = false): Action {
   let label = fyo.t`Accounting Entries`;
-  let reportClassName: 'GeneralLedger' | 'StockLedger' = 'GeneralLedger';
+  let reportClassName: "GeneralLedger" | "StockLedger" = "GeneralLedger";
 
   if (isStock) {
     label = fyo.t`Stock Entries`;
-    reportClassName = 'StockLedger';
+    reportClassName = "StockLedger";
   }
 
   return {
@@ -318,10 +318,10 @@ export function getLedgerLinkAction(fyo: Fyo, isStock = false): Action {
 
 export function getLedgerLink(
   doc: Doc,
-  reportClassName: 'GeneralLedger' | 'StockLedger'
+  reportClassName: "GeneralLedger" | "StockLedger",
 ) {
   return {
-    name: 'Report',
+    name: "Report",
     params: {
       reportClassName,
       defaultFilters: JSON.stringify({
@@ -351,7 +351,7 @@ export function getMakeReturnDocAction(fyo: Fyo): Action {
         return;
       }
 
-      const { routeTo } = await import('src/utils/ui');
+      const { routeTo } = await import("src/utils/ui");
       const path = `/edit/${doc.schemaName}/${returnDoc.name}`;
       await routeTo(path);
     },
@@ -361,11 +361,11 @@ export function getMakeReturnDocAction(fyo: Fyo): Action {
 export function getTransactionStatusColumn(): ColumnConfig {
   return {
     label: t`Status`,
-    fieldname: 'status',
-    fieldtype: 'Select',
+    fieldname: "status",
+    fieldtype: "Select",
     render(doc) {
       const status = getDocStatus(doc) as InvoiceStatus;
-      const color = statusColor[status] ?? 'gray';
+      const color = statusColor[status] ?? "gray";
       const label = getStatusText(status);
 
       return {
@@ -383,11 +383,11 @@ export function getTransactionStatusColumn(): ColumnConfig {
 export function getLeadStatusColumn(): ColumnConfig {
   return {
     label: t`Status`,
-    fieldname: 'status',
-    fieldtype: 'Select',
+    fieldname: "status",
+    fieldtype: "Select",
     render(doc) {
       const status = getLeadStatus(doc) as LeadStatus;
-      const color = statusColor[status] ?? 'gray';
+      const color = statusColor[status] ?? "gray";
       const label = getStatusTextOfLead(status);
 
       return {
@@ -401,101 +401,101 @@ export const statusColor: Record<
   DocStatus | InvoiceStatus | LeadStatus,
   string | undefined
 > = {
-  '': 'gray',
-  Draft: 'gray',
-  Open: 'gray',
-  Replied: 'yellow',
-  Opportunity: 'yellow',
-  Unpaid: 'orange',
-  Paid: 'green',
-  PartlyPaid: 'yellow',
-  Interested: 'yellow',
-  Converted: 'green',
-  Quotation: 'green',
-  Saved: 'blue',
-  NotSaved: 'gray',
-  Submitted: 'green',
-  Cancelled: 'red',
-  DonotContact: 'red',
-  Return: 'lime',
-  ReturnIssued: 'lime',
+  "": "gray",
+  Draft: "gray",
+  Open: "gray",
+  Replied: "yellow",
+  Opportunity: "yellow",
+  Unpaid: "orange",
+  Paid: "green",
+  PartlyPaid: "yellow",
+  Interested: "yellow",
+  Converted: "green",
+  Quotation: "green",
+  Saved: "blue",
+  NotSaved: "gray",
+  Submitted: "green",
+  Cancelled: "red",
+  DonotContact: "red",
+  Return: "lime",
+  ReturnIssued: "lime",
 };
 
 export function getStatusText(status: DocStatus | InvoiceStatus): string {
   switch (status) {
-    case 'Draft':
+    case "Draft":
       return t`Draft`;
-    case 'Saved':
+    case "Saved":
       return t`Saved`;
-    case 'NotSaved':
+    case "NotSaved":
       return t`Not Saved`;
-    case 'Submitted':
+    case "Submitted":
       return t`Submitted`;
-    case 'Cancelled':
+    case "Cancelled":
       return t`Cancelled`;
-    case 'Paid':
+    case "Paid":
       return t`Paid`;
-    case 'Unpaid':
+    case "Unpaid":
       return t`Unpaid`;
-    case 'PartlyPaid':
+    case "PartlyPaid":
       return t`Partly Paid`;
-    case 'Return':
+    case "Return":
       return t`Return`;
-    case 'ReturnIssued':
+    case "ReturnIssued":
       return t`Return Issued`;
     default:
-      return '';
+      return "";
   }
 }
 
 export function getStatusTextOfLead(status: LeadStatus): string {
   switch (status) {
-    case 'Open':
+    case "Open":
       return t`Open`;
-    case 'Replied':
+    case "Replied":
       return t`Replied`;
-    case 'Opportunity':
+    case "Opportunity":
       return t`Opportunity`;
-    case 'Interested':
+    case "Interested":
       return t`Interested`;
-    case 'Converted':
+    case "Converted":
       return t`Converted`;
-    case 'Quotation':
+    case "Quotation":
       return t`Quotation`;
-    case 'DonotContact':
+    case "DonotContact":
       return t`Do not Contact`;
     default:
-      return '';
+      return "";
   }
 }
 
 export function getLeadStatus(
-  doc?: Lead | Doc | RenderData
+  doc?: Lead | Doc | RenderData,
 ): LeadStatus | DocStatus {
   if (!doc) {
-    return '';
+    return "";
   }
 
   return doc.status as LeadStatus;
 }
 
 export function getDocStatus(
-  doc?: RenderData | Doc
+  doc?: RenderData | Doc,
 ): DocStatus | InvoiceStatus {
   if (!doc) {
-    return '';
+    return "";
   }
 
   if (doc.notInserted) {
-    return 'Draft';
+    return "Draft";
   }
 
   if (doc.dirty) {
-    return 'NotSaved';
+    return "NotSaved";
   }
 
   if (!doc.schema?.isSubmittable) {
-    return 'Saved';
+    return "Saved";
   }
 
   return getSubmittableDocStatus(doc);
@@ -504,7 +504,7 @@ export function getDocStatus(
 function getSubmittableDocStatus(doc: RenderData | Doc) {
   if (
     [ModelNameEnum.SalesInvoice, ModelNameEnum.PurchaseInvoice].includes(
-      doc.schema.name as ModelNameEnum
+      doc.schema.name as ModelNameEnum,
     )
   ) {
     return getInvoiceStatus(doc);
@@ -512,36 +512,36 @@ function getSubmittableDocStatus(doc: RenderData | Doc) {
 
   if (
     [ModelNameEnum.Shipment, ModelNameEnum.PurchaseReceipt].includes(
-      doc.schema.name as ModelNameEnum
+      doc.schema.name as ModelNameEnum,
     )
   ) {
     if (!!doc.returnAgainst && doc.submitted && !doc.cancelled) {
-      return 'Return';
+      return "Return";
     }
 
     if (doc.isReturned && doc.submitted && !doc.cancelled) {
-      return 'ReturnIssued';
+      return "ReturnIssued";
     }
   }
 
   if (!!doc.submitted && !doc.cancelled) {
-    return 'Submitted';
+    return "Submitted";
   }
 
   if (!!doc.submitted && !!doc.cancelled) {
-    return 'Cancelled';
+    return "Cancelled";
   }
 
-  return 'Saved';
+  return "Saved";
 }
 
 export function getInvoiceStatus(doc: RenderData | Doc): InvoiceStatus {
   if (doc.submitted && !doc.cancelled && doc.returnAgainst) {
-    return 'Return';
+    return "Return";
   }
 
   if (doc.submitted && !doc.cancelled && doc.isReturned) {
-    return 'ReturnIssued';
+    return "ReturnIssued";
   }
 
   if (
@@ -549,7 +549,7 @@ export function getInvoiceStatus(doc: RenderData | Doc): InvoiceStatus {
     !doc.cancelled &&
     (doc.outstandingAmount as Money).isZero()
   ) {
-    return 'Paid';
+    return "Paid";
   }
 
   if (
@@ -557,11 +557,11 @@ export function getInvoiceStatus(doc: RenderData | Doc): InvoiceStatus {
     !doc.cancelled &&
     (doc.outstandingAmount as Money).eq(doc.grandTotal as Money)
   ) {
-    return 'Unpaid';
+    return "Unpaid";
   }
 
   if (doc.cancelled) {
-    return 'Cancelled';
+    return "Cancelled";
   }
 
   if (
@@ -570,24 +570,24 @@ export function getInvoiceStatus(doc: RenderData | Doc): InvoiceStatus {
     (doc.outstandingAmount as Money).isPositive() &&
     (doc.outstandingAmount as Money).neq(doc.grandTotal as Money)
   ) {
-    return 'PartlyPaid';
+    return "PartlyPaid";
   }
 
-  return 'Saved';
+  return "Saved";
 }
 
 export function getSerialNumberStatusColumn(): ColumnConfig {
   return {
     label: t`Status`,
-    fieldname: 'status',
-    fieldtype: 'Select',
+    fieldname: "status",
+    fieldtype: "Select",
     render(doc) {
       let status = doc.status;
-      if (typeof status !== 'string') {
-        status = 'Inactive';
+      if (typeof status !== "string") {
+        status = "Inactive";
       }
 
-      const color = serialNumberStatusColor[status] ?? 'gray';
+      const color = serialNumberStatusColor[status] ?? "gray";
       const label = getSerialNumberStatusText(status);
 
       return {
@@ -598,18 +598,18 @@ export function getSerialNumberStatusColumn(): ColumnConfig {
 }
 
 export const serialNumberStatusColor: Record<string, string | undefined> = {
-  Inactive: 'gray',
-  Active: 'green',
-  Delivered: 'blue',
+  Inactive: "gray",
+  Active: "green",
+  Delivered: "blue",
 };
 
 export function getSerialNumberStatusText(status: string): string {
   switch (status) {
-    case 'Inactive':
+    case "Inactive":
       return t`Inactive`;
-    case 'Active':
+    case "Active":
       return t`Active`;
-    case 'Delivered':
+    case "Delivered":
       return t`Delivered`;
     default:
       return t`Inactive`;
@@ -619,8 +619,8 @@ export function getSerialNumberStatusText(status: string): string {
 export function getPriceListStatusColumn(): ColumnConfig {
   return {
     label: t`Enabled For`,
-    fieldname: 'enabledFor',
-    fieldtype: 'Select',
+    fieldname: "enabledFor",
+    fieldtype: "Select",
     render({ isSales, isPurchase }) {
       let status = t`None`;
 
@@ -642,14 +642,14 @@ export function getPriceListStatusColumn(): ColumnConfig {
 export function getIsDocEnabledColumn(): ColumnConfig {
   return {
     label: t`Enabled`,
-    fieldname: 'enabled',
-    fieldtype: 'Data',
+    fieldname: "enabled",
+    fieldtype: "Data",
     render(doc) {
       let status = t`Disabled`;
-      let color = 'orange';
+      let color = "orange";
       if (doc.isEnabled) {
         status = t`Enabled`;
-        color = 'green';
+        color = "green";
       }
 
       return {
@@ -673,7 +673,7 @@ export async function getExchangeRate({
   }
 
   if (!date) {
-    date = dayjs().format('YYYY-MM-DD');
+    date = dayjs().format("YYYY-MM-DD");
   }
 
   const cacheKey = `currencyExchangeRate:${date}:${fromCurrency}:${toCurrency}`;
@@ -689,7 +689,7 @@ export async function getExchangeRate({
 
   try {
     const res = await fetch(
-      `https://api.vatcomply.com/rates?date=${date}&base=${fromCurrency}&symbols=${toCurrency}`
+      `https://api.vatcomply.com/rates?date=${date}&base=${fromCurrency}&symbols=${toCurrency}`,
     );
     const data = (await res.json()) as {
       base: string;
@@ -732,7 +732,7 @@ export function getNumberSeries(schemaName: string, fyo: Fyo) {
   }
 
   const defaults = fyo.singles.Defaults;
-  const field = fyo.getField(schemaName, 'numberSeries');
+  const field = fyo.getField(schemaName, "numberSeries");
   const value = defaults?.[numberSeriesKey] as string | undefined;
   return value ?? (field?.default as string | undefined);
 }
@@ -740,11 +740,11 @@ export function getNumberSeries(schemaName: string, fyo: Fyo) {
 export function getDocStatusListColumn(): ColumnConfig {
   return {
     label: t`Status`,
-    fieldname: 'status',
-    fieldtype: 'Select',
+    fieldname: "status",
+    fieldtype: "Select",
     render(doc) {
       const status = getDocStatus(doc);
-      const color = statusColor[status] ?? 'gray';
+      const color = statusColor[status] ?? "gray";
       const label = getStatusText(status);
 
       return {
@@ -762,11 +762,11 @@ export function getDocStatusListColumn(): ColumnConfig {
 export function getLoyaltyProgramStatusColumn(): ColumnConfig {
   return {
     label: t`Status`,
-    fieldname: 'status',
-    fieldtype: 'Select',
+    fieldname: "status",
+    fieldtype: "Select",
     render(doc) {
       const status = getLoyaltyProgramStatus(doc);
-      const color = loyaltyProgramStatusColor[status] ?? 'gray';
+      const color = loyaltyProgramStatusColor[status] ?? "gray";
       const label = getLoyaltyProgramStatusText(status);
 
       return {
@@ -783,7 +783,7 @@ export function getLoyaltyProgramStatusColumn(): ColumnConfig {
 
 export function getLoyaltyProgramStatus(doc?: RenderData | Doc): string {
   if (!doc) {
-    return '';
+    return "";
   }
 
   const currentDate = new Date();
@@ -792,38 +792,38 @@ export function getLoyaltyProgramStatus(doc?: RenderData | Doc): string {
   const toDate = doc.toDate as Date;
 
   if (toDate && toDate <= currentDate) {
-    return 'Expired';
+    return "Expired";
   }
 
   const maximumUse = doc.maximumUse as number;
   const used = doc.used as number;
 
   if (maximumUse > 0 && used >= maximumUse) {
-    return 'Maxed';
+    return "Maxed";
   }
 
-  return 'Active';
+  return "Active";
 }
 
 export const loyaltyProgramStatusColor: Record<string, string | undefined> = {
-  Active: 'green',
-  Disabled: 'gray',
-  Expired: 'red',
-  Maxed: 'orange',
+  Active: "green",
+  Disabled: "gray",
+  Expired: "red",
+  Maxed: "orange",
 };
 
 export function getLoyaltyProgramStatusText(status: string): string {
   switch (status) {
-    case 'Active':
+    case "Active":
       return t`Active`;
-    case 'Disabled':
+    case "Disabled":
       return t`Disabled`;
-    case 'Expired':
+    case "Expired":
       return t`Expired`;
-    case 'Maxed':
+    case "Maxed":
       return t`Maxed`;
     default:
-      return '';
+      return "";
   }
 }
 
@@ -833,27 +833,27 @@ export async function addItem<M extends ModelsWithItems>(name: string, doc: M) {
     return;
   }
 
-  const items = (doc.items ?? []) as NonNullable<M['items']>[number][];
+  const items = (doc.items ?? []) as NonNullable<M["items"]>[number][];
 
   let item = items.find((i) => i.item === name);
   if (item) {
     const q = item.quantity ?? 0;
-    await item.set('quantity', q + 1);
+    await item.set("quantity", q + 1);
     return;
   }
 
-  await doc.append('items');
+  await doc.append("items");
   item = doc.items?.at(-1);
   if (!item) {
     return;
   }
 
-  await item.set('item', name);
+  await item.set("item", name);
 
   if (doc instanceof Invoice && !doc.isSales) {
     const batchName = await generateBatchForItem(doc.fyo, name);
     if (batchName) {
-      await item.set('batch', batchName);
+      await item.set("batch", batchName);
     }
   }
 
@@ -863,14 +863,14 @@ export async function addItem<M extends ModelsWithItems>(name: string, doc: M) {
   ) {
     const serialNumbers = await generateSerialNumbersForItem(doc.fyo, name, 1);
     if (serialNumbers) {
-      await item.set('serialNumber', serialNumbers);
+      await item.set("serialNumber", serialNumbers);
     }
   }
 }
 
 export async function getReturnLoyaltyPoints(doc: Invoice) {
   const returnDocs = await doc.fyo.db.getAll(doc.schemaName, {
-    fields: ['name', 'loyaltyPoints'],
+    fields: ["name", "loyaltyPoints"],
     filters: {
       returnAgainst: doc.returnAgainst as string,
       submitted: true,
@@ -881,20 +881,20 @@ export async function getReturnLoyaltyPoints(doc: Invoice) {
 
   const totalLoyaltyPoints = sunvDocs.reduce(
     (sum, doc) => sum + Math.abs(doc.loyaltyPoints as number),
-    0
+    0,
   );
 
   const loyaltyPoints = await doc.fyo.getValue(
     ModelNameEnum.SalesInvoice,
     doc.returnAgainst as string,
-    'loyaltyPoints'
+    "loyaltyPoints",
   );
 
   return Math.abs((loyaltyPoints as number) - Math.abs(totalLoyaltyPoints));
 }
 
 export async function getReturnQtyTotal(
-  doc: Invoice
+  doc: Invoice,
 ): Promise<
   Record<
     string,
@@ -902,14 +902,14 @@ export async function getReturnQtyTotal(
   >
 > {
   const returnDocs = await doc.fyo.db.getAll(doc.schemaName, {
-    fields: ['*'],
+    fields: ["*"],
     filters: {
       returnAgainst: doc.name as string,
     },
   });
 
   const returnedDocs = await Promise.all(
-    returnDocs.map((d) => doc.fyo.doc.getDoc(doc.schemaName, d.name as string))
+    returnDocs.map((d) => doc.fyo.doc.getDoc(doc.schemaName, d.name as string)),
   );
 
   const quantitySum: Record<
@@ -973,7 +973,7 @@ export async function getReturnQtyTotal(
 export async function createLoyaltyPointEntry(doc: Invoice) {
   const loyaltyProgramDoc = (await doc.fyo.doc.getDoc(
     ModelNameEnum.LoyaltyProgram,
-    doc?.loyaltyProgram
+    doc?.loyaltyProgram,
   )) as LoyaltyProgram;
 
   if (!loyaltyProgramDoc.isEnabled) {
@@ -991,7 +991,7 @@ export async function createLoyaltyPointEntry(doc: Invoice) {
   const expiryDate = new Date(Date.now());
 
   expiryDate.setDate(
-    expiryDate.getDate() + (loyaltyProgramDoc.expiryDuration || 0)
+    expiryDate.getDate() + (loyaltyProgramDoc.expiryDuration || 0),
   );
 
   let loyaltyProgramTier;
@@ -1002,7 +1002,7 @@ export async function createLoyaltyPointEntry(doc: Invoice) {
   } else {
     loyaltyProgramTier = getLoyaltyProgramTier(
       loyaltyProgramDoc,
-      doc?.grandTotal as Money
+      doc?.grandTotal as Money,
     ) as CollectionRulesItems;
 
     if (!loyaltyProgramTier) {
@@ -1024,7 +1024,7 @@ export async function createLoyaltyPointEntry(doc: Invoice) {
       expiryDate: expiryDate,
       loyaltyProgramTier: loyaltyProgramTier?.tierName,
       loyaltyPoints: loyaltyPoint,
-    }
+    },
   );
 
   return await newLoyaltyPointEntry.sync();
@@ -1033,11 +1033,11 @@ export async function createLoyaltyPointEntry(doc: Invoice) {
 export async function getAddedLPWithGrandTotal(
   fyo: Fyo,
   loyaltyProgram: string,
-  loyaltyPoints: number
+  loyaltyPoints: number,
 ) {
   const loyaltyProgramDoc = (await fyo.doc.getDoc(
     ModelNameEnum.LoyaltyProgram,
-    loyaltyProgram
+    loyaltyProgram,
   )) as LoyaltyProgram;
 
   const conversionFactor = loyaltyProgramDoc.conversionFactor as number;
@@ -1047,7 +1047,7 @@ export async function getAddedLPWithGrandTotal(
 
 export function getLoyaltyProgramTier(
   loyaltyProgramData: LoyaltyProgram,
-  grandTotal: Money
+  grandTotal: Money,
 ): CollectionRulesItems | undefined {
   if (!loyaltyProgramData.collectionRules) {
     return;
@@ -1084,7 +1084,7 @@ export async function removeLoyaltyPoint(doc: Doc) {
   }
 
   const data = (await doc.fyo.db.getAll(ModelNameEnum.LoyaltyPointEntry, {
-    fields: ['name', 'loyaltyPoints', 'expiryDate'],
+    fields: ["name", "loyaltyPoints", "expiryDate"],
     filters: {
       loyaltyProgram: doc.loyaltyProgram as string,
       invoice: doc.isReturn
@@ -1099,7 +1099,7 @@ export async function removeLoyaltyPoint(doc: Doc) {
 
   const lPEntryDoc = (await doc.fyo.doc.getDoc(
     ModelNameEnum.LoyaltyPointEntry,
-    data[0].name
+    data[0].name,
   )) as LoyaltyPointEntry;
 
   const newLoyaltyPoint =
@@ -1118,14 +1118,14 @@ export async function removeLoyaltyPoint(doc: Doc) {
         expiryDate: lPEntryDoc.expiryDate,
         loyaltyProgramTier: lPEntryDoc.loyaltyProgramTier,
         loyaltyPoints: newLoyaltyPoint,
-      }
+      },
     );
     await newLoyaltyPointEntry.sync();
   }
 
   const party = (await doc.fyo.doc.getDoc(
     ModelNameEnum.Party,
-    doc.party as string
+    doc.party as string,
   )) as Party;
 
   await lPEntryDoc.delete();
@@ -1135,7 +1135,7 @@ export async function removeLoyaltyPoint(doc: Doc) {
 export async function validateQty(
   sinvDoc: SalesInvoice,
   item: Item | SalesInvoiceItem | POSItem | undefined,
-  existingItems: InvoiceItem[]
+  existingItems: InvoiceItem[],
 ) {
   if (!item) {
     return;
@@ -1145,7 +1145,7 @@ export async function validateQty(
   const itemhasBatch = await sinvDoc.fyo.getValue(
     ModelNameEnum.Item,
     item.item as string,
-    'hasBatch'
+    "hasBatch",
   );
 
   const itemQtyMap: ItemQtyMap = await getItemQtyMap(sinvDoc);
@@ -1163,7 +1163,7 @@ export async function validateQty(
   const trackItem = await sinvDoc.fyo.getValue(
     ModelNameEnum.Item,
     item.item as string,
-    'trackItem'
+    "trackItem",
   );
 
   if (!trackItem) {
@@ -1182,7 +1182,7 @@ export async function validateQty(
       batchQty < (existingItems[0]?.quantity as number)
     ) {
       throw new ValidationError(
-        t`Item ${itemName} only has ${batchQty} Quantity in batch ${item.batch as string}`
+        t`Item ${itemName} only has ${batchQty} Quantity in batch ${item.batch as string}`,
       );
     }
   } else {
@@ -1191,7 +1191,7 @@ export async function validateQty(
       itemMapData.availableQty < (existingItems[0]?.quantity as number)
     ) {
       throw new ValidationError(
-        t`Item ${itemName} only has ${itemMapData.availableQty} Quantity`
+        t`Item ${itemName} only has ${itemMapData.availableQty} Quantity`,
       );
     }
   }
@@ -1202,7 +1202,7 @@ export async function validateQty(
 export async function getPricingRulesOfCoupons(
   doc: SalesInvoice,
   couponName?: string,
-  pricingRuleDocNames?: string[]
+  pricingRuleDocNames?: string[],
 ): Promise<PricingRule[] | undefined> {
   if (!doc?.coupons?.length && !couponName) {
     return;
@@ -1216,13 +1216,13 @@ export async function getPricingRulesOfCoupons(
 
   if (couponsToFetch?.length) {
     appliedCoupons = (await doc.fyo.db.getAll(ModelNameEnum.CouponCode, {
-      fields: ['*'],
-      filters: { name: ['in', couponsToFetch], isEnabled: true },
+      fields: ["*"],
+      filters: { name: ["in", couponsToFetch], isEnabled: true },
     })) as CouponCode[];
   }
 
   const filteredPricingRuleNames = appliedCoupons.filter(
-    (val) => val.pricingRule === pricingRuleDocNames![0]
+    (val) => val.pricingRule === pricingRuleDocNames![0],
   );
 
   if (!filteredPricingRuleNames.length) {
@@ -1232,15 +1232,15 @@ export async function getPricingRulesOfCoupons(
   const pricingRuleDocsForItem = (await doc.fyo.db.getAll(
     ModelNameEnum.PricingRule,
     {
-      fields: ['*'],
+      fields: ["*"],
       filters: {
-        name: ['in', pricingRuleDocNames as string[]],
+        name: ["in", pricingRuleDocNames as string[]],
         isEnabled: true,
         isCouponCodeBased: true,
       },
-      orderBy: 'priority',
-      order: 'desc',
-    }
+      orderBy: "priority",
+      order: "desc",
+    },
   )) as PricingRule[];
 
   return pricingRuleDocsForItem;
@@ -1248,7 +1248,7 @@ export async function getPricingRulesOfCoupons(
 
 export async function getPricingRule(
   doc: Invoice,
-  couponName?: string
+  couponName?: string,
 ): Promise<ApplicablePricingRules[] | undefined> {
   if (
     !doc.fyo.singles.AccountingSettings?.enablePricingRule ||
@@ -1267,7 +1267,7 @@ export async function getPricingRule(
 
     const pricingRuleDocNames = (
       await doc.fyo.db.getAll(ModelNameEnum.PricingRuleItem, {
-        fields: ['parent'],
+        fields: ["parent"],
         filters: {
           item: item.item as string,
           unit: item.unit as string,
@@ -1280,15 +1280,15 @@ export async function getPricingRule(
     const pricingRuleDocs = (await doc.fyo.db.getAll(
       ModelNameEnum.PricingRule,
       {
-        fields: ['*'],
+        fields: ["*"],
         filters: {
-          name: ['in', pricingRuleDocNames],
+          name: ["in", pricingRuleDocNames],
           isEnabled: true,
           isCouponCodeBased: false,
         },
-        orderBy: 'priority',
-        order: 'desc',
-      }
+        orderBy: "priority",
+        order: "desc",
+      },
     )) as PricingRule[];
 
     if (pricingRuleDocs.length) {
@@ -1300,7 +1300,7 @@ export async function getPricingRule(
         await getPricingRulesOfCoupons(
           doc as SalesInvoice,
           couponName,
-          pricingRuleDocNames
+          pricingRuleDocNames,
         );
 
       pricingRuleDocsForItem = couponPricingRules as PricingRule[];
@@ -1321,7 +1321,7 @@ export async function getPricingRule(
         Reflect.set(
           itemQuantity,
           item.item,
-          (Reflect.get(itemQuantity, item.item) ?? 0) + (item.quantity ?? 0)
+          (Reflect.get(itemQuantity, item.item) ?? 0) + (item.quantity ?? 0),
         );
       }
     }
@@ -1330,7 +1330,7 @@ export async function getPricingRule(
       doc as SalesInvoice,
       pricingRuleDocsForItem,
       Reflect.get(itemQuantity, item.item as string),
-      item.amount as Money
+      item.amount as Money,
     );
 
     if (!filtered.length) {
@@ -1354,7 +1354,7 @@ export async function getPricingRule(
 
 export async function getItemRateFromPriceList(
   doc: InvoiceItem | SalesInvoiceItem,
-  priceListName: string
+  priceListName: string,
 ): Promise<Money | undefined> {
   const item = doc.item;
   if (!priceListName || !item) {
@@ -1363,7 +1363,7 @@ export async function getItemRateFromPriceList(
 
   const priceList = await doc.fyo.doc.getDoc(
     ModelNameEnum.PriceList,
-    priceListName
+    priceListName,
   );
 
   if (!(priceList instanceof PriceList)) {
@@ -1393,7 +1393,7 @@ export function filterPricingRules(
   doc: SalesInvoice,
   pricingRuleDocsForItem: PricingRule[],
   quantity: number,
-  amount: Money
+  amount: Money,
 ): PricingRule[] | [] {
   const filteredPricingRules: PricingRule[] = [];
 
@@ -1411,7 +1411,7 @@ export function canApplyPricingRule(
   pricingRuleDoc: PricingRule,
   sinvDate: Date,
   quantity: number,
-  amount: Money
+  amount: Money,
 ): boolean {
   if (
     (pricingRuleDoc.minQuantity as number) > 0 &&
@@ -1465,7 +1465,7 @@ export function canApplyPricingRule(
 export function canApplyCouponCode(
   couponCodeData: CouponCode,
   amount: Money,
-  sinvDate: Date
+  sinvDate: Date,
 ): boolean {
   // Filter by Amount
   if (
@@ -1507,37 +1507,37 @@ export async function removeUnusedCoupons(sinvDoc: SalesInvoice) {
     sinvDoc.coupons?.map(async (coupon) => {
       return await getApplicableCouponCodesName(
         coupon.coupons as string,
-        sinvDoc
+        sinvDoc,
       );
-    })
+    }),
   );
 
   const flattedApplicableCouponCodes = applicableCouponCodes?.flat();
 
   const couponCodeDoc = (await sinvDoc.fyo.doc.getDoc(
     ModelNameEnum.CouponCode,
-    sinvDoc.coupons[0].coupons
+    sinvDoc.coupons[0].coupons,
   )) as CouponCode;
 
   couponCodeDoc.removeUnusedCoupons(
     flattedApplicableCouponCodes as ApplicableCouponCodes[],
-    sinvDoc
+    sinvDoc,
   );
 }
 
 export async function getApplicableCouponCodesName(
   couponName: string,
-  sinvDoc: SalesInvoice
+  sinvDoc: SalesInvoice,
 ) {
   const couponCodeDatas = (await sinvDoc.fyo.db.getAll(
     ModelNameEnum.CouponCode,
     {
-      fields: ['*'],
+      fields: ["*"],
       filters: {
         name: couponName,
         isEnabled: true,
       },
-    }
+    },
   )) as CouponCode[];
 
   if (!couponCodeDatas || !couponCodeDatas.length) {
@@ -1552,7 +1552,7 @@ export async function getApplicableCouponCodesName(
 
   return applicablePricingRules
     ?.filter(
-      (rule) => rule?.pricingRule?.name === couponCodeDatas[0].pricingRule
+      (rule) => rule?.pricingRule?.name === couponCodeDatas[0].pricingRule,
     )
     .map((rule) => ({
       pricingRule: rule.pricingRule.name,
@@ -1563,31 +1563,31 @@ export async function getApplicableCouponCodesName(
 export async function validateCouponCode(
   doc: AppliedCouponCodes,
   value: string,
-  sinvDoc?: SalesInvoice
+  sinvDoc?: SalesInvoice,
 ) {
   const coupon = await doc.fyo.db.getAll(ModelNameEnum.CouponCode, {
     fields: [
-      'minAmount',
-      'maxAmount',
-      'pricingRule',
-      'validFrom',
-      'validTo',
-      'maximumUse',
-      'used',
-      'isEnabled',
+      "minAmount",
+      "maxAmount",
+      "pricingRule",
+      "validFrom",
+      "validTo",
+      "maximumUse",
+      "used",
+      "isEnabled",
     ],
     filters: { name: value },
   });
 
   if (!coupon[0]?.isEnabled) {
     throw new ValidationError(
-      'Coupon code cannot be applied as it is not enabled'
+      "Coupon code cannot be applied as it is not enabled",
     );
   }
 
   if ((coupon[0]?.maximumUse as number) <= (coupon[0]?.used as number)) {
     throw new ValidationError(
-      'Coupon code has been used maximum number of times'
+      "Coupon code has been used maximum number of times",
     );
   }
 
@@ -1597,17 +1597,17 @@ export async function validateCouponCode(
 
   const applicableCouponCodesNames = await getApplicableCouponCodesName(
     value,
-    doc.parentdoc as SalesInvoice
+    doc.parentdoc as SalesInvoice,
   );
 
   if (!applicableCouponCodesNames?.length) {
     throw new ValidationError(
-      t`Coupon ${value} is not applicable for applied items.`
+      t`Coupon ${value} is not applicable for applied items.`,
     );
   }
 
   const couponExist = doc.parentdoc?.coupons?.some(
-    (coupon) => coupon?.coupons === value
+    (coupon) => coupon?.coupons === value,
   );
 
   if (couponExist) {
@@ -1621,7 +1621,7 @@ export async function validateCouponCode(
     throw new ValidationError(
       t`The Grand Total must exceed ${
         (coupon[0].minAmount as Money).float
-      } to apply the coupon ${value}.`
+      } to apply the coupon ${value}.`,
     );
   }
 
@@ -1632,29 +1632,29 @@ export async function validateCouponCode(
     throw new ValidationError(
       t`The Grand Total must be less than ${
         (coupon[0].maxAmount as Money).float
-      } to apply this coupon.`
+      } to apply this coupon.`,
     );
   }
 
   if ((coupon[0].validFrom as Date) > (doc.parentdoc?.date as Date)) {
     throw new ValidationError(
-      t`Valid From Date should be less than Valid To Date.`
+      t`Valid From Date should be less than Valid To Date.`,
     );
   }
 
   if ((coupon[0].validTo as Date) < (doc.parentdoc?.date as Date)) {
     throw new ValidationError(
-      t`Valid To Date should be greater than Valid From Date.`
+      t`Valid To Date should be greater than Valid From Date.`,
     );
   }
 }
 
 export async function validateLoyaltyProgram(
   doc: Invoice,
-  loyaltyProgramName: string
+  loyaltyProgramName: string,
 ) {
   const loyaltyProgram = await doc.fyo.db.getAll(ModelNameEnum.LoyaltyProgram, {
-    fields: ['fromDate', 'toDate', 'maximumUse', 'used', 'isEnabled'],
+    fields: ["fromDate", "toDate", "maximumUse", "used", "isEnabled"],
     filters: { name: loyaltyProgramName },
   });
 
@@ -1670,7 +1670,7 @@ export async function validateLoyaltyProgram(
     loyaltyProgram[0].fromDate &&
     (doc.date as Date) < (loyaltyProgram[0].fromDate as Date)
   ) {
-    throw new ValidationError('Loyalty program is not yet active');
+    throw new ValidationError("Loyalty program is not yet active");
   }
 
   const toDate = loyaltyProgram[0].toDate as Date;
@@ -1698,7 +1698,7 @@ export function removeFreeItems(sinvDoc: SalesInvoice) {
   for (const item of sinvDoc.items) {
     if (item.isFreeItem) {
       sinvDoc.items = sinvDoc.items?.filter(
-        (invoiceItem) => invoiceItem.name !== item.name
+        (invoiceItem) => invoiceItem.name !== item.name,
       );
     }
   }
@@ -1715,7 +1715,7 @@ export async function updatePricingRule(sinvDoc: SalesInvoice) {
   }
 
   const appliedPricingRuleCount = sinvDoc?.items?.filter(
-    (val) => val.isFreeItem
+    (val) => val.isFreeItem,
   ).length;
 
   setTimeout(() => {
@@ -1729,7 +1729,7 @@ export async function updatePricingRule(sinvDoc: SalesInvoice) {
 }
 
 export function getPricingRulesConflicts(
-  pricingRules: PricingRule[]
+  pricingRules: PricingRule[],
 ): undefined | boolean {
   const pricingRuleDocs = Array.from(pricingRules);
 
@@ -1756,21 +1756,21 @@ export function getPricingRulesConflicts(
 
 export function roundFreeItemQty(
   quantity: number,
-  roundingMethod: 'round' | 'floor' | 'ceil'
+  roundingMethod: "round" | "floor" | "ceil",
 ): number {
   return Reflect.get(Math, roundingMethod)(quantity);
 }
 
 export async function isLoyaltyProgramExpiredAndMaxed(
   fyo: Fyo,
-  loyaltyProgramName: string
+  loyaltyProgramName: string,
 ): Promise<boolean> {
   if (!loyaltyProgramName) {
     return false;
   }
 
   const loyaltyProgram = await fyo.db.getAll(ModelNameEnum.LoyaltyProgram, {
-    fields: ['toDate', 'maximumUse', 'used', 'isEnabled'],
+    fields: ["toDate", "maximumUse", "used", "isEnabled"],
     filters: { name: loyaltyProgramName },
   });
 

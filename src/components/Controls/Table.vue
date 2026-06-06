@@ -102,16 +102,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, watch } from 'vue';
-import { t } from 'fyo';
-import { fyo } from 'src/initFyo';
-import { useAppStore } from 'src/stores/app';
-import Row from 'src/components/Row.vue';
-import TableRow from './TableRow.vue';
+import { ref, computed, nextTick, onMounted, watch } from "vue";
+import { t } from "fyo";
+import { fyo } from "src/initFyo";
+import { useAppStore } from "src/stores/app";
+import Row from "src/components/Row.vue";
+import TableRow from "./TableRow.vue";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 interface TableProps extends BaseControlProps {
   value?: any[];
@@ -125,7 +125,7 @@ const props = withDefaults(defineProps<TableProps>(), {
   showHeader: true,
   border: false,
   step: 1,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -134,13 +134,13 @@ const props = withDefaults(defineProps<TableProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'change', val: any): void;
-  (e: 'editrow', ...args: any[]): void;
-  (e: 'row-change', field: any, value: any, df: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "change", val: any): void;
+  (e: "editrow", ...args: any[]): void;
+  (e: "row-change", field: any, value: any, df: any): void;
 }>();
 
-const maxHeight = ref('');
+const maxHeight = ref("");
 const store = useAppStore();
 const inputRef = ref<HTMLElement | null>(null);
 const tableRowRefs = ref<any[]>([]);
@@ -148,7 +148,7 @@ const tableRowRefs = ref<any[]>([]);
 const { doc, isReadOnly, isNumeric, triggerChange } = useBaseControl(
   props,
   emit,
-  inputRef
+  inputRef,
 );
 
 const canEditRow = computed(() => {
@@ -159,7 +159,7 @@ const effectiveMaxRows = computed(() => {
   if (props.maxRowsBeforeOverflow !== undefined) {
     return props.maxRowsBeforeOverflow;
   }
-  if (typeof window !== 'undefined' && window.innerWidth > 768) {
+  if (typeof window !== "undefined" && window.innerWidth > 768) {
     return 5; // Show up to 5 rows on desktop by default
   }
   return 3; // Show up to 3 rows on mobile by default
@@ -177,26 +177,26 @@ const ratio = computed(() => {
     const type = df.fieldtype;
     const name = df.fieldname?.toLowerCase();
 
-    if (name === 'item' || name === 'description' || name === 'account') {
+    if (name === "item" || name === "description" || name === "account") {
       return 2.2;
     }
     if (
-      type === 'Link' ||
-      type === 'Data' ||
-      type === 'Select' ||
-      type === 'Text'
+      type === "Link" ||
+      type === "Data" ||
+      type === "Select" ||
+      type === "Text"
     ) {
       return 1.5;
     }
     if (
-      type === 'Int' ||
-      type === 'Float' ||
-      type === 'Percent' ||
-      type === 'Check'
+      type === "Int" ||
+      type === "Float" ||
+      type === "Percent" ||
+      type === "Check"
     ) {
       return 0.7;
     }
-    if (type === 'Date') {
+    if (type === "Date") {
       return 0.9;
     }
     return 1.0;
@@ -210,7 +210,7 @@ const ratio = computed(() => {
 });
 
 const headerCellClass = computed(() => {
-  return props.size === 'small' ? 'px-2' : 'px-3';
+  return props.size === "small" ? "px-2" : "px-3";
 });
 
 const tableFields = computed(() => {
@@ -224,7 +224,7 @@ watch(
   () => {
     setMaxHeight();
   },
-  { deep: true }
+  { deep: true },
 );
 
 onMounted(() => {
@@ -270,19 +270,19 @@ const removeRow = (row: any) => {
 const scrollToRow = (index: number) => {
   const row = tableRowRefs.value[index];
   if (row && row.$el) {
-    row.$el.scrollIntoView({ block: 'nearest' });
+    row.$el.scrollIntoView({ block: "nearest" });
   }
 };
 
 const setMaxHeight = async () => {
   if (effectiveMaxRows.value === 0) {
-    maxHeight.value = '';
+    maxHeight.value = "";
     return;
   }
 
   const size = props.value?.length ?? 0;
   if (size === 0) {
-    maxHeight.value = '';
+    maxHeight.value = "";
     return;
   }
 

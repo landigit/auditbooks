@@ -1,12 +1,12 @@
-import { Action, ListViewSettings } from 'fyo/model/types';
+import { Action, ListViewSettings } from "fyo/model/types";
 import {
   getStockTransferActions,
   getTransactionStatusColumn,
-} from 'models/helpers';
-import { PurchaseReceiptItem } from './PurchaseReceiptItem';
-import { StockTransfer } from './StockTransfer';
-import { Fyo } from 'fyo';
-import { ModelNameEnum } from 'models/types';
+} from "models/helpers";
+import { PurchaseReceiptItem } from "./PurchaseReceiptItem";
+import { StockTransfer } from "./StockTransfer";
+import { Fyo } from "fyo";
+import { ModelNameEnum } from "models/types";
 
 export class PurchaseReceipt extends StockTransfer {
   declare items?: PurchaseReceiptItem[];
@@ -14,11 +14,11 @@ export class PurchaseReceipt extends StockTransfer {
   static getListViewSettings(): ListViewSettings {
     return {
       columns: [
-        'name',
+        "name",
         getTransactionStatusColumn(),
-        'party',
-        'date',
-        'grandTotal',
+        "party",
+        "date",
+        "grandTotal",
       ],
     };
   }

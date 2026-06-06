@@ -1,16 +1,16 @@
-import { Fyo, t } from 'fyo';
-import { RawValueMap } from 'fyo/core/types';
-import { ModelNameEnum } from 'models/types';
-import { reports } from 'reports';
-import { OptionField } from 'schemas/types';
-import { createFilters, routeFilters } from 'src/utils/filters';
-import { GetAllOptions } from 'utils/db/types';
-import { safeParseFloat, safeGet, safeSet } from 'utils/index';
-import { RouteLocationRaw } from 'vue-router';
-import { fuzzyMatch } from '.';
-import { getFormRoute, routeTo } from './ui';
-import { searchGroups } from '../../utils/types';
-import type { SearchGroup, SearchItem } from '../../utils/types';
+import { Fyo, t } from "fyo";
+import { RawValueMap } from "fyo/core/types";
+import { ModelNameEnum } from "models/types";
+import { reports } from "reports";
+import { OptionField } from "schemas/types";
+import { createFilters, routeFilters } from "src/utils/filters";
+import { GetAllOptions } from "utils/db/types";
+import { safeParseFloat, safeGet, safeSet } from "utils/index";
+import { RouteLocationRaw } from "vue-router";
+import { fuzzyMatch } from ".";
+import { getFormRoute, routeTo } from "./ui";
+import { searchGroups } from "../../utils/types";
+import type { SearchGroup, SearchItem } from "../../utils/types";
 
 export { searchGroups };
 export type { SearchGroup, SearchItem };
@@ -25,14 +25,14 @@ interface StoredRecentItem {
   timestamp: number;
 }
 
-interface DocSearchItem extends Omit<SearchItem, 'group'> {
-  group: 'Docs';
+interface DocSearchItem extends Omit<SearchItem, "group"> {
+  group: "Docs";
   schemaLabel: string;
   more: string[];
 }
 
-interface RecentSearchItem extends Omit<SearchItem, 'group'> {
-  group: 'Recent';
+interface RecentSearchItem extends Omit<SearchItem, "group"> {
+  group: "Recent";
 }
 
 export type SearchItems = (DocSearchItem | SearchItem | RecentSearchItem)[];
@@ -100,10 +100,10 @@ function getCreateList(fyo: Fyo): SearchItem[] {
     (schemaName) =>
       ({
         label: fyo.schemaMap[schemaName]?.label,
-        group: 'Create',
+        group: "Create",
         action: getCreateAction(fyo, schemaName),
         schemaName,
-      }) as SearchItem
+      }) as SearchItem,
   );
 
   const filteredCreateList = [
@@ -150,7 +150,7 @@ function getCreateList(fyo: Fyo): SearchItem[] {
   ].map(({ label, create, schemaName }) => {
     return {
       label,
-      group: 'Create' as const,
+      group: "Create" as const,
       action: getCreateAction(fyo, schemaName, create),
       schemaName,
       initData: create,
@@ -171,7 +171,7 @@ function getReportList(fyo: Fyo): SearchItem[] {
         return false;
       }
 
-      if (report.title.startsWith('GST') && !hasGstin) {
+      if (report.title.startsWith("GST") && !hasGstin) {
         return false;
       }
       return true;
@@ -181,7 +181,7 @@ function getReportList(fyo: Fyo): SearchItem[] {
       return {
         label: report.title,
         route: `/report/${r}`,
-        group: 'Report' as const,
+        group: "Report" as const,
       };
     });
 }
@@ -207,7 +207,7 @@ function getListViewList(fyo: Fyo): SearchItem[] {
       ModelNameEnum.Shipment,
       ModelNameEnum.PurchaseReceipt,
       ModelNameEnum.Location,
-      ModelNameEnum.StockLedgerEntry
+      ModelNameEnum.StockLedgerEntry,
     );
   }
 
@@ -235,7 +235,7 @@ function getListViewList(fyo: Fyo): SearchItem[] {
     .map((s) => ({
       label: s!.label,
       route: `/list/${s!.name}`,
-      group: 'List' as const,
+      group: "List" as const,
     }));
 
   const filteredLists = [
@@ -283,7 +283,7 @@ function getListViewList(fyo: Fyo): SearchItem[] {
     const label = i.label;
     const route = encodeURI(`${i.route}?filters=${JSON.stringify(i.filters)}`);
 
-    return { label, route, group: 'List' as const };
+    return { label, route, group: "List" as const };
   });
 
   return [standardLists, filteredLists].flat();
@@ -293,23 +293,23 @@ function getSetupList(): SearchItem[] {
   return [
     {
       label: t`Dashboard`,
-      route: '/',
-      group: 'Page' as const,
+      route: "/",
+      group: "Page" as const,
     },
     {
       label: t`Chart of Accounts`,
-      route: '/chart-of-accounts',
-      group: 'Page',
+      route: "/chart-of-accounts",
+      group: "Page",
     },
     {
       label: t`Import Wizard`,
-      route: '/import-wizard',
-      group: 'Page',
+      route: "/import-wizard",
+      group: "Page",
     },
     {
       label: t`Settings`,
-      route: '/settings',
-      group: 'Page',
+      route: "/settings",
+      group: "Page",
     },
   ];
 }
@@ -353,7 +353,7 @@ export class Search {
 
   _obsSet = false;
   numSearches = 0;
-  recentKey = 'searchRecents';
+  recentKey = "searchRecents";
   searchables: Record<string, Searchable>;
   keywords: Record<string, Keyword[]>;
   priorityMap: Record<string, number> = {
@@ -426,11 +426,11 @@ export class Search {
       timestamp: Date.now(),
     };
 
-    if ('route' in item && item.route) {
+    if ("route" in item && item.route) {
       recentItem.route = item.route;
-    } else if (item.group === 'Docs') {
+    } else if (item.group === "Docs") {
       recentItem.schemaName = item.schemaLabel;
-    } else if (item.group === 'Create') {
+    } else if (item.group === "Create") {
       recentItem.schemaName = item.schemaName;
       recentItem.initData = item.initData;
     }
@@ -453,13 +453,13 @@ export class Search {
         filtered = recents.filter(
           (item) =>
             item.label.toLowerCase().includes(lower) ||
-            item.group.toLowerCase().includes(lower)
+            item.group.toLowerCase().includes(lower),
         );
       }
 
       const result = filtered.map((item) => ({
         label: item.label,
-        group: 'Recent' as const,
+        group: "Recent" as const,
         action: () => this._executeRecentAction(item),
         route: item.route,
       }));
@@ -473,7 +473,7 @@ export class Search {
   private _executeRecentAction(item: StoredRecentItem) {
     if (item.route) {
       void routeTo(item.route);
-    } else if (item.schemaName && item.group === 'Create') {
+    } else if (item.schemaName && item.group === "Create") {
       const action = getCreateAction(this.fyo, item.schemaName, item.initData);
       void action();
     } else if (item.schemaName) {
@@ -519,9 +519,9 @@ export class Search {
 
   set(filterName: string, value: boolean) {
     if (
-      filterName === '__proto__' ||
-      filterName === 'constructor' ||
-      filterName === 'prototype'
+      filterName === "__proto__" ||
+      filterName === "constructor" ||
+      filterName === "prototype"
     ) {
       return;
     }
@@ -538,14 +538,14 @@ export class Search {
       safeSet(this.filters.schemaFilters, filterName, value);
       this.filters.skipTables = this.skipTables;
       this.filters.skipTransactions = this.skipTransactions;
-    } else if (filterName === 'skipTables') {
+    } else if (filterName === "skipTables") {
       Object.values(this.searchables)
         .filter(({ isChild }) => isChild)
         .forEach(({ schemaName }) => {
           safeSet(this.filters.schemaFilters, schemaName, !value);
         });
       this.filters.skipTables = value;
-    } else if (filterName === 'skipTransactions') {
+    } else if (filterName === "skipTransactions") {
       Object.values(this.searchables)
         .filter(({ isSubmittable }) => isSubmittable)
         .forEach(({ schemaName }) => {
@@ -573,16 +573,16 @@ export class Search {
       .reduce((a, b) => a + b, 0);
 
     if (totalChildKeywords > 2_000) {
-      this.set('skipTables', true);
+      this.set("skipTables", true);
     }
   }
 
   _setSchemaFilters() {
     for (const name in this.searchables) {
       if (
-        name !== '__proto__' &&
-        name !== 'constructor' &&
-        name !== 'prototype'
+        name !== "__proto__" &&
+        name !== "constructor" &&
+        name !== "prototype"
       ) {
         safeSet(this.filters.schemaFilters, name, true);
       }
@@ -597,11 +597,11 @@ export class Search {
 
       const options: GetAllOptions = {
         fields: [searchable.fields, searchable.meta].flat(),
-        order: 'desc',
+        order: "desc",
       };
 
       if (!searchable.isChild) {
-        options.orderBy = 'modified';
+        options.orderBy = "modified";
       }
 
       const maps = await this.fyo.db.getAllRaw(searchable.schemaName, options);
@@ -674,15 +674,15 @@ export class Search {
       this._setIntermediate([]);
     }
 
-    const inputParts = input ? input.split(' ').filter(Boolean) : [];
+    const inputParts = input ? input.split(" ").filter(Boolean) : [];
 
     /**
      * Create the suggestion list.
      */
     const groupedKeywords = this._getGroupedKeywords();
     const keys = Object.keys(groupedKeywords);
-    if (!keys.includes('0')) {
-      keys.push('0');
+    if (!keys.includes("0")) {
+      keys.push("0");
     }
 
     keys.sort((a, b) => safeParseFloat(b) - safeParseFloat(a));
@@ -690,10 +690,10 @@ export class Search {
 
     const showRecent =
       !input ||
-      input.startsWith('#') ||
-      input.toLowerCase().startsWith('recent');
+      input.startsWith("#") ||
+      input.toLowerCase().startsWith("recent");
     if (showRecent && this.filters.groupFilters.Recent) {
-      const recentSearchTerm = input?.replace(/^#|recent/gi, '').trim();
+      const recentSearchTerm = input?.replace(/^#|recent/gi, "").trim();
       const recentItems = this.getRecentItems(recentSearchTerm);
       if (recentItems.length > 0) {
         array.push(...recentItems);
@@ -703,7 +703,7 @@ export class Search {
     for (const key of keys) {
       const keywords = groupedKeywords[key] ?? [];
       this._pushDocSearchItems(keywords, array, inputParts);
-      if (key === '0') {
+      if (key === "0") {
         this._pushNonDocSearchItems(array, inputParts);
       }
     }
@@ -715,7 +715,7 @@ export class Search {
   _pushDocSearchItems(
     keywords: Keyword[],
     array: SearchItems,
-    inputParts: string[]
+    inputParts: string[],
   ) {
     if (inputParts.length === 0) {
       return;
@@ -731,7 +731,7 @@ export class Search {
 
   _pushNonDocSearchItems(array: SearchItems, inputParts: string[]) {
     const filtered = this._nonDocSearchList.filter(
-      (si) => this.filters.groupFilters[si.group]
+      (si) => this.filters.groupFilters[si.group],
     );
     const subArray = this._getSubSortedArray(filtered, inputParts);
     array.push(...subArray);
@@ -739,7 +739,7 @@ export class Search {
 
   _getSubSortedArray(
     items: (SearchItem | Keyword)[],
-    inputParts: string[]
+    inputParts: string[],
   ): SearchItems {
     const subArray: { item: SearchItems[number]; distance: number }[] = [];
 
@@ -758,7 +758,7 @@ export class Search {
 
   _getSubArrayItem(
     item: SearchItem | Keyword,
-    inputParts: string[]
+    inputParts: string[],
   ): { item: SearchItems[number]; distance: number } | null {
     if (isSearchItem(item)) {
       return this._getSubArrayItemFromSearchItem(item, inputParts);
@@ -779,7 +779,7 @@ export class Search {
     const values = this._getValueListFromSearchItem(item).filter(Boolean);
     const { isMatch, distance } = this._getMatchAndDistanceParts(
       inputParts,
-      values
+      values,
     );
 
     if (!isMatch) {
@@ -797,7 +797,7 @@ export class Search {
     const values = this._getValueListFromKeyword(item).filter(Boolean);
     const { isMatch, distance } = this._getMatchAndDistanceParts(
       inputParts,
-      values
+      values,
     );
 
     if (!isMatch) {
@@ -817,8 +817,8 @@ export class Search {
 
   _getMatchAndDistance(input: string, values: string[]) {
     return this._getMatchAndDistanceParts(
-      input.split(' ').filter(Boolean),
-      values
+      input.split(" ").filter(Boolean),
+      values,
     );
   }
 
@@ -864,7 +864,7 @@ export class Search {
       label: keyword.values[0],
       schemaLabel,
       more: keyword.values.slice(1),
-      group: 'Docs',
+      group: "Docs",
       action: async () => {
         await routeTo(route);
       },
@@ -935,11 +935,11 @@ export class Search {
       const fields = [...schema.keywordFields];
       const meta = [];
       if (schema.isChild) {
-        meta.push('parent', 'parentSchemaName');
+        meta.push("parent", "parentSchemaName");
       }
 
       if (schema.isSubmittable) {
-        meta.push('submitted', 'cancelled');
+        meta.push("submitted", "cancelled");
       }
 
       safeSet(this.searchables, schemaName, {
@@ -1000,7 +1000,7 @@ export class Search {
   _setKeywordValues(
     map: RawValueMap,
     searchable: Searchable,
-    keyword: Keyword
+    keyword: Keyword,
   ) {
     // Set individual field values
     for (const fn of searchable.fields) {
@@ -1012,7 +1012,7 @@ export class Search {
         value = options.find((o) => o.value === value)?.label ?? value;
       }
 
-      keyword.values.push(value ?? '');
+      keyword.values.push(value ?? "");
     }
   }
 
@@ -1020,14 +1020,14 @@ export class Search {
     // Set the meta map
     for (const fn of searchable.meta) {
       const meta = safeGet(map, fn);
-      if (typeof meta === 'number') {
+      if (typeof meta === "number") {
         safeSet(keyword.meta, fn, Boolean(meta));
-      } else if (typeof meta === 'string') {
+      } else if (typeof meta === "string") {
         safeSet(keyword.meta, fn, meta);
       }
     }
 
-    safeSet(keyword.meta, 'schemaName', searchable.schemaName);
+    safeSet(keyword.meta, "schemaName", searchable.schemaName);
     if (keyword.meta.parent) {
       keyword.values.unshift(keyword.meta.parent as string);
     }

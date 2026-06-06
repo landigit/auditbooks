@@ -1,12 +1,12 @@
-import { Doc } from 'fyo/model/doc';
-import { DocMap, ModelMap, SinglesMap } from 'fyo/model/types';
-import { coreModels } from 'fyo/models';
-import { NotFoundError, ValueError } from 'fyo/utils/errors';
-import Observable from 'fyo/utils/observable';
-import { Schema } from 'schemas/types';
-import { getRandomString } from 'utils';
-import { Fyo } from '..';
-import { DocValueMap, RawValueMap } from './types';
+import { Doc } from "fyo/model/doc";
+import { DocMap, ModelMap, SinglesMap } from "fyo/model/types";
+import { coreModels } from "fyo/models";
+import { NotFoundError, ValueError } from "fyo/utils/errors";
+import Observable from "fyo/utils/observable";
+import { Schema } from "schemas/types";
+import { getRandomString } from "utils";
+import { Fyo } from "..";
+import { DocValueMap, RawValueMap } from "./types";
 
 export class DocHandler {
   fyo: Fyo;
@@ -53,7 +53,7 @@ export class DocHandler {
   async getDoc(
     schemaName: string,
     name?: string,
-    options = { skipDocumentCache: false }
+    options = { skipDocumentCache: false },
   ) {
     if (name === undefined) {
       name = schemaName;
@@ -85,7 +85,7 @@ export class DocHandler {
     cacheDoc = true,
     schema?: Schema,
     Model?: typeof Doc,
-    isRawValueMap = true
+    isRawValueMap = true,
   ): Doc {
     if (!this.models[schemaName] && Model) {
       this.models[schemaName] = Model;
@@ -114,7 +114,7 @@ export class DocHandler {
   }
 
   getTemporaryName(schema: Schema): string {
-    if (schema.naming === 'random') {
+    if (schema.naming === "random") {
       return getRandomString();
     }
 
@@ -124,7 +124,7 @@ export class DocHandler {
     this.#temporaryNameCounters[schema.name] = idx + 1;
     const label = schema.label ?? schema.name;
 
-    return this.fyo.t`New ${label} ${String(idx).padStart(2, '0')}`;
+    return this.fyo.t`New ${label} ${String(idx).padStart(2, "0")}`;
   }
 
   /**
@@ -152,12 +152,12 @@ export class DocHandler {
     }
 
     // propagate change to `docs`
-    doc.on('change', (params: unknown) => {
+    doc.on("change", (params: unknown) => {
       // oxlint-disable-next-line @typescript-eslint/no-floating-promises
-      this.docs.trigger('change', params);
+      this.docs.trigger("change", params);
     });
 
-    doc.on('afterSync', () => {
+    doc.on("afterSync", () => {
       if (doc.name === name && this.#cacheHas(schemaName, name)) {
         return;
       }
@@ -169,7 +169,7 @@ export class DocHandler {
 
   #setCacheUpdationListeners(schemaName: string) {
     this.fyo.db.observer.on(`delete:${schemaName}`, (name) => {
-      if (typeof name !== 'string') {
+      if (typeof name !== "string") {
         return;
       }
 

@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 // prettier-ignore
 export const partyPurchaseItemMap: Record<string, string[]> = {
@@ -14,7 +14,7 @@ export const partyPurchaseItemMap: Record<string, string[]> = {
 };
 
 export const purchaseItemPartyMap: Record<string, string> = Object.keys(
-  partyPurchaseItemMap
+  partyPurchaseItemMap,
 ).reduce(
   (acc, party) => {
     for (const item of Reflect.get(partyPurchaseItemMap, party)) {
@@ -22,7 +22,7 @@ export const purchaseItemPartyMap: Record<string, string> = Object.keys(
     }
     return acc;
   },
-  {} as Record<string, string>
+  {} as Record<string, string>,
 );
 
 export const flow = [
@@ -41,7 +41,7 @@ export const flow = [
 ];
 export function getFlowConstant(months: number) {
   // Jan to December
-  const d = dayjs().subtract(months, 'month');
+  const d = dayjs().subtract(months, "month");
   return Reflect.get(flow, d.month());
 }
 
@@ -52,7 +52,7 @@ export function getRandomDates(count: number, months: number): Date[] {
    */
   let endDate = dayjs();
   if (months !== 0) {
-    endDate = endDate.subtract(months, 'month');
+    endDate = endDate.subtract(months, "month");
   }
 
   const dates: Date[] = [];

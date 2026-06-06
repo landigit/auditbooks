@@ -1,11 +1,11 @@
-import { Fyo } from 'fyo';
-import { Action, ListViewSettings } from 'fyo/model/types';
-import { LedgerPosting } from 'models/Transactional/LedgerPosting';
-import { ModelNameEnum } from 'models/types';
-import { getInvoiceActions, getTransactionStatusColumn } from '../../helpers';
-import { Invoice } from '../Invoice/Invoice';
-import { PurchaseInvoiceItem } from '../PurchaseInvoiceItem/PurchaseInvoiceItem';
-import { createBatch } from 'models/inventory/helpers';
+import { Fyo } from "fyo";
+import { Action, ListViewSettings } from "fyo/model/types";
+import { LedgerPosting } from "models/Transactional/LedgerPosting";
+import { ModelNameEnum } from "models/types";
+import { getInvoiceActions, getTransactionStatusColumn } from "../../helpers";
+import { Invoice } from "../Invoice/Invoice";
+import { PurchaseInvoiceItem } from "../PurchaseInvoiceItem/PurchaseInvoiceItem";
+import { createBatch } from "models/inventory/helpers";
 
 export class PurchaseInvoice extends Invoice {
   declare items?: PurchaseInvoiceItem[];
@@ -27,7 +27,7 @@ export class PurchaseInvoice extends Invoice {
       const hasBatch = await this.fyo.getValue(
         ModelNameEnum.Item,
         item.item,
-        'hasBatch'
+        "hasBatch",
       );
 
       if (hasBatch) {
@@ -88,12 +88,12 @@ export class PurchaseInvoice extends Invoice {
   static getListViewSettings(): ListViewSettings {
     return {
       columns: [
-        'name',
+        "name",
         getTransactionStatusColumn(),
-        'party',
-        'date',
-        'baseGrandTotal',
-        'outstandingAmount',
+        "party",
+        "date",
+        "baseGrandTotal",
+        "outstandingAmount",
       ],
     };
   }

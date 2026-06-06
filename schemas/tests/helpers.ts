@@ -1,10 +1,10 @@
-import Account from '../app/Account.json';
-import JournalEntry from '../app/JournalEntry.json';
-import JournalEntryAccount from '../app/JournalEntryAccount.json';
-import PartyRegional from '../regional/in/Party.json';
-import { Schema, SchemaStub, SchemaStubMap } from '../types';
-import Customer from './Customer.json';
-import Party from './Party.json';
+import Account from "../app/Account.json";
+import JournalEntry from "../app/JournalEntry.json";
+import JournalEntryAccount from "../app/JournalEntryAccount.json";
+import PartyRegional from "../regional/in/Party.json";
+import { Schema, SchemaStub, SchemaStubMap } from "../types";
+import Customer from "./Customer.json";
+import Party from "./Party.json";
 
 interface AppSchemaMap extends SchemaStubMap {
   Account: SchemaStub;
@@ -41,17 +41,17 @@ export function getTestSchemaMap(): {
 }
 
 export function everyFieldExists(fieldList: string[], schema: Schema): boolean {
-  return fieldsExist(fieldList, schema, 'every');
+  return fieldsExist(fieldList, schema, "every");
 }
 
 export function someFieldExists(fieldList: string[], schema: Schema): boolean {
-  return fieldsExist(fieldList, schema, 'some');
+  return fieldsExist(fieldList, schema, "some");
 }
 
 function fieldsExist(
   fieldList: string[],
   schema: Schema,
-  type: 'every' | 'some'
+  type: "every" | "some",
 ): boolean {
   const schemaFieldNames = schema.fields.map((f) => f.fieldname);
   return fieldList.map((f) => schemaFieldNames.includes(f))[type](Boolean);

@@ -15,9 +15,9 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { computed } from 'vue';
-import { getShortcutKeyMap } from 'src/utils/ui';
-import { useAppStore } from 'src/stores/app';
+import { computed } from "vue";
+import { getShortcutKeyMap } from "src/utils/ui";
+import { useAppStore } from "src/stores/app";
 
 // --- Props & Emits ---
 withDefaults(
@@ -27,7 +27,7 @@ withDefaults(
   }>(),
   {
     simple: false,
-  }
+  },
 );
 
 // --- State ---

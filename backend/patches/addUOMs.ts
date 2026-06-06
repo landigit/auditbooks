@@ -1,6 +1,6 @@
-import { ModelNameEnum } from '../../models/types';
-import { DatabaseManager } from '../database/manager';
-import { getDefaultMetaFieldValueMap } from '../helpers';
+import { ModelNameEnum } from "../../models/types";
+import { DatabaseManager } from "../database/manager";
+import { getDefaultMetaFieldValueMap } from "../helpers";
 
 const defaultUOMs = [
   {

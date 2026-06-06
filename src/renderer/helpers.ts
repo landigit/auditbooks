@@ -1,4 +1,4 @@
-import { Directive } from 'vue';
+import { Directive } from "vue";
 
 type OutsideClickCallback = (e: Event) => void;
 const instanceMap: Map<HTMLElement, OutsideClickCallback> = new Map();
@@ -14,7 +14,7 @@ export const outsideClickDirective: Directive<
 
     removeHandlerIfPresent(el);
     instanceMap.set(el, clickHandler);
-    document.addEventListener('click', clickHandler);
+    document.addEventListener("click", clickHandler);
   },
   unmounted(el) {
     removeHandlerIfPresent(el);
@@ -35,5 +35,5 @@ function removeHandlerIfPresent(el: HTMLElement) {
   }
 
   instanceMap.delete(el);
-  document.removeEventListener('click', clickHandler);
+  document.removeEventListener("click", clickHandler);
 }

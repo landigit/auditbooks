@@ -64,7 +64,7 @@
                 v-if="si.group === 'Docs'"
                 class="text-description text-sm ms-3"
               >
-                {{ si.more.filter(Boolean).join(', ') }}
+                {{ si.more.filter(Boolean).join(", ") }}
               </text>
             </view>
             <text
@@ -72,7 +72,7 @@
               :class="`text-indicator-${groupColorMap[si.group]}-text`"
             >
               {{
-                si.group === 'Docs' ? si.schemaLabel : groupLabelMap[si.group]
+                si.group === "Docs" ? si.schemaLabel : groupLabelMap[si.group]
               }}
             </text>
           </view>
@@ -117,7 +117,7 @@
               @tap="searcher?.set(s, !searcher?.filters[s])"
             >
               {{
-                s === 'skipTables' ? t`Skip Child Tables` : t`Skip Transactions`
+                s === "skipTables" ? t`Skip Child Tables` : t`Skip Transactions`
               }}
             </view>
           </view>
@@ -135,7 +135,7 @@
               @tap="
                 searcher?.set(
                   sf.value,
-                  !searcher?.filters.schemaFilters[sf.value]
+                  !searcher?.filters.schemaFilters[sf.value],
                 )
               "
             >
@@ -170,7 +170,7 @@
           >
             <template
               v-for="c in allowedLimits.filter(
-                (c) => c < (searcher?.numSearches ?? 0) || c === -1
+                (c) => c < (searcher?.numSearches ?? 0) || c === -1,
               )"
               :key="c + '-count'"
             >
@@ -191,17 +191,17 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { fyo } from 'src/initFyo';
-import { getBgTextColorClass } from 'src/utils/colors';
-import { searcherKey, shortcutsKey } from 'src/utils/injectionKeys';
-import { docsPathMap } from 'src/utils/misc';
+import { fyo } from "src/initFyo";
+import { getBgTextColorClass } from "src/utils/colors";
+import { searcherKey, shortcutsKey } from "src/utils/injectionKeys";
+import { docsPathMap } from "src/utils/misc";
 import {
   SearchGroup,
   SearchItems,
   getGroupLabelMap,
   searchGroups,
-} from 'src/utils/search';
-import { useAppStore } from 'src/stores/app';
+} from "src/utils/search";
+import { useAppStore } from "src/stores/app";
 import {
   ref,
   computed,
@@ -210,13 +210,13 @@ import {
   onMounted,
   onActivated,
   onDeactivated,
-} from 'vue';
-import Button from './Button.vue';
-import Modal from './Modal.vue';
-import { t } from 'fyo';
+} from "vue";
+import Button from "./Button.vue";
+import Modal from "./Modal.vue";
+import { t } from "fyo";
 
 // --- Types ---
-const COMPONENT_NAME = 'SearchBar';
+const COMPONENT_NAME = "SearchBar";
 type SchemaFilters = { value: string; label: string; index: number }[];
 
 // --- State ---
@@ -227,7 +227,7 @@ const store = useAppStore();
 const inputRef = ref<HTMLInputElement | null>(null);
 const idx = ref(0);
 const openModal = ref(false);
-const inputValue = ref('');
+const inputValue = ref("");
 const showMore = ref(false);
 const limit = ref(50);
 const allowedLimits = [50, 100, 500, -1];
@@ -264,12 +264,12 @@ const schemaFilters = computed<SchemaFilters>(() => {
 
 const groupColorMap = computed<Record<SearchGroup, string>>(() => {
   return {
-    Docs: 'blue',
-    Create: 'green',
-    List: 'teal',
-    Report: 'yellow',
-    Page: 'orange',
-    Recent: 'purple',
+    Docs: "blue",
+    Create: "green",
+    List: "teal",
+    Report: "yellow",
+    Page: "orange",
+    Recent: "purple",
   };
 });
 
@@ -293,7 +293,7 @@ defineExpose({ open });
 
 // --- Lifecycle ---
 onMounted(() => {
-  if (typeof window !== 'undefined' && store.isDevelopment) {
+  if (typeof window !== "undefined" && store.isDevelopment) {
     // @ts-ignore
     window.search = { open, close, searcher };
   }
@@ -312,7 +312,7 @@ onDeactivated(() => {
 
 // --- Methods ---
 function openDocs() {
-  ipc.openLink('https://landigit.com/auditbooks/' + docsPathMap.Search);
+  ipc.openLink("https://landigit.com/auditbooks/" + docsPathMap.Search);
 }
 
 function getShortcuts() {
@@ -321,7 +321,7 @@ function getShortcuts() {
 
   const sh = [
     {
-      shortcut: 'KeyK',
+      shortcut: "KeyK",
       callback: ifClose(() => open()),
     },
   ];
@@ -336,7 +336,7 @@ function getShortcuts() {
         }
 
         const value = searcher.value.filters.groupFilters[group];
-        if (typeof value !== 'boolean') {
+        if (typeof value !== "boolean") {
           return;
         }
 
@@ -369,7 +369,7 @@ function close(): void {
 }
 
 function reset(): void {
-  inputValue.value = '';
+  inputValue.value = "";
 }
 
 function up(): void {
@@ -380,7 +380,7 @@ function up(): void {
 function down(): void {
   idx.value = Math.max(
     Math.min(idx.value + 1, suggestions.value.length - 1),
-    0
+    0,
   );
   scrollToHighlighted();
 }
@@ -398,17 +398,17 @@ function select(index?: number): void {
 }
 
 function scrollToHighlighted(): void {
-  if (typeof document === 'undefined') {
+  if (typeof document === "undefined") {
     return;
   }
   const query = `[data-index="search-suggestion-${idx.value}"]`;
   const element = document.querySelectorAll(query)?.[0];
-  element?.scrollIntoView({ block: 'nearest' });
+  element?.scrollIntoView({ block: "nearest" });
 }
 
 function getGroupFilterButtonClass(g: SearchGroup): string {
   if (!searcher?.value) {
-    return '';
+    return "";
   }
 
   const isOn = searcher.value.filters.groupFilters[g];
@@ -422,10 +422,10 @@ function getGroupFilterButtonClass(g: SearchGroup): string {
 </script>
 
 <style scoped>
-input[type='search']::-webkit-search-decoration,
-input[type='search']::-webkit-search-cancel-button,
-input[type='search']::-webkit-search-results-button,
-input[type='search']::-webkit-search-results-decoration {
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
 </style>

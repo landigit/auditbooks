@@ -1,7 +1,7 @@
-import { DatabaseError, NotImplemented } from 'fyo/utils/errors';
-import { SchemaMap } from 'schemas/types';
-import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
-import { BackendResponse } from 'utils/ipc/types';
+import { DatabaseError, NotImplemented } from "fyo/utils/errors";
+import { SchemaMap } from "schemas/types";
+import { DatabaseDemuxBase, DatabaseMethod } from "utils/db/types";
+import { BackendResponse } from "utils/ipc/types";
 
 export class DatabaseDemux extends DatabaseDemuxBase {
   #isElectron = false;
@@ -36,7 +36,7 @@ export class DatabaseDemux extends DatabaseDemuxBase {
 
   async createNewDatabase(
     dbPath: string,
-    countryCode?: string
+    countryCode?: string,
   ): Promise<string> {
     if (!this.#isElectron) {
       throw new NotImplemented();
@@ -49,7 +49,7 @@ export class DatabaseDemux extends DatabaseDemuxBase {
 
   async connectToDatabase(
     dbPath: string,
-    countryCode?: string
+    countryCode?: string,
   ): Promise<string> {
     if (!this.#isElectron) {
       throw new NotImplemented();

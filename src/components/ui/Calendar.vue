@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue';
+import { type HTMLAttributes, computed } from "vue";
 import {
   CalendarRoot,
   type CalendarRootEmits,
@@ -16,11 +16,11 @@ import {
   CalendarCell,
   CalendarCellTrigger,
   useForwardPropsEmits,
-} from 'reka-ui';
-import { cn } from 'src/utils/cn';
+} from "reka-ui";
+import { cn } from "src/utils/cn";
 
 const props = defineProps<
-  CalendarRootProps & { class?: HTMLAttributes['class'] }
+  CalendarRootProps & { class?: HTMLAttributes["class"] }
 >();
 const emits = defineEmits<CalendarRootEmits>();
 
@@ -42,7 +42,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       <CalendarPrev
         :class="
           cn(
-            'h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center rounded-md hover:bg-surface-hover transition-colors cursor-pointer'
+            'h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center rounded-md hover:bg-surface-hover transition-colors cursor-pointer',
           )
         "
         aria-label="Previous month"
@@ -53,7 +53,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       <CalendarNext
         :class="
           cn(
-            'h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center rounded-md hover:bg-surface-hover transition-colors cursor-pointer'
+            'h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center rounded-md hover:bg-surface-hover transition-colors cursor-pointer',
           )
         "
         aria-label="Next month"
@@ -102,7 +102,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
                     'data-[selected]:bg-indicator-green-bg data-[selected]:text-white data-[selected]:hover:bg-indicator-green-bg data-[selected]:hover:text-white data-[selected]:font-bold',
                     'data-[today]:bg-surface-hover data-[today]:text-indicator-green-bg data-[today]:font-semibold',
                     'data-[outside-view]:text-description data-[outside-view]:opacity-20',
-                    'data-[disabled]:text-description data-[disabled]:opacity-20'
+                    'data-[disabled]:text-description data-[disabled]:opacity-20',
                   )
                 "
               />

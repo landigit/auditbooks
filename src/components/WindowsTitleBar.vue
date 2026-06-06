@@ -40,15 +40,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import Fb from './Icons/18/fb.vue';
+import { ref, onMounted, onUnmounted } from "vue";
+import Fb from "./Icons/18/fb.vue";
 
 defineProps<{
   dbPath?: string;
   companyName?: string;
 }>();
 
-const isDesktop = typeof ipc !== 'undefined' ? ipc.desktop : false;
+const isDesktop = typeof ipc !== "undefined" ? ipc.desktop : false;
 const isMax = ref(false);
 const isFullscreen = ref(false);
 
@@ -83,18 +83,18 @@ const handleResize = () => {
 onMounted(() => {
   getIsMaximized();
   getIsFullscreen();
-  window.addEventListener('resize', handleResize);
-  document.addEventListener('webkitfullscreenchange', getIsFullscreen);
-  document.addEventListener('mozfullscreenchange', getIsFullscreen);
-  document.addEventListener('fullscreenchange', getIsFullscreen);
-  document.addEventListener('MSFullscreenChange', getIsFullscreen);
+  window.addEventListener("resize", handleResize);
+  document.addEventListener("webkitfullscreenchange", getIsFullscreen);
+  document.addEventListener("mozfullscreenchange", getIsFullscreen);
+  document.addEventListener("fullscreenchange", getIsFullscreen);
+  document.addEventListener("MSFullscreenChange", getIsFullscreen);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize);
-  document.removeEventListener('webkitfullscreenchange', getIsFullscreen);
-  document.removeEventListener('mozfullscreenchange', getIsFullscreen);
-  document.removeEventListener('fullscreenchange', getIsFullscreen);
-  document.removeEventListener('MSFullscreenChange', getIsFullscreen);
+  window.removeEventListener("resize", handleResize);
+  document.removeEventListener("webkitfullscreenchange", getIsFullscreen);
+  document.removeEventListener("mozfullscreenchange", getIsFullscreen);
+  document.removeEventListener("fullscreenchange", getIsFullscreen);
+  document.removeEventListener("MSFullscreenChange", getIsFullscreen);
 });
 </script>

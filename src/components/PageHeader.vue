@@ -1,6 +1,7 @@
 <template>
   <view
-    class="px-2 md:px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface border-b border-border"
+    v-if="!isLynx"
+    class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface border-b border-border"
     :class="[
       border ? '' : 'md:border-b-0',
       store.platform !== 'Windows' ? 'window-drag' : '',
@@ -73,11 +74,24 @@
       <slot />
     </view>
   </view>
+  <view
+    v-else
+    class="NavBar flex flex-row justify-between items-center px-4 py-3 bg-surface border-b border-border"
+  >
+    <view class="flex flex-row items-center gap-2">
+      <slot name="left" />
+      <text v-if="title" class="text-lg font-bold text-main">{{ title }}</text>
+    </view>
+    <view class="flex flex-row items-center gap-2">
+      <slot />
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue';
-import { useAppStore } from 'src/stores/app';
+import { computed, defineAsyncComponent } from "vue";
+import { useAppStore } from "src/stores/app";
+import { isLynx } from "src/utils/interactive";
 
 // Define Props
 const props = withDefaults(
@@ -87,29 +101,29 @@ const props = withDefaults(
     searchborder?: boolean;
   }>(),
   {
-    title: '',
+    title: "",
     border: true,
     searchborder: true,
-  }
+  },
 );
 
 const store = useAppStore();
 
 const PageHeaderNavGroup = defineAsyncComponent(
-  () => import('./PageHeaderNavGroup.vue')
+  () => import("./PageHeaderNavGroup.vue"),
 );
 
 // Computed Properties
 const spacerClass = computed(() => {
   if (store.showSidebar) {
-    return '';
+    return "";
   }
 
   if (props.border) {
-    return 'me-4 border-e border-border';
+    return "me-4 border-e border-border";
   }
 
-  return 'me-4';
+  return "me-4";
 });
 </script>
 

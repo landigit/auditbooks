@@ -1,18 +1,18 @@
-import { t } from 'fyo';
+import { t } from "fyo";
 import {
   AccountRootType,
   AccountRootTypeEnum,
-} from 'models/baseModels/Account/types';
+} from "models/baseModels/Account/types";
 import {
   AccountReport,
   convertAccountRootNodesToAccountList,
-} from 'reports/AccountReport';
-import { ReportData, RootTypeRow } from 'reports/types';
-import { getMapFromList } from 'utils';
+} from "reports/AccountReport";
+import { ReportData, RootTypeRow } from "reports/types";
+import { getMapFromList } from "utils";
 
 export class BalanceSheet extends AccountReport {
   static title = t`Balance Sheet`;
-  static reportName = 'balance-sheet';
+  static reportName = "balance-sheet";
   loading = false;
 
   get rootTypes(): AccountRootType[] {
@@ -25,19 +25,19 @@ export class BalanceSheet extends AccountReport {
 
   async setReportData(filter?: string, force?: boolean) {
     this.loading = true;
-    if (force || filter !== 'hideGroupAmounts') {
+    if (force || filter !== "hideGroupAmounts") {
       await this._setRawData();
     }
 
-    const map = this._getGroupedMap(true, 'account');
+    const map = this._getGroupedMap(true, "account");
     const rangeGroupedMap = await this._getGroupedByDateRanges(map);
     const accountTree = await this._getAccountTree(rangeGroupedMap);
 
     for (const name of Object.keys(accountTree)) {
       if (
-        name === '__proto__' ||
-        name === 'constructor' ||
-        name === 'prototype'
+        name === "__proto__" ||
+        name === "constructor" ||
+        name === "prototype"
       ) {
         continue;
       }
@@ -63,13 +63,13 @@ export class BalanceSheet extends AccountReport {
       .filter((row) => !!row.rootNodes.length);
 
     this.reportData = this.getReportDataFromRows(
-      getMapFromList(rootTypeRows, 'rootType')
+      getMapFromList(rootTypeRows, "rootType"),
     );
     this.loading = false;
   }
 
   getReportDataFromRows(
-    rootTypeRows: Record<AccountRootType, RootTypeRow | undefined>
+    rootTypeRows: Record<AccountRootType, RootTypeRow | undefined>,
   ): ReportData {
     const typeNameList = [
       {

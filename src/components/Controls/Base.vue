@@ -30,16 +30,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from "vue";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -48,9 +48,9 @@ const props = withDefaults(defineProps<BaseControlProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
 }>();
 
 const inputRef = ref<HTMLInputElement | null>(null);
@@ -69,6 +69,22 @@ const {
   triggerChange,
   parse,
 } = useBaseControl(props as any, emit, inputRef);
+
+onMounted(() => {
+  if (
+    typeof window !== "undefined" &&
+    inputRef.value &&
+    inputType.value === "number"
+  ) {
+    inputRef.value.addEventListener(
+      "wheel",
+      (e) => {
+        e.preventDefault();
+      },
+      { passive: false },
+    );
+  }
+});
 
 defineExpose({
   focus,

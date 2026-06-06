@@ -4,11 +4,7 @@
   >
     <view class="flex flex-1 flex-col">
       <!-- Page Header (Title, Buttons, etc) -->
-      <PageHeader
-        v-if="showHeader"
-        :title="title"
-        :searchborder="searchborder"
-      >
+      <PageHeader v-if="showHeader" :title="title" :searchborder="searchborder">
         <template #left>
           <slot name="header-left" />
         </template>
@@ -21,7 +17,7 @@
         :class="
           useFullWidth
             ? 'w-full'
-            : 'w-full md:w-[var(--w-form)] border-0 md:border-x md:border-b border-border rounded-none md:rounded-b-lg shadow-none mb-0 mx-0 md:mb-4 md:mx-4'
+            : 'w-full md:w-[var(--w-form)] border-0 md:border-x md:border-b border-border rounded-none md:rounded-b-lg shadow-none mb-0 mx-0 md:mb-1 md:mx-4'
         "
       >
         <slot name="body" />
@@ -34,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import PageHeader from './PageHeader.vue';
+import PageHeader from "./PageHeader.vue";
 
 // Define Props directly without variable assignment (prevent TS6133)
 withDefaults(
@@ -45,10 +41,10 @@ withDefaults(
     searchborder?: boolean;
   }>(),
   {
-    title: '',
+    title: "",
     useFullWidth: false,
     showHeader: true,
     searchborder: true,
-  }
+  },
 );
 </script>

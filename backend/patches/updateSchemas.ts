@@ -1,27 +1,27 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { changeKeys, deleteKeys, getIsNullOrUndef, invertMap } from 'utils';
-import { getCountryCodeFromCountry } from 'utils/misc';
-import { Version } from 'utils/version';
-import { ModelNameEnum } from '../../models/types';
-import { FieldTypeEnum, Schema, SchemaMap } from '../../schemas/types';
-import { DatabaseManager } from '../database/manager';
-import { BunSqliteClient } from '../database/core';
-import { unlinkIfExists } from '../helpers';
+import fs from "fs/promises";
+import path from "path";
+import { changeKeys, deleteKeys, getIsNullOrUndef, invertMap } from "utils";
+import { getCountryCodeFromCountry } from "utils/misc";
+import { Version } from "utils/version";
+import { ModelNameEnum } from "../../models/types";
+import { FieldTypeEnum, Schema, SchemaMap } from "../../schemas/types";
+import { DatabaseManager } from "../database/manager";
+import { BunSqliteClient } from "../database/core";
+import { unlinkIfExists } from "../helpers";
 
-const ignoreColumns = ['keywords'];
-const columnMap = { creation: 'created', owner: 'createdBy' };
+const ignoreColumns = ["keywords"];
+const columnMap = { creation: "created", owner: "createdBy" };
 const childTableColumnMap = {
-  parenttype: 'parentSchemaName',
-  parentfield: 'parentFieldname',
+  parenttype: "parentSchemaName",
+  parentfield: "parentFieldname",
 };
 
 const defaultNumberSeriesMap = {
-  [ModelNameEnum.Payment]: 'PAY-',
-  [ModelNameEnum.JournalEntry]: 'JV-',
-  [ModelNameEnum.SalesInvoice]: 'SINV-',
-  [ModelNameEnum.PurchaseInvoice]: 'PINV-',
-  [ModelNameEnum.SalesQuote]: 'SQUOT-',
+  [ModelNameEnum.Payment]: "PAY-",
+  [ModelNameEnum.JournalEntry]: "JV-",
+  [ModelNameEnum.SalesInvoice]: "SINV-",
+  [ModelNameEnum.PurchaseInvoice]: "PINV-",
+  [ModelNameEnum.SalesQuote]: "SQUOT-",
 } as Record<ModelNameEnum, string>;
 
 async function selectAll(client: BunSqliteClient, tableName: string) {
@@ -36,16 +36,16 @@ async function selectAll(client: BunSqliteClient, tableName: string) {
 async function batchInsert(
   client: BunSqliteClient,
   tableName: string,
-  values: any[]
+  values: any[],
 ) {
   if (values.length === 0) return;
   for (const val of values) {
     const columns = Object.keys(val)
       .map((c) => `"${c}"`)
-      .join(', ');
+      .join(", ");
     const placeholders = Object.keys(val)
-      .map(() => '?')
-      .join(', ');
+      .map(() => "?")
+      .join(", ");
     const args = Object.values(val) as any[];
     await client.execute({
       sql: `INSERT INTO "${tableName}" (${columns}) VALUES (${placeholders})`,
@@ -55,7 +55,7 @@ async function batchInsert(
 }
 
 async function execute(dm: DatabaseManager) {
-  if (dm.db?.dbPath === ':memory:') {
+  if (dm.db?.dbPath === ":memory:") {
     return;
   }
 
@@ -69,7 +69,7 @@ async function execute(dm: DatabaseManager) {
   /**
    * Versions after this should have the new schemas
    */
-  if (version && Version.gt(version, '0.4.3-beta.0')) {
+  if (version && Version.gt(version, "0.4.3-beta.0")) {
     return;
   }
 
@@ -108,7 +108,7 @@ async function execute(dm: DatabaseManager) {
    * is set to prevent this patch from running again.
    */
   await destDm.db!.update(ModelNameEnum.SystemSettings, {
-    version: '0.5.0-beta.0',
+    version: "0.5.0-beta.0",
   });
 
   /**
@@ -119,17 +119,17 @@ async function execute(dm: DatabaseManager) {
 
 async function replaceDatabaseCore(
   dm: DatabaseManager,
-  destDm: DatabaseManager
+  destDm: DatabaseManager,
 ) {
   const newDbPath = destDm.db!.dbPath; // new db with new schema
   const oldDbPath = dm.db!.dbPath; // old db to be replaced
 
   // Flush WAL to main db file and release all locks before closing
   try {
-    await dm.db!.client?.execute('PRAGMA wal_checkpoint(TRUNCATE)');
+    await dm.db!.client?.execute("PRAGMA wal_checkpoint(TRUNCATE)");
   } catch {}
   try {
-    await destDm.db!.client?.execute('PRAGMA wal_checkpoint(TRUNCATE)');
+    await destDm.db!.client?.execute("PRAGMA wal_checkpoint(TRUNCATE)");
   } catch {}
 
   await dm.db!.close();
@@ -146,17 +146,17 @@ async function replaceDatabaseCore(
     !normalizedNewDbPath.startsWith(baseDir) ||
     !normalizedOldDbPath.startsWith(baseDir)
   ) {
-    throw new Error('Path traversal detected: invalid database path');
+    throw new Error("Path traversal detected: invalid database path");
   }
 
   // Delete all old database files (main, wal, shm)
   await unlinkIfExists(normalizedOldDbPath);
-  await unlinkIfExists(normalizedOldDbPath + '-wal');
-  await unlinkIfExists(normalizedOldDbPath + '-shm');
+  await unlinkIfExists(normalizedOldDbPath + "-wal");
+  await unlinkIfExists(normalizedOldDbPath + "-shm");
 
   // Delete any temporary wal/shm files before renaming
-  await unlinkIfExists(normalizedNewDbPath + '-wal');
-  await unlinkIfExists(normalizedNewDbPath + '-shm');
+  await unlinkIfExists(normalizedNewDbPath + "-wal");
+  await unlinkIfExists(normalizedNewDbPath + "-shm");
 
   await fs.rename(normalizedNewDbPath, normalizedOldDbPath);
   await dm._connect(normalizedOldDbPath);
@@ -165,20 +165,20 @@ async function replaceDatabaseCore(
 async function copyData(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  destDm: DatabaseManager
+  destDm: DatabaseManager,
 ) {
   const schemaMap = destDm.getSchemaMap();
-  await destClient.execute('PRAGMA foreign_keys=OFF');
+  await destClient.execute("PRAGMA foreign_keys=OFF");
   await copySingleValues(sourceClient, destClient, schemaMap);
   await copyParty(
     sourceClient,
     destClient,
-    Reflect.get(schemaMap, ModelNameEnum.Party)!
+    Reflect.get(schemaMap, ModelNameEnum.Party)!,
   );
   await copyItem(
     sourceClient,
     destClient,
-    Reflect.get(schemaMap, ModelNameEnum.Item)!
+    Reflect.get(schemaMap, ModelNameEnum.Item)!,
   );
   await copyChildTables(sourceClient, destClient, schemaMap);
   await copyOtherTables(sourceClient, destClient, schemaMap);
@@ -186,20 +186,20 @@ async function copyData(
   await copyLedgerEntries(
     sourceClient,
     destClient,
-    Reflect.get(schemaMap, ModelNameEnum.AccountingLedgerEntry)!
+    Reflect.get(schemaMap, ModelNameEnum.AccountingLedgerEntry)!,
   );
   await copyNumberSeries(
     sourceClient,
     destClient,
-    Reflect.get(schemaMap, ModelNameEnum.NumberSeries)!
+    Reflect.get(schemaMap, ModelNameEnum.NumberSeries)!,
   );
-  await destClient.execute('PRAGMA foreign_keys=ON');
+  await destClient.execute("PRAGMA foreign_keys=ON");
 }
 
 async function copyNumberSeries(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schema: Schema
+  schema: Schema,
 ) {
   const values = await selectAll(sourceClient, ModelNameEnum.NumberSeries);
   const refMap = invertMap(defaultNumberSeriesMap);
@@ -237,33 +237,33 @@ async function copyNumberSeries(
     values.filter((v) => v.name),
     [],
     {},
-    schema
+    schema,
   );
 }
 
 async function copyLedgerEntries(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schema: Schema
+  schema: Schema,
 ) {
   const values = await selectAll(
     sourceClient,
-    ModelNameEnum.AccountingLedgerEntry
+    ModelNameEnum.AccountingLedgerEntry,
   );
   await copyValues(
     destClient,
     ModelNameEnum.AccountingLedgerEntry,
     values,
-    ['description', 'againstAccount', 'balance'],
+    ["description", "againstAccount", "balance"],
     {},
-    schema
+    schema,
   );
 }
 
 async function copyOtherTables(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schemaMap: SchemaMap
+  schemaMap: SchemaMap,
 ) {
   const schemaNames = [
     ModelNameEnum.Account,
@@ -282,7 +282,7 @@ async function copyOtherTables(
       values,
       [],
       {},
-      Reflect.get(schemaMap, sn)
+      Reflect.get(schemaMap, sn),
     );
   }
 }
@@ -290,7 +290,7 @@ async function copyOtherTables(
 async function copyTransactionalTables(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schemaMap: SchemaMap
+  schemaMap: SchemaMap,
 ) {
   const schemaNames = [
     ModelNameEnum.JournalEntry,
@@ -329,7 +329,7 @@ async function copyTransactionalTables(
       values,
       [],
       childTableColumnMap,
-      Reflect.get(schemaMap, sn)
+      Reflect.get(schemaMap, sn),
     );
   }
 }
@@ -337,10 +337,10 @@ async function copyTransactionalTables(
 async function copyChildTables(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schemaMap: SchemaMap
+  schemaMap: SchemaMap,
 ) {
   const childSchemaNames = Object.keys(schemaMap).filter(
-    (sn) => Reflect.get(schemaMap, sn)?.isChild
+    (sn) => Reflect.get(schemaMap, sn)?.isChild,
   );
 
   for (const sn of childSchemaNames) {
@@ -351,7 +351,7 @@ async function copyChildTables(
       values,
       [],
       childTableColumnMap,
-      Reflect.get(schemaMap, sn)
+      Reflect.get(schemaMap, sn),
     );
   }
 }
@@ -359,11 +359,11 @@ async function copyChildTables(
 async function copyItem(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schema: Schema
+  schema: Schema,
 ) {
   const values = await selectAll(sourceClient, ModelNameEnum.Item);
   values.forEach((value) => {
-    value.for = 'Both';
+    value.for = "Both";
   });
 
   await copyValues(destClient, ModelNameEnum.Item, values, [], {}, schema);
@@ -372,15 +372,15 @@ async function copyItem(
 async function copyParty(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schema: Schema
+  schema: Schema,
 ) {
   const values = await selectAll(sourceClient, ModelNameEnum.Party);
   values.forEach((value) => {
     // customer will be mapped onto role
     if (Number(value.supplier) === 1) {
-      value.customer = 'Supplier';
+      value.customer = "Supplier";
     } else {
-      value.customer = 'Customer';
+      value.customer = "Customer";
     }
   });
 
@@ -388,22 +388,22 @@ async function copyParty(
     destClient,
     ModelNameEnum.Party,
     values,
-    ['supplier', 'addressDisplay'],
-    { customer: 'role' },
-    schema
+    ["supplier", "addressDisplay"],
+    { customer: "role" },
+    schema,
   );
 }
 
 async function copySingleValues(
   sourceClient: BunSqliteClient,
   destClient: BunSqliteClient,
-  schemaMap: SchemaMap
+  schemaMap: SchemaMap,
 ) {
   const singleSchemaNames = Object.keys(schemaMap).filter(
-    (k) => Reflect.get(schemaMap, k)?.isSingle
+    (k) => Reflect.get(schemaMap, k)?.isSingle,
   );
 
-  const placeholders = singleSchemaNames.map(() => '?').join(', ');
+  const placeholders = singleSchemaNames.map(() => "?").join(", ");
   const singleValuesRes = await sourceClient.execute({
     sql: `SELECT * FROM "SingleValue" WHERE "parent" IN (${placeholders})`,
     args: singleSchemaNames,
@@ -416,7 +416,7 @@ async function copySingleValues(
     singleValues,
     [],
     {},
-    Reflect.get(schemaMap, ModelNameEnum.SingleValue)!
+    Reflect.get(schemaMap, ModelNameEnum.SingleValue)!,
   );
 }
 
@@ -426,7 +426,7 @@ async function copyValues(
   values: any[],
   keysToDelete: string[] = [],
   keyMap: Record<string, string> = {},
-  schema?: Schema
+  schema?: Schema,
 ) {
   keysToDelete = [...keysToDelete, ...ignoreColumns];
   keyMap = { ...keyMap, ...columnMap };
@@ -448,7 +448,7 @@ async function copyValues(
 
 async function getDestinationDM(sourceDbPath: string, countryCode: string) {
   const dir = path.parse(sourceDbPath).dir;
-  const dbPath = path.join(dir, '__update_schemas_temp.db');
+  const dbPath = path.join(dir, "__update_schemas_temp.db");
   const dm = new DatabaseManager();
   await dm._connect(dbPath, countryCode);
   await dm.db!.migrate();
@@ -464,11 +464,11 @@ async function getCountryCode(client: BunSqliteClient) {
     });
     const country = (countryRes.rows[0] as any)?.value;
     if (!country) {
-      return '';
+      return "";
     }
     return getCountryCodeFromCountry(country);
   } catch {
-    return '';
+    return "";
   }
 }
 
@@ -488,12 +488,12 @@ function notNullify(map: any, schema: Schema) {
         Reflect.set(map, field.fieldname, 0);
         break;
       case FieldTypeEnum.Currency:
-        Reflect.set(map, field.fieldname, '0.00000000000');
+        Reflect.set(map, field.fieldname, "0.00000000000");
         break;
       case FieldTypeEnum.Table:
         continue;
       default:
-        Reflect.set(map, field.fieldname, '');
+        Reflect.set(map, field.fieldname, "");
     }
   }
 }

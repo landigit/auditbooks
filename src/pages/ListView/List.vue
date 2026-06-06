@@ -1,148 +1,223 @@
 <template>
-  <view class="text-base flex flex-col overflow-hidden h-full">
-    <!-- Main Scrollable Table Wrapper -->
-    <ScrollArea v-if="data?.length" class="flex-1 w-full" orientation="both">
-      <view
-        :style="{
-          minWidth: `${Math.max(800, columns.length * 160)}px`,
-        }"
-        class="flex flex-col min-h-full"
-      >
-        <!-- Title Row -->
-        <view class="flex items-center sticky top-0 bg-canvas z-10">
-          <view
-            v-if="!isSelectionMode"
-            class="w-8 text-end me-2 text-description"
-          >
-            #
-          </view>
-          <view v-else class="w-8 flex justify-end me-2">
-            <Check
-              :df="{
-                fieldtype: 'Check',
-                fieldname: 'selectAll',
-                label: '',
-              }"
-              :show-label="false"
-              :value="isAllSelected"
-              @change="toggleSelectAll"
-            />
-          </view>
-          <Row
-            class="flex-1 text-description h-row-mid"
-            :column-count="columns.length"
-            gap="1rem"
-          >
-            <view
-              v-for="(column, i) in columns"
-              :key="column.label"
-              class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
-              :class="{
-                'ms-auto': isNumeric(column.fieldtype),
-                'pe-4': i === columns.length - 1,
-              }"
-            >
-              {{ column.label }}
-            </view>
-          </Row>
-        </view>
+  <view v-if="!isLynx" class="flex-1 flex flex-col h-full w-full">
+    <view class="text-base flex flex-col overflow-hidden h-full w-full">
+      <!-- Main Scrollable Table Wrapper -->
+      <ScrollArea v-if="data?.length" class="flex-1 w-full" orientation="both">
         <view
-          class="border-b border-border sticky top-[var(--h-row-mid)] z-10"
-        />
-
-        <!-- Data Rows -->
-        <view class="flex-1">
-          <view v-for="(row, i) in dataSlice" :key="row.name as string">
-            <!-- Row Content -->
-            <view class="flex hover:bg-surface-hover items-center">
-              <view
-                v-if="!isSelectionMode"
-                class="w-8 text-end me-2 text-description"
-              >
-                {{ i + pageStart + 1 }}
-              </view>
-              <view v-else class="w-8 flex justify-end me-2">
-                <Check
-                  :df="{
-                    fieldtype: 'Check',
-                    fieldname: 'selectItem',
-                    label: '',
-                  }"
-                  :show-label="false"
-                  :value="selectedItems.includes(row.name as string)"
-                  @change="toggleItemSelection(row.name as string)"
-                />
-              </view>
-
-              <Row
-                gap="1rem"
-                class="cursor-pointer text-main flex-1 h-row-mid"
-                :column-count="columns.length"
-                @tap="
-                  isSelectionMode ? null : emit('openDoc', String(row.name))
-                "
-              >
-                <ListCell
-                  v-for="(column, c) in columns"
-                  :key="column.label"
-                  :class="{
-                    'text-end': isNumeric(column.fieldtype),
-                    'pe-4': c === columns.length - 1,
-                  }"
-                  :row="row as RenderData"
-                  :column="column"
-                  @status-found="handleStatusFound"
-                />
-              </Row>
-            </view>
+          :style="{
+            minWidth: `${Math.max(800, columns.length * 160)}px`,
+          }"
+          class="flex flex-col min-h-full"
+        >
+          <!-- Title Row -->
+          <view class="flex items-center sticky top-0 bg-canvas z-10">
             <view
-              class="border-b border-border"
-              v-if="!(i === dataSlice.length - 1 && i > 13)"
-            />
+              v-if="!isSelectionMode"
+              class="w-8 text-end me-2 text-description"
+            >
+              #
+            </view>
+            <view v-else class="w-8 flex justify-end me-2">
+              <Check
+                :df="{
+                  fieldtype: 'Check',
+                  fieldname: 'selectAll',
+                  label: '',
+                }"
+                :show-label="false"
+                :value="isAllSelected"
+                @change="toggleSelectAll"
+              />
+            </view>
+            <Row
+              class="flex-1 text-description h-row-mid"
+              :column-count="columns.length"
+              gap="1rem"
+            >
+              <view
+                v-for="(column, i) in columns"
+                :key="column.label"
+                class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
+                :class="{
+                  'ms-auto': isNumeric(column.fieldtype),
+                  'pe-4': i === columns.length - 1,
+                }"
+              >
+                {{ column.label }}
+              </view>
+            </Row>
           </view>
+          <view
+            class="border-b border-border sticky top-[var(--h-row-mid)] z-10"
+          />
+
+          <!-- Data Rows -->
+          <view class="flex-1">
+            <view v-for="(row, i) in dataSlice" :key="row.name as string">
+              <!-- Row Content -->
+              <view class="flex hover:bg-surface-hover items-center">
+                <view
+                  v-if="!isSelectionMode"
+                  class="w-8 text-end me-2 text-description"
+                >
+                  {{ i + pageStart + 1 }}
+                </view>
+                <view v-else class="w-8 flex justify-end me-2">
+                  <Check
+                    :df="{
+                      fieldtype: 'Check',
+                      fieldname: 'selectItem',
+                      label: '',
+                    }"
+                    :show-label="false"
+                    :value="selectedItems.includes(row.name as string)"
+                    @change="toggleItemSelection(row.name as string)"
+                  />
+                </view>
+
+                <Row
+                  gap="1rem"
+                  class="cursor-pointer text-main flex-1 h-row-mid"
+                  :column-count="columns.length"
+                  @tap="
+                    isSelectionMode ? null : emit('openDoc', String(row.name))
+                  "
+                >
+                  <ListCell
+                    v-for="(column, c) in columns"
+                    :key="column.label"
+                    :class="{
+                      'text-end': isNumeric(column.fieldtype),
+                      'pe-4': c === columns.length - 1,
+                    }"
+                    :row="row as RenderData"
+                    :column="column"
+                    @status-found="handleStatusFound"
+                  />
+                </Row>
+              </view>
+              <view
+                class="border-b border-border"
+                v-if="!(i === dataSlice.length - 1 && i > 13)"
+              />
+            </view>
+          </view>
+        </view>
+      </ScrollArea>
+
+      <!-- Pagination Footer -->
+      <view v-if="data?.length" class="mt-auto flex-shrink-0">
+        <view class="border-b border-border" />
+        <Paginator
+          :item-count="data.length"
+          class="px-4"
+          @index-change="setPageIndices"
+        />
+      </view>
+
+      <!-- Empty State -->
+      <view
+        v-if="!data?.length"
+        class="flex-1 flex flex-col items-center justify-center w-full"
+      >
+        <img src="../../assets/img/list-empty-state.svg" alt="" class="w-24" />
+        <text class="my-3 text-description">
+          {{ t`No entries found` }}
+        </text>
+        <Button v-if="canCreate" type="primary" @tap="emit('makeNewDoc')">
+          {{ t`Make Entry` }}
+        </Button>
+      </view>
+    </view>
+  </view>
+  <view v-else class="flex-1 flex flex-col h-full bg-canvas">
+    <!-- Native ScrollView List -->
+    <scroll-view
+      v-if="data?.length"
+      scroll-y="true"
+      class="flex-1 w-full px-4 py-2"
+    >
+      <view
+        v-for="row in data"
+        :key="row.name as string"
+        class="mb-3 p-4 bg-surface rounded-lg border border-border flex flex-col"
+        @tap="emit('openDoc', String(row.name))"
+      >
+        <!-- Top row: Primary key / Name and Status -->
+        <view class="flex flex-row justify-between items-center mb-2">
+          <text class="font-semibold text-lg text-main">{{ row.name }}</text>
+          <!-- Status Badge if any -->
+          <view
+            v-if="getRowStatus(row)"
+            class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40"
+          >
+            <text
+              class="text-xs font-medium text-blue-800 dark:text-blue-200"
+              >{{ getRowStatus(row) }}</text
+            >
+          </view>
+        </view>
+
+        <!-- Subtitles -->
+        <view class="flex flex-row justify-between items-center">
+          <!-- Left details: Customer/Supplier or other main metadata -->
+          <text class="text-sm text-description truncate max-w-[60%]">
+            {{ getRowSubtitle(row) }}
+          </text>
+          <!-- Right details: Total Amount/Rate if any -->
+          <text v-if="getRowTotal(row)" class="font-bold text-base text-main">
+            {{ getRowTotal(row) }}
+          </text>
         </view>
       </view>
-    </ScrollArea>
-
-    <!-- Pagination Footer -->
-    <view v-if="data?.length" class="mt-auto flex-shrink-0">
-      <view class="border-b border-border" />
-      <Paginator
-        :item-count="data.length"
-        class="px-4"
-        @index-change="setPageIndices"
-      />
-    </view>
+    </scroll-view>
 
     <!-- Empty State -->
     <view
       v-if="!data?.length"
-      class="flex flex-col items-center justify-center my-auto"
+      class="flex-1 flex flex-col items-center justify-center px-6 py-16"
     >
-      <img src="../../assets/img/list-empty-state.svg" alt="" class="w-24" />
-      <text class="my-3 text-description">
-        {{ t`No entries found` }}
+      <view
+        class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
+      >
+        <text class="text-3xl">📭</text>
+      </view>
+      <text class="text-lg font-bold text-main mb-2 text-center">
+        {{ t`No Entries Found` }}
       </text>
-      <Button v-if="canCreate" type="primary" @tap="emit('makeNewDoc')">
-        {{ t`Make Entry` }}
-      </Button>
+      <text
+        class="text-sm text-description text-center mb-6 max-w-xs leading-relaxed"
+      >
+        {{
+          t`There are no records in this list yet. Start by creating a new entry.`
+        }}
+      </text>
+      <view
+        v-if="canCreate"
+        class="px-6 py-3 bg-blue-600 rounded-xl shadow-md flex flex-row items-center justify-center"
+        @tap="emit('makeNewDoc')"
+      >
+        <text class="text-white font-semibold text-sm">{{
+          t`Make Entry`
+        }}</text>
+      </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, toRaw } from 'vue';
-import { ListViewSettings, RenderData } from 'fyo/model/types';
-import Button from 'src/components/Button.vue';
-import Check from 'src/components/Controls/Check.vue';
-import Paginator from 'src/components/Paginator.vue';
-import Row from 'src/components/Row.vue';
-import { ScrollArea } from 'src/components/ui';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
-import { isNumeric } from 'src/utils';
-import { QueryFilter } from 'utils/db/types';
-import ListCell from './ListCell.vue';
+import { ref, computed, watch, onMounted, toRaw } from "vue";
+import { ListViewSettings, RenderData } from "fyo/model/types";
+import Button from "src/components/Button.vue";
+import Check from "src/components/Controls/Check.vue";
+import Paginator from "src/components/Paginator.vue";
+import Row from "src/components/Row.vue";
+import { ScrollArea } from "src/components/ui";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import { isNumeric } from "src/utils";
+import { QueryFilter } from "utils/db/types";
+import ListCell from "./ListCell.vue";
 
 // Define Props
 const props = withDefaults(
@@ -158,15 +233,15 @@ const props = withDefaults(
     filters: () => ({}),
     canCreate: false,
     isSelectionMode: false,
-  }
+  },
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: 'openDoc', name: string): void;
-  (e: 'makeNewDoc'): void;
-  (e: 'updatedData', filters: any): void;
-  (e: 'selected-items-changed', selectedItems: string[]): void;
+  (e: "openDoc", name: string): void;
+  (e: "makeNewDoc"): void;
+  (e: "updatedData", filters: any): void;
+  (e: "selected-items-changed", selectedItems: string[]): void;
 }>();
 
 // Reactive State
@@ -192,12 +267,12 @@ const columns = computed(() => {
 
   if (cols.length === 0) {
     cols = fyo.schemaMap[props.schemaName]?.quickEditFields ?? [];
-    cols = [...new Set(['name', ...cols])];
+    cols = [...new Set(["name", ...cols])];
   }
 
   return cols
     .map((fieldname) => {
-      if (typeof fieldname === 'object') {
+      if (typeof fieldname === "object") {
         return fieldname;
       }
 
@@ -225,28 +300,28 @@ const setPageIndices = ({ start, end }: { start: number; end: number }) => {
 const updateData = async (filterObj?: Record<string, unknown>) => {
   const baseFilters = JSON.parse(JSON.stringify(toRaw(props.filters)));
   const activeFilters = JSON.parse(
-    JSON.stringify({ ...baseFilters, ...filterObj })
+    JSON.stringify({ ...baseFilters, ...filterObj }),
   );
 
   let statusFilter: [string, string] | undefined;
 
-  if ('status' in activeFilters) {
-    statusFilter = activeFilters['status'] as [string, string];
+  if ("status" in activeFilters) {
+    statusFilter = activeFilters["status"] as [string, string];
   }
 
   const isStatusFilter =
-    Array.isArray(statusFilter) && statusFilter[0] === 'like';
+    Array.isArray(statusFilter) && statusFilter[0] === "like";
   if (isStatusFilter) {
-    delete activeFilters['status'];
+    delete activeFilters["status"];
   }
 
-  const orderBy = ['created'];
-  if (fyo.db.fieldMap[props.schemaName]['date']) {
-    orderBy.unshift('date');
+  const orderBy = ["created"];
+  if (fyo.db.fieldMap[props.schemaName]["date"]) {
+    orderBy.unshift("date");
   }
 
   const tableData = await fyo.db.getAll(props.schemaName, {
-    fields: ['*'],
+    fields: ["*"],
     filters: activeFilters as QueryFilter,
     orderBy,
   });
@@ -261,7 +336,7 @@ const updateData = async (filterObj?: Record<string, unknown>) => {
       .map(([rowId]) => rowId);
 
     filteredData = tableData.filter((row) =>
-      matchedNames.includes(String(row.name))
+      matchedNames.includes(String(row.name)),
     );
   }
 
@@ -269,7 +344,7 @@ const updateData = async (filterObj?: Record<string, unknown>) => {
     ...d,
     schema: fyo.schemaMap[props.schemaName],
   })) as RenderData[];
-  emit('updatedData', activeFilters);
+  emit("updatedData", activeFilters);
 };
 
 const setUpdateListeners = () => {
@@ -298,14 +373,14 @@ const toggleItemSelection = (itemName: string) => {
   } else {
     selectedItems.value.push(itemName);
   }
-  emit('selected-items-changed', selectedItems.value);
+  emit("selected-items-changed", selectedItems.value);
 };
 
 const toggleSelectAll = (checked: boolean) => {
   selectedItems.value = checked
     ? data.value.map((row) => row.name as string)
     : [];
-  emit('selected-items-changed', selectedItems.value);
+  emit("selected-items-changed", selectedItems.value);
 };
 
 // Watchers
@@ -317,8 +392,42 @@ watch(
     }
 
     await updateData();
-  }
+  },
 );
+
+const getRowStatus = (row: any) => {
+  return (row.status || row.approvalStatus || "") as string;
+};
+
+const getRowSubtitle = (row: any) => {
+  const subCol = columns.value.find((col) => {
+    const name = col.fieldname;
+    return (
+      name !== "name" &&
+      name !== "status" &&
+      name !== "approvalStatus" &&
+      !isNumeric(col.fieldtype)
+    );
+  });
+  if (subCol) {
+    const val = row[subCol.fieldname];
+    return fyo.format(val, subCol as any);
+  }
+  return (row.customer ||
+    row.supplier ||
+    row.party ||
+    row.description ||
+    "") as string;
+};
+
+const getRowTotal = (row: any) => {
+  const numCol = columns.value.find((col) => isNumeric(col.fieldtype));
+  if (numCol) {
+    const val = row[numCol.fieldname];
+    return fyo.format(val, numCol as any);
+  }
+  return "";
+};
 
 onMounted(async () => {
   await updateData();

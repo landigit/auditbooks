@@ -1,10 +1,10 @@
-import { Fyo, t } from 'fyo';
-import { NotFoundError, ValidationError } from 'fyo/utils/errors';
-import { AccountingLedgerEntry } from 'models/baseModels/AccountingLedgerEntry/AccountingLedgerEntry';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { Transactional } from './Transactional';
-import { TransactionType } from './types';
+import { Fyo, t } from "fyo";
+import { NotFoundError, ValidationError } from "fyo/utils/errors";
+import { AccountingLedgerEntry } from "models/baseModels/AccountingLedgerEntry/AccountingLedgerEntry";
+import { ModelNameEnum } from "models/types";
+import { Money } from "pesa";
+import { Transactional } from "./Transactional";
+import { TransactionType } from "./types";
 
 /**
  * # LedgerPosting
@@ -38,13 +38,13 @@ export class LedgerPosting {
   }
 
   async debit(account: string, amount: Money) {
-    const ledgerEntry = this._getLedgerEntry(account, 'debit');
-    await ledgerEntry.set('debit', ledgerEntry.debit!.add(amount));
+    const ledgerEntry = this._getLedgerEntry(account, "debit");
+    await ledgerEntry.set("debit", ledgerEntry.debit!.add(amount));
   }
 
   async credit(account: string, amount: Money) {
-    const ledgerEntry = this._getLedgerEntry(account, 'credit');
-    await ledgerEntry.set('credit', ledgerEntry.credit!.add(amount));
+    const ledgerEntry = this._getLedgerEntry(account, "credit");
+    await ledgerEntry.set("credit", ledgerEntry.credit!.add(amount));
   }
 
   async post() {
@@ -94,10 +94,10 @@ export class LedgerPosting {
 
   _getLedgerEntry(
     account: string,
-    type: TransactionType
+    type: TransactionType,
   ): AccountingLedgerEntry {
     let map = this.creditMap;
-    if (type === 'debit') {
+    if (type === "debit") {
       map = this.debitMap;
     }
 
@@ -111,7 +111,7 @@ export class LedgerPosting {
       ModelNameEnum.AccountingLedgerEntry,
       {
         account: account,
-        party: (this.refDoc.party as string) ?? '',
+        party: (this.refDoc.party as string) ?? "",
         date: this.timezoneDateTimeAdjuster(this.refDoc.date as string | Date),
         referenceType: this.refDoc.schemaName,
         referenceName: this.refDoc.name!,
@@ -119,7 +119,7 @@ export class LedgerPosting {
         debit: this.fyo.pesa(0),
         credit: this.fyo.pesa(0),
       },
-      false
+      false,
     ) as AccountingLedgerEntry;
 
     this.entries.push(ledgerEntry);
@@ -137,8 +137,8 @@ export class LedgerPosting {
     throw new ValidationError(
       t`Total Debit: ${this.fyo.format(
         debit,
-        'Currency'
-      )} must be equal to Total Credit: ${this.fyo.format(credit, 'Currency')}`
+        "Currency",
+      )} must be equal to Total Credit: ${this.fyo.format(credit, "Currency")}`,
     );
   }
 
@@ -169,8 +169,8 @@ export class LedgerPosting {
   }
 
   async _syncReverseLedgerEntries() {
-    const data = (await this.fyo.db.getAll('AccountingLedgerEntry', {
-      fields: ['name'],
+    const data = (await this.fyo.db.getAll("AccountingLedgerEntry", {
+      fields: ["name"],
       filters: {
         referenceType: this.refDoc.schemaName,
         referenceName: this.refDoc.name!,
@@ -180,8 +180,8 @@ export class LedgerPosting {
 
     for (const { name } of data) {
       const doc = (await this.fyo.doc.getDoc(
-        'AccountingLedgerEntry',
-        name
+        "AccountingLedgerEntry",
+        name,
       )) as AccountingLedgerEntry;
       await doc.revert();
     }
@@ -190,13 +190,13 @@ export class LedgerPosting {
   async _getRoundOffAccount() {
     const roundOffAccount = (await this.fyo.getValue(
       ModelNameEnum.AccountingSettings,
-      'roundOffAccount'
+      "roundOffAccount",
     )) as string;
 
     if (!roundOffAccount) {
       const notFoundError = new NotFoundError(
         t`Please set Round Off Account in the Settings.`,
-        false
+        false,
       );
       notFoundError.name = t`Round Off Account Not Found`;
       throw notFoundError;

@@ -2,40 +2,40 @@
  * Utils to do UI stuff such as opening dialogs, toasts, etc.
  * Basically anything that may directly or indirectly import a Vue file.
  */
-import { t } from 'fyo';
-import type { Doc } from 'fyo/model/doc';
-import { Action } from 'fyo/model/types';
-import { getActions } from 'fyo/utils';
+import { t } from "fyo";
+import type { Doc } from "fyo/model/doc";
+import { Action } from "fyo/model/types";
+import { getActions } from "fyo/utils";
 import {
   BaseError,
   getDbError,
   LinkValidationError,
   ValueError,
-} from 'fyo/utils/errors';
-import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import { PurchaseInvoice } from 'models/baseModels/PurchaseInvoice/PurchaseInvoice';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { getLedgerLink } from 'models/helpers';
-import { Transfer } from 'models/inventory/Transfer';
-import { Transactional } from 'models/Transactional/Transactional';
-import { ModelNameEnum } from 'models/types';
-import { Schema } from 'schemas/types';
-import { handleErrorWithDialog } from 'src/errorHandling';
-import { fyo } from 'src/initFyo';
-import router from 'src/router';
-import { assertIsType } from 'utils/index';
-import { SelectFileOptions } from 'utils/types';
-import { RouteLocationRaw } from 'vue-router';
-import { useAppStore } from 'src/stores/app';
-import { evaluateHidden } from './doc';
-import { showDialog, showToast } from './interactive';
+} from "fyo/utils/errors";
+import { Invoice } from "models/baseModels/Invoice/Invoice";
+import { PurchaseInvoice } from "models/baseModels/PurchaseInvoice/PurchaseInvoice";
+import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { getLedgerLink } from "models/helpers";
+import { Transfer } from "models/inventory/Transfer";
+import { Transactional } from "models/Transactional/Transactional";
+import { ModelNameEnum } from "models/types";
+import { Schema } from "schemas/types";
+import { handleErrorWithDialog } from "src/errorHandling";
+import { fyo } from "src/initFyo";
+import router from "src/router";
+import { assertIsType } from "utils/index";
+import { SelectFileOptions } from "utils/types";
+import { RouteLocationRaw } from "vue-router";
+import { useAppStore } from "src/stores/app";
+import { evaluateHidden } from "./doc";
+import { showDialog, showToast } from "./interactive";
 import {
   ActionGroup,
   QuickEditOptions,
   SettingsTab,
   ToastOptions,
   UIGroupedFields,
-} from './types';
+} from "./types";
 
 export const toastDurationMap = {
   short: 2_500,
@@ -68,12 +68,12 @@ export async function openQuickEdit({
 }
 
 export async function openSettings(tab: SettingsTab) {
-  await routeTo({ path: '/settings', query: { tab } });
+  await routeTo({ path: "/settings", query: { tab } });
 }
 
 export async function routeTo(route: RouteLocationRaw) {
   if (
-    typeof route === 'string' &&
+    typeof route === "string" &&
     route === router.currentRoute.value.fullPath
   ) {
     return;
@@ -92,7 +92,7 @@ export async function deleteDocWithPrompt(doc: Doc) {
   return (await showDialog({
     title: t`Delete ${getDocReferenceLabel(doc)}?`,
     detail,
-    type: 'warning',
+    type: "warning",
     buttons: [
       {
         label: t`Yes`,
@@ -104,7 +104,7 @@ export async function deleteDocWithPrompt(doc: Doc) {
               await showDialog({
                 title: t`Delete Failed`,
                 detail: t`Cannot delete ${schemaLabel} "${doc.name!}" because of linked entries.`,
-                type: 'error',
+                type: "error",
               });
             } else {
               await handleErrorWithDialog(err, doc);
@@ -130,17 +130,17 @@ export async function deleteDocWithPrompt(doc: Doc) {
 
 export async function cancelDocWithPrompt(doc: Doc) {
   let detail = t`This action is permanent`;
-  if (['SalesInvoice', 'PurchaseInvoice'].includes(doc.schemaName)) {
+  if (["SalesInvoice", "PurchaseInvoice"].includes(doc.schemaName)) {
     const payments = (
-      await fyo.db.getAll('Payment', {
-        fields: ['name'],
+      await fyo.db.getAll("Payment", {
+        fields: ["name"],
         filters: { cancelled: false },
       })
     ).map(({ name }) => name);
 
     const query = (
-      await fyo.db.getAll('PaymentFor', {
-        fields: ['parent'],
+      await fyo.db.getAll("PaymentFor", {
+        fields: ["parent"],
         filters: {
           referenceName: doc.name!,
         },
@@ -155,7 +155,7 @@ export async function cancelDocWithPrompt(doc: Doc) {
       }`;
     } else if (paymentList.length > 1) {
       detail = t`This action is permanent and will cancel the following payments: ${paymentList.join(
-        ', '
+        ", ",
       )}`;
     }
   }
@@ -163,7 +163,7 @@ export async function cancelDocWithPrompt(doc: Doc) {
   return (await showDialog({
     title: t`Cancel ${getDocReferenceLabel(doc)}?`,
     detail,
-    type: 'warning',
+    type: "warning",
     buttons: [
       {
         label: t`Yes`,
@@ -201,7 +201,7 @@ export function getActionsForDoc(doc?: Doc): Action[] {
     getCancelAction(doc),
   ];
 
-  if (doc?.schemaName === 'Party') {
+  if (doc?.schemaName === "Party") {
     const viewActions = getViewActions(doc);
     actions.push(...viewActions);
   }
@@ -223,20 +223,20 @@ export function getGroupedActionsForDoc(doc?: Doc): ActionGroup[] {
   const actionsMap = actions.reduce(
     (acc, ac) => {
       if (!ac.group) {
-        ac.group = '';
+        ac.group = "";
       }
 
       acc[ac.group] ??= {
         group: ac.group,
-        label: ac.label ?? '',
-        type: ac.type ?? 'secondary',
+        label: ac.label ?? "",
+        type: ac.type ?? "secondary",
         actions: [],
       };
 
       acc[ac.group].actions.push(ac);
       return acc;
     },
-    {} as Record<string, ActionGroup>
+    {} as Record<string, ActionGroup>,
   );
 
   const grouped = Object.keys(actionsMap)
@@ -244,7 +244,7 @@ export function getGroupedActionsForDoc(doc?: Doc): ActionGroup[] {
     .sort()
     .map((k) => actionsMap[k]);
 
-  return [grouped, actionsMap['']].flat().filter(Boolean);
+  return [grouped, actionsMap[""]].flat().filter(Boolean);
 }
 
 function getViewActions(doc: Doc): Action[] {
@@ -252,10 +252,10 @@ function getViewActions(doc: Doc): Action[] {
     {
       label: t`General Ledger`,
       group: t`View`,
-      condition: (doc: Doc) => doc.schemaName === 'Party',
+      condition: (doc: Doc) => doc.schemaName === "Party",
       action: async () => {
         await router.push({
-          path: '/report/GeneralLedger',
+          path: "/report/GeneralLedger",
           query: {
             defaultFilters: JSON.stringify({
               party: doc.name,
@@ -341,12 +341,12 @@ function getNewAction(doc: Doc): Action {
 
 export function getFieldsGroupedByTabAndSection(
   schema: Schema,
-  doc: Doc
+  doc: Doc,
 ): UIGroupedFields {
   const grouped: UIGroupedFields = new Map();
   for (const field of schema?.fields ?? []) {
-    const tab = field.tab ?? 'Main';
-    const section = field.section ?? 'Default';
+    const tab = field.tab ?? "Main";
+    const section = field.section ?? "Default";
     if (!grouped.has(tab)) {
       grouped.set(tab, new Map());
     }
@@ -392,23 +392,23 @@ export function getFieldsGroupedByTabAndSection(
 
 export function getFormRoute(
   schemaName: string,
-  name: string
+  name: string,
 ): RouteLocationRaw {
   const route = fyo.models[schemaName]
     ?.getListViewSettings(fyo)
     ?.formRoute?.(name);
 
-  if (typeof route === 'string') {
+  if (typeof route === "string") {
     return route;
   }
 
   // Use `encodeURIComponent` if more name issues
-  return `/edit/${schemaName}/${name.replaceAll('/', '%2F')}`;
+  return `/edit/${schemaName}/${name.replaceAll("/", "%2F")}`;
 }
 
 export async function getDocFromNameIfExistsElseNew(
   schemaName: string,
-  name?: string
+  name?: string,
 ) {
   if (!name) {
     return fyo.doc.getNewDoc(schemaName);
@@ -436,18 +436,18 @@ export function toggleSidebar(value?: boolean) {
 export function focusOrSelectFormControl(
   doc: Doc,
   ref: unknown,
-  shouldClear = true
+  shouldClear = true,
 ) {
   if (!doc?.fyo) {
     return;
   }
 
   const naming = doc.fyo.schemaMap[doc.schemaName]?.naming;
-  if (naming !== 'manual' || doc.inserted) {
+  if (naming !== "manual" || doc.inserted) {
     return;
   }
 
-  if (!doc.fyo.doc.isTemporaryName(doc.name ?? '', doc.schema)) {
+  if (!doc.fyo.doc.isTemporaryName(doc.name ?? "", doc.schema)) {
     return;
   }
 
@@ -457,29 +457,29 @@ export function focusOrSelectFormControl(
 
   if (
     !ref ||
-    typeof ref !== 'object' ||
+    typeof ref !== "object" ||
     !assertIsType<Record<string, () => void>>(ref)
   ) {
     return;
   }
 
-  if (!shouldClear && typeof ref?.select === 'function') {
+  if (!shouldClear && typeof ref?.select === "function") {
     ref.select();
     return;
   }
 
-  if (typeof ref?.clear === 'function') {
+  if (typeof ref?.clear === "function") {
     ref.clear();
   }
 
-  if (typeof ref?.focus === 'function') {
+  if (typeof ref?.focus === "function") {
     ref.focus();
   }
 
-  doc.name = '';
+  doc.name = "";
 }
 
-export async function selectTextFile(filters?: SelectFileOptions['filters']) {
+export async function selectTextFile(filters?: SelectFileOptions["filters"]) {
   const options = {
     title: t`Select File`,
     filters,
@@ -489,7 +489,7 @@ export async function selectTextFile(filters?: SelectFileOptions['filters']) {
 
   if (canceled || !success) {
     showToast({
-      type: 'error',
+      type: "error",
       message: t`File selection failed`,
     });
     return {};
@@ -498,7 +498,7 @@ export async function selectTextFile(filters?: SelectFileOptions['filters']) {
   const text = new TextDecoder().decode(data);
   if (!text) {
     showToast({
-      type: 'error',
+      type: "error",
       message: t`Empty file selected`,
     });
 
@@ -509,50 +509,50 @@ export async function selectTextFile(filters?: SelectFileOptions['filters']) {
 }
 
 export enum ShortcutKey {
-  enter = 'enter',
-  ctrl = 'ctrl',
-  pmod = 'pmod',
-  shift = 'shift',
-  alt = 'alt',
-  delete = 'delete',
-  esc = 'esc',
+  enter = "enter",
+  ctrl = "ctrl",
+  pmod = "pmod",
+  shift = "shift",
+  alt = "alt",
+  delete = "delete",
+  esc = "esc",
 }
 
 export function getShortcutKeyMap(
-  platform: string
+  platform: string,
 ): Record<ShortcutKey, string> {
-  if (platform === 'Mac') {
+  if (platform === "Mac") {
     return {
-      [ShortcutKey.alt]: '⌥',
-      [ShortcutKey.ctrl]: '⌃',
-      [ShortcutKey.pmod]: '⌘',
-      [ShortcutKey.shift]: 'shift',
-      [ShortcutKey.delete]: 'delete',
-      [ShortcutKey.esc]: 'esc',
-      [ShortcutKey.enter]: 'return',
+      [ShortcutKey.alt]: "⌥",
+      [ShortcutKey.ctrl]: "⌃",
+      [ShortcutKey.pmod]: "⌘",
+      [ShortcutKey.shift]: "shift",
+      [ShortcutKey.delete]: "delete",
+      [ShortcutKey.esc]: "esc",
+      [ShortcutKey.enter]: "return",
     };
   }
   return {
-    [ShortcutKey.alt]: 'Alt',
-    [ShortcutKey.ctrl]: 'Ctrl',
-    [ShortcutKey.pmod]: 'Ctrl',
-    [ShortcutKey.shift]: '⇧',
-    [ShortcutKey.delete]: 'Backspace',
-    [ShortcutKey.esc]: 'Esc',
-    [ShortcutKey.enter]: 'Enter',
+    [ShortcutKey.alt]: "Alt",
+    [ShortcutKey.ctrl]: "Ctrl",
+    [ShortcutKey.pmod]: "Ctrl",
+    [ShortcutKey.shift]: "⇧",
+    [ShortcutKey.delete]: "Backspace",
+    [ShortcutKey.esc]: "Esc",
+    [ShortcutKey.enter]: "Enter",
   };
 }
 
 export async function commongDocDelete(
   doc: Doc,
-  routeBack = true
+  routeBack = true,
 ): Promise<boolean> {
   const res = await deleteDocWithPrompt(doc);
   if (!res) {
     return false;
   }
 
-  showActionToast(doc, 'delete');
+  showActionToast(doc, "delete");
   if (routeBack) {
     router.back();
   }
@@ -565,17 +565,17 @@ export async function commonDocCancel(doc: Doc): Promise<boolean> {
     return false;
   }
 
-  showActionToast(doc, 'cancel');
+  showActionToast(doc, "cancel");
   return true;
 }
 
 export async function commonDocSync(
   doc: Doc,
-  useDialog = false
+  useDialog = false,
 ): Promise<boolean> {
   let success: boolean;
   if (useDialog) {
-    success = !!(await showSubmitOrSyncDialog(doc, 'sync'));
+    success = !!(await showSubmitOrSyncDialog(doc, "sync"));
   } else {
     success = await syncWithoutDialog(doc);
   }
@@ -584,7 +584,7 @@ export async function commonDocSync(
     return false;
   }
 
-  showActionToast(doc, 'sync');
+  showActionToast(doc, "sync");
   return true;
 }
 
@@ -612,7 +612,7 @@ export async function commonDocSubmit(doc: Doc): Promise<boolean> {
     return false;
   }
 
-  success = await showSubmitOrSyncDialog(doc, 'submit');
+  success = await showSubmitOrSyncDialog(doc, "submit");
   if (!success) {
     return false;
   }
@@ -624,11 +624,11 @@ export async function commonDocSubmit(doc: Doc): Promise<boolean> {
 async function showInsufficientInventoryDialog(doc: SalesInvoice) {
   const insufficient: { item: string; quantity: number }[] = [];
   for (const { item, quantity, batch } of doc.items ?? []) {
-    if (!item || typeof quantity !== 'number') {
+    if (!item || typeof quantity !== "number") {
       continue;
     }
 
-    const isTracked = await fyo.getValue(ModelNameEnum.Item, item, 'trackItem');
+    const isTracked = await fyo.getValue(ModelNameEnum.Item, item, "trackItem");
     if (!isTracked) {
       continue;
     }
@@ -639,7 +639,7 @@ async function showInsufficientInventoryDialog(doc: SalesInvoice) {
         undefined,
         undefined,
         doc.date!.toISOString(),
-        batch
+        batch,
       )) ?? 0;
 
     if (stockQuantity > quantity) {
@@ -665,7 +665,7 @@ async function showInsufficientInventoryDialog(doc: SalesInvoice) {
 
     const list = insufficient
       .map(({ item, quantity }) => `${item} (${quantity})`)
-      .join(', ');
+      .join(", ");
     const detail = [
       t`The following items have insufficient quantity for Shipment: ${list}`,
       t`Continue submitting Sales Invoice?`,
@@ -673,7 +673,7 @@ async function showInsufficientInventoryDialog(doc: SalesInvoice) {
 
     return (await showDialog({
       title: t`Insufficient Quantity`,
-      type: 'warning',
+      type: "warning",
       detail,
       buttons,
     })) as boolean;
@@ -682,15 +682,15 @@ async function showInsufficientInventoryDialog(doc: SalesInvoice) {
   return true;
 }
 
-async function showSubmitOrSyncDialog(doc: Doc, type: 'submit' | 'sync') {
+async function showSubmitOrSyncDialog(doc: Doc, type: "submit" | "sync") {
   const label = getDocReferenceLabel(doc);
   let title = t`Save ${label}?`;
-  if (type === 'submit') {
+  if (type === "submit") {
     title = t`Submit ${label}?`;
   }
 
   let detail: string;
-  if (type === 'submit') {
+  if (type === "submit") {
     detail = getDocSubmitMessage(doc);
   } else {
     detail = getDocSyncMessage(doc);
@@ -737,11 +737,11 @@ function getDocSyncMessage(doc: Doc): string {
   }
 
   if (doc instanceof Invoice && doc.grandTotal?.isZero()) {
-    const gt = doc.fyo.format(doc.grandTotal ?? doc.fyo.pesa(0), 'Currency');
+    const gt = doc.fyo.format(doc.grandTotal ?? doc.fyo.pesa(0), "Currency");
     return [
       detail,
       t`Entry has Grand Total ${gt}. Please verify amounts.`,
-    ].join(' ');
+    ].join(" ");
   }
 
   return detail;
@@ -753,25 +753,25 @@ function getDocSubmitMessage(doc: Doc): string {
   if (doc instanceof SalesInvoice && doc.makeAutoPayment) {
     const toAccount = doc.autoPaymentAccount!;
     const fromAccount = doc.account!;
-    const amount = fyo.format(doc.outstandingAmount, 'Currency');
+    const amount = fyo.format(doc.outstandingAmount, "Currency");
 
     details.push(
-      t`Payment of ${amount} will be made from account "${fromAccount}" to account "${toAccount}" on Submit.`
+      t`Payment of ${amount} will be made from account "${fromAccount}" to account "${toAccount}" on Submit.`,
     );
   } else if (doc instanceof PurchaseInvoice && doc.makeAutoPayment) {
     const fromAccount = doc.autoPaymentAccount!;
     const toAccount = doc.account!;
-    const amount = fyo.format(doc.outstandingAmount, 'Currency');
+    const amount = fyo.format(doc.outstandingAmount, "Currency");
 
     details.push(
-      t`Payment of ${amount} will be made from account "${fromAccount}" to account "${toAccount}" on Submit.`
+      t`Payment of ${amount} will be made from account "${fromAccount}" to account "${toAccount}" on Submit.`,
     );
   }
 
-  return details.join(' ');
+  return details.join(" ");
 }
 
-function showActionToast(doc: Doc, type: 'sync' | 'cancel' | 'delete') {
+function showActionToast(doc: Doc, type: "sync" | "cancel" | "delete") {
   const label = getDocReferenceLabel(doc);
   const message = {
     sync: t`${label} saved`,
@@ -779,16 +779,16 @@ function showActionToast(doc: Doc, type: 'sync' | 'cancel' | 'delete') {
     delete: t`${label} deleted`,
   }[type];
 
-  showToast({ type: 'success', message, duration: 'short' });
+  showToast({ type: "success", message, duration: "short" });
 }
 
 function showSubmitToast(doc: Doc) {
   const label = getDocReferenceLabel(doc);
   const message = t`${label} submitted`;
   const toastOption: ToastOptions = {
-    type: 'success',
+    type: "success",
     message,
-    duration: 'long',
+    duration: "long",
     ...getSubmitSuccessToastAction(doc),
   };
   showToast(toastOption);
@@ -801,7 +801,7 @@ function getSubmitSuccessToastAction(doc: Doc) {
   if (isStockTransfer) {
     return {
       async action() {
-        const route = getLedgerLink(doc, 'StockLedger');
+        const route = getLedgerLink(doc, "StockLedger");
         await routeTo(route);
       },
       actionText: t`View Stock Entries`,
@@ -811,7 +811,7 @@ function getSubmitSuccessToastAction(doc: Doc) {
   if (isTransactional) {
     return {
       async action() {
-        const route = getLedgerLink(doc, 'GeneralLedger');
+        const route = getLedgerLink(doc, "GeneralLedger");
         await routeTo(route);
       },
       actionText: t`View Accounting Entries`,
@@ -829,7 +829,7 @@ export function showCannotSaveOrSubmitToast(doc: Doc) {
     message = t`${label} already submitted`;
   }
 
-  showToast({ type: 'warning', message, duration: 'short' });
+  showToast({ type: "warning", message, duration: "short" });
 }
 
 export function showCannotCancelOrDeleteToast(doc: Doc) {
@@ -839,12 +839,12 @@ export function showCannotCancelOrDeleteToast(doc: Doc) {
     message = t`${label} cannot be cancelled`;
   }
 
-  showToast({ type: 'warning', message, duration: 'short' });
+  showToast({ type: "warning", message, duration: "short" });
 }
 
 function getDocReferenceLabel(doc: Doc) {
   const label = doc.schema.label || doc.schemaName;
-  if (doc.schema.naming === 'random') {
+  if (doc.schema.naming === "random") {
     return label;
   }
 
@@ -852,37 +852,37 @@ function getDocReferenceLabel(doc: Doc) {
 }
 
 export const printSizes = [
-  'A0',
-  'A1',
-  'A2',
-  'A3',
-  'A4',
-  'A5',
-  'A6',
-  'A7',
-  'A8',
-  'A9',
-  'B0',
-  'B1',
-  'B2',
-  'B3',
-  'B4',
-  'B5',
-  'B6',
-  'B7',
-  'B8',
-  'B9',
-  'POS',
-  'Letter',
-  'Legal',
-  'Executive',
-  'C5E',
-  'Comm10',
-  'DLE',
-  'Folio',
-  'Ledger',
-  'Tabloid',
-  'Custom',
+  "A0",
+  "A1",
+  "A2",
+  "A3",
+  "A4",
+  "A5",
+  "A6",
+  "A7",
+  "A8",
+  "A9",
+  "B0",
+  "B1",
+  "B2",
+  "B3",
+  "B4",
+  "B5",
+  "B6",
+  "B7",
+  "B8",
+  "B9",
+  "POS",
+  "Letter",
+  "Legal",
+  "Executive",
+  "C5E",
+  "Comm10",
+  "DLE",
+  "Folio",
+  "Ledger",
+  "Tabloid",
+  "Custom",
 ] as const;
 
 export const paperSizeMap: Record<
@@ -1019,7 +1019,7 @@ export function showExportInFolder(message: string, filePath: string) {
   showToast({
     message,
     actionText: t`Open Folder`,
-    type: 'success',
+    type: "success",
     action: () => {
       ipc.showItemInFolder(filePath);
     },
@@ -1029,23 +1029,23 @@ export function showExportInFolder(message: string, filePath: string) {
 export async function deleteDb(filePath: string) {
   const { error } = await ipc.deleteFile(filePath);
 
-  if (error?.code === 'EBUSY') {
+  if (error?.code === "EBUSY") {
     await showDialog({
       title: t`Delete Failed`,
       detail: t`Please restart and try again.`,
-      type: 'error',
+      type: "error",
     });
-  } else if (error?.code === 'ENOENT') {
+  } else if (error?.code === "ENOENT") {
     await showDialog({
       title: t`Delete Failed`,
       detail: t`File ${filePath} does not exist.`,
-      type: 'error',
+      type: "error",
     });
-  } else if (error?.code === 'EPERM') {
+  } else if (error?.code === "EPERM") {
     await showDialog({
       title: t`Cannot Delete`,
       detail: t`Close Auditbooks and try manually.`,
-      type: 'error',
+      type: "error",
     });
   } else if (error) {
     const err = new BaseError(500, error.message);
@@ -1058,8 +1058,8 @@ export async function deleteDb(filePath: string) {
 export async function getSelectedFilePath() {
   return ipc.getOpenFilePath({
     title: t`Select file`,
-    properties: ['openFile'],
-    filters: [{ name: 'SQLite DB File', extensions: ['db'] }],
+    properties: ["openFile"],
+    filters: [{ name: "SQLite DB File", extensions: ["db"] }],
   });
 }
 
@@ -1072,7 +1072,7 @@ export async function getSavePath(name: string, extention: string) {
   const canceled = response.canceled;
   let filePath = response.filePath;
 
-  if (filePath && !filePath.endsWith(extention) && filePath !== ':memory:') {
+  if (filePath && !filePath.endsWith(extention) && filePath !== ":memory:") {
     filePath = `${filePath}.${extention}`;
   }
 

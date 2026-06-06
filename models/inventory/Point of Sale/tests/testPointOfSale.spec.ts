@@ -1,52 +1,52 @@
-﻿import { describe, expect, test } from '@rstest/core';
+﻿import { describe, expect, test } from "@rstest/core";
 import {
   closeTestFyoAfterAll,
   getTestFyo,
   setupTestFyoBeforeAll,
-} from 'tests/helpers';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { Payment } from 'models/baseModels/Payment/Payment';
-import { ModelNameEnum } from 'models/types';
+} from "tests/helpers";
+import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { Payment } from "models/baseModels/Payment/Payment";
+import { ModelNameEnum } from "models/types";
 
 const fyo = getTestFyo();
 
-describe('Point of Sale', () => {
+describe("Point of Sale", () => {
   setupTestFyoBeforeAll(fyo);
 
-  const customer = { name: 'Someone', role: 'Both' };
+  const customer = { name: "Someone", role: "Both" };
   const itemMap = {
     Pen: {
-      name: 'Pen',
+      name: "Pen",
       rate: 700,
     },
     Ink: {
-      name: 'Ink',
+      name: "Ink",
       rate: 50,
     },
   };
 
-  test('insert test docs', async () => {
+  test("insert test docs", async () => {
     await fyo.doc.getNewDoc(ModelNameEnum.Item, itemMap.Pen).sync();
     await fyo.doc.getNewDoc(ModelNameEnum.Item, itemMap.Ink).sync();
     await fyo.doc.getNewDoc(ModelNameEnum.Party, customer).sync();
   });
 
-  test('check pos transacted amount', async () => {
+  test("check pos transacted amount", async () => {
     const transactedAmountBeforeTxn = await fyo.db.getPOSTransactedAmount(
-      new Date('2023-01-01'),
-      new Date('2023-01-02')
+      new Date("2023-01-01"),
+      new Date("2023-01-02"),
     );
 
     expect(transactedAmountBeforeTxn).toBeUndefined();
 
     const sinvDocOne = fyo.doc.getNewDoc(ModelNameEnum.SalesInvoice, {
       isPOS: true,
-      date: new Date('2023-01-01'),
-      account: 'Debtors',
+      date: new Date("2023-01-01"),
+      account: "Debtors",
       party: customer.name,
     }) as SalesInvoice;
 
-    await sinvDocOne.append('items', {
+    await sinvDocOne.append("items", {
       item: itemMap.Pen.name,
       rate: itemMap.Pen.rate,
       quantity: 1,
@@ -59,12 +59,12 @@ describe('Point of Sale', () => {
 
     const sinvDocTwo = fyo.doc.getNewDoc(ModelNameEnum.SalesInvoice, {
       isPOS: true,
-      date: new Date('2023-01-01'),
-      account: 'Debtors',
+      date: new Date("2023-01-01"),
+      account: "Debtors",
       party: customer.name,
     }) as SalesInvoice;
 
-    await sinvDocTwo.append('items', {
+    await sinvDocTwo.append("items", {
       item: itemMap.Pen.name,
       rate: itemMap.Pen.rate,
       quantity: 1,
@@ -74,16 +74,16 @@ describe('Point of Sale', () => {
     const paymentDocTwo = sinvDocTwo.getPayment() as Payment;
 
     await paymentDocTwo.setMultiple({
-      paymentMethod: 'Transfer',
-      clearanceDate: new Date('2023-01-01'),
-      referenceId: 'xxxxxxxx',
+      paymentMethod: "Transfer",
+      clearanceDate: new Date("2023-01-01"),
+      referenceId: "xxxxxxxx",
     });
 
     await paymentDocTwo.sync();
 
     const transactedAmountAfterTxn = (await fyo.db.getPOSTransactedAmount(
-      new Date('2023-01-01'),
-      new Date('2023-01-02')
+      new Date("2023-01-01"),
+      new Date("2023-01-02"),
     )) as unknown as Record<string, number> | undefined;
 
     expect(transactedAmountAfterTxn).toBeDefined();
@@ -91,7 +91,7 @@ describe('Point of Sale', () => {
     expect(transactedAmountAfterTxn?.Cash).toBe(sinvDocOne.grandTotal?.float);
 
     expect(transactedAmountAfterTxn?.Transfer).toBe(
-      sinvDocTwo.grandTotal?.float
+      sinvDocTwo.grandTotal?.float,
     );
   });
 

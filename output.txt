@@ -1,0 +1,1 @@
+uid=9_0 RootWebArea "Rsbuild App" url="http://127.0.0.1:3000/__web_preview?casename=main.web.bundle"

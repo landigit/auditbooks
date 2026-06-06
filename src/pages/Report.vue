@@ -1,30 +1,86 @@
 <template>
-  <view class="flex flex-col w-full h-full">
-    <PageHeader :title="title">
-      <DropdownWithActions :actions="reportActions" />
-    </PageHeader>
+  <view v-if="!isLynx">
+    <view class="flex flex-col w-full h-full">
+      <PageHeader :title="title">
+        <DropdownWithActions :actions="reportActions" />
+      </PageHeader>
 
-    <!-- Filters -->
-    <view
-      v-if="report && report.filters.length"
-      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 p-4 border-b border-border items-end"
-    >
-      <FormControl
-        v-for="field in report.filters"
-        :key="field.fieldname + '-filter'"
-        :border="true"
-        size="large"
-        :class="[field.fieldtype === 'Check' ? 'h-10 flex items-center' : '']"
-        :show-label="true"
-        :df="field"
-        :value="report.get(field.fieldname)"
-        :read-only="loading"
-        @change="async (value) => await report?.set(field.fieldname, value)"
-      />
+      <!-- Filters -->
+      <view
+        v-if="report && report.filters.length"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 p-4 border-b border-border items-end"
+      >
+        <FormControl
+          v-for="field in report.filters"
+          :key="field.fieldname + '-filter'"
+          :border="true"
+          size="large"
+          :class="[field.fieldtype === 'Check' ? 'h-10 flex items-center' : '']"
+          :show-label="true"
+          :df="field"
+          :value="report.get(field.fieldname)"
+          :read-only="loading"
+          @change="async (value) => await report?.set(field.fieldname, value)"
+        />
+      </view>
+
+      <!-- Report Body -->
+      <ListReport v-if="report" :report="report" class="" />
+    </view>
+  </view>
+  <view v-else class="MainView">
+    <view class="NavBar">
+      <view class="BackBtn" @tap="router.back()">
+        <text class="BackBtnText">⬅️ Back</text>
+      </view>
+      <view class="NavBrand">
+        <text class="BrandText">{{ title }}</text>
+      </view>
+      <view v-if="report" class="flex flex-row gap-2">
+        <view
+          class="Btn Btn--primary px-3 py-1.5 rounded-lg"
+          @tap="routeTo(`/report-print/${props.reportClassName}`)"
+        >
+          <text class="BtnText BtnText--primary text-xs">Print</text>
+        </view>
+      </view>
     </view>
 
-    <!-- Report Body -->
-    <ListReport v-if="report" :report="report" class="" />
+    <!-- Filters (Scroll horizontally) -->
+    <scroll-view
+      v-if="report && report.filters.length"
+      scroll-x="true"
+      class="px-4 py-2 border-b border-border bg-surface flex flex-row gap-4"
+      style="height: 80px"
+    >
+      <view class="flex flex-row gap-4">
+        <FormControl
+          v-for="field in report.filters"
+          :key="field.fieldname + '-filter'"
+          :border="true"
+          size="small"
+          class="w-32"
+          :show-label="true"
+          :df="field"
+          :value="report.get(field.fieldname)"
+          :read-only="loading"
+          @change="
+            async (value) => {
+              await report?.set(field.fieldname, value);
+              await report?.updateData();
+            }
+          "
+        />
+      </view>
+    </scroll-view>
+
+    <!-- Report Body (Scrollable Table) -->
+    <view class="flex-1 overflow-hidden">
+      <ListReport v-if="report" :report="report" />
+      <view v-else class="flex-1 flex items-center justify-center">
+        <text class="text-description text-sm">Loading report...</text>
+      </view>
+    </view>
   </view>
 </template>
 <script setup lang="ts">
@@ -35,20 +91,22 @@ import {
   provide,
   onActivated,
   onDeactivated,
-} from 'vue';
-import { useRoute } from 'vue-router';
-import { t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import { reports } from 'reports';
-import { Report } from 'reports/Report';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { docsPathMap, getReport } from 'src/utils/misc';
-import { routeTo } from 'src/utils/ui';
-import { useAppStore } from 'src/stores/app';
-import PageHeader from 'src/components/PageHeader.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import ListReport from 'src/components/Report/ListReport.vue';
-import DropdownWithActions from 'src/components/DropdownWithActions.vue';
+} from "vue";
+import { useRoute } from "vue-router";
+import router from "src/router";
+import { isLynx } from "src/utils/interactive";
+import { t } from "fyo";
+import { DocValue } from "fyo/core/types";
+import { reports } from "reports";
+import { Report } from "reports/Report";
+import { shortcutsKey } from "src/utils/injectionKeys";
+import { docsPathMap, getReport } from "src/utils/misc";
+import { routeTo } from "src/utils/ui";
+import { useAppStore } from "src/stores/app";
+import PageHeader from "src/components/PageHeader.vue";
+import FormControl from "src/components/Controls/FormControl.vue";
+import ListReport from "src/components/Report/ListReport.vue";
+import DropdownWithActions from "src/components/DropdownWithActions.vue";
 
 // Define Props
 const props = withDefaults(
@@ -57,8 +115,8 @@ const props = withDefaults(
     defaultFilters?: string;
   }>(),
   {
-    defaultFilters: '{}',
-  }
+    defaultFilters: "{}",
+  },
 );
 
 // Inject dependencies
@@ -72,8 +130,8 @@ const report = ref<Report | null>(null);
 
 // Provide report down to child components
 provide(
-  'report',
-  computed(() => report.value)
+  "report",
+  computed(() => report.value),
 );
 
 // Computed properties
@@ -117,16 +175,20 @@ onActivated(async () => {
   store.docsPath = docsPathMap[props.reportClassName] ?? docsPathMap.Reports!;
   await setReportData();
 
-  const filters = route.query as Record<string, DocValue>;
+  const filters = isLynx
+    ? (router.currentRoute.value.params as Record<string, DocValue>) || {}
+    : route
+      ? (route.query as Record<string, DocValue>) || {}
+      : {};
   const validFilters: Record<string, DocValue> = {};
 
-  if (filters.defaultFilters && typeof filters.defaultFilters === 'string') {
+  if (filters.defaultFilters && typeof filters.defaultFilters === "string") {
     const parsed = JSON.parse(filters.defaultFilters);
     Object.assign(validFilters, parsed);
   }
 
   for (const [key, value] of Object.entries(filters)) {
-    if (key !== 'defaultFilters' && typeof value === 'string') {
+    if (key !== "defaultFilters" && typeof value === "string") {
       validFilters[key] = value;
     }
   }
@@ -139,8 +201,8 @@ onActivated(async () => {
     await report.value?.updateData();
   }
 
-  if (store.isDevelopment && typeof window !== 'undefined') {
-    // @ts-ignore
+  if (store.isDevelopment && typeof window !== "undefined") {
+    // @ts-expect-error
     window.rep = {
       loading,
       report,
@@ -150,13 +212,13 @@ onActivated(async () => {
     };
   }
 
-  shortcuts?.pmod.set(props.reportClassName, ['KeyP'], async () => {
+  shortcuts?.pmod.set(props.reportClassName, ["KeyP"], async () => {
     await routeTo(`/report-print/${props.reportClassName}`);
   });
 });
 
 onDeactivated(() => {
-  store.docsPath = '';
+  store.docsPath = "";
   shortcuts?.delete(props.reportClassName);
 });
 </script>

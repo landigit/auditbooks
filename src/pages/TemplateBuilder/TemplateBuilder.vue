@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view v-if="!isLynx">
     <PageHeader :title="doc && doc.inserted ? doc.name : ''">
       <!-- Template Name -->
       <template v-if="doc && !doc.inserted" #left>
@@ -197,6 +197,24 @@
       <SetType :doc="doc" @done="showTypeModal = !showTypeModal" />
     </Modal>
   </view>
+  <view v-else class="MainView">
+    <view class="NavBar">
+      <view class="BackBtn" @tap="router.back()">
+        <text class="BackBtnText">⬅️ Back</text>
+      </view>
+      <view class="NavBrand">
+        <text class="BrandText">Template Builder</text>
+      </view>
+    </view>
+    <view class="flex-1 flex flex-col items-center justify-center p-6">
+      <text class="text-sm font-semibold text-main mb-2">{{
+        doc?.name || name
+      }}</text>
+      <text class="text-xs text-description text-center">
+        Template editing is available on Web / Desktop only.
+      </text>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">
@@ -208,31 +226,32 @@ import {
   onDeactivated,
   inject,
   provide,
-} from 'vue';
-import { EditorView } from 'codemirror';
-import { Doc } from 'fyo/model/doc';
-import { ModelNameEnum } from 'models/types';
-import { saveExportData } from 'reports/commonExporter';
-import { Field, TargetField } from 'schemas/types';
-import Button from 'src/components/Button.vue';
-import FormControl from 'src/components/Controls/FormControl.vue';
-import Link from 'src/components/Controls/Link.vue';
-import DropdownWithActions from 'src/components/DropdownWithActions.vue';
-import HorizontalResizer from 'src/components/HorizontalResizer.vue';
-import Modal from 'src/components/Modal.vue';
-import PageHeader from 'src/components/PageHeader.vue';
-import ShortcutKeys from 'src/components/ShortcutKeys.vue';
-import { handleErrorWithDialog } from 'src/errorHandling';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import { showDialog, showToast } from 'src/utils/interactive';
-import { docsPathMap } from 'src/utils/misc';
+} from "vue";
+import { EditorView } from "codemirror";
+import { Doc } from "fyo/model/doc";
+import { ModelNameEnum } from "models/types";
+import { saveExportData } from "reports/commonExporter";
+import { Field, TargetField } from "schemas/types";
+import Button from "src/components/Button.vue";
+import FormControl from "src/components/Controls/FormControl.vue";
+import Link from "src/components/Controls/Link.vue";
+import DropdownWithActions from "src/components/DropdownWithActions.vue";
+import HorizontalResizer from "src/components/HorizontalResizer.vue";
+import Modal from "src/components/Modal.vue";
+import PageHeader from "src/components/PageHeader.vue";
+import ShortcutKeys from "src/components/ShortcutKeys.vue";
+import { handleErrorWithDialog } from "src/errorHandling";
+import { shortcutsKey } from "src/utils/injectionKeys";
+import { showDialog, showToast, isLynx } from "src/utils/interactive";
+import router from "src/router";
+import { docsPathMap } from "src/utils/misc";
 import {
   PrintTemplateHint,
   baseTemplate,
   getPrintTemplatePropHints,
   getPrintTemplatePropValues,
-} from 'src/utils/printTemplates';
-import { PrintValues } from 'src/utils/types';
+} from "src/utils/printTemplates";
+import { PrintValues } from "src/utils/types";
 import {
   ShortcutKey,
   focusOrSelectFormControl,
@@ -241,17 +260,17 @@ import {
   getSavePath,
   openSettings,
   selectTextFile,
-} from 'src/utils/ui';
-import { useDocShortcuts } from 'src/utils/vueUtils';
-import { getMapFromList } from 'utils/index';
-import { useAppStore } from 'src/stores/app';
-import PrintContainer from './PrintContainer.vue';
-import SetPrintSize from './SetPrintSize.vue';
-import SetType from './SetType.vue';
-import TemplateBuilderHint from './TemplateBuilderHint.vue';
-import TemplateEditor from './TemplateEditor.vue';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
+} from "src/utils/ui";
+import { useDocShortcuts } from "src/utils/vueUtils";
+import { getMapFromList } from "utils/index";
+import { useAppStore } from "src/stores/app";
+import PrintContainer from "./PrintContainer.vue";
+import SetPrintSize from "./SetPrintSize.vue";
+import SetType from "./SetType.vue";
+import TemplateBuilderHint from "./TemplateBuilderHint.vue";
+import TemplateEditor from "./TemplateEditor.vue";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
 
 // Define Props
 const props = defineProps<{
@@ -263,13 +282,13 @@ const store = useAppStore();
 const shortcuts = inject(shortcutsKey);
 const doc = ref<any>(null);
 
-let context = 'TemplateBuilder';
+let context = "TemplateBuilder";
 if (shortcuts) {
   context = useDocShortcuts(shortcuts, doc as any, context, false);
 }
 
 // Provide document context to child elements
-provide('doc', doc);
+provide("doc", doc);
 
 // Template Refs
 const printContainer = ref<InstanceType<typeof PrintContainer> | null>(null);
@@ -312,7 +331,7 @@ const applyChangesShortcut = computed(() => {
 });
 
 const view = computed<EditorView | null>(() => {
-  // @ts-ignore
+  // @ts-expect-error
   const v = templateEditor.value?.view;
   if (v instanceof EditorView) {
     return v;
@@ -322,31 +341,31 @@ const view = computed<EditorView | null>(() => {
 
 const maxWidth = computed(() => {
   let width = 1024;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     width = window.innerWidth;
-  } else if (typeof SystemInfo !== 'undefined') {
+  } else if (typeof SystemInfo !== "undefined") {
     width = SystemInfo.pixelWidth / SystemInfo.pixelRatio;
   }
   return width - 12 * 16 - 100;
 });
 
 const fields = computed<Record<string, Field>>(() => {
-  return getMapFromList(fyo.schemaMap.PrintTemplate?.fields ?? [], 'fieldname');
+  return getMapFromList(fyo.schemaMap.PrintTemplate?.fields ?? [], "fieldname");
 });
 
 const displayDocField = computed<TargetField>(() => {
   const target = doc.value?.type ?? ModelNameEnum.SalesInvoice;
   return {
-    fieldname: 'displayDoc',
+    fieldname: "displayDoc",
     label: t`Display Doc`,
-    fieldtype: 'Link',
+    fieldtype: "Link",
     target,
   };
 });
 
 const helperMessage = computed(() => {
   if (!doc.value) {
-    return '';
+    return "";
   }
 
   if (!doc.value.type) {
@@ -361,27 +380,27 @@ const helperMessage = computed(() => {
     return t`Set a Template value to see the Print Template`;
   }
 
-  return '';
+  return "";
 });
 
 const templateBuilderBodyStyles = computed<Record<string, string>>(() => {
   const styles: Record<string, string> = {};
-  styles['grid-template-columns'] = `auto 0px ${panelWidth.value}px`;
-  styles['height'] = 'calc(100vh - var(--h-row-largest) - 1px)';
+  styles["grid-template-columns"] = `auto 0px ${panelWidth.value}px`;
+  styles["height"] = "calc(100vh - var(--h-row-largest) - 1px)";
   return styles;
 });
 
 const templateDisplayStyles = computed<Record<string, string>>(() => {
   const styles: Record<string, string> = {};
   styles.height = `calc(100vh - var(--h-row-largest) - 1px - ${
-    store.platform == 'Windows' ? 'var(--h-row-smallest)' : '0px'
+    store.platform == "Windows" ? "var(--h-row-smallest)" : "0px"
   })`;
   return styles;
 });
 
 // Methods
 const getTemplateEditorState = () => {
-  const fallback = doc.value?.template ?? '';
+  const fallback = doc.value?.template ?? "";
   if (!view.value) {
     return fallback;
   }
@@ -395,12 +414,12 @@ const setTemplate = async (value?: string) => {
   }
 
   value ??= getTemplateEditorState();
-  await doc.value?.set('template', value);
+  await doc.value?.set("template", value);
 };
 
 const setScale = (e: Event | number) => {
   let val = scale.value;
-  if (typeof e === 'number') {
+  if (typeof e === "number") {
     val = Number(e.toFixed(2));
   } else if (e instanceof Event && e.target instanceof HTMLInputElement) {
     val = Number(e.target.value);
@@ -416,7 +435,7 @@ const toggleShowHints = () => {
 const getEditModeScale = (): number => {
   const div = printContainer.value?.$el;
   if (
-    typeof HTMLDivElement === 'undefined' ||
+    typeof HTMLDivElement === "undefined" ||
     !(div instanceof HTMLDivElement)
   ) {
     return scale.value;
@@ -424,9 +443,9 @@ const getEditModeScale = (): number => {
 
   const padding = 16 * 2 + 16 * 0.6;
   let width = 1024;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     width = window.innerWidth;
-  } else if (typeof SystemInfo !== 'undefined') {
+  } else if (typeof SystemInfo !== "undefined") {
     width = SystemInfo.pixelWidth / SystemInfo.pixelRatio;
   }
   const targetWidth = width / 2 - padding;
@@ -442,9 +461,9 @@ const enableEditMode = () => {
   preEditMode.value.scale = scale.value;
 
   let width = 1024;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     width = window.innerWidth;
-  } else if (typeof SystemInfo !== 'undefined') {
+  } else if (typeof SystemInfo !== "undefined") {
     width = SystemInfo.pixelWidth / SystemInfo.pixelRatio;
   }
   panelWidth.value = Math.max(width / 2, panelWidth.value);
@@ -466,7 +485,7 @@ const toggleEditMode = () => {
 
   const msg = t`Please set a Display Doc`;
   if (!displayDoc.value) {
-    return showToast({ type: 'warning', message: msg, duration: 'short' });
+    return showToast({ type: "warning", message: msg, duration: "short" });
   }
 
   editMode.value = !editMode.value;
@@ -513,8 +532,8 @@ const setDisplayInitialDoc = async () => {
 
   const names = (await fyo.db.getAll(schemaName, {
     limit: 1,
-    order: 'desc',
-    orderBy: 'created',
+    order: "desc",
+    orderBy: "created",
     filters: { cancelled: false },
   })) as { name: string }[];
 
@@ -524,7 +543,7 @@ const setDisplayInitialDoc = async () => {
     await showDialog({
       title: t`No Display Entries Found`,
       detail: t`Please create a ${label} entry to view Template Preview.`,
-      type: 'warning',
+      type: "warning",
     });
 
     return;
@@ -540,29 +559,29 @@ const setDoc = async () => {
 
   doc.value = await getDocFromNameIfExistsElseNew(
     ModelNameEnum.PrintTemplate,
-    props.name
+    props.name,
   );
 };
 
 const setType = async (value: unknown) => {
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     return;
   }
 
-  await doc.value?.set('type', value);
+  await doc.value?.set("type", value);
   await setDisplayInitialDoc();
 };
 
 const selectFile = async () => {
   const { name: fileName, text } = await selectTextFile([
-    { name: 'Template', extensions: ['template.html', 'html'] },
+    { name: "Template", extensions: ["template.html", "html"] },
   ]);
 
   if (!text) {
     return;
   }
 
-  await doc.value?.set('template', text);
+  await doc.value?.set("template", text);
   view.value?.dispatch({
     changes: { from: 0, to: view.value.state.doc.length, insert: text },
   });
@@ -572,19 +591,19 @@ const selectFile = async () => {
   }
 
   let nameVal: string | null = null;
-  if (fileName.endsWith('.template.html')) {
-    nameVal = fileName.split('.template.html')[0];
+  if (fileName.endsWith(".template.html")) {
+    nameVal = fileName.split(".template.html")[0];
   }
 
-  if (!nameVal && fileName.endsWith('.html')) {
-    nameVal = fileName.split('.html')[0];
+  if (!nameVal && fileName.endsWith(".html")) {
+    nameVal = fileName.split(".html")[0];
   }
 
   if (!nameVal) {
     return;
   }
 
-  await doc.value?.set('name', nameVal);
+  await doc.value?.set("name", nameVal);
 };
 
 const saveFile = async () => {
@@ -593,19 +612,19 @@ const saveFile = async () => {
 
   if (!nameVal) {
     return showToast({
-      type: 'warning',
+      type: "warning",
       message: t`Print Template Name not set`,
     });
   }
 
   if (!templateVal) {
     return showToast({
-      type: 'warning',
+      type: "warning",
       message: t`Print Template is empty`,
     });
   }
 
-  const { canceled, filePath } = await getSavePath(nameVal, 'template.html');
+  const { canceled, filePath } = await getSavePath(nameVal, "template.html");
   if (canceled || !filePath) {
     return;
   }
@@ -635,7 +654,7 @@ const initialize = async () => {
   focusOrSelectFormControl(doc.value as any, nameField.value, false);
 
   if (!doc.value?.template) {
-    await doc.value?.set('template', baseTemplate);
+    await doc.value?.set("template", baseTemplate);
   }
 
   await setDisplayInitialDoc();
@@ -698,18 +717,18 @@ const setShortcuts = () => {
     return;
   }
 
-  shortcuts.ctrl.set(context, ['Enter'], () => setTemplate());
-  shortcuts.ctrl.set(context, ['KeyE'], () => toggleEditMode());
-  shortcuts.ctrl.set(context, ['KeyH'], () => toggleShowHints());
-  shortcuts.ctrl.set(context, ['Equal'], () => setScale(scale.value + 0.1));
-  shortcuts.ctrl.set(context, ['Minus'], () => setScale(scale.value - 0.1));
+  shortcuts.ctrl.set(context, ["Enter"], () => setTemplate());
+  shortcuts.ctrl.set(context, ["KeyE"], () => toggleEditMode());
+  shortcuts.ctrl.set(context, ["KeyH"], () => toggleShowHints());
+  shortcuts.ctrl.set(context, ["Equal"], () => setScale(scale.value + 0.1));
+  shortcuts.ctrl.set(context, ["Minus"], () => setScale(scale.value - 0.1));
 };
 
 // Lifecycles
 onMounted(async () => {
   await initialize();
-  if (store.isDevelopment && typeof window !== 'undefined') {
-    // @ts-ignore
+  if (store.isDevelopment && typeof window !== "undefined") {
+    // @ts-expect-error
     window.tb = {
       doc,
       context,
@@ -747,12 +766,12 @@ onMounted(async () => {
 
 onActivated(async () => {
   await initialize();
-  store.docsPath = docsPathMap.PrintTemplate ?? '';
+  store.docsPath = docsPathMap.PrintTemplate ?? "";
   setShortcuts();
 });
 
 onDeactivated(() => {
-  store.docsPath = '';
+  store.docsPath = "";
   if (editMode.value) {
     disableEditMode();
   }

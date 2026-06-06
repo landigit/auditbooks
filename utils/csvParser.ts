@@ -2,7 +2,7 @@ export function parseCSV(text: string): string[][] {
   //  Works on RFC 4180 csv
   let rows = splitCsvBlock(text);
   if (rows.length === 1) {
-    rows = splitCsvBlock(text, '\n');
+    rows = splitCsvBlock(text, "\n");
   }
   return rows.map(splitCsvLine);
 }
@@ -10,15 +10,15 @@ export function parseCSV(text: string): string[][] {
 export function generateCSV(matrix: unknown[][]): string {
   // Generates RFC 4180 csv
   const formattedRows = getFormattedRows(matrix);
-  return formattedRows.join('\r\n');
+  return formattedRows.join("\r\n");
 }
 
-function splitCsvBlock(text: string, splitter = '\r\n'): string[] {
+function splitCsvBlock(text: string, splitter = "\r\n"): string[] {
   if (!text.endsWith(splitter)) {
     text += splitter;
   }
   const lines = [];
-  let line = '';
+  let line = "";
   let inDq = false;
 
   for (let i = 0; i <= text.length; i++) {
@@ -38,7 +38,7 @@ function splitCsvBlock(text: string, splitter = '\r\n'): string[] {
 
     if (!inDq && c === splitter[0] && isEnd) {
       lines.push(line);
-      line = '';
+      line = "";
       i = i + splitter.length - 1;
       continue;
     }
@@ -50,10 +50,10 @@ function splitCsvBlock(text: string, splitter = '\r\n'): string[] {
 }
 
 export function splitCsvLine(line: string): string[] {
-  line += ',';
+  line += ",";
 
   const items = [];
-  let item = '';
+  let item = "";
   let inDq = false;
 
   for (let i = 0; i < line.length; i++) {
@@ -66,11 +66,11 @@ export function splitCsvLine(line: string): string[] {
       inDq = !inDq;
     }
 
-    if (!inDq && c === ',') {
+    if (!inDq && c === ",") {
       item = unwrapDq(item);
       item = item.replaceAll('""', '"');
       items.push(item);
-      item = '';
+      item = "";
       continue;
     }
 
@@ -98,22 +98,22 @@ function getFormattedRows(matrix: unknown[][]): string[] {
       const formattedItem = getFormattedItem(item);
       formattedRow.push(formattedItem);
     }
-    formattedMatrix.push(formattedRow.join(','));
+    formattedMatrix.push(formattedRow.join(","));
   }
 
   return formattedMatrix;
 }
 
 function getFormattedItem(item: unknown): string {
-  if (typeof item === 'string') {
+  if (typeof item === "string") {
     return formatStringToCSV(item);
   }
 
   if (item === null || item === undefined) {
-    return '';
+    return "";
   }
 
-  if (typeof item === 'object') {
+  if (typeof item === "object") {
     return item.toString();
   }
 

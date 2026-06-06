@@ -1,20 +1,20 @@
-import { Fyo } from 'fyo';
-import { Doc } from 'fyo/model/doc';
+import { Fyo } from "fyo";
+import { Doc } from "fyo/model/doc";
 import {
   Action,
   FiltersMap,
   FormulaMap,
   ListViewSettings,
   ValidationMap,
-} from 'fyo/model/types';
+} from "fyo/model/types";
 import {
   validateEmail,
   validatePhoneNumber,
-} from 'fyo/model/validationFunction';
-import { Money } from 'pesa';
-import { PartyRole } from './types';
-import { ModelNameEnum } from 'models/types';
-import { isLoyaltyProgramExpiredAndMaxed } from 'models/helpers';
+} from "fyo/model/validationFunction";
+import { Money } from "pesa";
+import { PartyRole } from "./types";
+import { ModelNameEnum } from "models/types";
+import { isLoyaltyProgramExpiredAndMaxed } from "models/helpers";
 
 export class Party extends Doc {
   declare role?: PartyRole;
@@ -32,21 +32,21 @@ export class Party extends Doc {
     const role = this.role as PartyRole;
     let outstandingAmount = this.fyo.pesa(0);
 
-    if (role === 'Customer' || role === 'Both') {
+    if (role === "Customer" || role === "Both") {
       const outstandingReceive =
-        await this._getTotalOutstandingAmount('SalesInvoice');
+        await this._getTotalOutstandingAmount("SalesInvoice");
       outstandingAmount = outstandingAmount.add(outstandingReceive);
     }
 
-    if (role === 'Supplier') {
+    if (role === "Supplier") {
       const outstandingPay =
-        await this._getTotalOutstandingAmount('PurchaseInvoice');
+        await this._getTotalOutstandingAmount("PurchaseInvoice");
       outstandingAmount = outstandingAmount.add(outstandingPay);
     }
 
-    if (role === 'Both') {
+    if (role === "Both") {
       const outstandingPay =
-        await this._getTotalOutstandingAmount('PurchaseInvoice');
+        await this._getTotalOutstandingAmount("PurchaseInvoice");
       outstandingAmount = outstandingAmount.sub(outstandingPay);
     }
 
@@ -56,7 +56,7 @@ export class Party extends Doc {
   async updateLoyaltyPoints() {
     let loyaltyPoints = 0;
 
-    if (this.role === 'Customer' || this.role === 'Both') {
+    if (this.role === "Customer" || this.role === "Both") {
       loyaltyPoints = await this._getTotalLoyaltyPoints();
     }
 
@@ -68,7 +68,7 @@ export class Party extends Doc {
     if (loyaltyProgramName) {
       const isExpiredAndMaxed = await isLoyaltyProgramExpiredAndMaxed(
         this.fyo,
-        loyaltyProgramName
+        loyaltyProgramName,
       );
       if (isExpiredAndMaxed) {
         return 0;
@@ -76,7 +76,7 @@ export class Party extends Doc {
     }
 
     const data = (await this.fyo.db.getAll(ModelNameEnum.LoyaltyPointEntry, {
-      fields: ['name', 'loyaltyPoints', 'expiryDate', 'postingDate'],
+      fields: ["name", "loyaltyPoints", "expiryDate", "postingDate"],
       filters: {
         customer: this.name as string,
       },
@@ -99,10 +99,10 @@ export class Party extends Doc {
   }
 
   async _getTotalOutstandingAmount(
-    schemaName: 'SalesInvoice' | 'PurchaseInvoice'
+    schemaName: "SalesInvoice" | "PurchaseInvoice",
   ) {
     const outstandingAmounts = await this.fyo.db.getAllRaw(schemaName, {
-      fields: ['outstandingAmount'],
+      fields: ["outstandingAmount"],
       filters: {
         submitted: true,
         cancelled: false,
@@ -112,7 +112,7 @@ export class Party extends Doc {
 
     return outstandingAmounts
       .map(({ outstandingAmount }) =>
-        this.fyo.pesa(outstandingAmount as number)
+        this.fyo.pesa(outstandingAmount as number),
       )
       .reduce((a, b) => a.add(b), this.fyo.pesa(0));
   }
@@ -121,19 +121,19 @@ export class Party extends Doc {
     defaultAccount: {
       formula: async () => {
         const role = this.role as PartyRole;
-        if (role === 'Both') {
-          return '';
+        if (role === "Both") {
+          return "";
         }
 
-        let accountName = 'Debtors';
-        if (role === 'Supplier') {
-          accountName = 'Creditors';
+        let accountName = "Debtors";
+        if (role === "Supplier") {
+          accountName = "Creditors";
         }
 
-        const accountExists = await this.fyo.db.exists('Account', accountName);
-        return accountExists ? accountName : '';
+        const accountExists = await this.fyo.db.exists("Account", accountName);
+        return accountExists ? accountName : "";
       },
-      dependsOn: ['role'],
+      dependsOn: ["role"],
     },
     currency: {
       formula: () => {
@@ -152,23 +152,23 @@ export class Party extends Doc {
   static filters: FiltersMap = {
     defaultAccount: (doc: Doc) => {
       const role = doc.role as PartyRole;
-      if (role === 'Both') {
+      if (role === "Both") {
         return {
           isGroup: false,
-          accountType: ['in', ['Payable', 'Receivable']],
+          accountType: ["in", ["Payable", "Receivable"]],
         };
       }
 
       return {
         isGroup: false,
-        accountType: role === 'Customer' ? 'Receivable' : 'Payable',
+        accountType: role === "Customer" ? "Receivable" : "Payable",
       };
     },
   };
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ['name', 'email', 'phone', 'outstandingAmount'],
+      columns: ["name", "email", "phone", "outstandingAmount"],
     };
   }
 
@@ -178,7 +178,7 @@ export class Party extends Doc {
       return;
     }
     const leadData = await this.fyo.doc.getDoc(ModelNameEnum.Lead, this.name);
-    await leadData.setAndSync('status', 'Interested');
+    await leadData.setAndSync("status", "Interested");
   }
 
   async afterSync() {
@@ -188,7 +188,7 @@ export class Party extends Doc {
     }
 
     const leadData = await this.fyo.doc.getDoc(ModelNameEnum.Lead, this.name);
-    await leadData.setAndSync('status', 'Converted');
+    await leadData.setAndSync("status", "Converted");
   }
 
   static getActions(fyo: Fyo): Action[] {
@@ -196,9 +196,9 @@ export class Party extends Doc {
       {
         label: fyo.t`Create Purchase`,
         condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== 'Customer',
+          !doc.notInserted && (doc.role as PartyRole) !== "Customer",
         action: async (partyDoc, router) => {
-          const doc = fyo.doc.getNewDoc('PurchaseInvoice', {
+          const doc = fyo.doc.getNewDoc("PurchaseInvoice", {
             party: partyDoc.name,
             account: partyDoc.defaultAccount as string,
           });
@@ -206,9 +206,9 @@ export class Party extends Doc {
           await router.push({
             path: `/edit/PurchaseInvoice/${doc.name!}`,
             query: {
-              schemaName: 'PurchaseInvoice',
+              schemaName: "PurchaseInvoice",
               values: {
-                // @ts-ignore
+                // @ts-expect-error
                 party: partyDoc.name!,
               },
             },
@@ -218,10 +218,10 @@ export class Party extends Doc {
       {
         label: fyo.t`View Purchases`,
         condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== 'Customer',
+          !doc.notInserted && (doc.role as PartyRole) !== "Customer",
         action: async (partyDoc, router) => {
           await router.push({
-            path: '/list/PurchaseInvoice',
+            path: "/list/PurchaseInvoice",
             query: { filters: JSON.stringify({ party: partyDoc.name }) },
           });
         },
@@ -229,9 +229,9 @@ export class Party extends Doc {
       {
         label: fyo.t`Create Sale`,
         condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== 'Supplier',
+          !doc.notInserted && (doc.role as PartyRole) !== "Supplier",
         action: async (partyDoc, router) => {
-          const doc = fyo.doc.getNewDoc('SalesInvoice', {
+          const doc = fyo.doc.getNewDoc("SalesInvoice", {
             party: partyDoc.name,
             account: partyDoc.defaultAccount as string,
           });
@@ -239,9 +239,9 @@ export class Party extends Doc {
           await router.push({
             path: `/edit/SalesInvoice/${doc.name!}`,
             query: {
-              schemaName: 'SalesInvoice',
+              schemaName: "SalesInvoice",
               values: {
-                // @ts-ignore
+                // @ts-expect-error
                 party: partyDoc.name!,
               },
             },
@@ -251,10 +251,10 @@ export class Party extends Doc {
       {
         label: fyo.t`View Sales`,
         condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== 'Supplier',
+          !doc.notInserted && (doc.role as PartyRole) !== "Supplier",
         action: async (partyDoc, router) => {
           await router.push({
-            path: '/list/SalesInvoice',
+            path: "/list/SalesInvoice",
             query: { filters: JSON.stringify({ party: partyDoc.name }) },
           });
         },

@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { getBgTextColorClass } from 'src/utils/colors';
+import { computed } from "vue";
+import { getBgTextColorClass } from "src/utils/colors";
 
 // Define Props
 const props = withDefaults(
@@ -17,8 +17,8 @@ const props = withDefaults(
     color?: string;
   }>(),
   {
-    color: 'gray',
-  }
+    color: "gray",
+  },
 );
 
 // Computed Property

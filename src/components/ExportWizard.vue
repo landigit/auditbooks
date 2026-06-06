@@ -91,25 +91,25 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed } from 'vue';
-import { t } from 'fyo';
-import { Verb } from 'fyo/telemetry/types';
-import { Field, FieldTypeEnum } from 'schemas/types';
-import { fyo } from 'src/initFyo';
+import { ref, computed } from "vue";
+import { t } from "fyo";
+import { Verb } from "fyo/telemetry/types";
+import { Field, FieldTypeEnum } from "schemas/types";
+import { fyo } from "src/initFyo";
 import {
   getCsvExportData,
   getExportFields,
   getExportTableFields,
   getJsonExportData,
-} from 'src/utils/export';
-import { ExportField, ExportFormat, ExportTableField } from 'src/utils/types';
-import { getSavePath, showExportInFolder } from 'src/utils/ui';
-import { QueryFilter } from 'utils/db/types';
-import Button from './Button.vue';
-import Check from './Controls/Check.vue';
-import Int from './Controls/Int.vue';
-import Select from './Controls/Select.vue';
-import FormHeader from './FormHeader.vue';
+} from "src/utils/export";
+import { ExportField, ExportFormat, ExportTableField } from "src/utils/types";
+import { getSavePath, showExportInFolder } from "src/utils/ui";
+import { QueryFilter } from "utils/db/types";
+import Button from "./Button.vue";
+import Check from "./Controls/Check.vue";
+import Int from "./Controls/Int.vue";
+import Select from "./Controls/Select.vue";
+import FormHeader from "./FormHeader.vue";
 
 // --- Props & Emits ---
 const props = withDefaults(
@@ -121,17 +121,17 @@ const props = withDefaults(
   {
     listFilters: () => ({}),
     pageTitle: undefined,
-  }
+  },
 );
 
 // --- State ---
 const _schemaFields = fyo.schemaMap[props.schemaName]?.fields ?? [];
 const limit = ref<number | null>(null);
 const useListFilters = ref(true);
-const exportFormat = ref<ExportFormat>('csv');
+const exportFormat = ref<ExportFormat>("csv");
 const fields = ref<ExportField[]>(getExportFields(_schemaFields));
 const tableFields = ref<ExportTableField[]>(
-  getExportTableFields(_schemaFields, fyo)
+  getExportTableFields(_schemaFields, fyo),
 );
 
 // --- Computed ---
@@ -139,7 +139,7 @@ const label = computed(() => {
   if (props.pageTitle) {
     return props.pageTitle;
   }
-  return fyo.schemaMap?.[props.schemaName]?.label ?? '';
+  return fyo.schemaMap?.[props.schemaName]?.label ?? "";
 });
 
 const filteredTableFields = computed(() => {
@@ -153,7 +153,7 @@ const numSelected = computed(() => {
   return (
     filteredTableFields.value.reduce(
       (acc, f) => f.fields.filter((subF) => subF.export).length + acc,
-      0
+      0,
     ) +
     fields.value.filter((f) => f.fieldtype !== FieldTypeEnum.Table && f.export)
       .length
@@ -163,23 +163,23 @@ const numSelected = computed(() => {
 const configFields = computed(() => {
   return {
     useListFilters: {
-      fieldtype: 'Check',
+      fieldtype: "Check",
       label: t`Use List Filters`,
-      fieldname: 'useListFilters',
+      fieldname: "useListFilters",
     } as Field,
     limit: {
-      placeholder: 'Limit number of rows',
-      fieldtype: 'Int',
+      placeholder: "Limit number of rows",
+      fieldtype: "Int",
       label: t`Limit`,
-      fieldname: 'limit',
+      fieldname: "limit",
     } as Field,
     exportFormat: {
-      fieldtype: 'Select',
+      fieldtype: "Select",
       label: t`Export Format`,
-      fieldname: 'exportFormat',
+      fieldname: "exportFormat",
       options: [
-        { value: 'json', label: 'JSON' },
-        { value: 'csv', label: 'CSV' },
+        { value: "json", label: "JSON" },
+        { value: "csv", label: "CSV" },
       ],
     } as Field,
   };
@@ -188,7 +188,7 @@ const configFields = computed(() => {
 // --- Methods ---
 function getField(ef: ExportField): Field {
   return {
-    fieldtype: 'Check',
+    fieldtype: "Check",
     label: ef.label,
     fieldname: ef.fieldname,
   };
@@ -196,7 +196,7 @@ function getField(ef: ExportField): Field {
 
 function getExportField(
   fieldname: string,
-  target?: string
+  target?: string,
 ): ExportField | undefined {
   let listFields: ExportField[] | undefined;
 
@@ -224,18 +224,18 @@ function setExportFieldValue(ef: ExportField, value: boolean, target?: string) {
 
 async function exportData() {
   const filters = JSON.parse(
-    JSON.stringify(useListFilters.value ? props.listFilters : {})
+    JSON.stringify(useListFilters.value ? props.listFilters : {}),
   );
 
   let data: string;
-  if (exportFormat.value === 'json') {
+  if (exportFormat.value === "json") {
     data = await getJsonExportData(
       props.schemaName,
       fields.value,
       tableFields.value,
       limit.value,
       filters,
-      fyo
+      fyo,
     );
   } else {
     data = await getCsvExportData(
@@ -244,7 +244,7 @@ async function exportData() {
       tableFields.value,
       limit.value,
       filters,
-      fyo
+      fyo,
     );
   }
 
@@ -255,7 +255,7 @@ async function saveExportData(data: string) {
   const fileName = getFileName();
   const { canceled, filePath } = await getSavePath(
     fileName,
-    exportFormat.value
+    exportFormat.value,
   );
   if (canceled || !filePath) {
     return;
@@ -269,8 +269,8 @@ async function saveExportData(data: string) {
 }
 
 function getFileName() {
-  const fileStr = label.value.toLowerCase().replace(/\s/g, '-');
-  const dateString = new Date().toISOString().split('T')[0];
+  const fileStr = label.value.toLowerCase().replace(/\s/g, "-");
+  const dateString = new Date().toISOString().split("T")[0];
   return `${fileStr}_${dateString}`;
 }
 </script>

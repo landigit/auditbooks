@@ -1,7 +1,7 @@
-import { Doc } from 'fyo/model/doc';
-import { ChangeArg, HiddenMap } from 'fyo/model/types';
-import { initERPNSync, syncDocumentsToERPNext } from 'src/utils/erpnextSync';
-import { ErrorLogEnum } from 'fyo/telemetry/types';
+import { Doc } from "fyo/model/doc";
+import { ChangeArg, HiddenMap } from "fyo/model/types";
+import { initERPNSync, syncDocumentsToERPNext } from "src/utils/erpnextSync";
+import { ErrorLogEnum } from "fyo/telemetry/types";
 
 export class ERPNextSyncSettings extends Doc {
   declare deviceID?: string;
@@ -50,13 +50,13 @@ export class ERPNextSyncSettings extends Doc {
   };
 
   async change(ch: ChangeArg) {
-    if (ch.changed === 'syncDataFromServer') {
+    if (ch.changed === "syncDataFromServer") {
       try {
-        const { showToast } = await import('src/utils/interactive');
+        const { showToast } = await import("src/utils/interactive");
         showToast({
-          type: 'warning',
-          message: 'Fetching data from server.',
-          duration: 'very_long',
+          type: "warning",
+          message: "Fetching data from server.",
+          duration: "very_long",
         });
         await initERPNSync(this.fyo);
         ipc.reloadWindow();
@@ -70,8 +70,8 @@ export class ERPNextSyncSettings extends Doc {
               error: errorMessage,
               data: JSON.stringify({
                 instance: this.deviceID,
-                operation: 'sync_data_from_server',
-                trigger: 'change_event',
+                operation: "sync_data_from_server",
+                trigger: "change_event",
               }),
             })
             .sync();
@@ -79,7 +79,7 @@ export class ERPNextSyncSettings extends Doc {
           throw logError;
         }
       }
-    } else if (ch.changed === 'syncDataToServer') {
+    } else if (ch.changed === "syncDataToServer") {
       try {
         await syncDocumentsToERPNext(this.fyo);
         ipc.reloadWindow();
@@ -93,8 +93,8 @@ export class ERPNextSyncSettings extends Doc {
               error: errorMessage,
               data: JSON.stringify({
                 instance: this.deviceID,
-                operation: 'sync_data_to_server',
-                trigger: 'change_event',
+                operation: "sync_data_to_server",
+                trigger: "change_event",
               }),
             })
             .sync();

@@ -1,5 +1,5 @@
-import { Fyo } from 'fyo';
-import { Doc } from 'fyo/model/doc';
+import { Fyo } from "fyo";
+import { Doc } from "fyo/model/doc";
 import {
   DefaultMap,
   FiltersMap,
@@ -8,10 +8,10 @@ import {
   TreeViewSettings,
   ReadOnlyMap,
   FormulaMap,
-} from 'fyo/model/types';
-import { ModelNameEnum } from 'models/types';
-import { QueryFilter } from 'utils/db/types';
-import { AccountRootType, AccountRootTypeEnum, AccountType } from './types';
+} from "fyo/model/types";
+import { ModelNameEnum } from "models/types";
+import { QueryFilter } from "utils/db/types";
+import { AccountRootType, AccountRootTypeEnum, AccountType } from "./types";
 
 export class Account extends Doc {
   declare rootType?: AccountRootType;
@@ -59,21 +59,21 @@ export class Account extends Doc {
       return;
     }
 
-    const account = await this.fyo.db.get('Account', this.parentAccount);
+    const account = await this.fyo.db.get("Account", this.parentAccount);
     this.accountType = account.accountType as AccountType;
   }
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ['name', 'rootType', 'isGroup', 'parentAccount'],
+      columns: ["name", "rootType", "isGroup", "parentAccount"],
     };
   }
 
   static getTreeSettings(fyo: Fyo): void | TreeViewSettings {
     return {
-      parentField: 'parentAccount',
+      parentField: "parentAccount",
       async getRootLabel(): Promise<string> {
-        const accountingSettings = await fyo.doc.getDoc('AccountingSettings');
+        const accountingSettings = await fyo.doc.getDoc("AccountingSettings");
         return accountingSettings.companyName as string;
       },
     };
@@ -89,7 +89,7 @@ export class Account extends Doc {
         return await this.fyo.getValue(
           ModelNameEnum.Account,
           this.parentAccount,
-          'rootType'
+          "rootType",
         );
       },
     },

@@ -20,7 +20,7 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": ["@rsbuild/core/types", "bun-types"],
+    "types": ["@rsbuild/core/types", "bun-types", "unplugin-vue-router/client"],
     "paths": {
       "src/*": ["./src/*"],
       "fyo/*": ["./fyo/*"],

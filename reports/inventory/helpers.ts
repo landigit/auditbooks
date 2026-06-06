@@ -1,16 +1,16 @@
-import { Fyo } from 'fyo';
-import { StockQueue } from 'models/inventory/stockQueue';
-import { ValuationMethod } from 'models/inventory/types';
-import { ModelNameEnum } from 'models/types';
-import { safeParseFloat, safeParseInt } from 'utils/index';
+import { Fyo } from "fyo";
+import { StockQueue } from "models/inventory/stockQueue";
+import { ValuationMethod } from "models/inventory/types";
+import { ModelNameEnum } from "models/types";
+import { safeParseFloat, safeParseInt } from "utils/index";
 import type {
   ComputedStockLedgerEntry,
   RawStockLedgerEntry,
   SerialNumberStatus,
   StockBalanceEntry,
-} from './types';
-import type { QueryFilter } from 'utils/db/types';
-import type { StockTransfer } from 'models/inventory/StockTransfer';
+} from "./types";
+import type { QueryFilter } from "utils/db/types";
+import type { StockTransfer } from "models/inventory/StockTransfer";
 
 type Item = string;
 type Location = string;
@@ -18,31 +18,31 @@ type Batch = string;
 
 export async function getRawStockLedgerEntries(
   fyo: Fyo,
-  filters: QueryFilter = {}
+  filters: QueryFilter = {},
 ) {
   const fieldnames = [
-    'name',
-    'date',
-    'item',
-    'batch',
-    'serialNumber',
-    'rate',
-    'quantity',
-    'location',
-    'referenceName',
-    'referenceType',
+    "name",
+    "date",
+    "item",
+    "batch",
+    "serialNumber",
+    "rate",
+    "quantity",
+    "location",
+    "referenceName",
+    "referenceType",
   ];
 
   return (await fyo.db.getAllRaw(ModelNameEnum.StockLedgerEntry, {
     fields: fieldnames,
     filters,
-    orderBy: ['date', 'created', 'name'],
-    order: 'asc',
+    orderBy: ["date", "created", "name"],
+    order: "asc",
   })) as RawStockLedgerEntry[];
 }
 
 export async function getShipmentCOGSAmountFromSLEs(
-  stockTransfer: StockTransfer
+  stockTransfer: StockTransfer,
 ) {
   const fyo = stockTransfer.fyo;
   const date = stockTransfer.date ?? new Date();
@@ -55,19 +55,19 @@ export async function getShipmentCOGSAmountFromSLEs(
   type Queues = Record<Item, Record<Location, Record<Batch, StockQueue>>>;
 
   const rawSles = await getRawStockLedgerEntries(fyo, {
-    item: ['in', itemNames],
-    date: ['<=', date.toISOString()],
+    item: ["in", itemNames],
+    date: ["<=", date.toISOString()],
   });
 
   const q: Queues = Object.create(null);
   for (const sle of rawSles) {
     const i = sle.item;
     const l = sle.location;
-    const b = sle.batch ?? '-';
+    const b = sle.batch ?? "-";
 
-    if (i === '__proto__' || i === 'constructor' || i === 'prototype') continue;
-    if (l === '__proto__' || l === 'constructor' || l === 'prototype') continue;
-    if (b === '__proto__' || b === 'constructor' || b === 'prototype') continue;
+    if (i === "__proto__" || i === "constructor" || i === "prototype") continue;
+    if (l === "__proto__" || l === "constructor" || l === "prototype") continue;
+    if (b === "__proto__" || b === "constructor" || b === "prototype") continue;
 
     q[i] ??= Object.create(null);
     q[i][l] ??= Object.create(null);
@@ -84,9 +84,9 @@ export async function getShipmentCOGSAmountFromSLEs(
 
   let total = fyo.pesa(0);
   for (const item of items) {
-    const i = item.item ?? '-';
-    const l = item.location ?? '-';
-    const b = item.batch ?? '-';
+    const i = item.item ?? "-";
+    const l = item.location ?? "-";
+    const b = item.batch ?? "-";
     const stAmount = item.amount ?? 0;
 
     if (Object.keys(q).length === 0) {
@@ -114,7 +114,7 @@ export async function getShipmentCOGSAmountFromSLEs(
 
 export function getStockLedgerEntries(
   rawSLEs: RawStockLedgerEntry[],
-  valuationMethod: ValuationMethod
+  valuationMethod: ValuationMethod,
 ): ComputedStockLedgerEntry[] {
   const computedSLEs: ComputedStockLedgerEntry[] = [];
   const stockQueues: Record<
@@ -127,31 +127,31 @@ export function getStockLedgerEntries(
     const date = new Date(sle.date);
     const rate = safeParseFloat(sle.rate);
     const { item, location, quantity, referenceName, referenceType } = sle;
-    const batch = sle.batch ?? '';
-    const serialNumber = sle.serialNumber ?? '';
+    const batch = sle.batch ?? "";
+    const serialNumber = sle.serialNumber ?? "";
 
     if (quantity === 0) {
       continue;
     }
 
     if (
-      item === '__proto__' ||
-      item === 'constructor' ||
-      item === 'prototype'
+      item === "__proto__" ||
+      item === "constructor" ||
+      item === "prototype"
     ) {
       continue;
     }
     if (
-      location === '__proto__' ||
-      location === 'constructor' ||
-      location === 'prototype'
+      location === "__proto__" ||
+      location === "constructor" ||
+      location === "prototype"
     ) {
       continue;
     }
     if (
-      batch === '__proto__' ||
-      batch === 'constructor' ||
-      batch === 'prototype'
+      batch === "__proto__" ||
+      batch === "constructor" ||
+      batch === "prototype"
     ) {
       continue;
     }
@@ -230,7 +230,7 @@ export function getStockBalanceEntries(
     batch?: string;
   },
   showSerialNumbers = false,
-  serialNumberFilter: SerialNumberStatus = 'All'
+  serialNumberFilter: SerialNumberStatus = "All",
 ): StockBalanceEntry[] {
   const sbeMap: Record<
     Item,
@@ -255,39 +255,39 @@ export function getStockBalanceEntries(
 
     if (
       showSerialNumbers &&
-      (!sle.serialNumber || sle.serialNumber.trim() === '')
+      (!sle.serialNumber || sle.serialNumber.trim() === "")
     ) {
       continue;
     }
 
-    const batch = sle.batch || '';
-    const serialNumber = showSerialNumbers ? sle.serialNumber : '';
+    const batch = sle.batch || "";
+    const serialNumber = showSerialNumbers ? sle.serialNumber : "";
 
     if (
-      sle.item === '__proto__' ||
-      sle.item === 'constructor' ||
-      sle.item === 'prototype'
+      sle.item === "__proto__" ||
+      sle.item === "constructor" ||
+      sle.item === "prototype"
     ) {
       continue;
     }
     if (
-      sle.location === '__proto__' ||
-      sle.location === 'constructor' ||
-      sle.location === 'prototype'
+      sle.location === "__proto__" ||
+      sle.location === "constructor" ||
+      sle.location === "prototype"
     ) {
       continue;
     }
     if (
-      batch === '__proto__' ||
-      batch === 'constructor' ||
-      batch === 'prototype'
+      batch === "__proto__" ||
+      batch === "constructor" ||
+      batch === "prototype"
     ) {
       continue;
     }
     if (
-      serialNumber === '__proto__' ||
-      serialNumber === 'constructor' ||
-      serialNumber === 'prototype'
+      serialNumber === "__proto__" ||
+      serialNumber === "constructor" ||
+      serialNumber === "prototype"
     ) {
       continue;
     }
@@ -311,7 +311,7 @@ export function getStockBalanceEntries(
       Reflect.set(
         batchSbe,
         serialNumber,
-        getSBE(sle.item, sle.location, batch, serialNumber)
+        getSBE(sle.item, sle.location, batch, serialNumber),
       );
     }
     const sbe = Reflect.get(batchSbe, serialNumber);
@@ -332,15 +332,15 @@ export function getStockBalanceEntries(
   let entries = Object.values(sbeMap)
     .map((sbeBatched) =>
       Object.values(sbeBatched).map((sbes) =>
-        Object.values(sbes).map((sbeWithSN) => Object.values(sbeWithSN))
-      )
+        Object.values(sbes).map((sbeWithSN) => Object.values(sbeWithSN)),
+      ),
     )
     .flat(3);
 
   // Filter by serial number status
-  if (serialNumberFilter === 'In stock') {
+  if (serialNumberFilter === "In stock") {
     entries = entries.filter((entry) => entry.balanceQuantity > 0);
-  } else if (serialNumberFilter === 'Out stock') {
+  } else if (serialNumberFilter === "Out stock") {
     entries = entries.filter((entry) => entry.balanceQuantity <= 0);
   }
 
@@ -351,7 +351,7 @@ function getSBE(
   item: string,
   location: string,
   batch: string,
-  serialNumber: string
+  serialNumber: string,
 ): StockBalanceEntry {
   return {
     name: 0,
@@ -379,7 +379,7 @@ function getSBE(
 
 function updateOpeningBalances(
   sbe: StockBalanceEntry,
-  sle: ComputedStockLedgerEntry
+  sle: ComputedStockLedgerEntry,
 ) {
   sbe.openingQuantity += sle.quantity;
   sbe.openingValue += sle.valueChange;
@@ -390,7 +390,7 @@ function updateOpeningBalances(
 
 function updateCurrentBalances(
   sbe: StockBalanceEntry,
-  sle: ComputedStockLedgerEntry
+  sle: ComputedStockLedgerEntry,
 ) {
   sbe.balanceQuantity += sle.quantity;
   sbe.balanceValue += sle.valueChange;

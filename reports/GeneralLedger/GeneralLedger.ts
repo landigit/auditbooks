@@ -1,16 +1,16 @@
-import { Fyo, t } from 'fyo';
-import dayjs from 'dayjs';
-import { ModelNameEnum } from 'models/types';
-import { LedgerReport } from 'reports/LedgerReport';
+import { Fyo, t } from "fyo";
+import dayjs from "dayjs";
+import { ModelNameEnum } from "models/types";
+import { LedgerReport } from "reports/LedgerReport";
 import {
   ColumnField,
   GroupedMap,
   LedgerEntry,
   ReportData,
   ReportRow,
-} from 'reports/types';
-import { Field, FieldTypeEnum } from 'schemas/types';
-import { QueryFilter } from 'utils/db/types';
+} from "reports/types";
+import { Field, FieldTypeEnum } from "schemas/types";
+import { QueryFilter } from "utils/db/types";
 
 type ReferenceType =
   | ModelNameEnum.SalesInvoice
@@ -19,18 +19,18 @@ type ReferenceType =
   | ModelNameEnum.JournalEntry
   | ModelNameEnum.Shipment
   | ModelNameEnum.PurchaseReceipt
-  | 'All';
+  | "All";
 
 export class GeneralLedger extends LedgerReport {
   static title = t`General Ledger`;
-  static reportName = 'general-ledger';
+  static reportName = "general-ledger";
   usePagination = true;
   loading = false;
 
   ascending = false;
   reverted = false;
-  referenceType: ReferenceType = 'All';
-  groupBy: 'none' | 'party' | 'account' | 'referenceName' = 'none';
+  referenceType: ReferenceType = "All";
+  groupBy: "none" | "party" | "account" | "referenceName" = "none";
   _rawData: LedgerEntry[] = [];
 
   constructor(fyo: Fyo) {
@@ -38,14 +38,14 @@ export class GeneralLedger extends LedgerReport {
   }
 
   setDefaultFilters() {
-    this.toDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
-    this.fromDate = dayjs().subtract(1, 'month').format('YYYY-MM-DD');
+    this.toDate = dayjs().add(1, "day").format("YYYY-MM-DD");
+    this.fromDate = dayjs().subtract(1, "month").format("YYYY-MM-DD");
   }
 
   async setReportData(filter?: string, force?: boolean) {
     this.loading = true;
     let sort = true;
-    if (force || filter !== 'grouped' || this._rawData.length === 0) {
+    if (force || filter !== "grouped" || this._rawData.length === 0) {
       await this._setRawData();
       sort = false;
     }
@@ -72,11 +72,11 @@ export class GeneralLedger extends LedgerReport {
       debit: totalDebit,
       credit: totalCredit,
       balance: totalDebit - totalCredit,
-      referenceType: '',
-      referenceName: '',
-      party: '',
+      referenceType: "",
+      referenceName: "",
+      party: "",
       reverted: false,
-      reverts: '',
+      reverts: "",
     });
 
     this.reportData = this._convertEntriesToReportData(consolidated);
@@ -108,8 +108,8 @@ export class GeneralLedger extends LedgerReport {
       return {
         isEmpty: true,
         cells: columns.map((c) => ({
-          rawValue: '',
-          value: '',
+          rawValue: "",
+          value: "",
           width: c.width ?? 1,
         })),
       };
@@ -117,13 +117,13 @@ export class GeneralLedger extends LedgerReport {
 
     const row: ReportRow = { cells: [] };
     for (const col of columns) {
-      const align = col.align ?? 'left';
+      const align = col.align ?? "left";
       const width = col.width ?? 1;
       const fieldname = col.fieldname;
       if (
-        fieldname === '__proto__' ||
-        fieldname === 'constructor' ||
-        fieldname === 'prototype'
+        fieldname === "__proto__" ||
+        fieldname === "constructor" ||
+        fieldname === "prototype"
       ) {
         continue;
       }
@@ -131,24 +131,24 @@ export class GeneralLedger extends LedgerReport {
       let value = Reflect.get(entry, fieldname as keyof LedgerEntry);
       const rawValue = value;
       if (value === null || value === undefined) {
-        value = '';
+        value = "";
       }
 
       if (value instanceof Date) {
         value = this.fyo.format(value, FieldTypeEnum.Date);
       }
 
-      if (typeof value === 'number' && fieldname !== 'index') {
+      if (typeof value === "number" && fieldname !== "index") {
         value = this.fyo.format(value, FieldTypeEnum.Currency);
       }
 
-      if (typeof value === 'boolean' && fieldname === 'reverted') {
-        value = value ? t`Reverted` : '';
+      if (typeof value === "boolean" && fieldname === "reverted") {
+        value = value ? t`Reverted` : "";
       } else {
         value = String(value);
       }
 
-      if (fieldname === 'referenceType') {
+      if (fieldname === "referenceType") {
         value = this.fyo.schemaMap[value]?.label ?? value;
       }
 
@@ -173,7 +173,7 @@ export class GeneralLedger extends LedgerReport {
       /**
        * Add blank row for spacing if groupBy
        */
-      if (this.groupBy !== 'none') {
+      if (this.groupBy !== "none") {
         this._pushBlankEntry(entries);
       }
     }
@@ -184,16 +184,16 @@ export class GeneralLedger extends LedgerReport {
   _pushBlankEntry(entries: LedgerEntry[]) {
     entries.push({
       name: -3, // Empty
-      account: '',
+      account: "",
       date: null,
       debit: null,
       credit: null,
       balance: null,
-      referenceType: '',
-      referenceName: '',
-      party: '',
+      referenceType: "",
+      referenceName: "",
+      party: "",
       reverted: false,
-      reverts: '',
+      reverts: "",
     });
   }
 
@@ -218,7 +218,7 @@ export class GeneralLedger extends LedgerReport {
       /**
        * Total row incase groupBy is used
        */
-      if (this.groupBy !== 'none') {
+      if (this.groupBy !== "none") {
         map.get(key)?.push({
           name: -1, // Italics
           account: t`Total`,
@@ -226,11 +226,11 @@ export class GeneralLedger extends LedgerReport {
           debit,
           credit,
           balance: debit - credit,
-          referenceType: '',
-          referenceName: '',
-          party: '',
+          referenceType: "",
+          referenceName: "",
+          party: "",
           reverted: false,
-          reverts: '',
+          reverts: "",
         });
       }
 
@@ -246,14 +246,14 @@ export class GeneralLedger extends LedgerReport {
 
   _getQueryFilters(): QueryFilter {
     const filters: QueryFilter = Object.create(null);
-    const stringFilters = ['account', 'party', 'referenceName'];
+    const stringFilters = ["account", "party", "referenceName"];
 
     for (const sf of stringFilters) {
       if (
-        sf === '__proto__' ||
-        sf === '__proto__' ||
-        sf === 'constructor' ||
-        sf === 'prototype'
+        sf === "__proto__" ||
+        sf === "__proto__" ||
+        sf === "constructor" ||
+        sf === "prototype"
       ) {
         continue;
       }
@@ -265,18 +265,18 @@ export class GeneralLedger extends LedgerReport {
       Reflect.set(filters, sf, value as string);
     }
 
-    if (this.referenceType !== 'All') {
+    if (this.referenceType !== "All") {
       filters.referenceType = this.referenceType;
     }
 
     if (this.toDate) {
       filters.date ??= [];
-      (filters.date as string[]).push('<=', this.toDate as string);
+      (filters.date as string[]).push("<=", this.toDate as string);
     }
 
     if (this.fromDate) {
       filters.date ??= [];
-      (filters.date as string[]).push('>=', this.fromDate as string);
+      (filters.date as string[]).push(">=", this.fromDate as string);
     }
 
     if (!this.reverted) {
@@ -288,82 +288,82 @@ export class GeneralLedger extends LedgerReport {
 
   getFilters() {
     const refTypeOptions = [
-      { label: t`All`, value: 'All' },
-      { label: t`Sales Invoices`, value: 'SalesInvoice' },
-      { label: t`Purchase Invoices`, value: 'PurchaseInvoice' },
-      { label: t`Payments`, value: 'Payment' },
-      { label: t`Journal Entries`, value: 'JournalEntry' },
+      { label: t`All`, value: "All" },
+      { label: t`Sales Invoices`, value: "SalesInvoice" },
+      { label: t`Purchase Invoices`, value: "PurchaseInvoice" },
+      { label: t`Payments`, value: "Payment" },
+      { label: t`Journal Entries`, value: "JournalEntry" },
     ];
 
     if (!this.fyo.singles.AccountingSettings?.enableInventory) {
       refTypeOptions.push(
-        { label: t`Shipment`, value: 'Shipment' },
-        { label: t`Purchase Receipt`, value: 'PurchaseReceipt' }
+        { label: t`Shipment`, value: "Shipment" },
+        { label: t`Purchase Receipt`, value: "PurchaseReceipt" },
       );
     }
 
     return [
       {
-        fieldtype: 'Select',
+        fieldtype: "Select",
         options: refTypeOptions,
         label: t`Ref Type`,
-        fieldname: 'referenceType',
+        fieldname: "referenceType",
         placeholder: t`Ref Type`,
       },
       {
-        fieldtype: 'DynamicLink',
+        fieldtype: "DynamicLink",
         label: t`Ref. Name`,
-        references: 'referenceType',
+        references: "referenceType",
         placeholder: t`Ref Name`,
         emptyMessage: t`Change Ref Type`,
-        fieldname: 'referenceName',
+        fieldname: "referenceName",
       },
       {
-        fieldtype: 'Link',
-        target: 'Account',
+        fieldtype: "Link",
+        target: "Account",
         placeholder: t`Account`,
         label: t`Account`,
-        fieldname: 'account',
+        fieldname: "account",
       },
       {
-        fieldtype: 'Link',
-        target: 'Party',
+        fieldtype: "Link",
+        target: "Party",
         label: t`Party`,
         placeholder: t`Party`,
-        fieldname: 'party',
+        fieldname: "party",
       },
       {
-        fieldtype: 'Date',
+        fieldtype: "Date",
         placeholder: t`From Date`,
         label: t`From Date`,
-        fieldname: 'fromDate',
+        fieldname: "fromDate",
       },
       {
-        fieldtype: 'Date',
+        fieldtype: "Date",
         placeholder: t`To Date`,
         label: t`To Date`,
-        fieldname: 'toDate',
+        fieldname: "toDate",
       },
       {
-        fieldtype: 'Select',
+        fieldtype: "Select",
         label: t`Group By`,
-        fieldname: 'groupBy',
+        fieldname: "groupBy",
         options: [
-          { label: t`None`, value: 'none' },
-          { label: t`Party`, value: 'party' },
-          { label: t`Account`, value: 'account' },
-          { label: t`Reference`, value: 'referenceName' },
+          { label: t`None`, value: "none" },
+          { label: t`Party`, value: "party" },
+          { label: t`Account`, value: "account" },
+          { label: t`Reference`, value: "referenceName" },
         ],
       },
       {
-        fieldtype: 'Check',
+        fieldtype: "Check",
         label: t`Include Cancelled`,
-        fieldname: 'reverted',
+        fieldname: "reverted",
       },
       {
-        fieldtype: 'Check',
+        fieldtype: "Check",
         label: t`Ascending Order`,
-        fieldname: 'ascending',
+        fieldname: "ascending",
       },
     ] as Field[];
   }
@@ -371,68 +371,68 @@ export class GeneralLedger extends LedgerReport {
   getColumns(): ColumnField[] {
     let columns = [
       {
-        label: '#',
-        fieldtype: 'Int',
-        fieldname: 'index',
-        align: 'left',
+        label: "#",
+        fieldtype: "Int",
+        fieldname: "index",
+        align: "left",
         width: 0.5,
       },
       {
         label: t`Account`,
-        fieldtype: 'Link',
-        fieldname: 'account',
+        fieldtype: "Link",
+        fieldname: "account",
         width: 1.5,
       },
       {
         label: t`Date`,
-        fieldtype: 'Date',
-        fieldname: 'date',
+        fieldtype: "Date",
+        fieldname: "date",
       },
       {
         label: t`Debit`,
-        fieldtype: 'Currency',
-        fieldname: 'debit',
-        align: 'right',
+        fieldtype: "Currency",
+        fieldname: "debit",
+        align: "right",
         width: 1.25,
       },
       {
         label: t`Credit`,
-        fieldtype: 'Currency',
-        fieldname: 'credit',
-        align: 'right',
+        fieldtype: "Currency",
+        fieldname: "credit",
+        align: "right",
         width: 1.25,
       },
       {
         label: t`Balance`,
-        fieldtype: 'Currency',
-        fieldname: 'balance',
-        align: 'right',
+        fieldtype: "Currency",
+        fieldname: "balance",
+        align: "right",
         width: 1.25,
       },
       {
         label: t`Party`,
-        fieldtype: 'Link',
-        fieldname: 'party',
+        fieldtype: "Link",
+        fieldname: "party",
       },
       {
         label: t`Ref Name`,
-        fieldtype: 'Data',
-        fieldname: 'referenceName',
+        fieldtype: "Data",
+        fieldname: "referenceName",
       },
       {
         label: t`Ref Type`,
-        fieldtype: 'Data',
-        fieldname: 'referenceType',
+        fieldtype: "Data",
+        fieldname: "referenceType",
       },
       {
         label: t`Reverted`,
-        fieldtype: 'Check',
-        fieldname: 'reverted',
+        fieldtype: "Check",
+        fieldname: "reverted",
       },
     ] as ColumnField[];
 
     if (!this.reverted) {
-      columns = columns.filter((f) => f.fieldname !== 'reverted');
+      columns = columns.filter((f) => f.fieldname !== "reverted");
     }
 
     return columns;

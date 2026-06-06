@@ -1,7 +1,7 @@
-import { t } from 'fyo';
-import { ModelNameEnum } from 'models/types';
-import { openSettings, routeTo } from './ui';
-import { GetStartedConfigItem } from './types';
+import { t } from "fyo";
+import { ModelNameEnum } from "models/types";
+import { openSettings, routeTo } from "./ui";
+import { GetStartedConfigItem } from "./types";
 
 export function getGetStartedConfig(): GetStartedConfigItem[] {
   /* oxlint-disable @typescript-eslint/no-misused-promises */
@@ -10,27 +10,27 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
       label: t`Organisation`,
       items: [
         {
-          key: 'General',
+          key: "General",
           label: t`General`,
-          icon: 'home',
+          icon: "home",
           description: t`Set up your company information, email, country and fiscal year`,
-          fieldname: 'companySetup',
+          fieldname: "companySetup",
           action: () => openSettings(ModelNameEnum.AccountingSettings),
         },
         {
-          key: 'Print',
+          key: "Print",
           label: t`Print`,
-          icon: 'file-text',
+          icon: "file-text",
           description: t`Customize your invoices by adding a logo and address details`,
-          fieldname: 'printSetup',
+          fieldname: "printSetup",
           action: () => openSettings(ModelNameEnum.PrintSettings),
         },
         {
-          key: 'System',
+          key: "System",
           label: t`System`,
-          icon: 'settings-2',
+          icon: "settings-2",
           description: t`Setup system defaults like date format and display precision`,
-          fieldname: 'systemSetup',
+          fieldname: "systemSetup",
           action: () => openSettings(ModelNameEnum.SystemSettings),
         },
       ],
@@ -39,32 +39,32 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
       label: t`Accounts`,
       items: [
         {
-          key: 'Review Accounts',
+          key: "Review Accounts",
           label: t`Review Accounts`,
-          icon: 'book-open',
+          icon: "book-open",
           description: t`Review your chart of accounts, add any account or tax heads as needed`,
-          action: () => routeTo('/chart-of-accounts'),
-          fieldname: 'chartOfAccountsReviewed',
-          documentation: 'https://landigit.com/auditbooks/chart-of-accounts',
+          action: () => routeTo("/chart-of-accounts"),
+          fieldname: "chartOfAccountsReviewed",
+          documentation: "https://landigit.com/auditbooks/chart-of-accounts",
         },
         {
-          key: 'Opening Balances',
+          key: "Opening Balances",
           label: t`Opening Balances`,
-          icon: 'arrow-up-right',
-          fieldname: 'openingBalanceChecked',
+          icon: "arrow-up-right",
+          fieldname: "openingBalanceChecked",
           description: t`Set up your opening balances before performing any accounting entries`,
           documentation:
-            'https://landigit.com/auditbooks/setup-opening-balances',
+            "https://landigit.com/auditbooks/setup-opening-balances",
         },
         {
-          key: 'Add Taxes',
+          key: "Add Taxes",
           label: t`Add Taxes`,
-          icon: 'percent',
-          fieldname: 'taxesAdded',
+          icon: "percent",
+          fieldname: "taxesAdded",
           description: t`Set up your tax templates for your sales or purchase transactions`,
-          action: () => routeTo('/list/Tax'),
+          action: () => routeTo("/list/Tax"),
           documentation:
-            'https://landigit.com/auditbooks/create-initial-entries#add-taxes',
+            "https://landigit.com/auditbooks/create-initial-entries#add-taxes",
         },
       ],
     },
@@ -72,45 +72,45 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
       label: t`Sales`,
       items: [
         {
-          key: 'Add Sales Items',
+          key: "Add Sales Items",
           label: t`Add Items`,
-          icon: 'box',
+          icon: "box",
           description: t`Add products or services that you sell to your customers`,
           action: () =>
             routeTo({
               path: `/list/Item/${t`Sales Items`}`,
               query: {
-                filters: JSON.stringify({ for: 'Sales' }),
+                filters: JSON.stringify({ for: "Sales" }),
               },
             }),
-          fieldname: 'salesItemCreated',
+          fieldname: "salesItemCreated",
           documentation:
-            'https://landigit.com/auditbooks/create-initial-entries#add-sales-items',
+            "https://landigit.com/auditbooks/create-initial-entries#add-sales-items",
         },
         {
-          key: 'Add Customers',
+          key: "Add Customers",
           label: t`Add Customers`,
-          icon: 'users',
+          icon: "users",
           description: t`Add a few customers to create your first sales invoice`,
           action: () =>
             routeTo({
               path: `/list/Party/${t`Customers`}`,
               query: {
-                filters: JSON.stringify({ role: 'Customer' }),
+                filters: JSON.stringify({ role: "Customer" }),
               },
             }),
-          fieldname: 'customerCreated',
+          fieldname: "customerCreated",
           documentation:
-            'https://landigit.com/auditbooks/create-initial-entries#add-customers',
+            "https://landigit.com/auditbooks/create-initial-entries#add-customers",
         },
         {
-          key: 'Create Sales Invoice',
+          key: "Create Sales Invoice",
           label: t`Create Sales Invoice`,
-          icon: 'file-up',
+          icon: "file-up",
           description: t`Create your first sales invoice for the created customer`,
-          action: () => routeTo('/list/SalesInvoice'),
-          fieldname: 'invoiceCreated',
-          documentation: 'https://landigit.com/auditbooks/sales-invoices',
+          action: () => routeTo("/list/SalesInvoice"),
+          fieldname: "invoiceCreated",
+          documentation: "https://landigit.com/auditbooks/sales-invoices",
         },
       ],
     },
@@ -118,40 +118,40 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
       label: t`Purchase`,
       items: [
         {
-          key: 'Add Purchase Items',
+          key: "Add Purchase Items",
           label: t`Add Items`,
-          icon: 'box',
+          icon: "box",
           description: t`Add products or services that you buy from your suppliers`,
           action: () =>
             routeTo({
               path: `/list/Item/${t`Purchase Items`}`,
               query: {
-                filters: JSON.stringify({ for: 'Purchases' }),
+                filters: JSON.stringify({ for: "Purchases" }),
               },
             }),
-          fieldname: 'purchaseItemCreated',
+          fieldname: "purchaseItemCreated",
         },
         {
-          key: 'Add Suppliers',
+          key: "Add Suppliers",
           label: t`Add Suppliers`,
-          icon: 'truck',
+          icon: "truck",
           description: t`Add a few suppliers to create your first purchase invoice`,
           action: () =>
             routeTo({
               path: `/list/Party/${t`Suppliers`}`,
-              query: { filters: JSON.stringify({ role: 'Supplier' }) },
+              query: { filters: JSON.stringify({ role: "Supplier" }) },
             }),
-          fieldname: 'supplierCreated',
+          fieldname: "supplierCreated",
         },
         {
-          key: 'Create Purchase Invoice',
+          key: "Create Purchase Invoice",
           label: t`Create Purchase Invoice`,
-          icon: 'file-down',
+          icon: "file-down",
           description: t`Create your first purchase invoice from the created supplier`,
-          action: () => routeTo('/list/PurchaseInvoice'),
-          fieldname: 'billCreated',
+          action: () => routeTo("/list/PurchaseInvoice"),
+          fieldname: "billCreated",
           documentation:
-            'https://landigit.com/auditbooks/purchase-invoices#creating-purchase-invoices',
+            "https://landigit.com/auditbooks/purchase-invoices#creating-purchase-invoices",
         },
       ],
     },

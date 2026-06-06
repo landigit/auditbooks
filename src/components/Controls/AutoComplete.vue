@@ -109,18 +109,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue';
-import { getOptionList } from 'fyo/utils';
-import { FieldTypeEnum } from 'schemas/types';
-import Dropdown from 'src/components/Dropdown.vue';
-import { fuzzyMatch } from 'src/utils';
-import { getFormRoute, routeTo } from 'src/utils/ui';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
-import QuickView from '../QuickView.vue';
+import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { getOptionList } from "fyo/utils";
+import { FieldTypeEnum } from "schemas/types";
+import Dropdown from "src/components/Dropdown.vue";
+import { fuzzyMatch } from "src/utils";
+import { getFormRoute, routeTo } from "src/utils/ui";
+import { Popover, PopoverAnchor, PopoverContent } from "src/components/ui";
+import QuickView from "../QuickView.vue";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 interface AutoCompleteProps extends BaseControlProps {
   focusInput?: boolean;
@@ -135,7 +135,7 @@ const props = withDefaults(defineProps<AutoCompleteProps>(), {
   showClearButton: false,
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -145,14 +145,14 @@ const props = withDefaults(defineProps<AutoCompleteProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
-  (e: 'update:linkValue', val: string): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
+  (e: "update:linkValue", val: string): void;
 }>();
 
 const showQuickView = ref(false);
-const internalLinkValue = ref('');
+const internalLinkValue = ref("");
 const linkValue = computed({
   get: () =>
     props.linkValueOverride !== null
@@ -160,7 +160,7 @@ const linkValue = computed({
       : internalLinkValue.value,
   set: (val) => {
     internalLinkValue.value = val;
-    emit('update:linkValue', val);
+    emit("update:linkValue", val);
   },
 });
 
@@ -186,7 +186,7 @@ const {
 const linkSchemaName = computed(() => {
   let schemaName = (props.df as any)?.target;
   if (!schemaName) {
-    const references = (props.df as any)?.references ?? '';
+    const references = (props.df as any)?.references ?? "";
     schemaName = doc.value?.[references];
   }
   return schemaName;
@@ -239,8 +239,8 @@ const clearValue = (e?: Event) => {
     return;
   }
 
-  triggerChange('');
-  setLinkValue('');
+  triggerChange("");
+  setLinkValue("");
 };
 
 const routeToLinkedDoc = async () => {
@@ -267,7 +267,7 @@ const focusInputTag = async () => {
 };
 
 const setLinkValue = (value: any) => {
-  linkValue.value = value || '';
+  linkValue.value = value || "";
 };
 
 const getLinkValue = (value: any) => {
@@ -283,7 +283,7 @@ const getLinkValue = (value: any) => {
   return option?.label ?? oldValue;
 };
 
-const getSuggestionsFunc = async (keyword = '') => {
+const getSuggestionsFunc = async (keyword = "") => {
   if (props.getSuggestions) {
     return await props.getSuggestions(keyword);
   }
@@ -301,7 +301,7 @@ const getSuggestionsFunc = async (keyword = '') => {
 };
 
 const updateSuggestions = async (keyword?: string) => {
-  if (typeof keyword === 'string') {
+  if (typeof keyword === "string") {
     setLinkValue(keyword);
   }
 
@@ -341,7 +341,7 @@ const onClick = (e: MouseEvent, toggleDropdown: (val: boolean) => void) => {
     toggleDropdown(true);
     updateSuggestions();
     isDropdownOpen.value = true;
-    emit('focus', e as any);
+    emit("focus", e as any);
   }
 };
 
@@ -350,12 +350,12 @@ const onIconFocus = (e: MouseEvent, toggleDropdown: (val: boolean) => void) => {
   toggleDropdown(true);
   updateSuggestions();
   isDropdownOpen.value = true;
-  emit('focus', e as any);
+  emit("focus", e as any);
 };
 
 const onBlur = async (
   label: string,
-  _toggleDropdown: (val: boolean) => void
+  _toggleDropdown: (val: boolean) => void,
 ) => {
   isFocused.value = false;
   isDropdownOpen.value = false;
@@ -363,7 +363,7 @@ const onBlur = async (
     return;
   }
   if (!label) {
-    triggerChange('');
+    triggerChange("");
     return;
   }
 
@@ -400,7 +400,7 @@ const onInput = (e: any, toggleDropdown: (val: boolean) => void) => {
 const onPressEnter = async (
   e: any,
   toggleDropdown: (val: boolean) => void,
-  selectHighlightedItem: () => Promise<void>
+  selectHighlightedItem: () => Promise<void>,
 ) => {
   e.preventDefault();
 
@@ -418,7 +418,7 @@ const onPressEnter = async (
 const onKeyDownUp = (
   _e: any,
   toggleDropdown: (val: boolean) => void,
-  highlightItemUp: () => void
+  highlightItemUp: () => void,
 ) => {
   if (suggestions.value.length === 0) {
     updateSuggestions();
@@ -431,7 +431,7 @@ const onKeyDownUp = (
 const onKeyDownDown = (
   _e: any,
   toggleDropdown: (val: boolean) => void,
-  highlightItemDown: () => void
+  highlightItemDown: () => void,
 ) => {
   if (suggestions.value.length === 0) {
     updateSuggestions();
@@ -451,7 +451,7 @@ watch(
   (newValue) => {
     setLinkValue(getLinkValue(newValue));
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {

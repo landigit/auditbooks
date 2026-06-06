@@ -1,12 +1,12 @@
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-import countryInfo from '../fixtures/countryInfo.json';
-import { CUSTOM_EVENTS } from './messages';
-import { CountryInfoMap, UnexpectedLogObject } from './types';
+import countryInfo from "../fixtures/countryInfo.json";
+import { CUSTOM_EVENTS } from "./messages";
+import { CountryInfoMap, UnexpectedLogObject } from "./types";
 
 export function getCountryInfo(): CountryInfoMap {
-  // @ts-ignore
+  // @ts-expect-error
   return countryInfo as CountryInfoMap;
 }
 
@@ -14,7 +14,7 @@ export function getCountryCodeFromCountry(countryName: string): string {
   const countryInfoMap = getCountryInfo();
   const countryInfo = Reflect.get(countryInfoMap, countryName);
   if (countryInfo === undefined) {
-    return '';
+    return "";
   }
 
   return countryInfo.code;
@@ -22,22 +22,22 @@ export function getCountryCodeFromCountry(countryName: string): string {
 
 export function getFiscalYear(
   date: string,
-  isStart: boolean
+  isStart: boolean,
 ): undefined | Date {
   if (!date) {
     return undefined;
   }
 
   const today = dayjs();
-  const dateTime = dayjs(date, 'MM-DD');
+  const dateTime = dayjs(date, "MM-DD");
   if (isStart) {
     return dateTime
-      .add([0, 1, 2].includes(today.month()) ? -1 : 0, 'year')
+      .add([0, 1, 2].includes(today.month()) ? -1 : 0, "year")
       .toDate();
   }
 
   return dateTime
-    .add([0, 1, 2].includes(today.month()) ? 0 : 1, 'year')
+    .add([0, 1, 2].includes(today.month()) ? 0 : 1, "year")
     .toDate();
 }
 
@@ -50,8 +50,8 @@ export function logUnexpected(detail: Partial<UnexpectedLogObject>) {
     return;
   }
 
-  detail.name ??= 'LogUnexpected';
-  detail.message ??= 'Logging an unexpected occurance';
+  detail.name ??= "LogUnexpected";
+  detail.message ??= "Logging an unexpected occurance";
   detail.stack ??= new Error().stack;
   detail.more ??= {};
 

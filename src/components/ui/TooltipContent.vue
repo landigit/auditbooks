@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue';
+import { type HTMLAttributes, computed } from "vue";
 import {
   TooltipContent,
   type TooltipContentProps,
   TooltipPortal,
   useForwardPropsEmits,
-} from 'reka-ui';
-import { cn } from 'src/utils/cn';
+} from "reka-ui";
+import { cn } from "src/utils/cn";
 
 defineOptions({
   inheritAttrs: false,
@@ -15,17 +15,17 @@ defineOptions({
 const props = withDefaults(
   defineProps<
     TooltipContentProps & {
-      class?: HTMLAttributes['class'];
+      class?: HTMLAttributes["class"];
       offset?: number;
-      placement?: 'top' | 'right' | 'bottom' | 'left';
+      placement?: "top" | "right" | "bottom" | "left";
     }
   >(),
   {
     sideOffset: 4,
-  }
+  },
 );
 
-const emits = defineEmits(['close']);
+const emits = defineEmits(["close"]);
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props;
@@ -47,7 +47,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       :class="
         cn(
           'z-50 overflow-hidden pointer-events-none rounded bg-surface-variant px-2 py-1 text-xs text-on-surface shadow-md animate-in fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
-          props.class
+          props.class,
         )
       "
     >

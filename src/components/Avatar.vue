@@ -16,30 +16,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 // Define Props
 const props = withDefaults(
   defineProps<{
     imageURL?: string;
     label?: string;
-    size?: 'sm' | 'md' | 'lg';
+    size?: "sm" | "md" | "lg";
   }>(),
   {
-    imageURL: '',
-    label: '',
-    size: 'md',
-  }
+    imageURL: "",
+    label: "",
+    size: "md",
+  },
 );
 
 // Computed Property
 const sizeClasses = computed(() => {
   return (
     {
-      sm: 'w-5 h-5',
-      md: 'w-7 h-7',
-      lg: 'w-9 h-9',
-    }[props.size] ?? 'w-7 h-7'
+      sm: "w-5 h-5",
+      md: "w-7 h-7",
+      lg: "w-9 h-9",
+    }[props.size] ?? "w-7 h-7"
   );
 });
 </script>

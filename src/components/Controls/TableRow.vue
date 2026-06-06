@@ -73,12 +73,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, provide, nextTick, getCurrentInstance } from 'vue';
-import { Doc } from 'fyo/model/doc';
-import Row from 'src/components/Row.vue';
-import { getErrorMessage } from 'src/utils';
-import Button from '../Button.vue';
-import FormControl from './FormControl.vue';
+import { ref, computed, provide, nextTick, getCurrentInstance } from "vue";
+import { Doc } from "fyo/model/doc";
+import Row from "src/components/Row.vue";
+import { getErrorMessage } from "src/utils";
+import Button from "../Button.vue";
+import FormControl from "./FormControl.vue";
 
 interface TableRowProps {
   row: Doc;
@@ -96,14 +96,14 @@ const props = withDefaults(defineProps<TableRowProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'remove'): void;
-  (e: 'change', df: any, val: any): void;
-  (e: 'editrow', row: Doc): void;
+  (e: "remove"): void;
+  (e: "change", df: any, val: any): void;
+  (e: "editrow", row: Doc): void;
 }>();
 
 provide(
-  'doc',
-  computed(() => props.row)
+  "doc",
+  computed(() => props.row),
 );
 
 const isRowIndexVisible = ref(false);
@@ -119,23 +119,23 @@ const onChange = async (df: any, value: any) => {
   const oldValue = props.row[fieldname];
   try {
     await props.row.set(fieldname, value);
-    emit('change', df, value);
+    emit("change", df, value);
   } catch (e) {
     errors.value[fieldname] = getErrorMessage(e as Error, props.row);
-    props.row[fieldname] = '';
+    props.row[fieldname] = "";
     nextTick(() => (props.row[fieldname] = oldValue));
   }
 };
 
 const getErrorString = () => {
-  return Object.values(errors.value).filter(Boolean).join(' ');
+  return Object.values(errors.value).filter(Boolean).join(" ");
 };
 
 const instance = getCurrentInstance();
 const openRowQuickEdit = () => {
   if (!props.row) return;
-  emit('editrow', props.row);
-  instance?.parent?.emit('editrow', props.row);
+  emit("editrow", props.row);
+  instance?.parent?.emit("editrow", props.row);
 };
 
 const onFieldFocus = (index: number) => {
@@ -153,7 +153,7 @@ const onFieldBlur = (index: number) => {
 const focusFirstInput = () => {
   const el = instance?.proxy?.$el;
   const firstControl = el?.querySelector(
-    '.form-control, input, textarea, select'
+    ".form-control, input, textarea, select",
   );
   if (firstControl) {
     (firstControl as HTMLElement).focus();

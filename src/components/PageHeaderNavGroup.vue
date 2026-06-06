@@ -30,13 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, onActivated, onDeactivated } from 'vue';
-import { useRouter } from 'vue-router';
-import { shortcutsKey } from 'src/utils/injectionKeys';
-import SearchBar from './SearchBar.vue';
-import { useAppStore } from 'src/stores/app';
+import { ref, inject, onActivated, onDeactivated } from "vue";
+import { useRouter } from "vue-router";
+import { shortcutsKey } from "src/utils/injectionKeys";
+import SearchBar from "./SearchBar.vue";
+import { useAppStore } from "src/stores/app";
 
-const COMPONENT_NAME = 'PageHeaderNavGroup';
+const COMPONENT_NAME = "PageHeaderNavGroup";
 
 const store = useAppStore();
 const router = useRouter();
@@ -47,7 +47,7 @@ const backlink = ref<HTMLAnchorElement | null>(null);
 
 // Lifecycles
 onActivated(() => {
-  shortcuts?.shift.set(COMPONENT_NAME, ['Backspace'], () => {
+  shortcuts?.shift.set(COMPONENT_NAME, ["Backspace"], () => {
     backlink.value?.click();
   });
   // @ts-ignore

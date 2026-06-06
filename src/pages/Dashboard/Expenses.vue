@@ -1,53 +1,95 @@
 <template>
-  <view class="flex flex-col h-full">
-    <SectionHeader>
-      <template #title>{{ t`Top Expenses` }}</template>
-      <template #action>
-        <PeriodSelector :value="period" @change="(value) => (period = value)" />
-      </template>
-    </SectionHeader>
+  <view v-if="!isLynx">
+    <view class="flex flex-col h-full">
+      <SectionHeader>
+        <template #title>{{ t`Top Expenses` }}</template>
+        <template #action>
+          <PeriodSelector
+            :value="period"
+            @change="(value) => (period = value)"
+          />
+        </template>
+      </SectionHeader>
 
-    <view v-show="hasData" class="flex relative">
-      <!-- Chart Legend -->
-      <view class="w-1/2 flex flex-col gap-4 justify-center text-main">
-        <!-- Ledgend Item -->
-        <view
-          v-for="(d, i) in expenses"
-          :key="d.account"
-          class="flex items-center text-sm"
-          @mouseover="active = i"
-          @mouseleave="active = undefined"
-        >
-          <view class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
-          <text
-            class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28"
+      <view v-show="hasData" class="flex relative">
+        <!-- Chart Legend -->
+        <view class="w-1/2 flex flex-col gap-4 justify-center text-main">
+          <!-- Ledgend Item -->
+          <view
+            v-for="(d, i) in expenses"
+            :key="d.account"
+            class="flex items-center text-sm"
+            @mouseover="active = i"
+            @mouseleave="active = undefined"
           >
-            {{ d.account }}
-          </text>
-          <text class="whitespace-nowrap flex-shrink-0 ms-auto">
-            {{ fyo.format(d?.total ?? 0, 'Currency') }}
-          </text>
+            <view class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
+            <text
+              class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28"
+            >
+              {{ d.account }}
+            </text>
+            <text class="whitespace-nowrap flex-shrink-0 ms-auto">
+              {{ fyo.format(d?.total ?? 0, "Currency") }}
+            </text>
+          </view>
         </view>
+        <DonutChart
+          class="w-1/2 my-auto"
+          :active="active"
+          :sectors="sectors"
+          :offset-x="3"
+          :thickness="10"
+          :text-offset-x="6.5"
+          :value-formatter="(value: number) => fyo.format(value, 'Currency')"
+          :total-label="t`Total Spending`"
+          @change="(value: number | null) => (active = value)"
+        />
       </view>
-      <DonutChart
-        class="w-1/2 my-auto"
-        :active="active"
-        :sectors="sectors"
-        :offset-x="3"
-        :thickness="10"
-        :text-offset-x="6.5"
-        :value-formatter="(value: number) => fyo.format(value, 'Currency')"
-        :total-label="t`Total Spending`"
-        @change="(value: number | null) => (active = value)"
-      />
+
+      <!-- Empty Message -->
+      <view
+        v-if="expenses.length === 0"
+        class="flex-1 w-full h-full flex-center my-20"
+      >
+        <text class="text-base text-description">
+          {{ t`No expenses in this period` }}
+        </text>
+      </view>
+    </view>
+  </view>
+  <view v-else class="p-4 bg-canvas rounded-xl mb-4 border border-border">
+    <!-- Header -->
+    <view class="flex-row justify-between items-center mb-3">
+      <text class="text-sm font-semibold text-main">{{ t`Top Expenses` }}</text>
+      <PeriodSelector :value="period" @change="(value) => (period = value)" />
+    </view>
+
+    <!-- Expenses List -->
+    <view v-if="hasData" class="flex-col gap-2">
+      <view
+        v-for="d in expenses"
+        :key="d.account"
+        class="flex-row justify-between items-center py-2 border-b border-border"
+      >
+        <view class="flex-row items-center flex-1 mr-2">
+          <!-- Color Dot -->
+          <view
+            class="w-3 h-3 rounded-full mr-2"
+            :style="`background-color: ${d.color};`"
+          />
+          <text class="text-sm text-main font-medium flex-1">{{
+            d.account
+          }}</text>
+        </view>
+        <text class="text-sm font-bold text-main whitespace-nowrap">
+          {{ fyo.format(d?.total ?? 0, "Currency") }}
+        </text>
+      </view>
     </view>
 
     <!-- Empty Message -->
-    <view
-      v-if="expenses.length === 0"
-      class="flex-1 w-full h-full flex-center my-20"
-    >
-      <text class="text-base text-description">
+    <view v-else class="flex-col items-center justify-center py-6">
+      <text class="text-sm text-description">
         {{ t`No expenses in this period` }}
       </text>
     </view>
@@ -55,14 +97,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onActivated, onDeactivated } from 'vue';
-import { fyo } from 'src/initFyo';
-import { truncate } from 'src/utils';
-import { getDatesAndPeriodList } from 'src/utils/misc';
-import DonutChart from '../../components/Charts/DonutChart.vue';
-import PeriodSelector from './PeriodSelector.vue';
-import SectionHeader from './SectionHeader.vue';
-import { PeriodKey } from 'src/utils/types';
+import { ref, computed, watch, onActivated, onDeactivated } from "vue";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import { truncate } from "src/utils";
+import { getDatesAndPeriodList } from "src/utils/misc";
+import DonutChart from "../../components/Charts/DonutChart.vue";
+import PeriodSelector from "./PeriodSelector.vue";
+import SectionHeader from "./SectionHeader.vue";
+import { PeriodKey } from "src/utils/types";
+import { isLynx } from "src/utils/interactive";
 
 // Define Props
 const props = withDefaults(
@@ -70,23 +114,23 @@ const props = withDefaults(
     commonPeriod?: PeriodKey;
   }>(),
   {
-    commonPeriod: 'This Year',
-  }
+    commonPeriod: "This Year",
+  },
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: 'period-change', period: PeriodKey): void;
+  (e: "period-change", period: PeriodKey): void;
 }>();
 
 // State definition
 const active = ref<number | null | undefined>(undefined);
-const period = ref<PeriodKey>('This Year');
+const period = ref<PeriodKey>("This Year");
 const periodOptions: PeriodKey[] = [
-  'This Year',
-  'YTD',
-  'This Quarter',
-  'This Month',
+  "This Year",
+  "YTD",
+  "This Quarter",
+  "This Month",
 ];
 const expenses = ref<
   {
@@ -114,31 +158,33 @@ const sectors = computed(() => {
 const setData = async () => {
   const { fromDate, toDate } = getDatesAndPeriodList(period.value);
   let topExpenses = await fyo.db.getTopExpenses(
-    fromDate.format('YYYY-MM-DD'),
-    toDate.format('YYYY-MM-DD')
+    fromDate.format("YYYY-MM-DD"),
+    toDate.format("YYYY-MM-DD"),
   );
   const shades = [
-    { class: 'bg-chart-pink-1', hex: 'var(--color-chart-pink-1)' },
-    { class: 'bg-chart-pink-2', hex: 'var(--color-chart-pink-2)' },
-    { class: 'bg-chart-pink-3', hex: 'var(--color-chart-pink-3)' },
-    { class: 'bg-chart-pink-4', hex: 'var(--color-chart-pink-4)' },
-    { class: 'bg-chart-pink-5', hex: 'var(--color-chart-pink-5)' },
+    { class: "bg-chart-pink-1", hex: "var(--color-chart-pink-1)" },
+    { class: "bg-chart-pink-2", hex: "var(--color-chart-pink-2)" },
+    { class: "bg-chart-pink-3", hex: "var(--color-chart-pink-3)" },
+    { class: "bg-chart-pink-4", hex: "var(--color-chart-pink-4)" },
+    { class: "bg-chart-pink-5", hex: "var(--color-chart-pink-5)" },
   ];
 
   expenses.value = topExpenses
     .filter((e) => e.total > 0)
     .map((d, i) => {
+      // Handle array bounds
+      const shade = shades[i % shades.length];
       return {
         account: d.account,
         total: d.total,
-        color: shades[i].hex,
-        class: shades[i].class,
+        color: shade.hex,
+        class: shade.class,
       };
     });
 };
 
 const periodChange = async () => {
-  emit('period-change', period.value);
+  emit("period-change", period.value);
   await setData();
 };
 
@@ -154,7 +200,7 @@ watch(
       return;
     }
     period.value = val;
-  }
+  },
 );
 
 // Lifecycle Hooks (activated/deactivated)

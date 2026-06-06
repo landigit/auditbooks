@@ -71,14 +71,14 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { Doc } from 'fyo/model/doc';
-import { Field } from 'schemas/types';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
-import { DropdownItem } from 'src/utils/types';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
+import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
+import { Doc } from "fyo/model/doc";
+import { Field } from "schemas/types";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import { DropdownItem } from "src/utils/types";
+import { Popover, PopoverAnchor, PopoverContent } from "src/components/ui";
 
 // --- Props & Emits ---
 const props = withDefaults(
@@ -95,11 +95,11 @@ const props = withDefaults(
     isLoading: false,
     df: null,
     doc: null,
-  }
+  },
 );
 
 const emit = defineEmits<{
-  (e: 'update:open', val: boolean): void;
+  (e: "update:open", val: boolean): void;
 }>();
 
 // --- State ---
@@ -113,7 +113,7 @@ const dropdownItems = computed<DropdownItem[]>(() => {
   const groupedItems = getGroupedItems(props.items ?? []);
   const groupNames = Object.keys(groupedItems).filter(Boolean).sort();
 
-  const flatItems: DropdownItem[] = groupedItems[''] ?? [];
+  const flatItems: DropdownItem[] = groupedItems[""] ?? [];
   for (let group of groupNames) {
     flatItems.push({
       label: group,
@@ -148,7 +148,7 @@ function getEmptyMessage(): string {
   }
 
   const emptyMessage = fyo.models[schemaName]?.emptyMessages?.[fieldname]?.(
-    props.doc
+    props.doc,
   );
 
   if (!emptyMessage) {
@@ -173,7 +173,7 @@ async function selectItem(d?: DropdownItem): Promise<void> {
 }
 
 function toggleDropdown(flag?: boolean): void {
-  if (typeof flag !== 'boolean') {
+  if (typeof flag !== "boolean") {
     flag = !isShown.value;
   }
 
@@ -206,7 +206,7 @@ function highlightItemDown(e?: Event): void {
   e?.preventDefault();
   highlightedIndex.value = Math.min(
     dropdownItems.value.length - 1,
-    highlightedIndex.value + 1
+    highlightedIndex.value + 1,
   );
 }
 
@@ -221,15 +221,15 @@ function scrollToHighlighted(): void {
     return;
   }
 
-  highlightedElement.scrollIntoView({ block: 'nearest' });
+  highlightedElement.scrollIntoView({ block: "nearest" });
 }
 
 function getGroupedItems(
-  itemsList: DropdownItem[]
+  itemsList: DropdownItem[],
 ): Record<string, DropdownItem[]> {
   const groupedItems: Record<string, DropdownItem[]> = {};
   for (let item of itemsList) {
-    const group = item.group ?? '';
+    const group = item.group ?? "";
 
     groupedItems[group] ??= [];
     groupedItems[group].push(item);

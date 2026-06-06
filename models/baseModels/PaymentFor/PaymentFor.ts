@@ -1,12 +1,12 @@
-import { t } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
-import { FiltersMap, FormulaMap, ValidationMap } from 'fyo/model/types';
-import { NotFoundError } from 'fyo/utils/errors';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { PartyRoleEnum } from '../Party/types';
-import { Payment } from '../Payment/Payment';
+import { t } from "fyo";
+import { DocValue } from "fyo/core/types";
+import { Doc } from "fyo/model/doc";
+import { FiltersMap, FormulaMap, ValidationMap } from "fyo/model/types";
+import { NotFoundError } from "fyo/utils/errors";
+import { ModelNameEnum } from "models/types";
+import { Money } from "pesa";
+import { PartyRoleEnum } from "../Party/types";
+import { Payment } from "../Payment/Payment";
 
 export class PaymentFor extends Doc {
   declare parentdoc?: Payment | undefined;
@@ -23,7 +23,7 @@ export class PaymentFor extends Doc {
           return;
         }
 
-        const party = await this.parentdoc?.loadAndGetLink('party');
+        const party = await this.parentdoc?.loadAndGetLink("party");
         if (!party) {
           return ModelNameEnum.SalesInvoice;
         }
@@ -43,7 +43,7 @@ export class PaymentFor extends Doc {
 
         const exists = await this.fyo.db.exists(
           this.referenceType,
-          this.referenceName
+          this.referenceName,
         );
 
         if (!exists) {
@@ -52,7 +52,7 @@ export class PaymentFor extends Doc {
 
         return this.referenceName;
       },
-      dependsOn: ['referenceType'],
+      dependsOn: ["referenceType"],
     },
     amount: {
       formula: async () => {
@@ -63,7 +63,7 @@ export class PaymentFor extends Doc {
         const outstandingAmount = (await this.fyo.getValue(
           this.referenceType as string,
           this.referenceName,
-          'outstandingAmount'
+          "outstandingAmount",
         )) as Money;
 
         if (outstandingAmount) {
@@ -72,18 +72,18 @@ export class PaymentFor extends Doc {
 
         return this.fyo.pesa(0);
       },
-      dependsOn: ['referenceName'],
+      dependsOn: ["referenceName"],
     },
   };
 
   static filters: FiltersMap = {
     referenceName: (doc) => {
       const zero =
-        '0.' +
-        '0'.repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11);
+        "0." +
+        "0".repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11);
 
       const baseFilters = {
-        outstandingAmount: ['!=', zero],
+        outstandingAmount: ["!=", zero],
         submitted: true,
         cancelled: false,
       };
@@ -101,7 +101,7 @@ export class PaymentFor extends Doc {
     referenceName: async (value: DocValue) => {
       const exists = await this.fyo.db.exists(
         this.referenceType!,
-        value as string
+        value as string,
       );
       if (exists) {
         return;
@@ -112,7 +112,7 @@ export class PaymentFor extends Doc {
 
       throw new NotFoundError(
         t`${label} ${value as string} does not exist`,
-        false
+        false,
       );
     },
   };

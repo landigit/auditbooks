@@ -1,11 +1,11 @@
-import { computed, inject, Ref, unref } from 'vue';
-import { Doc } from 'fyo/model/doc';
-import { Field, FieldTypeEnum } from 'schemas/types';
-import { evaluateReadOnly, evaluateRequired } from 'src/utils/doc';
-import { getIsNullOrUndef } from 'utils/index';
+import { computed, inject, Ref, unref } from "vue";
+import { Doc } from "fyo/model/doc";
+import { Field, FieldTypeEnum } from "schemas/types";
+import { evaluateReadOnly, evaluateRequired } from "src/utils/doc";
+import { getIsNullOrUndef } from "utils/index";
 
 export function isNumeric(fieldtype: any): boolean {
-  if (fieldtype && typeof fieldtype !== 'string') {
+  if (fieldtype && typeof fieldtype !== "string") {
     fieldtype = fieldtype.fieldtype;
   }
   return [
@@ -35,9 +35,9 @@ export interface BaseControlProps {
 export function useBaseControl(
   props: BaseControlProps,
   emit: (event: any, ...args: any[]) => void,
-  inputRef: Ref<HTMLElement | null>
+  inputRef: Ref<HTMLElement | null>,
 ) {
-  const injectedDoc = inject<unknown>('doc', undefined);
+  const injectedDoc = inject<unknown>("doc", undefined);
 
   const doc = computed<Doc | undefined>(() => {
     const unwrapped = unref(injectedDoc);
@@ -47,26 +47,26 @@ export function useBaseControl(
     return undefined;
   });
 
-  const inputType = computed<string>(() => props.inputType || 'text');
+  const inputType = computed<string>(() => props.inputType || "text");
 
-  const labelClasses = computed<string>(() => 'text-description text-sm mb-1');
+  const labelClasses = computed<string>(() => "text-description text-sm mb-1");
 
   const baseInputClasses = computed<string[]>(() => [
-    'text-base',
-    'focus:outline-none',
-    'w-full',
-    'placeholder-description',
+    "text-base",
+    "focus:outline-none",
+    "w-full",
+    "placeholder-description",
   ]);
 
   const sizeClasses = computed<string>(() => {
-    if (props.size === 'small') {
-      return 'px-2 py-1';
+    if (props.size === "small") {
+      return "px-2 py-1";
     }
-    return 'px-3 py-2';
+    return "px-3 py-2";
   });
 
   const isReadOnly = computed<boolean>(() => {
-    if (typeof props.readOnly === 'boolean') {
+    if (typeof props.readOnly === "boolean") {
       return props.readOnly;
     }
     return evaluateReadOnly(props.df, doc.value);
@@ -74,9 +74,9 @@ export function useBaseControl(
 
   const inputReadOnlyClasses = computed<string>(() => {
     if (isReadOnly.value) {
-      return 'text-description cursor-default';
+      return "text-description cursor-default";
     }
-    return 'text-main';
+    return "text-main";
   });
 
   function getInputClassesFromProp(classes: string[]) {
@@ -84,10 +84,10 @@ export function useBaseControl(
       return classes;
     }
     let inputClass = props.inputClass;
-    if (typeof inputClass === 'string') {
+    if (typeof inputClass === "string") {
       inputClass = [inputClass];
     }
-    inputClass = inputClass.filter((i) => typeof i === 'string');
+    inputClass = inputClass.filter((i) => typeof i === "string");
     return [classes, inputClass].flat();
   }
 
@@ -95,32 +95,32 @@ export function useBaseControl(
     const classes: string[] = [];
     classes.push(...baseInputClasses.value);
     if (props.textRight ?? isNumeric(props.df)) {
-      classes.push('text-end');
+      classes.push("text-end");
     }
     classes.push(sizeClasses.value);
     classes.push(inputReadOnlyClasses.value);
     return getInputClassesFromProp(classes).filter(Boolean);
   });
 
-  const baseContainerClasses = computed<string[]>(() => ['rounded']);
+  const baseContainerClasses = computed<string[]>(() => ["rounded"]);
 
   const containerReadOnlyClasses = computed<string>(() => {
     if (!isReadOnly.value) {
-      return 'focus-within:bg-surface-hover';
+      return "focus-within:bg-surface-hover";
     }
-    return '';
+    return "";
   });
 
   const borderClasses = computed<string>(() => {
-    if ((props.border as any) === 'false' || !props.border) {
-      return '';
+    if ((props.border as any) === "false" || !props.border) {
+      return "";
     }
-    const border = 'border border-border';
-    let background = 'bg-canvas';
+    const border = "border border-border";
+    let background = "bg-canvas";
     if (isReadOnly.value) {
-      background = 'bg-canvas-muted';
+      background = "bg-canvas-muted";
     }
-    return border + ' ' + background;
+    return border + " " + background;
   });
 
   const containerClasses = computed<string[]>(() => {
@@ -139,7 +139,7 @@ export function useBaseControl(
     if (Array.isArray(props.value) && !props.value.length) {
       return true;
     }
-    if (typeof props.value === 'string' && !props.value) {
+    if (typeof props.value === "string" && !props.value) {
       return true;
     }
     if (getIsNullOrUndef(props.value)) {
@@ -149,7 +149,7 @@ export function useBaseControl(
   });
 
   const isRequired = computed<boolean>(() => {
-    if (typeof props.required === 'boolean') {
+    if (typeof props.required === "boolean") {
       return props.required;
     }
     return evaluateRequired(props.df, doc.value);
@@ -168,10 +168,10 @@ export function useBaseControl(
 
   function triggerChange(val: unknown): void {
     val = parse(val);
-    if (val === '') {
+    if (val === "") {
       val = null;
     }
-    emit('change', val);
+    emit("change", val);
   }
 
   function onBlur(e: FocusEvent) {

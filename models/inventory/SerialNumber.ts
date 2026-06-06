@@ -1,7 +1,7 @@
-import { Doc } from 'fyo/model/doc';
-import { ListViewSettings } from 'fyo/model/types';
-import { getSerialNumberStatusColumn } from 'models/helpers';
-import { SerialNumberStatus } from './types';
+import { Doc } from "fyo/model/doc";
+import { ListViewSettings } from "fyo/model/types";
+import { getSerialNumberStatusColumn } from "models/helpers";
+import { SerialNumberStatus } from "./types";
 
 export class SerialNumber extends Doc {
   declare name?: string;
@@ -12,11 +12,11 @@ export class SerialNumber extends Doc {
   static getListViewSettings(): ListViewSettings {
     return {
       columns: [
-        'name',
+        "name",
         getSerialNumberStatusColumn(),
-        'item',
-        'description',
-        'party',
+        "item",
+        "description",
+        "party",
       ],
     };
   }

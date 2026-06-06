@@ -1,6 +1,6 @@
-import { Fyo } from 'fyo';
+import { Fyo } from "fyo";
 
-export type TaxType = 'GST' | 'IGST' | 'Exempt-GST' | 'Exempt-IGST';
+export type TaxType = "GST" | "IGST" | "Exempt-GST" | "Exempt-IGST";
 
 export async function createIndianRecords(fyo: Fyo) {
   await createTaxes(fyo);
@@ -10,8 +10,8 @@ async function createTaxes(fyo: Fyo) {
   const GSTs = {
     GST: [28, 18, 12, 6, 5, 3, 0.25, 0],
     IGST: [28, 18, 12, 6, 5, 3, 0.25, 0],
-    'Exempt-GST': [0],
-    'Exempt-IGST': [0],
+    "Exempt-GST": [0],
+    "Exempt-IGST": [0],
   };
 
   for (const type of Object.keys(GSTs)) {
@@ -19,21 +19,21 @@ async function createTaxes(fyo: Fyo) {
       const name = `${type}-${percent}`;
       const details = getTaxDetails(type as TaxType, percent);
 
-      const newTax = fyo.doc.getNewDoc('Tax', { name, details });
+      const newTax = fyo.doc.getNewDoc("Tax", { name, details });
       await newTax.sync();
     }
   }
 }
 
 function getTaxDetails(type: TaxType, percent: number) {
-  if (type === 'GST') {
+  if (type === "GST") {
     return [
       {
-        account: 'CGST',
+        account: "CGST",
         rate: percent / 2,
       },
       {
-        account: 'SGST',
+        account: "SGST",
         rate: percent / 2,
       },
     ];
@@ -41,7 +41,7 @@ function getTaxDetails(type: TaxType, percent: number) {
 
   return [
     {
-      account: type.toString().split('-')[0],
+      account: type.toString().split("-")[0],
       rate: percent,
     },
   ];

@@ -1,5 +1,5 @@
-import type { IPC } from 'utils/ipc/types';
-import Vue, { VNode } from 'vue';
+import type { IPC } from "utils/ipc/types";
+import Vue, { VNode } from "vue";
 
 declare global {
   const ipc: IPC;

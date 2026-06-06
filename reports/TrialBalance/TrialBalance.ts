@@ -1,17 +1,17 @@
-import { t } from 'fyo';
-import { ValueError } from 'fyo/utils/errors';
-import dayjs from 'dayjs';
+import { t } from "fyo";
+import { ValueError } from "fyo/utils/errors";
+import dayjs from "dayjs";
 import {
   AccountRootType,
   AccountRootTypeEnum,
-} from 'models/baseModels/Account/types';
+} from "models/baseModels/Account/types";
 import {
   AccountReport,
   ACC_BAL_WIDTH,
   ACC_NAME_WIDTH,
   convertAccountRootNodesToAccountList,
   getFiscalEndpoints,
-} from 'reports/AccountReport';
+} from "reports/AccountReport";
 import {
   Account,
   AccountListNode,
@@ -25,13 +25,13 @@ import {
   ReportRow,
   RootTypeRow,
   ValueMap,
-} from 'reports/types';
-import { Field } from 'schemas/types';
-import { QueryFilter } from 'utils/db/types';
+} from "reports/types";
+import { Field } from "schemas/types";
+import { QueryFilter } from "utils/db/types";
 
 export class TrialBalance extends AccountReport {
   static title = t`Trial Balance`;
-  static reportName = 'trial-balance';
+  static reportName = "trial-balance";
 
   fromDate?: string;
   toDate?: string;
@@ -55,11 +55,11 @@ export class TrialBalance extends AccountReport {
 
   async setReportData(filter?: string, force?: boolean) {
     this.loading = true;
-    if (force || filter !== 'hideGroupAmounts') {
+    if (force || filter !== "hideGroupAmounts") {
       await this._setRawData();
     }
 
-    const map = this._getGroupedMap(true, 'account');
+    const map = this._getGroupedMap(true, "account");
     const rangeGroupedMap = await this._getGroupedByDateRanges(map);
     const accountTree = await this._getAccountTree(rangeGroupedMap);
 
@@ -81,7 +81,7 @@ export class TrialBalance extends AccountReport {
 
   // oxlint-disable-next-line @typescript-eslint/require-await
   async getReportDataFromRows(
-    rootTypeRows: RootTypeRow[]
+    rootTypeRows: RootTypeRow[],
   ): Promise<ReportData> {
     const reportData = rootTypeRows.reduce((reportData, r) => {
       reportData.push(...r.rows);
@@ -96,7 +96,7 @@ export class TrialBalance extends AccountReport {
 
   // oxlint-disable-next-line @typescript-eslint/require-await
   async _getGroupedByDateRanges(
-    map: GroupedMap
+    map: GroupedMap,
   ): Promise<AccountNameValueMapMap> {
     const accountValueMap: AccountNameValueMapMap = new Map();
 
@@ -110,7 +110,7 @@ export class TrialBalance extends AccountReport {
         const key = this._getRangeMapKey(entry);
         if (key === null) {
           throw new ValueError(
-            `invalid entry in trial balance ${entry.date?.toISOString() ?? ''}`
+            `invalid entry in trial balance ${entry.date?.toISOString() ?? ""}`,
           );
         }
 
@@ -140,13 +140,13 @@ export class TrialBalance extends AccountReport {
 
     return [
       {
-        fromDate: dayjs('0001-01-01'),
+        fromDate: dayjs("0001-01-01"),
         toDate: fromDate,
       },
       { fromDate, toDate },
       {
         fromDate: toDate,
-        toDate: dayjs('9999-12-31'),
+        toDate: dayjs("9999-12-31"),
       },
     ];
   }
@@ -155,7 +155,7 @@ export class TrialBalance extends AccountReport {
     const nameCell = {
       value: al.name,
       rawValue: al.name,
-      align: 'left',
+      align: "left",
       width: ACC_NAME_WIDTH,
       bold: !al.level,
       indent: al.level ?? 0,
@@ -168,14 +168,14 @@ export class TrialBalance extends AccountReport {
       return [
         {
           rawValue: map?.debit ?? 0,
-          value: hide ? '' : this.fyo.format(map?.debit ?? 0, 'Currency'),
-          align: 'right',
+          value: hide ? "" : this.fyo.format(map?.debit ?? 0, "Currency"),
+          align: "right",
           width: ACC_BAL_WIDTH,
         },
         {
           rawValue: map?.credit ?? 0,
-          value: hide ? '' : this.fyo.format(map?.credit ?? 0, 'Currency'),
-          align: 'right',
+          value: hide ? "" : this.fyo.format(map?.credit ?? 0, "Currency"),
+          align: "right",
           width: ACC_BAL_WIDTH,
         },
       ];
@@ -204,8 +204,8 @@ export class TrialBalance extends AccountReport {
 
       this.fromDate = endpoints.fromDate;
       this.toDate = dayjs(endpoints.toDate)
-        .subtract(1, 'day')
-        .format('YYYY-MM-DD')!;
+        .subtract(1, "day")
+        .format("YYYY-MM-DD")!;
     }
 
     await this._setDateRanges();
@@ -214,23 +214,23 @@ export class TrialBalance extends AccountReport {
   getFilters(): Field[] {
     return [
       {
-        fieldtype: 'Date',
-        fieldname: 'fromDate',
+        fieldtype: "Date",
+        fieldname: "fromDate",
         placeholder: t`From Date`,
         label: t`From Date`,
         required: true,
       },
       {
-        fieldtype: 'Date',
-        fieldname: 'toDate',
+        fieldtype: "Date",
+        fieldname: "toDate",
         placeholder: t`To Date`,
         label: t`To Date`,
         required: true,
       },
       {
-        fieldtype: 'Check',
+        fieldtype: "Check",
         label: t`Hide Group Amounts`,
-        fieldname: 'hideGroupAmounts',
+        fieldname: "hideGroupAmounts",
       },
     ] as Field[];
   }
@@ -239,51 +239,51 @@ export class TrialBalance extends AccountReport {
     return [
       {
         label: t`Account`,
-        fieldtype: 'Link',
-        fieldname: 'account',
-        align: 'left',
+        fieldtype: "Link",
+        fieldname: "account",
+        align: "left",
         width: ACC_NAME_WIDTH,
       },
       {
         label: t`Opening (Dr)`,
-        fieldtype: 'Data',
-        fieldname: 'openingDebit',
-        align: 'right',
+        fieldtype: "Data",
+        fieldname: "openingDebit",
+        align: "right",
         width: ACC_BAL_WIDTH,
       },
       {
         label: t`Opening (Cr)`,
-        fieldtype: 'Data',
-        fieldname: 'openingCredit',
-        align: 'right',
+        fieldtype: "Data",
+        fieldname: "openingCredit",
+        align: "right",
         width: ACC_BAL_WIDTH,
       },
       {
         label: t`Debit`,
-        fieldtype: 'Data',
-        fieldname: 'debit',
-        align: 'right',
+        fieldtype: "Data",
+        fieldname: "debit",
+        align: "right",
         width: ACC_BAL_WIDTH,
       },
       {
         label: t`Credit`,
-        fieldtype: 'Data',
-        fieldname: 'credit',
-        align: 'right',
+        fieldtype: "Data",
+        fieldname: "credit",
+        align: "right",
         width: ACC_BAL_WIDTH,
       },
       {
         label: t`Closing (Dr)`,
-        fieldtype: 'Data',
-        fieldname: 'closingDebit',
-        align: 'right',
+        fieldtype: "Data",
+        fieldname: "closingDebit",
+        align: "right",
         width: ACC_BAL_WIDTH,
       },
       {
         label: t`Closing (Cr)`,
-        fieldtype: 'Data',
-        fieldname: 'closingCredit',
-        align: 'right',
+        fieldtype: "Data",
+        fieldname: "closingCredit",
+        align: "right",
         width: ACC_BAL_WIDTH,
       },
     ] as ColumnField[];

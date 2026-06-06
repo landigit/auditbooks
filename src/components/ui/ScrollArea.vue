@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type HTMLAttributes } from 'vue';
+import { computed, type HTMLAttributes } from "vue";
 import {
   ScrollAreaCorner,
   ScrollAreaRoot,
@@ -7,14 +7,14 @@ import {
   ScrollAreaScrollbar,
   ScrollAreaThumb,
   ScrollAreaViewport,
-} from 'reka-ui';
-import { cn } from 'src/utils/cn';
+} from "reka-ui";
+import { cn } from "src/utils/cn";
 
 const props = withDefaults(
-  defineProps<ScrollAreaRootProps & { class?: HTMLAttributes['class'] }>(),
+  defineProps<ScrollAreaRootProps & { class?: HTMLAttributes["class"] }>(),
   {
-    type: 'auto',
-  }
+    type: "auto",
+  },
 );
 
 const delegatedProps = computed(() => {
@@ -26,7 +26,9 @@ const delegatedProps = computed(() => {
 <template>
   <ScrollAreaRoot
     v-bind="delegatedProps"
-    :class="cn('relative overflow-hidden', props.class)"
+    :class="
+      cn('relative overflow-hidden h-full w-full flex flex-col', props.class)
+    "
   >
     <ScrollAreaViewport class="h-full w-full rounded-[inherit] overflow-auto">
       <slot />

@@ -91,11 +91,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
+} from "src/composables/useBaseControl";
 
 interface CheckProps extends BaseControlProps {
   spaceBetween?: boolean;
@@ -106,10 +106,10 @@ interface CheckProps extends BaseControlProps {
 const props = withDefaults(defineProps<CheckProps>(), {
   spaceBetween: false,
   labelRight: true,
-  labelClass: '',
+  labelClass: "",
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   containerStyles: () => ({}),
   textRight: null,
   readOnly: null,
@@ -117,19 +117,19 @@ const props = withDefaults(defineProps<CheckProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "change", val: any): void;
 }>();
 
-const offColor = ref('#0000');
-const color = ref('var(--color-description)');
+const offColor = ref("#0000");
+const color = ref("var(--color-description)");
 const inputRef = ref<HTMLInputElement | null>(null);
 
 const { inputClasses, containerClasses, isReadOnly, triggerChange } =
   useBaseControl(props, emit, inputRef);
 
 const labelClasses = computed(() => {
-  return props.labelClass || 'text-description text-base';
+  return props.labelClass || "text-description text-base";
 });
 
 const getChecked = (value: unknown) => {
@@ -162,7 +162,7 @@ defineExpose({
 
 <style scoped>
 /* Keeping clean layout with zero hidden layout issues */
-input[type='checkbox'] {
+input[type="checkbox"] {
   display: none;
 }
 </style>

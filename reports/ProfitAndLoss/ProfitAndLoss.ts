@@ -1,22 +1,22 @@
-import { t } from 'fyo';
+import { t } from "fyo";
 import {
   AccountRootType,
   AccountRootTypeEnum,
-} from 'models/baseModels/Account/types';
+} from "models/baseModels/Account/types";
 import {
   AccountReport,
   convertAccountRootNodesToAccountList,
-} from 'reports/AccountReport';
+} from "reports/AccountReport";
 import {
   AccountListNode,
   AccountTreeNode,
   ReportData,
   ValueMap,
-} from 'reports/types';
+} from "reports/types";
 
 export class ProfitAndLoss extends AccountReport {
   static title = t`Profit And Loss`;
-  static reportName = 'profit-and-loss';
+  static reportName = "profit-and-loss";
   loading = false;
 
   get rootTypes(): AccountRootType[] {
@@ -25,19 +25,19 @@ export class ProfitAndLoss extends AccountReport {
 
   async setReportData(filter?: string, force?: boolean) {
     this.loading = true;
-    if (force || filter !== 'hideGroupAmounts') {
+    if (force || filter !== "hideGroupAmounts") {
       await this._setRawData();
     }
 
-    const map = this._getGroupedMap(true, 'account');
+    const map = this._getGroupedMap(true, "account");
     const rangeGroupedMap = await this._getGroupedByDateRanges(map);
     const accountTree = await this._getAccountTree(rangeGroupedMap);
 
     for (const name of Object.keys(accountTree)) {
       if (
-        name === '__proto__' ||
-        name === 'constructor' ||
-        name === 'prototype'
+        name === "__proto__" ||
+        name === "constructor" ||
+        name === "prototype"
       ) {
         continue;
       }
@@ -55,7 +55,7 @@ export class ProfitAndLoss extends AccountReport {
      */
     const incomeRoots = this.getRootNodes(
       AccountRootTypeEnum.Income,
-      accountTree
+      accountTree,
     )!;
     const incomeList = convertAccountRootNodesToAccountList(incomeRoots);
     const incomeRows = this.getReportRowsFromAccountList(incomeList);
@@ -65,7 +65,7 @@ export class ProfitAndLoss extends AccountReport {
      */
     const expenseRoots = this.getRootNodes(
       AccountRootTypeEnum.Expense,
-      accountTree
+      accountTree,
     )!;
     const expenseList = convertAccountRootNodesToAccountList(expenseRoots);
     const expenseRows = this.getReportRowsFromAccountList(expenseList);
@@ -74,7 +74,7 @@ export class ProfitAndLoss extends AccountReport {
       incomeRows,
       expenseRows,
       incomeRoots,
-      expenseRoots
+      expenseRoots,
     );
     this.loading = false;
   }
@@ -83,7 +83,7 @@ export class ProfitAndLoss extends AccountReport {
     incomeRows: ReportData,
     expenseRows: ReportData,
     incomeRoots: AccountTreeNode[] | undefined,
-    expenseRoots: AccountTreeNode[] | undefined
+    expenseRoots: AccountTreeNode[] | undefined,
   ): ReportData {
     if (
       incomeRoots &&
@@ -93,7 +93,7 @@ export class ProfitAndLoss extends AccountReport {
       return this.getIncomeOrExpenseRows(
         incomeRoots,
         incomeRows,
-        t`Total Income (Credit)`
+        t`Total Income (Credit)`,
       );
     }
 
@@ -105,7 +105,7 @@ export class ProfitAndLoss extends AccountReport {
       return this.getIncomeOrExpenseRows(
         expenseRoots,
         expenseRows,
-        t`Total Income (Credit)`
+        t`Total Income (Credit)`,
       );
     }
 
@@ -122,14 +122,14 @@ export class ProfitAndLoss extends AccountReport {
       incomeRows,
       expenseRows,
       incomeRoots,
-      expenseRoots
+      expenseRoots,
     );
   }
 
   getIncomeOrExpenseRows(
     roots: AccountTreeNode[],
     rows: ReportData,
-    totalRowName: string
+    totalRowName: string,
   ): ReportData {
     const total = this.getTotalNode(roots, totalRowName);
     const totalRow = this.getRowFromAccountListNode(total);
@@ -141,17 +141,17 @@ export class ProfitAndLoss extends AccountReport {
     incomeRows: ReportData,
     expenseRows: ReportData,
     incomeRoots: AccountTreeNode[],
-    expenseRoots: AccountTreeNode[]
+    expenseRoots: AccountTreeNode[],
   ) {
     const totalIncome = this.getTotalNode(
       incomeRoots,
-      t`Total Income (Credit)`
+      t`Total Income (Credit)`,
     );
     const totalIncomeRow = this.getRowFromAccountListNode(totalIncome);
 
     const totalExpense = this.getTotalNode(
       expenseRoots,
-      t`Total Expense (Debit)`
+      t`Total Expense (Debit)`,
     );
     const totalExpenseRow = this.getRowFromAccountListNode(totalExpense);
 
@@ -171,14 +171,14 @@ export class ProfitAndLoss extends AccountReport {
     const totalProfitRow = this.getRowFromAccountListNode(totalProfit);
     totalProfitRow.cells.forEach((c) => {
       c.bold = true;
-      if (typeof c.rawValue !== 'number') {
+      if (typeof c.rawValue !== "number") {
         return;
       }
 
       if (c.rawValue > 0) {
-        c.color = 'green';
+        c.color = "green";
       } else if (c.rawValue < 0) {
-        c.color = 'red';
+        c.color = "red";
       }
     });
 

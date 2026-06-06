@@ -1,4 +1,4 @@
-import { Keys } from 'utils/types';
+import { Keys } from "utils/types";
 import {
   onActivated,
   onDeactivated,
@@ -6,10 +6,10 @@ import {
   onUnmounted,
   reactive,
   ref,
-} from 'vue';
-import { getIsMac } from './misc';
-import { Shortcuts } from './shortcuts';
-import { DocRef } from './types';
+} from "vue";
+import { getIsMac } from "./misc";
+import { Shortcuts } from "./shortcuts";
+import { DocRef } from "./types";
 import {
   commonDocCancel,
   commonDocSubmit,
@@ -17,7 +17,7 @@ import {
   commongDocDelete,
   showCannotCancelOrDeleteToast,
   showCannotSaveOrSubmitToast,
-} from './ui';
+} from "./ui";
 
 export function useKeys() {
   const isMac = getIsMac();
@@ -33,17 +33,17 @@ export function useKeys() {
   const keydownListener = (e: KeyboardEvent) => {
     const notMods = !(e.altKey || e.metaKey || e.ctrlKey);
     const isHTMLInput =
-      typeof HTMLInputElement !== 'undefined' &&
+      typeof HTMLInputElement !== "undefined" &&
       e.target instanceof HTMLInputElement;
     if (isHTMLInput && notMods) {
       return;
     }
 
     const isHTMLElement =
-      typeof HTMLElement !== 'undefined' && e.target instanceof HTMLElement;
+      typeof HTMLElement !== "undefined" && e.target instanceof HTMLElement;
     if (
       isHTMLElement &&
-      (e.target as any).contentEditable === 'true' &&
+      (e.target as any).contentEditable === "true" &&
       notMods
     ) {
       return;
@@ -57,10 +57,10 @@ export function useKeys() {
 
     const { code } = e;
     if (
-      code.startsWith('Alt') ||
-      code.startsWith('Control') ||
-      code.startsWith('Meta') ||
-      code.startsWith('Shift')
+      code.startsWith("Alt") ||
+      code.startsWith("Control") ||
+      code.startsWith("Meta") ||
+      code.startsWith("Shift")
     ) {
       return;
     }
@@ -70,7 +70,7 @@ export function useKeys() {
 
   const keyupListener = (e: KeyboardEvent) => {
     const { code } = e;
-    if (code.startsWith('Meta') && isMac) {
+    if (code.startsWith("Meta") && isMac) {
       keys.alt = false;
       keys.ctrl = false;
       keys.meta = false;
@@ -84,16 +84,16 @@ export function useKeys() {
   };
 
   onMounted(() => {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('keydown', keydownListener);
-      window.addEventListener('keyup', keyupListener);
+    if (typeof window !== "undefined") {
+      window.addEventListener("keydown", keydownListener);
+      window.addEventListener("keyup", keyupListener);
     }
   });
 
   onUnmounted(() => {
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('keydown', keydownListener);
-      window.removeEventListener('keyup', keyupListener);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("keydown", keydownListener);
+      window.removeEventListener("keyup", keyupListener);
     }
   });
 
@@ -109,13 +109,13 @@ export function useMouseLocation() {
   };
 
   onMounted(() => {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('mousemove', mousemoveListener);
+    if (typeof window !== "undefined") {
+      window.addEventListener("mousemove", mousemoveListener);
     }
   });
   onUnmounted(() => {
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('mousemove', mousemoveListener);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("mousemove", mousemoveListener);
     }
   });
 
@@ -126,11 +126,11 @@ export function useDocShortcuts(
   shortcuts: Shortcuts,
   docRef: DocRef,
   name: string,
-  isMultiple = true
+  isMultiple = true,
 ) {
   let context = name;
   if (isMultiple) {
-    context = name + '-' + Math.random().toString(36).slice(2, 6);
+    context = name + "-" + Math.random().toString(36).slice(2, 6);
   }
 
   const syncOrSubmitCallback = async () => {
@@ -172,8 +172,8 @@ export function useDocShortcuts(
       return;
     }
 
-    shortcuts.pmod.set(context, ['KeyS'], syncOrSubmitCallback, false);
-    shortcuts.pmod.set(context, ['Backspace'], cancelOrDeleteCallback, false);
+    shortcuts.pmod.set(context, ["KeyS"], syncOrSubmitCallback, false);
+    shortcuts.pmod.set(context, ["Backspace"], cancelOrDeleteCallback, false);
   });
 
   onActivated(() => {
@@ -181,8 +181,8 @@ export function useDocShortcuts(
       return;
     }
 
-    shortcuts.pmod.set(context, ['KeyS'], syncOrSubmitCallback, false);
-    shortcuts.pmod.set(context, ['Backspace'], cancelOrDeleteCallback, false);
+    shortcuts.pmod.set(context, ["KeyS"], syncOrSubmitCallback, false);
+    shortcuts.pmod.set(context, ["Backspace"], cancelOrDeleteCallback, false);
   });
 
   onDeactivated(() => {

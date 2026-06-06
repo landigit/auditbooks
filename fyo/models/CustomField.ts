@@ -1,18 +1,18 @@
-import { DocValue } from 'fyo/core/types';
-import { Doc } from 'fyo/model/doc';
+import { DocValue } from "fyo/core/types";
+import { Doc } from "fyo/model/doc";
 import type {
   FormulaMap,
   HiddenMap,
   ListsMap,
   RequiredMap,
   ValidationMap,
-} from 'fyo/model/types';
-import { ValueError } from 'fyo/utils/errors';
-import { camelCase } from 'utils';
-import { ModelNameEnum } from 'models/types';
-import type { FieldType } from 'schemas/types';
-import { FieldTypeEnum } from 'schemas/types';
-import type { CustomForm } from './CustomForm';
+} from "fyo/model/types";
+import { ValueError } from "fyo/utils/errors";
+import { camelCase } from "utils";
+import { ModelNameEnum } from "models/types";
+import type { FieldType } from "schemas/types";
+import { FieldTypeEnum } from "schemas/types";
+import type { CustomForm } from "./CustomForm";
 
 export class CustomField extends Doc {
   parentdoc?: CustomForm;
@@ -44,22 +44,22 @@ export class CustomField extends Doc {
 
         return camelCase(this.label);
       },
-      dependsOn: ['label'],
+      dependsOn: ["label"],
     },
   };
 
   hidden: HiddenMap = {
     options: () =>
-      this.fieldtype !== 'Select' &&
-      this.fieldtype !== 'AutoComplete' &&
-      this.fieldtype !== 'Color',
-    target: () => this.fieldtype !== 'Link' && this.fieldtype !== 'Table',
-    references: () => this.fieldtype !== 'DynamicLink',
+      this.fieldtype !== "Select" &&
+      this.fieldtype !== "AutoComplete" &&
+      this.fieldtype !== "Color",
+    target: () => this.fieldtype !== "Link" && this.fieldtype !== "Table",
+    references: () => this.fieldtype !== "DynamicLink",
   };
 
   validations: ValidationMap = {
     label: (value) => {
-      if (typeof value !== 'string') {
+      if (typeof value !== "string") {
         return;
       }
 
@@ -67,7 +67,7 @@ export class CustomField extends Doc {
       (this.validations.fieldname as (value: DocValue) => void)(fieldname);
     },
     fieldname: (value) => {
-      if (typeof value !== 'string') {
+      if (typeof value !== "string") {
         return;
       }
 
@@ -75,18 +75,18 @@ export class CustomField extends Doc {
       if (field && !field.isCustom) {
         throw new ValueError(
           this.fyo.t`Fieldname ${value} already exists for ${this.parentdoc!
-            .name!}`
+            .name!}`,
         );
       }
 
       const cf = this.parentdoc?.customFields?.find(
-        (cf) => cf.fieldname === value
+        (cf) => cf.fieldname === value,
       );
       if (cf) {
         throw new ValueError(
           this.fyo.t`Fieldname ${value} already used for Custom Field ${
             (cf.idx ?? 0) + 1
-          }`
+          }`,
         );
       }
     },
@@ -105,11 +105,11 @@ export class CustomField extends Doc {
               ModelNameEnum.CustomField,
               ModelNameEnum.CustomForm,
               ModelNameEnum.SetupWizard,
-            ].includes(s?.name as ModelNameEnum)
+            ].includes(s?.name as ModelNameEnum),
         )
         .map((s) => ({
-          label: s?.label ?? '',
-          value: s?.name ?? '',
+          label: s?.label ?? "",
+          value: s?.name ?? "",
         }));
     },
     references: (doc) => {
@@ -130,14 +130,15 @@ export class CustomField extends Doc {
             (cf) =>
               cf.fieldname &&
               cf.label &&
-              referenceType.includes(cf.fieldtype ?? '')
+              referenceType.includes(cf.fieldtype ?? ""),
           )
           ?.map((cf) => ({ value: cf.fieldname!, label: cf.label! })) ?? [];
 
       const schemaFields =
         doc.parentSchema?.fields
           .filter(
-            (f) => f.fieldname && f.label && referenceType.includes(f.fieldtype)
+            (f) =>
+              f.fieldname && f.label && referenceType.includes(f.fieldtype),
           )
           .map((f) => ({ value: f.fieldname, label: f.label })) ?? [];
 
@@ -147,9 +148,9 @@ export class CustomField extends Doc {
 
   required: RequiredMap = {
     options: () =>
-      this.fieldtype === 'Select' || this.fieldtype === 'AutoComplete',
-    target: () => this.fieldtype === 'Link' || this.fieldtype === 'Table',
-    references: () => this.fieldtype === 'DynamicLink',
+      this.fieldtype === "Select" || this.fieldtype === "AutoComplete",
+    target: () => this.fieldtype === "Link" || this.fieldtype === "Table",
+    references: () => this.fieldtype === "DynamicLink",
     default: () => !!this.isRequired,
   };
 }

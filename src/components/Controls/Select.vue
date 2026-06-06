@@ -68,14 +68,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 import {
   BaseControlProps,
   useBaseControl,
-} from 'src/composables/useBaseControl';
-import { SelectOption } from 'schemas/types';
-import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
-import LucideIcon from '../LucideIcon.vue';
+} from "src/composables/useBaseControl";
+import { SelectOption } from "schemas/types";
+import { Popover, PopoverAnchor, PopoverContent } from "src/components/ui";
+import LucideIcon from "../LucideIcon.vue";
 
 interface SelectProps extends BaseControlProps {
   closeDropDown?: boolean;
@@ -85,7 +85,7 @@ const props = withDefaults(defineProps<SelectProps>(), {
   closeDropDown: true,
   step: 1,
   border: false,
-  size: 'large',
+  size: "large",
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -94,9 +94,9 @@ const props = withDefaults(defineProps<SelectProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'focus', ev: FocusEvent): void;
-  (e: 'input', ev: Event): void;
-  (e: 'change', val: any): void;
+  (e: "focus", ev: FocusEvent): void;
+  (e: "input", ev: Event): void;
+  (e: "change", val: any): void;
 }>();
 
 const dropdownVisible = ref(false);
@@ -115,7 +115,7 @@ const {
 } = useBaseControl(props as any, emit, inputRef);
 
 const options = computed<SelectOption[]>(() => {
-  if (props.df.fieldtype !== 'Select') {
+  if (props.df.fieldtype !== "Select") {
     return [];
   }
   return props.df.options || [];

@@ -8,13 +8,13 @@
   />
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
-import { DEFAULT_LANGUAGE } from 'fyo/utils/consts';
-import { OptionField } from 'schemas/types';
-import { t } from 'fyo';
-import { fyo } from 'src/initFyo';
-import { languageCodeMap, setLanguageMap } from 'src/utils/language';
-import AutoComplete from './AutoComplete.vue';
+import { computed } from "vue";
+import { DEFAULT_LANGUAGE } from "fyo/utils/consts";
+import { OptionField } from "schemas/types";
+import { t } from "fyo";
+import { fyo } from "src/initFyo";
+import { languageCodeMap, setLanguageMap } from "src/utils/language";
+import AutoComplete from "./AutoComplete.vue";
 
 const props = defineProps({
   dontReload: {
@@ -24,20 +24,20 @@ const props = defineProps({
 });
 
 const value = computed(() => {
-  return fyo.config.get('language') ?? DEFAULT_LANGUAGE;
+  return fyo.config.get("language") ?? DEFAULT_LANGUAGE;
 });
 
 const languageDf = computed<OptionField>(() => {
-  const preset = fyo.config.get('language');
+  const preset = fyo.config.get("language");
   let language = DEFAULT_LANGUAGE;
-  if (typeof preset === 'string') {
+  if (typeof preset === "string") {
     language = preset;
   }
 
   return {
-    fieldname: 'language',
+    fieldname: "language",
     label: t`Language`,
-    fieldtype: 'AutoComplete',
+    fieldtype: "AutoComplete",
     options: Object.keys(languageCodeMap).map((value) => ({
       label: value,
       value,
@@ -48,7 +48,7 @@ const languageDf = computed<OptionField>(() => {
 });
 
 function onChange(val: unknown) {
-  if (typeof val !== 'string') {
+  if (typeof val !== "string") {
     return;
   }
 

@@ -1,4 +1,4 @@
-import { Fyo } from 'fyo';
+import { Fyo } from "fyo";
 
 /**
  * Global fyo: this is meant to be used only by the app. For

@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import LucideIcon from './LucideIcon.vue';
+import LucideIcon from "./LucideIcon.vue";
 
 interface HowToProps {
   link?: string;
@@ -18,7 +18,7 @@ interface HowToProps {
 }
 
 const props = withDefaults(defineProps<HowToProps>(), {
-  link: '',
+  link: "",
   icon: true,
 });
 

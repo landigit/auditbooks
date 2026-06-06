@@ -1,16 +1,16 @@
-import { Fyo } from 'fyo';
-import { DocValue } from 'fyo/core/types';
-import { isPesa } from 'fyo/utils';
-import { deepEqual, getIsNullOrUndef } from 'utils';
-import { Field, FieldType, FieldTypeEnum } from 'schemas/types';
-import { Doc } from './doc';
-import { FormulaMap } from './types';
+import { Fyo } from "fyo";
+import { DocValue } from "fyo/core/types";
+import { isPesa } from "fyo/utils";
+import { deepEqual, getIsNullOrUndef } from "utils";
+import { Field, FieldType, FieldTypeEnum } from "schemas/types";
+import { Doc } from "./doc";
+import { FormulaMap } from "./types";
 
 export function areDocValuesEqual(
   dvOne: DocValue | Doc[],
-  dvTwo: DocValue | Doc[]
+  dvTwo: DocValue | Doc[],
 ): boolean {
-  if (['string', 'number'].includes(typeof dvOne) || dvOne instanceof Date) {
+  if (["string", "number"].includes(typeof dvOne) || dvOne instanceof Date) {
     return dvOne === dvTwo;
   }
 
@@ -27,7 +27,7 @@ export function areDocValuesEqual(
 
 export function getPreDefaultValues(
   fieldtype: FieldType,
-  fyo: Fyo
+  fyo: Fyo,
 ): DocValue | Doc[] {
   switch (fieldtype) {
     case FieldTypeEnum.Table:
@@ -53,10 +53,10 @@ export function getMissingMandatoryMessage(doc: Doc) {
         return isNullOrUndef || (value as Doc[])?.length === 0;
       }
 
-      return isNullOrUndef || value === '';
+      return isNullOrUndef || value === "";
     })
     .map((f) => f.label ?? f.fieldname)
-    .join(', ');
+    .join(", ");
 
   if (message && doc.schema.isChild && doc.parentdoc && doc.parentFieldname) {
     const parentfield = doc.parentdoc.fieldMap[doc.parentFieldname];
@@ -115,7 +115,7 @@ export function shouldApplyFormula(field: Field, doc: Doc, fieldname?: string) {
 function shouldApplyFormulaPreSync(
   fieldname: string,
   dependsOn: string[],
-  doc: Doc
+  doc: Doc,
 ): boolean {
   if (isDocValueTruthy(doc.get(fieldname))) {
     return false;
@@ -155,13 +155,13 @@ export function getFormulaSequence(formulas: FormulaMap) {
       acc[k] = [...(formulas[k]?.dependsOn ?? [])];
       return acc;
     },
-    {} as Record<string, string[] | undefined>
+    {} as Record<string, string[] | undefined>,
   );
   return sequenceDependencies(depMap);
 }
 
 function sequenceDependencies(
-  depMap: Record<string, string[] | undefined>
+  depMap: Record<string, string[] | undefined>,
 ): string[] {
   /**
    * Sufficiently okay algo to sequence dependents after

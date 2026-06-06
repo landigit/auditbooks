@@ -1,5 +1,6 @@
 <template>
   <view
+    v-if="!isLynx"
     class="flex-1 flex justify-center items-center bg-canvas"
     :class="{
       'pointer-events-none': loadingDatabase,
@@ -194,42 +195,120 @@
       </view>
     </Modal>
   </view>
+
+  <view v-else class="Container" :class="{ dark: store.isDark }">
+    <view class="Card">
+      <!-- Header -->
+      <view class="Header">
+        <text class="Title">{{ t`Welcome to Auditbooks` }}</text>
+        <text class="Subtitle">
+          {{ t`Create a new company or select an existing one` }}
+        </text>
+      </view>
+
+      <view class="Divider" />
+
+      <!-- Actions List -->
+      <view class="Actions">
+        <!-- New Company Button -->
+        <view class="ActionItem" @tap="newDatabase">
+          <view class="IconBadge IconBadge--blue">
+            <text class="BadgeText">+</text>
+          </view>
+          <view class="ActionDetails">
+            <text class="ActionTitle">{{ t`New Company` }}</text>
+            <text class="ActionDesc">{{ t`Create a new company file` }}</text>
+          </view>
+        </view>
+
+        <!-- Existing Company Button -->
+        <view class="ActionItem" @tap="existingDatabase">
+          <view class="IconBadge IconBadge--green">
+            <text class="BadgeText">📂</text>
+          </view>
+          <view class="ActionDetails">
+            <text class="ActionTitle">{{ t`Existing Company` }}</text>
+            <text class="ActionDesc">{{ t`Load an existing file` }}</text>
+          </view>
+        </view>
+
+        <!-- Create Demo Button -->
+        <view v-if="!files.length" class="ActionItem" @tap="createDemo">
+          <view class="IconBadge IconBadge--pink">
+            <text class="BadgeText">⚡</text>
+          </view>
+          <view class="ActionDetails">
+            <text class="ActionTitle">{{ t`Create Demo` }}</text>
+            <text class="ActionDesc">{{ t`Setup a demo database` }}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="Divider" />
+
+      <!-- Recent Databases List -->
+      <view class="FileListContainer">
+        <text class="ListHeader" v-if="files.length">{{
+          t`Recent Companies`
+        }}</text>
+        <view class="FileListView">
+          <view
+            v-for="(file, i) in files"
+            :key="file.dbPath"
+            class="FileRow"
+            @tap="selectFile(file)"
+          >
+            <view class="IndexBadge">
+              <text class="IndexBadgeText">{{ i + 1 }}</text>
+            </view>
+            <view class="FileInfo">
+              <text class="FileName">{{ file.companyName }}</text>
+              <text class="FilePath">{{ truncate(file.dbPath) }}</text>
+            </view>
+            <view class="DeleteButton" @tap.stop="() => deleteDb(i)">
+              <text class="DeleteText">✕</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useAppStore } from 'src/stores/app';
-import { setupDummyInstance } from 'dummy';
-import { t } from 'fyo';
-import { Verb } from 'fyo/telemetry/types';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { ref, onMounted } from "vue";
+import { useAppStore } from "src/stores/app";
+import { setupDummyInstance } from "dummy";
+import { t } from "fyo";
+import { Verb } from "fyo/telemetry/types";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-import { fyo } from 'src/initFyo';
-import { showDialog } from 'src/utils/interactive';
-import { updateConfigFiles } from 'src/utils/misc';
+import { fyo } from "src/initFyo";
+import { showDialog, isLynx } from "src/utils/interactive";
+import { updateConfigFiles } from "src/utils/misc";
 import {
   deleteDb as deleteDbFile,
   getSavePath,
   getSelectedFilePath,
-} from 'src/utils/ui';
-import type { ConfigFilesWithModified } from 'utils/types';
-import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
-import Loading from 'src/components/Loading.vue';
-import LucideIcon from 'src/components/LucideIcon.vue';
-import Modal from 'src/components/Modal.vue';
-import Button from 'src/components/Button.vue';
+} from "src/utils/ui";
+import type { ConfigFilesWithModified } from "utils/types";
+import LanguageSelector from "src/components/Controls/LanguageSelector.vue";
+import Loading from "src/components/Loading.vue";
+import LucideIcon from "src/components/LucideIcon.vue";
+import Modal from "src/components/Modal.vue";
+import Button from "src/components/Button.vue";
 
 // Define Emits
 const emit = defineEmits<{
-  (e: 'file-selected', filePath: string): void;
-  (e: 'new-database'): void;
+  (e: "file-selected", filePath: string): void;
+  (e: "new-database"): void;
 }>();
 
 // State definition
 const store = useAppStore();
 const openModal = ref(false);
 const baseCount = ref(100);
-const creationMessage = ref('');
+const creationMessage = ref("");
 const creationPercent = ref(0);
 const creatingDemo = ref(false);
 const loadingDatabase = ref(false);
@@ -240,7 +319,7 @@ const truncate = (value: string) => {
   if (value.length < 72) {
     return value;
   }
-  return '...' + value.slice(value.length - 72);
+  return "..." + value.slice(value.length - 72);
 };
 
 const formatDate = (isoDate: string) => {
@@ -250,7 +329,7 @@ const formatDate = (isoDate: string) => {
 const setFiles = async () => {
   const dbList = (await ipc.getDbList()) || [];
   files.value = dbList.sort(
-    (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
+    (a, b) => Date.parse(b.modified) - Date.parse(a.modified),
   );
 };
 
@@ -261,7 +340,7 @@ const deleteDb = async (i: number) => {
   await showDialog({
     title: t`Delete ${file.companyName}?`,
     detail: t`Database file: ${file.dbPath}`,
-    type: 'warning',
+    type: "warning",
     buttons: [
       {
         label: t`Yes`,
@@ -286,11 +365,11 @@ const emitFileSelected = (filePath: string) => {
   if (!filePath) {
     return;
   }
-  emit('file-selected', filePath);
+  emit("file-selected", filePath);
 };
 
 const startDummyInstanceSetup = async () => {
-  const { filePath, canceled } = await getSavePath('demo', 'db');
+  const { filePath, canceled } = await getSavePath("demo", "db");
   if (canceled || !filePath) {
     return;
   }
@@ -304,22 +383,36 @@ const startDummyInstanceSetup = async () => {
     (message, percent) => {
       creationMessage.value = message;
       creationPercent.value = percent;
-    }
+    },
   );
 
   updateConfigFiles(fyo);
   await fyo.purgeCache();
   await setFiles();
-  fyo.telemetry.log(Verb.Created, 'dummy-instance');
+  fyo.telemetry.log(Verb.Created, "dummy-instance");
   creatingDemo.value = false;
   emitFileSelected(filePath);
 };
 
 const createDemo = async () => {
-  if (!store.isDevelopment) {
-    await startDummyInstanceSetup();
+  if (isLynx) {
+    try {
+      const response = await (globalThis as any).ipc.getSaveFilePath({
+        title: t`Select folder`,
+        defaultPath: `demo.db`,
+      });
+      if (response?.filePath) {
+        emitFileSelected(response.filePath);
+      }
+    } catch (err) {
+      console.error("Failed to open save file selector:", err);
+    }
   } else {
-    openModal.value = true;
+    if (!store.isDevelopment) {
+      await startDummyInstanceSetup();
+    } else {
+      openModal.value = true;
+    }
   }
 };
 
@@ -327,7 +420,7 @@ const newDatabase = () => {
   if (creatingDemo.value) {
     return;
   }
-  emit('new-database');
+  emit("new-database");
 };
 
 const existingDatabase = async () => {
@@ -351,8 +444,8 @@ const selectFile = (file: ConfigFilesWithModified) => {
 onMounted(async () => {
   await setFiles();
 
-  if (store.isDevelopment && typeof window !== 'undefined') {
-    // @ts-ignore
+  if (store.isDevelopment && typeof window !== "undefined") {
+    // @ts-expect-error
     window.ds = {
       truncate,
       formatDate,
@@ -389,5 +482,238 @@ defineExpose({
   .file-list {
     max-height: 340px;
   }
+}
+
+/* Lynx Database Selector Styles */
+.Container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  width: 100vw;
+  height: 100vh;
+  padding: 16px;
+  --color-canvas: white;
+  --color-canvas-muted: #f8f8f8;
+  --color-surface: white;
+  --color-surface-hover: #f3f3f3;
+  --color-border: #ededed;
+  --color-main: #020617;
+  --color-description: #334155;
+}
+
+.Container.dark {
+  background-color: #171717;
+  --color-canvas: #171717;
+  --color-canvas-muted: #1c1c1c;
+  --color-surface: #212121;
+  --color-surface-hover: #1c1c1c;
+  --color-border: #383838;
+  --color-main: #fbfbfb;
+  --color-description: #999999;
+}
+
+.Card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  width: 90vw;
+  max-width: 420px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+}
+
+.Header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.Title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-main);
+  margin-bottom: 4px;
+}
+
+.Subtitle {
+  font-size: 14px;
+  color: var(--color-description);
+}
+
+.Divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.Actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ActionItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid transparent;
+}
+
+.ActionItem:active {
+  background-color: var(--color-surface-hover);
+}
+
+.IconBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.IconBadge--blue {
+  background-color: rgba(51, 161, 255, 0.15);
+}
+
+.IconBadge--green {
+  background-color: rgba(89, 186, 139, 0.15);
+}
+
+.IconBadge--pink {
+  background-color: rgba(223, 158, 184, 0.15);
+}
+
+.BadgeText {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.IconBadge--blue .BadgeText {
+  color: #33a1ff;
+}
+
+.IconBadge--green .BadgeText {
+  color: #59ba8b;
+}
+
+.IconBadge--pink .BadgeText {
+  color: #df9eb8;
+}
+
+.ActionDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.ActionTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-main);
+}
+
+.ActionDesc {
+  font-size: 13px;
+  color: var(--color-description);
+  margin-top: 2px;
+}
+
+.FileListContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.ListHeader {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-description);
+  margin-bottom: 8px;
+}
+
+.FileListView {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.FileRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--color-surface);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.FileRow:active {
+  background-color: var(--color-surface-hover);
+}
+
+.IndexBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-canvas-muted);
+  margin-right: 10px;
+}
+
+.IndexBadgeText {
+  color: var(--color-description);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.FileInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.FileName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-main);
+}
+
+.FilePath {
+  font-size: 11px;
+  color: var(--color-description);
+  margin-top: 2px;
+}
+
+.DeleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: transparent;
+}
+
+.DeleteButton:active {
+  background-color: #e03636;
+}
+
+.DeleteText {
+  color: var(--color-description);
+  font-size: 12px;
+}
+
+.DeleteButton:active .DeleteText {
+  color: #ffffff;
 }
 </style>

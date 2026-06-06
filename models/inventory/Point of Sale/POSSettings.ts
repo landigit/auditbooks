@@ -1,9 +1,9 @@
-import { Doc } from 'fyo/model/doc';
-import { FiltersMap, HiddenMap } from 'fyo/model/types';
+import { Doc } from "fyo/model/doc";
+import { FiltersMap, HiddenMap } from "fyo/model/types";
 import {
   AccountRootTypeEnum,
   AccountTypeEnum,
-} from 'models/baseModels/Account/types';
+} from "models/baseModels/Account/types";
 
 export class POSSettings extends Doc {
   declare isShiftOpen?: boolean;
@@ -16,8 +16,8 @@ export class POSSettings extends Doc {
   declare itemWeightDigits?: number;
   declare defaultAccount?: string;
   declare itemVisibility?: string;
-  declare itemVisibilityERP?: 'ERP Sync Items';
-  declare posUI?: 'Classic' | 'Modern';
+  declare itemVisibilityERP?: "ERP Sync Items";
+  declare posUI?: "Classic" | "Modern";
   declare canChangeRate?: boolean;
   declare canEditDiscount?: boolean;
   declare ignorePricingRule?: boolean;

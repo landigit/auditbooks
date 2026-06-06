@@ -1,87 +1,104 @@
 <template>
-  <Modal :open-modal="openModal" class="w-11/12 max-w-4xl p-6">
-    <text class="text-xl font-semibold text-center text-main pb-4">
-      {{ t`Close POS Shift` }}
-    </text>
+  <view v-if="!isLynx">
+    <Modal :open-modal="openModal" class="w-11/12 max-w-4xl p-6">
+      <text class="text-xl font-semibold text-center text-main pb-4">
+        {{ t`Close POS Shift` }}
+      </text>
 
-    <view class="grid grid-cols-12 gap-6">
-      <view class="col-span-6">
-        <text class="text-lg font-medium text-main mb-2">
-          {{ t`Closing Cash` }}
-        </text>
-        <Table
-          v-if="isValuesSeeded"
-          class="text-base"
-          :df="getField('closingCash')"
-          :show-header="true"
-          :border="true"
-          :value="posClosingShiftDoc?.closingCash ?? []"
-          :read-only="false"
-          @row-change="setClosingCashAmount"
-        />
-      </view>
+      <view class="grid grid-cols-12 gap-6">
+        <view class="col-span-6">
+          <text class="text-lg font-medium text-main mb-2">
+            {{ t`Closing Cash` }}
+          </text>
+          <Table
+            v-if="isValuesSeeded"
+            class="text-base"
+            :df="getField('closingCash')"
+            :show-header="true"
+            :border="true"
+            :value="posClosingShiftDoc?.closingCash ?? []"
+            :read-only="false"
+            @row-change="setClosingCashAmount"
+          />
+        </view>
 
-      <view class="col-span-6">
-        <text class="text-lg text-main font-medium mb-2">Closing Amounts</text>
-        <Table
-          v-if="isValuesSeeded"
-          class="text-base"
-          :df="getField('closingAmounts')"
-          :show-header="true"
-          :border="true"
-          :value="posClosingShiftDoc?.closingAmounts"
-          :read-only="true"
-          @row-change="setClosingCashAmount"
-        />
-
-        <view class="mt-6 grid grid-cols-2 gap-4 items-end">
-          <Button
-            class="w-full py-5 bg-indicator-red-bg"
-            @tap="emit('toggleModal', 'ShiftClose', false)"
+        <view class="col-span-6">
+          <text class="text-lg text-main font-medium mb-2"
+            >Closing Amounts</text
           >
-            <slot>
-              <text
-                class="uppercase text-lg text-indicator-red-text font-semibold"
-              >
-                {{ t`Cancel` }}
-              </text>
-            </slot>
-          </Button>
+          <Table
+            v-if="isValuesSeeded"
+            class="text-base"
+            :df="getField('closingAmounts')"
+            :show-header="true"
+            :border="true"
+            :value="posClosingShiftDoc?.closingAmounts"
+            :read-only="true"
+            @row-change="setClosingCashAmount"
+          />
 
-          <Button class="w-full py-5 bg-indicator-green-bg" @tap="handleSubmit">
-            <slot>
-              <text
-                class="uppercase text-lg text-indicator-green-text font-semibold"
-              >
-                {{ t`Submit` }}
-              </text>
-            </slot>
-          </Button>
+          <view class="mt-6 grid grid-cols-2 gap-4 items-end">
+            <Button
+              class="w-full py-5 bg-indicator-red-bg"
+              @tap="emit('toggleModal', 'ShiftClose', false)"
+            >
+              <slot>
+                <text
+                  class="uppercase text-lg text-indicator-red-text font-semibold"
+                >
+                  {{ t`Cancel` }}
+                </text>
+              </slot>
+            </Button>
+
+            <Button
+              class="w-full py-5 bg-indicator-green-bg"
+              @tap="handleSubmit"
+            >
+              <slot>
+                <text
+                  class="uppercase text-lg text-indicator-green-text font-semibold"
+                >
+                  {{ t`Submit` }}
+                </text>
+              </slot>
+            </Button>
+          </view>
         </view>
       </view>
+    </Modal>
+  </view>
+  <view v-else class="Container dark">
+    <view class="Card">
+      <view class="Header">
+        <text class="Title">Close P O S Shift Modal</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
+      </view>
     </view>
-  </Modal>
+  </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onActivated, onUpdated, provide } from 'vue';
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Table from 'src/components/Controls/Table.vue';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { OpeningAmounts } from 'models/inventory/Point of Sale/OpeningAmounts';
-import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { fyo } from 'src/initFyo';
-import { showToast } from 'src/utils/interactive';
-import { t } from 'fyo';
+import { ref, computed, watch, onActivated, onUpdated, provide } from "vue";
+import Button from "src/components/Button.vue";
+import Modal from "src/components/Modal.vue";
+import Table from "src/components/Controls/Table.vue";
+import { ModelNameEnum } from "models/types";
+import { Money } from "pesa";
+import { OpeningAmounts } from "models/inventory/Point of Sale/OpeningAmounts";
+import { POSOpeningShift } from "models/inventory/Point of Sale/POSOpeningShift";
+import { fyo } from "src/initFyo";
+import { showToast } from "src/utils/interactive";
+import { t } from "fyo";
 import {
   validateClosingAmounts,
   transferPOSCashAndWriteOff,
   getPOSOpeningShiftDoc,
-} from 'src/utils/pos';
-import { POSClosingShift } from 'models/inventory/Point of Sale/POSClosingShift';
-import { ForbiddenError } from 'fyo/utils/errors';
+} from "src/utils/pos";
+import { POSClosingShift } from "models/inventory/Point of Sale/POSClosingShift";
+import { ForbiddenError } from "fyo/utils/errors";
 
 declare const ipc: any;
 
@@ -92,12 +109,12 @@ const props = withDefaults(
   }>(),
   {
     openModal: false,
-  }
+  },
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: 'toggleModal', modal: string, value?: boolean): void;
+  (e: "toggleModal", modal: string, value?: boolean): void;
 }>();
 
 // Reactive State
@@ -108,13 +125,13 @@ const transactedAmount = ref<Record<string, Money>>({});
 
 // Provide context to child elements
 provide(
-  'doc',
-  computed(() => posClosingShiftDoc.value)
+  "doc",
+  computed(() => posClosingShiftDoc.value),
 );
 
 // Computed Properties
 const isOnline = computed(() => {
-  return !!navigator.onLine;
+  return typeof navigator !== "undefined" ? !!navigator.onLine : true;
 });
 
 // Methods
@@ -138,7 +155,7 @@ const seedClosingCash = () => {
   posClosingShiftDoc.value.closingCash = [];
 
   posOpeningShiftDoc.value?.openingCash?.map(async (row) => {
-    await posClosingShiftDoc.value?.append('closingCash', {
+    await posClosingShiftDoc.value?.append("closingCash", {
       count: row.count,
       denomination: row.denomination as Money,
     });
@@ -151,11 +168,11 @@ const setClosingCashAmount = () => {
   }
 
   posClosingShiftDoc.value.closingAmounts.map((row) => {
-    if (row.paymentMethod === 'Cash') {
+    if (row.paymentMethod === "Cash") {
       row.closingAmount = posClosingShiftDoc.value?.closingCashAmount;
       if (row.closingAmount) {
         row.differenceAmount = row.closingAmount.sub(
-          row.expectedAmount as Money
+          row.expectedAmount as Money,
         );
       }
     }
@@ -181,11 +198,11 @@ const seedClosingAmounts = async () => {
 
     if (transactedAmount.value) {
       expectedAmount = expectedAmount.add(
-        transactedAmount.value[row.paymentMethod]
+        transactedAmount.value[row.paymentMethod],
       );
     }
 
-    await posClosingShiftDoc.value.append('closingAmounts', {
+    await posClosingShiftDoc.value.append("closingAmounts", {
       paymentMethod: row.paymentMethod,
       openingAmount: row.amount,
       closingAmount: fyo.pesa(0),
@@ -210,30 +227,30 @@ const handleSubmit = async () => {
   try {
     if (!isOnline.value) {
       throw new ForbiddenError(
-        t`Device is offline. Please connect to a network to continue.`
+        t`Device is offline. Please connect to a network to continue.`,
       );
     }
 
     validateClosingAmounts(posClosingShiftDoc.value as POSClosingShift);
-    await posClosingShiftDoc.value?.set('closingDate', new Date());
+    await posClosingShiftDoc.value?.set("closingDate", new Date());
     await posClosingShiftDoc.value?.set(
-      'openingShift',
-      posOpeningShiftDoc.value?.name
+      "openingShift",
+      posOpeningShiftDoc.value?.name,
     );
     await posClosingShiftDoc.value?.sync();
     await transferPOSCashAndWriteOff(
       fyo,
-      posClosingShiftDoc.value as POSClosingShift
+      posClosingShiftDoc.value as POSClosingShift,
     );
 
-    await fyo.singles.POSSettings?.setAndSync('isShiftOpen', false);
-    emit('toggleModal', 'ShiftClose');
+    await fyo.singles.POSSettings?.setAndSync("isShiftOpen", false);
+    emit("toggleModal", "ShiftClose");
     ipc.reloadWindow();
   } catch (error) {
     return showToast({
-      type: 'error',
+      type: "error",
       message: t`${error as string}`,
-      duration: 'short',
+      duration: "short",
     });
   }
 };
@@ -244,13 +261,13 @@ watch(
   async () => {
     await setTransactedAmount();
     await seedClosingAmounts();
-  }
+  },
 );
 
 // Lifecycles
 onActivated(async () => {
   posClosingShiftDoc.value = fyo.doc.getNewDoc(
-    ModelNameEnum.POSClosingShift
+    ModelNameEnum.POSClosingShift,
   ) as POSClosingShift;
   await seedValues();
   await setTransactedAmount();

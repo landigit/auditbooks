@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, computed, type PropType } from 'vue';
+import { ref, onMounted, nextTick, computed, type PropType } from "vue";
 import {
   Dialog,
   DialogContent,
@@ -8,14 +8,14 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from 'src/components/ui';
-import Button from './Button.vue';
-import LucideIcon from './LucideIcon.vue';
-import { getIconConfig } from 'src/utils/interactive';
-import type { DialogButton, ToastType } from 'src/utils/types';
+} from "src/components/ui";
+import Button from "./Button.vue";
+import LucideIcon from "./LucideIcon.vue";
+import { getIconConfig } from "src/utils/interactive";
+import type { DialogButton, ToastType } from "src/utils/types";
 
 const props = defineProps({
-  type: { type: String as PropType<ToastType>, default: 'info' },
+  type: { type: String as PropType<ToastType>, default: "info" },
   title: { type: String, required: true },
   detail: {
     type: [String, Array] as PropType<string | string[]>,

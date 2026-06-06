@@ -1,3 +1,3 @@
-import { CashDenominations } from './CashDenominations';
+import { CashDenominations } from "./CashDenominations";
 
 export class DefaultCashDenominations extends CashDenominations {}

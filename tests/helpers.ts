@@ -1,30 +1,30 @@
-﻿import { DatabaseManager } from 'backend/database/manager';
-import { Fyo } from 'fyo';
-import { DummyAuthDemux } from 'fyo/tests/helpers';
-import dayjs from 'dayjs';
+﻿import { DatabaseManager } from "backend/database/manager";
+import { Fyo } from "fyo";
+import { DummyAuthDemux } from "fyo/tests/helpers";
+import dayjs from "dayjs";
 
-import setupInstance from 'src/setup/setupInstance';
-import { SetupWizardOptions } from 'src/setup/types';
-import { getFiscalYear } from 'utils/misc';
-import { beforeAll, afterAll } from '@rstest/core';
+import setupInstance from "src/setup/setupInstance";
+import { SetupWizardOptions } from "src/setup/types";
+import { getFiscalYear } from "utils/misc";
+import { beforeAll, afterAll } from "@rstest/core";
 
 export function getTestSetupWizardOptions(): SetupWizardOptions {
   return {
     logo: null,
-    companyName: 'Test Company',
-    country: 'India',
-    fullname: 'Test Person',
-    email: 'test@testmyfantasy.com',
-    bankName: 'Test Bank of Scriptia',
-    currency: 'INR',
-    fiscalYearStart: dayjs(getFiscalYear('04-01', true)!).format('YYYY-MM-DD')!,
-    fiscalYearEnd: dayjs(getFiscalYear('04-01', false)!).format('YYYY-MM-DD')!,
-    chartOfAccounts: 'India - Chart of Accounts',
+    companyName: "Test Company",
+    country: "India",
+    fullname: "Test Person",
+    email: "test@testmyfantasy.com",
+    bankName: "Test Bank of Scriptia",
+    currency: "INR",
+    fiscalYearStart: dayjs(getFiscalYear("04-01", true)!).format("YYYY-MM-DD")!,
+    fiscalYearEnd: dayjs(getFiscalYear("04-01", false)!).format("YYYY-MM-DD")!,
+    chartOfAccounts: "India - Chart of Accounts",
   };
 }
 
 export function getTestDbPath(dbPath?: string) {
-  return dbPath ?? process.env.TEST_DB_PATH ?? ':memory:';
+  return dbPath ?? process.env.TEST_DB_PATH ?? ":memory:";
 }
 
 /**

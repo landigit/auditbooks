@@ -1,10 +1,10 @@
-﻿import { mock } from '@rstest/core';
-import pkg from '../../package.json';
+import { rs } from "@rstest/core";
+import pkg from "../../package.json";
 
 // Mock electron
-mock.module('electron', () => ({
+rs.mock("electron", () => ({
   app: {
-    getPath: () => '/tmp',
+    getPath: () => "/tmp",
     getVersion: () => pkg.version,
   },
   ipcRenderer: {
@@ -18,7 +18,7 @@ mock.module('electron', () => ({
 (global as any).ipc = {
   getEnv: async () => ({
     isDevelopment: true,
-    platform: 'linux',
+    platform: "linux",
     version: pkg.version,
   }),
 };

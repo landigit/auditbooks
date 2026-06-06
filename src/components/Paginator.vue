@@ -73,9 +73,9 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed, onMounted } from 'vue';
-import LucideIcon from 'src/components/LucideIcon.vue';
-import { t } from 'fyo';
+import { ref, computed, onMounted } from "vue";
+import LucideIcon from "src/components/LucideIcon.vue";
+import { t } from "fyo";
 
 // --- Props & Emits ---
 const props = withDefaults(
@@ -86,11 +86,11 @@ const props = withDefaults(
   {
     itemCount: 0,
     allowedCounts: () => [50, 100, 500, -1],
-  }
+  },
 );
 
 const emit = defineEmits<{
-  (e: 'index-change', indices: { start: number; end: number }): void;
+  (e: "index-change", indices: { start: number; end: number }): void;
 }>();
 
 // --- State ---
@@ -127,7 +127,7 @@ function filterCount(c: number) {
 }
 
 function setPageNo(value: string | number) {
-  let parsedValue = typeof value === 'string' ? parseInt(value) : value;
+  let parsedValue = typeof value === "string" ? parseInt(value) : value;
 
   if (isNaN(parsedValue)) {
     return;
@@ -149,7 +149,7 @@ function setCount(c: number) {
 
 function emitIndices() {
   const indices = getSliceIndices();
-  emit('index-change', indices);
+  emit("index-change", indices);
 }
 
 function getSliceIndices() {

@@ -1,88 +1,106 @@
 <template>
-  <Modal class="w-11/12 max-w-4xl p-6">
-    <text class="text-xl font-semibold text-center text-main pb-4">
-      {{ t`Open POS Shift` }}
-    </text>
+  <view v-if="!isLynx">
+    <Modal class="w-11/12 max-w-4xl p-6">
+      <text class="text-xl font-semibold text-center text-main pb-4">
+        {{ t`Open POS Shift` }}
+      </text>
 
-    <view class="grid grid-cols-12 gap-6">
-      <view class="col-span-6">
-        <text class="text-lg font-medium text-main">
-          {{ t`Cash In Denominations` }}
-        </text>
+      <view class="grid grid-cols-12 gap-6">
+        <view class="col-span-6">
+          <text class="text-lg font-medium text-main">
+            {{ t`Cash In Denominations` }}
+          </text>
 
-        <Table
-          v-if="isValuesSeeded"
-          class="mt-4 text-base"
-          :df="getField('openingCash')"
-          :show-header="true"
-          :border="true"
-          :value="posShiftDoc?.openingCash"
-          @row-change="handleChange"
-        />
-      </view>
+          <Table
+            v-if="isValuesSeeded"
+            class="mt-4 text-base"
+            :df="getField('openingCash')"
+            :show-header="true"
+            :border="true"
+            :value="posShiftDoc?.openingCash"
+            @row-change="handleChange"
+          />
+        </view>
 
-      <view class="col-span-6">
-        <text class="text-lg font-medium text-main">
-          {{ t`Opening Amount` }}
-        </text>
+        <view class="col-span-6">
+          <text class="text-lg font-medium text-main">
+            {{ t`Opening Amount` }}
+          </text>
 
-        <Table
-          v-if="isValuesSeeded"
-          class="mt-4 text-base"
-          :df="getField('openingAmounts')"
-          :show-header="true"
-          :border="true"
-          :max-rows-before-overflow="4"
-          :value="posShiftDoc?.openingAmounts"
-          :read-only="true"
-          @row-change="handleChange"
-        />
+          <Table
+            v-if="isValuesSeeded"
+            class="mt-4 text-base"
+            :df="getField('openingAmounts')"
+            :show-header="true"
+            :border="true"
+            :max-rows-before-overflow="4"
+            :value="posShiftDoc?.openingAmounts"
+            :read-only="true"
+            @row-change="handleChange"
+          />
 
-        <view class="mt-4 grid grid-cols-2 gap-4 items-end">
-          <Button class="w-full py-5 bg-indicator-red-bg" @tap="router.back()">
-            <slot>
-              <text
-                class="uppercase text-lg text-indicator-red-text font-semibold"
-              >
-                {{ t`Back` }}
-              </text>
-            </slot>
-          </Button>
+          <view class="mt-4 grid grid-cols-2 gap-4 items-end">
+            <Button
+              class="w-full py-5 bg-indicator-red-bg"
+              @tap="router.back()"
+            >
+              <slot>
+                <text
+                  class="uppercase text-lg text-indicator-red-text font-semibold"
+                >
+                  {{ t`Back` }}
+                </text>
+              </slot>
+            </Button>
 
-          <Button class="w-full py-5 bg-indicator-green-bg" @tap="handleSubmit">
-            <slot>
-              <text
-                class="uppercase text-lg text-indicator-green-text font-semibold"
-              >
-                {{ t`Submit` }}
-              </text>
-            </slot>
-          </Button>
+            <Button
+              class="w-full py-5 bg-indicator-green-bg"
+              @tap="handleSubmit"
+            >
+              <slot>
+                <text
+                  class="uppercase text-lg text-indicator-green-text font-semibold"
+                >
+                  {{ t`Submit` }}
+                </text>
+              </slot>
+            </Button>
+          </view>
         </view>
       </view>
+    </Modal>
+  </view>
+  <view v-else class="Container dark">
+    <view class="Card">
+      <view class="Header">
+        <text class="Title">Open P O S Shift Modal</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
+      </view>
     </view>
-  </Modal>
+  </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, provide } from 'vue';
-import Button from 'src/components/Button.vue';
-import Modal from 'src/components/Modal.vue';
-import Table from 'src/components/Controls/Table.vue';
-import { AccountTypeEnum } from 'models/baseModels/Account/types';
-import { ModelNameEnum } from 'models/types';
-import { Money } from 'pesa';
-import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { fyo } from 'src/initFyo';
-import { showToast } from 'src/utils/interactive';
-import { t } from 'fyo';
-import { ValidationError } from 'fyo/utils/errors';
-import { getPOSOpeningShiftDoc } from 'src/utils/pos';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, provide } from "vue";
+import Button from "src/components/Button.vue";
+import Modal from "src/components/Modal.vue";
+import Table from "src/components/Controls/Table.vue";
+import { AccountTypeEnum } from "models/baseModels/Account/types";
+import { ModelNameEnum } from "models/types";
+import { Money } from "pesa";
+import { POSOpeningShift } from "models/inventory/Point of Sale/POSOpeningShift";
+import { fyo } from "src/initFyo";
+import { showToast } from "src/utils/interactive";
+import { t } from "fyo";
+import { ValidationError } from "fyo/utils/errors";
+import { getPOSOpeningShiftDoc } from "src/utils/pos";
+import { useRouter } from "vue-router";
 
 // Define Emits
 const emit = defineEmits<{
-  (e: 'toggleModal', modal: string): void;
+  (e: "toggleModal", modal: string): void;
 }>();
 
 // Router Instance
@@ -94,8 +112,8 @@ const isValuesSeeded = ref(false);
 
 // Provide context to child elements
 provide(
-  'doc',
-  computed(() => posShiftDoc.value)
+  "doc",
+  computed(() => posShiftDoc.value),
 );
 
 // Computed Properties
@@ -125,7 +143,7 @@ const seedDefaultCashDenomiations = async () => {
   }
 
   for (const row of denominations) {
-    await posShiftDoc.value.append('openingCash', {
+    await posShiftDoc.value.append("openingCash", {
       denomination: row.denomination,
       count: 0,
     });
@@ -141,11 +159,11 @@ const seedPaymentMethods = async () => {
 
   const paymentMethods = (
     (await fyo.db.getAll(ModelNameEnum.PaymentMethod, {
-      fields: ['name'],
+      fields: ["name"],
     })) as { name: string }[]
   ).map((doc) => ({ paymentMethod: doc.name, amount: fyo.pesa(0) }));
 
-  await posShiftDoc.value.set('openingAmounts', paymentMethods);
+  await posShiftDoc.value.set("openingAmounts", paymentMethods);
 };
 
 const seedDefaults = async () => {
@@ -167,7 +185,7 @@ const setOpeningCashAmount = () => {
   }
 
   posShiftDoc.value.openingAmounts.map((row) => {
-    if (row.paymentMethod === 'Cash') {
+    if (row.paymentMethod === "Cash") {
       row.amount = posShiftDoc.value?.openingCashAmount;
     }
   });
@@ -189,20 +207,20 @@ const handleSubmit = async () => {
     });
 
     await posShiftDoc.value?.sync();
-    await fyo.singles.POSSettings?.setAndSync('isShiftOpen', true);
+    await fyo.singles.POSSettings?.setAndSync("isShiftOpen", true);
 
     if (!posShiftDoc.value?.openingCashAmount.isZero()) {
       const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
-        entryType: 'Journal Entry',
+        entryType: "Journal Entry",
       });
 
-      await jvDoc.append('accounts', {
+      await jvDoc.append("accounts", {
         account: posCashAccount.value,
         debit: posShiftDoc.value?.openingCashAmount as Money,
         credit: fyo.pesa(0),
       });
 
-      await jvDoc.append('accounts', {
+      await jvDoc.append("accounts", {
         account: AccountTypeEnum.Cash,
         debit: fyo.pesa(0),
         credit: posShiftDoc.value?.openingCashAmount as Money,
@@ -211,12 +229,12 @@ const handleSubmit = async () => {
       await (await jvDoc.sync()).submit();
     }
 
-    emit('toggleModal', 'ShiftOpen');
+    emit("toggleModal", "ShiftOpen");
   } catch (error) {
     showToast({
-      type: 'error',
+      type: "error",
       message: t`${error as string}`,
-      duration: 'short',
+      duration: "short",
     });
     return;
   }

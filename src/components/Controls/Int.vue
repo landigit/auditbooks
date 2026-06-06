@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import Base from './Base.vue';
-import { BaseControlProps } from 'src/composables/useBaseControl';
-import { safeParseInt } from 'utils/index';
+import Base from "./Base.vue";
+import { BaseControlProps } from "src/composables/useBaseControl";
+import { safeParseInt } from "utils/index";
 
 const props = defineProps<BaseControlProps>();
 

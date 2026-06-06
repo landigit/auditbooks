@@ -40,7 +40,7 @@
             'change',
             thetasAndStarts.length === 1 && thetasAndStarts[0]
               ? thetasAndStarts[0][0]
-              : null
+              : null,
           )
         "
       />
@@ -72,7 +72,7 @@
           valueFormatter(
             active !== null && sectors.length !== 0 && sectors[active]
               ? sectors[active].value
-              : totalValue
+              : totalValue,
           )
         }}
       </text>
@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 interface Sector {
   value: number;
@@ -118,7 +118,7 @@ const props = withDefaults(
   }>(),
   {
     sectors: () => [],
-    totalLabel: 'Total',
+    totalLabel: "Total",
     radius: 36,
     startAngle: Math.PI,
     thickness: 10,
@@ -128,18 +128,18 @@ const props = withDefaults(
     offsetY: 0,
     textOffsetX: 0,
     textOffsetY: 0,
-  }
+  },
 );
 
 const emit = defineEmits<{
-  (e: 'change', active: number | null): void;
+  (e: "change", active: number | null): void;
 }>();
 
 const cx = computed(() => 50 + props.offsetX);
 const cy = computed(() => 50 + props.offsetY);
 
 const totalValue = computed(() =>
-  props.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0)
+  props.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0),
 );
 
 const thetasAndStarts = computed<[number, number, number][]>(() => {
@@ -167,7 +167,7 @@ const thetasAndStarts = computed<[number, number, number][]>(() => {
 });
 
 const hasNonZeroValues = computed(() =>
-  thetasAndStarts.value.some((t) => props.sectors[t[0]]?.value !== 0)
+  thetasAndStarts.value.some((t) => props.sectors[t[0]]?.value !== 0),
 );
 
 function getArcPath(
@@ -175,7 +175,7 @@ function getArcPath(
   cyVal: number,
   rVal: number,
   startVal: number,
-  thetaVal: number
+  thetaVal: number,
 ): string {
   const start = startVal + props.startAngle;
   const startX = cxVal + rVal * Math.cos(start);
@@ -189,7 +189,7 @@ function getArcPath(
 }
 
 function getSectorColor(index: number): string {
-  return props.sectors[index]?.color ?? '';
+  return props.sectors[index]?.color ?? "";
 }
 </script>
 

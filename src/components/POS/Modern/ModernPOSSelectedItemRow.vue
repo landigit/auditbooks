@@ -237,16 +237,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, inject } from 'vue';
-import Currency from 'src/components/Controls/Currency.vue';
-import Float from 'src/components/Controls/Float.vue';
-import Int from 'src/components/Controls/Int.vue';
-import Link from 'src/components/Controls/Link.vue';
-import Text from 'src/components/Controls/Text.vue';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { validateSerialNumberCount } from 'src/utils/pos';
+import { ref, computed, watch, inject } from "vue";
+import Currency from "src/components/Controls/Currency.vue";
+import Float from "src/components/Controls/Float.vue";
+import Int from "src/components/Controls/Int.vue";
+import Link from "src/components/Controls/Link.vue";
+import Text from "src/components/Controls/Text.vue";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import { validateSerialNumberCount } from "src/utils/pos";
 
 const props = defineProps({
   row: { type: SalesInvoiceItem, required: true },
@@ -258,15 +258,15 @@ const props = defineProps({
 });
 
 const emit = defineEmits([
-  'toggleModal',
-  'runSinvFormulas',
-  'selectedRow',
-  'applyPricingRule',
-  'setExpandedBatchId',
+  "toggleModal",
+  "runSinvFormulas",
+  "selectedRow",
+  "applyPricingRule",
+  "setExpandedBatchId",
 ]);
 
-const isDiscountingEnabled = inject('isDiscountingEnabled') as boolean;
-const itemSerialNumbers = inject('itemSerialNumbers') as {
+const isDiscountingEnabled = inject("isDiscountingEnabled") as boolean;
+const itemSerialNumbers = inject("itemSerialNumbers") as {
   [item: string]: string;
 };
 
@@ -291,7 +291,7 @@ watch(
     if (newVal !== props.row.name) {
       isExapanded.value = false;
     }
-  }
+  },
 );
 
 watch(
@@ -300,19 +300,19 @@ watch(
     if (newBatch) {
       availableQtyInBatch.value = await getAvailableQtyInBatch();
       isExapanded.value = true;
-      emit('setExpandedBatchId', props.row.name);
+      emit("setExpandedBatchId", props.row.name);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function toggleExpand() {
   if (isExapanded.value) {
     isExapanded.value = false;
-    emit('setExpandedBatchId', undefined);
+    emit("setExpandedBatchId", undefined);
   } else {
     isExapanded.value = true;
-    emit('setExpandedBatchId', props.row.name);
+    emit("setExpandedBatchId", props.row.name);
   }
 }
 
@@ -321,8 +321,8 @@ function handleOpenKeyboard(row: SalesInvoiceItem, field: string) {
     return;
   }
 
-  emit('selectedRow', row, field);
-  emit('toggleModal', 'Keyboard');
+  emit("selectedRow", row, field);
+  emit("toggleModal", "Keyboard");
 }
 
 async function getAvailableQtyInBatch(): Promise<number> {
@@ -336,13 +336,13 @@ async function getAvailableQtyInBatch(): Promise<number> {
       undefined,
       undefined,
       undefined,
-      props.row.batch
+      props.row.batch,
     )) ?? 0
   );
 }
 
 async function setBatch(batch: string) {
-  props.row.set('batch', batch);
+  props.row.set("batch", batch);
   availableQtyInBatch.value = await getAvailableQtyInBatch();
 }
 
@@ -355,15 +355,15 @@ function setSerialNumber(serialNumber: string) {
   validateSerialNumberCount(
     serialNumber,
     props.row.quantity ?? 0,
-    props.row.item!
+    props.row.item!,
   );
 }
 
 async function removeAddedItem(row: SalesInvoiceItem) {
-  props.row.parentdoc?.remove('items', row?.idx as number);
+  props.row.parentdoc?.remove("items", row?.idx as number);
 
   if (!row.isFreeItem) {
-    emit('applyPricingRule');
+    emit("applyPricingRule");
   }
 }
 </script>

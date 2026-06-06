@@ -45,14 +45,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue';
-import Row from 'src/components/Row.vue';
-import ModernPOSSelectedItemRow from './ModernPOSSelectedItemRow.vue';
-import { isNumeric } from 'src/utils';
-import { t } from 'fyo';
-import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
-import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { Field } from 'schemas/types';
+import { computed, inject } from "vue";
+import Row from "src/components/Row.vue";
+import ModernPOSSelectedItemRow from "./ModernPOSSelectedItemRow.vue";
+import { isNumeric } from "src/utils";
+import { t } from "fyo";
+import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
+import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
+import { Field } from "schemas/types";
 
 defineProps({
   expandedBatchId: {
@@ -62,13 +62,13 @@ defineProps({
 });
 
 const emit = defineEmits([
-  'toggleModal',
-  'selectedRow',
-  'applyPricingRule',
-  'setExpandedBatchId',
+  "toggleModal",
+  "selectedRow",
+  "applyPricingRule",
+  "setExpandedBatchId",
 ]);
 
-const sinvDoc = inject('sinvDoc') as SalesInvoice;
+const sinvDoc = inject("sinvDoc") as SalesInvoice;
 
 const ratio = computed(() => {
   return [0.1, 0.8, 0.4, 0.8, 0.8, 0.3];
@@ -77,46 +77,46 @@ const ratio = computed(() => {
 const tableFields = computed(() => {
   return [
     {
-      fieldname: 'toggler',
-      fieldtype: 'Link',
-      label: ' ',
+      fieldname: "toggler",
+      fieldtype: "Link",
+      label: " ",
     },
     {
-      fieldname: 'item',
-      fieldtype: 'Link',
+      fieldname: "item",
+      fieldtype: "Link",
       label: t`Item`,
-      placeholder: 'Item',
+      placeholder: "Item",
       required: true,
-      schemaName: 'Item',
+      schemaName: "Item",
     },
     {
-      fieldname: 'quantity',
+      fieldname: "quantity",
       label: t`Quantity`,
-      placeholder: 'Quantity',
-      fieldtype: 'Int',
+      placeholder: "Quantity",
+      fieldtype: "Int",
       required: true,
-      schemaName: '',
+      schemaName: "",
     },
     {
-      fieldname: 'rate',
+      fieldname: "rate",
       label: t`Rate`,
-      placeholder: 'Rate',
-      fieldtype: 'Currency',
+      placeholder: "Rate",
+      fieldtype: "Currency",
       required: true,
-      schemaName: '',
+      schemaName: "",
     },
     {
-      fieldname: 'amount',
+      fieldname: "amount",
       label: t`Amount`,
-      placeholder: 'Amount',
-      fieldtype: 'Currency',
+      placeholder: "Amount",
+      fieldtype: "Currency",
       required: true,
-      schemaName: '',
+      schemaName: "",
     },
     {
-      fieldname: 'removeItem',
-      fieldtype: 'Link',
-      label: ' ',
+      fieldname: "removeItem",
+      fieldtype: "Link",
+      label: " ",
     },
   ];
 });
@@ -126,6 +126,6 @@ async function runSinvFormulas() {
 }
 
 function selectedItemRow(row: SalesInvoiceItem, field: string) {
-  emit('selectedRow', row, field);
+  emit("selectedRow", row, field);
 }
 </script>

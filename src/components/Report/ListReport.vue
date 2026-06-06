@@ -69,13 +69,13 @@
   </view>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue';
-import { isNumeric } from 'src/utils';
-import { languageDirectionKey } from 'src/utils/injectionKeys';
-import { fyo } from 'src/initFyo';
-import { t } from 'fyo';
-import Paginator from '../Paginator.vue';
-import WithScroll from '../WithScroll.vue';
+import { ref, computed, inject } from "vue";
+import { isNumeric } from "src/utils";
+import { languageDirectionKey } from "src/utils/injectionKeys";
+import { fyo } from "src/initFyo";
+import { t } from "fyo";
+import Paginator from "../Paginator.vue";
+import WithScroll from "../WithScroll.vue";
 
 const props = defineProps<{
   report: any;
@@ -122,47 +122,47 @@ function getCellStyle(cell: any, _i: number) {
   const styles: Record<string, string> = {};
   const width = cell.width ?? 1;
 
-  let align = cell.align ?? 'left';
-  if (languageDirection?.value === 'rtl') {
-    align = languageDirection?.value === 'rtl' ? 'right' : 'left';
+  let align = cell.align ?? "left";
+  if (languageDirection?.value === "rtl") {
+    align = languageDirection?.value === "rtl" ? "right" : "left";
   }
 
-  styles['width'] = `${width * wconst}rem`;
-  styles['text-align'] = align;
+  styles["width"] = `${width * wconst}rem`;
+  styles["text-align"] = align;
 
   if (cell.bold) {
-    styles['font-weight'] = 'bold';
+    styles["font-weight"] = "bold";
   }
 
   if (cell.italics) {
-    styles['font-style'] = 'oblique 15deg';
+    styles["font-style"] = "oblique 15deg";
   }
 
   if (_i === 0) {
-    if (languageDirection?.value === 'rtl') {
-      styles['padding-right'] = '8px';
+    if (languageDirection?.value === "rtl") {
+      styles["padding-right"] = "8px";
     } else {
-      styles['padding-left'] = '8px';
+      styles["padding-left"] = "8px";
     }
   }
 
   if (!cell.align && isNumeric(cell.fieldtype)) {
-    styles['text-align'] = 'right';
+    styles["text-align"] = "right";
   }
 
   if (_i === props.report.columns.length - 1) {
-    if (languageDirection?.value === 'rtl') {
-      styles['padding-left'] = '8px';
+    if (languageDirection?.value === "rtl") {
+      styles["padding-left"] = "8px";
     } else {
-      styles['padding-right'] = '8px';
+      styles["padding-right"] = "8px";
     }
   }
 
   if (cell.indent) {
-    if (languageDirection?.value === 'rtl') {
-      styles['padding-right'] = `${cell.indent * 2}rem`;
+    if (languageDirection?.value === "rtl") {
+      styles["padding-right"] = `${cell.indent * 2}rem`;
     } else {
-      styles['padding-left'] = `${cell.indent * 2}rem`;
+      styles["padding-left"] = `${cell.indent * 2}rem`;
     }
   }
 
@@ -170,29 +170,29 @@ function getCellStyle(cell: any, _i: number) {
 }
 
 function getCellColorClass(cell: any) {
-  if (cell.color === 'red') {
-    return 'text-error';
-  } else if (cell.color === 'green') {
-    return 'text-indicator-green-text';
+  if (cell.color === "red") {
+    return "text-error";
+  } else if (cell.color === "green") {
+    return "text-indicator-green-text";
   }
 
   if (!cell.rawValue) {
-    return 'text-description';
+    return "text-description";
   }
 
-  if (typeof cell.rawValue !== 'number') {
-    return 'text-main';
+  if (typeof cell.rawValue !== "number") {
+    return "text-main";
   }
 
   if (cell.rawValue === 0) {
-    return 'text-description';
+    return "text-description";
   }
 
   const prec = fyo?.singles?.displayPrecision ?? 2;
   if (Number(cell.rawValue.toFixed(prec)) === 0) {
-    return 'text-description';
+    return "text-description";
   }
 
-  return 'text-main';
+  return "text-main";
 }
 </script>

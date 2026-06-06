@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue';
+import { computed, useAttrs } from "vue";
 
 // Define Props
 const props = withDefaults(
@@ -21,12 +21,12 @@ const props = withDefaults(
     background?: boolean;
   }>(),
   {
-    type: 'secondary',
+    type: "secondary",
     icon: false,
     disabled: false,
     padding: true,
     background: true,
-  }
+  },
 );
 
 const attrs = useAttrs();
@@ -35,18 +35,18 @@ const attrs = useAttrs();
 const _class = computed(() => {
   const customClass = attrs.class;
   const hasHeightOrPadding =
-    typeof customClass === 'string' &&
+    typeof customClass === "string" &&
     (/\bh-\d+/.test(customClass) || /\bpy-\d+/.test(customClass));
 
   return {
-    'opacity-50 cursor-not-allowed pointer-events-none': props.disabled,
-    'text-button-primary-text': props.type === 'primary',
-    'bg-button-primary-bg': props.type === 'primary' && props.background,
-    'text-button-secondary-text': props.type !== 'primary',
-    'bg-button-secondary-bg': props.type !== 'primary' && props.background,
-    'h-8': props.background && !hasHeightOrPadding,
-    'px-3': props.padding && props.icon,
-    'px-6': props.padding && !props.icon,
+    "opacity-50 cursor-not-allowed pointer-events-none": props.disabled,
+    "text-button-primary-text": props.type === "primary",
+    "bg-button-primary-bg": props.type === "primary" && props.background,
+    "text-button-secondary-text": props.type !== "primary",
+    "bg-button-secondary-bg": props.type !== "primary" && props.background,
+    "h-8": props.background && !hasHeightOrPadding,
+    "px-3": props.padding && props.icon,
+    "px-6": props.padding && !props.icon,
   };
 });
 </script>

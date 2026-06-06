@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue';
-import { DialogTitle, type DialogTitleProps } from 'reka-ui';
-import { cn } from 'src/utils/cn';
+import { type HTMLAttributes, computed } from "vue";
+import { DialogTitle, type DialogTitleProps } from "reka-ui";
+import { cn } from "src/utils/cn";
 
 const props = defineProps<
-  DialogTitleProps & { class?: HTMLAttributes['class'] }
+  DialogTitleProps & { class?: HTMLAttributes["class"] }
 >();
 
 const delegatedProps = computed(() => {
@@ -19,7 +19,7 @@ const delegatedProps = computed(() => {
     :class="
       cn(
         'text-lg font-semibold leading-none tracking-tight text-main',
-        props.class
+        props.class,
       )
     "
   >
