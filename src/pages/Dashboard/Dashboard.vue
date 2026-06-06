@@ -31,7 +31,7 @@
           :common-period="period || undefined"
           @period-change="handlePeriodChange"
         />
-        <view class="border-b border-border"   />
+        <view class="border-b border-border" />
         <view class="flex flex-col md:flex-row w-full">
           <UnpaidInvoices
             :schema-name="'SalesInvoice'"
@@ -46,7 +46,7 @@
             @period-change="handlePeriodChange"
           />
         </view>
-        <view class="border-b border-border"   />
+        <view class="border-b border-border" />
         <view class="flex flex-col md:flex-row w-full">
           <ProfitAndLoss
             class="w-full md:w-1/2 p-4 border-b md:border-b-0 md:border-e border-border"
@@ -59,7 +59,7 @@
             @period-change="handlePeriodChange"
           />
         </view>
-        <view class="border-b border-border"   />
+        <view class="border-b border-border" />
       </view>
     </view>
   </view>

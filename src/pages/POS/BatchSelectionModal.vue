@@ -28,7 +28,9 @@
           :disabled="!selectedBatch"
           @tap="submitSelection"
         >
-          <text class="uppercase text-lg text-indicator-green-text font-semibold">
+          <text
+            class="uppercase text-lg text-indicator-green-text font-semibold"
+          >
             {{ t`Select` }}
           </text>
         </Button>

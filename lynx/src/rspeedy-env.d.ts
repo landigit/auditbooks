@@ -9,4 +9,4 @@ declare module '@lynx-js/types' {
   }
 }
 
-export {}
+export {};

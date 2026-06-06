@@ -1,7 +1,7 @@
-import { onUnmounted, ref } from 'vue-lynx'
+import { onUnmounted, ref } from 'vue-lynx';
 
-import { createFlappy } from './lib/flappy.js'
-import type { FlappyOptions } from './lib/flappy.js'
+import { createFlappy } from './lib/flappy.js';
+import type { FlappyOptions } from './lib/flappy.js';
 
 /**
  * Vue composable for flappy-bird physics.
@@ -22,15 +22,15 @@ import type { FlappyOptions } from './lib/flappy.js'
  * ```
  */
 export function useFlappy(options?: FlappyOptions) {
-  const y = ref(0)
+  const y = ref(0);
 
   const engine = createFlappy((newY) => {
-    y.value = newY
-  }, options)
+    y.value = newY;
+  }, options);
 
   onUnmounted(() => {
-    engine.destroy()
-  })
+    engine.destroy();
+  });
 
-  return { y, jump: () => engine.jump() }
+  return { y, jump: () => engine.jump() };
 }

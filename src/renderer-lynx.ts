@@ -41,6 +41,9 @@ import { useAppStore } from './stores/app';
 
     app.mount();
   } catch (err) {
-    console.error('[Lynx Renderer Error]: Failed to bootstrap Vue Lynx app:', err);
+    console.error(
+      '[Lynx Renderer Error]: Failed to bootstrap Vue Lynx app:',
+      err
+    );
   }
 })();

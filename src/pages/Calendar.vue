@@ -131,7 +131,8 @@ async function openTransaction(t: any) {
             <view class="flex flex-col">
               <text
                 class="text-xs uppercase tracking-wider text-description font-semibold"
-                >{{ t.schemaName }}</text>
+                >{{ t.schemaName }}</text
+              >
               <text class="font-medium text-main">{{ t.name }}</text>
               <text class="text-sm text-description">{{
                 t.party || t.reference_name || ''

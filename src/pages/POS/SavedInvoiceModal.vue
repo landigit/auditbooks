@@ -4,7 +4,7 @@
       {{ t`Invoices` }}
     </text>
 
-    <view class="border-b border-border mt-2"   />
+    <view class="border-b border-border mt-2" />
 
     <view class="mt-4">
       <input
@@ -78,7 +78,9 @@
           @tap="emit('toggleModal', 'SavedInvoice')"
         >
           <slot>
-            <text class="uppercase text-lg text-indicator-red-text font-semibold">
+            <text
+              class="uppercase text-lg text-indicator-red-text font-semibold"
+            >
               {{ t`Cancel` }}
             </text>
           </slot>

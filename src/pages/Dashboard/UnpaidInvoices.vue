@@ -145,8 +145,8 @@ const paidColor = computed(() => {
     return 'bg-canvas-muted';
   }
   return color.value === 'blue'
-    ? 'bg-(--chart-blue-main)'
-    : 'bg-(--chart-pink-main)';
+    ? 'bg-[var(--chart-blue-main)]'
+    : 'bg-[var(--chart-pink-main)]';
 });
 
 const unpaidColor = computed(() => {
@@ -154,8 +154,8 @@ const unpaidColor = computed(() => {
     return 'bg-canvas-muted';
   }
   return color.value === 'blue'
-    ? 'bg-(--chart-blue-muted)'
-    : 'bg-(--chart-pink-muted)';
+    ? 'bg-[var(--chart-blue-muted)]'
+    : 'bg-[var(--chart-pink-muted)]';
 });
 
 // Methods

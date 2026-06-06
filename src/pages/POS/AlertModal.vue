@@ -1,7 +1,7 @@
 <template>
   <Modal class="h-auto px-6 select-none" :set-close-listener="false">
     <text class="text-center font-semibold py-3">{{ t`Alert` }}</text>
-    <view class="border-b border-border"   />
+    <view class="border-b border-border" />
     <text class="py-6">
       {{ t`Clicking continue will remove all the selected items.` }}
     </text>
@@ -13,7 +13,9 @@
           @tap="emit('toggleModal', 'Alert')"
         >
           <slot>
-            <text class="uppercase text-lg text-indicator-red-text font-semibold">
+            <text
+              class="uppercase text-lg text-indicator-red-text font-semibold"
+            >
               {{ t`Cancel` }}
             </text>
           </slot>
@@ -41,7 +43,9 @@
           @tap="emit('saveAndContinue')"
         >
           <slot>
-            <text class="uppercase text-lg text-indicator-blue-text font-semibold">
+            <text
+              class="uppercase text-lg text-indicator-blue-text font-semibold"
+            >
               {{ t`Save and Continue` }}
             </text>
           </slot>

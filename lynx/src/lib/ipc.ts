@@ -39,7 +39,10 @@ async function callBackend(action: string, args: unknown[] = []): Promise<any> {
   }
 }
 
-async function callBackendWrapped(action: string, args: unknown[] = []): Promise<any> {
+async function callBackendWrapped(
+  action: string,
+  args: unknown[] = []
+): Promise<any> {
   try {
     const response = await fetch(BACKEND_URL, {
       method: 'POST',
@@ -77,7 +80,10 @@ async function callBackendWrapped(action: string, args: unknown[] = []): Promise
 const configStore: Record<string, any> = {};
 
 const storeInstance = {
-  get<K extends keyof ConfigMap>(key: K, defaultValue?: ConfigMap[K]): ConfigMap[K] | undefined {
+  get<K extends keyof ConfigMap>(
+    key: K,
+    defaultValue?: ConfigMap[K]
+  ): ConfigMap[K] | undefined {
     const val = configStore[`config:${key}`];
     if (val === undefined) return defaultValue;
     return val;
@@ -93,7 +99,9 @@ const storeInstance = {
 export const lynxIpc: IPC = {
   desktop: false,
   reloadWindow() {
-    console.warn('[Lynx IPC] reloadWindow: window reloading is not supported in native Lynx.');
+    console.warn(
+      '[Lynx IPC] reloadWindow: window reloading is not supported in native Lynx.'
+    );
   },
   minimizeWindow() {
     console.log('[Lynx IPC] minimizeWindow (stub)');
@@ -114,7 +122,9 @@ export const lynxIpc: IPC = {
   async getCreds(): Promise<Creds> {
     return callBackend(IPC_ACTIONS.GET_CREDS);
   },
-  async getLanguageMap(code: string): Promise<{ languageMap: LanguageMap; success: boolean; message: string }> {
+  async getLanguageMap(
+    code: string
+  ): Promise<{ languageMap: LanguageMap; success: boolean; message: string }> {
     return callBackend(IPC_ACTIONS.GET_LANGUAGE_MAP, [code]);
   },
   async getTemplates(posTemplateWidth?: number): Promise<TemplateFile[]> {
@@ -127,15 +137,23 @@ export const lynxIpc: IPC = {
     // Return standard default file path mapped in dev backend
     return callBackend(IPC_ACTIONS.SELECT_FILE, [options]);
   },
-  async getSaveFilePath(options: any): Promise<{ canceled: boolean; filePath?: string }> {
+  async getSaveFilePath(
+    options: any
+  ): Promise<{ canceled: boolean; filePath?: string }> {
     // Bypass prompt dialogs, request direct save file path from dev backend
     const defaultPath = options?.defaultPath || 'saved_file.db';
-    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [defaultPath]);
+    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [
+      defaultPath,
+    ]);
     return { canceled: false, filePath: resolvedPath };
   },
-  async getOpenFilePath(options: any): Promise<{ canceled: boolean; filePaths: string[] }> {
+  async getOpenFilePath(
+    options: any
+  ): Promise<{ canceled: boolean; filePaths: string[] }> {
     // Select and return first active DB in dev backend
-    const response = await callBackend(IPC_ACTIONS.GET_OPEN_FILEPATH, [options]);
+    const response = await callBackend(IPC_ACTIONS.GET_OPEN_FILEPATH, [
+      options,
+    ]);
     return { canceled: response.canceled, filePaths: response.filePaths };
   },
   async checkDbAccess(filePath: string): Promise<boolean> {
@@ -156,13 +174,29 @@ export const lynxIpc: IPC = {
   showItemInFolder(filePath: string) {
     console.log('[Lynx IPC] showItemInFolder (stub):', filePath);
   },
-  async makePDF(html: string, savePath: string, width: number, height: number): Promise<boolean> {
+  async makePDF(
+    html: string,
+    savePath: string,
+    width: number,
+    height: number
+  ): Promise<boolean> {
     // Make PDF runs on backend using Playwright
-    await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [html, savePath, width, height]);
+    await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [
+      html,
+      savePath,
+      width,
+      height,
+    ]);
     return true;
   },
-  async printDocument(html: string, width: number, height: number): Promise<boolean> {
-    console.warn('[Lynx IPC] printDocument: direct document printing is not supported in native Lynx.');
+  async printDocument(
+    html: string,
+    width: number,
+    height: number
+  ): Promise<boolean> {
+    console.warn(
+      '[Lynx IPC] printDocument: direct document printing is not supported in native Lynx.'
+    );
     return false;
   },
   async getDbList(): Promise<ConfigFilesWithModified[]> {
@@ -171,7 +205,11 @@ export const lynxIpc: IPC = {
   async getDbDefaultPath(companyName: string): Promise<string> {
     return callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [companyName]);
   },
-  async getEnv(): Promise<{ isDevelopment: boolean; platform: string; version: string }> {
+  async getEnv(): Promise<{
+    isDevelopment: boolean;
+    platform: string;
+    version: string;
+  }> {
     return {
       isDevelopment: true,
       platform: 'lynx',
@@ -190,7 +228,9 @@ export const lynxIpc: IPC = {
   async sendAPIRequest(
     endpoint: string,
     options: RequestInit | undefined
-  ): Promise<{ [key: string]: string | number | boolean | Date | object | object[] }[]> {
+  ): Promise<
+    { [key: string]: string | number | boolean | Date | object | object[] }[]
+  > {
     return callBackend(IPC_ACTIONS.SEND_API_REQUEST, [endpoint, options]);
   },
 
@@ -209,16 +249,28 @@ export const lynxIpc: IPC = {
     async getSchema(): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_SCHEMA);
     },
-    async create(dbPath: string, countryCode?: string): Promise<BackendResponse> {
+    async create(
+      dbPath: string,
+      countryCode?: string
+    ): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_CREATE, [dbPath, countryCode]);
     },
-    async connect(dbPath: string, countryCode?: string): Promise<BackendResponse> {
+    async connect(
+      dbPath: string,
+      countryCode?: string
+    ): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_CONNECT, [dbPath, countryCode]);
     },
-    async call(method: DatabaseMethod, ...args: unknown[]): Promise<BackendResponse> {
+    async call(
+      method: DatabaseMethod,
+      ...args: unknown[]
+    ): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_CALL, [method, ...args]);
     },
-    async bespoke(method: string, ...args: unknown[]): Promise<BackendResponse> {
+    async bespoke(
+      method: string,
+      ...args: unknown[]
+    ): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_BESPOKE, [method, ...args]);
     },
   },

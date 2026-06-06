@@ -48,10 +48,7 @@
             </slot>
           </Button>
 
-          <Button
-            class="w-full py-5 bg-indicator-green-bg"
-            @tap="handleSubmit"
-          >
+          <Button class="w-full py-5 bg-indicator-green-bg" @tap="handleSubmit">
             <slot>
               <text
                 class="uppercase text-lg text-indicator-green-text font-semibold"

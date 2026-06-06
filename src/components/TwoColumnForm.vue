@@ -41,7 +41,10 @@
             :text-end="false"
             @change="async (value) => await onChange(df, value)"
           />
-          <view v-if="errors[df.fieldname]" class="text-sm text-error mt-2 ps-2">
+          <view
+            v-if="errors[df.fieldname]"
+            class="text-sm text-error mt-2 ps-2"
+          >
             {{ errors[df.fieldname] }}
           </view>
         </view>

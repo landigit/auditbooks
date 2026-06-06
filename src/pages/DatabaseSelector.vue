@@ -22,7 +22,7 @@
         </text>
       </view>
 
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
 
       <!-- New File (Blue Icon) -->
       <view
@@ -95,7 +95,7 @@
           </text>
         </view>
       </view>
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
 
       <!-- File List -->
       <view class="overflow-y-auto" style="max-height: 340px">
@@ -135,7 +135,7 @@
           </button>
         </view>
       </view>
-      <view class="border-b border-border"  v-if="files?.length"  />
+      <view class="border-b border-border" v-if="files?.length" />
 
       <!-- Language Selector -->
       <view

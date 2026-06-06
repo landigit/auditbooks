@@ -2,7 +2,7 @@
   <view>
     <!-- Export Wizard Header -->
     <FormHeader :form-title="label" :form-sub-title="t`Export Wizard`" />
-    <view class="border-b border-border"   />
+    <view class="border-b border-border" />
 
     <!-- Export Config -->
     <view class="grid grid-cols-3 p-4 gap-4">
@@ -31,7 +31,7 @@
         @change="(value: number) => (limit = value)"
       />
     </view>
-    <view class="border-b border-border"   />
+    <view class="border-b border-border" />
 
     <!-- Fields Selection -->
     <view class="max-h-80 overflow-auto custom-scroll custom-scroll-thumb2">
@@ -79,7 +79,7 @@
     </view>
 
     <!-- Export Button -->
-    <view class="border-b border-border"   />
+    <view class="border-b border-border" />
     <view class="p-4 flex justify-between items-center">
       <text class="text-sm text-description">
         {{ t`${numSelected} fields selected` }}

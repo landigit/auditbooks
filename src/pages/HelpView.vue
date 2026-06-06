@@ -31,7 +31,9 @@
                 name="file-warning"
                 class="w-12 h-12 mb-4 text-red-400"
               />
-              <text class="text-lg font-bold mb-2">Documentation Not Found</text>
+              <text class="text-lg font-bold mb-2"
+                >Documentation Not Found</text
+              >
               <text class="mb-4 text-sm opacity-90">{{ error }}</text>
               <Button @tap="loadDefault">Go to Getting Started</Button>
             </view>

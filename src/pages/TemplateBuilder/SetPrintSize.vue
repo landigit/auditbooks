@@ -1,7 +1,7 @@
 <template>
   <view class="w-form">
     <FormHeader :form-title="t`Set Print Size`" />
-    <view class="border-b border-border"   />
+    <view class="border-b border-border" />
     <view class="p-4 w-full flex flex-col gap-4">
       <text class="text-base text-main">
         {{
@@ -35,9 +35,7 @@
       </view>
     </view>
     <view class="flex border-t border-border p-4">
-      <Button class="ml-auto" type="primary" @tap="done">{{
-        t`Done`
-      }}</Button>
+      <Button class="ml-auto" type="primary" @tap="done">{{ t`Done` }}</Button>
     </view>
   </view>
 </template>

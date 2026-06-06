@@ -27,7 +27,8 @@
             <text
               v-if="selectValue || value"
               class="cursor-text text-main w-full"
-              >{{ selectValue ? selectValue : value }}</text>
+              >{{ selectValue ? selectValue : value }}</text
+            >
             <text v-else>{{ inputPlaceholder }}</text>
             <LucideIcon
               v-if="!isReadOnly"

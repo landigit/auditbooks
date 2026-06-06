@@ -51,7 +51,9 @@
 
       <!-- Recent Databases List -->
       <view class="FileListContainer">
-        <text class="ListHeader" v-if="files.length">{{ t`Recent Companies` }}</text>
+        <text class="ListHeader" v-if="files.length">{{
+          t`Recent Companies`
+        }}</text>
         <view class="FileListView">
           <view
             v-for="(file, i) in files"

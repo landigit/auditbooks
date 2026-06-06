@@ -94,7 +94,9 @@
       @apply-pricing-rule="emitEvent('applyPricingRule')"
     />
 
-    <view class="bg-canvas-muted flex flex-col lg:grid lg:grid-cols-9 gap-3 p-4">
+    <view
+      class="bg-canvas-muted flex flex-col lg:grid lg:grid-cols-9 gap-3 p-4"
+    >
       <view class="w-full lg:col-span-3 flex h-auto">
         <view class="flex flex-col w-full gap-3">
           <view

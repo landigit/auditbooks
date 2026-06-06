@@ -206,8 +206,11 @@ function getFeatureFlags(): string[] {
 
     return Object.entries(doc as Doc).reduce(
       (acc, [key, value]) => {
-        const fieldsArray = ((safeGet(fyo.schemaMap, docName) as any)?.fields ?? []) as any[];
-        const fieldsMap = new Map<string, any>(fieldsArray.map((f: any) => [f.fieldname, f]));
+        const fieldsArray = ((safeGet(fyo.schemaMap, docName) as any)?.fields ??
+          []) as any[];
+        const fieldsMap = new Map<string, any>(
+          fieldsArray.map((f: any) => [f.fieldname, f])
+        );
 
         const field = fieldsMap.get(key);
         if (

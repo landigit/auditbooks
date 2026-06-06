@@ -23,7 +23,9 @@
       :align="right ? 'end' : 'start'"
       class="bg-surface text-main rounded w-[var(--reka-popover-trigger-width)] min-w-40 overflow-hidden p-0 border border-border shadow-lg"
     >
-      <view class="bg-surface text-main rounded w-full min-w-40 overflow-hidden">
+      <view
+        class="bg-surface text-main rounded w-full min-w-40 overflow-hidden"
+      >
         <view
           class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm"
         >

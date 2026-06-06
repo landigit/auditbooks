@@ -2,7 +2,7 @@
   <Modal class="h-auto w-96" :set-close-listener="false">
     <text class="text-center font-semibold py-3">Apply Coupon Code</text>
     <view class="px-10">
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
       <text v-if="appliedCoupons.length" class="text-xs m-2 text-description">
         {{ t`Applied Coupon Codes` }}
       </text>

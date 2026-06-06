@@ -19,7 +19,9 @@
           @mouseleave="active = undefined"
         >
           <view class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
-          <text class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28">
+          <text
+            class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28"
+          >
             {{ d.account }}
           </text>
           <text class="whitespace-nowrap flex-shrink-0 ms-auto">

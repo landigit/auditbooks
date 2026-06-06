@@ -5,8 +5,9 @@ package-lock.json
 /dist
 /notebook
 /.agents/
-*books/
+/books/
 lynx/dist/
+
 
 # local env files
 .env

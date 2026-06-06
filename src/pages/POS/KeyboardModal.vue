@@ -1,8 +1,10 @@
 <template>
   <Modal class="h-auto" :set-close-listener="false">
     <view class="px-5" style="width: 30vw">
-      <text class="text-center text-description font-semibold py-3">Keyboard</text>
-      <view class="border-b border-border"   />
+      <text class="text-center text-description font-semibold py-3"
+        >Keyboard</text
+      >
+      <view class="border-b border-border" />
       <view class="mx-6 my-3">
         <component
           :is="selectedItemRow?.fieldMap[selectedItemField!].fieldtype"

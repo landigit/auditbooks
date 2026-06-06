@@ -3,7 +3,9 @@ import path from 'path';
 
 const targetPathArg = process.argv[2];
 if (!targetPathArg) {
-  console.error("Usage: node scripts/migrate-to-lynx-tags.mjs <file-or-directory-path>");
+  console.error(
+    'Usage: node scripts/migrate-to-lynx-tags.mjs <file-or-directory-path>'
+  );
   process.exit(1);
 }
 
@@ -14,9 +16,9 @@ function migrateFile(file) {
     console.error(`File not found: ${file}`);
     return;
   }
-  
+
   let content = fs.readFileSync(file, 'utf8');
-  
+
   // Regexp replacements to map HTML nodes and event listeners to Lynx compatible tags
   let newContent = content
     .replace(/<div(\s|>)/g, '<view$1')
@@ -41,13 +43,13 @@ function migrateFile(file) {
     while (true) {
       const startIdx = str.indexOf(startTag, index);
       if (startIdx === -1) break;
-      
+
       const nextChar = str[startIdx + startTag.length];
       if (nextChar && /\w/.test(nextChar)) {
         index = startIdx + startTag.length;
         continue;
       }
-      
+
       let inDoubleQuotes = false;
       let inSingleQuotes = false;
       let tagEndIdx = -1;
@@ -62,9 +64,9 @@ function migrateFile(file) {
           break;
         }
       }
-      
+
       if (tagEndIdx === -1) break;
-      
+
       const tagMatch = str.slice(startIdx, tagEndIdx + 1);
       const tagContent = str.slice(startIdx + startTag.length, tagEndIdx);
       results.push({ startIdx, endIdx: tagEndIdx + 1, tagMatch, tagContent });
@@ -80,9 +82,16 @@ function migrateFile(file) {
       const classRegex = /(?<![:-])\bclass="([^"]*)"/g;
       const matches = [...tagContent.matchAll(classRegex)];
       if (matches.length > 1) {
-        const classValues = matches.map(m => m[1]);
-        const combinedClasses = Array.from(new Set(classValues.flatMap(c => c.split(/\s+/)))).filter(Boolean).join(' ');
-        const cleanedContent = tagContent.replace(/(?<![:-])\bclass="[^"]*"/g, '');
+        const classValues = matches.map((m) => m[1]);
+        const combinedClasses = Array.from(
+          new Set(classValues.flatMap((c) => c.split(/\s+/)))
+        )
+          .filter(Boolean)
+          .join(' ');
+        const cleanedContent = tagContent.replace(
+          /(?<![:-])\bclass="[^"]*"/g,
+          ''
+        );
         const cleanedTag = `<${tagName} class="${combinedClasses}"${cleanedContent}>`;
         str = str.slice(0, startIdx) + cleanedTag + str.slice(endIdx);
       }
@@ -92,7 +101,7 @@ function migrateFile(file) {
 
   newContent = cleanDuplicateClassesForTag('view', newContent);
   newContent = cleanDuplicateClassesForTag('text', newContent);
-    
+
   if (content !== newContent) {
     fs.writeFileSync(file, newContent, 'utf8');
     console.log(`[Success] Migrated: ${file}`);

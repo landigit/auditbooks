@@ -8,7 +8,8 @@
         for="attachment"
         class="block whitespace-nowrap overflow-auto no-scrollbar"
         :class="[inputClasses, !value ? 'text-description' : 'cursor-default']"
-        >{{ label }}</text>
+        >{{ label }}</text
+      >
       <input
         id="attachment"
         ref="fileInput"
@@ -32,11 +33,7 @@
         </button>
 
         <!-- Clear Button -->
-        <button
-          v-if="value && !isReadOnly"
-          class="p-0.5 rounded"
-          @tap="clear"
-        >
+        <button v-if="value && !isReadOnly" class="p-0.5 rounded" @tap="clear">
           <LucideIcon name="x" class="h-4 w-4 text-description" />
         </button>
       </view>

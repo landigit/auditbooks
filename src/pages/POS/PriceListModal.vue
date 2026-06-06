@@ -1,8 +1,10 @@
 <template>
   <Modal class="h-auto w-96" :set-close-listener="false">
-    <text class="text-center font-semibold py-3">{{ t`Apply Price List` }}</text>
+    <text class="text-center font-semibold py-3">{{
+      t`Apply Price List`
+    }}</text>
     <view class="px-10">
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
       <view class="flex justify-center pt-10">
         <view class="flex justify-between w-full mb-20">
           <view class="w-full">

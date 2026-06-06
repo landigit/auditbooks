@@ -2,9 +2,7 @@
   <view class="flex flex-col h-full">
     <PageHeader :title="t`Chart of Accounts`">
       <Button v-if="!isAllExpanded" @tap="expand">{{ t`Expand` }}</Button>
-      <Button v-if="!isAllCollapsed" @tap="collapse">{{
-        t`Collapse`
-      }}</Button>
+      <Button v-if="!isAllCollapsed" @tap="collapse">{{ t`Collapse` }}</Button>
     </PageHeader>
 
     <!-- Chart of Accounts -->
@@ -63,7 +61,10 @@
           </view>
 
           <!-- Account Balance String -->
-          <text v-if="!account.isGroup" class="ms-auto text-base text-description">
+          <text
+            v-if="!account.isGroup"
+            class="ms-auto text-base text-description"
+          >
             {{ getBalanceString(account) }}
           </text>
         </view>

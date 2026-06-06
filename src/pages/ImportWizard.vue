@@ -78,7 +78,8 @@
           <text v-if="fileName" class="font-normal">{{ t`Selected` }} </text>
           {{ helperMessage }}{{ fileName ? ',' : '' }}
           <text v-if="fileName" class="font-normal">
-            {{ t`check values and click on` }} </text>{{ ' ' }}<text v-if="fileName">{{ t`Import Data.` }}</text>
+            {{ t`check values and click on` }} </text
+          >{{ ' ' }}<text v-if="fileName">{{ t`Import Data.` }}</text>
           <text
             v-if="hasImporter && importer.valueMatrix.length > 0"
             class="font-normal"
@@ -87,7 +88,8 @@
               (importer.valueMatrix.length === 2
                 ? t`${importer.valueMatrix.length} row added.`
                 : t`${importer.valueMatrix.length} rows added.`)
-            }}</text>
+            }}</text
+          >
         </text>
       </view>
 
@@ -219,7 +221,7 @@
       <view class="w-form">
         <!-- Pick Column Header -->
         <FormHeader :form-title="t`Pick Import Columns`" />
-        <view class="border-b border-border"   />
+        <view class="border-b border-border" />
 
         <!-- Pick Column Checkboxes -->
         <view
@@ -253,7 +255,7 @@
         </view>
 
         <!-- Pick Column Footer -->
-        <view class="border-b border-border"   />
+        <view class="border-b border-border" />
         <view class="p-4 flex justify-between items-center">
           <text class="text-sm text-description">
             {{ t`${numColumnsPicked} fields selected` }}
@@ -270,7 +272,7 @@
       <view class="w-form">
         <!-- Import Completed Header -->
         <FormHeader :form-title="t`Import Complete`" />
-        <view class="border-b border-border"   />
+        <view class="border-b border-border" />
         <!-- Success -->
         <view v-if="success.length > 0">
           <!-- Success Section Header -->
@@ -300,7 +302,7 @@
               </text>
             </view>
           </view>
-          <view class="border-b border-border"   />
+          <view class="border-b border-border" />
         </view>
 
         <!-- Failed -->
@@ -333,7 +335,7 @@
               </text>
             </view>
           </view>
-          <view class="border-b border-border"   />
+          <view class="border-b border-border" />
         </view>
 
         <!-- Fallback Div -->

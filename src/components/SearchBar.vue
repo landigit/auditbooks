@@ -33,7 +33,7 @@
           @keydown.esc="close"
         />
       </view>
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
 
       <!-- Search List -->
       <view
@@ -77,12 +77,12 @@
             </text>
           </view>
 
-          <view class="border-b border-border"   />
+          <view class="border-b border-border" />
         </view>
       </view>
 
       <!-- Footer -->
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
       <view class="m-1 flex justify-between flex-col gap-2 text-sm select-none">
         <!-- Group Filters -->
         <view class="flex justify-between">
@@ -151,7 +151,9 @@
           <view class="flex gap-4">
             <text>↑↓ {{ t`Navigate` }}</text>
             <text>↩ {{ t`Select` }}</text>
-            <text><text class="tracking-tighter">esc</text> {{ t`Close` }}</text>
+            <text
+              ><text class="tracking-tighter">esc</text> {{ t`Close` }}</text
+            >
             <button class="flex items-center hover:text-main" @tap="openDocs">
               <LucideIcon name="help-circle" class="w-4 h-4 me-1" />
               {{ t`Help` }}

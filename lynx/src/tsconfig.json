@@ -7,10 +7,10 @@
     "moduleResolution": "Bundler",
     "types": ["vue-lynx/types"],
 
-    "noEmit": true,
+    "noEmit": true
   },
   "vueCompilerOptions": {
     "plugins": ["vue-lynx/types/volar-plugin"]
   },
-  "include": ["./**/*.ts", "./**/*.vue"],
+  "include": ["./**/*.ts", "./**/*.vue"]
 }

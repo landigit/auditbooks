@@ -6,7 +6,7 @@ export interface Route {
 }
 
 const historyStack = ref<Route[]>([
-  { name: 'DatabaseSelector' } // Start with DatabaseSelector as default page
+  { name: 'DatabaseSelector' }, // Start with DatabaseSelector as default page
 ]);
 
 export const currentRoute = ref<Route>({ name: 'DatabaseSelector' });
@@ -31,5 +31,5 @@ export const router = {
     historyStack.value[historyStack.value.length - 1] = route;
     currentRoute.value = route;
     console.log(`[Router] Replaced with: ${name}`);
-  }
+  },
 };

@@ -46,7 +46,9 @@
             </view>
           </Row>
         </view>
-        <view class="border-b border-border sticky top-[var(--h-row-mid)] z-10"   />
+        <view
+          class="border-b border-border sticky top-[var(--h-row-mid)] z-10"
+        />
 
         <!-- Data Rows -->
         <view class="flex-1">
@@ -93,9 +95,9 @@
                 />
               </Row>
             </view>
-            <view class="border-b border-border" 
+            <view
+              class="border-b border-border"
               v-if="!(i === dataSlice.length - 1 && i > 13)"
-              
             />
           </view>
         </view>
@@ -104,7 +106,7 @@
 
     <!-- Pagination Footer -->
     <view v-if="data?.length" class="mt-auto flex-shrink-0">
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
       <Paginator
         :item-count="data.length"
         class="px-4"

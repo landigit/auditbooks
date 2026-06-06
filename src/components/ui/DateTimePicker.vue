@@ -150,7 +150,8 @@ const sizeClasses = computed(() => {
           <view class="flex flex-col gap-1.5">
             <text
               class="text-xs font-medium text-description uppercase tracking-wider"
-              >{{ t`Time` }}</text>
+              >{{ t`Time` }}</text
+            >
             <view class="flex items-center gap-2">
               <view class="flex flex-col gap-1">
                 <input
@@ -169,7 +170,8 @@ const sizeClasses = computed(() => {
                 />
                 <text
                   class="text-[10px] text-description text-center uppercase"
-                  >{{ t`Hrs` }}</text>
+                  >{{ t`Hrs` }}</text
+                >
               </view>
               <text class="text-main font-bold mb-5">:</text>
               <view class="flex flex-col gap-1">
@@ -189,7 +191,8 @@ const sizeClasses = computed(() => {
                 />
                 <text
                   class="text-[10px] text-description text-center uppercase"
-                  >{{ t`Min` }}</text>
+                  >{{ t`Min` }}</text
+                >
               </view>
             </view>
           </view>

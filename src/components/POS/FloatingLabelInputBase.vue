@@ -16,7 +16,8 @@
       for="floating_outlined"
       :class="size === 'large' ? 'text-xl' : 'text-md'"
       class="absolute font-medium text-description duration-300 transform -translate-y-4 scale-75 top-1 z-10 origin-[0] bg-surface px-2 peer-focus:px-2 peer-focus:text-indicator-blue-text peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
-      >{{ df.label }}</text>
+      >{{ df.label }}</text
+    >
   </view>
 </template>
 

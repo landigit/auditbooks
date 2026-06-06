@@ -23,7 +23,9 @@
       <view
         class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"
       ></view>
-      <text class="text-sm text-description">{{ t`Loading linked entries...` }}</text>
+      <text class="text-sm text-description">{{
+        t`Loading linked entries...`
+      }}</text>
     </view>
 
     <!-- Linked Entry List -->

@@ -2,7 +2,7 @@
   <Modal class="h-auto w-96" :set-close-listener="false">
     <text class="text-center font-semibold py-3">{{ t`Item Enquiry` }}</text>
     <view class="px-10">
-      <view class="border-b border-border"   />
+      <view class="border-b border-border" />
       <view class="flex flex-col gap-5 pt-8">
         <Link
           :df="{

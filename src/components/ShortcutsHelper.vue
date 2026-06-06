@@ -1,7 +1,7 @@
 <template>
   <view>
     <FormHeader :form-title="t`Shortcuts`" />
-    <view class="border-b border-border"   />
+    <view class="border-b border-border" />
     <view
       class="h-96 overflow-y-auto custom-scroll custom-scroll-thumb2 text-main"
     >
@@ -25,7 +25,9 @@
               style="grid-template-columns: 8rem auto"
             >
               <ShortcutKeys class="text-base" :keys="s.shortcut" />
-              <view class="whitespace-normal text-base">{{ s.description }}</view>
+              <view class="whitespace-normal text-base">{{
+                s.description
+              }}</view>
             </view>
           </view>
           <!-- Shortcut count if collapsed -->
@@ -33,7 +35,7 @@
             {{ t`${g.shortcuts.length} shortcuts` }}
           </view>
         </view>
-        <view class="border-b border-border"   />
+        <view class="border-b border-border" />
       </template>
       <view class="p-4 text-base text-description">
         {{ t`More shortcuts will be added soon.` }}

@@ -2,7 +2,7 @@
   <Modal class="h-96 w-96" :set-close-listener="false">
     <text class="text-center py-4 text-main">Redeem Loyalty Points</text>
 
-    <view class="border-b border-border"   />
+    <view class="border-b border-border" />
 
     <view class="flex gap-2 p-3 justify-end pt-10">
       <LucideIcon
@@ -11,7 +11,9 @@
         class="text-indicator-orange-text"
       />
 
-      <text class="text-main pr-6">{{ loyaltyPoints }} - ({{ loyaltyProgram }})</text>
+      <text class="text-main pr-6"
+        >{{ loyaltyPoints }} - ({{ loyaltyProgram }})</text
+      >
     </view>
 
     <Int
@@ -53,7 +55,9 @@
           @tap="cancelLoyaltyProgram"
         >
           <slot>
-            <text class="uppercase text-lg text-indicator-red-text font-semibold">
+            <text
+              class="uppercase text-lg text-indicator-red-text font-semibold"
+            >
               {{ t`Cancel` }}
             </text>
           </slot>

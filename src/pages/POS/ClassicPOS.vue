@@ -313,9 +313,7 @@
                         profile?.returnButtonColour ||
                         fyo.singles.Defaults?.returnButtonColour,
                     }"
-                    @tap="
-                      emitEvent('toggleModal', 'ReturnSalesInvoice', true)
-                    "
+                    @tap="emitEvent('toggleModal', 'ReturnSalesInvoice', true)"
                   >
                     <slot>
                       <text

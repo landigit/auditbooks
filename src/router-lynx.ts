@@ -5,9 +5,7 @@ export interface Route {
   params?: Record<string, any>;
 }
 
-const historyStack = ref<Route[]>([
-  { name: 'DatabaseSelector' }
-]);
+const historyStack = ref<Route[]>([{ name: 'DatabaseSelector' }]);
 
 export const currentRoute = ref<Route>({ name: 'DatabaseSelector' });
 
@@ -31,5 +29,5 @@ export const router = {
     historyStack.value[historyStack.value.length - 1] = route;
     currentRoute.value = route;
     console.log(`[Router] Replaced with: ${name}`);
-  }
+  },
 };

@@ -17,20 +17,24 @@ import { useAppStore } from './stores/app';
 
 // Click to Tap Polyfill for Web Browser
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement | null;
-    if (target) {
-      const tapEvent = new CustomEvent('tap', {
-        bubbles: true,
-        cancelable: true,
-        detail: e,
-      });
-      target.dispatchEvent(tapEvent);
-      if (tapEvent.defaultPrevented) {
-        e.preventDefault();
+  document.addEventListener(
+    'click',
+    (e) => {
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tapEvent = new CustomEvent('tap', {
+          bubbles: true,
+          cancelable: true,
+          detail: e,
+        });
+        target.dispatchEvent(tapEvent);
+        if (tapEvent.defaultPrevented) {
+          e.preventDefault();
+        }
       }
-    }
-  }, { capture: true });
+    },
+    { capture: true }
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
