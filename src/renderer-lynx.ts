@@ -1,22 +1,12 @@
 import './ipc-lynx.js';
-import { registerFsBridge } from './utils/fsBridge';
-import { lynxFsBridge } from '../lynx/src/lib/lynxFs';
-
-// Register the Lynx native FS bridge.
-// On device this calls AuditbooksFsModule; in dev server mode it uses
-// the HTTP backend fallback so the app works without a physical device.
-registerFsBridge(lynxFsBridge);
 import { createApp } from 'vue-lynx';
 import { createPinia } from 'pinia';
 import App from './App-lynx.vue';
-import { fyo } from './initFyo';
+import { fyo } from './initFyo-lynx';
 import { useAppStore } from './stores/app';
 
 (async () => {
   try {
-    // Pre-load persistent configurations from dev-backend
-    await (ipc.store as any).load();
-
     const app = createApp(App);
     const pinia = createPinia();
     app.use(pinia);

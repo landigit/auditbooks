@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test';
+﻿import { describe, expect, test } from '@rstest/core';
 import { getMapFromList } from 'utils';
 import {
   addMetaFields,

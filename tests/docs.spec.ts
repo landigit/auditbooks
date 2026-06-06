@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test';
+import { describe, it, expect } from '@rstest/core';
 import fs from 'fs';
 import path from 'path';
 
@@ -36,7 +36,7 @@ describe('Documentation Integrity', () => {
         const missingImages: string[] = [];
 
         matches.forEach((match) => {
-          const href = match[1];
+          const href = decodeURIComponent(match[1]);
           if (!href.startsWith('http') && !href.startsWith('data:')) {
             const imgPath = path.join(docsDir, href);
             if (!fs.existsSync(imgPath)) {

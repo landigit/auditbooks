@@ -49,7 +49,7 @@ import { ModelNameEnum } from 'models/types';
 import { DocItem } from 'models/inventory/types';
 
 export class Doc extends Observable<DocValue | Doc[]> {
-  /* eslint-disable @typescript-eslint/no-floating-promises */
+  /* oxlint-disable @typescript-eslint/no-floating-promises */
   name?: string;
   schema: Readonly<Schema>;
   fyo: Fyo;
@@ -1124,7 +1124,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
    * This may cause the lifecycle function to execute incorrectly.
    */
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  /* oxlint-disable @typescript-eslint/no-unused-vars */
   async change(_ch: ChangeArg) {}
   async validate() {}
   async beforeSync() {}

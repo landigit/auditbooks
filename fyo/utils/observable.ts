@@ -3,7 +3,7 @@ enum EventType {
   OnceListeners = '_onceListeners',
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 type Listener = (...args: any[]) => unknown | Promise<unknown>;
 
 export default class Observable<T> {
@@ -40,7 +40,7 @@ export default class Observable<T> {
    */
   set(key: string, value: T) {
     this[key] = value;
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     this.trigger('change', {
       doc: this,
       changed: key,
@@ -164,7 +164,7 @@ export default class Observable<T> {
 
       const params = this._eventQueue.get(event);
       if (params !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        // oxlint-disable-next-line @typescript-eslint/no-floating-promises
         this._executeTriggers(event, params);
         this._eventQueue.delete(event);
       }

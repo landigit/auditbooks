@@ -41,7 +41,7 @@ export async function sendError(errorLogObj: ErrorLog) {
   };
 
   if (store.isDevelopment) {
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.log('sendError', body);
   }
 
@@ -82,7 +82,7 @@ export async function handleError(
   notifyUser = true
 ) {
   if (logToConsole) {
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.error(error);
   }
 
@@ -144,7 +144,7 @@ export async function handleErrorWithDialog(
   if (dontThrow) {
     const store = useAppStore();
     if (store.isDevelopment) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.error(error);
     }
     return;
@@ -160,7 +160,7 @@ export async function showErrorDialog(title?: string, content?: string) {
   await ipc.showError(title, content);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(
   func: T
 ) {
@@ -179,7 +179,7 @@ export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 export function getErrorHandledSync<T extends (...args: any[]) => any>(
   func: T
 ) {
@@ -188,7 +188,7 @@ export function getErrorHandledSync<T extends (...args: any[]) => any>(
     try {
       return func(...args) as Return;
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      // oxlint-disable-next-line @typescript-eslint/no-floating-promises
       handleError(false, error as Error, {
         functionName: func.name,
         functionArgs: args,

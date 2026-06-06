@@ -158,7 +158,7 @@ export function deepEqual(a: any, b: any): boolean {
 }
 
 export function time<K, T>(func: (...args: K[]) => T, ...args: K[]): T {
-  /* eslint-disable no-console */
+  /* oxlint-disable no-console */
   const name = func.name;
   console.time(name);
   const stuff = func(...args);
@@ -170,7 +170,7 @@ export async function timeAsync<K, T>(
   func: (...args: K[]) => Promise<T>,
   ...args: K[]
 ): Promise<T> {
-  /* eslint-disable no-console */
+  /* oxlint-disable no-console */
   const name = func.name;
   console.time(name);
   const stuff = await func(...args);

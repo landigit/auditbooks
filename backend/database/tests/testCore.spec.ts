@@ -1,5 +1,5 @@
-import { FieldTypeEnum, RawValue, Schema } from 'schemas/types';
-import { describe, expect, test } from 'bun:test';
+﻿import { FieldTypeEnum, RawValue, Schema } from 'schemas/types';
+import { describe, expect, test } from '@rstest/core';
 import { getMapFromList, getValueMapFromList, sleep } from 'utils';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap } from '../../helpers';
 import DatabaseCore from '../core';

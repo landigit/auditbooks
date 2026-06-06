@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "ignoreDeprecations": "5.0",
+    "baseUrl": ".",
     "target": "es2022",
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -20,19 +21,18 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "types": ["@rsbuild/core/types", "bun-types"],
-    "baseUrl": ".",
     "paths": {
-      "src/*": ["src/*"],
-      "fyo/*": ["fyo/*"],
-      "schemas/*": ["schemas/*"],
-      "main/*": ["main/*"],
-      "backend/*": ["backend/*"],
-      "regional/*": ["regional/*"],
-      "fixtures/*": ["fixtures/*"],
-      "reports/*": ["reports/*"],
-      "models/*": ["models/*"],
-      "utils/*": ["utils/*"],
-      "dummy/*": ["dummy/*"]
+      "src/*": ["./src/*"],
+      "fyo/*": ["./fyo/*"],
+      "schemas/*": ["./schemas/*"],
+      "main/*": ["./main/*"],
+      "backend/*": ["./backend/*"],
+      "regional/*": ["./regional/*"],
+      "fixtures/*": ["./fixtures/*"],
+      "reports/*": ["./reports/*"],
+      "models/*": ["./models/*"],
+      "utils/*": ["./utils/*"],
+      "dummy/*": ["./dummy/*"]
     },
     "lib": ["ESNext", "DOM", "DOM.Iterable"]
   },

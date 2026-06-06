@@ -1,5 +1,5 @@
-import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'bun:test';
+﻿import { ModelNameEnum } from 'models/types';
+import { describe, expect, test } from '@rstest/core';
 import { getItem } from './helpers';
 import {
   closeTestFyoAfterAll,

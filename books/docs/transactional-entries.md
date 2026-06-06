@@ -4,7 +4,7 @@
 
 ### 1. Open POS Shift
 
-   ![](images/Screenshot%20from%202025-08-11%2009-48-11.png)
+   ![](images/Screenshot from 2025-08-11 09-48-11.png)
 
 Before initiating sales, a POS shift must be opened to record opening balances and enable accurate tracking of cash and other payment methods throughout the session.
 
@@ -25,7 +25,7 @@ Enter the quantity of each currency denomination (e.g., ₹1000, ₹500, ₹100)
 
 ### 2. Creating a POS Invoice
 
-![](images/Screenshot%20from%202025-08-11%2010-16-20.png)
+![](images/Screenshot from 2025-08-11 10-16-20.png)
 
 After opening a POS shift, sales billing can begin through the POS interface.
 
@@ -44,7 +44,7 @@ After opening a POS shift, sales billing can begin through the POS interface.
 
 ### 3. Adding an Item
 
-   ![](images/Screenshot%20from%202025-08-11%2011-24-53.png)
+   ![](images/Screenshot from 2025-08-11 11-24-53.png)
 
 
 Items can be selected in two ways: by clicking on the item name or by scanning the barcode.
@@ -55,7 +55,7 @@ Items can be selected in two ways: by clicking on the item name or by scanning t
 
 **Filter by Group:** A field that allows filtering and displaying items based on their assigned item group. When an item group is selected from the dropdown list, only items belonging to that group are shown.
 
-![](images/Screenshot%20from%202025-08-11%2011-10-06.png)
+![](images/Screenshot from 2025-08-11 11-10-06.png)
 
 * To change the quantity of an item, click the expand arrow and either enter the desired quantity in the **Transfer Quantity** field or use the up/down arrows to adjust it.
 
@@ -64,7 +64,7 @@ Items can be selected in two ways: by clicking on the item name or by scanning t
 ### 4. Additional POS Features
 
 
-![](images/Screenshot%20from%202025-08-12%2011-30-14.png)
+![](images/Screenshot from 2025-08-12 11-30-14.png)
 
 1. **Grid View:** Displays items in a grid format with images when the grid view icon is clicked.
 
@@ -80,7 +80,7 @@ Items can be selected in two ways: by clicking on the item name or by scanning t
 
 ### 5. Cart Actions
 
-   ![](images/Screenshot%20from%202025-08-11%2012-06-19.png)
+   ![](images/Screenshot from 2025-08-11 12-06-19.png)
    
 * Total Quantity: The Total Quantity refers to the combined number of all items included in a transaction or order.
 
@@ -99,14 +99,14 @@ Items can be selected in two ways: by clicking on the item name or by scanning t
   * Submitted – Displays all submitted invoices, including those that are partially paid.
 
 
-![](images/Screenshot%20from%202025-08-11%2014-22-42.png)
+![](images/Screenshot from 2025-08-11 14-22-42.png)
 
 A search function is available within the Held section to quickly locate invoices by their invoice name.
 
 * Return Button: It displays a list of all return invoices, and selecting an invoice will redirect the user and add its items to the POS cart.
 
 
-![](images/Screenshot%20from%202025-08-11%2014-28-48.png)
+![](images/Screenshot from 2025-08-11 14-28-48.png)
 
 A search function is available to quickly locate invoices by their invoice name.
 
@@ -114,7 +114,7 @@ A search function is available to quickly locate invoices by their invoice name.
 
 ### 6. Payment Workflow
 
-![](images/Screenshot%20from%202025-08-11%2014-30-54.png)
+![](images/Screenshot from 2025-08-11 14-30-54.png)
 
 1. Click Pay after adding items and selecting the customer.
 
@@ -132,7 +132,7 @@ Available payment actions:
 
 ### 7. Close POS Shift
 
-![](images/Screenshot%20from%202025-08-11%2014-53-23.png)
+![](images/Screenshot from 2025-08-11 14-53-23.png)
 
 
 The Close POS Shift feature is used to end a POS shift by recording final cash counts, calculating payment totals, and reconciling amounts.

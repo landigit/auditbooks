@@ -1,11 +1,4 @@
 import './ipc-polyfill';
-import { registerFsBridge } from './utils/fsBridge';
-import { tauriFsBridge } from './utils/ipc/tauriFs';
-
-// Register the Tauri native filesystem bridge before any DB access.
-// In web-only dev mode (no Tauri shell) this is a no-op because tauriFs
-// lazy-imports @tauri-apps/plugin-fs only when an actual DB call is made.
-registerFsBridge(tauriFsBridge);
 import { CUSTOM_EVENTS } from 'utils/messages';
 import { UnexpectedLogObject } from 'utils/types';
 import { App as VueApp, createApp } from 'vue';
@@ -44,7 +37,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
+// oxlint-disable-next-line @typescript-eslint/no-floating-promises
 (async () => {
   const app = createApp(App);
   const pinia = createPinia();
@@ -125,7 +118,7 @@ function setErrorHandlers(app: VueApp) {
       return;
     }
     error = error ?? new Error('triggered in window.onerror');
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     handleError(true, error, { message, source, lineno, colno });
   };
 
@@ -137,13 +130,13 @@ function setErrorHandlers(app: VueApp) {
       error = new Error(String(event.reason));
     }
 
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     handleError(true, error).catch((err) => console.error(err));
   };
 
   window.addEventListener(CUSTOM_EVENTS.LOG_UNEXPECTED, (event) => {
     const details = (event as CustomEvent)?.detail as UnexpectedLogObject;
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     sendError(details);
   });
 
@@ -159,9 +152,9 @@ function setErrorHandlers(app: VueApp) {
       more.props = stringifyCircular(vm.$props ?? {}, true, true);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     handleError(false, err as Error, more);
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.error(err, vm, info);
   };
 }

@@ -41,7 +41,7 @@
     <template #body>
       <FormHeader
         :form-title="title"
-        class="sticky top-0 bg-surface border-b border-border"
+        class="sticky top-0 bg-surface"
       >
         <StatusPill v-if="hasDoc" :doc="doc" />
       </FormHeader>

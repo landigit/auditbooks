@@ -1,3 +1,4 @@
 bun run format
 bun run build
 git add. staged
+vp staged

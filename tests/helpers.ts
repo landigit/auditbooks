@@ -1,4 +1,4 @@
-import { DatabaseManager } from 'backend/database/manager';
+﻿import { DatabaseManager } from 'backend/database/manager';
 import { Fyo } from 'fyo';
 import { DummyAuthDemux } from 'fyo/tests/helpers';
 import dayjs from 'dayjs';
@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import setupInstance from 'src/setup/setupInstance';
 import { SetupWizardOptions } from 'src/setup/types';
 import { getFiscalYear } from 'utils/misc';
-import { beforeAll, afterAll } from 'bun:test';
+import { beforeAll, afterAll } from '@rstest/core';
 
 export function getTestSetupWizardOptions(): SetupWizardOptions {
   return {

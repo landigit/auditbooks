@@ -1,19 +1,21 @@
 <template>
-  <view class="py-2 h-full flex justify-between flex-col bg-sidebar relative">
+  <view class="pb-2 h-full flex justify-between flex-col bg-sidebar relative">
     <view class="window-no-drag">
       <!-- Company name -->
       <view
-        class="px-4 flex flex-row items-center justify-between mb-4"
+        class="px-4 flex flex-row items-center justify-between h-row-largest border-b border-border"
         :class="[
           store.platform !== 'Windows' ? 'window-drag' : '',
-          store.platform === 'Mac' && languageDirection === 'ltr'
-            ? 'mt-10'
-            : 'mt-2',
+          store.platform === 'Mac'
+            ? languageDirection === 'rtl'
+              ? 'pe-20'
+              : 'ps-20'
+            : '',
         ]"
       >
         <text
           data-testid="company-name"
-          class="window-no-drag font-semibold text-main whitespace-nowrap overflow-auto no-scrollbar select-none"
+          class="window-no-drag text-xl font-semibold text-main whitespace-nowrap overflow-auto no-scrollbar select-none"
         >
           {{ companyName }}
         </text>

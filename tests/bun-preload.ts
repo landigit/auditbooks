@@ -1,4 +1,4 @@
-import { mock } from 'bun:test';
+﻿import { mock } from '@rstest/core';
 // @ts-ignore
 import { JSDOM } from 'jsdom';
 import pkg from '../package.json';

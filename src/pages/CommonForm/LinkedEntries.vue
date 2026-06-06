@@ -31,7 +31,7 @@
     <!-- Linked Entry List -->
     <view
       v-else-if="sequence.length"
-      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2 border-t border-border"
+      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2"
     >
       <view
         v-for="sn of sequence"

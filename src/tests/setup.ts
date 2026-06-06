@@ -1,4 +1,4 @@
-import { mock } from 'bun:test';
+﻿import { mock } from '@rstest/core';
 import pkg from '../../package.json';
 
 // Mock electron

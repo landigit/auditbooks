@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test';
+﻿import { expect, test } from '@rstest/core';
 import { StockQueue } from '../stockQueue';
 
 test('stockQueue:initialization', () => {

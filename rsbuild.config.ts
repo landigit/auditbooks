@@ -54,12 +54,6 @@ export default defineConfig({
       js: 'source-map',
       css: true,
     },
-    copy: [
-      {
-        from: path.resolve(__dirname, 'node_modules/sql.js/dist/sql-wasm.wasm'),
-        to: path.resolve(__dirname, 'dist/sql-wasm.wasm'),
-      },
-    ],
   },
   performance: {
     chunkSplit: {

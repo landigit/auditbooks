@@ -1,9 +1,9 @@
-import {
+﻿import {
   assertDoesNotThrow,
   assertThrows,
 } from 'backend/database/tests/helpers';
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from '@rstest/core';
 import {
   closeTestFyoAfterAll,
   getTestFyo,

@@ -1,7 +1,7 @@
-import { InventorySettings } from 'models/inventory/InventorySettings';
+﻿import { InventorySettings } from 'models/inventory/InventorySettings';
 import { StockTransfer } from 'models/inventory/StockTransfer';
 import { ModelNameEnum } from 'models/types';
-import { describe, expect, test, beforeAll } from 'bun:test';
+import { describe, expect, test, beforeAll } from '@rstest/core';
 import {
   closeTestFyoAfterAll,
   getTestFyo,
