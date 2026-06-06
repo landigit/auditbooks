@@ -1,9 +1,9 @@
 <template>
-  <div class="overflow-hidden flex flex-col h-full">
+  <view class="overflow-hidden flex flex-col h-full">
     <!-- Report Outer Container -->
-    <div v-if="dataSlice.length" class="overflow-hidden">
+    <view v-if="dataSlice.length" class="overflow-hidden">
       <!--Title Row -->
-      <div
+      <view
         ref="titlerow"
         class="w-full overflow-x-hidden flex items-center text-main border-b border-border px-4"
         :style="{
@@ -11,15 +11,15 @@
           paddingRight: 'calc(var(--w-scrollbar) + 1rem)',
         }"
       >
-        <div
+        <view
           v-for="(col, c) in report.columns"
           :key="c + '-col'"
           :style="getCellStyle(col, c)"
           class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar"
         >
           {{ col.label }}
-        </div>
-      </div>
+        </view>
+      </view>
 
       <WithScroll
         class="overflow-auto w-full"
@@ -28,7 +28,7 @@
       >
         <!-- Report Rows -->
         <template v-for="(row, r) in dataSlice" :key="r + '-row'">
-          <div
+          <view
             v-if="!row.folded"
             class="flex items-center w-max px-4"
             :style="{
@@ -39,10 +39,10 @@
               r !== pageEnd - 1 ? 'border-b border-border' : '',
               row.isGroup ? 'hover:bg-surface-hover cursor-pointer' : '',
             ]"
-            @click="() => onRowClick(row, r)"
+            @tap="() => onRowClick(row, r)"
           >
             <!-- Report Cell -->
-            <div
+            <view
               v-for="(cell, c) in row.cells"
               :key="`${c}-${r}-cell`"
               :style="getCellStyle(cell, c)"
@@ -50,26 +50,26 @@
               :class="[getCellColorClass(cell)]"
             >
               {{ cell.value }}
-            </div>
-          </div>
+            </view>
+          </view>
         </template>
       </WithScroll>
       <!-- Report Rows Container -->
-    </div>
-    <p v-else class="w-full text-center mt-20 text-description text-base">
+    </view>
+    <text v-else class="w-full text-center mt-20 text-description text-base">
       {{ report.loading ? t`Loading Report...` : t`No Values to be Displayed` }}
-    </p>
+    </text>
 
     <!-- Pagination Footer -->
-    <div v-if="report.usePagination" class="mt-auto flex-shrink-0">
+    <view v-if="report.usePagination" class="mt-auto flex-shrink-0">
       <Paginator
         :item-count="report?.reportData?.length ?? 0"
         class="px-4"
         @index-change="setPageIndices"
       />
-    </div>
-    <div v-else class="h-4" />
-  </div>
+    </view>
+    <view v-else class="h-4" />
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, computed, inject } from 'vue';

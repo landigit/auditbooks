@@ -1,8 +1,8 @@
 <template>
-  <div
+  <view
     class="flex items-center bg-canvas-muted border-border rounded-md text-sm p-1 border"
   >
-    <div
+    <view
       class="rate-container gap-2"
       :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'"
     >
@@ -14,12 +14,12 @@
         min="0"
       />
 
-      <span class="text-description">{{ left }}</span>
-    </div>
+      <text class="text-description">{{ left }}</text>
+    </view>
 
-    <p class="mx-1 text-description">=</p>
+    <text class="mx-1 text-description">=</text>
 
-    <div
+    <view
       class="rate-container gap-2"
       :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'"
     >
@@ -31,20 +31,20 @@
         min="0"
         @change="rightChange"
       />
-      <span class="text-description">{{ right }}</span>
-    </div>
+      <text class="text-description">{{ right }}</text>
+    </view>
 
     <button
       v-if="!disabled"
       class="bg-indicator-green-bg text-indicator-green-text px-2 ms-1 -me-0.5 h-full border-s border-border"
-      @click="swap"
+      @tap="swap"
     >
       <lucide-icon
         name="refresh-cw"
         class="w-3 h-3 text-indicator-green-text"
       />
     </button>
-  </div>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, computed } from 'vue';

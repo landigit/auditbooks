@@ -1,12 +1,12 @@
 <template>
   <Modal class="h-auto w-auto p-5" :set-close-listener="false">
-    <p class="text-center font-semibold text-description">
+    <text class="text-center font-semibold text-description">
       {{ t`Invoices` }}
-    </p>
+    </text>
 
-    <hr class="mt-2 border-border" />
+    <view class="border-b border-border mt-2"   />
 
-    <div class="mt-4">
+    <view class="mt-4">
       <input
         v-model="invoiceSearchTerm"
         type="text"
@@ -14,24 +14,24 @@
         class="w-full p-2 border rounded-md bg-surface text-main focus:outline-none focus:ring-0"
         @keydown.enter="handleSearchEnter"
       />
-    </div>
+    </view>
 
-    <hr class="mt-2 border-border" />
+    <view class="border-b border-border mt-2"   />
 
     <Row
       :ratio="ratio"
       class="border border-border items-center mt-2 px-2 w-full rounded-t-md text-description"
     >
-      <div
+      <view
         v-for="df in tableFields"
         :key="df.fieldname"
         class="flex items-center px-2 py-2 text-lg"
       >
         {{ df.label }}
-      </div>
+      </view>
     </Row>
 
-    <div
+    <view
       class="overflow-y-auto custom-scroll custom-scroll-thumb2"
       style="height: 65vh; width: 60vh"
     >
@@ -41,7 +41,7 @@
         :ratio="ratio"
         :border="true"
         class="border-b border-l border-r border-border bg-surface group h-row-mid hover:bg-surface-hover items-center justify-center px-2 w-full"
-        @click="returnInvoice(row as SalesInvoice)"
+        @tap="returnInvoice(row as SalesInvoice)"
       >
         <FormControl
           v-for="df in tableFields"
@@ -52,30 +52,30 @@
           :read-only="true"
         />
       </Row>
-    </div>
+    </view>
 
-    <div class="mt-1 mb-1">
+    <view class="mt-1 mb-1">
       <Paginator
         :item-count="filteredInvoices.length"
         :allowed-counts="[20, 40, -1]"
         @index-change="setPageIndices"
       />
-    </div>
+    </view>
 
-    <div class="row-start-6 grid grid-cols-2 gap-4 mt-1">
-      <div class="col-span-2">
+    <view class="row-start-6 grid grid-cols-2 gap-4 mt-1">
+      <view class="col-span-2">
         <Button
           class="w-full p-5 bg-indicator-red-bg"
-          @click="emit('toggleModal', 'SavedInvoice')"
+          @tap="emit('toggleModal', 'SavedInvoice')"
         >
           <slot>
-            <p class="uppercase text-lg text-indicator-red-text font-semibold">
+            <text class="uppercase text-lg text-indicator-red-text font-semibold">
               {{ t`Cancel` }}
-            </p>
+            </text>
           </slot>
         </Button>
-      </div>
-    </div>
+      </view>
+    </view>
   </Modal>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div
+  <view
     id="app"
     class="bg-canvas h-screen flex flex-col font-sans overflow-hidden antialiased"
     :dir="languageDirection"
@@ -31,12 +31,12 @@
     />
 
     <!-- Render target for toasts -->
-    <div
+    <view
       id="toast-container"
       class="absolute bottom-0 flex flex-col items-end mb-3 pe-6"
       style="width: 100%; pointer-events: none"
-    ></div>
-  </div>
+    ></view>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, shallowRef, computed, provide, onMounted } from 'vue';

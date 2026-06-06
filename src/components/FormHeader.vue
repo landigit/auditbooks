@@ -1,13 +1,13 @@
 <template>
-  <div
+  <view
     class="px-4 text-xl font-semibold flex justify-between h-row-large items-center flex-shrink-0"
   >
-    <h1 v-if="formTitle" class="text-main">{{ formTitle }}</h1>
+    <text v-if="formTitle" class="text-main">{{ formTitle }}</text>
     <slot />
-    <p v-if="formSubTitle" class="text-description">
+    <text v-if="formSubTitle" class="text-description">
       {{ formSubTitle }}
-    </p>
-  </div>
+    </text>
+  </view>
 </template>
 
 <script setup lang="ts">

@@ -1,11 +1,11 @@
 <template>
-  <div class="w-form">
+  <view class="w-form">
     <FormHeader :form-title="t`Set Print Size`" />
-    <hr class="border-border" />
-    <div class="p-4 w-full flex flex-col gap-4">
-      <p class="text-base text-main">
+    <view class="border-b border-border"   />
+    <view class="p-4 w-full flex flex-col gap-4">
+      <text class="text-base text-main">
         {{ t`Select the template type.` }}
-      </p>
+      </text>
       <Select
         :df="df"
         :value="type"
@@ -13,13 +13,13 @@
         :show-label="true"
         @change="typeChange"
       />
-    </div>
-    <div class="flex border-t border-border p-4">
-      <Button class="ml-auto" type="primary" @click="done">{{
+    </view>
+    <view class="flex border-t border-border p-4">
+      <Button class="ml-auto" type="primary" @tap="done">{{
         t`Done`
       }}</Button>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

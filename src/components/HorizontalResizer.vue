@@ -1,5 +1,5 @@
 <template>
-  <div
+  <view
     ref="hr"
     class="h-full bg-border transition-opacity hover:opacity-100"
     :class="resizing ? 'opacity-100' : 'opacity-0'"
@@ -14,7 +14,7 @@
     >
       {{ value }}
     </MouseFollower>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

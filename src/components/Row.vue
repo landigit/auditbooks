@@ -1,7 +1,7 @@
 <template>
-  <div class="inline-grid" :style="style" v-bind="$attrs">
+  <view class="inline-grid" :style="style" v-bind="$attrs">
     <slot></slot>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

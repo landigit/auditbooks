@@ -125,19 +125,19 @@ const sizeClasses = computed(() => {
           )
         "
       >
-        <div
+        <view
           class="flex items-center gap-2 overflow-hidden whitespace-nowrap text-sm"
         >
           <lucide-icon
             name="calendar"
             class="h-4 w-4 opacity-50 flex-shrink-0"
           />
-          <span class="truncate">{{ displayValue }}</span>
-        </div>
+          <text class="truncate">{{ displayValue }}</text>
+        </view>
       </button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0 overflow-hidden shadow-lg border-border">
-      <div
+      <view
         class="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-border"
       >
         <Calendar
@@ -146,14 +146,13 @@ const sizeClasses = computed(() => {
           @update:model-value="handleDateChange"
         />
 
-        <div class="p-4 flex flex-col gap-4 bg-surface min-w-[120px]">
-          <div class="flex flex-col gap-1.5">
-            <label
+        <view class="p-4 flex flex-col gap-4 bg-surface min-w-[120px]">
+          <view class="flex flex-col gap-1.5">
+            <text
               class="text-xs font-medium text-description uppercase tracking-wider"
-              >{{ t`Time` }}</label
-            >
-            <div class="flex items-center gap-2">
-              <div class="flex flex-col gap-1">
+              >{{ t`Time` }}</text>
+            <view class="flex items-center gap-2">
+              <view class="flex flex-col gap-1">
                 <input
                   type="number"
                   min="0"
@@ -168,13 +167,12 @@ const sizeClasses = computed(() => {
                       )
                   "
                 />
-                <span
+                <text
                   class="text-[10px] text-description text-center uppercase"
-                  >{{ t`Hrs` }}</span
-                >
-              </div>
-              <span class="text-main font-bold mb-5">:</span>
-              <div class="flex flex-col gap-1">
+                  >{{ t`Hrs` }}</text>
+              </view>
+              <text class="text-main font-bold mb-5">:</text>
+              <view class="flex flex-col gap-1">
                 <input
                   type="number"
                   min="0"
@@ -189,24 +187,23 @@ const sizeClasses = computed(() => {
                       )
                   "
                 />
-                <span
+                <text
                   class="text-[10px] text-description text-center uppercase"
-                  >{{ t`Min` }}</span
-                >
-              </div>
-            </div>
-          </div>
+                  >{{ t`Min` }}</text>
+              </view>
+            </view>
+          </view>
 
-          <div class="mt-auto pt-4 border-t border-border flex flex-col gap-2">
+          <view class="mt-auto pt-4 border-t border-border flex flex-col gap-2">
             <button
               class="w-full h-8 text-xs font-medium bg-indicator-green-bg text-white rounded hover:opacity-90 transition-opacity"
-              @click="updateModel(true)"
+              @tap="updateModel(true)"
             >
               {{ t`Set Time` }}
             </button>
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
     </PopoverContent>
   </Popover>
 </template>

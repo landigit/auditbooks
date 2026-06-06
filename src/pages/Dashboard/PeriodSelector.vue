@@ -8,18 +8,18 @@
         selectHighlightedItem,
       }"
     >
-      <div
+      <view
         class="text-sm flex focus:outline-none hover:text-main focus:text-main items-center py-1 rounded-md leading-relaxed cursor-pointer"
         :class="!value ? 'text-description' : 'text-main'"
         tabindex="0"
-        @click="toggleDropdown()"
+        @tap="toggleDropdown()"
         @keydown.down="highlightItemDown"
         @keydown.up="highlightItemUp"
         @keydown.enter="selectHighlightedItem"
       >
         {{ periodSelectorMap?.[value] ?? value }}
         <lucide-icon name="chevron-down" class="ms-1 w-3 h-3" />
-      </div>
+      </view>
     </template>
   </Dropdown>
 </template>

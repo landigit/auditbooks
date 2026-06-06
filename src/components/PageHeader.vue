@@ -1,5 +1,5 @@
 <template>
-  <div
+  <view
     class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface"
     :class="[
       border ? 'border-b border-border' : '',
@@ -15,7 +15,7 @@
       leave-to-class="opacity-0 w-0 !mr-0 !border-r-0"
       class="border-none"
     >
-      <div
+      <view
         v-if="
           !store.showSidebar &&
           store.platform === 'Mac' &&
@@ -26,7 +26,7 @@
       />
     </Transition>
 
-    <div
+    <view
       class="flex items-center window-no-drag gap-4 me-auto"
       :class="
         store.platform === 'Mac' && store.languageDirection === 'rtl'
@@ -36,21 +36,21 @@
     >
       <!-- Nav Group -->
       <PageHeaderNavGroup />
-      <h1
+      <text
         v-if="title"
         class="text-xl font-semibold select-none whitespace-nowrap text-main leading-none"
       >
         {{ title }}
-      </h1>
+      </text>
 
       <!-- Left Slot -->
-      <div class="flex items-stretch window-no-drag gap-4">
+      <view class="flex items-stretch window-no-drag gap-4">
         <slot name="left" />
-      </div>
-    </div>
+      </view>
+    </view>
 
     <!-- Right (regular) Slot -->
-    <div
+    <view
       class="flex items-stretch window-no-drag gap-2 ms-auto"
       :class="
         store.platform === 'Mac' && store.languageDirection === 'rtl'
@@ -59,8 +59,8 @@
       "
     >
       <slot />
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

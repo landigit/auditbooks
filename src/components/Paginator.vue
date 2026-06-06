@@ -1,26 +1,26 @@
 <template>
-  <div
+  <view
     class="grid grid-cols-3 text-main text-sm select-none items-center"
     style="height: 50px"
   >
     <!-- Length Display -->
-    <div class="justify-self-start">
+    <view class="justify-self-start">
       {{
         `${(pageNo - 1) * count + 1} - ${Math.min(pageNo * count, itemCount)}`
       }}
-    </div>
+    </view>
 
     <!-- Pagination Selector -->
-    <div class="flex gap-1 items-center justify-self-center">
+    <view class="flex gap-1 items-center justify-self-center">
       <LucideIcon
         name="chevron-left"
         class="w-4 h-4 rtl-rotate-180"
         :class="
           pageNo > 1 ? 'text-description cursor-pointer' : 'text-transparent'
         "
-        @click="() => setPageNo(Math.max(1, pageNo - 1))"
+        @tap="() => setPageNo(Math.max(1, pageNo - 1))"
       />
-      <div class="flex gap-1 bg-canvas-muted rounded">
+      <view class="flex gap-1 bg-canvas-muted rounded">
         <input
           type="number"
           class="w-7 text-end outline-none bg-transparent focus:text-main"
@@ -32,11 +32,11 @@
           "
           @input="(e: Event) => setPageNo((e.target as HTMLInputElement).value)"
         />
-        <p class="text-description">/</p>
-        <p class="w-7">
+        <text class="text-description">/</text>
+        <text class="w-7">
           {{ maxPages }}
-        </p>
-      </div>
+        </text>
+      </view>
       <LucideIcon
         name="chevron-right"
         class="w-4 h-4 rtl-rotate-180"
@@ -45,12 +45,12 @@
             ? 'text-description cursor-pointer'
             : 'text-transparent'
         "
-        @click="() => setPageNo(Math.min(maxPages, pageNo + 1))"
+        @tap="() => setPageNo(Math.min(maxPages, pageNo + 1))"
       />
-    </div>
+    </view>
 
     <!-- Count Selector -->
-    <div
+    <view
       v-if="filteredCounts.length"
       class="border border-border rounded flex justify-self-end"
     >
@@ -62,13 +62,13 @@
               ? 'rounded bg-surface-hover'
               : ''
           "
-          @click="setCount(c)"
+          @tap="setCount(c)"
         >
           {{ c === -1 ? t`All` : c }}
         </button>
       </template>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

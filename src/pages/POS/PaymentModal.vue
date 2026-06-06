@@ -1,6 +1,6 @@
 <template>
   <Modal class="w-2/6 ml-auto mr-3.5" :set-close-listener="false">
-    <div v-if="sinvDoc.fieldMap" class="px-4 py-6 grid" style="height: 95vh">
+    <view v-if="sinvDoc.fieldMap" class="px-4 py-6 grid" style="height: 95vh">
       <Currency
         :df="fyo.fieldMap.PaymentFor.amount"
         :read-only="!transferAmount.isZero()"
@@ -11,22 +11,22 @@
           (amount: Money) => emit('setPaidAmount', (amount as Money).float)
         "
       />
-      <div class="grid grid-cols-2 gap-6">
+      <view class="grid grid-cols-2 gap-6">
         <Button
           v-for="method in paymentMethods"
           :key="method"
           class="w-full py-5 bg-surface border border-border hover:bg-surface-hover"
-          @click="setPaymentMethodAndAmount(method)"
+          @tap="setPaymentMethodAndAmount(method)"
         >
           <slot>
-            <p class="uppercase text-lg text-main font-semibold">
+            <text class="uppercase text-lg text-main font-semibold">
               {{ t`${method}` }}
-            </p>
+            </text>
           </slot>
         </Button>
-      </div>
+      </view>
 
-      <div class="mt-8 grid grid-cols-2 gap-6">
+      <view class="mt-8 grid grid-cols-2 gap-6">
         <Data
           v-show="!isPaymentMethodIsCash"
           :df="fyo.fieldMap.Payment.referenceId"
@@ -48,9 +48,9 @@
           :value="transferClearanceDate"
           @change="(value: Date) => emit('setTransferClearanceDate', value)"
         />
-      </div>
+      </view>
 
-      <div class="mt-14 grid grid-cols-2 gap-6">
+      <view class="mt-14 grid grid-cols-2 gap-6">
         <Currency
           v-show="showPaidChange"
           :df="{
@@ -78,9 +78,9 @@
           :text-right="true"
           :value="balanceAmount"
         />
-      </div>
+      </view>
 
-      <div
+      <view
         class="mb-14 row-start-4 row-span-2 grid grid-cols-2 gap-x-6 gap-y-11"
       >
         <Currency
@@ -141,84 +141,84 @@
           :text-right="true"
           :value="sinvDoc?.outstandingAmount"
         />
-      </div>
+      </view>
 
-      <div class="grid grid-cols-2 gap-4 bottom-8">
-        <div class="col-span-1">
+      <view class="grid grid-cols-2 gap-4 bottom-8">
+        <view class="col-span-1">
           <Button
             class="w-full"
             :style="{
               backgroundColor: fyo.singles.Defaults?.submitButtonColour,
             }"
             style="padding: 1.35rem"
-            @click="submitTransaction"
+            @tap="submitTransaction"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-button-primary-text font-semibold"
               >
                 {{ t`Submit` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
+        </view>
 
-        <div class="col-span-1">
+        <view class="col-span-1">
           <Button
             class="w-full"
             :style="{
               backgroundColor: fyo.singles.Defaults?.cancelButtonColour,
             }"
             style="padding: 1.35rem"
-            @click="cancelTransaction"
+            @tap="cancelTransaction"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-button-primary-text font-semibold"
               >
                 {{ t`Cancel` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
+        </view>
 
-        <div class="col-span-1">
+        <view class="col-span-1">
           <Button
             class="w-full"
             :style="{ backgroundColor: fyo.singles.Defaults?.payButtonColour }"
             style="padding: 1.35rem"
-            @click="payTransaction"
+            @tap="payTransaction"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-button-primary-text font-semibold"
               >
                 {{ t`Pay` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
+        </view>
 
-        <div class="col-span-1">
+        <view class="col-span-1">
           <Button
             class="w-full"
             :style="{
               backgroundColor: fyo.singles.Defaults?.payAndPrintButtonColour,
             }"
             style="padding: 1.35rem"
-            @click="payAndPrintTransaction"
+            @tap="payAndPrintTransaction"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-button-primary-text font-semibold"
               >
                 {{ t`Pay & Print` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
-      </div>
-    </div>
+        </view>
+      </view>
+    </view>
   </Modal>
 </template>
 

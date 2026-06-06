@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full" :title="df.label">
-    <div v-if="showLabel" :class="labelClasses">
+  <view class="w-full" :title="df.label">
+    <view v-if="showLabel" :class="labelClasses">
       {{ df.label }}
-    </div>
-    <div :class="[showMandatory ? 'show-mandatory' : '', 'w-full']">
+    </view>
+    <view :class="[showMandatory ? 'show-mandatory' : '', 'w-full']">
       <input
         ref="inputRef"
         spellcheck="false"
@@ -22,11 +22,11 @@
         @focus="(e) => !isReadOnly && $emit('focus', e)"
         @input="(e) => !isReadOnly && $emit('input', e)"
       />
-    </div>
-    <div v-if="showLabel" :class="labelClasses">
+    </view>
+    <view v-if="showLabel" :class="labelClasses">
       {{ df?.sub_label }}
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

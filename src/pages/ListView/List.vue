@@ -1,22 +1,22 @@
 <template>
-  <div class="text-base flex flex-col overflow-hidden h-full">
+  <view class="text-base flex flex-col overflow-hidden h-full">
     <!-- Main Scrollable Table Wrapper -->
     <ScrollArea v-if="data?.length" class="flex-1 w-full" orientation="both">
-      <div
+      <view
         :style="{
           minWidth: `${Math.max(800, columns.length * 160)}px`,
         }"
         class="flex flex-col min-h-full"
       >
         <!-- Title Row -->
-        <div class="flex items-center sticky top-0 bg-canvas z-10">
-          <div
+        <view class="flex items-center sticky top-0 bg-canvas z-10">
+          <view
             v-if="!isSelectionMode"
             class="w-8 text-end me-2 text-description"
           >
             #
-          </div>
-          <div v-else class="w-8 flex justify-end me-2">
+          </view>
+          <view v-else class="w-8 flex justify-end me-2">
             <Check
               :df="{
                 fieldtype: 'Check',
@@ -27,13 +27,13 @@
               :value="isAllSelected"
               @change="toggleSelectAll"
             />
-          </div>
+          </view>
           <Row
             class="flex-1 text-description h-row-mid"
             :column-count="columns.length"
             gap="1rem"
           >
-            <div
+            <view
               v-for="(column, i) in columns"
               :key="column.label"
               class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
@@ -43,23 +43,23 @@
               }"
             >
               {{ column.label }}
-            </div>
+            </view>
           </Row>
-        </div>
-        <hr class="border-border sticky top-[var(--h-row-mid)] z-10" />
+        </view>
+        <view class="border-b border-border sticky top-[var(--h-row-mid)] z-10"   />
 
         <!-- Data Rows -->
-        <div class="flex-1">
-          <div v-for="(row, i) in dataSlice" :key="row.name as string">
+        <view class="flex-1">
+          <view v-for="(row, i) in dataSlice" :key="row.name as string">
             <!-- Row Content -->
-            <div class="flex hover:bg-surface-hover items-center">
-              <div
+            <view class="flex hover:bg-surface-hover items-center">
+              <view
                 v-if="!isSelectionMode"
                 class="w-8 text-end me-2 text-description"
               >
                 {{ i + pageStart + 1 }}
-              </div>
-              <div v-else class="w-8 flex justify-end me-2">
+              </view>
+              <view v-else class="w-8 flex justify-end me-2">
                 <Check
                   :df="{
                     fieldtype: 'Check',
@@ -70,13 +70,13 @@
                   :value="selectedItems.includes(row.name as string)"
                   @change="toggleItemSelection(row.name as string)"
                 />
-              </div>
+              </view>
 
               <Row
                 gap="1rem"
                 class="cursor-pointer text-main flex-1 h-row-mid"
                 :column-count="columns.length"
-                @click="
+                @tap="
                   isSelectionMode ? null : emit('openDoc', String(row.name))
                 "
               >
@@ -92,40 +92,40 @@
                   @status-found="handleStatusFound"
                 />
               </Row>
-            </div>
-            <hr
+            </view>
+            <view class="border-b border-border" 
               v-if="!(i === dataSlice.length - 1 && i > 13)"
-              class="border-border"
+              
             />
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
     </ScrollArea>
 
     <!-- Pagination Footer -->
-    <div v-if="data?.length" class="mt-auto flex-shrink-0">
-      <hr class="border-border" />
+    <view v-if="data?.length" class="mt-auto flex-shrink-0">
+      <view class="border-b border-border"   />
       <Paginator
         :item-count="data.length"
         class="px-4"
         @index-change="setPageIndices"
       />
-    </div>
+    </view>
 
     <!-- Empty State -->
-    <div
+    <view
       v-if="!data?.length"
       class="flex flex-col items-center justify-center my-auto"
     >
       <img src="../../assets/img/list-empty-state.svg" alt="" class="w-24" />
-      <p class="my-3 text-description">
+      <text class="my-3 text-description">
         {{ t`No entries found` }}
-      </p>
-      <Button v-if="canCreate" type="primary" @click="emit('makeNewDoc')">
+      </text>
+      <Button v-if="canCreate" type="primary" @tap="emit('makeNewDoc')">
         {{ t`Make Entry` }}
       </Button>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

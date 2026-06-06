@@ -1,43 +1,43 @@
 <template>
-  <div :class="level > 0 ? 'ms-2 ps-2 border-l border-border' : ''">
+  <view :class="level > 0 ? 'ms-2 ps-2 border-l border-border' : ''">
     <template v-for="r of rows" :key="r.key">
-      <div
+      <view
         class="flex gap-2 text-sm text-description whitespace-nowrap overflow-auto no-scrollbar"
         :class="[typeof r.value === 'object' ? 'cursor-pointer' : '']"
-        @click="r.collapsed = !r.collapsed"
+        @tap="r.collapsed = !r.collapsed"
       >
-        <div class="">{{ getKey(r) }}</div>
-        <div v-if="!r.isCollapsible" class="font-semibold text-muted">
+        <view class="">{{ getKey(r) }}</view>
+        <view v-if="!r.isCollapsible" class="font-semibold text-muted">
           {{ r.value }}
-        </div>
-        <div
+        </view>
+        <view
           v-else-if="Array.isArray(r.value)"
           class="text-indicator-blue-text bg-indicator-blue-bg border-indicator-blue-text border tracking-tighter rounded text-xs px-1"
         >
           Array
-        </div>
-        <div
+        </view>
+        <view
           v-else
           class="text-chart-pink-main bg-indicator-orange-bg border-chart-pink-main border tracking-tighter rounded text-xs px-1"
         >
           Object
-        </div>
+        </view>
 
         <lucide-icon
           v-if="r.isCollapsible"
           :name="r.collapsed ? 'chevron-up' : 'chevron-down'"
           class="w-4 h-4 ms-auto"
         />
-      </div>
-      <div v-if="!r.collapsed && typeof r.value === 'object'">
+      </view>
+      <view v-if="!r.collapsed && typeof r.value === 'object'">
         <TemplateBuilderHint
           :prefix="getKey(r)"
           :hints="Array.isArray(r.value) ? r.value[0] : r.value"
           :level="level + 1"
         />
-      </div>
+      </view>
     </template>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

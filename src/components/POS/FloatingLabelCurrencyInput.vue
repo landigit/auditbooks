@@ -1,5 +1,5 @@
 <template>
-  <div class="relative">
+  <view class="relative">
     <input
       ref="inputRef"
       :type="inputType"
@@ -12,19 +12,17 @@
       @blur="onBlur"
       class="block px-2.5 pb-2.5 pt-4 w-full font-medium text-main bg-canvas-muted rounded-lg border border-border appearance-none focus:outline-none focus:ring-0 peer"
     />
-    <label
+    <text
       for="floating_outlined"
       :class="size === 'large' ? 'text-xl' : 'text-md'"
       class="absolute font-medium text-description duration-300 transform -translate-y-4 scale-75 top-8 z-10 origin-[0] bg-surface px-2 peer-focus:px-2 peer-focus:text-indicator-blue-text peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
-      >{{ currency ? fyo.currencySymbols[currency] : undefined }}</label
-    >
-    <label
+      >{{ currency ? fyo.currencySymbols[currency] : undefined }}</text>
+    <text
       for="floating_outlined"
       :class="size === 'large' ? 'text-xl' : 'text-md'"
       class="absolute font-medium text-description duration-300 transform -translate-y-4 scale-75 top-1 z-10 origin-[0] bg-surface px-2 peer-focus:px-2 peer-focus:text-indicator-blue-text peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
-      >{{ df.label }}</label
-    >
-  </div>
+      >{{ df.label }}</text>
+  </view>
 </template>
 
 <script setup lang="ts">

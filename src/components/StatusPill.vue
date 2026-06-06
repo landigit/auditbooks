@@ -1,7 +1,7 @@
 <template>
-  <p v-if="showStatus" class="pill font-medium" :class="styleClass">
+  <text v-if="showStatus" class="pill font-medium" :class="styleClass">
     {{ text }}
-  </p>
+  </text>
 </template>
 
 <script setup lang="ts">

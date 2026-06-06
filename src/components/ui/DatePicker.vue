@@ -67,17 +67,17 @@ const sizeClasses = computed(() => {
             : 'Select a date'
         "
       >
-        <div
+        <view
           class="flex items-center gap-2 overflow-hidden whitespace-nowrap text-sm"
         >
           <lucide-icon
             name="calendar"
             class="h-4 w-4 opacity-50 flex-shrink-0"
           />
-          <span class="truncate">{{
+          <text class="truncate">{{
             modelValue ? df.format(modelValue) : placeholder || 'Pick a date'
-          }}</span>
-        </div>
+          }}</text>
+        </view>
       </button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0">

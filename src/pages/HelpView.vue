@@ -1,29 +1,29 @@
 <template>
-  <div class="flex h-full bg-canvas overflow-hidden">
+  <view class="flex h-full bg-canvas overflow-hidden">
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
+    <view class="flex-1 flex flex-col h-full overflow-hidden">
       <PageHeader :title="title">
         <template #right>
-          <div class="flex gap-2">
-            <Button variant="ghost" @click="$router.back()">
+          <view class="flex gap-2">
+            <Button variant="ghost" @tap="$router.back()">
               <LucideIcon name="arrow-left" class="w-4 h-4 mr-2" />
               {{ t('Back') }}
             </Button>
-          </div>
+          </view>
         </template>
       </PageHeader>
 
-      <div class="flex-1 flex overflow-hidden">
+      <view class="flex-1 flex overflow-hidden">
         <!-- Content -->
-        <div class="flex-1 overflow-y-auto custom-scroll p-8 lg:p-12">
-          <div class="max-w-3xl mx-auto w-full">
-            <div v-if="loading" class="flex items-center justify-center h-64">
-              <div
+        <view class="flex-1 overflow-y-auto custom-scroll p-8 lg:p-12">
+          <view class="max-w-3xl mx-auto w-full">
+            <view v-if="loading" class="flex items-center justify-center h-64">
+              <view
                 class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
-              ></div>
-            </div>
+              ></view>
+            </view>
 
-            <div
+            <view
               v-else-if="error"
               class="bg-red-50 p-6 rounded-lg border border-red-100 text-red-700 flex flex-col items-center text-center"
             >
@@ -31,30 +31,30 @@
                 name="file-warning"
                 class="w-12 h-12 mb-4 text-red-400"
               />
-              <h3 class="text-lg font-bold mb-2">Documentation Not Found</h3>
-              <p class="mb-4 text-sm opacity-90">{{ error }}</p>
-              <Button @click="loadDefault">Go to Getting Started</Button>
-            </div>
+              <text class="text-lg font-bold mb-2">Documentation Not Found</text>
+              <text class="mb-4 text-sm opacity-90">{{ error }}</text>
+              <Button @tap="loadDefault">Go to Getting Started</Button>
+            </view>
 
-            <div v-else class="help-content-wrapper">
-              <div
+            <view v-else class="help-content-wrapper">
+              <view
                 class="help-content prose prose-slate max-w-none dark:prose-invert"
                 v-html="renderedContent"
-              ></div>
-            </div>
-          </div>
-        </div>
+              ></view>
+            </view>
+          </view>
+        </view>
 
         <!-- Right Sidebar (TOC) -->
-        <div
+        <view
           v-if="toc.length > 0 && !loading"
           class="hidden xl:block w-64 border-l border-border p-6 overflow-y-auto custom-scroll"
         >
-          <h4
+          <text
             class="text-xs font-bold uppercase tracking-widest text-muted mb-4"
           >
             On this page
-          </h4>
+          </text>
           <nav class="space-y-1">
             <a
               v-for="item in toc"
@@ -65,15 +65,15 @@
                 item.level === 3 ? 'pl-4 text-muted' : 'text-main font-medium',
                 'hover:text-blue-600',
               ]"
-              @click.prevent="scrollTo(item.id)"
+              @tap.prevent="scrollTo(item.id)"
             >
               {{ item.text }}
             </a>
           </nav>
-        </div>
-      </div>
-    </div>
-  </div>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">
@@ -168,10 +168,10 @@ const loadContent = async () => {
       (_, type, body) => {
         const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
         const bodyHtml = marked.parseInline(body.trim());
-        placeholders.push(`<div class="help-alert alert-${type}">
-        <div class="alert-title font-bold uppercase text-xs mb-1">${type}</div>
-        <div class="alert-body">${bodyHtml}</div>
-      </div>`);
+        placeholders.push(`<view class="help-alert alert-${type}">
+        <view class="alert-title font-bold uppercase text-xs mb-1">${type}</view>
+        <view class="alert-body">${bodyHtml}</view>
+      </view>`);
         return id;
       }
     );
@@ -184,10 +184,10 @@ const loadContent = async () => {
       const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
       const cleanBody = body.replace(/^> ?/gm, '').trim();
       const bodyHtml = marked.parse(cleanBody);
-      placeholders.push(`<div class="help-alert alert-${typeLower}">
-        <div class="alert-title font-bold uppercase text-xs mb-1">${type}</div>
-        <div class="alert-body">${bodyHtml}</div>
-      </div>`);
+      placeholders.push(`<view class="help-alert alert-${typeLower}">
+        <view class="alert-title font-bold uppercase text-xs mb-1">${type}</view>
+        <view class="alert-body">${bodyHtml}</view>
+      </view>`);
       return id;
     });
 

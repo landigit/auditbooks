@@ -22,7 +22,7 @@ const appStore = useAppStore();
 const toggleSidebar = () => appStore.toggleSidebar();
 </script>
 <template>
-  <div class="flex overflow-hidden">
+  <view class="flex overflow-hidden">
     <Transition
       enter-active-class="transition-all duration-150 ease-out"
       enter-from-class="-translate-x-full rtl:translate-x-full opacity-0 w-0"
@@ -41,7 +41,7 @@ const toggleSidebar = () => appStore.toggleSidebar();
       />
     </Transition>
 
-    <div
+    <view
       class="flex flex-1 overflow-y-hidden custom-scroll custom-scroll-thumb1 bg-canvas"
     >
       <router-view v-slot="{ Component }">
@@ -59,7 +59,7 @@ const toggleSidebar = () => appStore.toggleSidebar();
           leave-from-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
           leave-to-class="translate-x-full opacity-0 w-0"
         >
-          <div v-if="route?.query?.edit">
+          <view v-if="route?.query?.edit">
             <component
               :is="Component"
               :key="
@@ -67,18 +67,18 @@ const toggleSidebar = () => appStore.toggleSidebar();
                 String(route.query.name || '')
               "
             />
-          </div>
+          </view>
         </Transition>
       </router-view>
-    </div>
+    </view>
 
     <!-- Show Sidebar Button -->
     <button
       v-show="!appStore.showSidebar"
       class="absolute bottom-0 start-0 text-description hover:bg-surface-hover rounded rtl-rotate-180 p-1 m-4 opacity-0 hover:opacity-100 hover:shadow-md"
-      @click="() => toggleSidebar()"
+      @tap="() => toggleSidebar()"
     >
       <LucideIcon name="chevrons-right" class="w-4 h-4" />
     </button>
-  </div>
+  </view>
 </template>

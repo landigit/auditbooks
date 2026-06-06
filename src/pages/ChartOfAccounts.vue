@@ -1,75 +1,75 @@
 <template>
-  <div class="flex flex-col h-full">
+  <view class="flex flex-col h-full">
     <PageHeader :title="t`Chart of Accounts`">
-      <Button v-if="!isAllExpanded" @click="expand">{{ t`Expand` }}</Button>
-      <Button v-if="!isAllCollapsed" @click="collapse">{{
+      <Button v-if="!isAllExpanded" @tap="expand">{{ t`Expand` }}</Button>
+      <Button v-if="!isAllCollapsed" @tap="collapse">{{
         t`Collapse`
       }}</Button>
     </PageHeader>
 
     <!-- Chart of Accounts -->
-    <div
+    <view
       v-if="root"
       class="flex-1 flex flex-col overflow-y-auto mb-4 custom-scroll custom-scroll-thumb1"
     >
       <!-- Chart of Accounts Indented List -->
       <template v-for="account in allAccounts" :key="account.name">
         <!-- Account List Item -->
-        <div
+        <view
           class="py-2 cursor-pointer hover:bg-surface-hover text-main group flex items-center border-b border-border flex-shrink-0 pe-4"
           :class="[
             account.level !== 0 ? 'text-base' : 'text-lg',
             isQuickEditOpen(account) ? 'bg-canvas-muted' : '',
           ]"
           :style="getItemStyle(account.level)"
-          @click="onClick(account)"
+          @tap="onClick(account)"
         >
           <LucideIcon
             :name="getIconName(!!account.isGroup, account.name)"
             :size="account.isGroup ? 20 : 16"
             class="text-description group-hover:text-main transition-colors"
           />
-          <div class="flex items-baseline">
-            <div
+          <view class="flex items-baseline">
+            <view
               class="ms-4"
               :class="[!account.parentAccount && 'font-semibold']"
             >
               {{ account.name }}
-            </div>
+            </view>
 
             <!-- Add Account Buttons on Group Hover -->
-            <div class="ms-6 hidden group-hover:block">
+            <view class="ms-6 hidden group-hover:block">
               <button
                 v-if="account.isGroup"
                 class="text-xs text-description hover:text-main focus:outline-none"
-                @click.stop="addAccount(account, 'addingAccount')"
+                @tap.stop="addAccount(account, 'addingAccount')"
               >
                 {{ t`Add Account` }}
               </button>
               <button
                 v-if="account.isGroup"
                 class="ms-3 text-xs text-description hover:text-main focus:outline-none"
-                @click.stop="addAccount(account, 'addingGroupAccount')"
+                @tap.stop="addAccount(account, 'addingGroupAccount')"
               >
                 {{ t`Add Group` }}
               </button>
               <button
                 class="ms-3 text-xs text-description hover:text-main focus:outline-none"
-                @click.stop="deleteAccount(account)"
+                @tap.stop="deleteAccount(account)"
               >
                 {{ account.isGroup ? t`Delete Group` : t`Delete Account` }}
               </button>
-            </div>
-          </div>
+            </view>
+          </view>
 
           <!-- Account Balance String -->
-          <p v-if="!account.isGroup" class="ms-auto text-base text-description">
+          <text v-if="!account.isGroup" class="ms-auto text-base text-description">
             {{ getBalanceString(account) }}
-          </p>
-        </div>
+          </text>
+        </view>
 
         <!-- Add Account/Group -->
-        <div
+        <view
           v-if="account.addingAccount || account.addingGroupAccount"
           :key="account.name + '-adding-account'"
           class="px-4 border-b border-border cursor-pointer hover:bg-surface-hover group flex items-center text-base"
@@ -80,7 +80,7 @@
             :size="account.addingGroupAccount ? 20 : 16"
             class="text-description"
           />
-          <div class="flex ms-4 h-row-mid items-center">
+          <view class="flex ms-4 h-row-mid items-center">
             <input
               :ref="(el) => setInputRef(el, account.name)"
               v-model="newAccountName"
@@ -97,22 +97,22 @@
             <button
               v-if="!insertingAccount"
               class="ms-4 text-xs text-description hover:text-main focus:outline-none"
-              @click="createNewAccount(account, account.addingGroupAccount)"
+              @tap="createNewAccount(account, account.addingGroupAccount)"
             >
               {{ t`Save` }}
             </button>
             <button
               v-if="!insertingAccount"
               class="ms-4 text-xs text-description hover:text-main focus:outline-none"
-              @click="cancelAddingAccount(account)"
+              @tap="cancelAddingAccount(account)"
             >
               {{ t`Cancel` }}
             </button>
-          </div>
-        </div>
+          </view>
+        </view>
       </template>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 <script setup lang="ts">
 import {

@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="bg-surface text-main"></div>
+  <view ref="container" class="bg-surface text-main"></view>
 </template>
 
 <script setup lang="ts">

@@ -82,7 +82,7 @@ watch(
     <TooltipRoot v-bind="forwarded" :open="isOpen">
       <template v-if="internalOpen">
         <TooltipTrigger as-child>
-          <div
+          <view
             class="fixed pointer-events-none"
             :style="{
               left: `${x}px`,

@@ -3,7 +3,7 @@
     :ratio="ratio"
     class="border border-border items-center mt-4 px-2 rounded-t-md text-description w-full"
   >
-    <div
+    <view
       v-for="df in tableFields"
       :key="df.fieldname"
       class="flex items-center px-2 py-2 text-lg"
@@ -15,10 +15,10 @@
       }"
     >
       {{ df.label }}
-    </div>
+    </view>
   </Row>
 
-  <div
+  <view
     class="overflow-y-auto custom-scroll custom-scroll-thumb2"
     style="height: 70vh"
   >
@@ -28,7 +28,7 @@
       :ratio="ratio"
       :border="true"
       class="border-b border-l border-r border-border group h-row-mid hover:bg-surface-hover bg-surface items-center justify-center px-2 w-full"
-      @click="handleChange(row)"
+      @tap="handleChange(row)"
     >
       <FormControl
         v-for="df in tableFields"
@@ -40,7 +40,7 @@
         :readOnly="true"
       />
     </Row>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

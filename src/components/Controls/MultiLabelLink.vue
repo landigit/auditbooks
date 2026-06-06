@@ -167,7 +167,7 @@ const getSuggestions = async (keyword = '') => {
       {
         component: markRaw({
           template:
-            '<span class="text-description">{{ t`No results found` }}</span>',
+            '<text class="text-description">{{ t`No results found` }}</text>',
           setup() {
             return { t };
           },
@@ -188,9 +188,9 @@ const getCreateNewOption = () => {
     actionOnly: true,
     component: markRaw({
       template:
-        '<div class="flex items-center font-semibold">{{ t`Create` }}' +
+        '<view class="flex items-center font-semibold">{{ t`Create` }}' +
         '<Badge color="blue" class="ms-2" v-if="isNewValue">{{ linkValue }}</Badge>' +
-        '</div>',
+        '</view>',
       setup() {
         const isNewValue = computed(() => {
           const suggestions = autoCompleteRef.value?.suggestions || [];

@@ -14,10 +14,10 @@
         selectHighlightedItem,
       }"
     >
-      <div v-if="showLabel" :class="labelClasses">
+      <view v-if="showLabel" :class="labelClasses">
         {{ df.label }}
-      </div>
-      <div
+      </view>
+      <view
         class="flex items-center justify-between pe-2 rounded w-full"
         :style="containerStyles"
         :class="containerClasses"
@@ -32,14 +32,14 @@
           :placeholder="inputPlaceholder"
           :readonly="isReadOnly"
           :tabindex="isReadOnly ? '-1' : '0'"
-          @focus="(e) => !isReadOnly && onInputFocus(e)"
-          @click="(e) => !isReadOnly && onClick(e, toggleDropdown)"
+          @focus="(e: any) => !isReadOnly && onInputFocus(e)"
+          @tap="(e: any) => !isReadOnly && onClick(e, toggleDropdown)"
           @blur="
-            (e) =>
+            (e: any) =>
               !isReadOnly &&
               onBlur((e.target as HTMLInputElement).value, toggleDropdown)
           "
-          @input="(e) => onInput(e, toggleDropdown)"
+          @input="(e: any) => onInput(e, toggleDropdown)"
           @keydown.up="onKeyDownUp($event, toggleDropdown, highlightItemUp)"
           @keydown.down="
             onKeyDownDown($event, toggleDropdown, highlightItemDown)
@@ -57,7 +57,7 @@
           style="background: inherit; margin-right: -3px"
           viewBox="0 0 5 10"
           xmlns="http://www.w3.org/2000/svg"
-          @click="(e) => !isReadOnly && onIconFocus(e, toggleDropdown)"
+          @tap="(e: any) => !isReadOnly && onIconFocus(e, toggleDropdown)"
         >
           <path
             d="M1 2.636L2.636 1l1.637 1.636M1 7.364L2.636 9l1.637-1.636"
@@ -70,7 +70,7 @@
           />
         </svg>
 
-        <div v-if="canLink" class="flex items-center gap-1">
+        <view v-if="canLink" class="flex items-center gap-1">
           <button
             v-if="value && showClearButton"
             class="p-0.5 rounded bg-transparent text-description hover:text-main transition-colors"
@@ -102,8 +102,8 @@
               />
             </PopoverContent>
           </Popover>
-        </div>
-      </div>
+        </view>
+      </view>
     </template>
   </Dropdown>
 </template>

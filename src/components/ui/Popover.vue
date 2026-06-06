@@ -32,7 +32,7 @@ const handleUpdateOpen = (val: boolean) => {
 </script>
 
 <template>
-  <div v-bind="$attrs">
+  <view v-bind="$attrs">
     <PopoverRoot
       v-bind="forwarded"
       :open="isOpen"
@@ -40,5 +40,5 @@ const handleUpdateOpen = (val: boolean) => {
     >
       <slot />
     </PopoverRoot>
-  </div>
+  </view>
 </template>

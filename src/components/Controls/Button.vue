@@ -1,20 +1,20 @@
 <template>
-  <div
+  <view
     :class="[containerClasses]"
     class="mt-6 w-full text-main text-base focus:outline-none"
   >
-    <label class="flex w-full">
+    <text class="flex w-full">
       <button
         ref="inputRef"
         type="button"
-        @click="onClick"
+        @tap="onClick"
         :disabled="isReadOnly"
         class="w-full flex items-center justify-center py-2.5 px-4 rounded-lg font-medium bg-indicator-blue-bg text-indicator-blue-text hover:bg-indicator-blue-bg/90 active:scale-[0.98] shadow-sm hover:shadow transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         {{ df.label }}
       </button>
-    </label>
-  </div>
+    </text>
+  </view>
 </template>
 
 <script setup lang="ts">

@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <view>
     <lucide-icon
       :name="isExapanded ? 'chevron-up' : 'chevron-down'"
       class="w-4 h-4 inline-flex text-main"
-      @click="toggleExpand"
+      @tap="toggleExpand"
     />
-  </div>
+  </view>
 
-  <div class="relative" @click="toggleExpand">
+  <view class="relative" @tap="toggleExpand">
     <Link
       :df="{
         fieldname: 'item',
@@ -20,14 +20,14 @@
       :value="row.item"
       :read-only="true"
     />
-    <p
+    <text
       v-if="row.isFreeItem"
       class="absolute flex top-0 font-medium text-xs ml-2 text-indicator-green-text"
       style="font-size: 0.6rem"
     >
       {{ row.pricingRule }}
-    </p>
-  </div>
+    </text>
+  </view>
 
   <Int
     :df="{
@@ -65,26 +65,26 @@
     :read-only="true"
   />
 
-  <div class="flex justify-center">
+  <view class="flex justify-center">
     <lucide-icon
       name="trash"
       class="w-4 text-xl text-error"
-      @click="removeAddedItem(row)"
+      @tap="removeAddedItem(row)"
     />
-  </div>
+  </view>
 
-  <div></div>
+  <view></view>
 
   <template v-if="isExapanded">
-    <div class="rounded-md grid grid-cols-4 my-3" style="width: 27vw">
-      <div class="px-4 col-span-2">
+    <view class="rounded-md grid grid-cols-4 my-3" style="width: 27vw">
+      <view class="px-4 col-span-2">
         <Float
           :df="{
             fieldname: 'quantity',
             fieldtype: 'Float',
             label: t`Quantity`,
           }"
-          @click="handleOpenKeyboard(row, 'quantity')"
+          @tap="handleOpenKeyboard(row, 'quantity')"
           size="medium"
           :min="0"
           :border="true"
@@ -92,9 +92,9 @@
           :value="row.quantity"
           :read-only="isReadOnly"
         />
-      </div>
+      </view>
 
-      <div class="px-4 col-span-2">
+      <view class="px-4 col-span-2">
         <Link
           v-if="isUOMConversionEnabled"
           :df="{
@@ -109,9 +109,9 @@
           :value="row.transferUnit"
           :read-only="isReadOnly"
         />
-      </div>
+      </view>
 
-      <div class="px-4 pt-6 col-span-2">
+      <view class="px-4 pt-6 col-span-2">
         <Int
           v-if="isUOMConversionEnabled"
           :df="{
@@ -119,30 +119,30 @@
             fieldname: 'transferQuantity',
             label: t`Transfer Quantity`,
           }"
-          @click="!isReadOnly && handleOpenKeyboard(row, 'transferQuantity')"
+          @tap="!isReadOnly && handleOpenKeyboard(row, 'transferQuantity')"
           size="medium"
           :border="true"
           :show-label="true"
           :value="row.transferQuantity"
           :read-only="isReadOnly"
         />
-      </div>
-      <div class="px-4 pt-6 col-span-2">
+      </view>
+      <view class="px-4 pt-6 col-span-2">
         <Currency
           :df="{
             fieldtype: 'Currency',
             fieldname: 'rate',
             label: t`Rate`,
           }"
-          @click="!isReadOnly && handleOpenKeyboard(row, 'rate')"
+          @tap="!isReadOnly && handleOpenKeyboard(row, 'rate')"
           size="medium"
           :show-label="true"
           :border="true"
           :value="row.rate"
           :read-only="isReadOnly"
         />
-      </div>
-      <div class="px-4 col-span-2 mt-5">
+      </view>
+      <view class="px-4 col-span-2 mt-5">
         <Currency
           v-if="isDiscountingEnabled"
           :df="{
@@ -150,7 +150,7 @@
             fieldname: 'discountAmount',
             label: 'Discount Amount',
           }"
-          @click="handleOpenKeyboard(row, 'itemDiscountAmount')"
+          @tap="handleOpenKeyboard(row, 'itemDiscountAmount')"
           class="col-span-2"
           size="medium"
           :show-label="true"
@@ -158,9 +158,9 @@
           :value="row.itemDiscountAmount"
           :read-only="(row.itemDiscountPercent as number) > 0 || isReadOnly"
         />
-      </div>
+      </view>
 
-      <div class="px-4 col-span-2 mt-5">
+      <view class="px-4 col-span-2 mt-5">
         <Float
           v-if="isDiscountingEnabled"
           :df="{
@@ -168,16 +168,16 @@
             fieldname: 'itemDiscountPercent',
             label: t`Discount Percent`,
           }"
-          @click="handleOpenKeyboard(row, 'itemDiscountPercent')"
+          @tap="handleOpenKeyboard(row, 'itemDiscountPercent')"
           size="medium"
           :show-label="true"
           :border="true"
           :value="row.itemDiscountPercent"
           :read-only="!row.itemDiscountAmount?.isZero() || isReadOnly"
         />
-      </div>
+      </view>
 
-      <div
+      <view
         v-if="row.links?.item && row.links?.item.hasBatch"
         class="px-4 pt-6 col-span-2"
       >
@@ -196,9 +196,9 @@
           :read-only="false"
           @change="(value: string) => setBatch(value)"
         />
-      </div>
+      </view>
 
-      <div
+      <view
         v-if="row.links?.item && row.links?.item.hasBatch"
         class="px-4 pt-6 col-span-2"
       >
@@ -216,9 +216,9 @@
           :read-only="true"
           :text-right="true"
         />
-      </div>
+      </view>
 
-      <div v-if="hasSerialNumber" class="px-4 pt-6 col-span-4">
+      <view v-if="hasSerialNumber" class="px-4 pt-6 col-span-4">
         <Text
           :df="{
             label: t`Serial Number`,
@@ -231,8 +231,8 @@
           :required="hasSerialNumber"
           @change="(value: string) => setSerialNumber(value)"
         />
-      </div>
-    </div>
+      </view>
+    </view>
   </template>
 </template>
 

@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <view>
     <PageHeader :title="t`Customize Form`">
       <DropdownWithActions :actions="[]" :disabled="false" :title="t`More`" />
       <Button :title="t`Save Customizations`" type="primary">
         {{ t`Save` }}
       </Button>
     </PageHeader>
-    <div class="flex text-base w-full flex-col">
+    <view class="flex text-base w-full flex-col">
       <!-- Select Entry Type -->
-      <div
+      <view
         class="h-row-largest flex flex-row justify-start items-center w-full gap-2 border-b border-border p-4"
       >
         <AutoComplete
@@ -26,15 +26,15 @@
           @change="setEntryType"
         />
 
-        <p v-if="errorMessage" class="text-base ms-2 text-error">
+        <text v-if="errorMessage" class="text-base ms-2 text-error">
           {{ errorMessage }}
-        </p>
-        <p v-else-if="helpMessage" class="text-base ms-2 text-description">
+        </text>
+        <text v-else-if="helpMessage" class="text-base ms-2 text-description">
           {{ helpMessage }}
-        </p>
-      </div>
-    </div>
-  </div>
+        </text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

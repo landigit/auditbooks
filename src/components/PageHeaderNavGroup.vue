@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <view class="flex">
     <SearchBar />
     <!-- Back Button -->
     <a
@@ -10,7 +10,7 @@
           ? 'text-main cursor-pointer'
           : 'text-description'
       "
-      @click="router.back()"
+      @tap="router.back()"
     >
       <lucide-icon name="chevron-left" class="w-4 h-4" />
     </a>
@@ -22,11 +22,11 @@
           ? 'text-main cursor-pointer'
           : 'text-description'
       "
-      @click="router.forward()"
+      @tap="router.forward()"
     >
       <lucide-icon name="chevron-right" class="w-4 h-4" />
     </a>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

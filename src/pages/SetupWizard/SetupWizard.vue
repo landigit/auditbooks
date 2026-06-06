@@ -12,7 +12,7 @@
       </FormHeader>
 
       <!-- Section Container -->
-      <div
+      <view
         v-if="hasDoc"
         class="overflow-auto custom-scroll custom-scroll-thumb1 window-no-drag"
       >
@@ -32,26 +32,26 @@
           :collapsible="false"
           @value-change="onValueChange"
         />
-      </div>
+      </view>
 
       <!-- Buttons Bar -->
-      <div
+      <view
         class="mt-auto p-4 flex items-center justify-between border-t border-border flex-shrink-0 sticky bottom-0 bg-surface window-no-drag"
       >
-        <p v-if="loading" class="text-base text-description">
+        <text v-if="loading" class="text-base text-description">
           {{ t`Loading instance...` }}
-        </p>
+        </text>
         <Button
           v-if="!loading"
           class="w-24 border border-border"
-          @click="cancel"
+          @tap="cancel"
           >{{ t`Cancel` }}</Button
         >
         <Button
           v-if="store.isDevelopment && !loading"
           class="w-24 ml-auto mr-4 border border-border"
           :disabled="loading"
-          @click="fill"
+          @tap="fill"
           >{{ t`Fill` }}</Button
         >
         <Button
@@ -59,10 +59,10 @@
           class="w-24"
           data-testid="submit-button"
           :disabled="!areAllValuesFilled || loading"
-          @click="submit"
+          @tap="submit"
           >{{ t`Submit` }}</Button
         >
-      </div>
+      </view>
     </template>
   </FormContainer>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-shrink-0 flex items-center gap-2" style="width: fit-content">
+  <view class="flex-shrink-0 flex items-center gap-2" style="width: fit-content">
     <kbd
       v-for="k in keys"
       :key="k"
@@ -7,7 +7,7 @@
       :class="{ 'key-styling': !simple }"
       >{{ keyMap[k] ?? k }}</kbd
     >
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

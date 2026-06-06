@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full">
+  <view class="flex flex-col h-full">
     <SectionHeader>
       <template #title>{{ t`Profit and Loss` }}</template>
       <template #action>
@@ -24,12 +24,12 @@
       :y-max="chartData.yMax"
       :y-min="chartData.yMin"
     />
-    <div v-else class="flex-1 w-full h-full flex-center my-20">
-      <span class="text-base text-description">
+    <view v-else class="flex-1 w-full h-full flex-center my-20">
+      <text class="text-base text-description">
         {{ t`No transactions yet` }}
-      </span>
-    </div>
-  </div>
+      </text>
+    </view>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, computed, watch, onActivated } from 'vue';

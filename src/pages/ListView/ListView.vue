@@ -1,37 +1,37 @@
 <template>
-  <div class="flex flex-col">
+  <view class="flex flex-col">
     <PageHeader :title="title">
       <Button
         v-if="
           schemaName === 'Item' &&
           (!isSelectionMode || (isSelectionMode && selectedItems.length === 0))
         "
-        @click="toggleSelectionMode"
+        @tap="toggleSelectionMode"
       >
         {{ t`Select` }}
       </Button>
-      <div
+      <view
         v-if="
           isSelectionMode && schemaName === 'Item' && selectedItems.length > 0
         "
         class="relative"
       >
-        <Button class="w-40" @click="toggleDropdown"> Create </Button>
-        <div
+        <Button class="w-40" @tap="toggleDropdown"> Create </Button>
+        <view
           v-if="showDropdown"
           class="absolute top-full mt-1 bg-surface border border-border rounded shadow-lg z-10 w-40"
         >
-          <div
+          <view
             v-for="option in actionOptions"
             :key="option.value"
             class="px-4 py-2 hover:bg-surface-hover cursor-pointer text-sm"
-            @click="createInvoice(option.value)"
+            @tap="createInvoice(option.value)"
           >
             {{ option.label }}
-          </div>
-        </div>
-      </div>
-      <Button ref="exportButton" :icon="false" @click="openExportModal = true">
+          </view>
+        </view>
+      </view>
+      <Button ref="exportButton" :icon="false" @tap="openExportModal = true">
         {{ t`Export` }}
       </Button>
       <FilterDropdown
@@ -46,7 +46,7 @@
         type="primary"
         :padding="false"
         class="px-3"
-        @click="handleMakeNewDoc"
+        @tap="handleMakeNewDoc"
       >
         <LucideIcon name="plus" class="w-4 h-4" />
       </Button>
@@ -72,7 +72,7 @@
         :list-filters="listFilters"
       />
     </Modal>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

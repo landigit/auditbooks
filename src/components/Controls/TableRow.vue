@@ -5,12 +5,12 @@
     :class="readOnly ? '' : 'hover:bg-surface-hover'"
   >
     <!-- Index or Remove button -->
-    <div
+    <view
       class="flex items-center ps-2 text-description"
       @mouseenter="isRowIndexVisible = false"
       @mouseleave="isRowIndexVisible = true"
     >
-      <span class="relative w-4 h-4 flex items-center justify-center">
+      <text class="relative w-4 h-4 flex items-center justify-center">
         <lucide-icon
           v-if="!readOnly && !isRowIndexVisible"
           name="x"
@@ -19,10 +19,10 @@
           tabindex="0"
           role="button"
           aria-label="Delete row"
-          @click="emit('remove')"
+          @tap="emit('remove')"
           @keydown.enter="emit('remove')"
         />
-        <span
+        <text
           v-if="!readOnly && isRowIndexVisible"
           class="absolute left-0 top-0 w-full h-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-main rounded"
           tabindex="0"
@@ -32,12 +32,12 @@
           @keydown.enter="emit('remove')"
         >
           {{ (row.idx ?? 0) + 1 }}
-        </span>
-      </span>
-      <span v-if="readOnly">
+        </text>
+      </text>
+      <text v-if="readOnly">
         {{ (row.idx ?? 0) + 1 }}
-      </span>
-    </div>
+      </text>
+    </view>
 
     <!-- Data Input Form Control -->
     <FormControl
@@ -56,19 +56,19 @@
       :icon="true"
       :padding="false"
       :background="false"
-      @click="openRowQuickEdit"
+      @tap="openRowQuickEdit"
     >
       <lucide-icon name="edit" class="w-4 h-4 text-description" />
     </Button>
 
     <!-- Error Display -->
-    <div
+    <view
       v-if="hasErrors"
       class="text-xs text-error ps-2 col-span-full relative"
       style="bottom: 0.75rem; height: 0px"
     >
       {{ getErrorString() }}
-    </div>
+    </view>
   </Row>
 </template>
 

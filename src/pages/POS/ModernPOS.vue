@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <view>
     <OpenPOSShiftModal
       v-if="!isPosShiftOpen"
       :open-modal="!isPosShiftOpen"
@@ -94,10 +94,10 @@
       @apply-pricing-rule="emitEvent('applyPricingRule')"
     />
 
-    <div class="bg-canvas-muted flex flex-col lg:grid lg:grid-cols-9 gap-3 p-4">
-      <div class="w-full lg:col-span-3 flex h-auto">
-        <div class="flex flex-col w-full gap-3">
-          <div
+    <view class="bg-canvas-muted flex flex-col lg:grid lg:grid-cols-9 gap-3 p-4">
+      <view class="w-full lg:col-span-3 flex h-auto">
+        <view class="flex flex-col w-full gap-3">
+          <view
             class="p-4 flex flex-col min-h-[350px] lg:h-[calc(100vh-25rem)] bg-surface border rounded-md border-border overflow-y-auto custom-scroll custom-scroll-thumb1"
           >
             <!-- Customer Search -->
@@ -121,12 +121,12 @@
               @apply-pricing-rule="emitEvent('applyPricingRule')"
               @toggle-modal="emitEvent('toggleModal', 'Keyboard')"
             />
-          </div>
+          </view>
 
-          <div
+          <view
             class="p-3 bg-surface border rounded-md border-border h-fit flex-shrink-0"
           >
-            <div class="grid grid-cols-2 gap-2">
+            <view class="grid grid-cols-2 gap-2">
               <FloatingLabelFloatInput
                 :df="{
                   label: t`Total Quantity`,
@@ -154,9 +154,9 @@
                 :text-right="true"
                 @change="(amount: Money) => (additionalDiscounts = amount)"
               />
-            </div>
+            </view>
 
-            <div class="mt-2 grid grid-cols-2 gap-2">
+            <view class="mt-2 grid grid-cols-2 gap-2">
               <FloatingLabelCurrencyInput
                 :df="{
                   label: t`Item Discounts`,
@@ -177,10 +177,10 @@
                 :read-only="true"
                 :text-right="true"
               />
-            </div>
+            </view>
 
-            <div class="flex w-full gap-2">
-              <div class="w-full">
+            <view class="flex w-full gap-2">
+              <view class="w-full">
                 <Button
                   class="mt-2 w-full py-5"
                   :style="{
@@ -189,14 +189,14 @@
                       fyo.singles.Defaults?.saveButtonColour,
                   }"
                   :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                  @click="emit('saveInvoiceAction')"
+                  @tap="emit('saveInvoiceAction')"
                 >
                   <slot>
-                    <p
+                    <text
                       class="uppercase text-lg text-button-primary-text font-semibold"
                     >
                       {{ t`Save` }}
-                    </p>
+                    </text>
                   </slot>
                 </Button>
                 <Button
@@ -207,18 +207,18 @@
                       fyo.singles.Defaults?.heldButtonColour,
                   }"
                   :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                  @click="emitEvent('toggleModal', 'SavedInvoice', true)"
+                  @tap="emitEvent('toggleModal', 'SavedInvoice', true)"
                 >
                   <slot>
-                    <p
+                    <text
                       class="uppercase text-lg text-button-primary-text font-semibold"
                     >
                       {{ t`Held` }}
-                    </p>
+                    </text>
                   </slot>
                 </Button>
-              </div>
-              <div class="w-full">
+              </view>
+              <view class="w-full">
                 <Button
                   class="mt-2 w-full py-5"
                   :style="{
@@ -227,14 +227,14 @@
                       fyo.singles.Defaults?.cancelButtonColour,
                   }"
                   :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                  @click="() => emit('clearValues')"
+                  @tap="() => emit('clearValues')"
                 >
                   <slot>
-                    <p
+                    <text
                       class="uppercase text-lg text-button-primary-text font-semibold"
                     >
                       {{ t`Cancel` }}
-                    </p>
+                    </text>
                   </slot>
                 </Button>
                 <Button
@@ -245,14 +245,14 @@
                       profile?.returnButtonColour ||
                       fyo.singles.Defaults?.returnButtonColour,
                   }"
-                  @click="emitEvent('toggleModal', 'ReturnSalesInvoice', true)"
+                  @tap="emitEvent('toggleModal', 'ReturnSalesInvoice', true)"
                 >
                   <slot>
-                    <p
+                    <text
                       class="uppercase text-lg text-button-primary-text font-semibold"
                     >
                       {{ t`Return` }}
-                    </p>
+                    </text>
                   </slot>
                 </Button>
                 <Button
@@ -263,18 +263,18 @@
                       profile?.payButtonColour ||
                       fyo.singles.Defaults?.payButtonColour,
                   }"
-                  @click="emitEvent('handlePaymentAction')"
+                  @tap="emitEvent('handlePaymentAction')"
                 >
                   <slot>
-                    <p
+                    <text
                       class="uppercase text-lg text-button-primary-text font-semibold"
                     >
                       {{ t`Pay` }}
-                    </p>
+                    </text>
                   </slot>
                 </Button>
-              </div>
-            </div>
+              </view>
+            </view>
             <Button
               v-if="isReturnInvoiceEnabledReturn"
               class="mt-2 w-full py-5"
@@ -283,25 +283,25 @@
                   profile?.payButtonColour ||
                   fyo.singles.Defaults?.payButtonColour,
               }"
-              @click="emitEvent('handlePaymentAction')"
+              @tap="emitEvent('handlePaymentAction')"
             >
               <slot>
-                <p
+                <text
                   class="uppercase text-lg text-button-primary-text font-semibold"
                 >
                   {{ t`Pay` }}
-                </p>
+                </text>
               </slot>
             </Button>
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
 
-      <div
+      <view
         class="bg-surface border rounded-md w-full lg:col-span-6 flex flex-col border-border h-auto lg:h-[calc(100vh-6rem)]"
       >
-        <div class="rounded-md p-4 col-span-5">
-          <div class="flex gap-x-2">
+        <view class="rounded-md p-4 col-span-5">
+          <view class="flex gap-x-2">
             <!-- Item Search -->
             <MultiLabelLink
               class="w-full"
@@ -340,7 +340,7 @@
               :value="selectedItemGroup"
               @change="(group: string) => emitEvent('setItemGroup', group)"
             />
-          </div>
+          </view>
 
           <ModernPOSItemsTable
             v-if="tableView"
@@ -358,7 +358,7 @@
             @add-item="(item: any) => emitEvent('addItem', item)"
           />
 
-          <div class="flex fixed bottom-0 p-1 ml-3 mb-7 gap-x-3">
+          <view class="flex fixed bottom-0 p-1 ml-3 mb-7 gap-x-3">
             <POSQuickActions
               :sinv-doc="sinvDoc"
               :loyalty-points="loyaltyPoints"
@@ -368,11 +368,11 @@
               @emit-route-to-sinv-list="emitEvent('routeToSinvList')"
               @toggle-modal="(modalName) => emitEvent('toggleModal', modalName)"
             />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

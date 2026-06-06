@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <div v-if="showLabel" :class="labelClasses">
+  <view>
+    <view v-if="showLabel" :class="labelClasses">
       {{ df.label }}
-    </div>
+    </view>
     <input
       v-show="showInput"
       ref="inputEl"
@@ -17,17 +17,17 @@
       @focus="onFocus"
       @input="(e: Event) => $emit('input', e)"
     />
-    <div
+    <view
       v-show="!showInput"
       class="whitespace-nowrap overflow-x-auto no-scrollbar"
       :class="[inputClasses, containerClasses]"
       tabindex="0"
-      @click="activateInput"
+      @tap="activateInput"
       @focus="activateInput"
     >
       {{ formattedValue }}
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

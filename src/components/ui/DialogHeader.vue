@@ -8,11 +8,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div
+  <view
     :class="
       cn('flex flex-col space-y-1.5 text-center sm:text-left', props.class)
     "
   >
     <slot />
-  </div>
+  </view>
 </template>

@@ -58,8 +58,8 @@ export const useAppStore = defineStore('app', () => {
   );
   const appFlags = ref({} as Record<string, boolean>);
   const historyState = reactive({
-    forward: !!(history.state as HistoryState)?.forward,
-    back: !!(history.state as HistoryState)?.back,
+    forward: typeof history !== 'undefined' ? !!(history.state as HistoryState)?.forward : false,
+    back: typeof history !== 'undefined' ? !!(history.state as HistoryState)?.back : false,
   });
 
   function toggleSidebar(value?: boolean) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="text-sm">
+  <view class="text-sm">
     <template v-for="df in formFields">
       <!-- Table Field Form (Eg: PaymentFor) -->
       <Table
@@ -13,7 +13,7 @@
       />
 
       <!-- Regular Field Form -->
-      <div
+      <view
         v-else
         :key="`${df.fieldname}-regular`"
         class="grid items-center border-b border-border"
@@ -22,11 +22,11 @@
           height: getFieldHeight(df),
         }"
       >
-        <div class="ps-4 flex text-description">
+        <view class="ps-4 flex text-description">
           {{ df.label }}
-        </div>
+        </view>
 
-        <div
+        <view
           class="py-2 pe-4"
           :class="{
             'ps-2': df.fieldtype === 'AttachImage',
@@ -41,13 +41,13 @@
             :text-end="false"
             @change="async (value) => await onChange(df, value)"
           />
-          <div v-if="errors[df.fieldname]" class="text-sm text-error mt-2 ps-2">
+          <view v-if="errors[df.fieldname]" class="text-sm text-error mt-2 ps-2">
             {{ errors[df.fieldname] }}
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
     </template>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

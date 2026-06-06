@@ -8,7 +8,7 @@
       leave-from-class="opacity-100 translate-y-0 scale-100"
       leave-to-class="opacity-0 translate-y-2 scale-95"
     >
-      <div
+      <view
         v-if="open"
         class="inner text-main shadow-lg px-3 py-2 flex items-center mb-3 w-toast z-30 bg-surface rounded-lg border border-border"
         :class="[config.containerBorder]"
@@ -19,13 +19,13 @@
           class="w-6 h-6 me-3"
           :class="config.iconColor"
         />
-        <div :class="actionText ? 'cursor-pointer' : ''" @click="actionClicked">
-          <p class="text-base">{{ message }}</p>
+        <view :class="actionText ? 'cursor-pointer' : ''" @tap="actionClicked">
+          <text class="text-base">{{ message }}</text>
           <button v-if="actionText" class="text-sm text-muted hover:text-main">
             {{ actionText }}
           </button>
-        </div>
-        <div class="ms-auto flex items-center">
+        </view>
+        <view class="ms-auto flex items-center">
           <LucideIcon
             v-if="isPersistent"
             name="loader-2"
@@ -36,10 +36,10 @@
             v-else
             name="x"
             class="w-4 h-4 ms-auto text-description cursor-pointer hover:text-main"
-            @click="closeToast"
+            @tap="closeToast"
           />
-        </div>
-      </div>
+        </view>
+      </view>
     </Transition>
   </Teleport>
 </template>

@@ -1,19 +1,19 @@
 <template>
   <Teleport to="body">
     <Transition>
-      <div
+      <view
         v-if="openModal"
         class="backdrop z-50 flex justify-center items-center"
-        @click="emit('closemodal')"
+        @tap="emit('closemodal')"
       >
-        <div
+        <view
           class="bg-surface rounded-lg shadow-2xl border border-border overflow-hidden inner"
           v-bind="$attrs"
           @click.stop
         >
           <slot></slot>
-        </div>
-      </div>
+        </view>
+      </view>
     </Transition>
   </Teleport>
 </template>

@@ -1,27 +1,27 @@
 <template>
-  <div>
+  <view>
     <!-- Title and Period Selector -->
-    <div class="flex items-center justify-between">
-      <div class="font-semibold text-base text-main">
+    <view class="flex items-center justify-between">
+      <view class="font-semibold text-base text-main">
         {{ t`Cashflow` }}
-      </div>
+      </view>
 
       <!-- Chart Legend -->
-      <div v-if="hasData" class="flex text-base gap-8">
-        <div class="flex items-center gap-2">
-          <span
+      <view v-if="hasData" class="flex text-base gap-8">
+        <view class="flex items-center gap-2">
+          <text
             class="w-3 h-3 rounded-sm inline-block bg-[var(--chart-blue-main)]"
           />
-          <span class="text-main">{{ t`Inflow` }}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span
+          <text class="text-main">{{ t`Inflow` }}</text>
+        </view>
+        <view class="flex items-center gap-2">
+          <text
             class="w-3 h-3 rounded-sm inline-block bg-[var(--chart-pink-main)]"
           />
-          <span class="text-main">{{ t`Outflow` }}</span>
-        </div>
-      </div>
-      <div v-else class="w-16 h-5 bg-canvas-muted rounded" />
+          <text class="text-main">{{ t`Outflow` }}</text>
+        </view>
+      </view>
+      <view v-else class="w-16 h-5 bg-canvas-muted rounded" />
 
       <PeriodSelector
         v-if="hasData"
@@ -29,8 +29,8 @@
         :options="periodOptions"
         @change="(value) => (period = value)"
       />
-      <div v-else class="w-20 h-5 bg-canvas-muted rounded" />
-    </div>
+      <view v-else class="w-20 h-5 bg-canvas-muted rounded" />
+    </view>
 
     <!-- Line Chart -->
     <LineChart
@@ -48,7 +48,7 @@
       :draw-labels="hasData"
       :show-tooltip="hasData"
     />
-  </div>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, onActivated } from 'vue';

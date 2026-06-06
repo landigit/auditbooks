@@ -1,9 +1,9 @@
 <template>
   <Modal class="h-auto" :set-close-listener="false">
-    <div class="px-5" style="width: 30vw">
-      <p class="text-center text-description font-semibold py-3">Keyboard</p>
-      <hr class="border-border" />
-      <div class="mx-6 my-3">
+    <view class="px-5" style="width: 30vw">
+      <text class="text-center text-description font-semibold py-3">Keyboard</text>
+      <view class="border-b border-border"   />
+      <view class="mx-6 my-3">
         <component
           :is="selectedItemRow?.fieldMap[selectedItemField!].fieldtype"
           ref="dynamicInput"
@@ -22,146 +22,146 @@
           @change="(value: number) => handleInput(value.toString())"
         />
 
-        <div
+        <view
           id="keypad"
           class="text-4xl grid grid-cols-4 gap-3 rounded font-bold py-4 text-description"
         >
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('7')"
+            @tap="appendValue('7')"
           >
             7
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('8')"
+            @tap="appendValue('8')"
           >
             8
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('9')"
+            @tap="appendValue('9')"
           >
             9
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="deleteLast()"
+            @tap="deleteLast()"
           >
             Del
           </button>
 
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('4')"
+            @tap="appendValue('4')"
           >
             4
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('5')"
+            @tap="appendValue('5')"
           >
             5
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('6')"
+            @tap="appendValue('6')"
           >
             6
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('-')"
+            @tap="appendValue('-')"
           >
             -
           </button>
 
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('1')"
+            @tap="appendValue('1')"
           >
             1
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('2')"
+            @tap="appendValue('2')"
           >
             2
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('3')"
+            @tap="appendValue('3')"
           >
             3
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('+')"
+            @tap="appendValue('+')"
           >
             +
           </button>
 
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('.')"
+            @tap="appendValue('.')"
           >
             •
           </button>
           <button
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-            @click="appendValue('0')"
+            @tap="appendValue('0')"
           >
             0
           </button>
-          <div class="grid col-span-2">
+          <view class="grid col-span-2">
             <button
               class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
-              @click="reset()"
+              @tap="reset()"
             >
               Clear
             </button>
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
 
-      <div class="px-5">
-        <div class="grid row-start-6 grid-cols-2 gap-4 mt-auto mb-3">
-          <div class="col-span-2">
+      <view class="px-5">
+        <view class="grid row-start-6 grid-cols-2 gap-4 mt-auto mb-3">
+          <view class="col-span-2">
             <Button
               class="w-full bg-indicator-green-bg"
               style="padding: 1.35rem"
-              @click="saveSelectedItem()"
+              @tap="saveSelectedItem()"
             >
               <slot>
-                <p
+                <text
                   class="uppercase text-lg text-indicator-green-text font-semibold"
                 >
                   {{ t`Save` }}
-                </p>
+                </text>
               </slot>
             </Button>
-          </div>
-        </div>
+          </view>
+        </view>
 
-        <div class="grid row-start-6 grid-cols-2 gap-4 mt-auto mb-8">
-          <div class="col-span-2">
+        <view class="grid row-start-6 grid-cols-2 gap-4 mt-auto mb-8">
+          <view class="col-span-2">
             <Button
               class="w-full bg-indicator-red-bg"
               style="padding: 1.35rem"
-              @click="closeKeyboardModal()"
+              @tap="closeKeyboardModal()"
             >
               <slot>
-                <p
+                <text
                   class="uppercase text-lg text-indicator-red-text font-semibold"
                 >
                   {{ t`Cancel` }}
-                </p>
+                </text>
               </slot>
             </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+          </view>
+        </view>
+      </view>
+    </view>
   </Modal>
 </template>
 

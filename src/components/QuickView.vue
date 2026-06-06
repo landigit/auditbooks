@@ -1,26 +1,26 @@
 <template>
-  <div style="min-width: 192px; max-width: 300px">
-    <div
+  <view style="min-width: 192px; max-width: 300px">
+    <view
       class="p-2 flex justify-between"
       :class="values.length ? 'border-b border-border' : ''"
     >
-      <p
+      <text
         v-if="schema?.naming !== 'random' && !schema?.isChild"
         class="font-semibold text-base text-main"
       >
         {{ name }}
-      </p>
-      <p class="font-semibold text-base text-description">
+      </text>
+      <text class="font-semibold text-base text-description">
         {{ schema?.label ?? '' }}
-      </p>
-    </div>
-    <div v-if="values.length" class="flex gap-2 p-2 flex-wrap">
-      <p v-for="v of values" :key="v.label" class="pill bg-canvas-muted">
-        <span class="text-description">{{ v.label }}</span>
-        <span class="text-main ml-1.5">{{ v.value }}</span>
-      </p>
-    </div>
-  </div>
+      </text>
+    </view>
+    <view v-if="values.length" class="flex gap-2 p-2 flex-wrap">
+      <text v-for="v of values" :key="v.label" class="pill bg-canvas-muted">
+        <text class="text-description">{{ v.label }}</text>
+        <text class="text-main ml-1.5">{{ v.value }}</text>
+      </text>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

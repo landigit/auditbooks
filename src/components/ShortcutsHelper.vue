@@ -1,45 +1,45 @@
 <template>
-  <div>
+  <view>
     <FormHeader :form-title="t`Shortcuts`" />
-    <hr class="border-border" />
-    <div
+    <view class="border-b border-border"   />
+    <view
       class="h-96 overflow-y-auto custom-scroll custom-scroll-thumb2 text-main"
     >
       <template v-for="g in groups" :key="g.label">
-        <div class="p-4 w-full">
+        <view class="p-4 w-full">
           <!-- Shortcut Group Header -->
-          <div class="cursor-pointer mb-4" @click="g.collapsed = !g.collapsed">
-            <div class="font-semibold">
+          <view class="cursor-pointer mb-4" @tap="g.collapsed = !g.collapsed">
+            <view class="font-semibold">
               {{ g.label }}
-            </div>
-            <div class="text-base">
+            </view>
+            <view class="text-base">
               {{ g.description }}
-            </div>
-          </div>
+            </view>
+          </view>
           <!-- Shortcuts -->
-          <div v-if="!g.collapsed" class="flex flex-col gap-4">
-            <div
+          <view v-if="!g.collapsed" class="flex flex-col gap-4">
+            <view
               v-for="(s, i) in g.shortcuts"
               :key="g.label + ' ' + i"
               class="grid gap-4 items-start"
               style="grid-template-columns: 8rem auto"
             >
               <ShortcutKeys class="text-base" :keys="s.shortcut" />
-              <div class="whitespace-normal text-base">{{ s.description }}</div>
-            </div>
-          </div>
+              <view class="whitespace-normal text-base">{{ s.description }}</view>
+            </view>
+          </view>
           <!-- Shortcut count if collapsed -->
-          <div v-else class="text-base text-description">
+          <view v-else class="text-base text-description">
             {{ t`${g.shortcuts.length} shortcuts` }}
-          </div>
-        </div>
-        <hr class="border-border" />
+          </view>
+        </view>
+        <view class="border-b border-border"   />
       </template>
-      <div class="p-4 text-base text-description">
+      <view class="p-4 text-base text-description">
         {{ t`More shortcuts will be added soon.` }}
-      </div>
-    </div>
-  </div>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

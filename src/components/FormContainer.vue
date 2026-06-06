@@ -1,8 +1,8 @@
 <template>
-  <div
+  <view
     class="flex bg-canvas overflow-x-auto custom-scroll custom-scroll-thumb1"
   >
-    <div class="flex flex-1 flex-col">
+    <view class="flex flex-1 flex-col">
       <!-- Page Header (Title, Buttons, etc) -->
       <PageHeader
         v-if="showHeader"
@@ -17,7 +17,7 @@
       </PageHeader>
 
       <!-- Common Form -->
-      <div
+      <view
         class="flex flex-col self-center h-full overflow-auto bg-surface window-no-drag"
         :class="
           useFullWidth
@@ -26,12 +26,12 @@
         "
       >
         <slot name="body" />
-      </div>
-    </div>
+      </view>
+    </view>
 
     <!-- Invoice Quick Edit -->
     <slot name="quickedit" />
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

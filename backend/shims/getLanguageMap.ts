@@ -1,16 +1,3 @@
-/**
- * Language files are packaged into the binary, if
- * newer files are available (if internet available)
- * then those will replace the current file.
- *
- * Language files are fetched from the landigit/auditbooks repo
- * the language files before storage have a ISO timestamp
- * prepended to the file.
- *
- * This timestamp denotes the commit datetime, update of the file
- * takes place only if a new update has been pushed.
- */
-
 import fs from 'fs/promises';
 import path from 'path';
 import { parseCSV } from 'utils/csvParser';
@@ -28,9 +15,6 @@ function getMapFromCsv(csv: string): LanguageMap {
   const languageMap: LanguageMap = {};
 
   for (const row of matrix) {
-    /**
-     * Ignore lines that have no translations
-     */
     if (!row[0] || !row[1]) {
       continue;
     }
@@ -147,15 +131,12 @@ async function getLastUpdated(code: string): Promise<Date> {
 
 async function getTranslationFilePath(code: string) {
   let filePath = path.join(
-    process.resourcesPath || '',
+    (process as any).resourcesPath || '',
     `../translations/${code}.csv`
   );
 
   const exists = await Bun.file(filePath).exists();
   if (!exists) {
-    /**
-     * This will be used in Development mode
-     */
     const currentDir =
       typeof __dirname !== 'undefined'
         ? __dirname

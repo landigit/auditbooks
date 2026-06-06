@@ -1,48 +1,48 @@
 <template>
-  <div>
-    <div v-if="showLabel" :class="labelClasses">
+  <view>
+    <view v-if="showLabel" :class="labelClasses">
       {{ df.label }}
-    </div>
+    </view>
     <Popover :open="isShown" @update:open="(val) => (isShown = val)">
       <PopoverAnchor as-child>
-        <div
+        <view
           tabindex="0"
           :class="[inputClasses, containerClasses]"
-          @click="!isReadOnly && (isShown = !isShown)"
+          @tap="!isReadOnly && (isShown = !isShown)"
         >
-          <div class="flex items-center">
-            <div
+          <view class="flex items-center">
+            <view
               v-if="value"
               class="w-3 h-3 rounded me-1"
               :style="{ backgroundColor: value as any }"
-            ></div>
-            <span v-if="value">
+            ></view>
+            <text v-if="value">
               {{ selectedColorLabel }}
-            </span>
-            <span v-else class="text-description">
+            </text>
+            <text v-else class="text-description">
               {{ inputPlaceholder }}
-            </span>
-          </div>
-        </div>
+            </text>
+          </view>
+        </view>
       </PopoverAnchor>
       <PopoverContent
         side="bottom"
         align="end"
         class="w-auto p-0 overflow-hidden"
       >
-        <div class="text-sm p-2 text-center">
-          <div>
+        <view class="text-sm p-2 text-center">
+          <view>
             <Row :column-count="5" gap="0.5rem">
-              <div
+              <view
                 v-for="color in colors"
                 :key="color.value"
                 class="w-4 h-4 rounded cursor-pointer"
                 :style="{ backgroundColor: color.value }"
-                @click="setColorValue(color.value)"
-              ></div>
+                @tap="setColorValue(color.value)"
+              ></view>
             </Row>
-          </div>
-          <div class="mt-3 w-28">
+          </view>
+          <view class="mt-3 w-28">
             <input
               type="color"
               :placeholder="t`Custom Hex`"
@@ -51,11 +51,11 @@
               style="padding: 0"
               @change="(e: any) => setColorValue(e.target.value)"
             />
-          </div>
-        </div>
+          </view>
+        </view>
       </PopoverContent>
     </Popover>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

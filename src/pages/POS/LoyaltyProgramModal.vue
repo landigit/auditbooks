@@ -1,18 +1,18 @@
 <template>
   <Modal class="h-96 w-96" :set-close-listener="false">
-    <p class="text-center py-4 text-main">Redeem Loyalty Points</p>
+    <text class="text-center py-4 text-main">Redeem Loyalty Points</text>
 
-    <hr class="border-border" />
+    <view class="border-b border-border"   />
 
-    <div class="flex gap-2 p-3 justify-end pt-10">
+    <view class="flex gap-2 p-3 justify-end pt-10">
       <LucideIcon
         name="refresh-ccw"
         :size="20"
         class="text-indicator-orange-text"
       />
 
-      <p class="text-main pr-6">{{ loyaltyPoints }} - ({{ loyaltyProgram }})</p>
-    </div>
+      <text class="text-main pr-6">{{ loyaltyPoints }} - ({{ loyaltyProgram }})</text>
+    </view>
 
     <Int
       v-if="sinvDoc.fieldMap"
@@ -26,40 +26,40 @@
       @change="updateLoyaltyPoints"
     />
 
-    <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2 px-10">
-      <div class="col-span-2">
+    <view class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2 px-10">
+      <view class="col-span-2">
         <Button
           class="w-full bg-indicator-green-bg"
           style="padding: 1.35rem"
           :disabled="validationError"
-          @click="setLoyaltyPoints()"
+          @tap="setLoyaltyPoints()"
         >
           <slot>
-            <p
+            <text
               class="uppercase text-lg text-indicator-green-text font-semibold"
             >
               {{ t`Save` }}
-            </p>
+            </text>
           </slot>
         </Button>
-      </div>
-    </div>
+      </view>
+    </view>
 
-    <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto px-10">
-      <div class="col-span-2">
+    <view class="row-start-6 grid grid-cols-2 gap-4 mt-auto px-10">
+      <view class="col-span-2">
         <Button
           class="w-full bg-indicator-red-bg"
           style="padding: 1.35rem"
-          @click="cancelLoyaltyProgram"
+          @tap="cancelLoyaltyProgram"
         >
           <slot>
-            <p class="uppercase text-lg text-indicator-red-text font-semibold">
+            <text class="uppercase text-lg text-indicator-red-text font-semibold">
               {{ t`Cancel` }}
-            </p>
+            </text>
           </slot>
         </Button>
-      </div>
-    </div>
+      </view>
+    </view>
   </Modal>
 </template>
 

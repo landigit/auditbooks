@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 bg-canvas">
+  <view class="flex flex-col flex-1 bg-canvas">
     <PageHeader :border="true" :title="t`Print View`">
       <AutoComplete
         v-if="templateList.length"
@@ -16,20 +16,20 @@
         @change="onTemplateNameChange"
       />
       <DropdownWithActions :actions="actions" :title="t`More`" />
-      <Button class="text-xs" type="primary" @click="savePDF()">
+      <Button class="text-xs" type="primary" @tap="savePDF()">
         {{ t`Save as PDF` }}
       </Button>
-      <Button class="text-xs" type="primary" @click="savePDF(true)">
+      <Button class="text-xs" type="primary" @tap="savePDF(true)">
         {{ t`Print` }}
       </Button>
     </PageHeader>
 
     <!-- Template Display Area -->
-    <div class="overflow-auto custom-scroll custom-scroll-thumb1 p-4">
+    <view class="overflow-auto custom-scroll custom-scroll-thumb1 p-4">
       <!-- Display Hints -->
-      <div v-if="helperMessage" class="text-sm text-muted">
+      <view v-if="helperMessage" class="text-sm text-muted">
         {{ helperMessage }}
-      </div>
+      </view>
 
       <!-- Template Container -->
       <PrintContainer
@@ -42,8 +42,8 @@
         :width="templateDoc?.width"
         :height="templateDoc?.height"
       />
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

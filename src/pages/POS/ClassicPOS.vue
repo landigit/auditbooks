@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <view>
     <OpenPOSShiftModal
       v-if="!isPosShiftOpen"
       :open-modal="!isPosShiftOpen"
@@ -83,13 +83,13 @@
       @save-and-continue="(value: any) => emitEvent('saveAndContinue', value)"
     />
 
-    <div
+    <view
       class="bg-canvas-muted grid grid-cols-12 gap-2 p-4"
       style="height: calc(100vh - var(--h-row-largest))"
     >
-      <div class="col-span-5 bg-surface border rounded-md border-border">
-        <div class="rounded-md p-4 col-span-5">
-          <div class="flex gap-x-2">
+      <view class="col-span-5 bg-surface border rounded-md border-border">
+        <view class="rounded-md p-4 col-span-5">
+          <view class="flex gap-x-2">
             <!-- Item Search -->
             <MultiLabelLink
               class="w-full"
@@ -128,7 +128,7 @@
               :value="selectedItemGroup"
               @change="(group: string) => emitEvent('setItemGroup', group)"
             />
-          </div>
+          </view>
 
           <ItemsTable
             v-if="tableView"
@@ -146,7 +146,7 @@
             @add-item="(item) => emitEvent('addItem', item)"
           />
 
-          <div class="flex fixed bottom-0 p-1 mb-7 gap-x-3">
+          <view class="flex fixed bottom-0 p-1 mb-7 gap-x-3">
             <POSQuickActions
               :sinv-doc="sinvDoc"
               :loyalty-points="loyaltyPoints"
@@ -156,13 +156,13 @@
               @emit-route-to-sinv-list="emitEvent('routeToSinvList')"
               @toggle-modal="(modalName) => emitEvent('toggleModal', modalName)"
             />
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
 
-      <div class="col-span-7">
-        <div class="flex flex-col gap-3" style="height: calc(100vh - 6rem)">
-          <div
+      <view class="col-span-7">
+        <view class="flex flex-col gap-3" style="height: calc(100vh - 6rem)">
+          <view
             class="p-4 bg-surface border rounded-md grow h-full border-border"
           >
             <!-- Customer Search -->
@@ -185,12 +185,12 @@
               @apply-pricing-rule="emitEvent('applyPricingRule')"
               @selected-row="(row) => emit('selectedRow', row)"
             />
-          </div>
+          </view>
 
-          <div class="p-3 bg-surface border rounded-md border-border">
-            <div class="w-full grid grid-cols-2 gap-y-2 gap-x-3">
-              <div class="flex flex-col justify-end">
-                <div class="grid grid-cols-2 gap-2">
+          <view class="p-3 bg-surface border rounded-md border-border">
+            <view class="w-full grid grid-cols-2 gap-y-2 gap-x-3">
+              <view class="flex flex-col justify-end">
+                <view class="grid grid-cols-2 gap-2">
                   <FloatingLabelFloatInput
                     :df="{
                       label: t`Total Quantity`,
@@ -218,9 +218,9 @@
                     :text-right="true"
                     @change="(amount: Money) => (additionalDiscounts = amount)"
                   />
-                </div>
+                </view>
 
-                <div class="mt-4 grid grid-cols-2 gap-2">
+                <view class="mt-4 grid grid-cols-2 gap-2">
                   <FloatingLabelCurrencyInput
                     :df="{
                       label: t`Item Discounts`,
@@ -241,10 +241,10 @@
                     :read-only="true"
                     :text-right="true"
                   />
-                </div>
-              </div>
-              <div class="w-full">
-                <div class="w-full flex gap-2">
+                </view>
+              </view>
+              <view class="w-full">
+                <view class="w-full flex gap-2">
                   <Button
                     class="w-full"
                     :style="{
@@ -253,14 +253,14 @@
                         fyo.singles.Defaults?.saveButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                    @click="emit('saveInvoiceAction')"
+                    @tap="emit('saveInvoiceAction')"
                   >
                     <slot>
-                      <p
+                      <text
                         class="uppercase text-lg text-button-primary-text font-semibold"
                       >
                         {{ t`Save` }}
-                      </p>
+                      </text>
                     </slot>
                   </Button>
                   <Button
@@ -271,18 +271,18 @@
                         fyo.singles.Defaults?.cancelButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                    @click="() => emit('clearValues')"
+                    @tap="() => emit('clearValues')"
                   >
                     <slot>
-                      <p
+                      <text
                         class="uppercase text-lg text-button-primary-text font-semibold"
                       >
                         {{ t`Cancel` }}
-                      </p>
+                      </text>
                     </slot>
                   </Button>
-                </div>
-                <div
+                </view>
+                <view
                   class="w-full flex gap-2"
                   :class="`${isReturnInvoiceEnabledReturn ? 'mt-2' : 'mt-4'}`"
                 >
@@ -294,14 +294,14 @@
                         fyo.singles.Defaults?.heldButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                    @click="emitEvent('toggleModal', 'SavedInvoice', true)"
+                    @tap="emitEvent('toggleModal', 'SavedInvoice', true)"
                   >
                     <slot>
-                      <p
+                      <text
                         class="uppercase text-lg text-button-primary-text font-semibold"
                       >
                         {{ t`held` }}
-                      </p>
+                      </text>
                     </slot>
                   </Button>
 
@@ -313,16 +313,16 @@
                         profile?.returnButtonColour ||
                         fyo.singles.Defaults?.returnButtonColour,
                     }"
-                    @click="
+                    @tap="
                       emitEvent('toggleModal', 'ReturnSalesInvoice', true)
                     "
                   >
                     <slot>
-                      <p
+                      <text
                         class="uppercase text-lg text-button-primary-text font-semibold"
                       >
                         {{ t`Return` }}
-                      </p>
+                      </text>
                     </slot>
                   </Button>
                   <Button
@@ -334,17 +334,17 @@
                         fyo.singles.Defaults?.payButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
-                    @click="emitEvent('handlePaymentAction')"
+                    @tap="emitEvent('handlePaymentAction')"
                   >
                     <slot>
-                      <p
+                      <text
                         class="uppercase text-lg text-button-primary-text font-semibold"
                       >
                         {{ t`Pay` }}
-                      </p>
+                      </text>
                     </slot>
                   </Button>
-                </div>
+                </view>
                 <Button
                   v-if="isReturnInvoiceEnabledReturn"
                   class="w-full mt-2 py-5"
@@ -353,23 +353,23 @@
                       profile?.payButtonColour ||
                       fyo.singles.Defaults?.payButtonColour,
                   }"
-                  @click="emitEvent('handlePaymentAction')"
+                  @tap="emitEvent('handlePaymentAction')"
                 >
                   <slot>
-                    <p
+                    <text
                       class="uppercase text-lg text-button-primary-text font-semibold"
                     >
                       {{ t`Pay` }}
-                    </p>
+                    </text>
                   </slot>
                 </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

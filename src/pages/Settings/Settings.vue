@@ -1,7 +1,7 @@
 <template>
   <FormContainer>
     <template #header>
-      <Button v-if="canSave" type="primary" @click="sync">
+      <Button v-if="canSave" type="primary" @tap="sync">
         {{ t`Save` }}
       </Button>
     </template>
@@ -14,7 +14,7 @@
       </FormHeader>
 
       <!-- Section Container -->
-      <div v-if="doc" class="overflow-auto custom-scroll custom-scroll-thumb1">
+      <view v-if="doc" class="overflow-auto custom-scroll custom-scroll-thumb1">
         <CommonFormSection
           v-for="([name, fields], idx) in activeGroup.entries()"
           :key="name + idx"
@@ -30,14 +30,14 @@
           :errors="errors"
           @value-change="onValueChange"
         />
-      </div>
+      </view>
 
       <!-- Tab Bar -->
-      <div
+      <view
         v-if="groupedFields && groupedFields.size > 1"
         class="mt-auto px-4 pb-4 flex gap-8 border-t border-border flex-shrink-0 sticky bottom-0 bg-surface"
       >
-        <div
+        <view
           v-for="key of groupedFields.keys()"
           :key="key"
           class="text-sm cursor-pointer"
@@ -49,11 +49,11 @@
           :style="{
             paddingTop: key === activeTab ? 'calc(1rem - 2px)' : '1rem',
           }"
-          @click="activeTab = key as ModelNameEnum"
+          @tap="activeTab = key as ModelNameEnum"
         >
           {{ tabLabels[key] }}
-        </div>
-      </div>
+        </view>
+      </view>
     </template>
   </FormContainer>
 </template>

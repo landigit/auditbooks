@@ -1,11 +1,11 @@
 <template>
   <Modal class="h-auto w-96" :set-close-listener="false">
-    <p class="text-center font-semibold py-3">{{ t`Apply Price List` }}</p>
-    <div class="px-10">
-      <hr class="border-border" />
-      <div class="flex justify-center pt-10">
-        <div class="flex justify-between w-full mb-20">
-          <div class="w-full">
+    <text class="text-center font-semibold py-3">{{ t`Apply Price List` }}</text>
+    <view class="px-10">
+      <view class="border-b border-border"   />
+      <view class="flex justify-center pt-10">
+        <view class="flex justify-between w-full mb-20">
+          <view class="w-full">
             <Link
               v-if="sinvDoc.fieldMap"
               class="flex-shrink-0 w-full"
@@ -15,53 +15,53 @@
               :df="sinvDoc.fieldMap.priceList"
               @change="(value) => applyPriceList(value)"
             />
-          </div>
-          <div class="w-10 flex justify-end items-center">
+          </view>
+          <view class="w-10 flex justify-end items-center">
             <lucide-icon
               name="trash"
               class="w-5 text-xl text-error cursor-pointer"
-              @click="removePriceList"
+              @tap="removePriceList"
             />
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
 
-      <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2">
-        <div class="col-span-2">
+      <view class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2">
+        <view class="col-span-2">
           <Button
             class="w-full bg-indicator-green-bg"
             style="padding: 1.35rem"
-            @click="setPriceList"
+            @tap="setPriceList"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-indicator-green-text font-semibold"
               >
                 {{ t`Save` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
-      </div>
+        </view>
+      </view>
 
-      <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-8">
-        <div class="col-span-2">
+      <view class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-8">
+        <view class="col-span-2">
           <Button
             class="w-full bg-indicator-red-bg"
             style="padding: 1.35rem"
-            @click="cancelPriceList"
+            @tap="cancelPriceList"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-indicator-red-text font-semibold"
               >
                 {{ t`Cancel` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
-      </div>
-    </div>
+        </view>
+      </view>
+    </view>
   </Modal>
 </template>
 

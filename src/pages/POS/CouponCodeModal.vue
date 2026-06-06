@@ -1,12 +1,12 @@
 <template>
   <Modal class="h-auto w-96" :set-close-listener="false">
-    <p class="text-center font-semibold py-3">Apply Coupon Code</p>
-    <div class="px-10">
-      <hr class="border-border" />
-      <p v-if="appliedCoupons.length" class="text-xs m-2 text-description">
+    <text class="text-center font-semibold py-3">Apply Coupon Code</text>
+    <view class="px-10">
+      <view class="border-b border-border"   />
+      <text v-if="appliedCoupons.length" class="text-xs m-2 text-description">
         {{ t`Applied Coupon Codes` }}
-      </p>
-      <div
+      </text>
+      <view
         v-if="appliedCoupons.length"
         class="overflow-y-auto mt-2 custom-scroll custom-scroll-thumb2"
         :style="{ height: appliedCoupons.length >= 2 ? '11vh' : '8vh' }"
@@ -18,8 +18,8 @@
           :border="true"
           class="border-b border-l border-r border-border relative group h-coupon-mid hover:bg-surface-hover bg-surface items-center justify-center"
         >
-          <div class="flex flex-row w-full items-center">
-            <div class="flex flex-row">
+          <view class="flex flex-row w-full items-center">
+            <view class="flex flex-row">
               <FormControl
                 v-for="df in tableFields"
                 :key="df.fieldname"
@@ -29,24 +29,24 @@
                 :value="(coupon as any)[df.fieldname]"
                 :read-only="true"
               />
-            </div>
-          </div>
-          <div class="absolute right-3">
+            </view>
+          </view>
+          <view class="absolute right-3">
             <lucide-icon
               name="trash"
               class="w-4 text-xl text-error cursor-pointer"
-              @click="removeAppliedCoupon(coupon as any)"
+              @tap="removeAppliedCoupon(coupon as any)"
             />
-          </div>
+          </view>
         </Row>
-      </div>
+      </view>
 
-      <div
+      <view
         v-if="coupons.fieldMap"
         class="flex justify-center"
         :class="appliedCoupons.length ? 'pb-0 pt-4' : 'pt-10'"
       >
-        <div class="w-80" :class="appliedCoupons.length ? 'pb-4' : 'pb-10'">
+        <view class="w-80" :class="appliedCoupons.length ? 'pb-4' : 'pb-10'">
           <Link
             v-if="coupons.fieldMap"
             class="flex-shrink-0"
@@ -57,46 +57,46 @@
             :df="coupons.fieldMap.coupons"
             @change="updateCouponCode"
           />
-        </div>
-      </div>
+        </view>
+      </view>
 
-      <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2">
-        <div class="col-span-2">
+      <view class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-2">
+        <view class="col-span-2">
           <Button
             class="w-full bg-indicator-green-bg"
             style="padding: 1.35rem"
             :disabled="validationError"
-            @click="setCouponCode()"
+            @tap="setCouponCode()"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-indicator-green-text font-semibold"
               >
                 {{ t`Save` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
-      </div>
+        </view>
+      </view>
 
-      <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-8">
-        <div class="col-span-2">
+      <view class="row-start-6 grid grid-cols-2 gap-4 mt-auto mb-8">
+        <view class="col-span-2">
           <Button
             class="w-full bg-indicator-red-bg"
             style="padding: 1.35rem"
-            @click="cancelApplyCouponCode()"
+            @tap="cancelApplyCouponCode()"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-indicator-red-text font-semibold"
               >
                 {{ t`Cancel` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
-      </div>
-    </div>
+        </view>
+      </view>
+    </view>
   </Modal>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-col justify-between w-full p-4">
+  <view class="flex-col justify-between w-full p-4">
     <!-- Title and Period Selector -->
     <SectionHeader>
       <template #title>{{ title }}</template>
@@ -9,57 +9,57 @@
     </SectionHeader>
 
     <!-- Widget Body -->
-    <div class="mt-4">
+    <view class="mt-4">
       <!-- Paid & Unpaid Amounts -->
-      <div class="flex justify-between">
+      <view class="flex justify-between">
         <!-- Paid -->
-        <div
+        <view
           class="text-sm font-medium text-main"
           :class="{
             'bg-canvas-muted text-description rounded': !count,
             'cursor-pointer': paidCount > 0,
           }"
           :title="paidCount > 0 ? t`View Paid Invoices` : ''"
-          @click="() => routeToInvoices('paid')"
+          @tap="() => routeToInvoices('paid')"
         >
           {{ fyo.format(paid, 'Currency') }}
-          <span :class="{ 'text-main font-normal': count }">{{ t`Paid` }}</span>
-        </div>
+          <text :class="{ 'text-main font-normal': count }">{{ t`Paid` }}</text>
+        </view>
 
         <!-- Unpaid -->
-        <div
+        <view
           class="text-sm font-medium text-main"
           :class="{
             'bg-canvas-muted text-description rounded': !count,
             'cursor-pointer': unpaidCount > 0,
           }"
           :title="unpaidCount > 0 ? t`View Unpaid Invoices` : ''"
-          @click="() => routeToInvoices('unpaid')"
+          @tap="() => routeToInvoices('unpaid')"
         >
           {{ fyo.format(unpaid, 'Currency') }}
-          <span :class="{ 'text-main font-normal': count }">{{
+          <text :class="{ 'text-main font-normal': count }">{{
             t`Unpaid`
-          }}</span>
-        </div>
-      </div>
+          }}</text>
+        </view>
+      </view>
 
       <!-- Widget Bar -->
-      <div
+      <view
         class="mt-3 relative rounded-full overflow-hidden h-2.5 bg-gray-100 dark:bg-gray-800/50"
         @mouseenter="show = true"
         @mouseleave="show = false"
       >
-        <div
+        <view
           class="w-full h-2.5 transition-all duration-300"
           :class="unpaidColor"
-        ></div>
-        <div
+        ></view>
+        <view
           class="absolute inset-y-0 start-0 h-2.5 rounded-full transition-all duration-500 ease-out"
           :class="paidColor"
           :style="`width: ${barWidth}%`"
-        ></div>
-      </div>
-    </div>
+        ></view>
+      </view>
+    </view>
     <MouseFollower
       v-if="hasData"
       :offset="15"
@@ -68,16 +68,16 @@
       class="text-sm shadow-md px-2 py-1 bg-surface text-main border-s-4"
       :style="{ borderColor: colors }"
     >
-      <div class="flex justify-between gap-4">
-        <p>{{ t`Paid` }}</p>
-        <p class="font-semibold">{{ paidCount ?? 0 }}</p>
-      </div>
-      <div v-if="unpaidCount > 0" class="flex justify-between gap-4">
-        <p>{{ t`Unpaid` }}</p>
-        <p class="font-semibold">{{ unpaidCount ?? 0 }}</p>
-      </div>
+      <view class="flex justify-between gap-4">
+        <text>{{ t`Paid` }}</text>
+        <text class="font-semibold">{{ paidCount ?? 0 }}</text>
+      </view>
+      <view v-if="unpaidCount > 0" class="flex justify-between gap-4">
+        <text>{{ t`Unpaid` }}</text>
+        <text class="font-semibold">{{ unpaidCount ?? 0 }}</text>
+      </view>
     </MouseFollower>
-  </div>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, computed, watch, onActivated, onDeactivated } from 'vue';

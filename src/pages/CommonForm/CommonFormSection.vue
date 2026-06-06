@@ -1,22 +1,22 @@
 <template>
-  <div v-if="(fields ?? []).length > 0">
-    <div
+  <view v-if="(fields ?? []).length > 0">
+    <view
       v-if="showTitle && title"
       class="flex justify-between items-center select-none"
       :class="[collapsed ? '' : 'mb-4', collapsible ? 'cursor-pointer' : '']"
-      @click="toggleCollapsed"
+      @tap="toggleCollapsed"
     >
-      <h2 class="text-base text-main font-semibold">
+      <text class="text-base text-main font-semibold">
         {{ title }}
-      </h2>
+      </text>
       <lucide-icon
         v-if="collapsible"
         :name="collapsed ? 'chevron-up' : 'chevron-down'"
         class="w-4 h-4 text-description"
       />
-    </div>
-    <div v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-2">
-      <div
+    </view>
+    <view v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-2">
+      <view
         v-for="field of fields"
         :key="field.fieldname"
         :class="[
@@ -57,12 +57,12 @@
               $emit('row-change', field, value, parentfield)
           "
         />
-        <div v-if="errors?.[field.fieldname]" class="text-sm text-error mt-1">
+        <view v-if="errors?.[field.fieldname]" class="text-sm text-error mt-1">
           {{ errors[field.fieldname] }}
-        </div>
-      </div>
-    </div>
-  </div>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';

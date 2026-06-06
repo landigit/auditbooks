@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <view>
     <svg
       ref="chartSvg"
       :viewBox="`0 0 ${viewBoxWidth} ${viewBoxHeight}`"
@@ -124,16 +124,16 @@
       class="text-sm shadow-md px-2 py-1 bg-surface text-main border-s-4"
       :style="{ borderColor: activeColor }"
     >
-      <div class="flex flex-col justify-center items-center">
-        <p>
+      <view class="flex flex-col justify-center items-center">
+        <text>
           {{ xi > -1 ? formatX(xLabels[xi] as string) : '' }}
-        </p>
-        <p class="font-semibold">
+        </text>
+        <text class="font-semibold">
           {{ yi > -1 && xi > -1 ? format(points[yi]?.[xi] as number) : '' }}
-        </p>
-      </div>
+        </text>
+      </view>
     </Tooltip>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

@@ -1,12 +1,12 @@
 <template>
-  <div class="overflow-hidden" :style="outerContainerStyle">
-    <div
+  <view class="overflow-hidden" :style="outerContainerStyle">
+    <view
       :style="innerContainerStyle"
       :class="showOverflow ? 'overflow-auto no-scrollbar' : 'overflow-visible'"
     >
       <slot></slot>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

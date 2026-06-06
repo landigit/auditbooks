@@ -1,10 +1,10 @@
 <template>
-  <div
+  <view
     class="inline-block rounded-md px-2 py-1 truncate select-none"
     :class="colorClass"
   >
     <slot></slot>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

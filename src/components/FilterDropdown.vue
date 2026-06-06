@@ -6,17 +6,17 @@
   >
     <PopoverTrigger as-child>
       <Button :icon="true">
-        <span class="flex items-center">
+        <text class="flex items-center">
           <LucideIcon name="filter" :size="12" class="text-muted" />
-          <span class="ms-1">
+          <text class="ms-1">
             <template v-if="activeFilterCount > 0">
               {{ filterAppliedMessage }}
             </template>
             <template v-else>
               {{ t`Filter` }}
             </template>
-          </span>
-        </span>
+          </text>
+        </text>
       </Button>
     </PopoverTrigger>
     <PopoverContent
@@ -24,29 +24,29 @@
       align="end"
       class="w-auto p-0 overflow-hidden"
     >
-      <div>
-        <div class="p-2">
+      <view>
+        <view class="p-2">
           <template v-if="explicitFilters.length">
-            <div class="flex flex-col gap-2">
-              <div
+            <view class="flex flex-col gap-2">
+              <view
                 v-for="(filter, i) in explicitFilters"
                 :key="filter.fieldname + getRandomString()"
                 class="flex items-center justify-between text-base gap-2"
               >
-                <div
+                <view
                   class="cursor-pointer w-4 h-4 flex items-center justify-center text-description hover:text-main rounded-md group"
                 >
-                  <span class="hidden group-hover:inline-block">
+                  <text class="hidden group-hover:inline-block">
                     <LucideIcon
                       name="x"
                       class="w-4 h-4 cursor-pointer"
-                      @click="removeFilter(i)"
+                      @tap="removeFilter(i)"
                     />
-                  </span>
-                  <span class="group-hover:hidden">
+                  </text>
+                  <text class="group-hover:hidden">
                     {{ i + 1 }}
-                  </span>
-                </div>
+                  </text>
+                </view>
                 <Select
                   :border="true"
                   size="small"
@@ -101,45 +101,45 @@
                   @change="(value) => updateNewFilters(i, 'value', value)"
                   @keydown.enter="applyFilters"
                 />
-              </div>
-            </div>
+              </view>
+            </view>
           </template>
           <template v-else>
-            <span class="text-base text-description">{{
+            <text class="text-base text-description">{{
               t`No filters selected`
-            }}</span>
+            }}</text>
           </template>
-        </div>
-        <div class="flex justify-between border-t border-border">
-          <div
+        </view>
+        <view class="flex justify-between border-t border-border">
+          <view
             class="text-base border-t border-border p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
-            @click.stop="addNewFilter"
+            @tap.stop="addNewFilter"
           >
             <LucideIcon name="plus" class="w-4 h-4" />
-            <span class="ms-2">{{ t`Add a filter` }}</span>
-          </div>
+            <text class="ms-2">{{ t`Add a filter` }}</text>
+          </view>
 
-          <div class="flex">
-            <div
+          <view class="flex">
+            <view
               v-if="filters.length"
               class="text-base p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
-              @click="clearAllFilters"
+              @tap="clearAllFilters"
             >
               <LucideIcon name="trash-2" class="w-4 h-4" />
-              <span class="ms-2">{{ t`Clear` }}</span>
-            </div>
+              <text class="ms-2">{{ t`Clear` }}</text>
+            </view>
 
-            <div
+            <view
               v-if="filters.length"
-              @click="applyFilters"
+              @tap="applyFilters"
               class="text-base border-t border-border p-2 flex items-center text-description cursor-pointer hover:bg-surface-hover"
             >
               <LucideIcon name="search" class="w-4 h-4" />
-              <span class="ml-2 text-sm">{{ t`Apply` }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+              <text class="ml-2 text-sm">{{ t`Apply` }}</text>
+            </view>
+          </view>
+        </view>
+      </view>
     </PopoverContent>
   </Popover>
 </template>

@@ -1,20 +1,20 @@
 <template>
-  <div :class="[inputClasses, containerClasses]">
-    <label
+  <view :class="[inputClasses, containerClasses]">
+    <text
       class="flex items-center"
       :class="[
         spaceBetween ? 'justify-between' : '',
         isReadOnly ? 'cursor-default' : 'cursor-pointer select-none group',
       ]"
     >
-      <div
+      <view
         v-if="showLabel && !labelRight"
         class="me-3 transition-colors duration-200"
         :class="labelClasses"
       >
         {{ df.label }}
-      </div>
-      <div
+      </view>
+      <view
         style="width: 16px; height: 16px"
         class="relative flex items-center justify-center transition-transform duration-200 active:scale-90"
         :class="isReadOnly ? 'cursor-default' : 'cursor-pointer'"
@@ -78,16 +78,16 @@
           @change="onChange"
           class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
         />
-      </div>
-      <div
+      </view>
+      <view
         v-if="showLabel && labelRight"
         class="ms-3 transition-colors duration-200"
         :class="labelClasses"
       >
         {{ df.label }}
-      </div>
-    </label>
-  </div>
+      </view>
+    </text>
+  </view>
 </template>
 
 <script setup lang="ts">

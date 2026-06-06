@@ -1,6 +1,6 @@
 <template>
-  <div class="flex gap-2">
-    <div
+  <view class="flex gap-2">
+    <view
       class="w-1/2 overflow-y-auto custom-scroll custom-scroll-thumb2"
       style="height: 81vh"
     >
@@ -8,7 +8,7 @@
         :ratio="ratio"
         class="mt-2 px-2 w-full items-center border rounded-t-md text-description border-border"
       >
-        <div
+        <view
           v-for="df in tableFields"
           :key="df.fieldname"
           class="flex items-center p-2 text-lg"
@@ -17,7 +17,7 @@
           }"
         >
           {{ df.label }}
-        </div>
+        </view>
       </Row>
 
       <Row
@@ -26,7 +26,7 @@
         :ratio="ratio"
         :border="true"
         class="px-2 w-full border items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
-        @click="handleChange(row)"
+        @tap="handleChange(row)"
       >
         <FormControl
           v-for="df in tableFields"
@@ -37,9 +37,9 @@
           :readOnly="true"
         />
       </Row>
-    </div>
+    </view>
 
-    <div
+    <view
       class="w-1/2 overflow-y-auto custom-scroll custom-scroll-thumb2"
       style="height: calc(80vh - 20rem)"
     >
@@ -47,7 +47,7 @@
         :ratio="ratio"
         class="mt-2 px-2 w-full items-center border rounded-t-md text-description border-border"
       >
-        <div
+        <view
           v-for="df in tableFields"
           :key="df.fieldname"
           class="flex items-center p-2 text-lg"
@@ -56,7 +56,7 @@
           }"
         >
           {{ df.label }}
-        </div>
+        </view>
       </Row>
       <Row
         v-for="row in secondColumnItems as POSItem[]"
@@ -64,7 +64,7 @@
         :ratio="ratio"
         :border="true"
         class="px-2 w-full border items-center justify-center group h-row-mid hover:bg-surface-hover bg-surface border-border"
-        @click="handleChange(row)"
+        @tap="handleChange(row)"
       >
         <FormControl
           v-for="df in tableFields"
@@ -75,8 +75,8 @@
           :readOnly="true"
         />
       </Row>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

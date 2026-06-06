@@ -1,38 +1,38 @@
 <template>
-  <div
+  <view
     class="border-s border-border h-full overflow-auto w-quick-edit bg-surface custom-scroll custom-scroll-thumb2"
   >
     <!-- Row Edit Tool bar -->
-    <div
+    <view
       class="sticky top-0 border-b border-border bg-surface"
       style="z-index: 1"
     >
-      <div class="flex items-center justify-between px-4 h-row-largest">
+      <view class="flex items-center justify-between px-4 h-row-largest">
         <!-- Close Button -->
-        <Button :icon="true" @click="emit('close')">
+        <Button :icon="true" @tap="emit('close')">
           <lucide-icon name="x" class="w-4 h-4" />
         </Button>
 
         <!-- Actions, Badge and Status Change Buttons -->
-        <div class="flex items-stretch gap-2">
+        <view class="flex items-stretch gap-2">
           <Button
             v-if="previous >= 0"
             :icon="true"
-            @click="emit('previous', previous)"
+            @tap="emit('previous', previous)"
           >
             <lucide-icon name="chevron-left" class="w-4 h-4" />
           </Button>
-          <Button v-if="next >= 0" :icon="true" @click="emit('next', next)">
+          <Button v-if="next >= 0" :icon="true" @tap="emit('next', next)">
             <lucide-icon name="chevron-right" class="w-4 h-4" />
           </Button>
-        </div>
-      </div>
+        </view>
+      </view>
       <FormHeader
         class="border-t border-border"
         :form-title="t`Row ${index + 1}`"
         :form-sub-title="fieldlabel"
       />
-    </div>
+    </view>
     <TwoColumnForm
       ref="form"
       class="w-full"
@@ -40,7 +40,7 @@
       :fields="fields"
       :column-ratio="[1.1, 2]"
     />
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

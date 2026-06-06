@@ -2,9 +2,9 @@ import fs from 'fs/promises';
 import { constants } from 'fs';
 import path from 'path';
 import databaseManager from '../../backend/database/manager';
-import { getLanguageMap } from '../../main/getLanguageMap';
-import { getTemplates } from '../../main/getPrintTemplates';
-import { sendAPIRequest } from '../../main/api';
+import { getLanguageMap } from '../../backend/shims/getLanguageMap';
+import { getTemplates } from '../../backend/shims/getTemplates';
+import { sendAPIRequest } from '../../backend/shims/api';
 import { IPC_ACTIONS } from '../../utils/messages';
 
 const PORT = 6970;

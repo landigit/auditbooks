@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full">
+  <view class="flex flex-col h-full">
     <SectionHeader>
       <template #title>{{ t`Top Expenses` }}</template>
       <template #action>
@@ -7,26 +7,26 @@
       </template>
     </SectionHeader>
 
-    <div v-show="hasData" class="flex relative">
+    <view v-show="hasData" class="flex relative">
       <!-- Chart Legend -->
-      <div class="w-1/2 flex flex-col gap-4 justify-center text-main">
+      <view class="w-1/2 flex flex-col gap-4 justify-center text-main">
         <!-- Ledgend Item -->
-        <div
+        <view
           v-for="(d, i) in expenses"
           :key="d.account"
           class="flex items-center text-sm"
           @mouseover="active = i"
           @mouseleave="active = undefined"
         >
-          <div class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
-          <p class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28">
+          <view class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
+          <text class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28">
             {{ d.account }}
-          </p>
-          <p class="whitespace-nowrap flex-shrink-0 ms-auto">
+          </text>
+          <text class="whitespace-nowrap flex-shrink-0 ms-auto">
             {{ fyo.format(d?.total ?? 0, 'Currency') }}
-          </p>
-        </div>
-      </div>
+          </text>
+        </view>
+      </view>
       <DonutChart
         class="w-1/2 my-auto"
         :active="active"
@@ -38,18 +38,18 @@
         :total-label="t`Total Spending`"
         @change="(value: number | null) => (active = value)"
       />
-    </div>
+    </view>
 
     <!-- Empty Message -->
-    <div
+    <view
       v-if="expenses.length === 0"
       class="flex-1 w-full h-full flex-center my-20"
     >
-      <span class="text-base text-description">
+      <text class="text-base text-description">
         {{ t`No expenses in this period` }}
-      </span>
-    </div>
-  </div>
+      </text>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

@@ -1,26 +1,26 @@
 <template>
-  <div
+  <view
     v-if="isDesktop"
     class="relative window-drag flex items-center border-b bg-canvas text-main border-border"
     style="height: 28px"
   >
     <Fb class="ms-2" />
-    <p v-if="companyName && dbPath" class="mx-auto text-sm">
+    <text v-if="companyName && dbPath" class="mx-auto text-sm">
       {{ companyName }} - {{ dbPath }}
-    </p>
-    <div
+    </text>
+    <view
       v-if="!isFullscreen"
       class="absolute window-no-drag flex h-full items-center right-0"
     >
-      <div
+      <view
         class="flex items-center px-4 h-full hover:bg-surface-hover"
-        @click="minimizeWindow"
+        @tap="minimizeWindow"
       >
         <LucideIcon name="minus" class="h-4 w-4 flex-shrink-0" />
-      </div>
-      <div
+      </view>
+      <view
         class="flex items-center px-4 h-full hover:bg-surface-hover"
-        @click="toggleMaximize"
+        @tap="toggleMaximize"
       >
         <LucideIcon
           v-if="isMax"
@@ -28,15 +28,15 @@
           class="h-3 w-3 flex-shrink-0"
         />
         <LucideIcon v-else name="square" class="h-3 w-3 flex-shrink-0" />
-      </div>
-      <div
+      </view>
+      <view
         class="flex items-center px-4 h-full hover:bg-error hover:text-white"
-        @click="closeWindow"
+        @tap="closeWindow"
       >
         <LucideIcon name="x" class="h-4 w-4 flex-shrink-0" />
-      </div>
-    </div>
-  </div>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

@@ -1,10 +1,10 @@
 <template>
   <Modal class="h-auto w-96" :set-close-listener="false">
-    <p class="text-center font-semibold py-3 text-main">
+    <text class="text-center font-semibold py-3 text-main">
       {{ t`Select the Batch` }}
-    </p>
+    </text>
 
-    <div class="px-10 pt-6">
+    <view class="px-10 pt-6">
       <Link
         :df="{
           fieldname: 'batch',
@@ -21,29 +21,29 @@
         @change="(value: string) => (selectedBatch = value)"
       />
 
-      <div class="mt-8 mb-6 grid grid-cols-2 gap-4">
+      <view class="mt-8 mb-6 grid grid-cols-2 gap-4">
         <Button
           class="w-full bg-indicator-green-bg"
           style="padding: 1.35rem"
           :disabled="!selectedBatch"
-          @click="submitSelection"
+          @tap="submitSelection"
         >
-          <p class="uppercase text-lg text-indicator-green-text font-semibold">
+          <text class="uppercase text-lg text-indicator-green-text font-semibold">
             {{ t`Select` }}
-          </p>
+          </text>
         </Button>
 
         <Button
           class="w-full bg-indicator-red-bg"
           style="padding: 1.35rem"
-          @click="closeModal"
+          @tap="closeModal"
         >
-          <p class="uppercase text-lg text-indicator-red-text font-semibold">
+          <text class="uppercase text-lg text-indicator-red-text font-semibold">
             {{ t`Cancel` }}
-          </p>
+          </text>
         </Button>
-      </div>
-    </div>
+      </view>
+    </view>
   </Modal>
 </template>
 

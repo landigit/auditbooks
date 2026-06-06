@@ -1,5 +1,5 @@
 <template>
-  <div
+  <view
     class="relative bg-surface border border-border flex-center overflow-hidden group"
     :class="{
       rounded: size === 'form',
@@ -10,13 +10,13 @@
     :style="imageSizeStyle"
   >
     <img v-if="value" :src="value" />
-    <div v-else :class="[!isReadOnly ? 'group-hover:opacity-90' : '']">
-      <div
+    <view v-else :class="[!isReadOnly ? 'group-hover:opacity-90' : '']">
+      <view
         v-if="letterPlaceholder"
         class="flex h-full items-center justify-center text-description font-semibold w-full text-4xl select-none"
       >
         {{ letterPlaceholder }}
-      </div>
+      </view>
       <svg
         v-else
         class="w-6 h-6 text-description"
@@ -29,20 +29,20 @@
           fill-rule="nonzero"
         />
       </svg>
-    </div>
-    <div
+    </view>
+    <view
       class="hidden w-full h-full absolute justify-center items-end"
       :class="[!isReadOnly ? 'group-hover:flex' : '']"
       style="background: var(--color-backdrop); backdrop-filter: blur(2px)"
     >
-      <button class="bg-surface-hover p-0.5 rounded mb-1" @click="handleClick">
+      <button class="bg-surface-hover p-0.5 rounded mb-1" @tap="handleClick">
         <LucideIcon
           :name="shouldClear ? 'x' : 'upload'"
           class="w-4 h-4 text-description"
         />
       </button>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

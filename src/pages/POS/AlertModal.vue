@@ -1,53 +1,53 @@
 <template>
   <Modal class="h-auto px-6 select-none" :set-close-listener="false">
-    <p class="text-center font-semibold py-3">{{ t`Alert` }}</p>
-    <hr class="border-border" />
-    <p class="py-6">
+    <text class="text-center font-semibold py-3">{{ t`Alert` }}</text>
+    <view class="border-b border-border"   />
+    <text class="py-6">
       {{ t`Clicking continue will remove all the selected items.` }}
-    </p>
+    </text>
 
-    <div class="row-start-6 grid grid-cols-2 gap-4 mt-auto pb-6">
-      <div class="flex col-span-2 gap-5">
+    <view class="row-start-6 grid grid-cols-2 gap-4 mt-auto pb-6">
+      <view class="flex col-span-2 gap-5">
         <Button
           class="py-5 w-full bg-indicator-red-bg"
-          @click="emit('toggleModal', 'Alert')"
+          @tap="emit('toggleModal', 'Alert')"
         >
           <slot>
-            <p class="uppercase text-lg text-indicator-red-text font-semibold">
+            <text class="uppercase text-lg text-indicator-red-text font-semibold">
               {{ t`Cancel` }}
-            </p>
+            </text>
           </slot>
         </Button>
 
         <Button
           class="w-full py-5 bg-indicator-green-bg"
-          @click="
+          @tap="
             routeTo('/list/SalesInvoice');
             emit('toggleModal', 'Alert');
           "
         >
           <slot>
-            <p
+            <text
               class="uppercase text-lg text-indicator-green-text font-semibold"
             >
               {{ t`Continue` }}
-            </p>
+            </text>
           </slot>
         </Button>
-      </div>
-      <div class="col-span-2 flex justify-center mt-3">
+      </view>
+      <view class="col-span-2 flex justify-center mt-3">
         <Button
           class="w-full py-5 bg-indicator-blue-bg"
-          @click="emit('saveAndContinue')"
+          @tap="emit('saveAndContinue')"
         >
           <slot>
-            <p class="uppercase text-lg text-indicator-blue-text font-semibold">
+            <text class="uppercase text-lg text-indicator-blue-text font-semibold">
               {{ t`Save and Continue` }}
-            </p>
+            </text>
           </slot>
         </Button>
-      </div>
-    </div>
+      </view>
+    </view>
   </Modal>
 </template>
 

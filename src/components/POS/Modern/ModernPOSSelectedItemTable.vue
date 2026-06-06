@@ -3,7 +3,7 @@
     :ratio="ratio"
     class="w-full px-2 mt-2 border rounded-t text-description border-border"
   >
-    <div
+    <view
       v-if="tableFields"
       v-for="df in tableFields"
       :key="df.fieldname"
@@ -13,10 +13,10 @@
       }"
     >
       {{ df.label }}
-    </div>
+    </view>
   </Row>
 
-  <div
+  <view
     class="overflow-auto custom-scroll custom-scroll-thumb1"
     style="height: calc(90vh - 25rem)"
   >
@@ -37,7 +37,7 @@
         @toggle-modal="$emit('toggleModal')"
       />
     </Row>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

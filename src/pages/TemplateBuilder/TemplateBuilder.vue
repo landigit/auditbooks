@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <view>
     <PageHeader :title="doc && doc.inserted ? doc.name : ''">
       <!-- Template Name -->
       <template v-if="doc && !doc.inserted" #left>
@@ -14,39 +14,39 @@
           @change="async (value) => await doc?.set('name', value)"
         />
       </template>
-      <Button v-if="displayDoc && doc?.template" @click="savePDF()">
+      <Button v-if="displayDoc && doc?.template" @tap="savePDF()">
         {{ t`Save as PDF` }}
       </Button>
-      <Button v-if="displayDoc && doc?.template" @click="savePDF(true)">
+      <Button v-if="displayDoc && doc?.template" @tap="savePDF(true)">
         {{ t`Print` }}
       </Button>
       <Button
         v-if="doc && doc.isCustom && displayDoc"
         :title="t`Toggle Edit Mode`"
         :icon="true"
-        @click="toggleEditMode"
+        @tap="toggleEditMode"
       >
         <lucide-icon name="edit" class="w-4 h-4" />
       </Button>
       <DropdownWithActions v-if="actions.length" :actions="actions" />
-      <Button v-if="doc?.canSave" type="primary" @click="sync()">
+      <Button v-if="doc?.canSave" type="primary" @tap="sync()">
         {{ t`Save` }}
       </Button>
     </PageHeader>
 
     <!-- Template Builder Body -->
-    <div
+    <view
       v-if="doc"
       class="w-full bg-canvas-muted grid"
       :style="templateBuilderBodyStyles"
     >
       <!-- Template Display Area -->
-      <div
+      <view
         class="overflow-auto no-scrollbar flex flex-col"
         :style="templateDisplayStyles"
       >
         <!-- Template Container -->
-        <div
+        <view
           v-if="canDisplayPreview"
           class="p-4 overflow-auto custom-scroll custom-scroll-thumb1"
         >
@@ -59,15 +59,15 @@
             :height="doc.height"
             :width="doc.width"
           />
-        </div>
+        </view>
 
         <!-- Display Hints -->
-        <p v-else-if="helperMessage" class="text-sm text-description p-4">
+        <text v-else-if="helperMessage" class="text-sm text-description p-4">
           {{ helperMessage }}
-        </p>
+        </text>
 
         <!-- Bottom Bar -->
-        <div
+        <view
           class="w-full sticky bottom-0 flex bg-surface border-t border-border mt-auto flex-shrink-0"
         >
           <!-- Entry Type -->
@@ -93,13 +93,13 @@
           />
 
           <!-- Display Scale -->
-          <div
+          <view
             v-if="canDisplayPreview"
             class="flex ml-auto gap-2 px-2 w-36 justify-between flex-shrink-0"
           >
-            <p class="text-sm text-description my-auto">
+            <text class="text-sm text-description my-auto">
               {{ t`Display Scale` }}
-            </p>
+            </text>
             <input
               type="number"
               class="my-auto w-10 text-base text-end bg-transparent text-main"
@@ -110,9 +110,9 @@
               @change="setScale"
               @input="setScale"
             />
-          </div>
-        </div>
-      </div>
+          </view>
+        </view>
+      </view>
 
       <!-- Input Panel Resizer -->
       <HorizontalResizer
@@ -124,12 +124,12 @@
       />
 
       <!-- Template Panel -->
-      <div
+      <view
         class="border-l border-border bg-surface flex flex-col"
         :style="templateDisplayStyles"
       >
         <!-- Template Editor -->
-        <div class="min-h-0">
+        <view class="min-h-0">
           <TemplateEditor
             v-if="typeof doc.template === 'string' && hints"
             ref="templateEditor"
@@ -140,48 +140,48 @@
             @input="() => (templateChanged = true)"
             @blur="(value: string) => setTemplate(value)"
           />
-        </div>
-        <div
+        </view>
+        <view
           v-if="templateChanged"
           class="flex gap-2 p-2 text-sm text-description items-center mt-auto border-t border-border"
         >
           <ShortcutKeys :keys="applyChangesShortcut" :simple="true" />
           {{ t` to apply changes` }}
-        </div>
+        </view>
 
         <!-- Value Key Hints Container -->
-        <div
+        <view
           v-if="hints"
           class="border-t border-border flex-shrink-0"
           :class="templateChanged ? '' : 'mt-auto'"
         >
           <!-- Value Key Toggle -->
-          <div
+          <view
             class="flex justify-between items-center cursor-pointer select-none p-2"
-            @click="toggleShowHints"
+            @tap="toggleShowHints"
           >
-            <h2 class="text-base text-main font-semibold">
+            <text class="text-base text-main font-semibold">
               {{ t`Key Hints` }}
-            </h2>
+            </text>
             <lucide-icon
               :name="showHints ? 'chevron-up' : 'chevron-down'"
               class="w-4 h-4 text-description resize-none"
             />
-          </div>
+          </view>
 
           <!-- Value Key Hints -->
           <Transition name="hints">
-            <div
+            <view
               v-if="showHints"
               class="overflow-auto custom-scroll custom-scroll-thumb1 p-2 border-t border-border"
               style="max-height: 30vh"
             >
               <TemplateBuilderHint :hints="hints" />
-            </div>
+            </view>
           </Transition>
-        </div>
-      </div>
-    </div>
+        </view>
+      </view>
+    </view>
     <Modal
       v-if="doc"
       :open-modal="showSizeModal"
@@ -196,7 +196,7 @@
     >
       <SetType :doc="doc" @done="showTypeModal = !showTypeModal" />
     </Modal>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

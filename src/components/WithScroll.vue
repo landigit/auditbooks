@@ -1,7 +1,7 @@
 <template>
-  <div ref="scrollContainer" class="custom-scroll custom-scroll-thumb1">
+  <view ref="scrollContainer" class="custom-scroll custom-scroll-thumb1">
     <slot></slot>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

@@ -1,14 +1,14 @@
 <template>
   <Modal :open-modal="openModal" class="w-11/12 max-w-4xl p-6">
-    <h1 class="text-xl font-semibold text-center text-main pb-4">
+    <text class="text-xl font-semibold text-center text-main pb-4">
       {{ t`Close POS Shift` }}
-    </h1>
+    </text>
 
-    <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-6">
-        <h2 class="text-lg font-medium text-main mb-2">
+    <view class="grid grid-cols-12 gap-6">
+      <view class="col-span-6">
+        <text class="text-lg font-medium text-main mb-2">
           {{ t`Closing Cash` }}
-        </h2>
+        </text>
         <Table
           v-if="isValuesSeeded"
           class="text-base"
@@ -19,10 +19,10 @@
           :read-only="false"
           @row-change="setClosingCashAmount"
         />
-      </div>
+      </view>
 
-      <div class="col-span-6">
-        <h2 class="text-lg text-main font-medium mb-2">Closing Amounts</h2>
+      <view class="col-span-6">
+        <text class="text-lg text-main font-medium mb-2">Closing Amounts</text>
         <Table
           v-if="isValuesSeeded"
           class="text-base"
@@ -34,35 +34,35 @@
           @row-change="setClosingCashAmount"
         />
 
-        <div class="mt-6 grid grid-cols-2 gap-4 items-end">
+        <view class="mt-6 grid grid-cols-2 gap-4 items-end">
           <Button
             class="w-full py-5 bg-indicator-red-bg"
-            @click="emit('toggleModal', 'ShiftClose', false)"
+            @tap="emit('toggleModal', 'ShiftClose', false)"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-indicator-red-text font-semibold"
               >
                 {{ t`Cancel` }}
-              </p>
+              </text>
             </slot>
           </Button>
 
           <Button
             class="w-full py-5 bg-indicator-green-bg"
-            @click="handleSubmit"
+            @tap="handleSubmit"
           >
             <slot>
-              <p
+              <text
                 class="uppercase text-lg text-indicator-green-text font-semibold"
               >
                 {{ t`Submit` }}
-              </p>
+              </text>
             </slot>
           </Button>
-        </div>
-      </div>
-    </div>
+        </view>
+      </view>
+    </view>
   </Modal>
 </template>
 

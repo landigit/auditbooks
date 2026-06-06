@@ -62,7 +62,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       </CalendarNext>
     </CalendarHeader>
 
-    <div
+    <view
       class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
     >
       <CalendarGrid
@@ -110,6 +110,6 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
           </CalendarGridRow>
         </CalendarGridBody>
       </CalendarGrid>
-    </div>
+    </view>
   </CalendarRoot>
 </template>

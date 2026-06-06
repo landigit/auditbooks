@@ -2,10 +2,10 @@
   <lucide-icon
     :name="isExapanded ? 'chevron-up' : 'chevron-down'"
     class="w-4 h-4 inline-flex cursor-pointer text-main"
-    @click="toggleExpand"
+    @tap="toggleExpand"
   />
 
-  <div class="relative" @click="toggleExpandAndEmit">
+  <view class="relative" @tap="toggleExpandAndEmit">
     <Link
       class="pt-2"
       :df="{
@@ -18,16 +18,16 @@
       :value="row.item"
       :read-only="true"
     />
-    <p
+    <text
       v-if="row.isFreeItem"
       class="absolute flex top-0 font-medium text-xs ml-2 text-indicator-green-text"
       style="font-size: 0.6rem"
     >
       {{ row.pricingRule }}
-    </p>
-  </div>
+    </text>
+  </view>
 
-  <div class="flex items-center">
+  <view class="flex items-center">
     <Int
       :df="{
         fieldname: 'quantity',
@@ -39,19 +39,19 @@
       :value="getDisplayTransferQuantity()"
       :read-only="true"
     />
-    <div class="flex flex-col ml-1">
+    <view class="flex flex-col ml-1">
       <lucide-icon
         name="chevron-up"
         class="w-3 h-3 cursor-pointer hover:text-indicator-blue-text text-main"
-        @click="adjustQuantity(1)"
+        @tap="adjustQuantity(1)"
       />
       <lucide-icon
         name="chevron-down"
         class="w-3 h-3 cursor-pointer hover:text-indicator-blue-text text-main"
-        @click="adjustQuantity(-1)"
+        @tap="adjustQuantity(-1)"
       />
-    </div>
-  </div>
+    </view>
+  </view>
 
   <Link
     class="ml-5"
@@ -90,18 +90,18 @@
     :read-only="true"
   />
 
-  <div class="px-4">
+  <view class="px-4">
     <lucide-icon
       name="trash"
       class="w-4 text-xl text-indicator-red-text"
-      @click="removeAddedItem(row)"
+      @tap="removeAddedItem(row)"
     />
-  </div>
+  </view>
 
-  <div></div>
+  <view></view>
 
   <template v-if="isExapanded">
-    <div class="px-4 pt-6 col-span-1">
+    <view class="px-4 pt-6 col-span-1">
       <Int
         v-if="isUOMConversionEnabled"
         :df="{
@@ -116,9 +116,9 @@
         @change="(value: string) => row.set('transferQuantity', value)"
         :read-only="isReadOnly"
       />
-    </div>
+    </view>
 
-    <div class="px-4 pt-6 col-span-2">
+    <view class="px-4 pt-6 col-span-2">
       <AutoComplete
         v-if="isUOMConversionEnabled && transferUnitOptions.length"
         :key="row.item"
@@ -135,9 +135,9 @@
         @change="(value: string) => row.set('transferUnit', value)"
         :read-only="isReadOnly"
       />
-    </div>
+    </view>
 
-    <div class="px-4 pt-6 col-span-2">
+    <view class="px-4 pt-6 col-span-2">
       <Float
         :df="{
           fieldname: 'quantity',
@@ -152,12 +152,12 @@
         @change="(value: number) => setQuantity(value)"
         :read-only="isUOMConversionEnabled"
       />
-    </div>
+    </view>
 
-    <div></div>
-    <div></div>
+    <view></view>
+    <view></view>
 
-    <div class="px-4 pt-6">
+    <view class="px-4 pt-6">
       <Currency
         :df="{
           fieldtype: 'Currency',
@@ -171,8 +171,8 @@
         :read-only="isRateReadOnly()"
         @change="(value: Money) => setRate((row.rate = value))"
       />
-    </div>
-    <div class="px-6 pt-6 col-span-2">
+    </view>
+    <view class="px-6 pt-6 col-span-2">
       <Currency
         v-if="isDiscountingEnabled"
         :df="{
@@ -190,9 +190,9 @@
         "
         @change="(value: number) => setItemDiscount('amount', value)"
       />
-    </div>
+    </view>
 
-    <div class="px-4 pt-6 col-span-2">
+    <view class="px-4 pt-6 col-span-2">
       <Float
         v-if="isDiscountingEnabled"
         :df="{
@@ -207,11 +207,11 @@
         :read-only="isDiscountsReadOnly(!row.itemDiscountAmount?.isZero())"
         @change="(value: number) => setItemDiscount('percent', value)"
       />
-    </div>
+    </view>
 
-    <div class=""></div>
+    <view class=""></view>
 
-    <div
+    <view
       v-if="row.links?.item && row.links?.item.hasBatch"
       class="pl-6 px-4 pt-6 col-span-2"
     >
@@ -229,9 +229,9 @@
         :read-only="false"
         @change="(value: string) => setBatch(value)"
       />
-    </div>
+    </view>
 
-    <div v-if="showAvlQuantityInBatch" class="px-5 pt-6 col-span-2">
+    <view v-if="showAvlQuantityInBatch" class="px-5 pt-6 col-span-2">
       <Float
         :df="{
           fieldname: 'availableQtyInBatch',
@@ -246,9 +246,9 @@
         :read-only="true"
         :text-right="true"
       />
-    </div>
+    </view>
 
-    <div v-if="hasSerialNumber" class="px-6 pt-6 col-span-3">
+    <view v-if="hasSerialNumber" class="px-6 pt-6 col-span-3">
       <Text
         :df="{
           label: t`Serial Number`,
@@ -261,7 +261,7 @@
         :required="hasSerialNumber"
         @change="(value: string) => setSerialNumber(value)"
       />
-    </div>
+    </view>
   </template>
 </template>
 

@@ -1,33 +1,33 @@
 <template>
-  <div
+  <view
     class="border-s border-border h-full overflow-auto w-quick-edit bg-surface"
   >
     <!-- Quick edit Tool bar -->
-    <div
+    <view
       class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-surface"
       style="z-index: 1"
     >
       <!-- Close Button  -->
-      <Button :icon="true" @click="routeToPrevious">
+      <Button :icon="true" @tap="routeToPrevious">
         <LucideIcon name="x" class="w-4 h-4" />
       </Button>
 
       <!-- Save & Submit Buttons -->
-      <Button v-if="doc?.canSave" :icon="true" type="primary" @click="sync">
+      <Button v-if="doc?.canSave" :icon="true" type="primary" @tap="sync">
         {{ t`Save` }}
       </Button>
       <Button
         v-else-if="doc?.canSubmit"
         :icon="true"
         type="primary"
-        @click="submit"
+        @tap="submit"
       >
         {{ t`Submit` }}
       </Button>
-    </div>
+    </view>
 
     <!-- Name and image -->
-    <div
+    <view
       v-if="doc && (titleField || imageField)"
       class="items-center border-b border-t border-border"
       :class="imageField ? 'grid' : 'flex justify-center'"
@@ -58,7 +58,7 @@
         :read-only="doc.inserted || doc.schema.naming !== 'manual'"
         @change="(value) => valueChange(titleField as Field, value)"
       />
-    </div>
+    </view>
 
     <!-- Rest of the form -->
     <TwoColumnForm
@@ -69,7 +69,7 @@
       :fields="fields"
       :column-ratio="[1.1, 2]"
     />
-  </div>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, computed, inject, provide, onActivated, onMounted } from 'vue';

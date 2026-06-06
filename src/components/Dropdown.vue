@@ -9,60 +9,60 @@
     "
   >
     <PopoverAnchor as-child>
-      <div class="h-full w-full">
+      <view class="h-full w-full">
         <slot
           :toggle-dropdown="toggleDropdown"
           :highlight-item-up="highlightItemUp"
           :highlight-item-down="highlightItemDown"
           :select-highlighted-item="selectHighlightedItem"
         ></slot>
-      </div>
+      </view>
     </PopoverAnchor>
     <PopoverContent
       :side="right ? 'bottom' : 'bottom'"
       :align="right ? 'end' : 'start'"
       class="bg-surface text-main rounded w-[var(--reka-popover-trigger-width)] min-w-40 overflow-hidden p-0 border border-border shadow-lg"
     >
-      <div class="bg-surface text-main rounded w-full min-w-40 overflow-hidden">
-        <div
+      <view class="bg-surface text-main rounded w-full min-w-40 overflow-hidden">
+        <view
           class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm"
         >
-          <div v-if="isLoading" class="p-2 text-description italic">
+          <view v-if="isLoading" class="p-2 text-description italic">
             {{ t`Loading...` }}
-          </div>
-          <div
+          </view>
+          <view
             v-else-if="dropdownItems.length === 0"
             class="p-2 text-description italic"
           >
             {{ getEmptyMessage() }}
-          </div>
+          </view>
           <template v-else>
-            <div
+            <view
               v-for="(d, index) in dropdownItems"
               :key="`key-${index}`"
               ref="itemsRef"
             >
-              <div
+              <view
                 v-if="d.isGroup"
                 class="px-2 pt-3 pb-1 text-xs uppercase text-muted font-semibold tracking-wider"
               >
                 {{ d.label }}
-              </div>
+              </view>
               <a
                 v-else
                 class="block p-2 rounded-md mt-1 first:mt-0 cursor-pointer truncate"
                 :class="index === highlightedIndex ? 'bg-surface-hover' : ''"
                 @mouseenter="highlightedIndex = index"
                 @mousedown.prevent
-                @click="selectItem(d)"
+                @tap="selectItem(d)"
               >
                 <component :is="d.component" v-if="d.component" />
                 <template v-else>{{ d.label }}</template>
               </a>
-            </div>
+            </view>
           </template>
-        </div>
-      </div>
+        </view>
+      </view>
     </PopoverContent>
   </Popover>
 </template>

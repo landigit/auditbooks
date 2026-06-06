@@ -1,144 +1,144 @@
 <template>
-  <div
+  <view
     class="flex-1 flex justify-center items-center bg-canvas"
     :class="{
       'pointer-events-none': loadingDatabase,
       'window-drag': store.platform !== 'Windows',
     }"
   >
-    <div
+    <view
       class="w-full w-form shadow-lg rounded-lg border border-border relative bg-surface window-no-drag"
       style="height: 700px"
     >
       <!-- Welcome to Auditbooks -->
-      <div class="px-4 py-4">
-        <h1 class="text-2xl font-semibold select-none text-main">
+      <view class="px-4 py-4">
+        <text class="text-2xl font-semibold select-none text-main">
           {{ t`Welcome to Auditbooks` }}
-        </h1>
-        <p class="text-description text-base select-none">
+        </text>
+        <text class="text-description text-base select-none">
           {{
             t`Create a new company or select an existing one from your computer`
           }}
-        </p>
-      </div>
+        </text>
+      </view>
 
-      <hr class="border-border" />
+      <view class="border-b border-border"   />
 
       <!-- New File (Blue Icon) -->
-      <div
+      <view
         data-testid="create-new-file"
         class="px-4 h-row-largest flex flex-row items-center gap-4 p-2"
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
-        @click="newDatabase"
+        @tap="newDatabase"
       >
-        <div
+        <view
           class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
         >
           <lucide-icon name="plus" class="text-indicator-blue-text w-5 h-5" />
-        </div>
+        </view>
 
-        <div>
-          <p class="font-medium text-main">
+        <view>
+          <text class="font-medium text-main">
             {{ t`New Company` }}
-          </p>
-          <p class="text-sm text-description">
+          </text>
+          <text class="text-sm text-description">
             {{ t`Create a new company and store it on your computer` }}
-          </p>
-        </div>
-      </div>
+          </text>
+        </view>
+      </view>
 
       <!-- Existing File (Green Icon) -->
-      <div
+      <view
         class="px-4 h-row-largest flex flex-row items-center gap-4 p-2"
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
-        @click="existingDatabase"
+        @tap="existingDatabase"
       >
-        <div
+        <view
           class="w-8 h-8 rounded-full bg-indicator-green-bg relative flex-center"
         >
           <lucide-icon
             name="upload"
             class="w-4 h-4 text-indicator-green-text"
           />
-        </div>
-        <div>
-          <p class="font-medium text-main">
+        </view>
+        <view>
+          <text class="font-medium text-main">
             {{ t`Existing Company` }}
-          </p>
-          <p class="text-sm text-description">
+          </text>
+          <text class="text-sm text-description">
             {{ t`Load an existing company from your computer` }}
-          </p>
-        </div>
-      </div>
+          </text>
+        </view>
+      </view>
 
       <!-- Create Demo (Pink Icon) -->
-      <div
+      <view
         v-if="!files?.length"
         class="px-4 h-row-largest flex flex-row items-center gap-4 p-2"
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
-        @click="createDemo"
+        @tap="createDemo"
       >
-        <div
+        <view
           class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
         >
           <lucide-icon
             name="monitor"
             class="w-4 h-4 text-indicator-blue-text"
           />
-        </div>
-        <div>
-          <p class="font-medium text-main">
+        </view>
+        <view>
+          <text class="font-medium text-main">
             {{ t`Create Demo` }}
-          </p>
-          <p class="text-sm text-description">
+          </text>
+          <text class="text-sm text-description">
             {{ t`Create a demo company to try out Auditbooks` }}
-          </p>
-        </div>
-      </div>
-      <hr class="border-border" />
+          </text>
+        </view>
+      </view>
+      <view class="border-b border-border"   />
 
       <!-- File List -->
-      <div class="overflow-y-auto" style="max-height: 340px">
-        <div
+      <view class="overflow-y-auto" style="max-height: 340px">
+        <view
           v-for="(file, i) in files"
           :key="file.dbPath"
           class="h-row-largest px-4 flex gap-4 items-center"
           :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
           :title="t`${file.companyName} stored at ${file.dbPath}`"
-          @click="selectFile(file)"
+          @tap="selectFile(file)"
         >
-          <div
+          <view
             class="w-8 h-8 rounded-full flex justify-center items-center bg-canvas-muted text-description font-semibold flex-shrink-0 text-base"
           >
             {{ i + 1 }}
-          </div>
-          <div class="w-full">
-            <div class="flex justify-between overflow-x-auto items-baseline">
-              <h2 class="font-medium text-main">
+          </view>
+          <view class="w-full">
+            <view class="flex justify-between overflow-x-auto items-baseline">
+              <text class="font-medium text-main">
                 {{ file.companyName }}
-              </h2>
-              <p class="whitespace-nowrap text-sm text-description">
+              </text>
+              <text class="whitespace-nowrap text-sm text-description">
                 {{ formatDate(file.modified) }}
-              </p>
-            </div>
-            <p
+              </text>
+            </view>
+            <text
               class="text-sm text-description overflow-x-auto no-scrollbar whitespace-nowrap"
             >
               {{ truncate(file.dbPath) }}
-            </p>
-          </div>
+            </text>
+          </view>
           <button
             class="ms-auto p-2 hover:bg-indicator-red-bg rounded-full w-8 h-8 text-description hover:text-error"
-            @click.stop="() => deleteDb(i)"
+            @tap.stop="() => deleteDb(i)"
           >
             <lucide-icon name="x" class="w-4 h-4" />
           </button>
-        </div>
-      </div>
-      <hr v-if="files?.length" class="border-border" />
+        </view>
+      </view>
+      <view class="border-b border-border"  v-if="files?.length"  />
 
       <!-- Language Selector -->
-      <div
+      <view
         class="w-full flex justify-between items-center absolute p-4 text-main"
         style="top: 100%; transform: translateY(-100%)"
       >
@@ -147,12 +147,12 @@
           v-if="files?.length"
           class="text-sm bg-surface-hover hover:bg-canvas-muted rounded px-4 py-1.5 w-auto h-8 no-scrollbar overflow-x-auto whitespace-nowrap"
           :disabled="creatingDemo"
-          @click="createDemo"
+          @tap="createDemo"
         >
           {{ creatingDemo ? t`Please Wait` : t`Create Demo` }}
         </button>
-      </div>
-    </div>
+      </view>
+    </view>
     <Loading
       v-if="creatingDemo"
       :open="creatingDemo"
@@ -164,26 +164,26 @@
 
     <!-- Base Count Selection when Dev -->
     <Modal :open-modal="openModal" @closemodal="openModal = false">
-      <div class="p-4 text-main w-form">
-        <h2 class="text-xl font-semibold select-none">Set Base Count</h2>
-        <p class="text-base mt-2">
+      <view class="p-4 text-main w-form">
+        <text class="text-xl font-semibold select-none">Set Base Count</text>
+        <text class="text-base mt-2">
           Base Count is a lower bound on the number of entries made when
           creating the dummy instance.
-        </p>
-        <div class="flex my-12 justify-center items-baseline gap-4 text-base">
-          <label for="basecount" class="text-description">Base Count</label>
+        </text>
+        <view class="flex my-12 justify-center items-baseline gap-4 text-base">
+          <text for="basecount" class="text-description">Base Count</text>
           <input
             v-model="baseCount"
             type="number"
             name="basecount"
             class="bg-canvas-muted focus:bg-surface-hover rounded-md px-2 py-1 outline-none"
           />
-        </div>
-        <div class="flex justify-between">
-          <Button @click="openModal = false">Cancel</Button>
+        </view>
+        <view class="flex justify-between">
+          <Button @tap="openModal = false">Cancel</Button>
           <Button
             type="primary"
-            @click="
+            @tap="
               () => {
                 openModal = false;
                 startDummyInstanceSetup();
@@ -191,10 +191,10 @@
             "
             >Create</Button
           >
-        </div>
-      </div>
+        </view>
+      </view>
     </Modal>
-  </div>
+  </view>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full h-full">
+  <view class="flex flex-col w-full h-full">
     <PageHeader :title="title">
       <DropdownWithActions
         v-for="group of groupedActions"
@@ -15,14 +15,14 @@
         ref="printButton"
         :icon="true"
         :title="t`Open Report Print View`"
-        @click="routeTo(`/report-print/${reportClassName}`)"
+        @tap="routeTo(`/report-print/${reportClassName}`)"
       >
         <lucide-icon name="printer" class="w-4 h-4"></lucide-icon>
       </Button>
     </PageHeader>
 
     <!-- Filters -->
-    <div
+    <view
       v-if="report && report.filters.length"
       class="grid grid-cols-5 gap-4 p-4 border-b border-border items-end"
     >
@@ -38,11 +38,11 @@
         :read-only="loading"
         @change="async (value) => await report?.set(field.fieldname, value)"
       />
-    </div>
+    </view>
 
     <!-- Report Body -->
     <ListReport v-if="report" :report="report" class="" />
-  </div>
+  </view>
 </template>
 <script setup lang="ts">
 import {

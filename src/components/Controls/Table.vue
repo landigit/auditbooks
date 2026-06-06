@@ -1,17 +1,17 @@
 <template>
-  <div v-if="tableFields?.length">
-    <div v-if="showLabel" class="text-description text-sm mb-1">
+  <view v-if="tableFields?.length">
+    <view v-if="showLabel" class="text-description text-sm mb-1">
       {{ df.label }}
-    </div>
+    </view>
 
-    <div :class="border ? 'border border-border rounded-md' : ''">
+    <view :class="border ? 'border border-border rounded-md' : ''">
       <!-- Title Row -->
       <Row
         :ratio="ratio"
         class="border-b border-border px-2 text-description w-full items-center"
       >
-        <div class="flex items-center ps-2">#</div>
-        <div
+        <view class="flex items-center ps-2">#</view>
+        <view
           v-for="df in tableFields"
           :key="df.fieldname"
           class="flex h-row-mid w-full"
@@ -24,16 +24,16 @@
                 : 'items-center',
           ]"
         >
-          <span>{{ df.label }}</span>
-          <p v-if="df.sub_label" class="text-xs">
+          <text>{{ df.label }}</text>
+          <text v-if="df.sub_label" class="text-xs">
             {{ df.sub_label }}
-          </p>
-        </div>
-        <div v-if="canEditRow" class="flex h-row-mid w-full" />
+          </text>
+        </view>
+        <view v-if="canEditRow" class="flex h-row-mid w-full" />
       </Row>
 
       <!-- Data Rows -->
-      <div
+      <view
         v-if="value"
         class="overflow-auto custom-scroll custom-scroll-thumb1"
         :style="{ 'max-height': maxHeight, 'scrollbar-gutter': 'stable' }"
@@ -51,7 +51,7 @@
             (field: any, value: any) => $emit('row-change', field, value, df)
           "
         />
-      </div>
+      </view>
 
       <!-- Add Row and Row Count -->
       <Row
@@ -60,20 +60,20 @@
         class="text-description cursor-pointer px-2 w-full h-row-mid items-center focus:outline-none focus:ring-1 focus:ring-main"
         :class="value.length > 0 ? 'border-t border-border' : ''"
         tabindex="0"
-        @click="addRow"
+        @tap="addRow"
         @keydown.enter="addRow"
       >
-        <div class="flex items-center ps-1">
+        <view class="flex items-center ps-1">
           <lucide-icon name="plus" class="w-4 h-4 text-description" />
-        </div>
-        <div
+        </view>
+        <view
           class="flex justify-between px-2"
           :style="`grid-column: 2 / ${ratio.length + 1}`"
         >
-          <p>
+          <text>
             {{ t`Add Row` }}
-          </p>
-          <p
+          </text>
+          <text
             v-if="
               value &&
               maxRowsBeforeOverflow &&
@@ -82,11 +82,11 @@
             class="text-end px-2"
           >
             {{ t`${value.length} rows` }}
-          </p>
-        </div>
+          </text>
+        </view>
       </Row>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <div v-if="showLabel" :class="labelClasses">
+  <view>
+    <view v-if="showLabel" :class="labelClasses">
       {{ df.label }}
-    </div>
+    </view>
     <DateTimePicker
       v-if="!isReadOnly"
       :model-value="dateValue"
@@ -10,27 +10,27 @@
       :size="size"
       @update:model-value="handleDateChange"
     />
-    <div
+    <view
       v-else
       class="flex"
       :class="[containerClasses, sizeClasses]"
       tabindex="-1"
     >
-      <p
+      <text
         v-if="!isEmpty"
         :class="[baseInputClasses]"
         class="overflow-auto no-scrollbar whitespace-nowrap text-description"
       >
         {{ formattedValue }}
-      </p>
-      <p
+      </text>
+      <text
         v-else-if="inputPlaceholder"
         class="text-base text-description w-full opacity-50"
       >
         {{ inputPlaceholder }}
-      </p>
-    </div>
-  </div>
+      </text>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

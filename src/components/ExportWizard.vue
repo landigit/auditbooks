@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <view>
     <!-- Export Wizard Header -->
     <FormHeader :form-title="label" :form-sub-title="t`Export Wizard`" />
-    <hr class="border-border" />
+    <view class="border-b border-border"   />
 
     <!-- Export Config -->
-    <div class="grid grid-cols-3 p-4 gap-4">
+    <view class="grid grid-cols-3 p-4 gap-4">
       <Check
         v-if="configFields.useListFilters && Object.keys(listFilters).length"
         :df="configFields.useListFilters"
@@ -30,17 +30,17 @@
         :border="true"
         @change="(value: number) => (limit = value)"
       />
-    </div>
-    <hr class="border-border" />
+    </view>
+    <view class="border-b border-border"   />
 
     <!-- Fields Selection -->
-    <div class="max-h-80 overflow-auto custom-scroll custom-scroll-thumb2">
+    <view class="max-h-80 overflow-auto custom-scroll custom-scroll-thumb2">
       <!-- Main Fields -->
-      <div class="p-4">
-        <h2 class="text-sm font-semibold text-main">
+      <view class="p-4">
+        <text class="text-sm font-semibold text-main">
           {{ fyo.schemaMap[schemaName]?.label ?? schemaName }}
-        </h2>
-        <div class="grid grid-cols-3 border border-border rounded mt-1">
+        </text>
+        <view class="grid grid-cols-3 border border-border rounded mt-1">
           <Check
             v-for="ef of fields"
             :key="ef.fieldname"
@@ -54,15 +54,15 @@
             :value="ef.export"
             @change="(value: boolean) => setExportFieldValue(ef, value)"
           />
-        </div>
-      </div>
+        </view>
+      </view>
 
       <!-- Table Fields -->
-      <div v-for="efs of filteredTableFields" :key="efs.fieldname" class="p-4">
-        <h2 class="text-sm font-semibold text-muted">
+      <view v-for="efs of filteredTableFields" :key="efs.fieldname" class="p-4">
+        <text class="text-sm font-semibold text-muted">
           {{ fyo.schemaMap[efs.target]?.label ?? schemaName }}
-        </h2>
-        <div class="grid grid-cols-3 border border-border rounded mt-1">
+        </text>
+        <view class="grid grid-cols-3 border border-border rounded mt-1">
           <Check
             v-for="ef of efs.fields"
             :key="ef.fieldname"
@@ -74,19 +74,19 @@
               (value: boolean) => setExportFieldValue(ef, value, efs.target)
             "
           />
-        </div>
-      </div>
-    </div>
+        </view>
+      </view>
+    </view>
 
     <!-- Export Button -->
-    <hr class="border-border" />
-    <div class="p-4 flex justify-between items-center">
-      <p class="text-sm text-description">
+    <view class="border-b border-border"   />
+    <view class="p-4 flex justify-between items-center">
+      <text class="text-sm text-description">
         {{ t`${numSelected} fields selected` }}
-      </p>
-      <Button type="primary" @click="exportData">{{ t`Export` }}</Button>
-    </div>
-  </div>
+      </text>
+      <Button type="primary" @tap="exportData">{{ t`Export` }}</Button>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

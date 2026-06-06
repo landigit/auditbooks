@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col overflow-hidden w-full">
+  <view class="flex flex-col overflow-hidden w-full">
     <!-- Header -->
     <PageHeader :title="t`Import Wizard`">
       <DropdownWithActions
@@ -13,7 +13,7 @@
         :title="t`Add Row`"
         :disabled="isMakingEntries"
         :icon="true"
-        @click="() => importer.addRow()"
+        @tap="() => importer.addRow()"
       >
         <lucide-icon name="plus" class="w-4 h-4" />
       </Button>
@@ -21,7 +21,7 @@
         v-if="hasImporter"
         :title="t`Save Template`"
         :icon="true"
-        @click="saveTemplate"
+        @tap="saveTemplate"
       >
         <lucide-icon name="download" class="w-4 h-4" />
       </Button>
@@ -30,7 +30,7 @@
         :title="t`Import Data`"
         type="primary"
         :disabled="errorMessage.length > 0 || isMakingEntries"
-        @click="importData"
+        @tap="importData"
       >
         {{ t`Import Data` }}
       </Button>
@@ -38,16 +38,16 @@
         v-if="importType && !canImportData"
         :title="t`Select File`"
         type="primary"
-        @click="selectFile"
+        @tap="selectFile"
       >
         {{ t`Select File` }}
       </Button>
     </PageHeader>
 
     <!-- Main Body of the Wizard -->
-    <div class="flex text-base w-full flex-col">
+    <view class="flex text-base w-full flex-col">
       <!-- Select Import Type -->
-      <div
+      <view
         class="h-row-largest flex flex-row justify-start items-center w-full gap-2 border-b border-border p-4"
       >
         <AutoComplete
@@ -67,20 +67,19 @@
           @change="setImportType"
         />
 
-        <p v-if="errorMessage.length > 0" class="text-base ms-2 text-error">
+        <text v-if="errorMessage.length > 0" class="text-base ms-2 text-error">
           {{ errorMessage }}
-        </p>
-        <p
+        </text>
+        <text
           v-else
           class="text-base ms-2"
           :class="fileName ? 'text-main font-semibold' : 'text-description'"
         >
-          <span v-if="fileName" class="font-normal">{{ t`Selected` }} </span>
+          <text v-if="fileName" class="font-normal">{{ t`Selected` }} </text>
           {{ helperMessage }}{{ fileName ? ',' : '' }}
-          <span v-if="fileName" class="font-normal">
-            {{ t`check values and click on` }} </span
-          >{{ ' ' }}<span v-if="fileName">{{ t`Import Data.` }}</span>
-          <span
+          <text v-if="fileName" class="font-normal">
+            {{ t`check values and click on` }} </text>{{ ' ' }}<text v-if="fileName">{{ t`Import Data.` }}</text>
+          <text
             v-if="hasImporter && importer.valueMatrix.length > 0"
             class="font-normal"
             >{{
@@ -88,24 +87,23 @@
               (importer.valueMatrix.length === 2
                 ? t`${importer.valueMatrix.length} row added.`
                 : t`${importer.valueMatrix.length} rows added.`)
-            }}</span
-          >
-        </p>
-      </div>
+            }}</text>
+        </text>
+      </view>
 
       <!-- Assignment Row and Value Grid container -->
-      <div
+      <view
         v-if="hasImporter"
         class="overflow-auto custom-scroll custom-scroll-thumb1"
         style="max-height: calc(100vh - (2 * var(--h-row-largest)) - 2px)"
       >
         <!-- Column Assignment Row -->
-        <div
+        <view
           class="grid sticky top-0 py-4 pe-4 bg-surface border-b border-e border-border gap-4"
           style="z-index: 1; width: fit-content"
           :style="gridTemplateColumn"
         >
-          <div class="index-cell">#</div>
+          <view class="index-cell">#</view>
           <Select
             v-for="index in columnIterator"
             :key="index"
@@ -118,10 +116,10 @@
               (value: string | null) => importer.setTemplateField(index, value)
             "
           />
-        </div>
+        </view>
 
         <!-- Values Grid -->
-        <div
+        <view
           v-if="importer.valueMatrix.length"
           class="grid py-4 pe-4 bg-surface gap-4 border-e last:border-b border-border"
           style="width: fit-content"
@@ -129,19 +127,19 @@
         >
           <!-- Grid Value Row Cells, Allow Editing Values -->
           <template v-for="(row, ridx) of importer.valueMatrix" :key="ridx">
-            <div
+            <view
               class="index-cell group cursor-pointer"
-              @click="importer.removeRow(ridx)"
+              @tap="importer.removeRow(ridx)"
             >
               <lucide-icon
                 name="x"
                 class="w-4 h-4 hidden group-hover:inline-block -me-1"
                 :button="true"
               />
-              <span class="group-hover:hidden">
+              <text class="group-hover:hidden">
                 {{ ridx + 1 }}
-              </span>
-            </div>
+              </text>
+            </view>
 
             <template
               v-for="(val, cidx) of row.slice(0, columnCount)"
@@ -193,17 +191,17 @@
               />
             </template>
           </template>
-        </div>
+        </view>
 
-        <div
+        <view
           v-else
           class="ps-4 text-description sticky left-0 flex items-center"
           style="height: 62.5px"
         >
           {{ t`No rows added. Select a file or add rows.` }}
-        </div>
-      </div>
-    </div>
+        </view>
+      </view>
+    </view>
 
     <!-- Loading Bar when Saving Docs -->
     <Loading
@@ -218,22 +216,22 @@
       :open-modal="showColumnPicker"
       @closemodal="showColumnPicker = false"
     >
-      <div class="w-form">
+      <view class="w-form">
         <!-- Pick Column Header -->
         <FormHeader :form-title="t`Pick Import Columns`" />
-        <hr class="border-border" />
+        <view class="border-b border-border"   />
 
         <!-- Pick Column Checkboxes -->
-        <div
+        <view
           v-for="[key, value] of columnPickerFieldsMap.entries()"
           :key="key"
           class="p-4 max-h-80 overflow-auto custom-scroll custom-scroll-thumb1"
         >
-          <h2 class="text-sm font-semibold text-main">
+          <text class="text-sm font-semibold text-main">
             {{ key }}
-          </h2>
-          <div class="grid grid-cols-3 border border-border rounded mt-1">
-            <div
+          </text>
+          <view class="grid grid-cols-3 border border-border rounded mt-1">
+            <view
               v-for="tf of value"
               :key="tf.fieldKey"
               class="flex items-center"
@@ -249,120 +247,120 @@
                 :value="importer.templateFieldsPicked.get(tf.fieldKey)"
                 @change="(value: boolean) => pickColumn(tf.fieldKey, value)"
               />
-              <p v-if="tf.required" class="w-0 text-error -ml-4">*</p>
-            </div>
-          </div>
-        </div>
+              <text v-if="tf.required" class="w-0 text-error -ml-4">*</text>
+            </view>
+          </view>
+        </view>
 
         <!-- Pick Column Footer -->
-        <hr class="border-border" />
-        <div class="p-4 flex justify-between items-center">
-          <p class="text-sm text-description">
+        <view class="border-b border-border"   />
+        <view class="p-4 flex justify-between items-center">
+          <text class="text-sm text-description">
             {{ t`${numColumnsPicked} fields selected` }}
-          </p>
-          <Button type="primary" @click="showColumnPicker = false">{{
+          </text>
+          <Button type="primary" @tap="showColumnPicker = false">{{
             t`Done`
           }}</Button>
-        </div>
-      </div>
+        </view>
+      </view>
     </Modal>
 
     <!-- Import Completed Modal -->
     <Modal :open-modal="complete" @closemodal="clear">
-      <div class="w-form">
+      <view class="w-form">
         <!-- Import Completed Header -->
         <FormHeader :form-title="t`Import Complete`" />
-        <hr class="border-border" />
+        <view class="border-b border-border"   />
         <!-- Success -->
-        <div v-if="success.length > 0">
+        <view v-if="success.length > 0">
           <!-- Success Section Header -->
-          <div class="flex justify-between px-4 pt-4 pb-1">
-            <p class="text-base font-semibold text-main">
+          <view class="flex justify-between px-4 pt-4 pb-1">
+            <text class="text-base font-semibold text-main">
               {{ t`Success` }}
-            </p>
-            <p class="text-sm text-description">
+            </text>
+            <text class="text-sm text-description">
               {{
                 success.length === 1
                   ? t`${success.length} entry imported`
                   : t`${success.length} entries imported`
               }}
-            </p>
-          </div>
+            </text>
+          </view>
           <!-- Success Body -->
-          <div class="max-h-40 overflow-auto text-main">
-            <div
+          <view class="max-h-40 overflow-auto text-main">
+            <view
               v-for="(name, i) of success"
               :key="name"
               class="px-4 py-1 grid grid-cols-2 text-base gap-4"
               style="grid-template-columns: 1rem auto"
             >
-              <div class="text-end">{{ i + 1 }}.</div>
-              <p class="whitespace-nowrap overflow-auto no-scrollbar">
+              <view class="text-end">{{ i + 1 }}.</view>
+              <text class="whitespace-nowrap overflow-auto no-scrollbar">
                 {{ name }}
-              </p>
-            </div>
-          </div>
-          <hr class="border-border" />
-        </div>
+              </text>
+            </view>
+          </view>
+          <view class="border-b border-border"   />
+        </view>
 
         <!-- Failed -->
-        <div v-if="failed.length > 0">
+        <view v-if="failed.length > 0">
           <!-- Failed Section Header -->
-          <div class="flex justify-between px-4 pt-4 pb-1">
-            <p class="text-base font-semibold">{{ t`Failed` }}</p>
-            <p class="text-sm text-description">
+          <view class="flex justify-between px-4 pt-4 pb-1">
+            <text class="text-base font-semibold">{{ t`Failed` }}</text>
+            <text class="text-sm text-description">
               {{
                 failed.length === 1
                   ? t`${failed.length} entry failed`
                   : t`${failed.length} entries failed`
               }}
-            </p>
-          </div>
+            </text>
+          </view>
           <!-- Failed Body -->
-          <div class="max-h-40 overflow-auto text-main">
-            <div
+          <view class="max-h-40 overflow-auto text-main">
+            <view
               v-for="(f, i) of failed"
               :key="f.name"
               class="px-4 py-1 grid grid-cols-2 text-base gap-4"
               style="grid-template-columns: 1rem 8rem auto"
             >
-              <div class="text-end">{{ i + 1 }}.</div>
-              <p class="whitespace-nowrap overflow-auto no-scrollbar">
+              <view class="text-end">{{ i + 1 }}.</view>
+              <text class="whitespace-nowrap overflow-auto no-scrollbar">
                 {{ f.name }}
-              </p>
-              <p class="whitespace-nowrap overflow-auto no-scrollbar">
+              </text>
+              <text class="whitespace-nowrap overflow-auto no-scrollbar">
                 {{ f.error.message }}
-              </p>
-            </div>
-          </div>
-          <hr class="border-border" />
-        </div>
+              </text>
+            </view>
+          </view>
+          <view class="border-b border-border"   />
+        </view>
 
         <!-- Fallback Div -->
-        <div
+        <view
           v-if="failed.length === 0 && success.length === 0"
           class="p-4 text-base text-main"
         >
           {{ t`No entries were imported.` }}
-        </div>
+        </view>
 
         <!-- Footer Button -->
-        <div class="flex justify-between p-4">
+        <view class="flex justify-between p-4">
           <Button
             v-if="failed.length > 0"
-            @click="clearSuccessfullyImportedEntries"
+            @tap="clearSuccessfullyImportedEntries"
             >{{ t`Fix Failed` }}</Button
           >
           <Button
             v-if="failed.length === 0 && success.length > 0"
-            @click="showMe"
+            @tap="showMe"
             >{{ t`Show Me` }}</Button
           >
-          <Button @click="clear">{{ t`Done` }}</Button>
-        </div>
-      </div>
+          <Button @tap="clear">{{ t`Done` }}</Button>
+        </view>
+      </view>
     </Modal>
-  </div>
+  </view>
 </template>
 <script setup lang="ts">
 import {
@@ -599,7 +597,7 @@ const actions = computed<Action[]>(() => {
     list.push({
       label: selectFileLabel,
       component: {
-        template: `<span>{{ "${selectFileLabel}" }}</span>`,
+        template: `<text>{{ "${selectFileLabel}" }}</text>`,
       },
       action: selectFile.bind(null),
     });
@@ -608,7 +606,7 @@ const actions = computed<Action[]>(() => {
   const pickColumnsAction = {
     label: t`Pick Import Columns`,
     component: {
-      template: '<span>{{ t`Pick Import Columns` }}</span>',
+      template: '<text>{{ t`Pick Import Columns` }}</text>',
     },
     action: () => (showColumnPicker.value = true),
   };
@@ -616,7 +614,7 @@ const actions = computed<Action[]>(() => {
   const cancelAction = {
     label: t`Cancel`,
     component: {
-      template: '<span class="text-error" >{{ t`Cancel` }}</span>',
+      template: '<text class="text-error" >{{ t`Cancel` }}</text>',
     },
     action: clear.bind(null),
   };

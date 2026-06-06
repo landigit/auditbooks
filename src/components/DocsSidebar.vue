@@ -1,10 +1,10 @@
 <template>
-  <div
+  <view
     class="flex flex-col h-full bg-sidebar border-r border-border w-64 flex-shrink-0 select-none"
   >
     <!-- Search -->
-    <div class="p-4 border-b border-border">
-      <div class="relative">
+    <view class="p-4 border-b border-border">
+      <view class="relative">
         <lucide-icon
           name="search"
           class="absolute left-3 top-2.5 h-4 w-4 text-muted"
@@ -15,15 +15,15 @@
           placeholder="Search docs..."
           class="w-full bg-canvas border border-border rounded-md py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
-      </div>
-    </div>
+      </view>
+    </view>
 
     <!-- Navigation Tree -->
-    <div class="flex-1 overflow-y-auto custom-scroll p-2">
-      <div v-for="group in filteredNav" :key="group.id" class="mb-4">
-        <div
+    <view class="flex-1 overflow-y-auto custom-scroll p-2">
+      <view v-for="group in filteredNav" :key="group.id" class="mb-4">
+        <view
           class="flex items-center px-2 py-1.5 text-xs font-semibold text-muted uppercase tracking-wider cursor-pointer hover:text-main"
-          @click="toggleGroup(group)"
+          @tap="toggleGroup(group)"
         >
           <lucide-icon
             name="chevron-right"
@@ -31,13 +31,13 @@
             :class="{ 'rotate-90': group.isExpanded !== false }"
           />
           {{ group.title }}
-        </div>
+        </view>
 
-        <div v-if="group.isExpanded !== false" class="mt-1 space-y-0.5">
-          <div
+        <view v-if="group.isExpanded !== false" class="mt-1 space-y-0.5">
+          <view
             v-for="item in group.children"
             :key="item.id"
-            @click="navigateTo(item)"
+            @tap="navigateTo(item)"
             class="group flex items-center px-6 py-1.5 rounded-md text-sm cursor-pointer transition-colors"
             :class="[
               isActive(item)
@@ -46,11 +46,11 @@
             ]"
           >
             {{ item.title }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

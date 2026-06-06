@@ -1,117 +1,117 @@
 <template>
-  <div
+  <view
     class="w-quick-edit bg-surface border-l border-border overflow-y-auto custom-scroll custom-scroll-thumb2"
   >
     <!-- Page Header -->
-    <div
+    <view
       class="relative flex items-center justify-center px-4 h-row-largest sticky top-0 bg-surface border-b border-border"
       style="z-index: 1"
     >
-      <Button :icon="true" class="absolute left-4" @click="emit('close')">
+      <Button :icon="true" class="absolute left-4" @tap="emit('close')">
         <lucide-icon name="x" class="w-4 h-4" />
       </Button>
-      <p class="text-xl font-semibold text-description">
+      <text class="text-xl font-semibold text-description">
         {{ t`Linked Entries` }}
-      </p>
-    </div>
+      </text>
+    </view>
 
     <!-- Loading Spinner -->
-    <div
+    <view
       v-if="loading"
       class="flex flex-col items-center justify-center p-8 text-description h-64"
     >
-      <div
+      <view
         class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"
-      ></div>
-      <p class="text-sm text-description">{{ t`Loading linked entries...` }}</p>
-    </div>
+      ></view>
+      <text class="text-sm text-description">{{ t`Loading linked entries...` }}</text>
+    </view>
 
     <!-- Linked Entry List -->
-    <div
+    <view
       v-else-if="sequence.length"
       class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2 border-t border-border"
     >
-      <div
+      <view
         v-for="sn of sequence"
         :key="sn"
         class="border-b border-border p-4 overflow-auto"
       >
         <!-- Header with count and schema label -->
-        <div
+        <view
           class="flex justify-between cursor-pointer"
           :class="entries[sn].collapsed ? '' : 'pb-4'"
-          @click="entries[sn].collapsed = !entries[sn].collapsed"
+          @tap="entries[sn].collapsed = !entries[sn].collapsed"
         >
-          <h2 class="text-base text-description font-semibold select-none">
+          <text class="text-base text-description font-semibold select-none">
             {{ fyo.schemaMap[sn]?.label ?? sn
-            }}<span class="font-normal">{{
+            }}<text class="font-normal">{{
               ` – ${entries[sn].details.length}`
-            }}</span>
-          </h2>
+            }}</text>
+          </text>
           <lucide-icon
             :name="entries[sn].collapsed ? 'chevron-up' : 'chevron-down'"
             class="w-4 h-4 text-description"
           />
-        </div>
+        </view>
 
         <!-- Entry list -->
-        <div
+        <view
           v-show="!entries[sn].collapsed"
           class="entry-container rounded-md border border-border overflow-hidden"
         >
           <!-- Entry -->
-          <div
+          <view
             v-for="e of entries[sn].details"
             :key="String(e.name) + sn"
             class="p-2 text-sm cursor-pointer border-b last:border-0 border-border hover:bg-surface-hover"
-            @click="routeToEntry(sn, String(e.name))"
+            @tap="routeToEntry(sn, String(e.name))"
           >
-            <div class="flex justify-between">
+            <view class="flex justify-between">
               <!-- Name -->
-              <p class="font-semibold text-main">
+              <text class="font-semibold text-main">
                 {{ e.name }}
-              </p>
+              </text>
 
               <!-- Date -->
-              <p v-if="e.date" class="text-xs text-description">
+              <text v-if="e.date" class="text-xs text-description">
                 {{ fyo.format(e.date, 'Date') }}
-              </p>
-            </div>
-            <div class="flex gap-2 mt-1 pill-container flex-wrap">
+              </text>
+            </view>
+            <view class="flex gap-2 mt-1 pill-container flex-wrap">
               <!-- Credit or Debit (GLE) -->
-              <p
+              <text
                 v-if="isPesa(e.credit) && e.credit.isPositive()"
                 class="pill"
                 :class="colorClass('draft')"
               >
                 {{ t`Cr. ${fyo.format(e.credit, 'Currency')}` }}
-              </p>
-              <p
+              </text>
+              <text
                 v-else-if="isPesa(e.debit) && e.debit.isPositive()"
                 class="pill"
                 :class="colorClass('draft')"
               >
                 {{ t`Dr. ${fyo.format(e.debit, 'Currency')}` }}
-              </p>
+              </text>
 
               <!-- Party or EntryType or Account -->
-              <p
+              <text
                 v-if="e.party || e.entryType || e.account"
                 class="pill"
                 :class="colorClass('draft')"
               >
                 {{ e.party || e.entryType || e.account }}
-              </p>
+              </text>
 
-              <p v-if="e.item" class="pill" :class="colorClass('draft')">
+              <text v-if="e.item" class="pill" :class="colorClass('draft')">
                 {{ e.item }}
-              </p>
-              <p v-if="e.location" class="pill" :class="colorClass('draft')">
+              </text>
+              <text v-if="e.location" class="pill" :class="colorClass('draft')">
                 {{ e.location }}
-              </p>
+              </text>
 
               <!-- Amounts -->
-              <p
+              <text
                 v-if="
                   isPesa(e.outstandingAmount) &&
                   e.outstandingAmount.isPositive()
@@ -120,24 +120,24 @@
                 :class="colorClass('unpaid')"
               >
                 {{ t`Unpaid ${fyo.format(e.outstandingAmount, 'Currency')}` }}
-              </p>
-              <p
+              </text>
+              <text
                 v-else-if="isPesa(e.grandTotal) && e.grandTotal.isPositive()"
                 class="pill no-scrollbar"
                 :class="colorClass('success')"
               >
                 {{ fyo.format(e.grandTotal, 'Currency') }}
-              </p>
-              <p
+              </text>
+              <text
                 v-else-if="isPesa(e.amount) && e.amount.isPositive()"
                 class="pill no-scrollbar"
                 :class="colorClass('success')"
               >
                 {{ fyo.format(e.amount, 'Currency') }}
-              </p>
+              </text>
 
               <!-- Quantities -->
-              <p
+              <text
                 v-if="e.stockNotTransferred"
                 class="pill no-scrollbar"
                 :class="colorClass('unpaid')"
@@ -145,23 +145,23 @@
                 {{
                   t`Pending qty. ${fyo.format(e.stockNotTransferred, 'Float')}`
                 }}
-              </p>
-              <p
+              </text>
+              <text
                 v-else-if="typeof e.quantity === 'number' && e.quantity"
                 class="pill no-scrollbar"
                 :class="colorClass('draft')"
               >
                 {{ t`Qty. ${fyo.format(e.quantity, 'Float')}` }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <p v-else class="p-4 text-sm text-description">
+              </text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <text v-else class="p-4 text-sm text-description">
       {{ t`No linked entries found` }}
-    </p>
-  </div>
+    </text>
+  </view>
 </template>
 
 <script setup lang="ts">

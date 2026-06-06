@@ -1,14 +1,14 @@
 <template>
-  <div>
+  <view>
     <!-- Search Bar Button -->
     <Button
       class="px-3 py-2 rounded-r-none bg-canvas-muted"
       :padding="false"
-      @click="open"
+      @tap="open"
     >
       <LucideIcon name="search" class="w-4 h-4 text-main" />
     </Button>
-  </div>
+  </view>
 
   <!-- Search Modal -->
   <Modal
@@ -16,9 +16,9 @@
     :set-close-listener="false"
     @closemodal="close"
   >
-    <div class="w-form">
+    <view class="w-form">
       <!-- Search Input -->
-      <div class="p-1">
+      <view class="p-1">
         <input
           ref="inputRef"
           v-model="inputValue"
@@ -32,98 +32,98 @@
           @keydown.enter="() => select()"
           @keydown.esc="close"
         />
-      </div>
-      <hr class="border-border" />
+      </view>
+      <view class="border-b border-border"   />
 
       <!-- Search List -->
-      <div
+      <view
         :style="`max-height: ${49 * 6 - 1}px`"
         class="overflow-auto custom-scroll custom-scroll-thumb2"
       >
-        <div
+        <view
           v-for="(si, i) in suggestions"
           :key="`${i}-${si.label}`"
           :data-index="`search-suggestion-${i}`"
           class="hover:bg-surface-hover cursor-pointer"
           :class="idx === i ? 'border-main bg-surface-hover border-s-4' : ''"
-          @click="select(i)"
+          @tap="select(i)"
         >
           <!-- Search List Item -->
-          <div
+          <view
             class="flex w-full justify-between px-3 items-center"
             style="height: var(--h-row-mid)"
           >
-            <div class="flex items-center">
-              <p
+            <view class="flex items-center">
+              <text
                 :class="idx === i ? 'text-main' : 'text-description'"
                 :style="idx === i ? 'margin-left: -4px' : ''"
               >
                 {{ si.label }}
-              </p>
-              <p
+              </text>
+              <text
                 v-if="si.group === 'Docs'"
                 class="text-description text-sm ms-3"
               >
                 {{ si.more.filter(Boolean).join(', ') }}
-              </p>
-            </div>
-            <p
+              </text>
+            </view>
+            <text
               class="text-sm text-end justify-self-end"
               :class="`text-indicator-${groupColorMap[si.group]}-text`"
             >
               {{
                 si.group === 'Docs' ? si.schemaLabel : groupLabelMap[si.group]
               }}
-            </p>
-          </div>
+            </text>
+          </view>
 
-          <hr class="border-border" />
-        </div>
-      </div>
+          <view class="border-b border-border"   />
+        </view>
+      </view>
 
       <!-- Footer -->
-      <hr class="border-border" />
-      <div class="m-1 flex justify-between flex-col gap-2 text-sm select-none">
+      <view class="border-b border-border"   />
+      <view class="m-1 flex justify-between flex-col gap-2 text-sm select-none">
         <!-- Group Filters -->
-        <div class="flex justify-between">
-          <div class="flex gap-1">
+        <view class="flex justify-between">
+          <view class="flex gap-1">
             <button
               v-for="g in searchGroups"
               :key="g"
               class="border border-border px-1 py-0.5 rounded-lg"
               :class="getGroupFilterButtonClass(g)"
-              @click="searcher!.set(g, !searcher!.filters.groupFilters[g])"
+              @tap="searcher!.set(g, !searcher!.filters.groupFilters[g])"
             >
               {{ groupLabelMap[g] }}
             </button>
-          </div>
+          </view>
           <button
             class="hover:text-main py-0.5 rounded text-description"
-            @click="showMore = !showMore"
+            @tap="showMore = !showMore"
           >
             {{ showMore ? t`Less Filters` : t`More Filters` }}
           </button>
-        </div>
+        </view>
 
         <!-- Additional Filters -->
-        <div v-if="showMore" class="-mt-1">
+        <view v-if="showMore" class="-mt-1">
           <!-- Group Skip Filters -->
-          <div class="flex gap-1 text-main">
+          <view class="flex gap-1 text-main">
             <button
               v-for="s in ['skipTables', 'skipTransactions'] as const"
               :key="s"
               class="border border-border px-1 py-0.5 rounded-lg"
               :class="{ 'bg-surface-hover': searcher?.filters[s] }"
-              @click="searcher?.set(s, !searcher?.filters[s])"
+              @tap="searcher?.set(s, !searcher?.filters[s])"
             >
               {{
                 s === 'skipTables' ? t`Skip Child Tables` : t`Skip Transactions`
               }}
             </button>
-          </div>
+          </view>
 
           <!-- Schema Name Filters -->
-          <div class="flex mt-1 gap-1 text-indicator-blue-text flex-wrap">
+          <view class="flex mt-1 gap-1 text-indicator-blue-text flex-wrap">
             <button
               v-for="sf in schemaFilters"
               :key="sf.value"
@@ -132,7 +132,7 @@
                 'bg-indicator-blue-bg':
                   searcher?.filters.schemaFilters[sf.value],
               }"
-              @click="
+              @tap="
                 searcher?.set(
                   sf.value,
                   !searcher?.filters.schemaFilters[sf.value]
@@ -141,28 +141,28 @@
             >
               {{ sf.label }}
             </button>
-          </div>
-        </div>
+          </view>
+        </view>
 
         <!-- Keybindings Help -->
-        <div
+        <view
           class="flex text-sm text-description justify-between items-baseline"
         >
-          <div class="flex gap-4">
-            <p>↑↓ {{ t`Navigate` }}</p>
-            <p>↩ {{ t`Select` }}</p>
-            <p><span class="tracking-tighter">esc</span> {{ t`Close` }}</p>
-            <button class="flex items-center hover:text-main" @click="openDocs">
+          <view class="flex gap-4">
+            <text>↑↓ {{ t`Navigate` }}</text>
+            <text>↩ {{ t`Select` }}</text>
+            <text><text class="tracking-tighter">esc</text> {{ t`Close` }}</text>
+            <button class="flex items-center hover:text-main" @tap="openDocs">
               <LucideIcon name="help-circle" class="w-4 h-4 me-1" />
               {{ t`Help` }}
             </button>
-          </div>
+          </view>
 
-          <p v-if="searcher?.numSearches" class="ms-auto">
+          <text v-if="searcher?.numSearches" class="ms-auto">
             {{ t`${suggestions.length} out of ${searcher.numSearches}` }}
-          </p>
+          </text>
 
-          <div
+          <view
             v-if="(searcher?.numSearches ?? 0) > 50"
             class="border border-border rounded flex justify-self-end ms-2"
           >
@@ -175,15 +175,15 @@
               <button
                 class="w-9"
                 :class="limit === c ? 'bg-surface-hover rounded' : ''"
-                @click="limit = Number(c)"
+                @tap="limit = Number(c)"
               >
                 {{ c === -1 ? t`All` : c }}
               </button>
             </template>
-          </div>
-        </div>
-      </div>
-    </div>
+          </view>
+        </view>
+      </view>
+    </view>
   </Modal>
 </template>
 

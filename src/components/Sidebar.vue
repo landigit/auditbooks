@@ -1,8 +1,8 @@
 <template>
-  <div class="py-2 h-full flex justify-between flex-col bg-sidebar relative">
-    <div class="window-no-drag">
+  <view class="py-2 h-full flex justify-between flex-col bg-sidebar relative">
+    <view class="window-no-drag">
       <!-- Company name -->
-      <div
+      <view
         class="px-4 flex flex-row items-center justify-between mb-4"
         :class="[
           store.platform !== 'Windows' ? 'window-drag' : '',
@@ -11,24 +11,24 @@
             : 'mt-2',
         ]"
       >
-        <h6
+        <text
           data-testid="company-name"
           class="window-no-drag font-semibold text-main whitespace-nowrap overflow-auto no-scrollbar select-none"
         >
           {{ companyName }}
-        </h6>
-      </div>
+        </text>
+      </view>
 
       <!-- Sidebar Items -->
-      <div v-for="group in groups" :key="group.label" class="window-no-drag">
-        <div
+      <view v-for="group in groups" :key="group.label" class="window-no-drag">
+        <view
           class="px-4 flex items-center cursor-pointer hover:bg-surface-hover h-10"
           :class="
             isGroupActive(group) && !group.items
               ? 'bg-sidebar-active-bg text-sidebar-active-text border-s-2 border-sidebar-active-border'
               : 'text-muted'
           "
-          @click="routeToSidebarItem(group)"
+          @tap="routeToSidebarItem(group)"
         >
           <component
             :is="group.icon === 'calendar-range' ? 'LucideIcon' : Icon"
@@ -39,19 +39,19 @@
             :active="!!isGroupActive(group)"
             :class="isGroupActive(group) && !group.items ? '-ms-1' : ''"
           />
-          <div
+          <view
             class="ms-2 text-lg"
             :class="
               isGroupActive(group) && !group.items ? 'text-main' : 'text-muted'
             "
           >
             {{ group.label }}
-          </div>
-        </div>
+          </view>
+        </view>
 
         <!-- Expanded Group -->
-        <div v-if="group.items && isGroupActive(group)">
-          <div
+        <view v-if="group.items && isGroupActive(group)">
+          <view
             v-for="item in group.items"
             :key="item.label"
             class="text-base h-10 ps-10 cursor-pointer flex items-center hover:bg-surface-hover"
@@ -60,83 +60,83 @@
                 ? 'bg-sidebar-active-bg text-sidebar-active-text border-s-2 border-sidebar-active-border'
                 : 'text-muted'
             "
-            @click="routeToSidebarItem(item)"
+            @tap="routeToSidebarItem(item)"
           >
-            <p :style="isItemActive(item) ? 'margin-left: -4px' : ''">
+            <text :style="isItemActive(item) ? 'margin-left: -4px' : ''">
               {{ item.label }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
 
     <!-- Report Issue and DB Switcher -->
-    <div class="window-no-drag flex flex-col gap-2 py-2 px-4">
+    <view class="window-no-drag flex flex-col gap-2 py-2 px-4">
       <button
         class="flex text-sm text-description hover:text-main gap-1 items-center"
-        @click="openDocumentation"
+        @tap="openDocumentation"
       >
         <LucideIcon name="help-circle" class="h-4 w-4 flex-shrink-0" />
-        <p>
+        <text>
           {{ t`Help` }}
-        </p>
+        </text>
       </button>
 
       <button
         class="flex text-sm text-description hover:text-main gap-1 items-center"
-        @click="viewShortcuts = true"
+        @tap="viewShortcuts = true"
       >
         <LucideIcon name="command" class="h-4 w-4 flex-shrink-0" />
-        <p>{{ t`Shortcuts` }}</p>
+        <text>{{ t`Shortcuts` }}</text>
       </button>
 
       <button
         data-testid="change-db"
         class="flex text-sm text-description hover:text-main gap-1 items-center"
-        @click="$emit('change-db-file')"
+        @tap="$emit('change-db-file')"
       >
         <LucideIcon name="database" class="h-4 w-4 flex-shrink-0" />
-        <p>{{ t`Change DB` }}</p>
+        <text>{{ t`Change DB` }}</text>
       </button>
 
       <button
         class="flex text-sm text-description hover:text-main gap-1 items-center"
-        @click="$emit('toggle-darkmode')"
+        @tap="$emit('toggle-darkmode')"
       >
         <template v-if="resolvedIsDark">
           <LucideIcon name="sun" class="h-4 w-4 flex-shrink-0" />
-          <p>{{ t`Light Mode` }}</p>
+          <text>{{ t`Light Mode` }}</text>
         </template>
         <template v-else>
           <LucideIcon name="moon" class="h-4 w-4 flex-shrink-0" />
-          <p>{{ t`Dark Mode` }}</p>
+          <text>{{ t`Dark Mode` }}</text>
         </template>
       </button>
       <button
         v-if="false"
         class="flex text-sm text-description hover:text-main gap-1 items-center"
-        @click="() => reportIssue()"
+        @tap="() => reportIssue()"
       >
         <LucideIcon name="flag" class="h-4 w-4 flex-shrink-0" />
-        <p>
+        <text>
           {{ t`Send Feedback` }}
-        </p>
+        </text>
       </button>
 
-      <p
+      <text
         v-if="showDevMode"
         class="text-xs text-description select-none cursor-pointer"
-        @click="showDevMode = false"
+        @tap="showDevMode = false"
         title="Open dev tools with Ctrl+Shift+I"
       >
         dev mode
-      </p>
-    </div>
+      </text>
+    </view>
 
     <!-- Hide Sidebar Button -->
     <button
       class="absolute bottom-0 end-0 text-description hover:bg-surface-hover rounded p-1 m-4 rtl-rotate-180"
-      @click="() => toggleSidebar()"
+      @tap="() => toggleSidebar()"
     >
       <LucideIcon name="chevrons-left" class="w-4 h-4" />
     </button>
@@ -144,7 +144,7 @@
     <Modal :open-modal="viewShortcuts" @closemodal="viewShortcuts = false">
       <ShortcutsHelper class="w-form" />
     </Modal>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

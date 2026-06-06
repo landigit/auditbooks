@@ -7,7 +7,7 @@
     right
   >
     <template #default="{ toggleDropdown }">
-      <Button :type="type" :icon="icon" @click="toggleDropdown()">
+      <Button :type="type" :icon="icon" @tap="toggleDropdown()">
         <slot>
           <lucide-icon name="more-horizontal" class="w-4 h-4" />
         </slot>

@@ -52,30 +52,30 @@ onMounted(async () => {
   <Dialog v-model:open="open">
     <DialogContent class="w-dialog p-0 overflow-hidden sm:max-w-none">
       <DialogHeader class="p-4 border-b border-border bg-surface">
-        <div class="flex items-center justify-center relative">
+        <view class="flex items-center justify-center relative">
           <DialogTitle class="text-base font-semibold">{{ title }}</DialogTitle>
           <LucideIcon
             :name="config.iconName"
             class="w-5 h-5 absolute right-0"
             :class="config.iconColor"
           />
-        </div>
+        </view>
       </DialogHeader>
 
-      <div class="p-6 bg-surface">
+      <view class="p-6 bg-surface">
         <DialogDescription v-if="details.length" class="text-center text-main">
-          <div v-for="(d, i) in details" :key="i" class="mb-1 last:mb-0">
+          <view v-for="(d, i) in details" :key="i" class="mb-1 last:mb-0">
             {{ d }}
-          </div>
+          </view>
         </DialogDescription>
-      </div>
+      </view>
 
       <DialogFooter class="p-4 bg-canvas-muted flex justify-center gap-4">
         <DialogClose v-for="(b, index) in buttons" :key="b.label" as-child>
           <Button
             :type="b.isPrimary ? 'primary' : 'secondary'"
             class="w-full"
-            @click="handleClick(index)"
+            @tap="handleClick(index)"
           >
             {{ b.label }}
           </Button>

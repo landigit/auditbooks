@@ -1,7 +1,7 @@
 <template>
-  <div class="h-screen w-full overflow-hidden flex flex-col">
+  <view class="h-screen w-full overflow-hidden flex flex-col">
     <PageHeader :title="t`Dashboard`">
-      <div
+      <view
         class="border border-border rounded bg-canvas-muted focus-within:bg-surface-hover flex items-center"
       >
         <PeriodSelector
@@ -10,29 +10,29 @@
           :options="['This Year', 'This Quarter', 'This Month', 'YTD']"
           @change="(value) => (period = value)"
         />
-      </div>
+      </view>
       <!-- <Button
         variant="outline"
         class="ms-2"
-        @click="$router.push('/calendar')"
+        @tap="$router.push('/calendar')"
       >
         <lucide-icon name="calendar-range" class="w-4 h-4 me-2" />
         {{ t`View Calendar` }}
       </Button> -->
     </PageHeader>
 
-    <div
+    <view
       class="no-scrollbar overflow-auto bg-canvas"
       style="height: calc(100vh - var(--h-row-largest) - 1px)"
     >
-      <div class="w-full">
+      <view class="w-full">
         <Cashflow
           class="p-4"
           :common-period="period || undefined"
           @period-change="handlePeriodChange"
         />
-        <hr class="border-border" />
-        <div class="flex flex-col md:flex-row w-full">
+        <view class="border-b border-border"   />
+        <view class="flex flex-col md:flex-row w-full">
           <UnpaidInvoices
             :schema-name="'SalesInvoice'"
             :common-period="period || undefined"
@@ -45,9 +45,9 @@
             class="w-full md:w-1/2"
             @period-change="handlePeriodChange"
           />
-        </div>
-        <hr class="border-border" />
-        <div class="flex flex-col md:flex-row w-full">
+        </view>
+        <view class="border-b border-border"   />
+        <view class="flex flex-col md:flex-row w-full">
           <ProfitAndLoss
             class="w-full md:w-1/2 p-4 border-b md:border-b-0 md:border-e border-border"
             :common-period="period || undefined"
@@ -58,11 +58,11 @@
             :common-period="period || undefined"
             @period-change="handlePeriodChange"
           />
-        </div>
-        <hr class="border-border" />
-      </div>
-    </div>
-  </div>
+        </view>
+        <view class="border-b border-border"   />
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

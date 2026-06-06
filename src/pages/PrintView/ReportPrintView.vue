@@ -1,19 +1,19 @@
 <template>
-  <div class="flex flex-col w-full h-full">
+  <view class="flex flex-col w-full h-full">
     <PageHeader :title="t`Print ${title}`">
-      <Button class="text-xs" type="primary" @click="savePDF()">
+      <Button class="text-xs" type="primary" @tap="savePDF()">
         {{ t`Save as PDF` }}
       </Button>
-      <Button class="text-xs" type="primary" @click="savePDF(true)">
+      <Button class="text-xs" type="primary" @tap="savePDF(true)">
         {{ t`Print` }}
       </Button>
     </PageHeader>
 
-    <div
+    <view
       class="outer-container overflow-y-auto custom-scroll custom-scroll-thumb1"
     >
       <!-- Report Print Display Area -->
-      <div
+      <view
         class="p-4 bg-canvas-muted overflow-auto flex justify-center custom-scroll custom-scroll-thumb1"
       >
         <!-- Report Print Display Container -->
@@ -25,22 +25,22 @@
           :height="size.height"
           :show-overflow="true"
         >
-          <div class="bg-surface mx-auto">
-            <div class="p-2">
-              <div class="font-semibold text-xl w-full flex justify-between">
-                <h1>
+          <view class="bg-surface mx-auto">
+            <view class="p-2">
+              <view class="font-semibold text-xl w-full flex justify-between">
+                <text>
                   {{ `${fyo.singles.PrintSettings?.companyName}` }}
-                </h1>
-                <p class="text-description">
+                </text>
+                <text class="text-description">
                   {{ title }}
-                </p>
-              </div>
-            </div>
+                </text>
+              </view>
+            </view>
 
             <!-- Report Data -->
-            <div class="grid" :style="rowStyles">
+            <view class="grid" :style="rowStyles">
               <template v-for="(row, r) of matrix" :key="`row-${r}`">
-                <div
+                <view
                   v-for="(cell, c) of row"
                   :key="`cell-${r}.${c}`"
                   :class="cellClasses(cell.idx, r)"
@@ -48,31 +48,31 @@
                   style="min-height: 2rem"
                 >
                   {{ cell.value }}
-                </div>
+                </view>
               </template>
-            </div>
+            </view>
 
-            <div class="border-t p-2">
-              <p class="text-xs text-right w-full">
+            <view class="border-t p-2">
+              <text class="text-xs text-right w-full">
                 {{ fyo.format(new Date(), 'Datetime') }}
-              </p>
-            </div>
-          </div>
+              </text>
+            </view>
+          </view>
         </ScaledContainer>
-      </div>
+      </view>
 
       <!-- Report Print Settings -->
-      <div v-if="report" class="border-l border-border flex flex-col">
-        <p class="p-4 text-sm text-description">
+      <view v-if="report" class="border-l border-border flex flex-col">
+        <text class="p-4 text-sm text-description">
           {{
             [
               t`Hidden values will be visible on Print on.`,
               t`Report will use more than one page if required.`,
             ].join(' ')
           }}
-        </p>
+        </text>
         <!-- Row Selection -->
-        <div class="p-4 border-t border-border">
+        <view class="p-4 border-t border-border">
           <Int
             :show-label="true"
             :border="true"
@@ -100,10 +100,10 @@
             :value="limit"
             @change="(v) => (limit = v)"
           />
-        </div>
+        </view>
 
         <!-- Size Selection -->
-        <div class="border-t border-border p-4">
+        <view class="border-t border-border p-4">
           <Select
             :show-label="true"
             :border="true"
@@ -123,14 +123,14 @@
             :value="isLandscape"
             @change="(v) => (isLandscape = v)"
           />
-        </div>
+        </view>
 
         <!-- Pick Columns -->
-        <div class="border-t border-border p-4">
-          <h2 class="text-sm text-description">
+        <view class="border-t border-border p-4">
+          <text class="text-sm text-description">
             {{ t`Pick Columns` }}
-          </h2>
-          <div class="border border-border rounded grid grid-cols-2 mt-1">
+          </text>
+          <view class="border border-border rounded grid grid-cols-2 mt-1">
             <Check
               v-for="(col, i) of report?.columns"
               :key="col.fieldname"
@@ -143,11 +143,11 @@
               :value="columnSelection[i]"
               @change="(v) => (columnSelection[i] = v)"
             />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

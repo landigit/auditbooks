@@ -22,19 +22,19 @@
             await doc.set('exchangeRate', exchangeRate)
         "
       />
-      <p
+      <text
         v-if="schema.label && !(canShowBarcode || canShowExchangeRate)"
         class="text-xl font-semibold items-center text-description"
       >
         {{ schema.label }}
-      </p>
+      </text>
     </template>
     <template v-if="hasDoc" #header>
       <Button
         v-if="canShowLinks"
         :icon="true"
         :title="t`View linked entries`"
-        @click="showLinks = true"
+        @tap="showLinks = true"
       >
         <LucideIcon name="link" class="w-4 h-4"></LucideIcon>
       </Button>
@@ -43,14 +43,14 @@
         ref="printButton"
         :icon="true"
         :title="t`Open Print View`"
-        @click="routeTo(`/print/${doc.schemaName}/${doc.name}`)"
+        @tap="routeTo(`/print/${doc.schemaName}/${doc.name}`)"
       >
         <LucideIcon name="printer" class="w-4 h-4"></LucideIcon>
       </Button>
       <Button
         :icon="true"
         :title="t`Toggle between form and full width`"
-        @click="toggleWidth"
+        @tap="toggleWidth"
       >
         <LucideIcon
           :name="useFullWidth ? 'minimize' : 'maximize'"
@@ -63,15 +63,15 @@
         :type="group.type"
         :actions="group.actions"
       >
-        <p v-if="group.group">
+        <text v-if="group.group">
           {{ group.group }}
-        </p>
+        </text>
         <LucideIcon v-else name="more-horizontal" class="w-4 h-4" />
       </DropdownWithActions>
-      <Button v-if="doc?.canSave" type="primary" @click="sync">
+      <Button v-if="doc?.canSave" type="primary" @tap="sync">
         {{ t`Save` }}
       </Button>
-      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit">{{
+      <Button v-else-if="doc?.canSubmit" type="primary" @tap="submit">{{
         t`Submit`
       }}</Button>
     </template>
@@ -84,7 +84,7 @@
       </FormHeader>
 
       <!-- Section Container -->
-      <div
+      <view
         v-if="hasDoc"
         class="overflow-auto custom-scroll custom-scroll-thumb1"
       >
@@ -105,14 +105,14 @@
           @value-change="onValueChange"
           @row-change="updateGroupedFields"
         />
-      </div>
+      </view>
 
       <!-- Tab Bar -->
-      <div
+      <view
         v-if="groupedFields && groupedFields.size > 1"
         class="mt-auto px-4 pb-4 flex gap-8 border-t border-border flex-shrink-0 sticky bottom-0 bg-surface"
       >
-        <div
+        <view
           v-for="key of groupedFields.keys()"
           :key="key"
           class="text-sm cursor-pointer"
@@ -124,11 +124,11 @@
           :style="{
             paddingTop: key === activeTab ? 'calc(1rem - 2px)' : '1rem',
           }"
-          @click="activeTab = key"
+          @tap="activeTab = key"
         >
           {{ key }}
-        </div>
-      </div>
+        </view>
+      </view>
     </template>
     <template #quickedit>
       <Transition

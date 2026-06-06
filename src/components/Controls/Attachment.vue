@@ -1,15 +1,14 @@
 <template>
-  <div>
-    <div v-if="showLabel && df" :class="labelClasses">
+  <view>
+    <view v-if="showLabel && df" :class="labelClasses">
       {{ df.label }}
-    </div>
-    <div :class="containerClasses" class="flex gap-2 items-center">
-      <label
+    </view>
+    <view :class="containerClasses" class="flex gap-2 items-center">
+      <text
         for="attachment"
         class="block whitespace-nowrap overflow-auto no-scrollbar"
         :class="[inputClasses, !value ? 'text-description' : 'cursor-default']"
-        >{{ label }}</label
-      >
+        >{{ label }}</text>
       <input
         id="attachment"
         ref="fileInput"
@@ -21,14 +20,14 @@
       />
 
       <!-- Buttons -->
-      <div class="me-2 flex gap-1">
+      <view class="me-2 flex gap-1">
         <!-- Upload Button -->
-        <button v-if="!value" class="p-0.5 rounded" @click="upload">
+        <button v-if="!value" class="p-0.5 rounded" @tap="upload">
           <LucideIcon name="upload" class="h-4 w-4 text-description" />
         </button>
 
         <!-- Download Button -->
-        <button v-if="value" class="p-0.5 rounded" @click="download">
+        <button v-if="value" class="p-0.5 rounded" @tap="download">
           <LucideIcon name="download" class="h-4 w-4 text-description" />
         </button>
 
@@ -36,13 +35,13 @@
         <button
           v-if="value && !isReadOnly"
           class="p-0.5 rounded"
-          @click="clear"
+          @tap="clear"
         >
           <LucideIcon name="x" class="h-4 w-4 text-description" />
         </button>
-      </div>
-    </div>
-  </div>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

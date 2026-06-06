@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <div v-if="showLabel" :class="labelClasses">
+  <view>
+    <view v-if="showLabel" :class="labelClasses">
       {{ df.label }}
-    </div>
-    <div :class="showMandatory ? 'show-mandatory' : ''">
+    </view>
+    <view :class="showMandatory ? 'show-mandatory' : ''">
       <textarea
         ref="inputRef"
         :rows="df.rows ?? rows"
@@ -17,8 +17,8 @@
         @focus="(e) => $emit('focus', e)"
         @input="(e) => $emit('input', e)"
       ></textarea>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

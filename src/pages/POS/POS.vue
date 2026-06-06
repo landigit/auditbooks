@@ -1,14 +1,14 @@
 <template>
-  <div class="flex-col">
+  <view class="flex-col">
     <PageHeader :title="t`Point of Sale`">
       <slot>
         <Button
           class="bg-error hover:bg-error-hover"
-          @click="toggleModal('ShiftClose')"
+          @tap="toggleModal('ShiftClose')"
         >
-          <span class="font-medium text-button-primary-text">{{
+          <text class="font-medium text-button-primary-text">{{
             t`Close POS Shift `
-          }}</span>
+          }}</text>
         </Button>
       </slot>
     </PageHeader>
@@ -134,7 +134,7 @@
       @handle-payment-action="handlePaymentAction"
       @batch-selected="handleBatchSelected"
     />
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

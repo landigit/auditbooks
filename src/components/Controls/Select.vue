@@ -1,35 +1,34 @@
 <template>
-  <div>
-    <div v-if="showLabel" :class="labelClasses">
+  <view>
+    <view v-if="showLabel" :class="labelClasses">
       {{ df.label }}
-    </div>
+    </view>
     <Popover
       :open="dropdownVisible"
       @update:open="(val) => (dropdownVisible = val)"
     >
       <PopoverAnchor as-child>
-        <div
+        <view
           class="relative flex items-center justify-between"
           :class="[
             inputClasses,
             containerClasses,
             dropdownVisible ? 'hover:bg-surface-hover' : '',
           ]"
-          @click="toggleDropdown"
+          @tap="toggleDropdown"
         >
-          <div
+          <view
             class="flex items-center justify-between bg-transparent w-full cursor-pointer custom-scroll custom-scroll-thumb2"
             :class="{
               'pointer-events-none': isReadOnly,
               'text-description': !value,
             }"
           >
-            <span
+            <text
               v-if="selectValue || value"
               class="cursor-text text-main w-full"
-              >{{ selectValue ? selectValue : value }}</span
-            >
-            <span v-else>{{ inputPlaceholder }}</span>
+              >{{ selectValue ? selectValue : value }}</text>
+            <text v-else>{{ inputPlaceholder }}</text>
             <LucideIcon
               v-if="!isReadOnly"
               name="chevrons-up-down"
@@ -37,8 +36,8 @@
               class="me-[-3px]"
               :class="showMandatory ? 'text-error' : 'text-description'"
             />
-          </div>
-        </div>
+          </view>
+        </view>
       </PopoverAnchor>
       <PopoverContent
         class="bg-surface text-main rounded w-[var(--reka-popover-trigger-width)] min-w-40 overflow-hidden p-0 border border-border shadow-lg"
@@ -51,7 +50,7 @@
             :key="option.value"
             class="p-1.5 rounded-md hover:bg-surface-hover flex cursor-pointer"
             :class="selectValue !== option.label ? 'pl-6' : 'pl-2'"
-            @click="selectOption(option)"
+            @tap="selectOption(option)"
           >
             <LucideIcon
               v-if="selectValue === option.label"
@@ -64,7 +63,7 @@
         </ul>
       </PopoverContent>
     </Popover>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

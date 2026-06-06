@@ -1,13 +1,13 @@
 <template>
-  <div class="w-form">
+  <view class="w-form">
     <FormHeader :form-title="t`Set Print Size`" />
-    <hr class="border-border" />
-    <div class="p-4 w-full flex flex-col gap-4">
-      <p class="text-base text-main">
+    <view class="border-b border-border"   />
+    <view class="p-4 w-full flex flex-col gap-4">
+      <text class="text-base text-main">
         {{
           t`Select a pre-defined page size, or set a custom page size for your Print Template.`
         }}
-      </p>
+      </text>
       <Select
         :df="df"
         :value="size"
@@ -15,7 +15,7 @@
         :show-label="true"
         @change="sizeChange"
       />
-      <div class="flex gap-4 w-full">
+      <view class="flex gap-4 w-full">
         <Float
           class="w-full"
           :df="fyo.getField('PrintTemplate', 'height')"
@@ -32,14 +32,14 @@
           :value="width"
           @change="(v) => valueChange(v, 'width')"
         />
-      </div>
-    </div>
-    <div class="flex border-t border-border p-4">
-      <Button class="ml-auto" type="primary" @click="done">{{
+      </view>
+    </view>
+    <view class="flex border-t border-border p-4">
+      <Button class="ml-auto" type="primary" @tap="done">{{
         t`Done`
       }}</Button>
-    </div>
-  </div>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

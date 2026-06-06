@@ -41,15 +41,14 @@ async function getPrintTemplatePaths(): Promise<{
 } | null> {
   let root = '';
 
-  if (process.resourcesPath) {
+  if ((process as any).resourcesPath) {
     try {
-      root = path.join(process.resourcesPath, `../templates`);
+      root = path.join((process as any).resourcesPath, `../templates`);
       const files = await fs.readdir(root);
       return { files, root };
     } catch {}
   }
 
-  // Support both CommonJS (__dirname) and Bun ESM (import.meta.dir)
   const currentDir =
     typeof __dirname !== 'undefined'
       ? __dirname

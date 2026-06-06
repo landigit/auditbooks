@@ -1,5 +1,5 @@
 <template>
-  <div
+  <view
     class="px-2 w-36 flex items-center border rounded border-border bg-canvas-muted text-main focus-within:bg-surface-hover"
   >
     <input
@@ -12,9 +12,9 @@
     <lucide-icon
       name="maximize"
       class="w-3 h-3 text-description cursor-text"
-      @click="() => ($refs.scanner as HTMLInputElement).focus()"
+      @tap="() => ($refs.scanner as HTMLInputElement).focus()"
     />
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">

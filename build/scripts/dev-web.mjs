@@ -19,8 +19,8 @@ const backendProcess = Bun.spawn(['bun', 'build/scripts/dev-backend.ts'], {
   cwd: root,
 });
 
-// Start the vite dev server
-const viteProcess = Bun.spawn(['bun', 'x', 'vite'], {
+// Start the rsbuild dev server
+const rsbuildProcess = Bun.spawn(['bun', 'x', 'rsbuild', 'dev'], {
   stdout: 'inherit',
   stderr: 'inherit',
   cwd: root,
@@ -34,7 +34,7 @@ const terminate = () => {
     backendProcess.kill();
   } catch {}
   try {
-    viteProcess.kill();
+    rsbuildProcess.kill();
   } catch {}
 
   process.exit(0);
@@ -44,6 +44,6 @@ process.on('SIGINT', terminate);
 process.on('SIGTERM', terminate);
 
 // Monitor processes for termination
-Promise.all([backendProcess.exited, viteProcess.exited]).then(() => {
+Promise.all([backendProcess.exited, rsbuildProcess.exited]).then(() => {
   terminate();
 });

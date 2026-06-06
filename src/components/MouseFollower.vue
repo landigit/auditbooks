@@ -1,7 +1,7 @@
 <template>
   <Tooltip :open="show">
     <TooltipTrigger as-child>
-      <div
+      <view
         ref="trigger"
         class="fixed pointer-events-none"
         :style="{

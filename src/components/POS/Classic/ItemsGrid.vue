@@ -1,21 +1,21 @@
 <template>
-  <div
+  <view
     class="gap-4 py-2 w-full flex flex-col items-center rounded-t-md text-main overflow-y-auto custom-scroll custom-scroll-thumb2"
     style="height: 83vh"
   >
     <!-- Items Grid -->
-    <div
+    <view
       class="gap-2 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
-      <div
+      <view
         class="p-1 border border-border flex flex-col text-sm text-center"
-        @click="handleChange(item as POSItem)"
+        @tap="handleChange(item as POSItem)"
         v-for="item in items as POSItem[]"
         :key="item.name"
         v-memo="[item.name, item.image, item.availableQty, item.rate]"
       >
-        <div class="self-center w-32 h-32 p-1 rounded-lg">
-          <div class="relative w-full h-full p-2">
+        <view class="self-center w-32 h-32 p-1 rounded-lg">
+          <view class="relative w-full h-full p-2">
             <img
               v-if="item.image"
               :src="item.image"
@@ -23,15 +23,15 @@
               class="rounded-lg w-full h-full object-cover"
             />
 
-            <div
+            <view
               v-else
               class="rounded-lg w-full h-full bg-canvas-muted flex justify-center items-center"
             >
-              <p class="text-4xl font-semibold text-description select-none">
+              <text class="text-4xl font-semibold text-description select-none">
                 {{ getExtractedWords(item.name) }}
-              </p>
-            </div>
-            <p
+              </text>
+            </view>
+            <text
               v-if="itemVisibility !== 'ERP Sync Items'"
               class="absolute top-1 right-1 rounded-full w-6 h-6 flex justify-center items-center"
               :class="
@@ -41,20 +41,20 @@
               "
             >
               {{ item.availableQty }}
-            </p>
-          </div>
-        </div>
-        <h3 class="text-lg font-medium text-main">{{ item.name }}</h3>
+            </text>
+          </view>
+        </view>
+        <text class="text-lg font-medium text-main">{{ item.name }}</text>
 
-        <p class="text-lg font-medium text-main">
+        <text class="text-lg font-medium text-main">
           {{
             item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined
           }}
           {{ item.rate }}
-        </p>
-      </div>
-    </div>
-  </div>
+        </text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">

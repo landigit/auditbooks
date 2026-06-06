@@ -3,7 +3,7 @@
     :ratio="ratio"
     class="border border-border rounded-t px-2 text-description w-full items-center mt-2"
   >
-    <div
+    <view
       v-if="tableFields"
       v-for="df in tableFields"
       :key="df.fieldname"
@@ -16,10 +16,10 @@
       }"
     >
       {{ df.label }}
-    </div>
+    </view>
   </Row>
 
-  <div
+  <view
     class="overflow-y-auto overflow-x-auto custom-scroll custom-scroll-thumb1"
     style="height: 50vh"
   >
@@ -39,7 +39,7 @@
         @selected-row="selectedItemRow"
       />
     </Row>
-  </div>
+  </view>
 </template>
 
 <script setup lang="ts">
