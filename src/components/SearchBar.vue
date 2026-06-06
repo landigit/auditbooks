@@ -87,7 +87,7 @@
         <!-- Group Filters -->
         <view class="flex justify-between">
           <view class="flex gap-1">
-            <button
+            <view
               v-for="g in searchGroups"
               :key="g"
               class="border border-border px-1 py-0.5 rounded-lg"
@@ -95,21 +95,21 @@
               @tap="searcher!.set(g, !searcher!.filters.groupFilters[g])"
             >
               {{ groupLabelMap[g] }}
-            </button>
+            </view>
           </view>
-          <button
+          <view
             class="hover:text-main py-0.5 rounded text-description"
             @tap="showMore = !showMore"
           >
             {{ showMore ? t`Less Filters` : t`More Filters` }}
-          </button>
+          </view>
         </view>
 
         <!-- Additional Filters -->
         <view v-if="showMore" class="-mt-1">
           <!-- Group Skip Filters -->
           <view class="flex gap-1 text-main">
-            <button
+            <view
               v-for="s in ['skipTables', 'skipTransactions'] as const"
               :key="s"
               class="border border-border px-1 py-0.5 rounded-lg"
@@ -119,12 +119,12 @@
               {{
                 s === 'skipTables' ? t`Skip Child Tables` : t`Skip Transactions`
               }}
-            </button>
+            </view>
           </view>
 
           <!-- Schema Name Filters -->
           <view class="flex mt-1 gap-1 text-indicator-blue-text flex-wrap">
-            <button
+            <view
               v-for="sf in schemaFilters"
               :key="sf.value"
               class="border px-1 py-0.5 rounded-lg border-indicator-blue-bg whitespace-nowrap"
@@ -140,7 +140,7 @@
               "
             >
               {{ sf.label }}
-            </button>
+            </view>
           </view>
         </view>
 
@@ -154,10 +154,10 @@
             <text
               ><text class="tracking-tighter">esc</text> {{ t`Close` }}</text
             >
-            <button class="flex items-center hover:text-main" @tap="openDocs">
+            <view class="flex items-center hover:text-main" @tap="openDocs">
               <LucideIcon name="help-circle" class="w-4 h-4 me-1" />
               {{ t`Help` }}
-            </button>
+            </view>
           </view>
 
           <text v-if="searcher?.numSearches" class="ms-auto">
@@ -174,13 +174,13 @@
               )"
               :key="c + '-count'"
             >
-              <button
+              <view
                 class="w-9"
                 :class="limit === c ? 'bg-surface-hover rounded' : ''"
                 @tap="limit = Number(c)"
               >
                 {{ c === -1 ? t`All` : c }}
-              </button>
+              </view>
             </template>
           </view>
         </view>
@@ -293,7 +293,7 @@ defineExpose({ open });
 
 // --- Lifecycle ---
 onMounted(() => {
-  if (store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-ignore
     window.search = { open, close, searcher };
   }
@@ -398,6 +398,9 @@ function select(index?: number): void {
 }
 
 function scrollToHighlighted(): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
   const query = `[data-index="search-suggestion-${idx.value}"]`;
   const element = document.querySelectorAll(query)?.[0];
   element?.scrollIntoView({ block: 'nearest' });

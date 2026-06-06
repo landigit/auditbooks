@@ -1,8 +1,8 @@
 <template>
   <view
-    class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface"
+    class="px-2 md:px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface border-b border-border"
     :class="[
-      border ? 'border-b border-border' : '',
+      border ? '' : 'md:border-b-0',
       store.platform !== 'Windows' ? 'window-drag' : '',
     ]"
   >
@@ -27,31 +27,41 @@
     </Transition>
 
     <view
-      class="flex items-center window-no-drag gap-4 me-auto"
+      class="flex items-center window-no-drag gap-2 md:gap-4 me-auto min-w-0"
       :class="
         store.platform === 'Mac' && store.languageDirection === 'rtl'
           ? 'me-18'
           : ''
       "
     >
+      <!-- Hamburger menu toggle -->
+      <view
+        v-if="!store.showSidebar"
+        class="flex items-center justify-center p-1.5 rounded hover:bg-surface-hover text-main cursor-pointer flex-shrink-0"
+        @tap="() => store.toggleSidebar(true)"
+      >
+        <lucide-icon name="menu" class="w-5 h-5" />
+      </view>
+
       <!-- Nav Group -->
-      <PageHeaderNavGroup />
+      <PageHeaderNavGroup class="flex-shrink-0" />
       <text
         v-if="title"
-        class="text-xl font-semibold select-none whitespace-nowrap text-main leading-none"
+        class="text-xl font-semibold select-none truncate text-main leading-none max-w-[120px] md:max-w-none flex-shrink-0"
+        :title="title"
       >
         {{ title }}
       </text>
 
       <!-- Left Slot -->
-      <view class="flex items-stretch window-no-drag gap-4">
+      <view class="flex items-stretch window-no-drag gap-2 md:gap-4 flex-shrink-0 min-w-0">
         <slot name="left" />
       </view>
     </view>
 
     <!-- Right (regular) Slot -->
     <view
-      class="flex items-stretch window-no-drag gap-2 ms-auto"
+      class="flex items-stretch window-no-drag gap-1.5 md:gap-2 ms-auto flex-shrink-0"
       :class="
         store.platform === 'Mac' && store.languageDirection === 'rtl'
           ? 'me-18'

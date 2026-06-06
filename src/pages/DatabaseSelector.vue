@@ -7,11 +7,10 @@
     }"
   >
     <view
-      class="w-full w-form shadow-lg rounded-lg border border-border relative bg-surface window-no-drag"
-      style="height: 700px"
+      class="w-full h-full md:h-[700px] md:w-[var(--w-form)] md:shadow-lg md:rounded-lg md:border md:border-border relative bg-surface window-no-drag"
     >
       <!-- Welcome to Auditbooks -->
-      <view class="px-4 py-4">
+      <view class="px-4 py-4 flex flex-col">
         <text class="text-2xl font-semibold select-none text-main">
           {{ t`Welcome to Auditbooks` }}
         </text>
@@ -37,7 +36,7 @@
           <lucide-icon name="plus" class="text-indicator-blue-text w-5 h-5" />
         </view>
 
-        <view>
+        <view class="flex flex-col">
           <text class="font-medium text-main">
             {{ t`New Company` }}
           </text>
@@ -61,7 +60,7 @@
             class="w-4 h-4 text-indicator-green-text"
           />
         </view>
-        <view>
+        <view class="flex flex-col">
           <text class="font-medium text-main">
             {{ t`Existing Company` }}
           </text>
@@ -86,7 +85,7 @@
             class="w-4 h-4 text-indicator-blue-text"
           />
         </view>
-        <view>
+        <view class="flex flex-col">
           <text class="font-medium text-main">
             {{ t`Create Demo` }}
           </text>
@@ -98,7 +97,7 @@
       <view class="border-b border-border" />
 
       <!-- File List -->
-      <view class="overflow-y-auto" style="max-height: 340px">
+      <view class="overflow-y-auto file-list">
         <view
           v-for="(file, i) in files"
           :key="file.dbPath"
@@ -112,7 +111,7 @@
           >
             {{ i + 1 }}
           </view>
-          <view class="w-full">
+          <view class="w-full flex flex-col">
             <view class="flex justify-between overflow-x-auto items-baseline">
               <text class="font-medium text-main">
                 {{ file.companyName }}
@@ -127,12 +126,12 @@
               {{ truncate(file.dbPath) }}
             </text>
           </view>
-          <button
+          <view
             class="ms-auto p-2 hover:bg-indicator-red-bg rounded-full w-8 h-8 text-description hover:text-error"
             @tap.stop="() => deleteDb(i)"
           >
             <lucide-icon name="x" class="w-4 h-4" />
-          </button>
+          </view>
         </view>
       </view>
       <view class="border-b border-border" v-if="files?.length" />
@@ -143,14 +142,14 @@
         style="top: 100%; transform: translateY(-100%)"
       >
         <LanguageSelector v-show="!creatingDemo" class="text-sm w-28" />
-        <button
+        <view
           v-if="files?.length"
           class="text-sm bg-surface-hover hover:bg-canvas-muted rounded px-4 py-1.5 w-auto h-8 no-scrollbar overflow-x-auto whitespace-nowrap"
           :disabled="creatingDemo"
           @tap="createDemo"
         >
           {{ creatingDemo ? t`Please Wait` : t`Create Demo` }}
-        </button>
+        </view>
       </view>
     </view>
     <Loading
@@ -352,7 +351,7 @@ const selectFile = (file: ConfigFilesWithModified) => {
 onMounted(async () => {
   await setFiles();
 
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.ds = {
       truncate,
@@ -381,3 +380,14 @@ defineExpose({
   existingDatabase,
 });
 </script>
+
+<style scoped>
+.file-list {
+  max-height: calc(100vh - 340px);
+}
+@media (min-width: 768px) {
+  .file-list {
+    max-height: 340px;
+  }
+}
+</style>

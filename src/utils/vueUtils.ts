@@ -32,13 +32,15 @@ export function useKeys() {
 
   const keydownListener = (e: KeyboardEvent) => {
     const notMods = !(e.altKey || e.metaKey || e.ctrlKey);
-    if (e.target instanceof HTMLInputElement && notMods) {
+    const isHTMLInput = typeof HTMLInputElement !== 'undefined' && e.target instanceof HTMLInputElement;
+    if (isHTMLInput && notMods) {
       return;
     }
 
+    const isHTMLElement = typeof HTMLElement !== 'undefined' && e.target instanceof HTMLElement;
     if (
-      e.target instanceof HTMLElement &&
-      e.target.contentEditable === 'true' &&
+      isHTMLElement &&
+      (e.target as any).contentEditable === 'true' &&
       notMods
     ) {
       return;
@@ -79,13 +81,17 @@ export function useKeys() {
   };
 
   onMounted(() => {
-    window.addEventListener('keydown', keydownListener);
-    window.addEventListener('keyup', keyupListener);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', keydownListener);
+      window.addEventListener('keyup', keyupListener);
+    }
   });
 
   onUnmounted(() => {
-    window.removeEventListener('keydown', keydownListener);
-    window.removeEventListener('keyup', keyupListener);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('keydown', keydownListener);
+      window.removeEventListener('keyup', keyupListener);
+    }
   });
 
   return keys;
@@ -100,10 +106,14 @@ export function useMouseLocation() {
   };
 
   onMounted(() => {
-    window.addEventListener('mousemove', mousemoveListener);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', mousemoveListener);
+    }
   });
   onUnmounted(() => {
-    window.removeEventListener('mousemove', mousemoveListener);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('mousemove', mousemoveListener);
+    }
   });
 
   return loc;

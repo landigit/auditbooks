@@ -288,7 +288,7 @@ const onValueChange = async (field: Field, value: DocValue) => {
 
 // Lifecycles
 onMounted(() => {
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.settings = {
       errors,

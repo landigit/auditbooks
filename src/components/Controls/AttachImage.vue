@@ -35,12 +35,12 @@
       :class="[!isReadOnly ? 'group-hover:flex' : '']"
       style="background: var(--color-backdrop); backdrop-filter: blur(2px)"
     >
-      <button class="bg-surface-hover p-0.5 rounded mb-1" @tap="handleClick">
+      <view class="bg-surface-hover p-0.5 rounded mb-1" @tap="handleClick">
         <LucideIcon
           :name="shouldClear ? 'x' : 'upload'"
           class="w-4 h-4 text-description"
         />
-      </button>
+      </view>
     </view>
   </view>
 </template>

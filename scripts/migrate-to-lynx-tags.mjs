@@ -31,6 +31,8 @@ function migrateFile(file) {
     .replace(/<\/h[1-6][\s\r\n]*>/g, '</text>')
     .replace(/<label(\s|>)/g, '<text$1')
     .replace(/<\/label[\s\r\n]*>/g, '</text>')
+    .replace(/<button(\s|>)/g, '<view$1')
+    .replace(/<\/button[\s\r\n]*>/g, '</view>')
     .replace(/<hr(\s|>)/g, '<view class="border-b border-border"$1')
     .replace(/<hr\s*\/>/g, '<view class="border-b border-border" />')
     .replace(/@click(\.stop|\.prevent)?=/g, '@tap$1=');

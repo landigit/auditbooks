@@ -555,6 +555,7 @@
 /* App Layout Classes */
 .w-form {
   width: var(--w-form);
+  max-width: 100%;
 }
 .w-dialog {
   width: 24rem;

@@ -1,42 +1,46 @@
 <template>
-  <Row
-    :ratio="ratio"
-    class="w-full px-2 mt-2 border rounded-t text-description border-border"
-  >
-    <view
-      v-if="tableFields"
-      v-for="df in tableFields"
-      :key="df.fieldname"
-      class="text-lg flex m-2"
-      :class="{
-        'ms-auto': isNumeric(df as Field),
-      }"
-    >
-      {{ df.label }}
-    </view>
-  </Row>
+  <view class="overflow-x-auto w-full custom-scroll custom-scroll-thumb1">
+    <view class="min-w-[600px] md:min-w-0">
+      <Row
+        :ratio="ratio"
+        class="w-full px-2 mt-2 border rounded-t text-description border-border"
+      >
+        <view
+          v-if="tableFields"
+          v-for="df in tableFields"
+          :key="df.fieldname"
+          class="text-lg flex m-2"
+          :class="{
+            'ms-auto': isNumeric(df as Field),
+          }"
+        >
+          {{ df.label }}
+        </view>
+      </Row>
 
-  <view
-    class="overflow-auto custom-scroll custom-scroll-thumb1"
-    style="height: calc(90vh - 25rem)"
-  >
-    <Row
-      v-for="row in sinvDoc.items"
-      :ratio="ratio"
-      class="p-2 border w-full hover:bg-surface-hover bg-surface border-border"
-    >
-      <ModernPOSSelectedItemRow
-        :row="row as SalesInvoiceItem"
-        :expanded-batch-id="expandedBatchId"
-        @set-expanded-batch-id="
-          (rowName) => $emit('setExpandedBatchId', rowName)
-        "
-        @selected-row="selectedItemRow"
-        @run-sinv-formulas="runSinvFormulas"
-        @apply-pricing-rule="$emit('applyPricingRule')"
-        @toggle-modal="$emit('toggleModal')"
-      />
-    </Row>
+      <view
+        class="overflow-auto custom-scroll custom-scroll-thumb2"
+        style="height: calc(90vh - 25rem)"
+      >
+        <Row
+          v-for="row in sinvDoc.items"
+          :ratio="ratio"
+          class="p-2 border w-full hover:bg-surface-hover bg-surface border-border"
+        >
+          <ModernPOSSelectedItemRow
+            :row="row as SalesInvoiceItem"
+            :expanded-batch-id="expandedBatchId"
+            @set-expanded-batch-id="
+              (rowName) => $emit('setExpandedBatchId', rowName)
+            "
+            @selected-row="selectedItemRow"
+            @run-sinv-formulas="runSinvFormulas"
+            @apply-pricing-rule="$emit('applyPricingRule')"
+            @toggle-modal="$emit('toggleModal')"
+          />
+        </Row>
+      </view>
+    </view>
   </view>
 </template>
 

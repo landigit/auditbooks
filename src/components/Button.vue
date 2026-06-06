@@ -1,12 +1,11 @@
 <template>
-  <button
-    class="rounded-md flex justify-center items-center text-sm"
-    :disabled="disabled"
+  <view
+    class="rounded-md flex justify-center items-center text-sm cursor-pointer select-none transition-all duration-150 active:scale-95 active:brightness-95"
     :class="_class"
     v-bind="$attrs"
   >
     <slot></slot>
-  </button>
+  </view>
 </template>
 
 <script setup lang="ts">
@@ -53,7 +52,6 @@ const _class = computed(() => {
 </script>
 
 <style scoped>
-button:focus {
-  filter: brightness(0.95);
-}
+@reference "../styles/index.css";
 </style>
+

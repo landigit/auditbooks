@@ -66,9 +66,9 @@ async function openTransaction(t: any) {
   <view class="h-screen flex flex-col bg-canvas">
     <PageHeader :title="t`Transaction Calendar`" />
 
-    <view class="flex-1 flex overflow-hidden p-6 gap-6">
+    <view class="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden p-4 md:p-6 gap-4 md:gap-6">
       <!-- Calendar Panel -->
-      <view class="w-1/3 flex flex-col gap-4">
+      <view class="w-full md:w-1/3 flex flex-col gap-4 flex-shrink-0">
         <component
           :is="CalendarUI"
           v-bind="
@@ -98,7 +98,7 @@ async function openTransaction(t: any) {
 
       <!-- Transactions List Panel -->
       <view
-        class="flex-1 bg-surface rounded border border-border flex flex-col overflow-hidden"
+        class="flex-1 bg-surface rounded border border-border flex flex-col min-h-[350px] md:min-h-0 overflow-hidden"
       >
         <view
           class="p-4 border-b border-border flex justify-between items-center bg-surface-hover/30"

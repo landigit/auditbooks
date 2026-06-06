@@ -204,7 +204,7 @@ onMounted(async () => {
   // Register SetupWizard in doc handler models since db.init() clears it
   fyo.doc.models['SetupWizard'] = SetupWizard;
 
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.sw = {
       docOrNull,

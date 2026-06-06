@@ -4,87 +4,95 @@
       {{ df.label }}
     </view>
 
-    <view :class="border ? 'border border-border rounded-md' : ''">
-      <!-- Title Row -->
-      <Row
-        :ratio="ratio"
-        class="border-b border-border px-2 text-description w-full items-center"
-      >
-        <view class="flex items-center ps-2">#</view>
-        <view
-          v-for="df in tableFields"
-          :key="df.fieldname"
-          class="flex h-row-mid w-full"
-          :class="[
-            headerCellClass,
-            df.sub_label
-              ? 'flex-col items-center text-center'
-              : isNumeric(df)
-                ? 'justify-end items-center'
-                : 'items-center',
-          ]"
-        >
-          <text>{{ df.label }}</text>
-          <text v-if="df.sub_label" class="text-xs">
-            {{ df.sub_label }}
-          </text>
-        </view>
-        <view v-if="canEditRow" class="flex h-row-mid w-full" />
-      </Row>
-
-      <!-- Data Rows -->
+    <view class="overflow-x-auto w-full custom-scroll custom-scroll-thumb1">
       <view
-        v-if="value"
-        class="overflow-auto custom-scroll custom-scroll-thumb1"
-        :style="{ 'max-height': maxHeight, 'scrollbar-gutter': 'stable' }"
+        class="w-full"
+        :style="{ minWidth: minTableWidth }"
+        :class="border ? 'border border-border rounded-md' : ''"
       >
-        <TableRow
-          v-for="(row, idx) of value"
-          ref="tableRowRefs"
-          :key="row.name"
-          :class="idx < value.length - 1 ? 'border-b border-border' : ''"
-          v-bind="{ row, tableFields, size, ratio, isNumeric }"
-          :read-only="isReadOnly"
-          :can-edit-row="canEditRow"
-          @remove="removeRow(row)"
-          @change="
-            (field: any, value: any) => $emit('row-change', field, value, df)
-          "
-        />
-      </view>
-
-      <!-- Add Row and Row Count -->
-      <Row
-        v-if="!isReadOnly"
-        :ratio="ratio"
-        class="text-description cursor-pointer px-2 w-full h-row-mid items-center focus:outline-none focus:ring-1 focus:ring-main"
-        :class="value.length > 0 ? 'border-t border-border' : ''"
-        tabindex="0"
-        @tap="addRow"
-        @keydown.enter="addRow"
-      >
-        <view class="flex items-center ps-1">
-          <lucide-icon name="plus" class="w-4 h-4 text-description" />
-        </view>
+        <!-- Scrollable container for both Title and Data Rows -->
         <view
-          class="flex justify-between px-2"
-          :style="`grid-column: 2 / ${ratio.length + 1}`"
+          class="overflow-auto custom-scroll custom-scroll-thumb1"
+          :style="{ 'max-height': maxHeight ? `calc(${maxHeight} + var(--h-row-mid))` : '', 'scrollbar-gutter': 'stable' }"
         >
-          <text>
-            {{ t`Add Row` }}
-          </text>
-          <text
-            v-if="
-              value &&
-              maxRowsBeforeOverflow &&
-              value.length > maxRowsBeforeOverflow
-            "
-            class="text-end px-2"
+          <!-- Title Row -->
+          <Row
+            :ratio="ratio"
+            class="sticky top-0 bg-surface z-10 border-b border-border px-2 text-description w-full items-center"
           >
-            {{ t`${value.length} rows` }}
-          </text>
+            <view class="flex items-center ps-2">#</view>
+            <view
+              v-for="df in tableFields"
+              :key="df.fieldname"
+              class="flex h-row-mid w-full"
+              :class="[
+                headerCellClass,
+                df.sub_label
+                  ? 'flex-col items-center text-center'
+                  : isNumeric(df)
+                    ? 'justify-end items-center'
+                    : 'items-center',
+              ]"
+            >
+              <text>{{ df.label }}</text>
+              <text v-if="df.sub_label" class="text-xs">
+                {{ df.sub_label }}
+              </text>
+            </view>
+            <view v-if="canEditRow" class="flex h-row-mid w-full" />
+          </Row>
+
+          <!-- Data Rows -->
+          <view v-if="value?.length">
+            <TableRow
+              v-for="(row, idx) of value"
+              ref="tableRowRefs"
+              :key="row.name"
+              :class="idx < value.length - 1 ? 'border-b border-border' : ''"
+              v-bind="{ row, tableFields, size, ratio, isNumeric }"
+              :read-only="isReadOnly"
+              :can-edit-row="canEditRow"
+              @remove="removeRow(row)"
+              @change="
+                (field: any, value: any) => $emit('row-change', field, value, df)
+              "
+            />
+          </view>
         </view>
-      </Row>
+
+        <!-- Add Row and Row Count -->
+        <Row
+          v-if="!isReadOnly"
+          :ratio="ratio"
+          class="text-description cursor-pointer px-2 w-full h-row-mid items-center focus:outline-none focus:ring-1 focus:ring-main"
+          :class="value.length > 0 ? 'border-t border-border' : ''"
+          tabindex="0"
+          @tap="addRow"
+          @keydown.enter="addRow"
+        >
+          <view class="flex items-center ps-1">
+            <lucide-icon name="plus" class="w-4 h-4 text-description" />
+          </view>
+          <view
+            class="flex justify-between px-2"
+            :style="`grid-column: 2 / ${ratio.length + 1}`"
+          >
+            <text>
+              {{ t`Add Row` }}
+            </text>
+            <text
+              v-if="
+                value &&
+                effectiveMaxRows &&
+                value.length > effectiveMaxRows
+              "
+              class="text-end px-2"
+            >
+              {{ t`${value.length} rows` }}
+            </text>
+          </view>
+        </Row>
+      </view>
     </view>
   </view>
 </template>
@@ -111,7 +119,6 @@ interface TableProps extends BaseControlProps {
 const props = withDefaults(defineProps<TableProps>(), {
   value: () => [],
   showHeader: true,
-  maxRowsBeforeOverflow: 3,
   border: false,
   step: 1,
   size: 'large',
@@ -144,8 +151,44 @@ const canEditRow = computed(() => {
   return (props.df as any).edit;
 });
 
+const effectiveMaxRows = computed(() => {
+  if (props.maxRowsBeforeOverflow !== undefined) {
+    return props.maxRowsBeforeOverflow;
+  }
+  if (typeof window !== 'undefined' && window.innerWidth > 768) {
+    return 5; // Show up to 5 rows on desktop by default
+  }
+  return 3; // Show up to 3 rows on mobile by default
+});
+
+const minTableWidth = computed(() => {
+  const sum = ratio.value.reduce((acc, val) => acc + val, 0);
+  const computedWidth = Math.round(sum * 110);
+  return `${computedWidth}px`;
+});
+
 const ratio = computed(() => {
-  const baseRatio = [0.3].concat(tableFields.value.map(() => 1));
+  const fieldsRatio = tableFields.value.map((df: any) => {
+    if (!df) return 1.0;
+    const type = df.fieldtype;
+    const name = df.fieldname?.toLowerCase();
+
+    if (name === 'item' || name === 'description' || name === 'account') {
+      return 2.2;
+    }
+    if (type === 'Link' || type === 'Data' || type === 'Select' || type === 'Text') {
+      return 1.5;
+    }
+    if (type === 'Int' || type === 'Float' || type === 'Percent' || type === 'Check') {
+      return 0.7;
+    }
+    if (type === 'Date') {
+      return 0.9;
+    }
+    return 1.0;
+  });
+
+  const baseRatio = [0.3].concat(fieldsRatio);
   if (canEditRow.value) {
     return baseRatio.concat(0.3);
   }
@@ -217,8 +260,8 @@ const scrollToRow = (index: number) => {
   }
 };
 
-const setMaxHeight = () => {
-  if (props.maxRowsBeforeOverflow === 0) {
+const setMaxHeight = async () => {
+  if (effectiveMaxRows.value === 0) {
     maxHeight.value = '';
     return;
   }
@@ -229,15 +272,16 @@ const setMaxHeight = () => {
     return;
   }
 
+  await nextTick();
+
   const rows = tableRowRefs.value;
-  const rowHeight = rows?.[0]?.$el?.offsetHeight;
-  if (rowHeight === undefined) {
-    maxHeight.value = '';
-    return;
+  let rowHeight = rows?.[0]?.$el?.offsetHeight;
+  if (rowHeight === undefined || rowHeight === 0) {
+    rowHeight = 48; // Fallback to standard row height (3rem)
   }
 
   const computedMaxHeight =
-    rowHeight * Math.min(props.maxRowsBeforeOverflow, size);
+    rowHeight * Math.min(effectiveMaxRows.value, size);
   maxHeight.value = `${computedMaxHeight}px`;
 };
 

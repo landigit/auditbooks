@@ -9,7 +9,7 @@
         <view
           class="bg-surface rounded-lg shadow-2xl border border-border overflow-hidden inner"
           v-bind="$attrs"
-          @click.stop
+          @tap.stop
         >
           <slot></slot>
         </view>

@@ -1,31 +1,28 @@
 <template>
   <view class="overflow-hidden flex flex-col h-full">
     <!-- Report Outer Container -->
-    <view v-if="dataSlice.length" class="overflow-hidden">
-      <!--Title Row -->
-      <view
-        ref="titlerow"
-        class="w-full overflow-x-hidden flex items-center text-main border-b border-border px-4"
-        :style="{
-          height: `${hconst}px`,
-          paddingRight: 'calc(var(--w-scrollbar) + 1rem)',
-        }"
-      >
-        <view
-          v-for="(col, c) in report.columns"
-          :key="c + '-col'"
-          :style="getCellStyle(col, c)"
-          class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar"
-        >
-          {{ col.label }}
-        </view>
-      </view>
-
+    <view v-if="dataSlice.length" class="overflow-hidden flex-1 flex flex-col">
       <WithScroll
-        class="overflow-auto w-full"
-        style="height: calc(100% - 49px)"
-        @scroll="scroll"
+        class="overflow-auto w-full flex-1"
+        style="scrollbar-gutter: stable"
       >
+        <!--Title Row -->
+        <view
+          class="sticky top-0 bg-canvas z-10 w-max flex items-center text-main border-b border-border px-4"
+          :style="{
+            height: `${hconst}px`,
+          }"
+        >
+          <view
+            v-for="(col, c) in report.columns"
+            :key="c + '-col'"
+            :style="getCellStyle(col, c)"
+            class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar"
+          >
+            {{ col.label }}
+          </view>
+        </view>
+
         <!-- Report Rows -->
         <template v-for="(row, r) in dataSlice" :key="r + '-row'">
           <view
@@ -86,8 +83,6 @@ const props = defineProps<{
 
 const languageDirection = inject(languageDirectionKey);
 
-const titlerow = ref<HTMLDivElement | null>(null);
-
 const wconst = 8;
 const hconst = 48;
 const pageStart = ref(0);
@@ -100,12 +95,6 @@ const dataSlice = computed(() => {
 
   return props.report.reportData;
 });
-
-function scroll({ scrollLeft }: { scrollLeft: number }) {
-  if (titlerow.value) {
-    titlerow.value.scrollLeft = scrollLeft;
-  }
-}
 
 function setPageIndices({ start, end }: { start: number; end: number }) {
   pageStart.value = start;
@@ -129,7 +118,7 @@ function onRowClick(clickedRow: any, r: number) {
   }
 }
 
-function getCellStyle(cell: any, i: number) {
+function getCellStyle(cell: any, _i: number) {
   const styles: Record<string, string> = {};
   const width = cell.width ?? 1;
 
@@ -149,11 +138,11 @@ function getCellStyle(cell: any, i: number) {
     styles['font-style'] = 'oblique 15deg';
   }
 
-  if (i === 0) {
+  if (_i === 0) {
     if (languageDirection?.value === 'rtl') {
-      styles['padding-right'] = '0px';
+      styles['padding-right'] = '8px';
     } else {
-      styles['padding-left'] = '0px';
+      styles['padding-left'] = '8px';
     }
   }
 
@@ -161,11 +150,11 @@ function getCellStyle(cell: any, i: number) {
     styles['text-align'] = 'right';
   }
 
-  if (i === props.report.columns.length - 1) {
+  if (_i === props.report.columns.length - 1) {
     if (languageDirection?.value === 'rtl') {
-      styles['padding-left'] = '0px';
+      styles['padding-left'] = '8px';
     } else {
-      styles['padding-right'] = '0px';
+      styles['padding-right'] = '8px';
     }
   }
 

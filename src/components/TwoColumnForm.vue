@@ -108,7 +108,7 @@ defineExpose({ onChange });
 // --- Lifecycle ---
 onMounted(() => {
   setFormFields();
-  if (store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-ignore
     window.tcf = { formFields, errors, props };
   }

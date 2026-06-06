@@ -374,7 +374,7 @@ export class GeneralLedger extends LedgerReport {
         label: '#',
         fieldtype: 'Int',
         fieldname: 'index',
-        align: 'right',
+        align: 'left',
         width: 0.5,
       },
       {

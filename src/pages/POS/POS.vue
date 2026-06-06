@@ -6,8 +6,11 @@
           class="bg-error hover:bg-error-hover"
           @tap="toggleModal('ShiftClose')"
         >
-          <text class="font-medium text-button-primary-text">{{
-            t`Close POS Shift `
+          <text class="font-medium text-button-primary-text hidden md:inline">{{
+            t`Close POS Shift`
+          }}</text>
+          <text class="font-medium text-button-primary-text md:hidden">{{
+            t`Close Shift`
           }}</text>
         </Button>
       </slot>
@@ -386,28 +389,32 @@ function setExpandedBatchId(rowName: string | undefined) {
 function addQuickQtyListeners() {
   quickQtyKeyDownHandler.value = (e: KeyboardEvent) => onQuickQtyKeyDown(e);
   quickQtyKeyUpHandler.value = (e: KeyboardEvent) => onQuickQtyKeyUp(e);
-  window.addEventListener(
-    'keydown',
-    quickQtyKeyDownHandler.value as EventListener
-  );
-  window.addEventListener('keyup', quickQtyKeyUpHandler.value as EventListener);
-}
-
-function removeQuickQtyListeners() {
-  if (quickQtyKeyDownHandler.value) {
-    window.removeEventListener(
+  if (typeof window !== 'undefined') {
+    window.addEventListener(
       'keydown',
       quickQtyKeyDownHandler.value as EventListener
     );
-    quickQtyKeyDownHandler.value = null;
+    window.addEventListener('keyup', quickQtyKeyUpHandler.value as EventListener);
   }
-  if (quickQtyKeyUpHandler.value) {
-    window.removeEventListener(
-      'keyup',
-      quickQtyKeyUpHandler.value as EventListener
-    );
-    quickQtyKeyUpHandler.value = null;
+}
+
+function removeQuickQtyListeners() {
+  if (typeof window !== 'undefined') {
+    if (quickQtyKeyDownHandler.value) {
+      window.removeEventListener(
+        'keydown',
+        quickQtyKeyDownHandler.value as EventListener
+      );
+    }
+    if (quickQtyKeyUpHandler.value) {
+      window.removeEventListener(
+        'keyup',
+        quickQtyKeyUpHandler.value as EventListener
+      );
+    }
   }
+  quickQtyKeyDownHandler.value = null;
+  quickQtyKeyUpHandler.value = null;
 }
 
 function hasAnyOpenModal(): boolean {

@@ -37,26 +37,26 @@
 
             <!-- Add Account Buttons on Group Hover -->
             <view class="ms-6 hidden group-hover:block">
-              <button
+              <view
                 v-if="account.isGroup"
                 class="text-xs text-description hover:text-main focus:outline-none"
                 @tap.stop="addAccount(account, 'addingAccount')"
               >
                 {{ t`Add Account` }}
-              </button>
-              <button
+              </view>
+              <view
                 v-if="account.isGroup"
                 class="ms-3 text-xs text-description hover:text-main focus:outline-none"
                 @tap.stop="addAccount(account, 'addingGroupAccount')"
               >
                 {{ t`Add Group` }}
-              </button>
-              <button
+              </view>
+              <view
                 class="ms-3 text-xs text-description hover:text-main focus:outline-none"
                 @tap.stop="deleteAccount(account)"
               >
                 {{ account.isGroup ? t`Delete Group` : t`Delete Account` }}
-              </button>
+              </view>
             </view>
           </view>
 
@@ -95,20 +95,20 @@
                 createNewAccount(account, account.addingGroupAccount)
               "
             />
-            <button
+            <view
               v-if="!insertingAccount"
               class="ms-4 text-xs text-description hover:text-main focus:outline-none"
               @tap="createNewAccount(account, account.addingGroupAccount)"
             >
               {{ t`Save` }}
-            </button>
-            <button
+            </view>
+            <view
               v-if="!insertingAccount"
               class="ms-4 text-xs text-description hover:text-main focus:outline-none"
               @tap="cancelAddingAccount(account)"
             >
               {{ t`Cancel` }}
-            </button>
+            </view>
           </view>
         </view>
       </template>
@@ -552,7 +552,7 @@ onMounted(async () => {
 
 onActivated(async () => {
   await fetchAccounts();
-  if (store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-ignore
     window.coa = {
       isAllCollapsed,

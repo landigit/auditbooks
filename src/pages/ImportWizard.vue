@@ -969,7 +969,7 @@ const selectFile = async (): Promise<void> => {
 
 // Lifecycles
 onMounted(() => {
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.iw = {
       showColumnPicker,

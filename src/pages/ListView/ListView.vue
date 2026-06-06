@@ -31,7 +31,12 @@
           </view>
         </view>
       </view>
-      <Button ref="exportButton" :icon="false" @tap="openExportModal = true">
+      <Button
+        ref="exportButton"
+        :icon="false"
+        class="hidden md:inline-flex"
+        @tap="openExportModal = true"
+      >
         {{ t`Export` }}
       </Button>
       <FilterDropdown
@@ -258,7 +263,7 @@ onActivated(() => {
   listConfig.value = getListConfig(props.schemaName);
   store.docsPath = docsPathMap[props.schemaName] ?? docsPathMap.Entries ?? '';
 
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.lv = {
       listConfig,

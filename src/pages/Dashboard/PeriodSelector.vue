@@ -17,7 +17,7 @@
         @keydown.up="highlightItemUp"
         @keydown.enter="selectHighlightedItem"
       >
-        {{ periodSelectorMap?.[value] ?? value }}
+        <text>{{ periodSelectorMap?.[value] ?? value }}</text>
         <lucide-icon name="chevron-down" class="ms-1 w-3 h-3" />
       </view>
     </template>

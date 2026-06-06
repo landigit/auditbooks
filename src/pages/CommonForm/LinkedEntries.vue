@@ -1,6 +1,6 @@
 <template>
   <view
-    class="w-quick-edit bg-surface border-l border-border overflow-y-auto custom-scroll custom-scroll-thumb2"
+    class="fixed md:relative inset-y-0 end-0 z-50 w-quick-edit bg-surface border-s md:border-l border-border overflow-y-auto custom-scroll custom-scroll-thumb2"
   >
     <!-- Page Header -->
     <view

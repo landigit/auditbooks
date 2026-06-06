@@ -30,44 +30,9 @@
       </text>
     </template>
     <template v-if="hasDoc" #header>
-      <Button
-        v-if="canShowLinks"
-        :icon="true"
-        :title="t`View linked entries`"
-        @tap="showLinks = true"
-      >
-        <LucideIcon name="link" class="w-4 h-4"></LucideIcon>
-      </Button>
-      <Button
-        v-if="canPrint"
-        ref="printButton"
-        :icon="true"
-        :title="t`Open Print View`"
-        @tap="routeTo(`/print/${doc.schemaName}/${doc.name}`)"
-      >
-        <LucideIcon name="printer" class="w-4 h-4"></LucideIcon>
-      </Button>
-      <Button
-        :icon="true"
-        :title="t`Toggle between form and full width`"
-        @tap="toggleWidth"
-      >
-        <LucideIcon
-          :name="useFullWidth ? 'minimize' : 'maximize'"
-          class="w-4 h-4"
-        ></LucideIcon>
-      </Button>
       <DropdownWithActions
-        v-for="group of groupedActions"
-        :key="group.label"
-        :type="group.type"
-        :actions="group.actions"
-      >
-        <text v-if="group.group">
-          {{ group.group }}
-        </text>
-        <LucideIcon v-else name="more-horizontal" class="w-4 h-4" />
-      </DropdownWithActions>
+        :actions="formActions"
+      />
       <Button v-if="doc?.canSave" type="primary" @tap="sync">
         {{ t`Save` }}
       </Button>
@@ -131,6 +96,22 @@
       </view>
     </template>
     <template #quickedit>
+      <!-- Backdrop overlay for quick edit / linked entries on mobile -->
+      <Transition
+        enter-active-class="transition-opacity duration-150 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <view
+          v-if="(showLinks && canShowLinks) || row"
+          class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden"
+          @tap="closeQuickEdit"
+        />
+      </Transition>
+
       <Transition
         enter-active-class="transition-all duration-150 ease-out"
         enter-from-class="translate-x-full opacity-0 w-0"
@@ -196,14 +177,14 @@ import StatusPill from 'src/components/StatusPill.vue';
 import { getErrorMessage } from 'src/utils';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap } from 'src/utils/misc';
-import { ActionGroup, DocRef, UIGroupedFields } from 'src/utils/types';
+import { DocRef, UIGroupedFields } from 'src/utils/types';
 import {
   commonDocSubmit,
   commonDocSync,
   getDocFromNameIfExistsElseNew,
   getFieldsGroupedByTabAndSection,
   getFormRoute,
-  getGroupedActionsForDoc,
+  getActionsForDoc,
   isPrintable as isPrintableFn,
   routeTo,
 } from 'src/utils/ui';
@@ -246,7 +227,6 @@ provide(
 );
 
 // Template Ref
-const printButton = ref<InstanceType<typeof Button> | null>(null);
 
 // Reactive State definitions
 const errors = ref<Record<string, string>>({});
@@ -378,12 +358,44 @@ const activeGroup = computed<Map<string, Field[]>>(() => {
   return group;
 });
 
-const groupedActions = computed<ActionGroup[]>(() => {
+const formActions = computed(() => {
   if (!hasDoc.value) {
     return [];
   }
 
-  return getGroupedActionsForDoc(doc.value);
+  const actions: any[] = [];
+
+  // Toggle full width action
+  actions.push({
+    label: useFullWidth.value ? t`Minimize width` : t`Maximize width`,
+    action: toggleWidth,
+  });
+
+  // View linked entries action
+  if (canShowLinks.value) {
+    actions.push({
+      label: t`View linked entries`,
+      action: () => {
+        showLinks.value = true;
+      },
+    });
+  }
+
+  // Open print view action
+  if (canPrint.value) {
+    actions.push({
+      label: t`Open Print View`,
+      action: () => {
+        routeTo(`/print/${doc.value.schemaName}/${doc.value.name}`);
+      },
+    });
+  }
+
+  // Get raw actions for doc
+  const docActions = getActionsForDoc(doc.value);
+  actions.push(...docActions);
+
+  return actions;
 });
 
 // Methods
@@ -452,6 +464,11 @@ const showRowEditForm = async (childDoc: Doc) => {
   }
 };
 
+const closeQuickEdit = () => {
+  showLinks.value = false;
+  row.value = null;
+};
+
 const onValueChange = async (field: Field, value: DocValue) => {
   const { fieldname } = field;
   delete errors.value[fieldname];
@@ -475,7 +492,7 @@ onBeforeMount(() => {
 });
 
 onMounted(async () => {
-  if (store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-ignore
     window.cf = {
       errors,
@@ -498,8 +515,7 @@ onMounted(async () => {
       title,
       schema,
       activeGroup,
-      groupedActions,
-      printButton,
+      formActions,
       toggleWidth,
       updateGroupedFields,
       sync,
@@ -524,11 +540,11 @@ onActivated(() => {
   useFullWidth.value = !!fyo.singles.Misc?.useFullWidth;
   store.docsPath = docsPathMap[props.schemaName] ?? '';
   shortcuts?.pmod.set(context, ['KeyP'], () => {
-    if (!canPrint.value) {
+    if (!canPrint.value || !doc.value) {
       return;
     }
 
-    printButton.value?.$el.click();
+    routeTo(`/print/${doc.value.schemaName}/${doc.value.name}`);
   });
   shortcuts?.pmod.set(context, ['KeyL'], () => {
     if (!canShowLinks.value && !showLinks.value) {

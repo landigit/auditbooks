@@ -80,6 +80,18 @@ async function callBackendWrapped(
 const configStore: Record<string, any> = {};
 
 const storeInstance = {
+  async load(): Promise<void> {
+    try {
+      const allConfigs = await callBackend(IPC_ACTIONS.STORE_ALL);
+      if (allConfigs && typeof allConfigs === 'object') {
+        for (const [key, val] of Object.entries(allConfigs)) {
+          configStore[key] = val;
+        }
+      }
+    } catch (err) {
+      console.error('[Lynx IPC] Failed to load configurations:', err);
+    }
+  },
   get<K extends keyof ConfigMap>(
     key: K,
     defaultValue?: ConfigMap[K]
@@ -89,10 +101,18 @@ const storeInstance = {
     return val;
   },
   set<K extends keyof ConfigMap>(key: K, value: ConfigMap[K]): void {
-    configStore[`config:${key}`] = value;
+    const storeKey = `config:${key}`;
+    configStore[storeKey] = value;
+    callBackend(IPC_ACTIONS.STORE_SET, [storeKey, value]).catch((err) => {
+      console.error(`[Lynx IPC] Failed to persist config set for ${key}:`, err);
+    });
   },
   delete(key: keyof ConfigMap): void {
-    delete configStore[`config:${key}`];
+    const storeKey = `config:${key}`;
+    delete configStore[storeKey];
+    callBackend(IPC_ACTIONS.STORE_DELETE, [storeKey]).catch((err) => {
+      console.error(`[Lynx IPC] Failed to persist config delete for ${key}:`, err);
+    });
   },
 };
 

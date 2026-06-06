@@ -1,44 +1,48 @@
 <template>
-  <Row
-    :ratio="ratio"
-    class="border border-border rounded-t px-2 text-description w-full items-center mt-2"
-  >
-    <view
-      v-if="tableFields"
-      v-for="df in tableFields"
-      :key="df.fieldname"
-      class="items-center text-lg flex px-2 py-2"
-      :class="{
-        'ms-auto': isNumeric(df as Field),
-      }"
-      :style="{
-        height: ``,
-      }"
-    >
-      {{ df.label }}
-    </view>
-  </Row>
+  <view class="overflow-x-auto w-full custom-scroll custom-scroll-thumb1">
+    <view class="min-w-[700px] md:min-w-0">
+      <Row
+        :ratio="ratio"
+        class="border border-border rounded-t px-2 text-description w-full items-center mt-2"
+      >
+        <view
+          v-if="tableFields"
+          v-for="df in tableFields"
+          :key="df.fieldname"
+          class="items-center text-lg flex px-2 py-2"
+          :class="{
+            'ms-auto': isNumeric(df as Field),
+          }"
+          :style="{
+            height: ``,
+          }"
+        >
+          {{ df.label }}
+        </view>
+      </Row>
 
-  <view
-    class="overflow-y-auto overflow-x-auto custom-scroll custom-scroll-thumb1"
-    style="height: 50vh"
-  >
-    <Row
-      v-for="row in sinvDoc.items"
-      :ratio="ratio"
-      class="border border-border w-full px-2 py-2 group items-center justify-center hover:bg-surface-hover bg-surface"
-    >
-      <SelectedItemRow
-        :row="row as SalesInvoiceItem"
-        :expanded-batch-id="expandedBatchId"
-        @set-expanded-batch-id="
-          (rowName) => $emit('setExpandedBatchId', rowName)
-        "
-        @run-sinv-formulas="runSinvFormulas"
-        @apply-pricing-rule="$emit('applyPricingRule')"
-        @selected-row="selectedItemRow"
-      />
-    </Row>
+      <view
+        class="overflow-y-auto custom-scroll custom-scroll-thumb2"
+        style="height: 50vh"
+      >
+        <Row
+          v-for="row in sinvDoc.items"
+          :ratio="ratio"
+          class="border border-border w-full px-2 py-2 group items-center justify-center hover:bg-surface-hover bg-surface"
+        >
+          <SelectedItemRow
+            :row="row as SalesInvoiceItem"
+            :expanded-batch-id="expandedBatchId"
+            @set-expanded-batch-id="
+              (rowName) => $emit('setExpandedBatchId', rowName)
+            "
+            @run-sinv-formulas="runSinvFormulas"
+            @apply-pricing-rule="$emit('applyPricingRule')"
+            @selected-row="selectedItemRow"
+          />
+        </Row>
+      </view>
+    </view>
   </view>
 </template>
 

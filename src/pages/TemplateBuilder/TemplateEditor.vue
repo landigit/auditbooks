@@ -124,7 +124,7 @@ onMounted(() => {
     init();
   }
 
-  if (store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-ignore
     window.te = {
       editorState,

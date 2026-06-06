@@ -1,8 +1,7 @@
 <template>
-  <view class="flex gap-2">
+  <view class="flex flex-col md:flex-row gap-2">
     <view
-      class="w-1/2 overflow-y-auto custom-scroll custom-scroll-thumb2"
-      style="height: 81vh"
+      class="w-full md:w-1/2 h-[40vh] md:h-[81vh] overflow-y-auto custom-scroll custom-scroll-thumb2"
     >
       <Row
         :ratio="ratio"
@@ -40,8 +39,7 @@
     </view>
 
     <view
-      class="w-1/2 overflow-y-auto custom-scroll custom-scroll-thumb2"
-      style="height: calc(80vh - 20rem)"
+      class="w-full md:w-1/2 h-[40vh] md:h-[calc(80vh-20rem)] overflow-y-auto custom-scroll custom-scroll-thumb2"
     >
       <Row
         :ratio="ratio"

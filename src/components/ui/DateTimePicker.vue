@@ -115,7 +115,7 @@ const sizeClasses = computed(() => {
 <template>
   <Popover v-model:open="isOpen">
     <PopoverTrigger as-child>
-      <button
+      <view
         variant="outline"
         :class="
           cn(
@@ -134,7 +134,7 @@ const sizeClasses = computed(() => {
           />
           <text class="truncate">{{ displayValue }}</text>
         </view>
-      </button>
+      </view>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0 overflow-hidden shadow-lg border-border">
       <view
@@ -198,12 +198,12 @@ const sizeClasses = computed(() => {
           </view>
 
           <view class="mt-auto pt-4 border-t border-border flex flex-col gap-2">
-            <button
+            <view
               class="w-full h-8 text-xs font-medium bg-indicator-green-bg text-white rounded hover:opacity-90 transition-opacity"
               @tap="updateModel(true)"
             >
               {{ t`Set Time` }}
-            </button>
+            </view>
           </view>
         </view>
       </view>

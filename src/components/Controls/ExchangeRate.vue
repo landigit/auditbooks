@@ -34,7 +34,7 @@
       <text class="text-description">{{ right }}</text>
     </view>
 
-    <button
+    <view
       v-if="!disabled"
       class="bg-indicator-green-bg text-indicator-green-text px-2 ms-1 -me-0.5 h-full border-s border-border"
       @tap="swap"
@@ -43,7 +43,7 @@
         name="refresh-cw"
         class="w-3 h-3 text-indicator-green-text"
       />
-    </button>
+    </view>
   </view>
 </template>
 <script setup lang="ts">

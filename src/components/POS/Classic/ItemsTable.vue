@@ -1,45 +1,49 @@
 <template>
-  <Row
-    :ratio="ratio"
-    class="border border-border items-center mt-4 px-2 rounded-t-md text-description w-full"
-  >
-    <view
-      v-for="df in tableFields"
-      :key="df.fieldname"
-      class="flex items-center px-2 py-2 text-lg"
-      :class="{
-        'ms-auto': isNumeric(df as Field),
-      }"
-      :style="{
-        height: ``,
-      }"
-    >
-      {{ df.label }}
-    </view>
-  </Row>
+  <view class="overflow-x-auto w-full custom-scroll custom-scroll-thumb1">
+    <view class="min-w-[500px] md:min-w-0">
+      <Row
+        :ratio="ratio"
+        class="border border-border items-center mt-4 px-2 rounded-t-md text-description w-full"
+      >
+        <view
+          v-for="df in tableFields"
+          :key="df.fieldname"
+          class="flex items-center px-2 py-2 text-lg"
+          :class="{
+            'ms-auto': isNumeric(df as Field),
+          }"
+          :style="{
+            height: ``,
+          }"
+        >
+          {{ df.label }}
+        </view>
+      </Row>
 
-  <view
-    class="overflow-y-auto custom-scroll custom-scroll-thumb2"
-    style="height: 70vh"
-  >
-    <Row
-      v-if="items"
-      v-for="row in items as POSItem[]"
-      :ratio="ratio"
-      :border="true"
-      class="border-b border-l border-r border-border group h-row-mid hover:bg-surface-hover bg-surface items-center justify-center px-2 w-full"
-      @tap="handleChange(row)"
-    >
-      <FormControl
-        v-for="df in tableFields"
-        :key="df.fieldname"
-        size="large"
-        class=""
-        :df="df"
-        :value="(row as POSItem)[df.fieldname as keyof POSItem]"
-        :readOnly="true"
-      />
-    </Row>
+      <view
+        class="overflow-y-auto custom-scroll custom-scroll-thumb2"
+        style="height: 70vh"
+      >
+        <Row
+          v-if="items"
+          v-for="row in items as POSItem[]"
+          :ratio="ratio"
+          :border="true"
+          class="border-b border-l border-r border-border group h-row-mid hover:bg-surface-hover bg-surface items-center justify-center px-2 w-full"
+          @tap="handleChange(row)"
+        >
+          <FormControl
+            v-for="df in tableFields"
+            :key="df.fieldname"
+            size="large"
+            class=""
+            :df="df"
+            :value="(row as POSItem)[df.fieldname as keyof POSItem]"
+            :readOnly="true"
+          />
+        </Row>
+      </view>
+    </view>
   </view>
 </template>
 

@@ -256,7 +256,7 @@ onActivated(() => {
 onMounted(async () => {
   await initialize();
 
-  if (store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-ignore
     window.qef = {
       doc,

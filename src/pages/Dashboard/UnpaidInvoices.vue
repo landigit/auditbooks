@@ -22,7 +22,7 @@
           :title="paidCount > 0 ? t`View Paid Invoices` : ''"
           @tap="() => routeToInvoices('paid')"
         >
-          {{ fyo.format(paid, 'Currency') }}
+          <text>{{ fyo.format(paid, 'Currency') }} </text>
           <text :class="{ 'text-main font-normal': count }">{{ t`Paid` }}</text>
         </view>
 
@@ -36,7 +36,7 @@
           :title="unpaidCount > 0 ? t`View Unpaid Invoices` : ''"
           @tap="() => routeToInvoices('unpaid')"
         >
-          {{ fyo.format(unpaid, 'Currency') }}
+          <text>{{ fyo.format(unpaid, 'Currency') }} </text>
           <text :class="{ 'text-main font-normal': count }">{{
             t`Unpaid`
           }}</text>

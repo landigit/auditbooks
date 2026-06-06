@@ -21,9 +21,9 @@
         />
         <view :class="actionText ? 'cursor-pointer' : ''" @tap="actionClicked">
           <text class="text-base">{{ message }}</text>
-          <button v-if="actionText" class="text-sm text-muted hover:text-main">
+          <view v-if="actionText" class="text-sm text-muted hover:text-main">
             {{ actionText }}
-          </button>
+          </view>
         </view>
         <view class="ms-auto flex items-center">
           <LucideIcon

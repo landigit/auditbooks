@@ -4,7 +4,7 @@
     class="mt-6 w-full text-main text-base focus:outline-none"
   >
     <text class="flex w-full">
-      <button
+      <view
         ref="inputRef"
         type="button"
         @tap="onClick"
@@ -12,7 +12,7 @@
         class="w-full flex items-center justify-center py-2.5 px-4 rounded-lg font-medium bg-indicator-blue-bg text-indicator-blue-text hover:bg-indicator-blue-bg/90 active:scale-[0.98] shadow-sm hover:shadow transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         {{ df.label }}
-      </button>
+      </view>
     </text>
   </view>
 </template>

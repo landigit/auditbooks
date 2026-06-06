@@ -71,24 +71,24 @@
         </svg>
 
         <view v-if="canLink" class="flex items-center gap-1">
-          <button
+          <view
             v-if="value && showClearButton"
             class="p-0.5 rounded bg-transparent text-description hover:text-main transition-colors"
-            @click.stop.prevent="clearValue"
+            @tap.stop.prevent="clearValue"
             @mousedown.prevent
           >
             <lucide-icon name="x" class="w-3.5 h-3.5" />
-          </button>
+          </view>
           <Popover v-if="linkSchemaName && value" :open="showQuickView">
             <PopoverAnchor as-child>
-              <button
+              <view
                 class="h-6 w-6 flex items-center justify-center p-0 rounded-md text-description hover:text-main hover:bg-surface-hover transition-colors outline-none"
                 @mouseenter="showQuickView = true"
                 @mouseleave="showQuickView = false"
-                @click.stop.prevent="routeToLinkedDoc"
+                @tap.stop.prevent="routeToLinkedDoc"
               >
                 <lucide-icon name="chevron-right" class="w-4 h-4" />
-              </button>
+              </view>
             </PopoverAnchor>
             <PopoverContent
               v-if="showQuickView"

@@ -1,6 +1,6 @@
 <template>
   <view
-    class="border-s border-border h-full overflow-auto w-quick-edit bg-surface custom-scroll custom-scroll-thumb2"
+    class="fixed md:relative inset-y-0 end-0 z-50 border-s border-border h-full overflow-auto w-quick-edit bg-surface custom-scroll custom-scroll-thumb2"
   >
     <!-- Row Edit Tool bar -->
     <view

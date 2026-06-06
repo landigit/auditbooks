@@ -321,7 +321,13 @@ const view = computed<EditorView | null>(() => {
 });
 
 const maxWidth = computed(() => {
-  return window.innerWidth - 12 * 16 - 100;
+  let width = 1024;
+  if (typeof window !== 'undefined') {
+    width = window.innerWidth;
+  } else if (typeof SystemInfo !== 'undefined') {
+    width = SystemInfo.pixelWidth / SystemInfo.pixelRatio;
+  }
+  return width - 12 * 16 - 100;
 });
 
 const fields = computed<Record<string, Field>>(() => {
@@ -409,12 +415,18 @@ const toggleShowHints = () => {
 
 const getEditModeScale = (): number => {
   const div = printContainer.value?.$el;
-  if (!(div instanceof HTMLDivElement)) {
+  if (typeof HTMLDivElement === 'undefined' || !(div instanceof HTMLDivElement)) {
     return scale.value;
   }
 
   const padding = 16 * 2 + 16 * 0.6;
-  const targetWidth = window.innerWidth / 2 - padding;
+  let width = 1024;
+  if (typeof window !== 'undefined') {
+    width = window.innerWidth;
+  } else if (typeof SystemInfo !== 'undefined') {
+    width = SystemInfo.pixelWidth / SystemInfo.pixelRatio;
+  }
+  const targetWidth = width / 2 - padding;
   const currentWidth = div.getBoundingClientRect().width;
   const targetScale = (targetWidth * scale.value) / currentWidth;
 
@@ -426,7 +438,13 @@ const enableEditMode = () => {
   preEditMode.value.panelWidth = panelWidth.value;
   preEditMode.value.scale = scale.value;
 
-  panelWidth.value = Math.max(window.innerWidth / 2, panelWidth.value);
+  let width = 1024;
+  if (typeof window !== 'undefined') {
+    width = window.innerWidth;
+  } else if (typeof SystemInfo !== 'undefined') {
+    width = SystemInfo.pixelWidth / SystemInfo.pixelRatio;
+  }
+  panelWidth.value = Math.max(width / 2, panelWidth.value);
   store.showSidebar = false;
   scale.value = getEditModeScale();
   view.value?.focus();
@@ -687,7 +705,7 @@ const setShortcuts = () => {
 // Lifecycles
 onMounted(async () => {
   await initialize();
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.tb = {
       doc,

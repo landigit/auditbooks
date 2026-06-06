@@ -1,12 +1,7 @@
 <template>
   <view class="flex flex-col w-full h-full">
     <PageHeader :title="t`Print ${title}`">
-      <Button class="text-xs" type="primary" @tap="savePDF()">
-        {{ t`Save as PDF` }}
-      </Button>
-      <Button class="text-xs" type="primary" @tap="savePDF(true)">
-        {{ t`Print` }}
-      </Button>
+      <DropdownWithActions :actions="printActions" />
     </PageHeader>
 
     <view
@@ -47,7 +42,7 @@
                   class="text-sm p-2"
                   style="min-height: 2rem"
                 >
-                  {{ cell.value }}
+                  <text>{{ cell.value }}</text>
                 </view>
               </template>
             </view>
@@ -158,10 +153,10 @@ import { Verb } from 'fyo/telemetry/types';
 import { Report } from 'reports/Report';
 import { reports } from 'reports/index';
 import { OptionField } from 'schemas/types';
-import Button from 'src/components/Button.vue';
 import Check from 'src/components/Controls/Check.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Select from 'src/components/Controls/Select.vue';
+import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import { getReport } from 'src/utils/misc';
 import { getPathAndMakePDF } from 'src/utils/printTemplates';
@@ -261,7 +256,12 @@ const size = computed<{ width: number; height: number }>(() => {
 // Methods
 const setScale = () => {
   const widthVal = size.value.width * 37.2;
-  let containerWidth = window.innerWidth - 26 * 16;
+  let containerWidth = 1024;
+  if (typeof window !== 'undefined') {
+    containerWidth = window.innerWidth - 26 * 16;
+  } else if (typeof SystemInfo !== 'undefined') {
+    containerWidth = (SystemInfo.pixelWidth / SystemInfo.pixelRatio) - 26 * 16;
+  }
   if (store.showSidebar) {
     containerWidth -= 12 * 16;
   }
@@ -287,6 +287,19 @@ const savePDF = async (shouldPrint?: boolean) => {
 
   fyo.telemetry.log(Verb.Printed, report.value!.reportName);
 };
+
+const printActions = computed(() => {
+  return [
+    {
+      label: t`Save as PDF`,
+      action: () => savePDF(),
+    },
+    {
+      label: t`Print`,
+      action: () => savePDF(true),
+    },
+  ];
+});
 
 const cellClasses = (cIdx: number, rIdx: number): string[] => {
   const classes: string[] = [];
@@ -324,7 +337,7 @@ onMounted(async () => {
   columnSelection.value = report.value.columns.map(() => true);
   setScale();
 
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.rpv = {
       start,

@@ -296,6 +296,59 @@ const server = Bun.serve({
             result = { data: true };
             break;
           }
+          case IPC_ACTIONS.STORE_ALL: {
+            const configPath = path.resolve('dbs', 'config.json');
+            let data = {};
+            try {
+              const file = Bun.file(configPath);
+              if (await file.exists()) {
+                data = await file.json();
+              }
+            } catch (err) {
+              console.error('[Dev Backend] Error reading config.json:', err);
+            }
+            result = { data };
+            break;
+          }
+          case IPC_ACTIONS.STORE_SET: {
+            const key = args[0] as string;
+            const value = args[1];
+            const configPath = path.resolve('dbs', 'config.json');
+            let data: Record<string, any> = {};
+            try {
+              const file = Bun.file(configPath);
+              if (await file.exists()) {
+                data = await file.json();
+              }
+            } catch (err) {
+              // ignore if file doesn't exist or is invalid JSON
+            }
+            data[key] = value;
+            const dbsDir = path.resolve('dbs');
+            await fs.mkdir(dbsDir, { recursive: true });
+            await Bun.write(configPath, JSON.stringify(data, null, 2));
+            result = { data: true };
+            break;
+          }
+          case IPC_ACTIONS.STORE_DELETE: {
+            const key = args[0] as string;
+            const configPath = path.resolve('dbs', 'config.json');
+            let data: Record<string, any> = {};
+            try {
+              const file = Bun.file(configPath);
+              if (await file.exists()) {
+                data = await file.json();
+              }
+            } catch (err) {
+              // ignore if file doesn't exist or is invalid JSON
+            }
+            delete data[key];
+            const dbsDir = path.resolve('dbs');
+            await fs.mkdir(dbsDir, { recursive: true });
+            await Bun.write(configPath, JSON.stringify(data, null, 2));
+            result = { data: true };
+            break;
+          }
           case IPC_ACTIONS.SAVE_HTML_AS_PDF: {
             const html = args[0];
             const savePath = args[1];

@@ -28,100 +28,100 @@
           id="keypad"
           class="text-4xl grid grid-cols-4 gap-3 rounded font-bold py-4 text-description"
         >
-          <button
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('7')"
           >
             7
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('8')"
           >
             8
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('9')"
           >
             9
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="deleteLast()"
           >
             Del
-          </button>
+          </view>
 
-          <button
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('4')"
           >
             4
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('5')"
           >
             5
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('6')"
           >
             6
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('-')"
           >
             -
-          </button>
+          </view>
 
-          <button
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('1')"
           >
             1
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('2')"
           >
             2
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('3')"
           >
             3
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('+')"
           >
             +
-          </button>
+          </view>
 
-          <button
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('.')"
           >
             •
-          </button>
-          <button
+          </view>
+          <view
             class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
             @tap="appendValue('0')"
           >
             0
-          </button>
+          </view>
           <view class="grid col-span-2">
-            <button
+            <view
               class="py-2.5 bg-canvas-muted text-2xl border-transparent rounded-lg transition-colors duration-200 hover:bg-surface-hover"
               @tap="reset()"
             >
               Clear
-            </button>
+            </view>
           </view>
         </view>
       </view>

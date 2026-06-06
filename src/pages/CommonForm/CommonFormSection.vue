@@ -15,7 +15,7 @@
         class="w-4 h-4 text-description"
       />
     </view>
-    <view v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-2">
+    <view v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-1 md:grid-cols-2">
       <view
         v-for="field of fields"
         :key="field.fieldname"

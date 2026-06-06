@@ -15,21 +15,15 @@
         :value="templateName ?? ''"
         @change="onTemplateNameChange"
       />
-      <DropdownWithActions :actions="actions" :title="t`More`" />
-      <Button class="text-xs" type="primary" @tap="savePDF()">
-        {{ t`Save as PDF` }}
-      </Button>
-      <Button class="text-xs" type="primary" @tap="savePDF(true)">
-        {{ t`Print` }}
-      </Button>
+      <DropdownWithActions :actions="printActions" />
     </PageHeader>
 
     <!-- Template Display Area -->
     <view class="overflow-auto custom-scroll custom-scroll-thumb1 p-4">
       <!-- Display Hints -->
-      <view v-if="helperMessage" class="text-sm text-muted">
+      <text v-if="helperMessage" class="text-sm text-muted">
         {{ helperMessage }}
-      </view>
+      </text>
 
       <!-- Template Container -->
       <PrintContainer
@@ -59,7 +53,6 @@ import { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
 import { PrintTemplate } from 'models/baseModels/PrintTemplate';
 import { ModelNameEnum } from 'models/types';
-import Button from 'src/components/Button.vue';
 import AutoComplete from 'src/components/Controls/AutoComplete.vue';
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import PageHeader from 'src/components/PageHeader.vue';
@@ -175,11 +168,35 @@ const actions = computed<Action[]>(() => {
   return acts;
 });
 
+const printActions = computed(() => {
+  const acts: any[] = [];
+
+  acts.push({
+    label: t`Save as PDF`,
+    action: () => savePDF(),
+  });
+
+  acts.push({
+    label: t`Print`,
+    action: () => savePDF(true),
+  });
+
+  const customActs = actions.value;
+  acts.push(...customActs);
+
+  return acts;
+});
+
 // Methods
 const setScale = () => {
   scale.value = 1;
   const widthVal = (templateDoc.value?.width ?? 21) * 37.8;
-  let containerWidth = window.innerWidth - 32;
+  let containerWidth = 1024;
+  if (typeof window !== 'undefined') {
+    containerWidth = window.innerWidth - 32;
+  } else if (typeof SystemInfo !== 'undefined') {
+    containerWidth = (SystemInfo.pixelWidth / SystemInfo.pixelRatio) - 32;
+  }
   if (store.showSidebar) {
     containerWidth -= 12 * 16;
   }
@@ -284,7 +301,7 @@ const savePDF = async (shouldPrint?: boolean) => {
 // Lifecycles
 onMounted(async () => {
   await initialize();
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.pv = {
       doc,
@@ -295,7 +312,7 @@ onMounted(async () => {
       templateList,
       helperMessage,
       printProps,
-      actions,
+      printActions,
       setScale,
       onTemplateNameChange,
       setTemplateList,

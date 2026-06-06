@@ -19,10 +19,25 @@ defineEmits<{
 }>();
 
 const appStore = useAppStore();
-const toggleSidebar = () => appStore.toggleSidebar();
 </script>
 <template>
-  <view class="flex overflow-hidden">
+  <view class="flex overflow-hidden relative">
+    <!-- Sidebar backdrop overlay for mobile -->
+    <Transition
+      enter-active-class="transition-opacity duration-150 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-150 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <view
+        v-if="appStore.showSidebar"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden"
+        @tap="() => appStore.toggleSidebar(false)"
+      />
+    </Transition>
+
     <Transition
       enter-active-class="transition-all duration-150 ease-out"
       enter-from-class="-translate-x-full rtl:translate-x-full opacity-0 w-0"
@@ -34,7 +49,7 @@ const toggleSidebar = () => appStore.toggleSidebar();
       <!-- eslint-disable vue/require-explicit-emits -->
       <Sidebar
         v-show="appStore.showSidebar"
-        class="flex-shrink-0 border-e border-border whitespace-nowrap w-sidebar"
+        class="fixed md:relative inset-y-0 start-0 z-50 bg-sidebar flex-shrink-0 border-e border-border whitespace-nowrap w-sidebar"
         :theme="theme"
         @change-db-file="$emit('change-db-file')"
         @toggle-darkmode="$emit('toggle-darkmode')"
@@ -71,14 +86,5 @@ const toggleSidebar = () => appStore.toggleSidebar();
         </Transition>
       </router-view>
     </view>
-
-    <!-- Show Sidebar Button -->
-    <button
-      v-show="!appStore.showSidebar"
-      class="absolute bottom-0 start-0 text-description hover:bg-surface-hover rounded rtl-rotate-180 p-1 m-4 opacity-0 hover:opacity-100 hover:shadow-md"
-      @tap="() => toggleSidebar()"
-    >
-      <LucideIcon name="chevrons-right" class="w-4 h-4" />
-    </button>
   </view>
 </template>

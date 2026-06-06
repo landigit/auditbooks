@@ -23,19 +23,19 @@
       <!-- Buttons -->
       <view class="me-2 flex gap-1">
         <!-- Upload Button -->
-        <button v-if="!value" class="p-0.5 rounded" @tap="upload">
+        <view v-if="!value" class="p-0.5 rounded" @tap="upload">
           <LucideIcon name="upload" class="h-4 w-4 text-description" />
-        </button>
+        </view>
 
         <!-- Download Button -->
-        <button v-if="value" class="p-0.5 rounded" @tap="download">
+        <view v-if="value" class="p-0.5 rounded" @tap="download">
           <LucideIcon name="download" class="h-4 w-4 text-description" />
-        </button>
+        </view>
 
         <!-- Clear Button -->
-        <button v-if="value && !isReadOnly" class="p-0.5 rounded" @tap="clear">
+        <view v-if="value && !isReadOnly" class="p-0.5 rounded" @tap="clear">
           <LucideIcon name="x" class="h-4 w-4 text-description" />
-        </button>
+        </view>
       </view>
     </view>
   </view>

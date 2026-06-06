@@ -60,7 +60,7 @@
                   }"
                   :value="filter.fieldname"
                   @mousedown.stop
-                  @click.stop
+                  @tap.stop
                   @change="(value) => updateNewFilters(i, 'fieldname', value)"
                   @keydown.enter="applyFilters"
                 />
@@ -79,7 +79,7 @@
                   :value="filter.condition"
                   :close-drop-down="false"
                   @mousedown.stop
-                  @click.stop
+                  @tap.stop
                   @change="(value) => updateNewFilters(i, 'condition', value)"
                   @keydown.enter="applyFilters"
                 />
@@ -97,7 +97,7 @@
                   :value="String(filter.value)"
                   :close-drop-down="false"
                   @mousedown.stop
-                  @click.stop
+                  @tap.stop
                   @change="(value) => updateNewFilters(i, 'value', value)"
                   @keydown.enter="applyFilters"
                 />

@@ -2,6 +2,10 @@ import { IPC } from 'utils/ipc/types';
 
 declare global {
   const ipc: IPC;
+  const SystemInfo: {
+    pixelWidth: number;
+    pixelRatio: number;
+  };
 }
 
 declare module '*.vue' {

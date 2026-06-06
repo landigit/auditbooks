@@ -1,27 +1,27 @@
 <template>
-  <view class="flex">
+  <view class="flex items-center gap-1">
     <SearchBar />
     <!-- Back Button -->
     <a
       ref="backlink"
-      class="nav-link border-l border-r border-border bg-canvas-muted"
-      :class="
+      class="nav-link flex items-center border border-border bg-canvas-muted rounded-md h-8"
+      :class="[
         store.historyState.back
           ? 'text-main cursor-pointer'
-          : 'text-description'
-      "
+          : 'text-description pointer-events-none opacity-50',
+      ]"
       @tap="router.back()"
     >
       <lucide-icon name="chevron-left" class="w-4 h-4" />
     </a>
     <!-- Forward Button -->
     <a
-      class="nav-link rounded-md rounded-l-none bg-canvas-muted"
-      :class="
+      class="nav-link hidden md:flex items-center border border-border bg-canvas-muted rounded-md h-8"
+      :class="[
         store.historyState.forward
           ? 'text-main cursor-pointer'
-          : 'text-description'
-      "
+          : 'text-description pointer-events-none opacity-50',
+      ]"
       @tap="router.forward()"
     >
       <lucide-icon name="chevron-right" class="w-4 h-4" />
@@ -62,6 +62,6 @@ onDeactivated(() => {
 <style scoped>
 @reference "../styles/index.css";
 .nav-link {
-  @apply flex items-center bg-canvas-muted px-3;
+  @apply bg-canvas-muted px-3;
 }
 </style>

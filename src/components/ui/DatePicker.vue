@@ -52,7 +52,7 @@ const sizeClasses = computed(() => {
 <template>
   <Popover>
     <PopoverTrigger as-child>
-      <button
+      <view
         variant="outline"
         :class="
           cn(
@@ -78,7 +78,7 @@ const sizeClasses = computed(() => {
             modelValue ? df.format(modelValue) : placeholder || 'Pick a date'
           }}</text>
         </view>
-      </button>
+      </view>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0">
       <Calendar v-model="value" initial-focus />

@@ -29,7 +29,9 @@ export const useAppStore = defineStore('app', () => {
         : 'Linux';
   });
 
-  const showSidebar = ref(true);
+  const showSidebar = ref(
+    typeof window !== 'undefined' ? window.innerWidth >= 768 : true
+  );
   const theme = ref<Theme>('auto');
 
   const isDark = computed(() => {

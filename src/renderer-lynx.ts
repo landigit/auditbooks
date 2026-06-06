@@ -7,6 +7,9 @@ import { useAppStore } from './stores/app';
 
 (async () => {
   try {
+    // Pre-load persistent configurations from dev-backend
+    await (ipc.store as any).load();
+
     const app = createApp(App);
     const pinia = createPinia();
     app.use(pinia);

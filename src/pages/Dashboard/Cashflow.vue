@@ -122,7 +122,13 @@ const chartData = computed(() => {
 
 // Methods
 const updateAspectRatio = () => {
-  aspectRatio.value = window.innerWidth < 768 ? 2.2 : 4.15;
+  let width = 1024;
+  if (typeof window !== 'undefined') {
+    width = window.innerWidth;
+  } else if (typeof SystemInfo !== 'undefined') {
+    width = SystemInfo.pixelWidth / SystemInfo.pixelRatio;
+  }
+  aspectRatio.value = width < 768 ? 2.2 : 4.15;
 };
 
 const setData = async () => {
@@ -184,11 +190,15 @@ watch(
 // Lifecycle Hooks
 onMounted(() => {
   updateAspectRatio();
-  window.addEventListener('resize', updateAspectRatio);
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', updateAspectRatio);
+  }
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateAspectRatio);
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('resize', updateAspectRatio);
+  }
 });
 
 onActivated(async () => {

@@ -44,6 +44,9 @@ export enum IPC_ACTIONS {
   DB_SCHEMA = 'db-schema',
   READ_DOC_FILE = 'READ_DOC_FILE',
   READ_DOC_DATA = 'READ_DOC_DATA',
+  STORE_ALL = 'store-all',
+  STORE_SET = 'store-set',
+  STORE_DELETE = 'store-delete',
 }
 
 // ipcMain.send(...)

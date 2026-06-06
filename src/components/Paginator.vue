@@ -55,7 +55,7 @@
       class="border border-border rounded flex justify-self-end"
     >
       <template v-for="c in filteredCounts" :key="c + '-count'">
-        <button
+        <view
           class="w-9"
           :class="
             count === c || (count === itemCount && c === -1)
@@ -65,7 +65,7 @@
           @tap="setCount(c)"
         >
           {{ c === -1 ? t`All` : c }}
-        </button>
+        </view>
       </template>
     </view>
   </view>

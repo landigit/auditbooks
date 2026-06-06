@@ -2,29 +2,14 @@
   <view class="flex flex-col w-full h-full">
     <PageHeader :title="title">
       <DropdownWithActions
-        v-for="group of groupedActions"
-        :key="group.label"
-        :icon="false"
-        :type="group.type"
-        :actions="group.actions"
-        class="text-xs"
-      >
-        {{ group.group }}
-      </DropdownWithActions>
-      <Button
-        ref="printButton"
-        :icon="true"
-        :title="t`Open Report Print View`"
-        @tap="routeTo(`/report-print/${reportClassName}`)"
-      >
-        <lucide-icon name="printer" class="w-4 h-4"></lucide-icon>
-      </Button>
+        :actions="reportActions"
+      />
     </PageHeader>
 
     <!-- Filters -->
     <view
       v-if="report && report.filters.length"
-      class="grid grid-cols-5 gap-4 p-4 border-b border-border items-end"
+      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 p-4 border-b border-border items-end"
     >
       <FormControl
         v-for="field in report.filters"
@@ -60,14 +45,12 @@ import { reports } from 'reports';
 import { Report } from 'reports/Report';
 import { shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap, getReport } from 'src/utils/misc';
-import { ActionGroup } from 'src/utils/types';
 import { routeTo } from 'src/utils/ui';
 import { useAppStore } from 'src/stores/app';
 import PageHeader from 'src/components/PageHeader.vue';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import ListReport from 'src/components/Report/ListReport.vue';
 import DropdownWithActions from 'src/components/DropdownWithActions.vue';
-import Button from 'src/components/Button.vue';
 
 // Define Props
 const props = withDefaults(
@@ -100,28 +83,22 @@ const title = computed(() => {
   return reports[props.reportClassName]?.title ?? t`Report`;
 });
 
-const groupedActions = computed(() => {
-  const actions = report.value?.getActions() ?? [];
-  const actionsMap = actions.reduce(
-    (acc, ac) => {
-      if (!ac.group) {
-        ac.group = 'none';
-      }
+const reportActions = computed(() => {
+  const actions: any[] = [];
 
-      acc[ac.group] ??= {
-        group: ac.group,
-        label: ac.label ?? '',
-        type: ac.type ?? 'secondary',
-        actions: [],
-      };
+  const rawActions = report.value?.getActions() ?? [];
+  actions.push(...rawActions);
 
-      acc[ac.group].actions.push(ac);
-      return acc;
-    },
-    {} as Record<string, ActionGroup>
-  );
+  if (report.value) {
+    actions.push({
+      label: t`Print`,
+      action: () => {
+        routeTo(`/report-print/${props.reportClassName}`);
+      },
+    });
+  }
 
-  return Object.values(actionsMap);
+  return actions;
 });
 
 // Methods
@@ -164,13 +141,13 @@ onActivated(async () => {
     await report.value?.updateData();
   }
 
-  if (store.isDevelopment) {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-ignore
     window.rep = {
       loading,
       report,
       title,
-      groupedActions,
+      reportActions,
       setReportData,
     };
   }
