@@ -260,7 +260,7 @@ const setScale = () => {
   if (typeof window !== 'undefined') {
     containerWidth = window.innerWidth - 26 * 16;
   } else if (typeof SystemInfo !== 'undefined') {
-    containerWidth = (SystemInfo.pixelWidth / SystemInfo.pixelRatio) - 26 * 16;
+    containerWidth = SystemInfo.pixelWidth / SystemInfo.pixelRatio - 26 * 16;
   }
   if (store.showSidebar) {
     containerWidth -= 12 * 16;

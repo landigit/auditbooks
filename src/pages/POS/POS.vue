@@ -394,7 +394,10 @@ function addQuickQtyListeners() {
       'keydown',
       quickQtyKeyDownHandler.value as EventListener
     );
-    window.addEventListener('keyup', quickQtyKeyUpHandler.value as EventListener);
+    window.addEventListener(
+      'keyup',
+      quickQtyKeyUpHandler.value as EventListener
+    );
   }
 }
 

@@ -66,7 +66,9 @@ async function openTransaction(t: any) {
   <view class="h-screen flex flex-col bg-canvas">
     <PageHeader :title="t`Transaction Calendar`" />
 
-    <view class="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden p-4 md:p-6 gap-4 md:gap-6">
+    <view
+      class="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden p-4 md:p-6 gap-4 md:gap-6"
+    >
       <!-- Calendar Panel -->
       <view class="w-full md:w-1/3 flex flex-col gap-4 flex-shrink-0">
         <component

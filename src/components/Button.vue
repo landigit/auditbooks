@@ -54,4 +54,3 @@ const _class = computed(() => {
 <style scoped>
 @reference "../styles/index.css";
 </style>
-

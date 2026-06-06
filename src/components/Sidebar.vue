@@ -235,9 +235,12 @@ onUnmounted(() => {
 function getIconStyle(iconName: string, active: boolean) {
   const isDark = resolvedIsDark.value;
 
-  const colorMap: Record<string, { light: string; dark: string; lightPassive: string; darkPassive: string }> = isDark
+  const colorMap: Record<
+    string,
+    { light: string; dark: string; lightPassive: string; darkPassive: string }
+  > = isDark
     ? {
-        'dashboard': {
+        dashboard: {
           light: 'var(--color-blue-300)',
           dark: 'var(--color-blue-400)',
           lightPassive: 'var(--color-blue-400)',
@@ -249,43 +252,43 @@ function getIconStyle(iconName: string, active: boolean) {
           lightPassive: 'var(--color-teal-400)',
           darkPassive: 'var(--color-teal-500)',
         },
-        'sales': {
+        sales: {
           light: 'var(--color-green-300)',
           dark: 'var(--color-green-400)',
           lightPassive: 'var(--color-green-400)',
           darkPassive: 'var(--color-green-500)',
         },
-        'purchase': {
+        purchase: {
           light: 'var(--color-red-300)',
           dark: 'var(--color-red-400)',
           lightPassive: 'var(--color-red-400)',
           darkPassive: 'var(--color-red-500)',
         },
-        'inventory': {
+        inventory: {
           light: 'var(--color-amber-300)',
           dark: 'var(--color-amber-400)',
           lightPassive: 'var(--color-amber-400)',
           darkPassive: 'var(--color-amber-500)',
         },
-        'gst': {
+        gst: {
           light: 'var(--color-violet-300)',
           dark: 'var(--color-violet-400)',
           lightPassive: 'var(--color-violet-400)',
           darkPassive: 'var(--color-violet-500)',
         },
-        'pos': {
+        pos: {
           light: 'var(--color-indigo-300)',
           dark: 'var(--color-indigo-400)',
           lightPassive: 'var(--color-indigo-400)',
           darkPassive: 'var(--color-indigo-500)',
         },
-        'reports': {
+        reports: {
           light: 'var(--color-orange-300)',
           dark: 'var(--color-orange-400)',
           lightPassive: 'var(--color-orange-400)',
           darkPassive: 'var(--color-orange-500)',
         },
-        'settings': {
+        settings: {
           light: 'var(--color-purple-300)',
           dark: 'var(--color-purple-400)',
           lightPassive: 'var(--color-purple-400)',
@@ -293,7 +296,7 @@ function getIconStyle(iconName: string, active: boolean) {
         },
       }
     : {
-        'dashboard': {
+        dashboard: {
           light: 'var(--color-blue-400)',
           dark: 'var(--color-blue-600)',
           lightPassive: 'var(--color-blue-600)',
@@ -305,43 +308,43 @@ function getIconStyle(iconName: string, active: boolean) {
           lightPassive: 'var(--color-teal-600)',
           darkPassive: 'var(--color-teal-800)',
         },
-        'sales': {
+        sales: {
           light: 'var(--color-green-400)',
           dark: 'var(--color-green-600)',
           lightPassive: 'var(--color-green-600)',
           darkPassive: 'var(--color-green-800)',
         },
-        'purchase': {
+        purchase: {
           light: 'var(--color-red-400)',
           dark: 'var(--color-red-600)',
           lightPassive: 'var(--color-red-600)',
           darkPassive: 'var(--color-red-800)',
         },
-        'inventory': {
+        inventory: {
           light: 'var(--color-amber-400)',
           dark: 'var(--color-amber-600)',
           lightPassive: 'var(--color-amber-600)',
           darkPassive: 'var(--color-amber-800)',
         },
-        'gst': {
+        gst: {
           light: 'var(--color-violet-400)',
           dark: 'var(--color-violet-600)',
           lightPassive: 'var(--color-violet-600)',
           darkPassive: 'var(--color-violet-800)',
         },
-        'pos': {
+        pos: {
           light: 'var(--color-indigo-400)',
           dark: 'var(--color-indigo-600)',
           lightPassive: 'var(--color-indigo-600)',
           darkPassive: 'var(--color-indigo-800)',
         },
-        'reports': {
+        reports: {
           light: 'var(--color-orange-400)',
           dark: 'var(--color-orange-600)',
           lightPassive: 'var(--color-orange-600)',
           darkPassive: 'var(--color-orange-800)',
         },
-        'settings': {
+        settings: {
           light: 'var(--color-purple-400)',
           dark: 'var(--color-purple-600)',
           lightPassive: 'var(--color-purple-600)',

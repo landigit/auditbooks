@@ -32,12 +32,15 @@ export function useKeys() {
 
   const keydownListener = (e: KeyboardEvent) => {
     const notMods = !(e.altKey || e.metaKey || e.ctrlKey);
-    const isHTMLInput = typeof HTMLInputElement !== 'undefined' && e.target instanceof HTMLInputElement;
+    const isHTMLInput =
+      typeof HTMLInputElement !== 'undefined' &&
+      e.target instanceof HTMLInputElement;
     if (isHTMLInput && notMods) {
       return;
     }
 
-    const isHTMLElement = typeof HTMLElement !== 'undefined' && e.target instanceof HTMLElement;
+    const isHTMLElement =
+      typeof HTMLElement !== 'undefined' && e.target instanceof HTMLElement;
     if (
       isHTMLElement &&
       (e.target as any).contentEditable === 'true' &&

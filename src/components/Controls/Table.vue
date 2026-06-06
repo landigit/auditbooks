@@ -13,7 +13,12 @@
         <!-- Scrollable container for both Title and Data Rows -->
         <view
           class="overflow-auto custom-scroll custom-scroll-thumb1"
-          :style="{ 'max-height': maxHeight ? `calc(${maxHeight} + var(--h-row-mid))` : '', 'scrollbar-gutter': 'stable' }"
+          :style="{
+            'max-height': maxHeight
+              ? `calc(${maxHeight} + var(--h-row-mid))`
+              : '',
+            'scrollbar-gutter': 'stable',
+          }"
         >
           <!-- Title Row -->
           <Row
@@ -54,7 +59,8 @@
               :can-edit-row="canEditRow"
               @remove="removeRow(row)"
               @change="
-                (field: any, value: any) => $emit('row-change', field, value, df)
+                (field: any, value: any) =>
+                  $emit('row-change', field, value, df)
               "
             />
           </view>
@@ -82,9 +88,7 @@
             </text>
             <text
               v-if="
-                value &&
-                effectiveMaxRows &&
-                value.length > effectiveMaxRows
+                value && effectiveMaxRows && value.length > effectiveMaxRows
               "
               class="text-end px-2"
             >
@@ -176,10 +180,20 @@ const ratio = computed(() => {
     if (name === 'item' || name === 'description' || name === 'account') {
       return 2.2;
     }
-    if (type === 'Link' || type === 'Data' || type === 'Select' || type === 'Text') {
+    if (
+      type === 'Link' ||
+      type === 'Data' ||
+      type === 'Select' ||
+      type === 'Text'
+    ) {
       return 1.5;
     }
-    if (type === 'Int' || type === 'Float' || type === 'Percent' || type === 'Check') {
+    if (
+      type === 'Int' ||
+      type === 'Float' ||
+      type === 'Percent' ||
+      type === 'Check'
+    ) {
       return 0.7;
     }
     if (type === 'Date') {
@@ -280,8 +294,7 @@ const setMaxHeight = async () => {
     rowHeight = 48; // Fallback to standard row height (3rem)
   }
 
-  const computedMaxHeight =
-    rowHeight * Math.min(effectiveMaxRows.value, size);
+  const computedMaxHeight = rowHeight * Math.min(effectiveMaxRows.value, size);
   maxHeight.value = `${computedMaxHeight}px`;
 };
 

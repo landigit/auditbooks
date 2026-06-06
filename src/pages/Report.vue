@@ -1,9 +1,7 @@
 <template>
   <view class="flex flex-col w-full h-full">
     <PageHeader :title="title">
-      <DropdownWithActions
-        :actions="reportActions"
-      />
+      <DropdownWithActions :actions="reportActions" />
     </PageHeader>
 
     <!-- Filters -->

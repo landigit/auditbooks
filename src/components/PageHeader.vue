@@ -54,7 +54,9 @@
       </text>
 
       <!-- Left Slot -->
-      <view class="flex items-stretch window-no-drag gap-2 md:gap-4 flex-shrink-0 min-w-0">
+      <view
+        class="flex items-stretch window-no-drag gap-2 md:gap-4 flex-shrink-0 min-w-0"
+      >
         <slot name="left" />
       </view>
     </view>

@@ -1,4 +1,11 @@
 import './ipc-polyfill';
+import { registerFsBridge } from './utils/fsBridge';
+import { tauriFsBridge } from './utils/ipc/tauriFs';
+
+// Register the Tauri native filesystem bridge before any DB access.
+// In web-only dev mode (no Tauri shell) this is a no-op because tauriFs
+// lazy-imports @tauri-apps/plugin-fs only when an actual DB call is made.
+registerFsBridge(tauriFsBridge);
 import { CUSTOM_EVENTS } from 'utils/messages';
 import { UnexpectedLogObject } from 'utils/types';
 import { App as VueApp, createApp } from 'vue';

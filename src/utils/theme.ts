@@ -3,7 +3,10 @@ export type Theme = 'auto' | 'light' | 'dark';
 let themeListener: ((e: MediaQueryListEvent) => void) | null = null;
 
 export function setTheme(theme: Theme): void {
-  const mediaQuery = typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  const mediaQuery =
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-color-scheme: dark)')
+      : null;
 
   // Clean up old listener if it exists
   if (themeListener && mediaQuery) {

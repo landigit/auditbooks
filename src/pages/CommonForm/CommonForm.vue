@@ -30,9 +30,7 @@
       </text>
     </template>
     <template v-if="hasDoc" #header>
-      <DropdownWithActions
-        :actions="formActions"
-      />
+      <DropdownWithActions :actions="formActions" />
       <Button v-if="doc?.canSave" type="primary" @tap="sync">
         {{ t`Save` }}
       </Button>

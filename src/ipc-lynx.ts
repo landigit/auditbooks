@@ -111,7 +111,10 @@ const storeInstance = {
     const storeKey = `config:${key}`;
     delete configStore[storeKey];
     callBackend(IPC_ACTIONS.STORE_DELETE, [storeKey]).catch((err) => {
-      console.error(`[Lynx IPC] Failed to persist config delete for ${key}:`, err);
+      console.error(
+        `[Lynx IPC] Failed to persist config delete for ${key}:`,
+        err
+      );
     });
   },
 };

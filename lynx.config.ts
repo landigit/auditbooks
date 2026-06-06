@@ -48,6 +48,16 @@ export default defineConfig({
     lynx: {},
     web: {},
   },
+  output: {
+    copy: [
+      {
+        // Copy the SQLite Wasm binary into the Lynx bundle output so the
+        // JS thread can locate it at runtime via a relative URL.
+        from: path.resolve(__dirname, 'node_modules/sql.js/dist/sql-wasm.wasm'),
+        to: 'sql-wasm.wasm',
+      },
+    ],
+  },
   plugins: [
     pluginQRCode({
       schema(url) {

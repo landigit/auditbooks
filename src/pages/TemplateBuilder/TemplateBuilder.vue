@@ -415,7 +415,10 @@ const toggleShowHints = () => {
 
 const getEditModeScale = (): number => {
   const div = printContainer.value?.$el;
-  if (typeof HTMLDivElement === 'undefined' || !(div instanceof HTMLDivElement)) {
+  if (
+    typeof HTMLDivElement === 'undefined' ||
+    !(div instanceof HTMLDivElement)
+  ) {
     return scale.value;
   }
 
