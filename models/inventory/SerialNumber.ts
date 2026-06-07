@@ -11,13 +11,7 @@ export class SerialNumber extends Doc {
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: [
-        "name",
-        getSerialNumberStatusColumn(),
-        "item",
-        "description",
-        "party",
-      ],
+      columns: ["name", getSerialNumberStatusColumn(), "item", "description", "party"],
     };
   }
 }

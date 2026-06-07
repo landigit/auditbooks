@@ -45,9 +45,7 @@ export class CreateCOA {
       const accountNumber = (child as COAChildAccount).accountNumber;
       const accountName = getAccountName(rootName, accountNumber);
 
-      const isGroup = identifyIsGroup(
-        child as COAChildAccount | COARootAccount,
-      );
+      const isGroup = identifyIsGroup(child as COAChildAccount | COARootAccount);
 
       const doc = this.fyo.doc.getNewDoc("Account", {
         name: accountName,
@@ -58,12 +56,7 @@ export class CreateCOA {
       });
 
       await doc.sync();
-      await this.createCOAAccounts(
-        child as COAChildAccount,
-        accountName,
-        rootType,
-        false,
-      );
+      await this.createCOAAccounts(child as COAChildAccount, accountName, rootType, false);
     }
   }
 }
@@ -93,8 +86,9 @@ async function getCOA(chartOfAccounts: string): Promise<COATree> {
   }
 
   try {
-    const countryCoa = (await import(`../../fixtures/verified/${conCode}.json`))
-      .default as { tree: COATree };
+    const countryCoa = (await import(`../../fixtures/verified/${conCode}.json`)).default as {
+      tree: COATree;
+    };
     return countryCoa.tree;
   } catch (e) {
     return getStandardCOA();

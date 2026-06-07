@@ -13,9 +13,7 @@ import { safeParseFloat } from "utils/index";
 import { showToast } from "./interactive";
 import { POSClosingShift } from "models/inventory/Point of Sale/POSClosingShift";
 
-export async function getPOSOpeningShiftDoc(
-  fyo: Fyo,
-): Promise<POSOpeningShift> {
+export async function getPOSOpeningShiftDoc(fyo: Fyo): Promise<POSOpeningShift> {
   const existingShiftDoc = await fyo.db.getAll(ModelNameEnum.POSOpeningShift, {
     limit: 1,
     orderBy: "created",
@@ -62,9 +60,7 @@ export function getItemDiscounts(items: SalesInvoiceItem[]): Money {
       }
     } else {
       if (item.amount && (item.itemDiscountPercent as number) > 1) {
-        itemDiscounts = itemDiscounts.add(
-          item.amount.percent(item.itemDiscountPercent as number),
-        );
+        itemDiscounts = itemDiscounts.add(item.amount.percent(item.itemDiscountPercent as number));
       }
     }
   }
@@ -80,19 +76,12 @@ export async function getItem(item: string): Promise<Item | undefined> {
   return itemDoc;
 }
 
-export async function validateSinv(
-  sinvDoc: SalesInvoice,
-  itemQtyMap: ItemQtyMap,
-) {
+export async function validateSinv(sinvDoc: SalesInvoice, itemQtyMap: ItemQtyMap) {
   if (!sinvDoc) {
     return;
   }
 
-  await validateSinvItems(
-    sinvDoc.items as SalesInvoiceItem[],
-    itemQtyMap,
-    sinvDoc.returnAgainst,
-  );
+  await validateSinvItems(sinvDoc.items as SalesInvoiceItem[], itemQtyMap, sinvDoc.returnAgainst);
 }
 
 async function validateSinvItems(
@@ -101,20 +90,14 @@ async function validateSinvItems(
   isReturn?: string,
 ) {
   for (const item of sinvItems) {
-    const trackItem = await fyo.getValue(
-      ModelNameEnum.Item,
-      item.item as string,
-      "trackItem",
-    );
+    const trackItem = await fyo.getValue(ModelNameEnum.Item, item.item as string, "trackItem");
 
     if (!trackItem) {
       return;
     }
 
     if (!item.quantity || (item.quantity < 1 && !isReturn)) {
-      throw new ValidationError(
-        t`Invalid Quantity for Item ${item.item as string}`,
-      );
+      throw new ValidationError(t`Invalid Quantity for Item ${item.item as string}`);
     }
 
     if (!itemQtyMap[item.item as string]) {
@@ -140,16 +123,10 @@ export async function validateShipment(itemSerialNumbers: ItemSerialNumbers) {
     const serialNumbers = itemSerialNumbers[idx].split("\n");
 
     for (const serialNumber of serialNumbers) {
-      const status = await fyo.getValue(
-        ModelNameEnum.SerialNumber,
-        serialNumber,
-        "status",
-      );
+      const status = await fyo.getValue(ModelNameEnum.SerialNumber, serialNumber, "status");
 
       if (status !== "Active") {
-        throw new ValidationError(
-          t`Serial Number ${serialNumber} status is not Active.`,
-        );
+        throw new ValidationError(t`Serial Number ${serialNumber} status is not Active.`);
       }
     }
   }
@@ -159,9 +136,7 @@ export function validateIsPosSettingsSet(fyo: Fyo) {
   try {
     const inventory = fyo.singles.POSSettings?.inventory;
     if (!inventory) {
-      throw new ValidationError(
-        t`POS Inventory is not set. Please set it on POS Settings`,
-      );
+      throw new ValidationError(t`POS Inventory is not set. Please set it on POS Settings`);
     }
 
     const cashAccount = fyo.singles.POSSettings?.cashAccount;
@@ -173,9 +148,7 @@ export function validateIsPosSettingsSet(fyo: Fyo) {
 
     const writeOffAccount = fyo.singles.POSSettings?.writeOffAccount;
     if (!writeOffAccount) {
-      throw new ValidationError(
-        t`POS Write Off Account is not set. Please set it on POS Settings`,
-      );
+      throw new ValidationError(t`POS Write Off Account is not set. Please set it on POS Settings`);
     }
   } catch (error) {
     showToast({
@@ -201,9 +174,7 @@ export function getTotalTaxedAmount(sinvDoc: SalesInvoice): Money {
 export function validateClosingAmounts(posShiftDoc: POSClosingShift) {
   try {
     if (!posShiftDoc) {
-      throw new ValidationError(
-        `POS Shift Document not loaded. Please reload.`,
-      );
+      throw new ValidationError(`POS Shift Document not loaded. Please reload.`);
     }
 
     posShiftDoc.closingAmounts?.map((row) => {
@@ -216,21 +187,16 @@ export function validateClosingAmounts(posShiftDoc: POSClosingShift) {
   } catch (error) {}
 }
 
-export async function transferPOSCashAndWriteOff(
-  fyo: Fyo,
-  posShiftDoc: POSClosingShift,
-) {
-  const expectedCashAmount = posShiftDoc.closingAmounts?.find(
-    (row) => row.paymentMethod === "Cash",
-  )?.expectedAmount as Money;
+export async function transferPOSCashAndWriteOff(fyo: Fyo, posShiftDoc: POSClosingShift) {
+  const expectedCashAmount = posShiftDoc.closingAmounts?.find((row) => row.paymentMethod === "Cash")
+    ?.expectedAmount as Money;
 
   if (expectedCashAmount.isZero()) {
     return;
   }
 
-  const closingCashAmount = posShiftDoc.closingAmounts?.find(
-    (row) => row.paymentMethod === "Cash",
-  )?.closingAmount as Money;
+  const closingCashAmount = posShiftDoc.closingAmounts?.find((row) => row.paymentMethod === "Cash")
+    ?.closingAmount as Money;
 
   const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
     entryType: "Journal Entry",
@@ -246,9 +212,8 @@ export async function transferPOSCashAndWriteOff(
     credit: closingCashAmount,
   });
 
-  const differenceAmount = posShiftDoc?.closingAmounts?.find(
-    (row) => row.paymentMethod === "Cash",
-  )?.differenceAmount as Money;
+  const differenceAmount = posShiftDoc?.closingAmounts?.find((row) => row.paymentMethod === "Cash")
+    ?.differenceAmount as Money;
 
   if (differenceAmount.isNegative()) {
     await jvDoc.append("accounts", {

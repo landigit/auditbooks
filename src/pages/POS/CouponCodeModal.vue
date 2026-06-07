@@ -70,9 +70,7 @@
               @tap="setCouponCode()"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-green-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-green-text font-semibold">
                   {{ t`Save` }}
                 </text>
               </slot>
@@ -88,9 +86,7 @@
               @tap="cancelApplyCouponCode()"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-red-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-red-text font-semibold">
                   {{ t`Cancel` }}
                 </text>
               </slot>
@@ -104,9 +100,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Coupon Code Modal</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -174,15 +168,9 @@ const updateCouponCode = async (value: string | Event) => {
     }
 
     couponCode.value = value as string;
-    const appliedCouponCodes = fyo.doc.getNewDoc(
-      ModelNameEnum.AppliedCouponCodes,
-    );
+    const appliedCouponCodes = fyo.doc.getNewDoc(ModelNameEnum.AppliedCouponCodes);
 
-    await validateCouponCode(
-      appliedCouponCodes as AppliedCouponCodes,
-      couponCode.value,
-      sinvDoc,
-    );
+    await validateCouponCode(appliedCouponCodes as AppliedCouponCodes, couponCode.value, sinvDoc);
 
     await sinvDoc.append("coupons", { coupons: couponCode.value });
 

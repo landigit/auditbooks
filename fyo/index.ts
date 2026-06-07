@@ -113,11 +113,7 @@ export class Fyo {
     }
   }
 
-  async initializeAndRegister(
-    models: ModelMap = {},
-    regionalModels: ModelMap = {},
-    force = false,
-  ) {
+  async initializeAndRegister(models: ModelMap = {}, regionalModels: ModelMap = {}, force = false) {
     if (this._initialized && !force) return;
 
     await this.initializeModules();
@@ -162,10 +158,8 @@ export class Fyo {
       {} as Record<string, string | number | undefined>,
     );
 
-    const precision: number =
-      (acc.internalPrecision as number) ?? DEFAULT_INTERNAL_PRECISION;
-    const display: number =
-      (acc.displayPrecision as number) ?? DEFAULT_DISPLAY_PRECISION;
+    const precision: number = (acc.internalPrecision as number) ?? DEFAULT_INTERNAL_PRECISION;
+    const display: number = (acc.displayPrecision as number) ?? DEFAULT_DISPLAY_PRECISION;
     const currency: string = (acc.currency as string) ?? DEFAULT_CURRENCY;
 
     this.pesa = getMoneyMaker({
@@ -184,11 +178,7 @@ export class Fyo {
     return this.fieldMap[schemaName]?.[fieldname];
   }
 
-  async getValue(
-    schemaName: string,
-    name: string,
-    fieldname?: string,
-  ): Promise<DocValue | Doc[]> {
+  async getValue(schemaName: string, name: string, fieldname?: string): Promise<DocValue | Doc[]> {
     if (fieldname === undefined && this.schemaMap[schemaName]?.isSingle) {
       fieldname = name;
       name = schemaName;

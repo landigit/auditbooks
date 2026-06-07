@@ -1,17 +1,10 @@
 ﻿import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { SalesInvoice } from "../SalesInvoice/SalesInvoice";
 import { Payment } from "../Payment/Payment";
 import { PaymentTypeEnum } from "../Payment/types";
-import {
-  assertDoesNotThrow,
-  assertThrows,
-} from "backend/database/tests/helpers";
+import { assertDoesNotThrow, assertThrows } from "backend/database/tests/helpers";
 import { PurchaseInvoice } from "../PurchaseInvoice/PurchaseInvoice";
 
 const fyo = getTestFyo();
@@ -76,9 +69,7 @@ describe("Invoice", () => {
     await sinvDoc.runFormulas();
     await sinvDoc.submit();
 
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(
-      true,
-    );
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(true);
 
     const paymentDoc = sinvDoc.getPayment();
     await paymentDoc?.sync();
@@ -88,10 +79,7 @@ describe("Invoice", () => {
   });
 
   test("create SINV return for one qty", async () => {
-    const sinvDoc = (await fyo.doc.getDoc(
-      ModelNameEnum.SalesInvoice,
-      "SINV-1001",
-    )) as SalesInvoice;
+    const sinvDoc = (await fyo.doc.getDoc(ModelNameEnum.SalesInvoice, "SINV-1001")) as SalesInvoice;
 
     const returnDoc = (await sinvDoc?.getReturnDoc()) as SalesInvoice;
 
@@ -107,30 +95,21 @@ describe("Invoice", () => {
     await returnDoc.sync();
     await returnDoc.submit();
 
-    expect(
-      await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name),
-    ).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name)).toBe(true);
     expect(returnDoc.outstandingAmount?.float).toBe(itemData.rate);
 
-    const returnSinvAles = (await fyo.db.getAllRaw(
-      ModelNameEnum.AccountingLedgerEntry,
-      {
-        fields: ["name", "account", "credit", "debit"],
-        filters: { referenceName: returnDoc.name! },
-      },
-    )) as { account: string; credit: string; debit: string }[];
+    const returnSinvAles = (await fyo.db.getAllRaw(ModelNameEnum.AccountingLedgerEntry, {
+      fields: ["name", "account", "credit", "debit"],
+      filters: { referenceName: returnDoc.name! },
+    })) as { account: string; credit: string; debit: string }[];
 
     for (const ale of returnSinvAles) {
       if (ale.account === "Sales") {
-        expect(fyo.pesa(ale.debit as string).float).toBe(
-          fyo.pesa(itemData.rate).float,
-        );
+        expect(fyo.pesa(ale.debit as string).float).toBe(fyo.pesa(itemData.rate).float);
       }
 
       if (ale.account === "Debtors") {
-        expect(fyo.pesa(ale.credit as string).float).toBe(
-          fyo.pesa(itemData.rate).float,
-        );
+        expect(fyo.pesa(ale.credit as string).float).toBe(fyo.pesa(itemData.rate).float);
       }
     }
 
@@ -138,10 +117,7 @@ describe("Invoice", () => {
   });
 
   test("create SINV return for balance qty", async () => {
-    const sinvDoc = (await fyo.doc.getDoc(
-      ModelNameEnum.SalesInvoice,
-      "SINV-1001",
-    )) as SalesInvoice;
+    const sinvDoc = (await fyo.doc.getDoc(ModelNameEnum.SalesInvoice, "SINV-1001")) as SalesInvoice;
 
     const returnDoc = (await sinvDoc?.getReturnDoc()) as SalesInvoice;
     expect(returnDoc.items![0].quantity).toBe(-1);
@@ -150,9 +126,7 @@ describe("Invoice", () => {
     await returnDoc.runFormulas();
     await returnDoc.submit();
 
-    expect(
-      await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name),
-    ).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name)).toBe(true);
     expect(returnDoc.outstandingAmount?.float).toBe(itemData.rate);
   });
 
@@ -169,17 +143,13 @@ describe("Invoice", () => {
     expect(paymentDoc.amount?.float).toBe(itemData.rate);
 
     await paymentDoc.sync();
-    expect(await fyo.db.exists(ModelNameEnum.Payment, paymentDoc.name)).toBe(
-      true,
-    );
+    expect(await fyo.db.exists(ModelNameEnum.Payment, paymentDoc.name)).toBe(true);
 
     await assertDoesNotThrow(async () => await returnDoc.cancel());
   });
 
   test("creating PINV return when invoice is not paid", async () => {
-    const pinvDoc = fyo.doc.getNewDoc(
-      ModelNameEnum.PurchaseInvoice,
-    ) as PurchaseInvoice;
+    const pinvDoc = fyo.doc.getNewDoc(ModelNameEnum.PurchaseInvoice) as PurchaseInvoice;
 
     await pinvDoc.set({
       party: partyData.name,
@@ -205,13 +175,10 @@ describe("Invoice", () => {
     expect(returnDoc?.returnAgainst).toBe(pinvDoc.name);
     expect(returnDoc.items![0].quantity).toBe(-2);
 
-    const returnSinvAles = (await fyo.db.getAllRaw(
-      ModelNameEnum.AccountingLedgerEntry,
-      {
-        fields: ["name", "account", "credit", "debit"],
-        filters: { referenceName: returnDoc.name! },
-      },
-    )) as { account: string; credit: string; debit: string }[];
+    const returnSinvAles = (await fyo.db.getAllRaw(ModelNameEnum.AccountingLedgerEntry, {
+      fields: ["name", "account", "credit", "debit"],
+      filters: { referenceName: returnDoc.name! },
+    })) as { account: string; credit: string; debit: string }[];
 
     for (const ale of returnSinvAles) {
       if (ale.account === "Creditors") {
@@ -219,9 +186,7 @@ describe("Invoice", () => {
       }
 
       if (ale.account === "Cost of Goods Sold") {
-        expect(fyo.pesa(ale.credit as string).float).toBe(
-          returnDoc.outstandingAmount!.float,
-        );
+        expect(fyo.pesa(ale.credit as string).float).toBe(returnDoc.outstandingAmount!.float);
       }
     }
   });

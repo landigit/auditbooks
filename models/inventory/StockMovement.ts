@@ -1,11 +1,5 @@
 import { Fyo, t } from "fyo";
-import {
-  Action,
-  DefaultMap,
-  FiltersMap,
-  FormulaMap,
-  ListViewSettings,
-} from "fyo/model/types";
+import { Action, DefaultMap, FiltersMap, FormulaMap, ListViewSettings } from "fyo/model/types";
 import { ValidationError } from "fyo/utils/errors";
 import { LedgerPosting } from "models/Transactional/LedgerPosting";
 import { getDocStatusListColumn, getLedgerLinkAction } from "models/helpers";
@@ -45,10 +39,7 @@ export class StockMovement extends Transfer {
   formulas: FormulaMap = {
     amount: {
       formula: () => {
-        return this.items?.reduce(
-          (acc, item) => acc.add(item.amount ?? 0),
-          this.fyo.pesa(0),
-        );
+        return this.items?.reduce((acc, item) => acc.add(item.amount ?? 0), this.fyo.pesa(0));
       },
       dependsOn: ["items"],
     },
@@ -77,17 +68,10 @@ export class StockMovement extends Transfer {
         continue;
       }
 
-      const hasBatch = await this.fyo.getValue(
-        ModelNameEnum.Item,
-        item.item,
-        "hasBatch",
-      );
+      const hasBatch = await this.fyo.getValue(ModelNameEnum.Item, item.item, "hasBatch");
 
       if (hasBatch) {
-        const batchExists = await this.fyo.db.exists(
-          ModelNameEnum.Batch,
-          item.batch,
-        );
+        const batchExists = await this.fyo.db.exists(ModelNameEnum.Batch, item.batch);
 
         if (!batchExists) {
           batchesToCreate.push({
@@ -183,11 +167,7 @@ export class StockMovement extends Transfer {
     let batch: string | null | undefined =
       (itemDoc.defaultBatch as string | null | undefined) ?? null;
 
-    if (
-      this.movementType === MovementTypeEnum.MaterialReceipt &&
-      itemDoc.hasBatch &&
-      !batch
-    ) {
+    if (this.movementType === MovementTypeEnum.MaterialReceipt && itemDoc.hasBatch && !batch) {
       batch = await generateBatchForItem(this.fyo, name);
     }
 
@@ -197,14 +177,9 @@ export class StockMovement extends Transfer {
     };
 
     if (item.batch) {
-      const batchDoc = await this.fyo.doc.getDoc(
-        ModelNameEnum.Batch,
-        item.batch,
-      );
+      const batchDoc = await this.fyo.doc.getDoc(ModelNameEnum.Batch, item.batch);
       if (batchDoc && batchDoc.item !== name) {
-        throw new ValidationError(
-          t`Batch ${item.batch} does not belong to Item ${name}`,
-        );
+        throw new ValidationError(t`Batch ${item.batch} does not belong to Item ${name}`);
       }
     }
 
@@ -223,10 +198,7 @@ async function validateSerialNumberStatus(doc: StockMovement) {
       continue;
     }
 
-    const snDoc = await doc.fyo.doc.getDoc(
-      ModelNameEnum.SerialNumber,
-      serialNumber,
-    );
+    const snDoc = await doc.fyo.doc.getDoc(ModelNameEnum.SerialNumber, serialNumber);
 
     if (!(snDoc instanceof SerialNumber)) {
       continue;

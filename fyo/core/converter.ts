@@ -121,11 +121,7 @@ export class Converter {
           rawValue.map((rv) => this.#toDocValueMap(parentSchemaName, rv)),
         );
       } else {
-        Reflect.set(
-          docValueMap,
-          fieldname,
-          Converter.toDocValue(rawValue, field, this.fyo),
-        );
+        Reflect.set(docValueMap, fieldname, Converter.toDocValue(rawValue, field, this.fyo));
       }
     }
 
@@ -148,21 +144,14 @@ export class Converter {
           fieldname,
           docValue.map((value) => {
             if (value instanceof Doc) {
-              return this.#toRawValueMap(
-                parentSchemaName,
-                value.getValidDict(),
-              );
+              return this.#toRawValueMap(parentSchemaName, value.getValidDict());
             }
 
             return this.#toRawValueMap(parentSchemaName, value);
           }),
         );
       } else {
-        Reflect.set(
-          rawValueMap,
-          fieldname,
-          Converter.toRawValue(docValue, field, this.fyo),
-        );
+        Reflect.set(rawValueMap, fieldname, Converter.toRawValue(docValue, field, this.fyo));
       }
     }
 
@@ -447,11 +436,7 @@ function toRawAttachment(value: DocValue, field: Field): null | string {
     return null;
   }
 
-  if (
-    (value as Attachment)?.name &&
-    (value as Attachment)?.data &&
-    (value as Attachment)?.type
-  ) {
+  if ((value as Attachment)?.name && (value as Attachment)?.data && (value as Attachment)?.type) {
     return JSON.stringify(value);
   }
 

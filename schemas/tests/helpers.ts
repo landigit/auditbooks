@@ -48,19 +48,12 @@ export function someFieldExists(fieldList: string[], schema: Schema): boolean {
   return fieldsExist(fieldList, schema, "some");
 }
 
-function fieldsExist(
-  fieldList: string[],
-  schema: Schema,
-  type: "every" | "some",
-): boolean {
+function fieldsExist(fieldList: string[], schema: Schema, type: "every" | "some"): boolean {
   const schemaFieldNames = schema.fields.map((f) => f.fieldname);
   return fieldList.map((f) => schemaFieldNames.includes(f))[type](Boolean);
 }
 
-export function subtract(
-  targetList: string[],
-  ...removalLists: string[][]
-): string[] {
+export function subtract(targetList: string[], ...removalLists: string[][]): string[] {
   const removalList = removalLists.flat();
   return targetList.filter((f) => !removalList.includes(f));
 }

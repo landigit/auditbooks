@@ -1,9 +1,7 @@
 <template>
   <view v-if="!isLynx">
     <Modal class="h-auto w-96" :set-close-listener="false">
-      <text class="text-center font-semibold py-3">{{
-        t`Apply Price List`
-      }}</text>
+      <text class="text-center font-semibold py-3">{{ t`Apply Price List` }}</text>
       <view class="px-10">
         <view class="border-b border-border" />
         <view class="flex justify-center pt-10">
@@ -37,9 +35,7 @@
               @tap="setPriceList"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-green-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-green-text font-semibold">
                   {{ t`Save` }}
                 </text>
               </slot>
@@ -55,9 +51,7 @@
               @tap="cancelPriceList"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-red-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-red-text font-semibold">
                   {{ t`Cancel` }}
                 </text>
               </slot>
@@ -71,19 +65,13 @@
     v-else
     class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-50 p-4"
   >
-    <view
-      class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col"
-    >
-      <text class="text-lg font-bold text-main mb-3">{{
-        t`Apply Price List`
-      }}</text>
+    <view class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col">
+      <text class="text-lg font-bold text-main mb-3">{{ t`Apply Price List` }}</text>
       <view class="border-b border-border mb-4" />
 
       <view class="mb-4 flex-row items-center gap-2">
         <view class="flex-1">
-          <text class="text-sm font-semibold text-main mb-2">{{
-            t`Price List`
-          }}</text>
+          <text class="text-sm font-semibold text-main mb-2">{{ t`Price List` }}</text>
           <Link
             v-if="sinvDoc.fieldMap"
             class="w-full"

@@ -60,9 +60,7 @@ async function getFileContents(fileList: string[]): Promise<Content[]> {
   return contents;
 }
 
-async function getAllTStringsMap(
-  contents: Content[],
-): Promise<Map<string, string[]>> {
+async function getAllTStringsMap(contents: Content[]): Promise<Map<string, string[]>> {
   const strings: Map<string, string[]> = new Map();
   const promises: Promise<void>[] = [];
 
@@ -94,10 +92,7 @@ function tStringFinder(content: string): string[] {
   });
 }
 
-function tStringsToArray(
-  tMap: Map<string, string[]>,
-  tStrings: string[],
-): string[] {
+function tStringsToArray(tMap: Map<string, string[]>, tStrings: string[]): string[] {
   const tSet: Set<string> = new Set();
   for (const k of tMap.keys()) {
     tMap.get(k)!.forEach((s) => tSet.add(s));
@@ -204,8 +199,7 @@ async function writeTranslations(languageCode: string, tArray: string[]) {
     }
 
     console.log(
-      `Existing file found for '${languageCode}': ${path}\n` +
-        `regenerating it's translations.`,
+      `Existing file found for '${languageCode}': ${path}\n` + `regenerating it's translations.`,
     );
     regenerateTranslations(languageCode, tArray);
   } catch (err) {
@@ -220,9 +214,7 @@ async function writeTranslations(languageCode: string, tArray: string[]) {
   }
 }
 
-async function getTStringsFromJsonFileList(
-  fileList: string[],
-): Promise<string[]> {
+async function getTStringsFromJsonFileList(fileList: string[]): Promise<string[]> {
   const promises: Promise<void>[] = [];
   const schemaTStrings: string[][] = [];
 

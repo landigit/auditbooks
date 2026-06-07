@@ -76,22 +76,16 @@ export abstract class Transactional extends Doc {
       return;
     }
 
-    const ledgerEntryIds = (await this.fyo.db.getAll(
-      ModelNameEnum.AccountingLedgerEntry,
-      {
-        fields: ["name"],
-        filters: {
-          referenceType: this.schemaName,
-          referenceName: this.name!,
-        },
+    const ledgerEntryIds = (await this.fyo.db.getAll(ModelNameEnum.AccountingLedgerEntry, {
+      fields: ["name"],
+      filters: {
+        referenceType: this.schemaName,
+        referenceName: this.name!,
       },
-    )) as { name: string }[];
+    })) as { name: string }[];
 
     for (const { name } of ledgerEntryIds) {
-      const ledgerEntryDoc = await this.fyo.doc.getDoc(
-        ModelNameEnum.AccountingLedgerEntry,
-        name,
-      );
+      const ledgerEntryDoc = await this.fyo.doc.getDoc(ModelNameEnum.AccountingLedgerEntry, name);
       await ledgerEntryDoc.delete();
     }
   }

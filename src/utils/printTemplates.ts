@@ -7,11 +7,7 @@ import { getValueMapFromList } from "utils/index";
 import { TemplateFile } from "utils/types";
 import { showToast } from "./interactive";
 import { PrintValues } from "./types";
-import {
-  getDocFromNameIfExistsElseNew,
-  getSavePath,
-  showExportInFolder,
-} from "./ui";
+import { getDocFromNameIfExistsElseNew, getSavePath, showExportInFolder } from "./ui";
 import { Money } from "pesa";
 import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
 import { Payment } from "models/baseModels/Payment/Payment";
@@ -44,9 +40,7 @@ const printSettingsFields = [
 ];
 const accountingSettingsFields = ["gstin", "taxId"];
 
-export async function getPrintTemplatePropValues(
-  doc: Doc,
-): Promise<PrintValues> {
+export async function getPrintTemplatePropValues(doc: Doc): Promise<PrintValues> {
   const fyo = doc.fyo;
   let paymentId;
   let sinvDoc;
@@ -96,14 +90,9 @@ export async function getPrintTemplatePropValues(
   );
 
   const printSettings = await fyo.doc.getDoc(ModelNameEnum.PrintSettings);
-  const printValues = await getPrintTemplateDocValues(
-    printSettings,
-    printSettingsFields,
-  );
+  const printValues = await getPrintTemplateDocValues(printSettings, printSettingsFields);
 
-  const accountingSettings = await fyo.doc.getDoc(
-    ModelNameEnum.AccountingSettings,
-  );
+  const accountingSettings = await fyo.doc.getDoc(ModelNameEnum.AccountingSettings);
   const accountingValues = await getPrintTemplateDocValues(
     accountingSettings,
     accountingSettingsFields,
@@ -115,8 +104,7 @@ export async function getPrintTemplatePropValues(
   };
   const discountSchema = ["Invoice", "Quote"];
   if (discountSchema.some((value) => doc.schemaName?.endsWith(value))) {
-    (values.doc as PrintTemplateData).totalDiscount =
-      formattedTotalDiscount(doc);
+    (values.doc as PrintTemplateData).totalDiscount = formattedTotalDiscount(doc);
   }
   (values.doc as PrintTemplateData).showHSN = showHSN(doc);
 
@@ -149,10 +137,7 @@ async function getPaymentDetails(doc: Doc, paymentId: string[]) {
       amount: doc.fyo.format(paymentDoc.amount, ModelNameEnum.Currency),
       amountPaid: doc.fyo.format(paymentDoc.amountPaid, ModelNameEnum.Currency),
       paymentMethod: paymentDoc.paymentMethod as string,
-      outstandingAmount: doc.fyo.format(
-        outstandingAmount,
-        ModelNameEnum.Currency,
-      ),
+      outstandingAmount: doc.fyo.format(outstandingAmount, ModelNameEnum.Currency),
     });
   }
 
@@ -291,8 +276,7 @@ function getGrandTotalInWords(total: number) {
     if (groupValue > 0) {
       const groupText = convertThreeDigitNumber(groupValue);
       const groupSuffix = scales[groupCount - index - 1];
-      spelledOutInteger +=
-        groupText + (groupSuffix ? " " + groupSuffix : "") + " ";
+      spelledOutInteger += groupText + (groupSuffix ? " " + groupSuffix : "") + " ";
     }
   });
 
@@ -302,8 +286,7 @@ function getGrandTotalInWords(total: number) {
   const decimalCents = parseInt(decimalPart);
 
   if (decimalCents !== 0) {
-    spelledOutDecimal =
-      ` ${t`and`} ` + convertThreeDigitNumber(decimalCents) + ` ${t`Paisa`}`;
+    spelledOutDecimal = ` ${t`and`} ` + convertThreeDigitNumber(decimalCents) + ` ${t`Paisa`}`;
   }
 
   return `${spelledOutInteger}${spelledOutDecimal} ${t`only`}`;
@@ -363,12 +346,7 @@ function getPrintTemplateDocHints(
     const { target } = field as TargetField;
     const targetSchema = fyo.schemaMap[target];
     if (fieldtype === FieldTypeEnum.Link && targetSchema && linkLevel < 2) {
-      links[fieldname] = getPrintTemplateDocHints(
-        targetSchema,
-        fyo,
-        undefined,
-        linkLevel + 1,
-      );
+      links[fieldname] = getPrintTemplateDocHints(targetSchema, fyo, undefined, linkLevel + 1);
     }
 
     if (fieldtype === FieldTypeEnum.Table && targetSchema) {
@@ -509,10 +487,7 @@ function constructPrintDocument(innerHTML: string, font?: string) {
     }
   `;
 
-  head.innerHTML = [
-    '<meta charset="UTF-8">',
-    "<title>Print Window</title>",
-  ].join("\n");
+  head.innerHTML = ['<meta charset="UTF-8">', "<title>Print Window</title>"].join("\n");
 
   head.append(style, printCSS);
 
@@ -539,27 +514,17 @@ function getAllCSSAsStyleElem() {
 }
 
 export async function updatePrintTemplates(fyo: Fyo) {
-  const templateFiles = await ipc.getTemplates(
-    fyo.singles.PrintSettings?.posPrintWidth,
-  );
+  const templateFiles = await ipc.getTemplates(fyo.singles.PrintSettings?.posPrintWidth);
   const existingTemplates = (await fyo.db.getAll(ModelNameEnum.PrintTemplate, {
     fields: ["name", "modified"],
     filters: { isCustom: false },
   })) as { name: string; modified: Date }[];
 
-  const nameModifiedMap = getValueMapFromList(
-    existingTemplates,
-    "name",
-    "modified",
-  );
+  const nameModifiedMap = getValueMapFromList(existingTemplates, "name", "modified");
 
   const updateList: TemplateUpdateItem[] = [];
   for (const templateFile of templateFiles) {
-    const updates = getPrintTemplateUpdateList(
-      templateFile,
-      nameModifiedMap,
-      fyo,
-    );
+    const updates = getPrintTemplateUpdateList(templateFile, nameModifiedMap, fyo);
 
     updateList.push(...updates);
   }
@@ -568,10 +533,7 @@ export async function updatePrintTemplates(fyo: Fyo) {
   const isLogging = appStore.skipTelemetryLogging;
   appStore.skipTelemetryLogging = true;
   for (const { name, type, template, width, height } of updateList) {
-    const doc = await getDocFromNameIfExistsElseNew(
-      ModelNameEnum.PrintTemplate,
-      name,
-    );
+    const doc = await getDocFromNameIfExistsElseNew(ModelNameEnum.PrintTemplate, name);
 
     const updateData = {
       name,
@@ -613,10 +575,7 @@ function getPrintTemplateUpdateList(
   return templateList;
 }
 
-function getNameAndTypeFromTemplateFile(
-  file: string,
-  fyo: Fyo,
-): { name: string; type: string }[] {
+function getNameAndTypeFromTemplateFile(file: string, fyo: Fyo): { name: string; type: string }[] {
   /**
    * Template File Name Format:
    * TemplateName[.SchemaName].template.html
@@ -637,14 +596,12 @@ function getNameAndTypeFromTemplateFile(
     return [{ name: `${name} - ${label}`, type: schemaName }];
   }
 
-  return [
-    ModelNameEnum.SalesInvoice,
-    ModelNameEnum.SalesQuote,
-    ModelNameEnum.PurchaseInvoice,
-  ].map((schemaName) => {
-    const label = fyo.schemaMap[schemaName]?.label ?? schemaName;
-    return { name: `${name} - ${label}`, type: schemaName };
-  });
+  return [ModelNameEnum.SalesInvoice, ModelNameEnum.SalesQuote, ModelNameEnum.PurchaseInvoice].map(
+    (schemaName) => {
+      const label = fyo.schemaMap[schemaName]?.label ?? schemaName;
+      return { name: `${name} - ${label}`, type: schemaName };
+    },
+  );
 }
 
 export const baseTemplate = `<main 

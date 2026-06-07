@@ -2,13 +2,7 @@ import { Fyo, t } from "fyo";
 import dayjs from "dayjs";
 import { ModelNameEnum } from "models/types";
 import { LedgerReport } from "reports/LedgerReport";
-import {
-  ColumnField,
-  GroupedMap,
-  LedgerEntry,
-  ReportData,
-  ReportRow,
-} from "reports/types";
+import { ColumnField, GroupedMap, LedgerEntry, ReportData, ReportRow } from "reports/types";
 import { Field, FieldTypeEnum } from "schemas/types";
 import { QueryFilter } from "utils/db/types";
 
@@ -120,11 +114,7 @@ export class GeneralLedger extends LedgerReport {
       const align = col.align ?? "left";
       const width = col.width ?? 1;
       const fieldname = col.fieldname;
-      if (
-        fieldname === "__proto__" ||
-        fieldname === "constructor" ||
-        fieldname === "prototype"
-      ) {
+      if (fieldname === "__proto__" || fieldname === "constructor" || fieldname === "prototype") {
         continue;
       }
 
@@ -249,12 +239,7 @@ export class GeneralLedger extends LedgerReport {
     const stringFilters = ["account", "party", "referenceName"];
 
     for (const sf of stringFilters) {
-      if (
-        sf === "__proto__" ||
-        sf === "__proto__" ||
-        sf === "constructor" ||
-        sf === "prototype"
-      ) {
+      if (sf === "__proto__" || sf === "__proto__" || sf === "constructor" || sf === "prototype") {
         continue;
       }
       const value = Reflect.get(this, sf);

@@ -4,12 +4,7 @@ import { getMapFromList, getValueMapFromList, sleep } from "utils";
 import { getDefaultMetaFieldValueMap, sqliteTypeMap } from "../../helpers";
 import DatabaseCore from "../core";
 import { FieldValueMap, SqliteTableInfo } from "../types";
-import {
-  assertDoesNotThrow,
-  assertThrows,
-  BaseMetaKey,
-  getBuiltTestSchemaMap,
-} from "./helpers";
+import { assertDoesNotThrow, assertThrows, BaseMetaKey, getBuiltTestSchemaMap } from "./helpers";
 
 const schemaMap = getBuiltTestSchemaMap();
 
@@ -43,9 +38,7 @@ describe("DatabaseCore Tests", () => {
   test("Pre Migrate TableInfo", async () => {
     const db = await getDb(false);
     for (const schemaName in schemaMap) {
-      const columnsRes = await db.client!.execute(
-        `pragma table_info("${schemaName}")`,
-      );
+      const columnsRes = await db.client!.execute(`pragma table_info("${schemaName}")`);
       expect(columnsRes.rows.length).toBe(0);
     }
     await db.close();
@@ -56,14 +49,10 @@ describe("DatabaseCore Tests", () => {
     for (const schemaName in schemaMap) {
       const schema = Reflect.get(schemaMap, schemaName) as Schema;
       const fieldMap = getMapFromList(schema.fields, "fieldname");
-      const columnsRes = await db.client!.execute(
-        `pragma table_info("${schemaName}")`,
-      );
+      const columnsRes = await db.client!.execute(`pragma table_info("${schemaName}")`);
       const columns = columnsRes.rows as unknown as SqliteTableInfo[];
 
-      let columnCount = schema.fields.filter(
-        (f) => f.fieldtype !== FieldTypeEnum.Table,
-      ).length;
+      let columnCount = schema.fields.filter((f) => f.fieldtype !== FieldTypeEnum.Table).length;
 
       if (schema.isSingle) {
         columnCount = 0;
@@ -78,11 +67,7 @@ describe("DatabaseCore Tests", () => {
         expect(column.name).toBe(field.fieldname);
 
         const expectedTypes: string[] = [dbColType];
-        if (
-          dbColType === "datetime" ||
-          dbColType === "date" ||
-          dbColType === "time"
-        ) {
+        if (dbColType === "datetime" || dbColType === "date" || dbColType === "time") {
           expectedTypes.push("numeric", "text");
         }
         if (dbColType === "boolean") {
@@ -133,9 +118,7 @@ describe("DatabaseCore Tests", () => {
       "default",
     );
     for (const row of rows) {
-      expect(row.value as any).toBe(
-        Reflect.get(defaultMap, row.fieldname as string),
-      );
+      expect(row.value as any).toBe(Reflect.get(defaultMap, row.fieldname as string));
     }
 
     let localeRow = rows.find((r) => r.fieldname === "locale");
@@ -219,9 +202,7 @@ describe("DatabaseCore Tests", () => {
     expect(firstRow.email).toBe(null);
 
     for (const key in metaValues) {
-      expect(Reflect.get(firstRow, key)).toBe(
-        Reflect.get(metaValues, key as BaseMetaKey),
-      );
+      expect(Reflect.get(firstRow, key)).toBe(Reflect.get(metaValues, key as BaseMetaKey));
     }
 
     const email = "john@thoe.com";
@@ -274,9 +255,7 @@ describe("DatabaseCore Tests", () => {
     await db.insert(schemaName, cTwo);
     rows = await db.getAll(schemaName, { fields: ["*"] });
     const cs = [cOne, cTwo].sort((a, b) => a.name.localeCompare(b.name));
-    const sortedRows = [...rows].sort((a, b) =>
-      (a.name as string).localeCompare(b.name as string),
-    );
+    const sortedRows = [...rows].sort((a, b) => (a.name as string).localeCompare(b.name as string));
     expect(rows.length).toBe(2);
 
     for (const i in cs) {
@@ -468,28 +447,17 @@ describe("DatabaseCore Tests", () => {
     expect(await db.deleteAll("Customer", { email: emailOne })).toBe(
       customers.filter((c) => c.email === emailOne).length,
     );
-    expect(
-      (await db.getAll("Customer", { filters: { email: emailOne } })).length,
-    ).toBe(0);
+    expect((await db.getAll("Customer", { filters: { email: emailOne } })).length).toBe(0);
 
-    expect(
-      await db.deleteAll("Customer", { email: emailTwo, phone: phoneTwo }),
-    ).toBe(
-      customers.filter(
-        ({ phone, email }) => email === emailTwo && phone === phoneTwo,
-      ).length,
+    expect(await db.deleteAll("Customer", { email: emailTwo, phone: phoneTwo })).toBe(
+      customers.filter(({ phone, email }) => email === emailTwo && phone === phoneTwo).length,
     );
-    expect(
-      await db.deleteAll("Customer", { email: emailTwo, phone: phoneTwo }),
-    ).toBe(0);
+    expect(await db.deleteAll("Customer", { email: emailTwo, phone: phoneTwo })).toBe(0);
 
-    expect(
-      await db.deleteAll("Customer", { email: ["in", [emailTwo, emailThree]] }),
-    ).toBe(
+    expect(await db.deleteAll("Customer", { email: ["in", [emailTwo, emailThree]] })).toBe(
       customers.filter(
         ({ email, phone }) =>
-          [emailTwo, emailThree].includes(email) &&
-          !(phone === phoneTwo && email === emailTwo),
+          [emailTwo, emailThree].includes(email) && !(phone === phoneTwo && email === emailTwo),
       ).length,
     );
     expect(

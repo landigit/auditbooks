@@ -18,26 +18,16 @@
           <!-- Content -->
           <view class="flex-1 overflow-y-auto custom-scroll p-8 lg:p-12">
             <view class="max-w-3xl mx-auto w-full">
-              <view
-                v-if="loading"
-                class="flex items-center justify-center h-64"
-              >
-                <view
-                  class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
-                ></view>
+              <view v-if="loading" class="flex items-center justify-center h-64">
+                <view class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></view>
               </view>
 
               <view
                 v-else-if="error"
                 class="bg-red-50 p-6 rounded-lg border border-red-100 text-red-700 flex flex-col items-center text-center"
               >
-                <LucideIcon
-                  name="file-warning"
-                  class="w-12 h-12 mb-4 text-red-400"
-                />
-                <text class="text-lg font-bold mb-2"
-                  >Documentation Not Found</text
-                >
+                <LucideIcon name="file-warning" class="w-12 h-12 mb-4 text-red-400" />
+                <text class="text-lg font-bold mb-2">Documentation Not Found</text>
                 <text class="mb-4 text-sm opacity-90">{{ error }}</text>
                 <Button @tap="loadDefault">Go to Getting Started</Button>
               </view>
@@ -56,9 +46,7 @@
             v-if="toc.length > 0 && !loading"
             class="hidden xl:block w-64 border-l border-border p-6 overflow-y-auto custom-scroll"
           >
-            <text
-              class="text-xs font-bold uppercase tracking-widest text-muted mb-4"
-            >
+            <text class="text-xs font-bold uppercase tracking-widest text-muted mb-4">
               On this page
             </text>
             <nav class="space-y-1">
@@ -68,9 +56,7 @@
                 :href="'#' + item.id"
                 class="block text-sm py-1 transition-colors"
                 :class="[
-                  item.level === 3
-                    ? 'pl-4 text-muted'
-                    : 'text-main font-medium',
+                  item.level === 3 ? 'pl-4 text-muted' : 'text-main font-medium',
                   'hover:text-blue-600',
                 ]"
                 @tap.prevent="scrollTo(item.id)"
@@ -101,25 +87,19 @@
             class="text-xl font-bold text-main border-b border-border pb-1 mb-2"
             >{{ line.text }}</text
           >
-          <text
-            v-else-if="line.type === 'h2'"
-            class="text-lg font-semibold text-main mt-4 mb-2"
-            >{{ line.text }}</text
-          >
-          <text
-            v-else-if="line.type === 'h3'"
-            class="text-base font-medium text-main mt-3 mb-1"
-            >{{ line.text }}</text
-          >
+          <text v-else-if="line.type === 'h2'" class="text-lg font-semibold text-main mt-4 mb-2">{{
+            line.text
+          }}</text>
+          <text v-else-if="line.type === 'h3'" class="text-base font-medium text-main mt-3 mb-1">{{
+            line.text
+          }}</text>
           <view
             v-else-if="line.type === 'alert'"
             class="p-3 bg-blue-900/20 border-l-4 border-blue-500 rounded-r-lg my-3"
           >
             <text class="text-xs text-blue-300">{{ line.text }}</text>
           </view>
-          <text v-else class="text-sm text-description leading-relaxed">{{
-            line.text
-          }}</text>
+          <text v-else class="text-sm text-description leading-relaxed">{{ line.text }}</text>
         </view>
       </view>
     </scroll-view>
@@ -252,27 +232,22 @@ const loadContent = async () => {
     });
 
     // Handle ::: type alerts
-    const containerRegex =
-      /^::: (tip|info|warning|important|caution)\s?([\s\S]*?)\s?:::/gm;
+    const containerRegex = /^::: (tip|info|warning|important|caution)\s?([\s\S]*?)\s?:::/gm;
     let processedContent = content;
 
     const placeholders: string[] = [];
-    processedContent = processedContent.replace(
-      containerRegex,
-      (_, type, body) => {
-        const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
-        const bodyHtml = marked.parseInline(body.trim());
-        placeholders.push(`<view class="help-alert alert-${type}">
+    processedContent = processedContent.replace(containerRegex, (_, type, body) => {
+      const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
+      const bodyHtml = marked.parseInline(body.trim());
+      placeholders.push(`<view class="help-alert alert-${type}">
         <view class="alert-title font-bold uppercase text-xs mb-1">${type}</view>
         <view class="alert-body">${bodyHtml}</view>
       </view>`);
-        return id;
-      },
-    );
+      return id;
+    });
 
     // Handle GitHub-style alerts > [!TIP]
-    const alertRegex =
-      /^> \[!(TIP|INFO|IMPORTANT|WARNING|CAUTION)\](?:\r?\n)((?:>.*\r?\n?)*)/gm;
+    const alertRegex = /^> \[!(TIP|INFO|IMPORTANT|WARNING|CAUTION)\](?:\r?\n)((?:>.*\r?\n?)*)/gm;
     processedContent = processedContent.replace(alertRegex, (_, type, body) => {
       const typeLower = type.toLowerCase();
       const id = `:::ALERT_PLACEHOLDER_${placeholders.length}:::`;
@@ -286,9 +261,7 @@ const loadContent = async () => {
     });
 
     // Pre-process images: fix paths and resolve spaces
-    const docDir = relPath.includes("/")
-      ? relPath.substring(0, relPath.lastIndexOf("/") + 1)
-      : "";
+    const docDir = relPath.includes("/") ? relPath.substring(0, relPath.lastIndexOf("/") + 1) : "";
     const imgRegex = /!\[(.*?)\]\((.*?)\)/g;
     const imgMatches = [...processedContent.matchAll(imgRegex)];
 
@@ -302,9 +275,7 @@ const loadContent = async () => {
           let cleanSrc = decodeURIComponent(href);
 
           const isRelative =
-            !cleanSrc.startsWith("/") &&
-            !cleanSrc.startsWith("./") &&
-            !cleanSrc.startsWith("../");
+            !cleanSrc.startsWith("/") && !cleanSrc.startsWith("./") && !cleanSrc.startsWith("../");
           cleanSrc = cleanSrc.replace(/^\.?\/+/, "");
 
           if (isRelative && docDir) {
@@ -312,10 +283,7 @@ const loadContent = async () => {
           }
 
           const dataUrl = await ipc.readDocData(cleanSrc);
-          processedContent = processedContent.replace(
-            fullMatch,
-            `![${alt}](${dataUrl})`,
-          );
+          processedContent = processedContent.replace(fullMatch, `![${alt}](${dataUrl})`);
         } catch (e) {
           console.warn("Failed to pre-load image:", href, e);
         }

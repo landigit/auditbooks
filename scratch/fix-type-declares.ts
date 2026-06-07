@@ -85,8 +85,7 @@ function processSource(src: string): { out: string; fixes: number } {
     }
 
     // ── 3. decide context for this line ─────────────────────────────────────
-    const inClassBody =
-      stack.length > 0 && stack[stack.length - 1].kind === "class";
+    const inClassBody = stack.length > 0 && stack[stack.length - 1].kind === "class";
 
     // ── 4. optionally strip `declare ` ──────────────────────────────────────
     let outLine = line;
@@ -99,12 +98,10 @@ function processSource(src: string): { out: string; fixes: number } {
 
     // ── 5. push new frames for each opening brace ───────────────────────────
     // Detect whether the opening is a class or not.
-    const isClassOpener =
-      /\b(export\s+)?(abstract\s+)?class\s+\w/.test(stripped) && opens > 0;
+    const isClassOpener = /\b(export\s+)?(abstract\s+)?class\s+\w/.test(stripped) && opens > 0;
 
     for (let i = 0; i < opens; i++) {
-      const kind: "class" | "other" =
-        isClassOpener && i === 0 ? "class" : "other";
+      const kind: "class" | "other" = isClassOpener && i === 0 ? "class" : "other";
       stack.push({ kind, openDepth: braceDepth });
       braceDepth++;
     }
@@ -144,6 +141,4 @@ for (const filePath of files) {
   }
 }
 
-console.log(
-  `\n✅  Done — ${totalFixes} declare(s) removed across ${totalFiles} file(s).`,
-);
+console.log(`\n✅  Done — ${totalFixes} declare(s) removed across ${totalFiles} file(s).`);

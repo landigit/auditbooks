@@ -49,15 +49,11 @@ for (const file of files) {
     // Detect class/type/interface starts
     // Check for class declarations
     const isClassStart =
-      /^\s*(export\s+)?(abstract\s+)?class\s+\w/.test(line) &&
-      line.includes("{");
+      /^\s*(export\s+)?(abstract\s+)?class\s+\w/.test(line) && line.includes("{");
     const isTypeStart =
-      /^\s*(export\s+)?type\s+\w+.*=\s*(\|?\s*)?(\{|$)/.test(line) &&
-      !isClassStart;
-    const isInterfaceStart =
-      /^\s*(export\s+)?interface\s+\w/.test(line) && !isClassStart;
-    const isInlineTypeAssertion =
-      /\)\s+as\s+\{/.test(line) || /as\s+\{/.test(line);
+      /^\s*(export\s+)?type\s+\w+.*=\s*(\|?\s*)?(\{|$)/.test(line) && !isClassStart;
+    const isInterfaceStart = /^\s*(export\s+)?interface\s+\w/.test(line) && !isClassStart;
+    const isInlineTypeAssertion = /\)\s+as\s+\{/.test(line) || /as\s+\{/.test(line);
 
     // Count braces
     const openBraces = (line.match(/\{/g) || []).length;
@@ -81,17 +77,14 @@ for (const file of files) {
 
     const isInTypeContext = inTypeBlock && !inClassBlock;
     const isInInlineTypeAssertion =
-      !inClassBlock &&
-      (isInlineTypeAssertion || (inTypeBlock && braceDepth > typeStartDepth));
+      !inClassBlock && (isInlineTypeAssertion || (inTypeBlock && braceDepth > typeStartDepth));
 
     // Simple heuristic: if line has `declare ` but we're not inside a class
     if (!inClassBlock && line.includes("  declare ") && !isClassStart) {
       // Extra check: only remove if it's a type member pattern (indent + declare + field: type)
       if (
         /^\s+declare\s+\w/.test(line) &&
-        !/^\s*declare\s+(class|function|const|let|var|type|interface|abstract)/.test(
-          line,
-        )
+        !/^\s*declare\s+(class|function|const|let|var|type|interface|abstract)/.test(line)
       ) {
         newLine = line.replace(/declare\s+/, "");
         if (newLine !== line) {

@@ -20,10 +20,7 @@
         </view>
       </Row>
 
-      <view
-        class="overflow-y-auto custom-scroll custom-scroll-thumb2"
-        style="height: 70vh"
-      >
+      <view class="overflow-y-auto custom-scroll custom-scroll-thumb2" style="height: 70vh">
         <Row
           v-if="items"
           v-for="row in items as POSItem[]"

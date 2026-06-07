@@ -39,11 +39,7 @@ export function getTable(name: string) {
 export async function getRow(tableName: string, name: string) {
   const table = getTable(tableName);
   // In this system, all schemas have 'name' as their primary key
-  const results = await db
-    .select()
-    .from(table)
-    .where(eq(table.name, name))
-    .limit(1);
+  const results = await db.select().from(table).where(eq(table.name, name)).limit(1);
   return results[0] || null;
 }
 
@@ -61,11 +57,7 @@ export async function insertRow(tableName: string, data: any) {
  */
 export async function updateRow(tableName: string, name: string, data: any) {
   const table = getTable(tableName);
-  const result = await db
-    .update(table)
-    .set(data)
-    .where(eq(table.name, name))
-    .returning();
+  const result = await db.update(table).set(data).where(eq(table.name, name)).returning();
   return (result as any)[0];
 }
 

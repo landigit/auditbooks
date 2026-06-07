@@ -8,25 +8,12 @@
     <text v-if="companyName && dbPath" class="mx-auto text-sm">
       {{ companyName }} - {{ dbPath }}
     </text>
-    <view
-      v-if="!isFullscreen"
-      class="absolute window-no-drag flex h-full items-center right-0"
-    >
-      <view
-        class="flex items-center px-4 h-full hover:bg-surface-hover"
-        @tap="minimizeWindow"
-      >
+    <view v-if="!isFullscreen" class="absolute window-no-drag flex h-full items-center right-0">
+      <view class="flex items-center px-4 h-full hover:bg-surface-hover" @tap="minimizeWindow">
         <LucideIcon name="minus" class="h-4 w-4 flex-shrink-0" />
       </view>
-      <view
-        class="flex items-center px-4 h-full hover:bg-surface-hover"
-        @tap="toggleMaximize"
-      >
-        <LucideIcon
-          v-if="isMax"
-          name="minimize"
-          class="h-3 w-3 flex-shrink-0"
-        />
+      <view class="flex items-center px-4 h-full hover:bg-surface-hover" @tap="toggleMaximize">
+        <LucideIcon v-if="isMax" name="minimize" class="h-3 w-3 flex-shrink-0" />
         <LucideIcon v-else name="square" class="h-3 w-3 flex-shrink-0" />
       </view>
       <view

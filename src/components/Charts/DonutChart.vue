@@ -8,13 +8,7 @@
     >
       <defs>
         <clipPath id="donut-hole">
-          <circle
-            :cx="cx"
-            :cy="cy"
-            :r="radius + thickness / 2"
-            fill="black"
-            stroke-width="0"
-          />
+          <circle :cx="cx" :cy="cy" :r="radius + thickness / 2" fill="black" stroke-width="0" />
         </clipPath>
       </defs>
       <circle
@@ -23,10 +17,7 @@
         :cx="cx"
         :cy="cy"
         :r="radius"
-        :stroke-width="
-          thickness +
-          (hasNonZeroValues && active === thetasAndStarts[0]?.[0] ? 4 : 0)
-        "
+        :stroke-width="thickness + (hasNonZeroValues && active === thetasAndStarts[0]?.[0] ? 4 : 0)"
         :stroke="
           hasNonZeroValues && thetasAndStarts[0]
             ? sectors[thetasAndStarts[0][0]].color
@@ -38,9 +29,7 @@
         @mouseover="
           emit(
             'change',
-            thetasAndStarts.length === 1 && thetasAndStarts[0]
-              ? thetasAndStarts[0][0]
-              : null,
+            thetasAndStarts.length === 1 && thetasAndStarts[0] ? thetasAndStarts[0][0] : null,
           )
         "
       />

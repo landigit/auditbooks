@@ -82,15 +82,12 @@ export class AccountingSettings extends Doc {
   override hidden: HiddenMap = {
     discountAccount: () => !this.enableDiscounting,
     gstin: () => this.fyo.singles.SystemSettings?.countryCode !== "in",
-    enablePricingRule: () =>
-      !this.fyo.singles.AccountingSettings?.enableDiscounting,
-    enableCouponCode: () =>
-      !this.fyo.singles.AccountingSettings?.enablePricingRule,
+    enablePricingRule: () => !this.fyo.singles.AccountingSettings?.enableDiscounting,
+    enableCouponCode: () => !this.fyo.singles.AccountingSettings?.enablePricingRule,
   };
 
   async change(ch: ChangeArg) {
-    const discountingEnabled =
-      ch.changed === "enableDiscounting" && this.enableDiscounting;
+    const discountingEnabled = ch.changed === "enableDiscounting" && this.enableDiscounting;
     const discountAccountNotSet = !this.discountAccount;
 
     if (discountingEnabled && discountAccountNotSet) {

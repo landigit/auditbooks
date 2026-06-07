@@ -1,10 +1,6 @@
 ﻿import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { Lead } from "../Lead/Lead";
 import { Party } from "../Party/Party";
 
@@ -44,9 +40,7 @@ describe("Lead", () => {
     await newCustomer.sync();
 
     expect(leadDoc.status).toBe("Converted");
-    expect(await fyo.db.exists(ModelNameEnum.Party, newCustomer.name)).toBe(
-      true,
-    );
+    expect(await fyo.db.exists(ModelNameEnum.Party, newCustomer.name)).toBe(true);
   });
 
   test("create SalesQuote", async () => {
@@ -66,16 +60,11 @@ describe("Lead", () => {
     await newSalesQuote.submit();
 
     expect(leadDoc.status).toBe("Quotation");
-    expect(
-      await fyo.db.exists(ModelNameEnum.SalesQuote, newSalesQuote.name),
-    ).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.SalesQuote, newSalesQuote.name)).toBe(true);
   });
 
   test("delete Customer then lead status changes to Interested", async () => {
-    const partyDoc = (await fyo.doc.getDoc(
-      ModelNameEnum.Party,
-      "name2",
-    )) as Party;
+    const partyDoc = (await fyo.doc.getDoc(ModelNameEnum.Party, "name2")) as Party;
 
     await partyDoc.delete();
 

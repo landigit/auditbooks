@@ -29,21 +29,13 @@
             :disabled="!selectedBatch"
             @tap="submitSelection"
           >
-            <text
-              class="uppercase text-lg text-indicator-green-text font-semibold"
-            >
+            <text class="uppercase text-lg text-indicator-green-text font-semibold">
               {{ t`Select` }}
             </text>
           </Button>
 
-          <Button
-            class="w-full bg-indicator-red-bg"
-            style="padding: 1.35rem"
-            @tap="closeModal"
-          >
-            <text
-              class="uppercase text-lg text-indicator-red-text font-semibold"
-            >
+          <Button class="w-full bg-indicator-red-bg" style="padding: 1.35rem" @tap="closeModal">
+            <text class="uppercase text-lg text-indicator-red-text font-semibold">
               {{ t`Cancel` }}
             </text>
           </Button>
@@ -55,12 +47,8 @@
     v-else
     class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-50 p-4"
   >
-    <view
-      class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col"
-    >
-      <text class="text-lg font-bold text-main mb-3">{{
-        t`Select the Batch`
-      }}</text>
+    <view class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col">
+      <text class="text-lg font-bold text-main mb-3">{{ t`Select the Batch` }}</text>
       <view class="border-b border-border mb-4" />
 
       <view class="mb-4">

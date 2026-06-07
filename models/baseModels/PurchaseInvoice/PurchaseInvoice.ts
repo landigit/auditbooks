@@ -24,11 +24,7 @@ export class PurchaseInvoice extends Invoice {
         continue;
       }
 
-      const hasBatch = await this.fyo.getValue(
-        ModelNameEnum.Item,
-        item.item,
-        "hasBatch",
-      );
+      const hasBatch = await this.fyo.getValue(ModelNameEnum.Item, item.item, "hasBatch");
 
       if (hasBatch) {
         batchesToCreate.push({
@@ -71,8 +67,9 @@ export class PurchaseInvoice extends Invoice {
     }
 
     const discountAmount = this.getTotalDiscount();
-    const discountAccount = this.fyo.singles.AccountingSettings
-      ?.discountAccount as string | undefined;
+    const discountAccount = this.fyo.singles.AccountingSettings?.discountAccount as
+      | string
+      | undefined;
     if (discountAccount && discountAmount.isPositive()) {
       if (this.isReturn) {
         await posting.debit(discountAccount, discountAmount.mul(exchangeRate));

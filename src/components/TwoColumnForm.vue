@@ -41,10 +41,7 @@
             :text-end="false"
             @change="async (value) => await onChange(df, value)"
           />
-          <view
-            v-if="errors[df.fieldname]"
-            class="text-sm text-error mt-2 ps-2"
-          >
+          <view v-if="errors[df.fieldname]" class="text-sm text-error mt-2 ps-2">
             {{ errors[df.fieldname] }}
           </view>
         </view>
@@ -86,9 +83,7 @@ const controls = ref<any[]>([]);
 
 // --- Computed ---
 const style = computed(() => {
-  let templateColumns = (props.columnRatio || [1, 1])
-    .map((r) => `minmax(0, ${r}fr)`)
-    .join(" ");
+  let templateColumns = (props.columnRatio || [1, 1]).map((r) => `minmax(0, ${r}fr)`).join(" ");
   return {
     "grid-template-columns": templateColumns,
   };
@@ -158,8 +153,6 @@ function setFormFields() {
     fieldList = props.doc.schema.fields.filter((f) => f.required);
   }
 
-  formFields.value = fieldList.filter(
-    (field) => field && !evaluateHidden(field, props.doc),
-  );
+  formFields.value = fieldList.filter((field) => field && !evaluateHidden(field, props.doc));
 }
 </script>

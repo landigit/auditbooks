@@ -5,9 +5,7 @@
         <DropdownWithActions :actions="printActions" />
       </PageHeader>
 
-      <view
-        class="outer-container overflow-y-auto custom-scroll custom-scroll-thumb1"
-      >
+      <view class="outer-container overflow-y-auto custom-scroll custom-scroll-thumb1">
         <!-- Report Print Display Area -->
         <view
           class="p-4 bg-canvas-muted overflow-auto flex justify-center custom-scroll custom-scroll-thumb1"
@@ -149,9 +147,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Report Print View</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -206,9 +202,7 @@ const printSizeDf = computed<OptionField>(() => {
     label: "Print Size",
     fieldname: "printSize",
     fieldtype: "Select",
-    options: printSizes
-      .filter((p) => p !== "Custom")
-      .map((name) => ({ value: name, label: name })),
+    options: printSizes.filter((p) => p !== "Custom").map((name) => ({ value: name, label: name })),
   };
 });
 
@@ -223,10 +217,7 @@ const matrix = computed(() => {
 
   const mat: { value: string; idx: number }[][] = [columns];
   const startVal = Math.max(start.value - 1, 0);
-  const endVal = Math.min(
-    startVal + limit.value,
-    report.value.reportData.length,
-  );
+  const endVal = Math.min(startVal + limit.value, report.value.reportData.length);
   const slice = report.value.reportData.slice(startVal, endVal);
 
   for (let i = 0; i < slice.length; i++) {

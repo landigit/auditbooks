@@ -1,8 +1,6 @@
 <template>
   <view v-if="!isLynx">
-    <view
-      class="border-s border-border h-full overflow-auto w-quick-edit bg-surface"
-    >
+    <view class="border-s border-border h-full overflow-auto w-quick-edit bg-surface">
       <!-- Quick edit Tool bar -->
       <view
         class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-surface"
@@ -17,12 +15,7 @@
         <Button v-if="doc?.canSave" :icon="true" type="primary" @tap="sync">
           {{ t`Save` }}
         </Button>
-        <Button
-          v-else-if="doc?.canSubmit"
-          :icon="true"
-          type="primary"
-          @tap="submit"
-        >
+        <Button v-else-if="doc?.canSubmit" :icon="true" type="primary" @tap="submit">
           {{ t`Submit` }}
         </Button>
       </view>
@@ -49,10 +42,7 @@
           v-if="titleField"
           ref="titleControl"
           :class="!!imageField ? 'me-4' : 'w-full mx-4'"
-          :input-class="[
-            'font-semibold text-xl',
-            !!imageField ? '' : 'text-center',
-          ]"
+          :input-class="['font-semibold text-xl', !!imageField ? '' : 'text-center']"
           size="small"
           :df="titleField"
           :value="doc[titleField.fieldname]"
@@ -76,9 +66,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Quick Edit Form</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -95,11 +83,7 @@ import TwoColumnForm from "src/components/TwoColumnForm.vue";
 import { fyo } from "src/initFyo";
 import { shortcutsKey } from "src/utils/injectionKeys";
 import { DocRef } from "src/utils/types";
-import {
-  commonDocSubmit,
-  commonDocSync,
-  focusOrSelectFormControl,
-} from "src/utils/ui";
+import { commonDocSubmit, commonDocSync, focusOrSelectFormControl } from "src/utils/ui";
 import { useDocShortcuts } from "src/utils/vueUtils";
 import { useAppStore } from "src/stores/app";
 
@@ -178,9 +162,7 @@ const fields = computed(() => {
 
   if (props.showFields?.length) {
     fieldnames.push(
-      ...schema.value.fields
-        .map((f) => f.fieldname)
-        .filter((f) => props.showFields.includes(f)),
+      ...schema.value.fields.map((f) => f.fieldname).filter((f) => props.showFields.includes(f)),
     );
   }
 

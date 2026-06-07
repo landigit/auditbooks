@@ -2,25 +2,15 @@ import { Fyo } from "fyo";
 import { DocValueMap } from "fyo/core/types";
 import { Doc } from "fyo/model/doc";
 import { createNumberSeries } from "fyo/model/naming";
-import {
-  DEFAULT_CURRENCY,
-  DEFAULT_LOCALE,
-  DEFAULT_SERIES_START,
-} from "fyo/utils/consts";
-import {
-  AccountRootTypeEnum,
-  AccountTypeEnum,
-} from "models/baseModels/Account/types";
+import { DEFAULT_CURRENCY, DEFAULT_LOCALE, DEFAULT_SERIES_START } from "fyo/utils/consts";
+import { AccountRootTypeEnum, AccountTypeEnum } from "models/baseModels/Account/types";
 import { AccountingSettings } from "models/baseModels/AccountingSettings/AccountingSettings";
 import { numberSeriesDefaultsMap } from "models/baseModels/Defaults/Defaults";
 import { InventorySettings } from "models/inventory/InventorySettings";
 import { ValuationMethod } from "models/inventory/types";
 import { ModelNameEnum } from "models/types";
 import { createRegionalRecords } from "src/regional";
-import {
-  initializeInstance,
-  setCurrencySymbols,
-} from "src/utils/initialization";
+import { initializeInstance, setCurrencySymbols } from "src/utils/initialization";
 import { useAppStore } from "src/stores/app";
 import { getRandomString } from "utils";
 import { getDefaultLocations, getDefaultUOMs } from "utils/defaults";
@@ -34,8 +24,7 @@ export default async function setupInstance(
   setupWizardOptions: SetupWizardOptions,
   fyo: Fyo,
 ) {
-  const { companyName, country, bankName, chartOfAccounts } =
-    setupWizardOptions;
+  const { companyName, country, bankName, chartOfAccounts } = setupWizardOptions;
   let appStore: any;
   try {
     appStore = useAppStore();
@@ -99,9 +88,7 @@ async function updateAccountingSettings(
   }: SetupWizardOptions,
   fyo: Fyo,
 ) {
-  const accountingSettings = (await fyo.doc.getDoc(
-    "AccountingSettings",
-  )) as AccountingSettings;
+  const accountingSettings = (await fyo.doc.getDoc("AccountingSettings")) as AccountingSettings;
   await accountingSettings.setAndSync({
     companyName,
     country,
@@ -114,10 +101,7 @@ async function updateAccountingSettings(
   return accountingSettings;
 }
 
-async function updatePrintSettings(
-  { logo, companyName, email }: SetupWizardOptions,
-  fyo: Fyo,
-) {
+async function updatePrintSettings({ logo, companyName, email }: SetupWizardOptions, fyo: Fyo) {
   const printSettings = await fyo.doc.getDoc("PrintSettings");
   await printSettings.setAndSync({
     logo,
@@ -133,8 +117,7 @@ async function updateSystemSettings(
 ) {
   const countryInfo = getCountryInfo();
   const countryOptions = Reflect.get(countryInfo, country) as CountryInfo;
-  const currency =
-    companyCurrency ?? countryOptions.currency ?? DEFAULT_CURRENCY;
+  const currency = companyCurrency ?? countryOptions.currency ?? DEFAULT_CURRENCY;
   const locale = countryOptions.locale ?? DEFAULT_LOCALE;
   const countryCode = getCountryCodeFromCountry(country);
   const systemSettings = await fyo.doc.getDoc("SystemSettings");
@@ -205,10 +188,7 @@ async function createAccountRecords(
 
 export async function createDiscountAccount(fyo: Fyo) {
   const incomeAccountName = fyo.t`Indirect Income`;
-  const accountExists = await fyo.db.exists(
-    ModelNameEnum.Account,
-    incomeAccountName,
-  );
+  const accountExists = await fyo.db.exists(ModelNameEnum.Account, incomeAccountName);
 
   if (!accountExists) {
     return;
@@ -224,19 +204,12 @@ export async function createDiscountAccount(fyo: Fyo) {
   };
 
   await checkAndCreateDoc(ModelNameEnum.Account, discountAccountDoc, fyo);
-  await fyo.singles.AccountingSettings!.setAndSync(
-    "discountAccount",
-    discountAccountName,
-  );
+  await fyo.singles.AccountingSettings!.setAndSync("discountAccount", discountAccountName);
 }
 
 async function setDefaultAccounts(fyo: Fyo) {
   await setDefaultAccount("writeOffAccount", fyo.t`Write Off`, fyo);
-  const isSet = await setDefaultAccount(
-    "roundOffAccount",
-    fyo.t`Rounded Off`,
-    fyo,
-  );
+  const isSet = await setDefaultAccount("roundOffAccount", fyo.t`Rounded Off`, fyo);
 
   if (!isSet) {
     await setDefaultAccount("roundOffAccount", fyo.t`Round Off`, fyo);
@@ -271,11 +244,7 @@ async function checkAndCreateDoc(
   return doc.sync();
 }
 
-async function checkIfExactRecordAbsent(
-  schemaName: string,
-  docMap: DocValueMap,
-  fyo: Fyo,
-) {
+async function checkIfExactRecordAbsent(schemaName: string, docMap: DocValueMap, fyo: Fyo) {
   const name = docMap.name as string;
   const newDocObject = Object.assign({}, docMap);
 
@@ -337,18 +306,10 @@ async function createDefaultNumberSeries(fyo: Fyo) {
       continue;
     }
 
-    await createNumberSeries(
-      defaultValue,
-      schemaName,
-      DEFAULT_SERIES_START,
-      fyo,
-    );
+    await createNumberSeries(defaultValue, schemaName, DEFAULT_SERIES_START, fyo);
 
     const defaultKey = Reflect.get(numberSeriesDefaultsMap, schemaName);
-    if (
-      !defaultKey ||
-      (fyo.singles.Defaults && Reflect.get(fyo.singles.Defaults, defaultKey))
-    ) {
+    if (!defaultKey || (fyo.singles.Defaults && Reflect.get(fyo.singles.Defaults, defaultKey))) {
       continue;
     }
 
@@ -366,8 +327,7 @@ async function updateInventorySettings(fyo: Fyo) {
   }
   const accountTypeDefaultMap = {
     [AccountTypeEnum.Stock]: "stockInHand",
-    [AccountTypeEnum["Stock Received But Not Billed"]]:
-      "stockReceivedButNotBilled",
+    [AccountTypeEnum["Stock Received But Not Billed"]]: "stockReceivedButNotBilled",
     [AccountTypeEnum["Cost of Goods Sold"]]: "costOfGoodsSold",
   } as Record<string, string>;
 

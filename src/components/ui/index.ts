@@ -12,12 +12,7 @@ export { default as HoverCard } from "./HoverCard.vue";
 export { HoverCardTrigger } from "reka-ui";
 export { default as HoverCardContent } from "./HoverCardContent.vue";
 export { default as Dialog } from "./Dialog.vue";
-export {
-  DialogTrigger,
-  DialogPortal,
-  DialogClose,
-  DialogOverlay,
-} from "reka-ui";
+export { DialogTrigger, DialogPortal, DialogClose, DialogOverlay } from "reka-ui";
 export { default as DialogContent } from "./DialogContent.vue";
 export { default as DialogHeader } from "./DialogHeader.vue";
 export { default as DialogFooter } from "./DialogFooter.vue";

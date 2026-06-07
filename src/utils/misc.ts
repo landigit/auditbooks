@@ -68,13 +68,7 @@ export function getSetupWizardDoc(languageMap?: LanguageMap) {
   if (languageMap) {
     translateSchema(schema, languageMap, schemaTranslateables);
   }
-  return fyo.doc.getNewDoc(
-    "SetupWizard",
-    {},
-    false,
-    schema as Schema,
-    SetupWizard,
-  );
+  return fyo.doc.getNewDoc("SetupWizard", {}, false, schema as Schema, SetupWizard);
 }
 
 export function updateConfigFiles(fyo: Fyo): ConfigFile {
@@ -162,10 +156,7 @@ export function getCreateFiltersFromListViewFilters(filters: QueryFilter) {
   const createFilters: Record<string, string | number | boolean | null> = {};
 
   for (const key in filters) {
-    let value: (typeof filters)[string] | undefined | number = Reflect.get(
-      filters,
-      key,
-    );
+    let value: (typeof filters)[string] | undefined | number = Reflect.get(filters, key);
 
     if (Array.isArray(value) && value[0] === "in" && Array.isArray(value[1])) {
       value = value[1].filter((v) => v !== "Both")[0];

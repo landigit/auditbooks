@@ -125,9 +125,7 @@ export const models = {
   IntegrationErrorLog,
 } as ModelMap;
 
-export async function getRegionalModels(
-  countryCode: string,
-): Promise<ModelMap> {
+export async function getRegionalModels(countryCode: string): Promise<ModelMap> {
   if (countryCode !== "in") {
     return {};
   }

@@ -18,10 +18,7 @@
           :from-currency="fromCurrency"
           :to-currency="toCurrency"
           :exchange-rate="exchangeRate"
-          @change="
-            async (exchangeRate: number) =>
-              await doc.set('exchangeRate', exchangeRate)
-          "
+          @change="async (exchangeRate: number) => await doc.set('exchangeRate', exchangeRate)"
         />
         <text
           v-if="schema.label && !(canShowBarcode || canShowExchangeRate)"
@@ -35,9 +32,7 @@
         <Button v-if="doc?.canSave" type="primary" @tap="sync">
           {{ t`Save` }}
         </Button>
-        <Button v-else-if="doc?.canSubmit" type="primary" @tap="submit">{{
-          t`Submit`
-        }}</Button>
+        <Button v-else-if="doc?.canSubmit" type="primary" @tap="submit">{{ t`Submit` }}</Button>
       </template>
       <template #body>
         <FormHeader :form-title="title" class="sticky top-0 bg-surface">
@@ -53,9 +48,7 @@
             :key="n + idx"
             ref="section"
             class="p-4"
-            :class="
-              idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''
-            "
+            :class="idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''"
             :show-title="activeGroup.size > 1 && n !== t`Default`"
             :title="n"
             :fields="fields"
@@ -115,11 +108,7 @@
           leave-from-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
           leave-to-class="translate-x-full opacity-0 w-0"
         >
-          <LinkedEntries
-            v-if="showLinks && canShowLinks"
-            :doc="doc"
-            @close="showLinks = false"
-          />
+          <LinkedEntries v-if="showLinks && canShowLinks" :doc="doc" @close="showLinks = false" />
         </Transition>
         <Transition
           enter-active-class="transition-all duration-150 ease-out"
@@ -149,23 +138,13 @@
     >
       <view class="flex flex-row items-center gap-2" @tap="router.back()">
         <text class="text-xl font-bold text-blue-600">&lt;</text>
-        <text class="text-lg font-semibold text-main truncate max-w-[150px]">{{
-          title
-        }}</text>
+        <text class="text-lg font-semibold text-main truncate max-w-[150px]">{{ title }}</text>
       </view>
       <view class="flex flex-row items-center gap-2">
-        <view
-          v-if="doc?.canSave"
-          class="px-4 py-2 bg-blue-600 rounded-lg"
-          @tap="sync(true)"
-        >
+        <view v-if="doc?.canSave" class="px-4 py-2 bg-blue-600 rounded-lg" @tap="sync(true)">
           <text class="text-white font-semibold text-sm">{{ t`Save` }}</text>
         </view>
-        <view
-          v-else-if="doc?.canSubmit"
-          class="px-4 py-2 bg-green-600 rounded-lg"
-          @tap="submit"
-        >
+        <view v-else-if="doc?.canSubmit" class="px-4 py-2 bg-green-600 rounded-lg" @tap="submit">
           <text class="text-white font-semibold text-sm">{{ t`Submit` }}</text>
         </view>
         <StatusPill v-if="hasDoc" :doc="doc" class="ms-2" />
@@ -385,9 +364,7 @@ const status = computed<string>(() => {
 const doc = computed<Doc>(() => {
   const d = docOrNull.value;
   if (!d) {
-    throw new ValidationError(
-      t`Doc ${schema.value.label} ${props.name} not set`,
-    );
+    throw new ValidationError(t`Doc ${schema.value.label} ${props.name} not set`);
   }
   return d;
 });
@@ -475,10 +452,7 @@ const updateGroupedFields = (): void => {
     return;
   }
 
-  groupedFields.value = getFieldsGroupedByTabAndSection(
-    schema.value,
-    doc.value,
-  );
+  groupedFields.value = getFieldsGroupedByTabAndSection(schema.value, doc.value);
 };
 
 const sync = async (useDialog?: boolean) => {
@@ -498,10 +472,7 @@ const setDoc = async () => {
     return;
   }
 
-  docOrNull.value = await getDocFromNameIfExistsElseNew(
-    props.schemaName,
-    props.name,
-  );
+  docOrNull.value = await getDocFromNameIfExistsElseNew(props.schemaName, props.name);
 };
 
 const replacePathAfterSync = () => {

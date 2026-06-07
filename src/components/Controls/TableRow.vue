@@ -152,9 +152,7 @@ const onFieldBlur = (index: number) => {
 
 const focusFirstInput = () => {
   const el = instance?.proxy?.$el;
-  const firstControl = el?.querySelector(
-    ".form-control, input, textarea, select",
-  );
+  const firstControl = el?.querySelector(".form-control, input, textarea, select");
   if (firstControl) {
     (firstControl as HTMLElement).focus();
   }

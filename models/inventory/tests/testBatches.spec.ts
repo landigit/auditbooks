@@ -1,11 +1,7 @@
 ﻿import { assertThrows } from "backend/database/tests/helpers";
 import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { MovementTypeEnum } from "../types";
 import { getItem, getStockMovement } from "./helpers";
 

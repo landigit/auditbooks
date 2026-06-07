@@ -2,12 +2,7 @@
   <view v-if="!isLynx">
     <Dropdown ref="dropdown" class="text-sm" :items="periodOptions" right>
       <template
-        #default="{
-          toggleDropdown,
-          highlightItemUp,
-          highlightItemDown,
-          selectHighlightedItem,
-        }"
+        #default="{ toggleDropdown, highlightItemUp, highlightItemDown, selectHighlightedItem }"
       >
         <view
           class="text-sm flex focus:outline-none hover:text-main focus:text-main items-center py-1 rounded-md leading-relaxed cursor-pointer"

@@ -7,12 +7,7 @@
     @update:open="(val) => (isDropdownOpen = val)"
   >
     <template
-      #default="{
-        toggleDropdown,
-        highlightItemUp,
-        highlightItemDown,
-        selectHighlightedItem,
-      }"
+      #default="{ toggleDropdown, highlightItemUp, highlightItemDown, selectHighlightedItem }"
     >
       <view v-if="showLabel" :class="labelClasses">
         {{ df.label }}
@@ -35,18 +30,12 @@
           @focus="(e: any) => !isReadOnly && onInputFocus(e)"
           @tap="(e: any) => !isReadOnly && onClick(e, toggleDropdown)"
           @blur="
-            (e: any) =>
-              !isReadOnly &&
-              onBlur((e.target as HTMLInputElement).value, toggleDropdown)
+            (e: any) => !isReadOnly && onBlur((e.target as HTMLInputElement).value, toggleDropdown)
           "
           @input="(e: any) => onInput(e, toggleDropdown)"
           @keydown.up="onKeyDownUp($event, toggleDropdown, highlightItemUp)"
-          @keydown.down="
-            onKeyDownDown($event, toggleDropdown, highlightItemDown)
-          "
-          @keydown.enter="
-            onPressEnter($event, toggleDropdown, selectHighlightedItem)
-          "
+          @keydown.down="onKeyDownDown($event, toggleDropdown, highlightItemDown)"
+          @keydown.enter="onPressEnter($event, toggleDropdown, selectHighlightedItem)"
           @keydown.tab="closeDropdown($event, toggleDropdown)"
           @keydown.esc="closeDropdown($event, toggleDropdown)"
         />
@@ -96,10 +85,7 @@
               :side-offset="10"
               class="p-0 overflow-hidden shadow-xl border-border"
             >
-              <QuickView
-                :schema-name="linkSchemaName"
-                :name="value as string"
-              />
+              <QuickView :schema-name="linkSchemaName" :name="value as string" />
             </PopoverContent>
           </Popover>
         </view>
@@ -117,10 +103,7 @@ import { fuzzyMatch } from "src/utils";
 import { getFormRoute, routeTo } from "src/utils/ui";
 import { Popover, PopoverAnchor, PopoverContent } from "src/components/ui";
 import QuickView from "../QuickView.vue";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 
 interface AutoCompleteProps extends BaseControlProps {
   focusInput?: boolean;
@@ -154,10 +137,7 @@ const emit = defineEmits<{
 const showQuickView = ref(false);
 const internalLinkValue = ref("");
 const linkValue = computed({
-  get: () =>
-    props.linkValueOverride !== null
-      ? props.linkValueOverride
-      : internalLinkValue.value,
+  get: () => (props.linkValueOverride !== null ? props.linkValueOverride : internalLinkValue.value),
   set: (val) => {
     internalLinkValue.value = val;
     emit("update:linkValue", val);
@@ -353,10 +333,7 @@ const onIconFocus = (e: MouseEvent, toggleDropdown: (val: boolean) => void) => {
   emit("focus", e as any);
 };
 
-const onBlur = async (
-  label: string,
-  _toggleDropdown: (val: boolean) => void,
-) => {
+const onBlur = async (label: string, _toggleDropdown: (val: boolean) => void) => {
   isFocused.value = false;
   isDropdownOpen.value = false;
   if (!label && !props.value) {

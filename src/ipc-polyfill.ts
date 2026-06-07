@@ -4,10 +4,7 @@ import { IPC_ACTIONS } from "utils/messages";
 const BACKEND_URL = "http://localhost:6970/api/ipc";
 
 // Helper to route IPC calls to our lightweight local HTTP backend
-async function callBackend(
-  action: string,
-  args: unknown[] = [],
-): Promise<any> {
+async function callBackend(action: string, args: unknown[] = []): Promise<any> {
   try {
     const response = await fetch(BACKEND_URL, {
       method: "POST",
@@ -31,10 +28,7 @@ async function callBackend(
 }
 
 // Helper for action listeners expecting a BackendResponse structure: { data?: unknown, error?: unknown }
-async function callBackendWrapped(
-  action: string,
-  args: unknown[] = [],
-): Promise<any> {
+async function callBackendWrapped(action: string, args: unknown[] = []): Promise<any> {
   try {
     const response = await fetch(BACKEND_URL, {
       method: "POST",
@@ -129,10 +123,7 @@ const webIpc: IPC = {
   },
   async getSaveFilePath(options: any) {
     const defaultPath = options?.defaultPath || "";
-    if (
-      defaultPath.toLowerCase().endsWith(".pdf") ||
-      defaultPath.toLowerCase().includes(".pdf")
-    ) {
+    if (defaultPath.toLowerCase().endsWith(".pdf") || defaultPath.toLowerCase().includes(".pdf")) {
       return { canceled: false, filePath: defaultPath };
     }
 
@@ -147,9 +138,7 @@ const webIpc: IPC = {
       .replace(/\.books$/i, "")
       .replace(/\.db$/i, "")
       .replace(/[^a-zA-Z0-9 ._-]/g, "_");
-    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [
-      safeName,
-    ]);
+    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [safeName]);
     return { canceled: false, filePath: resolvedPath };
   },
   async getOpenFilePath(_options: any) {
@@ -174,14 +163,11 @@ const webIpc: IPC = {
         }
         try {
           const arrayBuffer = await file.arrayBuffer();
-          const response = await fetch(
-            "http://localhost:6970/api/upload-db",
-            {
-              method: "POST",
-              headers: { "X-File-Name": encodeURIComponent(file.name) },
-              body: arrayBuffer,
-            },
-          );
+          const response = await fetch("http://localhost:6970/api/upload-db", {
+            method: "POST",
+            headers: { "X-File-Name": encodeURIComponent(file.name) },
+            body: arrayBuffer,
+          });
           const result = await response.json();
           if (!response.ok || result.error) {
             throw new Error(result.error || "Upload failed");
@@ -227,12 +213,7 @@ const webIpc: IPC = {
   showItemInFolder(filePath: string) {
     console.log("showItemInFolder (stub):", filePath);
   },
-  async makePDF(
-    html: string,
-    savePath: string,
-    width: number,
-    height: number,
-  ) {
+  async makePDF(html: string, savePath: string, width: number, height: number) {
     const base64Data = await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [
       html,
       savePath,
@@ -242,8 +223,7 @@ const webIpc: IPC = {
     if (base64Data && typeof document !== "undefined") {
       const link = document.createElement("a");
       link.href = `data:application/pdf;base64,${base64Data}`;
-      const fileName =
-        savePath.split(/[\\/]/).pop()?.replace(".db", "") || "document.pdf";
+      const fileName = savePath.split(/[\\/]/).pop()?.replace(".db", "") || "document.pdf";
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
@@ -330,10 +310,7 @@ const webIpc: IPC = {
       return callBackendWrapped(IPC_ACTIONS.DB_CREATE, [dbPath, countryCode]);
     },
     async connect(dbPath: string, countryCode?: string) {
-      return callBackendWrapped(IPC_ACTIONS.DB_CONNECT, [
-        dbPath,
-        countryCode,
-      ]);
+      return callBackendWrapped(IPC_ACTIONS.DB_CONNECT, [dbPath, countryCode]);
     },
     async call(method: string, ...args: any[]) {
       return callBackendWrapped(IPC_ACTIONS.DB_CALL, [method, ...args]);

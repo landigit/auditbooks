@@ -38,12 +38,9 @@ export class TranslationString {
     let indexFormat = getIndexFormat(this.args[0]);
     indexFormat = getWhitespaceSanitized(indexFormat);
 
-    const translatedIndexFormat =
-      this.languageMap![indexFormat]?.translation ?? indexFormat;
+    const translatedIndexFormat = this.languageMap![indexFormat]?.translation ?? indexFormat;
 
-    this.argList = getIndexList(translatedIndexFormat).map(
-      (i) => this.argList![i],
-    );
+    this.argList = getIndexList(translatedIndexFormat).map((i) => this.argList![i]);
     this.strList = getSnippets(translatedIndexFormat);
   }
 
@@ -91,9 +88,7 @@ export function t(...args: TranslationLiteral[]): string {
   return new TranslationString(...args).s;
 }
 
-export function setLanguageMapOnTranslationString(
-  languageMap: LanguageMap | undefined,
-) {
+export function setLanguageMapOnTranslationString(languageMap: LanguageMap | undefined) {
   TranslationString.prototype.languageMap = languageMap;
 }
 
@@ -127,10 +122,6 @@ export function translateSchema(
       continue;
     }
 
-    translateSchema(
-      value as UnknownMap | UnknownMap[],
-      languageMap,
-      translateables,
-    );
+    translateSchema(value as UnknownMap | UnknownMap[], languageMap, translateables);
   }
 }

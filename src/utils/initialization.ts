@@ -3,11 +3,7 @@ import { ConfigFile } from "fyo/core/types";
 import { getRegionalModels, models } from "models/index";
 import { ModelNameEnum } from "models/types";
 import { TargetField } from "schemas/types";
-import {
-  getMapFromList,
-  getRandomString,
-  getValueMapFromList,
-} from "utils/index";
+import { getMapFromList, getRandomString, getValueMapFromList } from "utils/index";
 import { useAppStore } from "src/stores/app";
 
 export async function initializeInstance(
@@ -112,19 +108,17 @@ async function checkSingleLinks(fyo: Fyo) {
 }
 
 async function setCreds(fyo: Fyo) {
-  const email = (await fyo.getValue(
-    ModelNameEnum.AccountingSettings,
-    "email",
-  )) as string | undefined;
+  const email = (await fyo.getValue(ModelNameEnum.AccountingSettings, "email")) as
+    | string
+    | undefined;
   const user = fyo.auth.user;
   fyo.auth.user = email ?? user;
 }
 
 async function setVersion(fyo: Fyo) {
-  const version = (await fyo.getValue(
-    ModelNameEnum.SystemSettings,
-    "version",
-  )) as string | undefined;
+  const version = (await fyo.getValue(ModelNameEnum.SystemSettings, "version")) as
+    | string
+    | undefined;
 
   let appStore: any;
   try {
@@ -149,19 +143,13 @@ function setDeviceId(fyo: Fyo, appStore: ReturnType<typeof useAppStore>) {
   appStore.deviceId = deviceId;
 }
 
-async function setInstanceId(
-  fyo: Fyo,
-  appStore: ReturnType<typeof useAppStore>,
-) {
+async function setInstanceId(fyo: Fyo, appStore: ReturnType<typeof useAppStore>) {
   const systemSettings = await fyo.doc.getDoc(ModelNameEnum.SystemSettings);
   if (!systemSettings.instanceId) {
     await systemSettings.setAndSync("instanceId", getRandomString());
   }
 
-  appStore.instanceId = (await fyo.getValue(
-    ModelNameEnum.SystemSettings,
-    "instanceId",
-  )) as string;
+  appStore.instanceId = (await fyo.getValue(ModelNameEnum.SystemSettings, "instanceId")) as string;
 }
 
 export async function setCurrencySymbols(fyo: Fyo) {
@@ -172,10 +160,7 @@ export async function setCurrencySymbols(fyo: Fyo) {
   fyo.currencySymbols = getValueMapFromList(currencies, "name", "symbol");
 }
 
-async function setOpenCount(
-  fyo: Fyo,
-  appStore: ReturnType<typeof useAppStore>,
-) {
+async function setOpenCount(fyo: Fyo, appStore: ReturnType<typeof useAppStore>) {
   const misc = await fyo.doc.getDoc(ModelNameEnum.Misc);
   let openCount = misc.openCount as number | null;
 

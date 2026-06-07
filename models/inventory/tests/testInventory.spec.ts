@@ -1,14 +1,7 @@
-﻿import {
-  assertDoesNotThrow,
-  assertThrows,
-} from "backend/database/tests/helpers";
+﻿import { assertDoesNotThrow, assertThrows } from "backend/database/tests/helpers";
 import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { StockMovement } from "../StockMovement";
 import { MovementTypeEnum } from "../types";
 import { getItem, getSLEs, getStockMovement } from "./helpers";
@@ -126,9 +119,7 @@ describe("Inventory", () => {
       }
     }
 
-    expect(
-      await fyo.db.getStockQuantity(itemMap.Ink.name, locationMap.LocationOne),
-    ).toBe(0);
+    expect(await fyo.db.getStockQuantity(itemMap.Ink.name, locationMap.LocationOne)).toBe(0);
     expect(await fyo.db.getStockQuantity(itemMap.Ink.name)).toBe(quantity);
   });
 
@@ -172,10 +163,7 @@ describe("Inventory", () => {
 
     for (const { name } of names) {
       const slesBefore = await getSLEs(name, ModelNameEnum.StockMovement, fyo);
-      const doc = (await fyo.doc.getDoc(
-        ModelNameEnum.StockMovement,
-        name,
-      )) as StockMovement;
+      const doc = (await fyo.doc.getDoc(ModelNameEnum.StockMovement, name)) as StockMovement;
 
       if (doc.movementType === MovementTypeEnum.MaterialTransfer) {
         expect(slesBefore.length).toBe((doc.items?.length || 0) * 2);

@@ -22,10 +22,7 @@ function processFile(file) {
   let content = fs.readFileSync(file, "utf8");
 
   // Skip if already contains isLynx in template
-  if (
-    content.includes('v-if="!isLynx"') ||
-    content.includes('v-else-if="!isLynx"')
-  ) {
+  if (content.includes('v-if="!isLynx"') || content.includes('v-else-if="!isLynx"')) {
     console.log(`[Skip] Already compatible: ${file}`);
     return;
   }
@@ -56,12 +53,7 @@ function processFile(file) {
     if (nextStart !== -1 && nextStart < nextEnd) {
       // Check if it's <template> or <template ...>
       const nextChar = content[nextStart + 9];
-      if (
-        nextChar === ">" ||
-        nextChar === " " ||
-        nextChar === "\r" ||
-        nextChar === "\n"
-      ) {
+      if (nextChar === ">" || nextChar === " " || nextChar === "\r" || nextChar === "\n") {
         depth++;
       }
       cursor = nextStart + 9;
@@ -99,9 +91,7 @@ function processFile(file) {
 
   // Modify script setup to import isLynx
   let newContent =
-    content.slice(0, startContentIdx) +
-    newInnerTemplate +
-    content.slice(templateEndIdx);
+    content.slice(0, startContentIdx) + newInnerTemplate + content.slice(templateEndIdx);
 
   // Match <script setup ...>
   const scriptSetupRegex = /<script\s+setup([^>]*)>/;

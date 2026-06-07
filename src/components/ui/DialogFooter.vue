@@ -8,14 +8,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <view
-    :class="
-      cn(
-        'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
-        props.class,
-      )
-    "
-  >
+  <view :class="cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', props.class)">
     <slot />
   </view>
 </template>

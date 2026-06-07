@@ -1,10 +1,5 @@
 <template>
-  <component
-    :is="iconComponent"
-    :size="size"
-    :stroke-width="strokeWidth"
-    class="lucide-icon"
-  />
+  <component :is="iconComponent" :size="size" :stroke-width="strokeWidth" class="lucide-icon" />
 </template>
 
 <script setup lang="ts">
@@ -30,9 +25,7 @@ const iconComponent = computed(() => {
   const Icon = (icons as Record<string, any>)[iconName];
 
   if (!Icon) {
-    console.warn(
-      `[Lucide] Icon "${props.name}" (mapped to "${iconName}") not found.`,
-    );
+    console.warn(`[Lucide] Icon "${props.name}" (mapped to "${iconName}") not found.`);
     return null;
   }
 

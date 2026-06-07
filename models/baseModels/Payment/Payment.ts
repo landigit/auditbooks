@@ -12,11 +12,7 @@ import {
   ValidationMap,
 } from "fyo/model/types";
 import { NotFoundError, ValidationError } from "fyo/utils/errors";
-import {
-  getDocStatusListColumn,
-  getLedgerLinkAction,
-  getNumberSeries,
-} from "models/helpers";
+import { getDocStatusListColumn, getLedgerLinkAction, getNumberSeries } from "models/helpers";
 import { LedgerPosting } from "models/Transactional/LedgerPosting";
 import { Transactional } from "models/Transactional/Transactional";
 import { ModelNameEnum } from "models/types";
@@ -39,9 +35,7 @@ export class Payment extends Transactional {
   declare writeoff?: Money;
   declare paymentType?: PaymentType;
   declare paymentMethod?: string;
-  declare referenceType?:
-    | ModelNameEnum.SalesInvoice
-    | ModelNameEnum.PurchaseInvoice;
+  declare referenceType?: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice;
   declare for?: PaymentFor[];
   declare _accountsMap?: AccountTypeMap;
   declare initialAmount?: Money;
@@ -76,10 +70,7 @@ export class Payment extends Transactional {
     }
 
     const schemaName = referenceType as string;
-    const doc = (await this.fyo.doc.getDoc(
-      schemaName,
-      referenceName as string,
-    )) as Invoice;
+    const doc = (await this.fyo.doc.getDoc(schemaName, referenceName as string)) as Invoice;
 
     let paymentType: PaymentType;
     if (doc.isSales) {
@@ -145,8 +136,7 @@ export class Payment extends Transactional {
 
       if (refDoc?.party !== this.party) {
         throw new ValidationError(
-          t`${refDoc.name!} party ${refDoc.party!} is different from ${this
-            .party!}`,
+          t`${refDoc.name!} party ${refDoc.party!} is different from ${this.party!}`,
         );
       }
     }
@@ -158,9 +148,7 @@ export class Payment extends Transactional {
     }
 
     throw new this.fyo.errors.ValidationError(
-      t`To Account and From Account can't be the same: ${
-        this.account as string
-      }`,
+      t`To Account and From Account can't be the same: ${this.account as string}`,
     );
   }
 
@@ -174,11 +162,7 @@ export class Payment extends Transactional {
       .map(({ amount }) => amount as Money)
       .reduce((a, b) => a.add(b), this.fyo.pesa(0));
 
-    if (
-      (this.amount as Money)
-        .add((this.writeoff as Money) ?? 0)
-        .gte(referenceAmountTotal)
-    ) {
+    if ((this.amount as Money).add((this.writeoff as Money) ?? 0).gte(referenceAmountTotal)) {
       return;
     }
 
@@ -205,8 +189,10 @@ export class Payment extends Transactional {
       return;
     }
 
-    const writeOffAccount = this.fyo.singles.AccountingSettings!
-      .writeOffAccount as string | null | undefined;
+    const writeOffAccount = this.fyo.singles.AccountingSettings!.writeOffAccount as
+      | string
+      | null
+      | undefined;
 
     if (!writeOffAccount) {
       throw new NotFoundError(
@@ -216,10 +202,7 @@ export class Payment extends Transactional {
       );
     }
 
-    const exists = await this.fyo.db.exists(
-      ModelNameEnum.Account,
-      writeOffAccount,
-    );
+    const exists = await this.fyo.db.exists(ModelNameEnum.Account, writeOffAccount);
 
     if (exists) {
       return;
@@ -283,11 +266,7 @@ export class Payment extends Transactional {
         continue;
       }
 
-      for (const {
-        details,
-        taxAmount,
-        exchangeRate,
-      } of await refDoc.getTaxItems()) {
+      for (const { details, taxAmount, exchangeRate } of await refDoc.getTaxItems()) {
         if (!details) {
           continue;
         }
@@ -304,9 +283,9 @@ export class Payment extends Transactional {
           amount: this.fyo.pesa(0),
         };
 
-        taxes[payment_account][account!].amount = taxes[payment_account][
-          account!
-        ].amount!.add(taxAmount!.mul(exchangeRate ?? 1));
+        taxes[payment_account][account!].amount = taxes[payment_account][account!].amount!.add(
+          taxAmount!.mul(exchangeRate ?? 1),
+        );
       }
     }
 
@@ -380,8 +359,7 @@ export class Payment extends Transactional {
 
     const account = this.account as string;
     const paymentAccount = this.paymentAccount as string;
-    const writeOffAccount = this.fyo.singles.AccountingSettings!
-      .writeOffAccount as string;
+    const writeOffAccount = this.fyo.singles.AccountingSettings!.writeOffAccount as string;
 
     if (this.paymentType === "Pay") {
       await posting.credit(paymentAccount, writeoff);
@@ -407,11 +385,7 @@ export class Payment extends Transactional {
 
   validateReferenceType(row: PaymentFor) {
     const referenceType = row.referenceType;
-    if (
-      ![ModelNameEnum.SalesInvoice, ModelNameEnum.PurchaseInvoice].includes(
-        referenceType!,
-      )
-    ) {
+    if (![ModelNameEnum.SalesInvoice, ModelNameEnum.PurchaseInvoice].includes(referenceType!)) {
       throw new ValidationError(t`Please select a valid reference type.`);
     }
   }
@@ -424,9 +398,7 @@ export class Payment extends Transactional {
         row.referenceName,
       )) as Invoice;
 
-      outstandingAmount = outstandingAmount.add(
-        referenceDoc.outstandingAmount?.abs() ?? 0,
-      );
+      outstandingAmount = outstandingAmount.add(referenceDoc.outstandingAmount?.abs() ?? 0);
     }
 
     const amount = this.amount as Money;
@@ -438,10 +410,7 @@ export class Payment extends Transactional {
     let message = this.fyo.t`Payment amount: ${this.fyo.format(
       this.amount!,
       "Currency",
-    )} should be less than Outstanding amount: ${this.fyo.format(
-      outstandingAmount,
-      "Currency",
-    )}.`;
+    )} should be less than Outstanding amount: ${this.fyo.format(outstandingAmount, "Currency")}.`;
 
     if (amount.lte(0)) {
       const amt = this.fyo.format(this.amount!, "Currency");
@@ -459,10 +428,7 @@ export class Payment extends Transactional {
 
   async updateReferenceDocOutstanding() {
     for (const row of this.for ?? []) {
-      const referenceDoc = await this.fyo.doc.getDoc(
-        row.referenceType!,
-        row.referenceName,
-      );
+      const referenceDoc = await this.fyo.doc.getDoc(row.referenceType!, row.referenceName);
 
       const previousOutstandingAmount = referenceDoc.outstandingAmount as Money;
       const isReturnInvoice = (referenceDoc as Invoice).isReturn;
@@ -495,9 +461,7 @@ export class Payment extends Transactional {
           if (this.writeoff?.isZero()) {
             this.amount = totalAmount;
             row.amountPaid = this.fyo.pesa(0);
-            throw new ValidationError(
-              this.fyo.t`Enable Partial payment to pay partial amount`,
-            );
+            throw new ValidationError(this.fyo.t`Enable Partial payment to pay partial amount`);
           }
         }
       }
@@ -516,10 +480,7 @@ export class Payment extends Transactional {
 
   async _revertReferenceOutstanding() {
     for (const ref of this.for ?? []) {
-      const refDoc = await this.fyo.doc.getDoc(
-        ref.referenceType!,
-        ref.referenceName,
-      );
+      const refDoc = await this.fyo.doc.getDoc(ref.referenceType!, ref.referenceName);
       const isReturnInvoice = (refDoc as Invoice).isReturn;
       const outstandingAmount = isReturnInvoice
         ? (refDoc.outstandingAmount as Money).sub(ref.amount!)
@@ -529,10 +490,7 @@ export class Payment extends Transactional {
   }
 
   async updatePartyOutstanding() {
-    const partyDoc = (await this.fyo.doc.getDoc(
-      ModelNameEnum.Party,
-      this.party,
-    )) as Party;
+    const partyDoc = (await this.fyo.doc.getDoc(ModelNameEnum.Party, this.party)) as Party;
     await partyDoc.updateOutstandingAmount();
   }
 
@@ -544,9 +502,7 @@ export class Payment extends Transactional {
   async getTotalTax() {
     const taxArr = await this.getTaxSummary();
 
-    return taxArr
-      .map(({ amount }) => amount)
-      .reduce((a, b) => a!.add(b!), this.fyo.pesa(0));
+    return taxArr.map(({ amount }) => amount).reduce((a, b) => a!.add(b!), this.fyo.pesa(0));
   }
 
   async _getAccountsMap(): Promise<AccountTypeMap> {
@@ -600,15 +556,9 @@ export class Payment extends Transactional {
       return null;
     }
 
-    const refDoc = (await reference.loadAndGetLink(
-      "referenceName",
-    )) as Invoice | null;
+    const refDoc = (await reference.loadAndGetLink("referenceName")) as Invoice | null;
 
-    if (
-      refDoc &&
-      refDoc.schema.name === ModelNameEnum.SalesInvoice &&
-      refDoc.isReturned
-    ) {
+    if (refDoc && refDoc.schema.name === ModelNameEnum.SalesInvoice && refDoc.isReturned) {
       const accountsMap = await this._getAccountsMap();
       return accountsMap[AccountTypeEnum.Cash]?.[0];
     }
@@ -643,9 +593,7 @@ export class Payment extends Transactional {
         const accountsMap = await this._getAccountsMap();
         if (this.paymentType === "Pay") {
           return (
-            (await this._getReferenceAccount()) ??
-            accountsMap[AccountTypeEnum.Payable]?.[0] ??
-            null
+            (await this._getReferenceAccount()) ?? accountsMap[AccountTypeEnum.Payable]?.[0] ?? null
           );
         }
 
@@ -670,9 +618,7 @@ export class Payment extends Transactional {
         }
 
         const reference = this?.for?.[0];
-        const refDoc = (await reference?.loadAndGetLink(
-          "referenceName",
-        )) as Invoice | null;
+        const refDoc = (await reference?.loadAndGetLink("referenceName")) as Invoice | null;
 
         const partyDoc = (await this.loadAndGetLink("party")) as Party;
         const outstanding = partyDoc.outstandingAmount as Money;
@@ -727,9 +673,7 @@ export class Payment extends Transactional {
   validations: ValidationMap = {
     amount: async (value: DocValue) => {
       if ((value as Money).isNegative()) {
-        throw new ValidationError(
-          this.fyo.t`Payment amount cannot be less than zero.`,
-        );
+        throw new ValidationError(this.fyo.t`Payment amount cannot be less than zero.`);
       }
 
       if (((this.for ?? []) as Doc[]).length === 0) {
@@ -757,10 +701,7 @@ export class Payment extends Transactional {
         );
       } else if ((value as Money).isZero()) {
         throw new ValidationError(
-          this.fyo.t`Payment amount cannot be ${this.fyo.format(
-            value,
-            "Currency",
-          )}.`,
+          this.fyo.t`Payment amount cannot be ${this.fyo.format(value, "Currency")}.`,
         );
       }
     },
@@ -768,8 +709,7 @@ export class Payment extends Transactional {
 
   hidden: HiddenMap = {
     amountPaid: () => this.writeoff?.isZero() ?? true,
-    attachment: () =>
-      !(this.attachment || !(this.isSubmitted || this.isCancelled)),
+    attachment: () => !(this.attachment || !(this.isSubmitted || this.isCancelled)),
     for: () => !!((this.isSubmitted || this.isCancelled) && !this.for?.length),
     taxes: () => !this.taxes?.length,
   };

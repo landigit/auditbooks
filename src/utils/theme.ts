@@ -4,9 +4,7 @@ let themeListener: ((e: MediaQueryListEvent) => void) | null = null;
 
 export function setTheme(theme: Theme): void {
   const mediaQuery =
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-color-scheme: dark)")
-      : null;
+    typeof window !== "undefined" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
 
   // Clean up old listener if it exists
   if (themeListener && mediaQuery) {
@@ -17,11 +15,7 @@ export function setTheme(theme: Theme): void {
   const applyTheme = (isDark: boolean) => {
     if (typeof document !== "undefined") {
       if (isDark) {
-        document.documentElement.classList.add(
-          "dark",
-          "custom-scroll",
-          "custom-scroll-thumb1",
-        );
+        document.documentElement.classList.add("dark", "custom-scroll", "custom-scroll-thumb1");
       } else {
         document.documentElement.classList.remove("dark");
       }

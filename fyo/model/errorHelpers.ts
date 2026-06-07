@@ -1,20 +1,11 @@
 import { Fyo } from "fyo";
 import { DuplicateEntryError, NotFoundError } from "fyo/utils/errors";
-import {
-  DynamicLinkField,
-  Field,
-  FieldTypeEnum,
-  TargetField,
-} from "schemas/types";
+import { DynamicLinkField, Field, FieldTypeEnum, TargetField } from "schemas/types";
 import { Doc } from "./doc";
 
 type NotFoundDetails = { label: string; value: string };
 
-export async function getDbSyncError(
-  err: Error,
-  doc: Doc,
-  fyo: Fyo,
-): Promise<Error> {
+export async function getDbSyncError(err: Error, doc: Doc, fyo: Fyo): Promise<Error> {
   if (err.message.includes("UNIQUE constraint failed:")) {
     return getDuplicateEntryError(err, doc);
   }
@@ -25,10 +16,7 @@ export async function getDbSyncError(
   return err;
 }
 
-function getDuplicateEntryError(
-  err: Error,
-  doc: Doc,
-): Error | DuplicateEntryError {
+function getDuplicateEntryError(err: Error, doc: Doc): Error | DuplicateEntryError {
   const matches = err.message.match(/UNIQUE constraint failed:\s(\w+)\.(\w+)$/);
   if (!matches) {
     return err;
@@ -52,11 +40,7 @@ function getDuplicateEntryError(
   return duplicateEntryError;
 }
 
-async function getNotFoundError(
-  err: Error,
-  doc: Doc,
-  fyo: Fyo,
-): Promise<NotFoundError> {
+async function getNotFoundError(err: Error, doc: Doc, fyo: Fyo): Promise<NotFoundError> {
   const notFoundError = new NotFoundError(fyo.t`Cannot perform operation.`);
   notFoundError.stack = err.stack;
   notFoundError.more.message = err.message;
@@ -72,10 +56,7 @@ async function getNotFoundError(
   return notFoundError;
 }
 
-async function getNotFoundDetails(
-  doc: Doc,
-  fyo: Fyo,
-): Promise<NotFoundDetails | null> {
+async function getNotFoundDetails(doc: Doc, fyo: Fyo): Promise<NotFoundDetails | null> {
   /**
    * Since 'FOREIGN KEY constraint failed' doesn't inform
    * how the operation failed, all Link and DynamicLink fields
@@ -106,10 +87,7 @@ async function getNotFoundDetailsIfDoesNotExists(
     return getNotFoundDynamicLinkDetails(field, value as string, fyo, doc);
   }
 
-  if (
-    field.fieldtype === FieldTypeEnum.Table &&
-    (value as Doc[] | undefined)?.length
-  ) {
+  if (field.fieldtype === FieldTypeEnum.Table && (value as Doc[] | undefined)?.length) {
     return await getNotFoundTableDetails(value as Doc[], fyo);
   }
 
@@ -150,10 +128,7 @@ async function getNotFoundDynamicLinkDetails(
   return null;
 }
 
-async function getNotFoundTableDetails(
-  value: Doc[],
-  fyo: Fyo,
-): Promise<NotFoundDetails | null> {
+async function getNotFoundTableDetails(value: Doc[], fyo: Fyo): Promise<NotFoundDetails | null> {
   for (const childDoc of value) {
     const details = await getNotFoundDetails(childDoc, fyo);
     if (details) {

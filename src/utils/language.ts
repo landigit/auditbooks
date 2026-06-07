@@ -27,16 +27,10 @@ export const languageCodeMap: Record<string, string> = {
   Turkish: "tr",
 };
 
-export async function setLanguageMap(
-  initLanguage?: string,
-  dontReload = false,
-) {
+export async function setLanguageMap(initLanguage?: string, dontReload = false) {
   const oldLanguage = fyo.config.get("language") as string;
   initLanguage ??= oldLanguage;
-  const { code, language, usingDefault } = getLanguageCode(
-    initLanguage,
-    oldLanguage,
-  );
+  const { code, language, usingDefault } = getLanguageCode(initLanguage, oldLanguage);
 
   let success = true;
   if (code === "en") {

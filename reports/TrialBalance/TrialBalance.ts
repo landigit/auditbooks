@@ -1,10 +1,7 @@
 import { t } from "fyo";
 import { ValueError } from "fyo/utils/errors";
 import dayjs from "dayjs";
-import {
-  AccountRootType,
-  AccountRootTypeEnum,
-} from "models/baseModels/Account/types";
+import { AccountRootType, AccountRootTypeEnum } from "models/baseModels/Account/types";
 import {
   AccountReport,
   ACC_BAL_WIDTH,
@@ -80,9 +77,7 @@ export class TrialBalance extends AccountReport {
   }
 
   // oxlint-disable-next-line @typescript-eslint/require-await
-  async getReportDataFromRows(
-    rootTypeRows: RootTypeRow[],
-  ): Promise<ReportData> {
+  async getReportDataFromRows(rootTypeRows: RootTypeRow[]): Promise<ReportData> {
     const reportData = rootTypeRows.reduce((reportData, r) => {
       reportData.push(...r.rows);
       reportData.push(this.getEmptyRow());
@@ -95,9 +90,7 @@ export class TrialBalance extends AccountReport {
   }
 
   // oxlint-disable-next-line @typescript-eslint/require-await
-  async _getGroupedByDateRanges(
-    map: GroupedMap,
-  ): Promise<AccountNameValueMapMap> {
+  async _getGroupedByDateRanges(map: GroupedMap): Promise<AccountNameValueMapMap> {
     const accountValueMap: AccountNameValueMapMap = new Map();
 
     for (const account of map.keys()) {
@@ -109,9 +102,7 @@ export class TrialBalance extends AccountReport {
       for (const entry of map.get(account)!) {
         const key = this._getRangeMapKey(entry);
         if (key === null) {
-          throw new ValueError(
-            `invalid entry in trial balance ${entry.date?.toISOString() ?? ""}`,
-          );
+          throw new ValueError(`invalid entry in trial balance ${entry.date?.toISOString() ?? ""}`);
         }
 
         const map = valueMap.get(key);
@@ -203,9 +194,7 @@ export class TrialBalance extends AccountReport {
       const endpoints = await getFiscalEndpoints(year + 1, year, this.fyo);
 
       this.fromDate = endpoints.fromDate;
-      this.toDate = dayjs(endpoints.toDate)
-        .subtract(1, "day")
-        .format("YYYY-MM-DD")!;
+      this.toDate = dayjs(endpoints.toDate).subtract(1, "day").format("YYYY-MM-DD")!;
     }
 
     await this._setDateRanges();

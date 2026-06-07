@@ -21,12 +21,8 @@
         v-if="loading"
         class="flex flex-col items-center justify-center p-8 text-description h-64"
       >
-        <view
-          class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"
-        ></view>
-        <text class="text-sm text-description">{{
-          t`Loading linked entries...`
-        }}</text>
+        <view class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></view>
+        <text class="text-sm text-description">{{ t`Loading linked entries...` }}</text>
       </view>
 
       <!-- Linked Entry List -->
@@ -34,11 +30,7 @@
         v-else-if="sequence.length"
         class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2"
       >
-        <view
-          v-for="sn of sequence"
-          :key="sn"
-          class="border-b border-border p-4 overflow-auto"
-        >
+        <view v-for="sn of sequence" :key="sn" class="border-b border-border p-4 overflow-auto">
           <!-- Header with count and schema label -->
           <view
             class="flex justify-between cursor-pointer"
@@ -47,9 +39,7 @@
           >
             <text class="text-base text-description font-semibold select-none">
               {{ fyo.schemaMap[sn]?.label ?? sn
-              }}<text class="font-normal">{{
-                ` – ${entries[sn].details.length}`
-              }}</text>
+              }}<text class="font-normal">{{ ` – ${entries[sn].details.length}` }}</text>
             </text>
             <lucide-icon
               :name="entries[sn].collapsed ? 'chevron-up' : 'chevron-down'"
@@ -109,20 +99,13 @@
                 <text v-if="e.item" class="pill" :class="colorClass('draft')">
                   {{ e.item }}
                 </text>
-                <text
-                  v-if="e.location"
-                  class="pill"
-                  :class="colorClass('draft')"
-                >
+                <text v-if="e.location" class="pill" :class="colorClass('draft')">
                   {{ e.location }}
                 </text>
 
                 <!-- Amounts -->
                 <text
-                  v-if="
-                    isPesa(e.outstandingAmount) &&
-                    e.outstandingAmount.isPositive()
-                  "
+                  v-if="isPesa(e.outstandingAmount) && e.outstandingAmount.isPositive()"
                   class="pill no-scrollbar"
                   :class="colorClass('unpaid')"
                 >
@@ -149,9 +132,7 @@
                   class="pill no-scrollbar"
                   :class="colorClass('unpaid')"
                 >
-                  {{
-                    t`Pending qty. ${fyo.format(e.stockNotTransferred, "Float")}`
-                  }}
+                  {{ t`Pending qty. ${fyo.format(e.stockNotTransferred, "Float")}` }}
                 </text>
                 <text
                   v-else-if="typeof e.quantity === 'number' && e.quantity"
@@ -184,19 +165,10 @@
     </view>
 
     <!-- Scrollable content -->
-    <scroll-view
-      scroll-y="true"
-      class="flex-1"
-      style="height: 0; min-height: 0"
-    >
+    <scroll-view scroll-y="true" class="flex-1" style="height: 0; min-height: 0">
       <!-- Loading Spinner -->
-      <view
-        v-if="loading"
-        class="flex-col items-center justify-center p-8 text-description h-64"
-      >
-        <text class="text-sm text-description mb-2">{{
-          t`Loading linked entries...`
-        }}</text>
+      <view v-if="loading" class="flex-col items-center justify-center p-8 text-description h-64">
+        <text class="text-sm text-description mb-2">{{ t`Loading linked entries...` }}</text>
       </view>
 
       <!-- Linked Entry List -->
@@ -212,9 +184,7 @@
             @tap="entries[sn].collapsed = !entries[sn].collapsed"
           >
             <text class="text-sm text-main font-semibold">
-              {{ fyo.schemaMap[sn]?.label ?? sn }} ({{
-                entries[sn].details.length
-              }})
+              {{ fyo.schemaMap[sn]?.label ?? sn }} ({{ entries[sn].details.length }})
             </text>
             <text class="text-xs text-description">
               {{ entries[sn].collapsed ? "▲" : "▼" }}
@@ -263,10 +233,7 @@
 
                 <!-- Amounts -->
                 <text
-                  v-if="
-                    isPesa(e.outstandingAmount) &&
-                    e.outstandingAmount.isPositive()
-                  "
+                  v-if="isPesa(e.outstandingAmount) && e.outstandingAmount.isPositive()"
                   class="text-xs px-2 py-0.5 rounded bg-danger-muted text-danger font-semibold"
                 >
                   {{ t`Unpaid ${fyo.format(e.outstandingAmount, "Currency")}` }}
@@ -289,9 +256,7 @@
                   v-if="e.stockNotTransferred"
                   class="text-xs px-2 py-0.5 rounded bg-danger-muted text-danger"
                 >
-                  {{
-                    t`Pending qty. ${fyo.format(e.stockNotTransferred, "Float")}`
-                  }}
+                  {{ t`Pending qty. ${fyo.format(e.stockNotTransferred, "Float")}` }}
                 </text>
                 <text
                   v-else-if="typeof e.quantity === 'number' && e.quantity"
@@ -352,17 +317,13 @@ const emit = defineEmits<{
 // State definition
 const shortcuts = inject(shortcutsKey);
 const loading = ref(true);
-const entries = ref<
-  Record<string, { collapsed: boolean; details: Record<string, any>[] }>
->({});
+const entries = ref<Record<string, { collapsed: boolean; details: Record<string, any>[] }>>({});
 
 const colorClass = getBgTextColorClass;
 
 // Computed properties
 const sequence = computed<string[]>(() => {
-  const seq: string[] = linkSequence.filter(
-    (s) => !!entries.value[s]?.details?.length,
-  );
+  const seq: string[] = linkSequence.filter((s) => !!entries.value[s]?.details?.length);
 
   for (const s in entries.value) {
     if (seq.includes(s)) {
@@ -407,10 +368,7 @@ const setLinkedEntries = async () => {
 
     const results = await Promise.all(fetchPromises);
 
-    const newEntries: Record<
-      string,
-      { collapsed: boolean; details: Record<string, any>[] }
-    > = {};
+    const newEntries: Record<string, { collapsed: boolean; details: Record<string, any>[] }> = {};
     for (const res of results) {
       if (res) {
         newEntries[res.key] = {
@@ -486,20 +444,8 @@ const linkEntryDisplayFields: Record<string, string[]> = {
   [ModelNameEnum.JournalEntry]: ["name", "date", "entryType"],
   [ModelNameEnum.StockMovement]: ["name", "date", "amount"],
   // Ledgers
-  [ModelNameEnum.AccountingLedgerEntry]: [
-    "name",
-    "date",
-    "account",
-    "credit",
-    "debit",
-  ],
-  [ModelNameEnum.StockLedgerEntry]: [
-    "name",
-    "date",
-    "item",
-    "location",
-    "quantity",
-  ],
+  [ModelNameEnum.AccountingLedgerEntry]: ["name", "date", "account", "credit", "debit"],
+  [ModelNameEnum.StockLedgerEntry]: ["name", "date", "item", "location", "quantity"],
 };
 </script>
 

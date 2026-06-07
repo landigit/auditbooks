@@ -7,10 +7,7 @@ export function evaluateReadOnly(field: Field, doc?: Doc) {
     return true;
   }
 
-  if (
-    field.fieldname === "name" &&
-    (doc?.inserted || doc?.schema.naming !== "manual")
-  ) {
+  if (field.fieldname === "name" && (doc?.inserted || doc?.schema.naming !== "manual")) {
     return true;
   }
 
@@ -54,9 +51,7 @@ function evaluateFieldMeta(
 
   const docRecord = doc as Record<string, unknown> | undefined;
   const metaKey = meta as string;
-  const metaObj = docRecord?.[metaKey] as
-    | Record<string, (() => boolean) | undefined>
-    | undefined;
+  const metaObj = docRecord?.[metaKey] as Record<string, (() => boolean) | undefined> | undefined;
   const evalFunction = metaObj?.[field.fieldname];
   if (typeof evalFunction === "function") {
     return evalFunction();
@@ -65,9 +60,7 @@ function evaluateFieldMeta(
   return defaultValue;
 }
 
-export async function getLinkedEntries(
-  doc: Doc,
-): Promise<Record<string, string[]>> {
+export async function getLinkedEntries(doc: Doc): Promise<Record<string, string[]>> {
   // TODO: Normalize this function.
   const fyo = doc.fyo;
   const target = doc.schemaName;
@@ -76,9 +69,7 @@ export async function getLinkedEntries(
     .filter((sch) => !sch?.isSingle)
     .map((sch) => sch?.fields)
     .flat()
-    .filter(
-      (f) => f?.fieldtype === "Link" && f.target === target,
-    ) as TargetField[];
+    .filter((f) => f?.fieldtype === "Link" && f.target === target) as TargetField[];
 
   const dynamicLinkingFields = Object.values(fyo.schemaMap)
     .filter((sch) => !sch?.isSingle)

@@ -10,12 +10,7 @@
       :size="size"
       @update:model-value="handleDateChange"
     />
-    <view
-      v-else
-      class="flex"
-      :class="[containerClasses, sizeClasses]"
-      tabindex="-1"
-    >
+    <view v-else class="flex" :class="[containerClasses, sizeClasses]" tabindex="-1">
       <text
         v-if="!isEmpty"
         :class="[baseInputClasses]"
@@ -23,10 +18,7 @@
       >
         {{ formattedValue }}
       </text>
-      <text
-        v-else-if="inputPlaceholder"
-        class="text-base text-description w-full opacity-50"
-      >
+      <text v-else-if="inputPlaceholder" class="text-base text-description w-full opacity-50">
         {{ inputPlaceholder }}
       </text>
     </view>
@@ -38,10 +30,7 @@
 import { computed, ref } from "vue";
 import { fyo } from "src/initFyo";
 import { DateTimePicker } from "src/components/ui";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 
 // --- Props & Emits ---
 const props = withDefaults(defineProps<BaseControlProps>(), {

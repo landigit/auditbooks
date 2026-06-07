@@ -1,10 +1,5 @@
 <template>
-  <component
-    v-bind="$attrs"
-    :is="iconComponent"
-    :class="iconClasses"
-    :active="active"
-  />
+  <component v-bind="$attrs" :is="iconComponent" :class="iconClasses" :active="active" />
 </template>
 
 <script setup lang="ts">

@@ -1,15 +1,8 @@
 <template>
-  <view
-    class="flex-shrink-0 flex items-center gap-2"
-    style="width: fit-content"
-  >
-    <kbd
-      v-for="k in keys"
-      :key="k"
-      class="key-common"
-      :class="{ 'key-styling': !simple }"
-      >{{ keyMap[k] ?? k }}</kbd
-    >
+  <view class="flex-shrink-0 flex items-center gap-2" style="width: fit-content">
+    <kbd v-for="k in keys" :key="k" class="key-common" :class="{ 'key-styling': !simple }">{{
+      keyMap[k] ?? k
+    }}</kbd>
   </view>
 </template>
 

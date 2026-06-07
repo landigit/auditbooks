@@ -23,9 +23,7 @@
         </view>
 
         <view class="col-span-6">
-          <text class="text-lg text-main font-medium mb-2"
-            >Closing Amounts</text
-          >
+          <text class="text-lg text-main font-medium mb-2">Closing Amounts</text>
           <Table
             v-if="isValuesSeeded"
             class="text-base"
@@ -43,22 +41,15 @@
               @tap="emit('toggleModal', 'ShiftClose', false)"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-red-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-red-text font-semibold">
                   {{ t`Cancel` }}
                 </text>
               </slot>
             </Button>
 
-            <Button
-              class="w-full py-5 bg-indicator-green-bg"
-              @tap="handleSubmit"
-            >
+            <Button class="w-full py-5 bg-indicator-green-bg" @tap="handleSubmit">
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-green-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-green-text font-semibold">
                   {{ t`Submit` }}
                 </text>
               </slot>
@@ -72,9 +63,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Close P O S Shift Modal</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -143,8 +132,7 @@ const setTransactedAmount = async () => {
     return;
   }
 
-  transactedAmount.value =
-    (await fyo.db.getPOSTransactedAmount(fromDate, new Date())) ?? {};
+  transactedAmount.value = (await fyo.db.getPOSTransactedAmount(fromDate, new Date())) ?? {};
 };
 
 const seedClosingCash = () => {
@@ -171,9 +159,7 @@ const setClosingCashAmount = () => {
     if (row.paymentMethod === "Cash") {
       row.closingAmount = posClosingShiftDoc.value?.closingCashAmount;
       if (row.closingAmount) {
-        row.differenceAmount = row.closingAmount.sub(
-          row.expectedAmount as Money,
-        );
+        row.differenceAmount = row.closingAmount.sub(row.expectedAmount as Money);
       }
     }
   });
@@ -186,8 +172,7 @@ const seedClosingAmounts = async () => {
 
   posClosingShiftDoc.value.closingAmounts = [];
 
-  const openingAmounts = posOpeningShiftDoc.value
-    ?.openingAmounts as OpeningAmounts[];
+  const openingAmounts = posOpeningShiftDoc.value?.openingAmounts as OpeningAmounts[];
 
   for (const row of openingAmounts) {
     if (!row.paymentMethod) {
@@ -197,9 +182,7 @@ const seedClosingAmounts = async () => {
     let expectedAmount = row.amount ?? fyo.pesa(0);
 
     if (transactedAmount.value) {
-      expectedAmount = expectedAmount.add(
-        transactedAmount.value[row.paymentMethod],
-      );
+      expectedAmount = expectedAmount.add(transactedAmount.value[row.paymentMethod]);
     }
 
     await posClosingShiftDoc.value.append("closingAmounts", {
@@ -226,22 +209,14 @@ const getField = (fieldname: string) => {
 const handleSubmit = async () => {
   try {
     if (!isOnline.value) {
-      throw new ForbiddenError(
-        t`Device is offline. Please connect to a network to continue.`,
-      );
+      throw new ForbiddenError(t`Device is offline. Please connect to a network to continue.`);
     }
 
     validateClosingAmounts(posClosingShiftDoc.value as POSClosingShift);
     await posClosingShiftDoc.value?.set("closingDate", new Date());
-    await posClosingShiftDoc.value?.set(
-      "openingShift",
-      posOpeningShiftDoc.value?.name,
-    );
+    await posClosingShiftDoc.value?.set("openingShift", posOpeningShiftDoc.value?.name);
     await posClosingShiftDoc.value?.sync();
-    await transferPOSCashAndWriteOff(
-      fyo,
-      posClosingShiftDoc.value as POSClosingShift,
-    );
+    await transferPOSCashAndWriteOff(fyo, posClosingShiftDoc.value as POSClosingShift);
 
     await fyo.singles.POSSettings?.setAndSync("isShiftOpen", false);
     emit("toggleModal", "ShiftClose");
@@ -266,9 +241,7 @@ watch(
 
 // Lifecycles
 onActivated(async () => {
-  posClosingShiftDoc.value = fyo.doc.getNewDoc(
-    ModelNameEnum.POSClosingShift,
-  ) as POSClosingShift;
+  posClosingShiftDoc.value = fyo.doc.getNewDoc(ModelNameEnum.POSClosingShift) as POSClosingShift;
   await seedValues();
   await setTransactedAmount();
 });

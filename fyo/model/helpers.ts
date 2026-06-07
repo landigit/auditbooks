@@ -6,10 +6,7 @@ import { Field, FieldType, FieldTypeEnum } from "schemas/types";
 import { Doc } from "./doc";
 import { FormulaMap } from "./types";
 
-export function areDocValuesEqual(
-  dvOne: DocValue | Doc[],
-  dvTwo: DocValue | Doc[],
-): boolean {
+export function areDocValuesEqual(dvOne: DocValue | Doc[], dvTwo: DocValue | Doc[]): boolean {
   if (["string", "number"].includes(typeof dvOne) || dvOne instanceof Date) {
     return dvOne === dvTwo;
   }
@@ -25,10 +22,7 @@ export function areDocValuesEqual(
   return deepEqual(dvOne, dvTwo);
 }
 
-export function getPreDefaultValues(
-  fieldtype: FieldType,
-  fyo: Fyo,
-): DocValue | Doc[] {
+export function getPreDefaultValues(fieldtype: FieldType, fyo: Fyo): DocValue | Doc[] {
   switch (fieldtype) {
     case FieldTypeEnum.Table:
       return [] as Doc[];
@@ -112,11 +106,7 @@ export function shouldApplyFormula(field: Field, doc: Doc, fieldname?: string) {
   return getIsNullOrUndef(value);
 }
 
-function shouldApplyFormulaPreSync(
-  fieldname: string,
-  dependsOn: string[],
-  doc: Doc,
-): boolean {
+function shouldApplyFormulaPreSync(fieldname: string, dependsOn: string[], doc: Doc): boolean {
   if (isDocValueTruthy(doc.get(fieldname))) {
     return false;
   }
@@ -160,9 +150,7 @@ export function getFormulaSequence(formulas: FormulaMap) {
   return sequenceDependencies(depMap);
 }
 
-function sequenceDependencies(
-  depMap: Record<string, string[] | undefined>,
-): string[] {
+function sequenceDependencies(depMap: Record<string, string[] | undefined>): string[] {
   /**
    * Sufficiently okay algo to sequence dependents after
    * their dependencies

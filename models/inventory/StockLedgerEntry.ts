@@ -15,14 +15,7 @@ export class StockLedgerEntry extends Doc {
 
   static override getListViewSettings(): ListViewSettings {
     return {
-      columns: [
-        "date",
-        "item",
-        "location",
-        "rate",
-        "quantity",
-        "referenceName",
-      ],
+      columns: ["date", "item", "location", "rate", "quantity", "referenceName"],
     };
   }
 }

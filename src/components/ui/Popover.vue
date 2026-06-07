@@ -7,12 +7,9 @@ import {
   useForwardPropsEmits,
 } from "reka-ui";
 
-const props = withDefaults(
-  defineProps<PopoverRootProps & { open?: boolean }>(),
-  {
-    modal: false,
-  },
-);
+const props = withDefaults(defineProps<PopoverRootProps & { open?: boolean }>(), {
+  modal: false,
+});
 const emits = defineEmits<PopoverRootEmits>();
 
 const forwarded = useForwardPropsEmits(props, emits);
@@ -33,11 +30,7 @@ const handleUpdateOpen = (val: boolean) => {
 
 <template>
   <view v-bind="$attrs">
-    <PopoverRoot
-      v-bind="forwarded"
-      :open="isOpen"
-      @update:open="handleUpdateOpen"
-    >
+    <PopoverRoot v-bind="forwarded" :open="isOpen" @update:open="handleUpdateOpen">
       <slot />
     </PopoverRoot>
   </view>

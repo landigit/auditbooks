@@ -45,10 +45,7 @@
 import { ref, computed } from "vue";
 import { t } from "fyo";
 import { convertFileToDataURL } from "src/utils/misc";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 import LucideIcon from "../LucideIcon.vue";
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
@@ -70,14 +67,8 @@ const emit = defineEmits<{
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
-const {
-  labelClasses,
-  inputClasses,
-  containerClasses,
-  isReadOnly,
-  triggerChange,
-  focus,
-} = useBaseControl(props as any, emit, fileInput);
+const { labelClasses, inputClasses, containerClasses, isReadOnly, triggerChange, focus } =
+  useBaseControl(props as any, emit, fileInput);
 
 const label = computed(() => {
   if (props.value) {

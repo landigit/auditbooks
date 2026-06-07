@@ -86,11 +86,7 @@ export class Account extends Doc {
           return;
         }
 
-        return await this.fyo.getValue(
-          ModelNameEnum.Account,
-          this.parentAccount,
-          "rootType",
-        );
+        return await this.fyo.getValue(ModelNameEnum.Account, this.parentAccount, "rootType");
       },
     },
   };

@@ -1,11 +1,5 @@
 <template>
-  <Dropdown
-    v-if="actions && actions.length"
-    class="text-xs"
-    :items="items"
-    :doc="doc"
-    right
-  >
+  <Dropdown v-if="actions && actions.length" class="text-xs" :items="items" :doc="doc" right>
     <template #default="{ toggleDropdown }">
       <Button :type="type" :icon="icon" @tap="toggleDropdown()">
         <slot>

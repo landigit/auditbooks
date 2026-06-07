@@ -1,16 +1,9 @@
 ﻿import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
 import { getItem } from "./helpers";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { MovementTypeEnum } from "../types";
-import {
-  assertDoesNotThrow,
-  assertThrows,
-} from "backend/database/tests/helpers";
+import { assertDoesNotThrow, assertThrows } from "backend/database/tests/helpers";
 import { StockMovement } from "../StockMovement";
 
 const fyo = getTestFyo();
@@ -22,11 +15,7 @@ describe("Stock Movement", () => {
     const e = await fyo.db.exists(ModelNameEnum.Location, "Stores");
     expect(e).toBe(true);
 
-    const items = [
-      getItem("RawOne", 100),
-      getItem("RawTwo", 100),
-      getItem("Final", 200),
-    ];
+    const items = [getItem("RawOne", 100), getItem("RawTwo", 100), getItem("Final", 200)];
 
     for (const item of items) {
       await fyo.doc.getNewDoc(ModelNameEnum.Item, item).sync();
@@ -78,12 +67,8 @@ describe("Stock Movement", () => {
       rate: 100,
     });
 
-    await assertDoesNotThrow(
-      async () => await sm.items?.[0].set("fromLocation", "Stores"),
-    );
-    await assertThrows(
-      async () => await sm.items?.[0].set("toLocation", "Stores"),
-    );
+    await assertDoesNotThrow(async () => await sm.items?.[0].set("fromLocation", "Stores"));
+    await assertThrows(async () => await sm.items?.[0].set("toLocation", "Stores"));
     expect(sm.items?.[0].to).toBeUndefined();
 
     await sm.append("items", {

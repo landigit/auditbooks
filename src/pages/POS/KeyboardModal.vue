@@ -2,21 +2,16 @@
   <view v-if="!isLynx">
     <Modal class="h-auto" :set-close-listener="false">
       <view class="px-5" style="width: 30vw">
-        <text class="text-center text-description font-semibold py-3"
-          >Keyboard</text
-        >
+        <text class="text-center text-description font-semibold py-3">Keyboard</text>
         <view class="border-b border-border" />
         <view class="mx-6 my-3">
           <component
             :is="selectedItemRow?.fieldMap[selectedItemField!].fieldtype"
             ref="dynamicInput"
             :df="{
-              fieldname: selectedItemRow?.fieldMap[selectedItemField!]
-                .fieldname as string,
-              fieldtype:
-                selectedItemRow?.fieldMap[selectedItemField!].fieldtype,
-              label: selectedItemRow?.fieldMap[selectedItemField!]
-                .label as string,
+              fieldname: selectedItemRow?.fieldMap[selectedItemField!].fieldname as string,
+              fieldtype: selectedItemRow?.fieldMap[selectedItemField!].fieldtype,
+              label: selectedItemRow?.fieldMap[selectedItemField!].label as string,
             }"
             class="mb-3"
             :border="true"
@@ -137,9 +132,7 @@
                 @tap="saveSelectedItem()"
               >
                 <slot>
-                  <text
-                    class="uppercase text-lg text-indicator-green-text font-semibold"
-                  >
+                  <text class="uppercase text-lg text-indicator-green-text font-semibold">
                     {{ t`Save` }}
                   </text>
                 </slot>
@@ -155,9 +148,7 @@
                 @tap="closeKeyboardModal()"
               >
                 <slot>
-                  <text
-                    class="uppercase text-lg text-indicator-red-text font-semibold"
-                  >
+                  <text class="uppercase text-lg text-indicator-red-text font-semibold">
                     {{ t`Cancel` }}
                   </text>
                 </slot>
@@ -172,9 +163,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Keyboard Modal</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -240,8 +229,7 @@ const appendValue = async (value: string) => {
       ? selectedValue.value.slice(1)
       : selectedValue.value;
   } else {
-    selectedValue.value =
-      selectedValue.value === "0" ? value : selectedValue.value + value;
+    selectedValue.value = selectedValue.value === "0" ? value : selectedValue.value + value;
   }
 
   await focusInput();
@@ -255,8 +243,7 @@ const updateSelectedValue = () => {
   }
 
   if (
-    props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype !==
-    ModelNameEnum.Currency
+    props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype !== ModelNameEnum.Currency
   ) {
     selectedValue.value = props.selectedItemRow[
       props.selectedItemField as keyof SalesInvoiceItem
@@ -275,11 +262,11 @@ const saveSelectedItem = async () => {
     }
 
     if (
-      props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype ===
-      ModelNameEnum.Currency
+      props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype === ModelNameEnum.Currency
     ) {
-      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
-        fyo.pesa(Number(selectedValue.value)) as any;
+      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] = fyo.pesa(
+        Number(selectedValue.value),
+      ) as any;
 
       if (props.selectedItemField === "rate") {
         props.selectedItemRow.setRate = fyo.pesa(Number(selectedValue.value));
@@ -297,10 +284,7 @@ const saveSelectedItem = async () => {
             fyo.t`Discount Amount (${fyo.format(
               selectedValue.value,
               "Currency",
-            )}) cannot be greated than Amount (${fyo.format(
-              sinvDoc.grandTotal,
-              "Currency",
-            )}).`,
+            )}) cannot be greated than Amount (${fyo.format(sinvDoc.grandTotal, "Currency")}).`,
           );
         }
 
@@ -311,8 +295,9 @@ const saveSelectedItem = async () => {
         );
       }
     } else {
-      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
-        Number(selectedValue.value) as any;
+      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] = Number(
+        selectedValue.value,
+      ) as any;
 
       if (props.selectedItemField === "itemDiscountPercent") {
         if (Number(selectedValue.value) > 100) {
@@ -324,18 +309,14 @@ const saveSelectedItem = async () => {
         }
 
         await props.selectedItemRow?.set("setItemDiscountAmount", false);
-        await props.selectedItemRow?.set(
-          "itemDiscountPercent",
-          selectedValue.value,
-        );
+        await props.selectedItemRow?.set("itemDiscountPercent", selectedValue.value);
       }
 
       if (props.selectedItemField === "quantity") {
         const existingItems =
           sinvDoc.items?.filter(
             (invoiceItem: InvoiceItem) =>
-              invoiceItem.item === props.selectedItemRow?.item &&
-              !invoiceItem.isFreeItem,
+              invoiceItem.item === props.selectedItemRow?.item && !invoiceItem.isFreeItem,
           ) ?? [];
 
         await validateQty(sinvDoc, props.selectedItemRow, existingItems);

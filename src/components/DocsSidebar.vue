@@ -5,10 +5,7 @@
     <!-- Search -->
     <view class="p-4 border-b border-border">
       <view class="relative">
-        <lucide-icon
-          name="search"
-          class="absolute left-3 top-2.5 h-4 w-4 text-muted"
-        />
+        <lucide-icon name="search" class="absolute left-3 top-2.5 h-4 w-4 text-muted" />
         <input
           v-model="searchQuery"
           type="text"
@@ -93,9 +90,7 @@ const navigateTo = (item: DocNode) => {
 
 const isActive = (item: DocNode) => {
   const currentPath = route.params.path;
-  const normalizedCurrent = Array.isArray(currentPath)
-    ? currentPath.join("/")
-    : currentPath;
+  const normalizedCurrent = Array.isArray(currentPath) ? currentPath.join("/") : currentPath;
   return normalizedCurrent === item.path;
 };
 </script>

@@ -1,10 +1,7 @@
 <template>
   <view class="overflow-x-auto w-full custom-scroll custom-scroll-thumb1">
     <view class="min-w-[600px] md:min-w-0">
-      <Row
-        :ratio="ratio"
-        class="w-full px-2 mt-2 border rounded-t text-description border-border"
-      >
+      <Row :ratio="ratio" class="w-full px-2 mt-2 border rounded-t text-description border-border">
         <view
           v-if="tableFields"
           v-for="df in tableFields"
@@ -30,9 +27,7 @@
           <ModernPOSSelectedItemRow
             :row="row as SalesInvoiceItem"
             :expanded-batch-id="expandedBatchId"
-            @set-expanded-batch-id="
-              (rowName) => $emit('setExpandedBatchId', rowName)
-            "
+            @set-expanded-batch-id="(rowName) => $emit('setExpandedBatchId', rowName)"
             @selected-row="selectedItemRow"
             @run-sinv-formulas="runSinvFormulas"
             @apply-pricing-rule="$emit('applyPricingRule')"
@@ -61,12 +56,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits([
-  "toggleModal",
-  "selectedRow",
-  "applyPricingRule",
-  "setExpandedBatchId",
-]);
+const emit = defineEmits(["toggleModal", "selectedRow", "applyPricingRule", "setExpandedBatchId"]);
 
 const sinvDoc = inject("sinvDoc") as SalesInvoice;
 

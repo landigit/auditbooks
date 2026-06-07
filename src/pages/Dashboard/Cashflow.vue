@@ -10,15 +10,11 @@
         <!-- Chart Legend -->
         <view v-if="hasData" class="flex text-base gap-8">
           <view class="flex items-center gap-2">
-            <text
-              class="w-3 h-3 rounded-sm inline-block bg-[var(--chart-blue-main)]"
-            />
+            <text class="w-3 h-3 rounded-sm inline-block bg-[var(--chart-blue-main)]" />
             <text class="text-main">{{ t`Inflow` }}</text>
           </view>
           <view class="flex items-center gap-2">
-            <text
-              class="w-3 h-3 rounded-sm inline-block bg-[var(--chart-pink-main)]"
-            />
+            <text class="w-3 h-3 rounded-sm inline-block bg-[var(--chart-pink-main)]" />
             <text class="text-main">{{ t`Outflow` }}</text>
           </view>
         </view>
@@ -65,15 +61,11 @@
     <view class="flex-row gap-3 mb-4">
       <view class="flex-1 p-3 rounded-lg bg-canvas-muted border border-border">
         <text class="text-xs text-description mb-1">{{ t`Inflow` }}</text>
-        <text class="text-base font-bold text-success">{{
-          chartData.format(totalInflow)
-        }}</text>
+        <text class="text-base font-bold text-success">{{ chartData.format(totalInflow) }}</text>
       </view>
       <view class="flex-1 p-3 rounded-lg bg-canvas-muted border border-border">
         <text class="text-xs text-description mb-1">{{ t`Outflow` }}</text>
-        <text class="text-base font-bold text-danger">{{
-          chartData.format(totalOutflow)
-        }}</text>
+        <text class="text-base font-bold text-danger">{{ chartData.format(totalOutflow) }}</text>
       </view>
     </view>
 
@@ -91,9 +83,7 @@
 
     <!-- Monthly breakdown list -->
     <view v-if="data && data.length" class="mt-2">
-      <text class="text-xs font-semibold text-description mb-2">{{
-        t`Monthly Breakdown`
-      }}</text>
+      <text class="text-xs font-semibold text-description mb-2">{{ t`Monthly Breakdown` }}</text>
       <view
         v-for="item in data"
         :key="item.yearmonth"
@@ -179,9 +169,7 @@ const chartData = computed(() => {
   }
 
   const xLabels = displayData.map((cf) => cf.yearmonth);
-  const points = (["inflow", "outflow"] as const).map((k) =>
-    displayData.map((d) => d[k]),
-  );
+  const points = (["inflow", "outflow"] as const).map((k) => displayData.map((d) => d[k]));
 
   const format = (value: number) => fyo.format(value ?? 0, "Currency");
   const yMax = getYMax(points);
@@ -211,10 +199,7 @@ const updateAspectRatio = () => {
 const setData = async () => {
   const { periodList, fromDate, toDate } = getDatesAndPeriodList(period.value);
 
-  const res = await fyo.db.getCashflow(
-    fromDate.format("YYYY-MM-DD"),
-    toDate.format("YYYY-MM-DD"),
-  );
+  const res = await fyo.db.getCashflow(fromDate.format("YYYY-MM-DD"), toDate.format("YYYY-MM-DD"));
   const dataMap = getMapFromList(res, "yearmonth");
   data.value = periodList.map((p) => {
     const key = p.format("YYYY-MM");

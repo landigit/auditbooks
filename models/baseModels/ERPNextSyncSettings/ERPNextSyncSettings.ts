@@ -61,8 +61,7 @@ export class ERPNextSyncSettings extends Doc {
         await initERPNSync(this.fyo);
         ipc.reloadWindow();
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
 
         try {
           await this.fyo.doc
@@ -84,8 +83,7 @@ export class ERPNextSyncSettings extends Doc {
         await syncDocumentsToERPNext(this.fyo);
         ipc.reloadWindow();
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
 
         try {
           await this.fyo.doc

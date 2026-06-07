@@ -6,11 +6,7 @@
         class="px-4 flex flex-row items-center justify-between h-row-largest border-b border-border"
         :class="[
           store.platform !== 'Windows' ? 'window-drag' : '',
-          store.platform === 'Mac'
-            ? languageDirection === 'rtl'
-              ? 'pe-20'
-              : 'ps-20'
-            : '',
+          store.platform === 'Mac' ? (languageDirection === 'rtl' ? 'pe-20' : 'ps-20') : '',
         ]"
       >
         <text
@@ -44,9 +40,7 @@
           />
           <view
             class="ms-2 text-lg"
-            :class="
-              isGroupActive(group) && !group.items ? 'text-main' : 'text-muted'
-            "
+            :class="isGroupActive(group) && !group.items ? 'text-main' : 'text-muted'"
           >
             {{ group.label }}
           </view>
@@ -222,9 +216,7 @@ onMounted(async () => {
     }
   });
   shortcuts?.set(COMPONENT_NAME, ["F1"], () => openDocumentation());
-  shortcuts?.pmodShift.set(COMPONENT_NAME, ["KeyD"], () =>
-    emit("toggle-darkmode"),
-  );
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ["KeyD"], () => emit("toggle-darkmode"));
 
   showDevMode.value = store.isDevelopment;
 });
@@ -410,8 +402,7 @@ function isItemActive(item: SidebarItem) {
   const params = route.params;
   const routeMatch = currentRoute === item.route;
 
-  const schemaNameMatch =
-    item.schemaName && params.schemaName === item.schemaName;
+  const schemaNameMatch = item.schemaName && params.schemaName === item.schemaName;
 
   const isMatch = routeMatch || schemaNameMatch;
   if (params.name && item.schemaName && !isMatch) {

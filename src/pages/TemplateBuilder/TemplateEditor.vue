@@ -6,9 +6,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Template Editor</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -18,11 +16,7 @@
 import { ref, watch, onMounted, markRaw } from "vue";
 import { autocompletion, CompletionContext } from "@codemirror/autocomplete";
 import { vue } from "@codemirror/lang-vue";
-import {
-  HighlightStyle,
-  syntaxHighlighting,
-  syntaxTree,
-} from "@codemirror/language";
+import { HighlightStyle, syntaxHighlighting, syntaxTree } from "@codemirror/language";
 import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView, ViewUpdate } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
@@ -181,10 +175,7 @@ type CompletionOption = {
   detail: string;
 };
 
-function hintsToCompletionOptions(
-  hints: object,
-  prefix?: string,
-): CompletionOption[] {
+function hintsToCompletionOptions(hints: object, prefix?: string): CompletionOption[] {
   prefix ??= "";
   const list: CompletionOption[] = [];
 

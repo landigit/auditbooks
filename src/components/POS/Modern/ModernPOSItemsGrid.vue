@@ -47,9 +47,7 @@
         <text class="text-lg font-medium text-main">{{ item.name }}</text>
 
         <text class="text-lg font-medium text-main">
-          {{
-            item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined
-          }}
+          {{ item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined }}
           {{ item.rate }}
         </text>
       </view>

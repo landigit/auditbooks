@@ -23,11 +23,7 @@ async function execute(dm: DatabaseManager) {
   }
 }
 
-async function createNumberSeries(
-  name: string,
-  referenceType: string,
-  dm: DatabaseManager,
-) {
+async function createNumberSeries(name: string, referenceType: string, dm: DatabaseManager) {
   const exists = await dm.db?.exists("NumberSeries", name);
   if (exists) {
     return;

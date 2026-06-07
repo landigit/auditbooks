@@ -1,9 +1,5 @@
 <template>
-  <view
-    v-if="!isLynx"
-    class="h-full flex items-center truncate"
-    :class="cellClass"
-  >
+  <view v-if="!isLynx" class="h-full flex items-center truncate" :class="cellClass">
     <text v-if="!customRenderer" class="truncate">{{ columnValue }}</text>
     <component :is="customRenderer as {}" v-else />
   </view>
@@ -11,9 +7,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">List Cell</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>

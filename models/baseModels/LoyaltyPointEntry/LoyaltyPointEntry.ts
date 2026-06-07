@@ -12,12 +12,7 @@ export class LoyaltyPointEntry extends Doc {
 
   static override getListViewSettings(): ListViewSettings {
     return {
-      columns: [
-        "loyaltyProgram",
-        "customer",
-        "purchaseAmount",
-        "loyaltyPoints",
-      ],
+      columns: ["loyaltyProgram", "customer", "purchaseAmount", "loyaltyPoints"],
     };
   }
 }

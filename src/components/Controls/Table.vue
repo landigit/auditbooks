@@ -14,9 +14,7 @@
         <view
           class="overflow-auto custom-scroll custom-scroll-thumb1"
           :style="{
-            'max-height': maxHeight
-              ? `calc(${maxHeight} + var(--h-row-mid))`
-              : '',
+            'max-height': maxHeight ? `calc(${maxHeight} + var(--h-row-mid))` : '',
             'scrollbar-gutter': 'stable',
           }"
         >
@@ -58,10 +56,7 @@
               :read-only="isReadOnly"
               :can-edit-row="canEditRow"
               @remove="removeRow(row)"
-              @change="
-                (field: any, value: any) =>
-                  $emit('row-change', field, value, df)
-              "
+              @change="(field: any, value: any) => $emit('row-change', field, value, df)"
             />
           </view>
         </view>
@@ -79,17 +74,12 @@
           <view class="flex items-center ps-1">
             <lucide-icon name="plus" class="w-4 h-4 text-description" />
           </view>
-          <view
-            class="flex justify-between px-2"
-            :style="`grid-column: 2 / ${ratio.length + 1}`"
-          >
+          <view class="flex justify-between px-2" :style="`grid-column: 2 / ${ratio.length + 1}`">
             <text>
               {{ t`Add Row` }}
             </text>
             <text
-              v-if="
-                value && effectiveMaxRows && value.length > effectiveMaxRows
-              "
+              v-if="value && effectiveMaxRows && value.length > effectiveMaxRows"
               class="text-end px-2"
             >
               {{ t`${value.length} rows` }}
@@ -108,10 +98,7 @@ import { fyo } from "src/initFyo";
 import { useAppStore } from "src/stores/app";
 import Row from "src/components/Row.vue";
 import TableRow from "./TableRow.vue";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 
 interface TableProps extends BaseControlProps {
   value?: any[];
@@ -145,11 +132,7 @@ const store = useAppStore();
 const inputRef = ref<HTMLElement | null>(null);
 const tableRowRefs = ref<any[]>([]);
 
-const { doc, isReadOnly, isNumeric, triggerChange } = useBaseControl(
-  props,
-  emit,
-  inputRef,
-);
+const { doc, isReadOnly, isNumeric, triggerChange } = useBaseControl(props, emit, inputRef);
 
 const canEditRow = computed(() => {
   return (props.df as any).edit;
@@ -180,20 +163,10 @@ const ratio = computed(() => {
     if (name === "item" || name === "description" || name === "account") {
       return 2.2;
     }
-    if (
-      type === "Link" ||
-      type === "Data" ||
-      type === "Select" ||
-      type === "Text"
-    ) {
+    if (type === "Link" || type === "Data" || type === "Select" || type === "Text") {
       return 1.5;
     }
-    if (
-      type === "Int" ||
-      type === "Float" ||
-      type === "Percent" ||
-      type === "Check"
-    ) {
+    if (type === "Int" || type === "Float" || type === "Percent" || type === "Check") {
       return 0.7;
     }
     if (type === "Date") {

@@ -35,9 +35,7 @@
   <view v-else class="p-4 bg-canvas rounded-xl mb-4 border border-border">
     <!-- Header -->
     <view class="flex-row justify-between items-center mb-3">
-      <text class="text-sm font-semibold text-main">{{
-        t`Profit and Loss`
-      }}</text>
+      <text class="text-sm font-semibold text-main">{{ t`Profit and Loss` }}</text>
       <PeriodSelector
         :value="period"
         :options="periodOptions"
@@ -49,15 +47,11 @@
     <view class="flex-row gap-3 mb-4">
       <view class="flex-1 p-3 rounded-lg bg-canvas-muted border border-border">
         <text class="text-xs text-description mb-1">{{ t`Income` }}</text>
-        <text class="text-base font-bold text-success">{{
-          chartData.format(totalIncome)
-        }}</text>
+        <text class="text-base font-bold text-success">{{ chartData.format(totalIncome) }}</text>
       </view>
       <view class="flex-1 p-3 rounded-lg bg-canvas-muted border border-border">
         <text class="text-xs text-description mb-1">{{ t`Expense` }}</text>
-        <text class="text-base font-bold text-danger">{{
-          chartData.format(totalExpense)
-        }}</text>
+        <text class="text-base font-bold text-danger">{{ chartData.format(totalExpense) }}</text>
       </view>
     </view>
 
@@ -66,29 +60,21 @@
       class="p-3 rounded-lg bg-canvas-muted border border-border mb-4 flex-row justify-between items-center"
     >
       <text class="text-sm font-medium text-main">{{ t`Net Profit` }}</text>
-      <text
-        class="text-lg font-extrabold"
-        :class="netProfit >= 0 ? 'text-success' : 'text-danger'"
-      >
+      <text class="text-lg font-extrabold" :class="netProfit >= 0 ? 'text-success' : 'text-danger'">
         {{ chartData.format(netProfit) }}
       </text>
     </view>
 
     <!-- Monthly Profit/Loss breakdown list -->
     <view v-if="hasData && data && data.length" class="mt-2">
-      <text class="text-xs font-semibold text-description mb-2">{{
-        t`Monthly Performance`
-      }}</text>
+      <text class="text-xs font-semibold text-description mb-2">{{ t`Monthly Performance` }}</text>
       <view
         v-for="item in data"
         :key="item.yearmonth"
         class="flex-row justify-between py-2 border-b border-border"
       >
         <text class="text-sm text-main font-medium">{{ item.yearmonth }}</text>
-        <text
-          class="text-sm font-bold"
-          :class="item.balance >= 0 ? 'text-success' : 'text-danger'"
-        >
+        <text class="text-sm font-bold" :class="item.balance >= 0 ? 'text-success' : 'text-danger'">
           {{ chartData.format(item.balance) }}
         </text>
       </view>
@@ -153,14 +139,8 @@ const setData = async () => {
     toDate.format("YYYY-MM-DD"),
   );
 
-  totalIncome.value = res.income.reduce(
-    (sum, item) => sum + (item.balance || 0),
-    0,
-  );
-  totalExpense.value = res.expense.reduce(
-    (sum, item) => sum + (item.balance || 0),
-    0,
-  );
+  totalIncome.value = res.income.reduce((sum, item) => sum + (item.balance || 0), 0);
+  totalExpense.value = res.expense.reduce((sum, item) => sum + (item.balance || 0), 0);
 
   const incomes = getValueMapFromList(res.income, "yearmonth", "balance");
   const expenses = getValueMapFromList(res.expense, "yearmonth", "balance");

@@ -23,27 +23,16 @@
       :align="right ? 'end' : 'start'"
       class="bg-surface text-main rounded w-[var(--reka-popover-trigger-width)] min-w-40 overflow-hidden p-0 border border-border shadow-lg"
     >
-      <view
-        class="bg-surface text-main rounded w-full min-w-40 overflow-hidden"
-      >
-        <view
-          class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm"
-        >
+      <view class="bg-surface text-main rounded w-full min-w-40 overflow-hidden">
+        <view class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm">
           <view v-if="isLoading" class="p-2 text-description italic">
             {{ t`Loading...` }}
           </view>
-          <view
-            v-else-if="dropdownItems.length === 0"
-            class="p-2 text-description italic"
-          >
+          <view v-else-if="dropdownItems.length === 0" class="p-2 text-description italic">
             {{ getEmptyMessage() }}
           </view>
           <template v-else>
-            <view
-              v-for="(d, index) in dropdownItems"
-              :key="`key-${index}`"
-              ref="itemsRef"
-            >
+            <view v-for="(d, index) in dropdownItems" :key="`key-${index}`" ref="itemsRef">
               <view
                 v-if="d.isGroup"
                 class="px-2 pt-3 pb-1 text-xs uppercase text-muted font-semibold tracking-wider"
@@ -147,9 +136,7 @@ function getEmptyMessage(): string {
     return t`Empty`;
   }
 
-  const emptyMessage = fyo.models[schemaName]?.emptyMessages?.[fieldname]?.(
-    props.doc,
-  );
+  const emptyMessage = fyo.models[schemaName]?.emptyMessages?.[fieldname]?.(props.doc);
 
   if (!emptyMessage) {
     return t`Empty`;
@@ -204,10 +191,7 @@ function highlightItemUp(e?: Event): void {
 
 function highlightItemDown(e?: Event): void {
   e?.preventDefault();
-  highlightedIndex.value = Math.min(
-    dropdownItems.value.length - 1,
-    highlightedIndex.value + 1,
-  );
+  highlightedIndex.value = Math.min(dropdownItems.value.length - 1, highlightedIndex.value + 1);
 }
 
 function scrollToHighlighted(): void {
@@ -224,9 +208,7 @@ function scrollToHighlighted(): void {
   highlightedElement.scrollIntoView({ block: "nearest" });
 }
 
-function getGroupedItems(
-  itemsList: DropdownItem[],
-): Record<string, DropdownItem[]> {
+function getGroupedItems(itemsList: DropdownItem[]): Record<string, DropdownItem[]> {
   const groupedItems: Record<string, DropdownItem[]> = {};
   for (let item of itemsList) {
     const group = item.group ?? "";

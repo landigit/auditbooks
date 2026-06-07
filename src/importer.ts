@@ -97,9 +97,7 @@ export class Importer {
 
   constructor(schemaName: string, fyo: Fyo) {
     if (!fyo.schemaMap[schemaName]) {
-      throw new ValidationError(
-        `Invalid schemaName ${schemaName} found in importer`,
-      );
+      throw new ValidationError(`Invalid schemaName ${schemaName} found in importer`);
     }
 
     this.hasChildTables = false;
@@ -216,8 +214,7 @@ export class Importer {
   }
 
   populateDocs() {
-    const { dataMap, childTableMap } =
-      this.getDataAndChildTableMapFromValueMatrix();
+    const { dataMap, childTableMap } = this.getDataAndChildTableMapFromValueMatrix();
 
     const schema = this.fyo.schemaMap[this.schemaName];
     const targetFieldnameMap = schema?.fields
@@ -258,10 +255,7 @@ export class Importer {
     /**
      * Record key is doc.name, childSchemaName, childDoc.name
      */
-    const childTableMap: Record<
-      string,
-      Record<string, Map<string, DocValueMap>>
-    > = {};
+    const childTableMap: Record<string, Record<string, Map<string, DocValueMap>>> = {};
 
     const nameIndices = this.assignedTemplateFields
       .map((key, index) => ({ key, index }))
@@ -522,18 +516,16 @@ export class Importer {
   }
 
   addRow() {
-    const valueRow: ValueMatrix[number] = this.assignedTemplateFields.map(
-      (key) => {
-        key ??= "";
-        const { fieldtype } = this.templateFieldsMap.get(key) ?? {};
-        let value = null;
-        if (fieldtype) {
-          value = getEmptyValuesByFieldTypes(fieldtype, this.fyo);
-        }
+    const valueRow: ValueMatrix[number] = this.assignedTemplateFields.map((key) => {
+      key ??= "";
+      const { fieldtype } = this.templateFieldsMap.get(key) ?? {};
+      let value = null;
+      if (fieldtype) {
+        value = getEmptyValuesByFieldTypes(fieldtype, this.fyo);
+      }
 
-        return { value };
-      },
-    );
+      return { value };
+    });
 
     this.valueMatrix.push(valueRow);
   }
@@ -566,11 +558,7 @@ export class Importer {
   }
 }
 
-function getTemplateFields(
-  schemaName: string,
-  fyo: Fyo,
-  importer: Importer,
-): TemplateField[] {
+function getTemplateFields(schemaName: string, fyo: Fyo, importer: Importer): TemplateField[] {
   const schemas: { schema: Schema; parentSchemaChildField?: TargetField }[] = [
     { schema: fyo.schemaMap[schemaName]! },
   ];
@@ -622,11 +610,7 @@ function getTemplateFields(
         tf.required = false;
       }
 
-      if (
-        schema.isChild &&
-        tf.required &&
-        !targetSchemaFieldMap[tf.schemaName ?? ""]?.required
-      ) {
+      if (schema.isChild && tf.required && !targetSchemaFieldMap[tf.schemaName ?? ""]?.required) {
         tf.required = false;
       }
 

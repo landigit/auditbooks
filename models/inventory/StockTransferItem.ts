@@ -1,11 +1,6 @@
 import { DocValue } from "fyo/core/types";
 import { Doc } from "fyo/model/doc";
-import {
-  FiltersMap,
-  FormulaMap,
-  HiddenMap,
-  ValidationMap,
-} from "fyo/model/types";
+import { FiltersMap, FormulaMap, HiddenMap, ValidationMap } from "fyo/model/types";
 import { ValidationError } from "fyo/utils/errors";
 import { ModelNameEnum } from "models/types";
 import { Money } from "pesa";
@@ -14,10 +9,7 @@ import { StockTransfer } from "./StockTransfer";
 import { TransferItem } from "./TransferItem";
 import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
 import { PurchaseInvoice } from "models/baseModels/PurchaseInvoice/PurchaseInvoice";
-import {
-  generateSerialNumbersForItem,
-  getExistingActiveSerialNumbersForItem,
-} from "./helpers";
+import { generateSerialNumbersForItem, getExistingActiveSerialNumbersForItem } from "./helpers";
 
 export class StockTransferItem extends TransferItem {
   declare item?: string;
@@ -83,13 +75,11 @@ export class StockTransferItem extends TransferItem {
 
   formulas: FormulaMap = {
     description: {
-      formula: async () =>
-        await this.fyo.getValue("Item", this.item as string, "description"),
+      formula: async () => await this.fyo.getValue("Item", this.item as string, "description"),
       dependsOn: ["item"],
     },
     unit: {
-      formula: async () =>
-        await this.fyo.getValue("Item", this.item as string, "unit"),
+      formula: async () => await this.fyo.getValue("Item", this.item as string, "unit"),
       dependsOn: ["item"],
     },
     transferUnit: {
@@ -118,10 +108,7 @@ export class StockTransferItem extends TransferItem {
           return this.quantity;
         }
 
-        const itemDoc = await this.fyo.doc.getDoc(
-          ModelNameEnum.Item,
-          this.item,
-        );
+        const itemDoc = await this.fyo.doc.getDoc(ModelNameEnum.Item, this.item);
         const unitDoc = itemDoc.getLink("uom");
 
         let quantity: number = this.quantity ?? 1;
@@ -158,21 +145,17 @@ export class StockTransferItem extends TransferItem {
           return 1;
         }
 
-        const conversionFactor = await this.fyo.db.getAll(
-          ModelNameEnum.UOMConversionItem,
-          {
-            fields: ["conversionFactor"],
-            filters: { parent: this.item! },
-          },
-        );
+        const conversionFactor = await this.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
+          fields: ["conversionFactor"],
+          filters: { parent: this.item! },
+        });
 
         return safeParseFloat(conversionFactor[0]?.conversionFactor ?? 1);
       },
       dependsOn: ["transferUnit"],
     },
     hsnCode: {
-      formula: async () =>
-        await this.fyo.getValue("Item", this.item as string, "hsnCode"),
+      formula: async () => await this.fyo.getValue("Item", this.item as string, "hsnCode"),
       dependsOn: ["item"],
     },
     amount: {
@@ -193,11 +176,9 @@ export class StockTransferItem extends TransferItem {
     },
     rate: {
       formula: async () => {
-        const rate = (await this.fyo.getValue(
-          "Item",
-          this.item as string,
-          "rate",
-        )) as undefined | Money;
+        const rate = (await this.fyo.getValue("Item", this.item as string, "rate")) as
+          | undefined
+          | Money;
 
         if (!rate?.float && this.rate?.float) {
           return this.rate;
@@ -223,8 +204,7 @@ export class StockTransferItem extends TransferItem {
           return;
         }
 
-        const defaultLocation =
-          this.fyo.singles.InventorySettings?.defaultLocation;
+        const defaultLocation = this.fyo.singles.InventorySettings?.defaultLocation;
 
         if (defaultLocation && !this.location) {
           return defaultLocation;
@@ -257,33 +237,21 @@ export class StockTransferItem extends TransferItem {
         }
 
         try {
-          if (
-            !this.isSales &&
-            this.parentdoc?.schemaName === ModelNameEnum.PurchaseReceipt
-          ) {
-            const serialNumbers = await generateSerialNumbersForItem(
-              this.fyo,
-              this.item,
-              quantity,
-            );
+          if (!this.isSales && this.parentdoc?.schemaName === ModelNameEnum.PurchaseReceipt) {
+            const serialNumbers = await generateSerialNumbersForItem(this.fyo, this.item, quantity);
 
             if (serialNumbers) {
               return serialNumbers;
             }
           }
 
-          if (
-            this.isSales &&
-            this.parentdoc?.schemaName === ModelNameEnum.Shipment
-          ) {
+          if (this.isSales && this.parentdoc?.schemaName === ModelNameEnum.Shipment) {
             const salesInvoice = (await this.fyo.doc.getDoc(
               ModelNameEnum.SalesInvoice,
               this.parentdoc.backReference,
             )) as SalesInvoice;
 
-            const invoiceItem = salesInvoice?.items?.find(
-              (val) => val.item === this.item,
-            );
+            const invoiceItem = salesInvoice?.items?.find((val) => val.item === this.item);
 
             if (invoiceItem?.serialNumber) {
               return invoiceItem.serialNumber as string;
@@ -320,9 +288,7 @@ export class StockTransferItem extends TransferItem {
 
       if (item.length < 1)
         throw new ValidationError(
-          this.fyo.t`Transfer Unit ${
-            value as string
-          } is not applicable for Item ${this.item}`,
+          this.fyo.t`Transfer Unit ${value as string} is not applicable for Item ${this.item}`,
         );
     },
   };
@@ -349,11 +315,8 @@ export class StockTransferItem extends TransferItem {
     itemDiscountPercent: () => !this.itemDiscountPercent,
     batch: () => !this.fyo.singles.InventorySettings?.enableBatches,
     serialNumber: () => !this.fyo.singles.InventorySettings?.enableSerialNumber,
-    transferUnit: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-    transferQuantity: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
-    unitConversionFactor: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
+    transferUnit: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
+    transferQuantity: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
+    unitConversionFactor: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
   };
 }

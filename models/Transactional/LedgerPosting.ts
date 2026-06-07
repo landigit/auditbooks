@@ -92,10 +92,7 @@ export class LedgerPosting {
     }
   }
 
-  _getLedgerEntry(
-    account: string,
-    type: TransactionType,
-  ): AccountingLedgerEntry {
+  _getLedgerEntry(account: string, type: TransactionType): AccountingLedgerEntry {
     let map = this.creditMap;
     if (type === "debit") {
       map = this.debitMap;

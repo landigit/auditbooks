@@ -39,10 +39,7 @@ export async function sleep(durationMilliseconds = 1000) {
   return new Promise((r) => setTimeout(() => r(null), durationMilliseconds));
 }
 
-export function getMapFromList<T, K extends keyof T>(
-  list: T[],
-  name: K,
-): Record<string, T> {
+export function getMapFromList<T, K extends keyof T>(list: T[], name: K): Record<string, T> {
   /**
    * Do not convert function to use copies of T
    * instead of references.
@@ -112,9 +109,7 @@ export function camelCase(str: string): string {
     .trim()
     .split(/\s+/)
     .map((word, index) =>
-      index === 0
-        ? word.toLowerCase()
-        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+      index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
     )
     .join("");
 }
@@ -146,8 +141,7 @@ export function deepEqual(a: any, b: any): boolean {
     length = keys.length;
     if (length !== Object.keys(b).length) return false;
     for (i = length; i-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b, Reflect.get(keys, i)))
-        return false;
+      if (!Object.prototype.hasOwnProperty.call(b, Reflect.get(keys, i))) return false;
     for (i = length; i-- !== 0; ) {
       const key = Reflect.get(keys, i);
       if (!deepEqual(Reflect.get(a, key), Reflect.get(b, key))) return false;
@@ -191,10 +185,7 @@ export function changeKeys<T>(
   return dest;
 }
 
-export function deleteKeys<T>(
-  source: Record<string, T>,
-  keysToDelete: string[],
-) {
+export function deleteKeys<T>(source: Record<string, T>, keysToDelete: string[]) {
   const dest: Record<string, T> = Object.create(null);
   for (const key of Object.keys(source)) {
     if (keysToDelete.includes(key)) {
@@ -303,11 +294,7 @@ export function removeAtIndex<T>(array: T[], index: number): T[] {
  */
 export const assertIsType = <T>(_value: unknown): _value is T => true;
 
-const PROTOTYPE_POLLUTION_KEYS = new Set([
-  "__proto__",
-  "constructor",
-  "prototype",
-]);
+const PROTOTYPE_POLLUTION_KEYS = new Set(["__proto__", "constructor", "prototype"]);
 
 export function safeGet<T = any>(obj: any, key: any): T | undefined {
   if (obj === null || obj === undefined) {

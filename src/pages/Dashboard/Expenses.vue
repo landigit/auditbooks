@@ -4,10 +4,7 @@
       <SectionHeader>
         <template #title>{{ t`Top Expenses` }}</template>
         <template #action>
-          <PeriodSelector
-            :value="period"
-            @change="(value) => (period = value)"
-          />
+          <PeriodSelector :value="period" @change="(value) => (period = value)" />
         </template>
       </SectionHeader>
 
@@ -23,9 +20,7 @@
             @mouseleave="active = undefined"
           >
             <view class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
-            <text
-              class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28"
-            >
+            <text class="ms-2 overflow-x-auto whitespace-nowrap no-scrollbar w-28">
               {{ d.account }}
             </text>
             <text class="whitespace-nowrap flex-shrink-0 ms-auto">
@@ -47,10 +42,7 @@
       </view>
 
       <!-- Empty Message -->
-      <view
-        v-if="expenses.length === 0"
-        class="flex-1 w-full h-full flex-center my-20"
-      >
+      <view v-if="expenses.length === 0" class="flex-1 w-full h-full flex-center my-20">
         <text class="text-base text-description">
           {{ t`No expenses in this period` }}
         </text>
@@ -73,13 +65,8 @@
       >
         <view class="flex-row items-center flex-1 mr-2">
           <!-- Color Dot -->
-          <view
-            class="w-3 h-3 rounded-full mr-2"
-            :style="`background-color: ${d.color};`"
-          />
-          <text class="text-sm text-main font-medium flex-1">{{
-            d.account
-          }}</text>
+          <view class="w-3 h-3 rounded-full mr-2" :style="`background-color: ${d.color};`" />
+          <text class="text-sm text-main font-medium flex-1">{{ d.account }}</text>
         </view>
         <text class="text-sm font-bold text-main whitespace-nowrap">
           {{ fyo.format(d?.total ?? 0, "Currency") }}
@@ -126,12 +113,7 @@ const emit = defineEmits<{
 // State definition
 const active = ref<number | null | undefined>(undefined);
 const period = ref<PeriodKey>("This Year");
-const periodOptions: PeriodKey[] = [
-  "This Year",
-  "YTD",
-  "This Quarter",
-  "This Month",
-];
+const periodOptions: PeriodKey[] = ["This Year", "YTD", "This Quarter", "This Month"];
 const expenses = ref<
   {
     account: string;

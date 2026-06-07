@@ -37,11 +37,7 @@ export async function setName(doc: Doc, fyo: Fyo) {
   }
 
   if (doc.numberSeries !== undefined) {
-    return (doc.name = await getSeriesNext(
-      doc.numberSeries as string,
-      doc.schemaName,
-      fyo,
-    ));
+    return (doc.name = await getSeriesNext(doc.numberSeries as string, doc.schemaName, fyo));
   }
 
   // name === schemaName for Single
@@ -62,11 +58,7 @@ export async function getNextId(schemaName: string, fyo: Fyo): Promise<string> {
   return String(lastInserted + 1).padStart(9, "0");
 }
 
-export async function getSeriesNext(
-  prefix: string,
-  schemaName: string,
-  fyo: Fyo,
-) {
+export async function getSeriesNext(prefix: string, schemaName: string, fyo: Fyo) {
   let series: NumberSeries;
 
   try {

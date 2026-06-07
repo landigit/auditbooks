@@ -3,10 +3,7 @@ import { Directive } from "vue";
 type OutsideClickCallback = (e: Event) => void;
 const instanceMap: Map<HTMLElement, OutsideClickCallback> = new Map();
 
-export const outsideClickDirective: Directive<
-  HTMLElement,
-  OutsideClickCallback
-> = {
+export const outsideClickDirective: Directive<HTMLElement, OutsideClickCallback> = {
   beforeMount(el, binding) {
     const clickHandler = function (e: Event) {
       onDocumentClick(e, el, binding.value);

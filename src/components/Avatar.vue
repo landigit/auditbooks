@@ -1,11 +1,6 @@
 <template>
   <view class="rounded-full overflow-hidden" :class="sizeClasses">
-    <img
-      v-if="imageURL"
-      :src="imageURL"
-      class="object-cover"
-      :class="sizeClasses"
-    />
+    <img v-if="imageURL" :src="imageURL" class="object-cover" :class="sizeClasses" />
     <view
       v-else
       class="bg-indicator-gray-bg flex h-full items-center justify-center text-indicator-gray-text w-full text-base uppercase"

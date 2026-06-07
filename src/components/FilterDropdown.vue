@@ -19,11 +19,7 @@
         </text>
       </Button>
     </PopoverTrigger>
-    <PopoverContent
-      side="bottom"
-      align="end"
-      class="w-auto p-0 overflow-hidden"
-    >
+    <PopoverContent side="bottom" align="end" class="w-auto p-0 overflow-hidden">
       <view>
         <view class="p-2">
           <template v-if="explicitFilters.length">
@@ -37,11 +33,7 @@
                   class="cursor-pointer w-4 h-4 flex items-center justify-center text-description hover:text-main rounded-md group"
                 >
                   <text class="hidden group-hover:inline-block">
-                    <LucideIcon
-                      name="x"
-                      class="w-4 h-4 cursor-pointer"
-                      @tap="removeFilter(i)"
-                    />
+                    <LucideIcon name="x" class="w-4 h-4 cursor-pointer" @tap="removeFilter(i)" />
                   </text>
                   <text class="group-hover:hidden">
                     {{ i + 1 }}
@@ -105,9 +97,7 @@
             </view>
           </template>
           <template v-else>
-            <text class="text-base text-description">{{
-              t`No filters selected`
-            }}</text>
+            <text class="text-base text-description">{{ t`No filters selected` }}</text>
           </template>
         </view>
         <view class="flex justify-between border-t border-border">
@@ -198,8 +188,7 @@ const fields = computed<Field[]>(() => {
     FieldTypeEnum.AttachImage,
   ];
 
-  const listViewSettings =
-    fyo.models[props.schemaName]?.getListViewSettings?.(fyo);
+  const listViewSettings = fyo.models[props.schemaName]?.getListViewSettings?.(fyo);
   const statusField = listViewSettings?.columns?.[1] as any;
 
   const schemaFields = fyo.schemaMap[props.schemaName]?.fields ?? [];
@@ -246,14 +235,12 @@ const fieldOptions = computed<{ label: string; value: string }[]>(() => {
   }));
 });
 
-const conditionsForDropdown = computed<{ label: string; value: string }[]>(
-  () => {
-    return conditions.map((c) => ({
-      label: c.label,
-      value: c.label,
-    }));
-  },
-);
+const conditionsForDropdown = computed<{ label: string; value: string }[]>(() => {
+  return conditions.map((c) => ({
+    label: c.label,
+    value: c.label,
+  }));
+});
 
 const explicitFilters = computed<Filter[]>(() => {
   return filters.value.filter((f) => !f.implicit);
@@ -327,11 +314,7 @@ function clearAllFilters(): void {
   emit("change", {});
 }
 
-function updateNewFilters<K extends keyof Filter>(
-  index: number,
-  key: K,
-  value: Filter[K],
-) {
+function updateNewFilters<K extends keyof Filter>(index: number, key: K, value: Filter[K]) {
   if (key === "condition") {
     const displayCondition = getConditionLabel(value as string);
     newFilters.value[index][key] = displayCondition as Filter[K];

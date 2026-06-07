@@ -80,9 +80,9 @@ const getOptions = async (filters: any) => {
     return [];
   }
 
-  const fields = [
-    ...new Set(["name", schema.titleField, (props.df as any).groupBy]),
-  ].filter(Boolean) as string[];
+  const fields = [...new Set(["name", schema.titleField, (props.df as any).groupBy])].filter(
+    Boolean,
+  ) as string[];
 
   const dbResults = await fyo.db.getAll(schemaName, {
     filters,

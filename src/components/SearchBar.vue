@@ -1,21 +1,13 @@
 <template>
   <view>
     <!-- Search Bar Button -->
-    <Button
-      class="px-3 py-2 rounded-r-none bg-canvas-muted"
-      :padding="false"
-      @tap="open"
-    >
+    <Button class="px-3 py-2 rounded-r-none bg-canvas-muted" :padding="false" @tap="open">
       <LucideIcon name="search" class="w-4 h-4 text-main" />
     </Button>
   </view>
 
   <!-- Search Modal -->
-  <Modal
-    :open-modal="openModal"
-    :set-close-listener="false"
-    @closemodal="close"
-  >
+  <Modal :open-modal="openModal" :set-close-listener="false" @closemodal="close">
     <view class="w-form">
       <!-- Search Input -->
       <view class="p-1">
@@ -60,10 +52,7 @@
               >
                 {{ si.label }}
               </text>
-              <text
-                v-if="si.group === 'Docs'"
-                class="text-description text-sm ms-3"
-              >
+              <text v-if="si.group === 'Docs'" class="text-description text-sm ms-3">
                 {{ si.more.filter(Boolean).join(", ") }}
               </text>
             </view>
@@ -71,9 +60,7 @@
               class="text-sm text-end justify-self-end"
               :class="`text-indicator-${groupColorMap[si.group]}-text`"
             >
-              {{
-                si.group === "Docs" ? si.schemaLabel : groupLabelMap[si.group]
-              }}
+              {{ si.group === "Docs" ? si.schemaLabel : groupLabelMap[si.group] }}
             </text>
           </view>
 
@@ -97,10 +84,7 @@
               {{ groupLabelMap[g] }}
             </view>
           </view>
-          <view
-            class="hover:text-main py-0.5 rounded text-description"
-            @tap="showMore = !showMore"
-          >
+          <view class="hover:text-main py-0.5 rounded text-description" @tap="showMore = !showMore">
             {{ showMore ? t`Less Filters` : t`More Filters` }}
           </view>
         </view>
@@ -116,9 +100,7 @@
               :class="{ 'bg-surface-hover': searcher?.filters[s] }"
               @tap="searcher?.set(s, !searcher?.filters[s])"
             >
-              {{
-                s === "skipTables" ? t`Skip Child Tables` : t`Skip Transactions`
-              }}
+              {{ s === "skipTables" ? t`Skip Child Tables` : t`Skip Transactions` }}
             </view>
           </view>
 
@@ -129,15 +111,9 @@
               :key="sf.value"
               class="border px-1 py-0.5 rounded-lg border-indicator-blue-bg whitespace-nowrap"
               :class="{
-                'bg-indicator-blue-bg':
-                  searcher?.filters.schemaFilters[sf.value],
+                'bg-indicator-blue-bg': searcher?.filters.schemaFilters[sf.value],
               }"
-              @tap="
-                searcher?.set(
-                  sf.value,
-                  !searcher?.filters.schemaFilters[sf.value],
-                )
-              "
+              @tap="searcher?.set(sf.value, !searcher?.filters.schemaFilters[sf.value])"
             >
               {{ sf.label }}
             </view>
@@ -145,15 +121,11 @@
         </view>
 
         <!-- Keybindings Help -->
-        <view
-          class="flex text-sm text-description justify-between items-baseline"
-        >
+        <view class="flex text-sm text-description justify-between items-baseline">
           <view class="flex gap-4">
             <text>↑↓ {{ t`Navigate` }}</text>
             <text>↩ {{ t`Select` }}</text>
-            <text
-              ><text class="tracking-tighter">esc</text> {{ t`Close` }}</text
-            >
+            <text><text class="tracking-tighter">esc</text> {{ t`Close` }}</text>
             <view class="flex items-center hover:text-main" @tap="openDocs">
               <LucideIcon name="help-circle" class="w-4 h-4 me-1" />
               {{ t`Help` }}
@@ -169,9 +141,7 @@
             class="border border-border rounded flex justify-self-end ms-2"
           >
             <template
-              v-for="c in allowedLimits.filter(
-                (c) => c < (searcher?.numSearches ?? 0) || c === -1,
-              )"
+              v-for="c in allowedLimits.filter((c) => c < (searcher?.numSearches ?? 0) || c === -1)"
               :key="c + '-count'"
             >
               <view
@@ -195,22 +165,9 @@ import { fyo } from "src/initFyo";
 import { getBgTextColorClass } from "src/utils/colors";
 import { searcherKey, shortcutsKey } from "src/utils/injectionKeys";
 import { docsPathMap } from "src/utils/misc";
-import {
-  SearchGroup,
-  SearchItems,
-  getGroupLabelMap,
-  searchGroups,
-} from "src/utils/search";
+import { SearchGroup, SearchItems, getGroupLabelMap, searchGroups } from "src/utils/search";
 import { useAppStore } from "src/stores/app";
-import {
-  ref,
-  computed,
-  inject,
-  nextTick,
-  onMounted,
-  onActivated,
-  onDeactivated,
-} from "vue";
+import { ref, computed, inject, nextTick, onMounted, onActivated, onDeactivated } from "vue";
 import Button from "./Button.vue";
 import Modal from "./Modal.vue";
 import { t } from "fyo";
@@ -378,10 +335,7 @@ function up(): void {
 }
 
 function down(): void {
-  idx.value = Math.max(
-    Math.min(idx.value + 1, suggestions.value.length - 1),
-    0,
-  );
+  idx.value = Math.max(Math.min(idx.value + 1, suggestions.value.length - 1), 0);
   scrollToHighlighted();
 }
 

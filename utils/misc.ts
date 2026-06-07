@@ -20,10 +20,7 @@ export function getCountryCodeFromCountry(countryName: string): string {
   return countryInfo.code;
 }
 
-export function getFiscalYear(
-  date: string,
-  isStart: boolean,
-): undefined | Date {
+export function getFiscalYear(date: string, isStart: boolean): undefined | Date {
   if (!date) {
     return undefined;
   }
@@ -31,14 +28,10 @@ export function getFiscalYear(
   const today = dayjs();
   const dateTime = dayjs(date, "MM-DD");
   if (isStart) {
-    return dateTime
-      .add([0, 1, 2].includes(today.month()) ? -1 : 0, "year")
-      .toDate();
+    return dateTime.add([0, 1, 2].includes(today.month()) ? -1 : 0, "year").toDate();
   }
 
-  return dateTime
-    .add([0, 1, 2].includes(today.month()) ? 0 : 1, "year")
-    .toDate();
+  return dateTime.add([0, 1, 2].includes(today.month()) ? 0 : 1, "year").toDate();
 }
 
 export function logUnexpected(detail: Partial<UnexpectedLogObject>) {

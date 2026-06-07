@@ -25,9 +25,7 @@ export default class SystemSettings extends Doc {
         return;
       }
 
-      throw new ValidationError(
-        t`Display Precision should have a value between 0 and 9.`,
-      );
+      throw new ValidationError(t`Display Precision should have a value between 0 and 9.`);
     },
   };
 

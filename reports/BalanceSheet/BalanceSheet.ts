@@ -1,12 +1,6 @@
 import { t } from "fyo";
-import {
-  AccountRootType,
-  AccountRootTypeEnum,
-} from "models/baseModels/Account/types";
-import {
-  AccountReport,
-  convertAccountRootNodesToAccountList,
-} from "reports/AccountReport";
+import { AccountRootType, AccountRootTypeEnum } from "models/baseModels/Account/types";
+import { AccountReport, convertAccountRootNodesToAccountList } from "reports/AccountReport";
 import { ReportData, RootTypeRow } from "reports/types";
 import { getMapFromList } from "utils";
 
@@ -16,11 +10,7 @@ export class BalanceSheet extends AccountReport {
   loading = false;
 
   get rootTypes(): AccountRootType[] {
-    return [
-      AccountRootTypeEnum.Asset,
-      AccountRootTypeEnum.Liability,
-      AccountRootTypeEnum.Equity,
-    ];
+    return [AccountRootTypeEnum.Asset, AccountRootTypeEnum.Liability, AccountRootTypeEnum.Equity];
   }
 
   async setReportData(filter?: string, force?: boolean) {
@@ -34,11 +24,7 @@ export class BalanceSheet extends AccountReport {
     const accountTree = await this._getAccountTree(rangeGroupedMap);
 
     for (const name of Object.keys(accountTree)) {
-      if (
-        name === "__proto__" ||
-        name === "constructor" ||
-        name === "prototype"
-      ) {
+      if (name === "__proto__" || name === "constructor" || name === "prototype") {
         continue;
       }
       const node = Reflect.get(accountTree, name);
@@ -62,9 +48,7 @@ export class BalanceSheet extends AccountReport {
       })
       .filter((row) => !!row.rootNodes.length);
 
-    this.reportData = this.getReportDataFromRows(
-      getMapFromList(rootTypeRows, "rootType"),
-    );
+    this.reportData = this.getReportDataFromRows(getMapFromList(rootTypeRows, "rootType"));
     this.loading = false;
   }
 

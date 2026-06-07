@@ -55,10 +55,7 @@ export class SalesInvoice extends Invoice {
         );
       }
 
-      await posting.debit(
-        loyaltyProgramDoc.expenseAccount as string,
-        loyaltyAmount,
-      );
+      await posting.debit(loyaltyProgramDoc.expenseAccount as string, loyaltyAmount);
     }
 
     if (this.taxes) {
@@ -72,8 +69,9 @@ export class SalesInvoice extends Invoice {
     }
 
     const discountAmount = this.getTotalDiscount();
-    const discountAccount = this.fyo.singles.AccountingSettings
-      ?.discountAccount as string | undefined;
+    const discountAccount = this.fyo.singles.AccountingSettings?.discountAccount as
+      | string
+      | undefined;
     if (discountAccount && discountAmount.isPositive()) {
       if (this.isReturn) {
         await posting.credit(discountAccount, discountAmount.mul(exchangeRate));
@@ -92,10 +90,7 @@ export class SalesInvoice extends Invoice {
         return;
       }
 
-      const partyDoc = (await this.fyo.doc.getDoc(
-        ModelNameEnum.Party,
-        this.party,
-      )) as Party;
+      const partyDoc = (await this.fyo.doc.getDoc(ModelNameEnum.Party, this.party)) as Party;
 
       if ((value as number) <= 0) {
         throw new ValidationError(t`Points must be greather than 0`);
@@ -103,9 +98,7 @@ export class SalesInvoice extends Invoice {
 
       if ((value as number) > (partyDoc?.loyaltyPoints || 0)) {
         throw new ValidationError(
-          t`${this.party as string} only has ${
-            partyDoc.loyaltyPoints as number
-          } points`,
+          t`${this.party as string} only has ${partyDoc.loyaltyPoints as number} points`,
         );
       }
 
@@ -126,8 +119,7 @@ export class SalesInvoice extends Invoice {
       }
 
       const loyaltyPoint =
-        ((value as number) || 0) *
-        ((loyaltyProgramDoc?.conversionFactor as number) || 0);
+        ((value as number) || 0) * ((loyaltyProgramDoc?.conversionFactor as number) || 0);
 
       if (!this.isReturn) {
         const totalDiscount = this.getTotalDiscount();
@@ -151,9 +143,7 @@ export class SalesInvoice extends Invoice {
         }
 
         if (baseGrandTotal?.lt(loyaltyPoint)) {
-          throw new ValidationError(
-            t`no need ${value as number} points to purchase this item`,
-          );
+          throw new ValidationError(t`no need ${value as number} points to purchase this item`);
         }
       }
     },

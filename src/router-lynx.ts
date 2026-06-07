@@ -6,9 +6,7 @@ export interface Route {
   fullPath: string;
 }
 
-const historyStack = ref<Route[]>([
-  { name: "DatabaseSelector", fullPath: "/DatabaseSelector" },
-]);
+const historyStack = ref<Route[]>([{ name: "DatabaseSelector", fullPath: "/DatabaseSelector" }]);
 
 export const currentRoute = ref<Route>({
   name: "DatabaseSelector",
@@ -38,10 +36,7 @@ const routeDefinitions: RoutePattern[] = [
   { path: "/help/:path*", name: "Help" },
 ];
 
-function matchPathPattern(
-  pattern: string,
-  path: string,
-): Record<string, any> | null {
+function matchPathPattern(pattern: string, path: string): Record<string, any> | null {
   const patternSegments = pattern.split("/").filter(Boolean);
   const pathSegments = path.split("/").filter(Boolean);
 
@@ -85,10 +80,7 @@ function matchPathPattern(
 
   while (patIdx < patternSegments.length) {
     const patSeg = patternSegments[patIdx];
-    if (
-      patSeg.startsWith(":") &&
-      (patSeg.endsWith("?") || patSeg.endsWith("*"))
-    ) {
+    if (patSeg.startsWith(":") && (patSeg.endsWith("?") || patSeg.endsWith("*"))) {
       const paramName = patSeg.slice(1, -1);
       params[paramName] = "";
       patIdx++;
@@ -157,9 +149,7 @@ function resolvePath(name: string, params: Record<string, any>): string {
   const queryParts: string[] = [];
   for (const [key, val] of Object.entries(unusedParams)) {
     if (val !== undefined && val !== null) {
-      queryParts.push(
-        `${encodeURIComponent(key)}=${encodeURIComponent(String(val))}`,
-      );
+      queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(val))}`);
     }
   }
 

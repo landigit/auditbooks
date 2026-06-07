@@ -84,14 +84,7 @@
   </view>
 </template>
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  inject,
-  provide,
-  onActivated,
-  onDeactivated,
-} from "vue";
+import { ref, computed, inject, provide, onActivated, onDeactivated } from "vue";
 import { useRoute } from "vue-router";
 import router from "src/router";
 import { isLynx } from "src/utils/interactive";

@@ -70,9 +70,7 @@
             :df="getField(ef)"
             :show-label="true"
             :value="ef.export"
-            @change="
-              (value: boolean) => setExportFieldValue(ef, value, efs.target)
-            "
+            @change="(value: boolean) => setExportFieldValue(ef, value, efs.target)"
           />
         </view>
       </view>
@@ -130,9 +128,7 @@ const limit = ref<number | null>(null);
 const useListFilters = ref(true);
 const exportFormat = ref<ExportFormat>("csv");
 const fields = ref<ExportField[]>(getExportFields(_schemaFields));
-const tableFields = ref<ExportTableField[]>(
-  getExportTableFields(_schemaFields, fyo),
-);
+const tableFields = ref<ExportTableField[]>(getExportTableFields(_schemaFields, fyo));
 
 // --- Computed ---
 const label = computed(() => {
@@ -154,9 +150,7 @@ const numSelected = computed(() => {
     filteredTableFields.value.reduce(
       (acc, f) => f.fields.filter((subF) => subF.export).length + acc,
       0,
-    ) +
-    fields.value.filter((f) => f.fieldtype !== FieldTypeEnum.Table && f.export)
-      .length
+    ) + fields.value.filter((f) => f.fieldtype !== FieldTypeEnum.Table && f.export).length
   );
 });
 
@@ -194,10 +188,7 @@ function getField(ef: ExportField): Field {
   };
 }
 
-function getExportField(
-  fieldname: string,
-  target?: string,
-): ExportField | undefined {
+function getExportField(fieldname: string, target?: string): ExportField | undefined {
   let listFields: ExportField[] | undefined;
 
   if (!target) {
@@ -223,9 +214,7 @@ function setExportFieldValue(ef: ExportField, value: boolean, target?: string) {
 }
 
 async function exportData() {
-  const filters = JSON.parse(
-    JSON.stringify(useListFilters.value ? props.listFilters : {}),
-  );
+  const filters = JSON.parse(JSON.stringify(useListFilters.value ? props.listFilters : {}));
 
   let data: string;
   if (exportFormat.value === "json") {
@@ -253,10 +242,7 @@ async function exportData() {
 
 async function saveExportData(data: string) {
   const fileName = getFileName();
-  const { canceled, filePath } = await getSavePath(
-    fileName,
-    exportFormat.value,
-  );
+  const { canceled, filePath } = await getSavePath(fileName, exportFormat.value);
   if (canceled || !filePath) {
     return;
   }

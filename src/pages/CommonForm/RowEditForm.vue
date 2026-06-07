@@ -4,10 +4,7 @@
       class="fixed md:relative inset-y-0 end-0 z-50 border-s border-border h-full overflow-auto w-quick-edit bg-surface custom-scroll custom-scroll-thumb2"
     >
       <!-- Row Edit Tool bar -->
-      <view
-        class="sticky top-0 border-b border-border bg-surface"
-        style="z-index: 1"
-      >
+      <view class="sticky top-0 border-b border-border bg-surface" style="z-index: 1">
         <view class="flex items-center justify-between px-4 h-row-largest">
           <!-- Close Button -->
           <Button :icon="true" @tap="emit('close')">
@@ -16,11 +13,7 @@
 
           <!-- Actions, Badge and Status Change Buttons -->
           <view class="flex items-stretch gap-2">
-            <Button
-              v-if="previous >= 0"
-              :icon="true"
-              @tap="emit('previous', previous)"
-            >
+            <Button v-if="previous >= 0" :icon="true" @tap="emit('previous', previous)">
               <lucide-icon name="chevron-left" class="w-4 h-4" />
             </Button>
             <Button v-if="next >= 0" :icon="true" @tap="emit('next', next)">
@@ -77,19 +70,11 @@
     </view>
 
     <!-- Scrollable Edit Form fields -->
-    <scroll-view
-      scroll-y="true"
-      class="flex-1"
-      style="height: 0; min-height: 0"
-    >
+    <scroll-view scroll-y="true" class="flex-1" style="height: 0; min-height: 0">
       <view class="p-4 flex-col gap-4">
         <view v-for="field of fields" :key="field.fieldname" class="flex-col">
-          <text class="text-sm font-semibold text-description mb-1">{{
-            field.label
-          }}</text>
-          <view
-            class="px-3 py-2.5 bg-canvas border border-border rounded-lg flex-row items-center"
-          >
+          <text class="text-sm font-semibold text-description mb-1">{{ field.label }}</text>
+          <view class="px-3 py-2.5 bg-canvas border border-border rounded-lg flex-row items-center">
             <input
               class="flex-1 text-base text-main bg-transparent focus:outline-none"
               :value="row[field.fieldname]"

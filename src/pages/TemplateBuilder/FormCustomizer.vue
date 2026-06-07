@@ -3,10 +3,7 @@
     <!-- Header -->
     <div class="p-4 border-b border-border flex justify-between items-center bg-canvas-muted">
       <span class="font-semibold text-base text-main">{{ t`Customize Template` }}</span>
-      <button 
-        @click="resetToDefault"
-        class="text-xs text-primary hover:underline font-medium"
-      >
+      <button @click="resetToDefault" class="text-xs text-primary hover:underline font-medium">
         {{ t`Reset Defaults` }}
       </button>
     </div>
@@ -15,21 +12,23 @@
     <div class="flex-1 overflow-y-auto p-4 space-y-6 custom-scroll">
       <!-- Theme & Styling -->
       <div class="space-y-3">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{ t`Theme & Typography` }}</h3>
-        
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t`Theme & Typography` }}
+        </h3>
+
         <!-- Theme Color -->
         <div class="flex justify-between items-center">
           <label class="text-sm text-main font-medium">{{ t`Accent Color` }}</label>
           <div class="flex items-center gap-2">
-            <input 
-              type="color" 
-              v-model="schema.themeColor" 
+            <input
+              type="color"
+              v-model="schema.themeColor"
               @change="updateTemplate"
               class="w-8 h-8 rounded border border-border cursor-pointer bg-transparent"
             />
-            <input 
-              type="text" 
-              v-model="schema.themeColor" 
+            <input
+              type="text"
+              v-model="schema.themeColor"
               @change="updateTemplate"
               class="w-20 text-xs py-1 px-1.5 border border-border rounded text-main bg-transparent text-center font-mono"
             />
@@ -39,8 +38,8 @@
         <!-- Fonts -->
         <div class="flex justify-between items-center">
           <label class="text-sm text-main font-medium">{{ t`Font Family` }}</label>
-          <select 
-            v-model="schema.font" 
+          <select
+            v-model="schema.font"
             @change="updateTemplate"
             class="text-sm py-1 px-2 border border-border rounded text-main bg-surface w-36 outline-none"
           >
@@ -54,65 +53,138 @@
 
       <!-- Header Settings -->
       <div class="space-y-3 border-t border-border pt-4">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{ t`Header Options` }}</h3>
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t`Header Options` }}
+        </h3>
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Logo` }}</label>
-          <input type="checkbox" v-model="schema.displayLogo" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displayLogo"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Company Name` }}</label>
-          <input type="checkbox" v-model="schema.displayCompanyName" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displayCompanyName"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Company Address` }}</label>
-          <input type="checkbox" v-model="schema.displayAddress" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displayAddress"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Company Phone` }}</label>
-          <input type="checkbox" v-model="schema.displayPhone" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displayPhone"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Company Email` }}</label>
-          <input type="checkbox" v-model="schema.displayEmail" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displayEmail"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
       </div>
 
       <!-- Table Columns -->
       <div class="space-y-3 border-t border-border pt-4">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{ t`Items Table Columns` }}</h3>
-        
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t`Items Table Columns` }}
+        </h3>
+
         <div class="grid grid-cols-2 gap-2 text-sm">
           <label class="flex items-center gap-2 text-main">
-            <input type="checkbox" value="sNo" v-model="schema.columns" @change="updateTemplate" class="w-4 h-4 rounded" />
+            <input
+              type="checkbox"
+              value="sNo"
+              v-model="schema.columns"
+              @change="updateTemplate"
+              class="w-4 h-4 rounded"
+            />
             <span>S.No</span>
           </label>
           <label class="flex items-center gap-2 text-main">
-            <input type="checkbox" value="description" v-model="schema.columns" @change="updateTemplate" class="w-4 h-4 rounded" disabled />
+            <input
+              type="checkbox"
+              value="description"
+              v-model="schema.columns"
+              @change="updateTemplate"
+              class="w-4 h-4 rounded"
+              disabled
+            />
             <span>Description</span>
           </label>
           <label class="flex items-center gap-2 text-main">
-            <input type="checkbox" value="qty" v-model="schema.columns" @change="updateTemplate" class="w-4 h-4 rounded" />
+            <input
+              type="checkbox"
+              value="qty"
+              v-model="schema.columns"
+              @change="updateTemplate"
+              class="w-4 h-4 rounded"
+            />
             <span>Qty</span>
           </label>
           <label class="flex items-center gap-2 text-main">
-            <input type="checkbox" value="rate" v-model="schema.columns" @change="updateTemplate" class="w-4 h-4 rounded" />
+            <input
+              type="checkbox"
+              value="rate"
+              v-model="schema.columns"
+              @change="updateTemplate"
+              class="w-4 h-4 rounded"
+            />
             <span>Rate</span>
           </label>
           <label class="flex items-center gap-2 text-main">
-            <input type="checkbox" value="discount" v-model="schema.columns" @change="updateTemplate" class="w-4 h-4 rounded" />
+            <input
+              type="checkbox"
+              value="discount"
+              v-model="schema.columns"
+              @change="updateTemplate"
+              class="w-4 h-4 rounded"
+            />
             <span>Discount</span>
           </label>
           <label class="flex items-center gap-2 text-main">
-            <input type="checkbox" value="tax" v-model="schema.columns" @change="updateTemplate" class="w-4 h-4 rounded" />
+            <input
+              type="checkbox"
+              value="tax"
+              v-model="schema.columns"
+              @change="updateTemplate"
+              class="w-4 h-4 rounded"
+            />
             <span>Tax</span>
           </label>
           <label class="flex items-center gap-2 text-main">
-            <input type="checkbox" value="amount" v-model="schema.columns" @change="updateTemplate" class="w-4 h-4 rounded" disabled />
+            <input
+              type="checkbox"
+              value="amount"
+              v-model="schema.columns"
+              @change="updateTemplate"
+              class="w-4 h-4 rounded"
+              disabled
+            />
             <span>Amount</span>
           </label>
         </div>
@@ -120,25 +192,37 @@
 
       <!-- Footer & Signature -->
       <div class="space-y-3 border-t border-border pt-4">
-        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{ t`Footer & Extra Details` }}</h3>
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          {{ t`Footer & Extra Details` }}
+        </h3>
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Taxes Summary` }}</label>
-          <input type="checkbox" v-model="schema.displayTaxes" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displayTaxes"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Terms & Conditions` }}</label>
-          <input type="checkbox" v-model="schema.displayTerms" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displayTerms"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
 
         <!-- Custom Terms Input -->
         <div v-if="schema.displayTerms" class="space-y-1">
           <label class="text-xs text-gray-400 font-semibold uppercase">{{ t`Custom Terms` }}</label>
-          <textarea 
-            v-model="schema.customTerms" 
+          <textarea
+            v-model="schema.customTerms"
             @input="updateTemplate"
-            rows="3" 
+            rows="3"
             class="w-full text-sm p-2 border border-border rounded text-main bg-transparent outline-none focus:border-primary resize-none"
             placeholder="E.g., Payment is due within 30 days."
           ></textarea>
@@ -146,7 +230,12 @@
 
         <div class="flex items-center justify-between">
           <label class="text-sm text-main font-medium">{{ t`Show Authorized Signatory` }}</label>
-          <input type="checkbox" v-model="schema.displaySignature" @change="updateTemplate" class="w-4 h-4 rounded text-primary" />
+          <input
+            type="checkbox"
+            v-model="schema.displaySignature"
+            @change="updateTemplate"
+            class="w-4 h-4 rounded text-primary"
+          />
         </div>
       </div>
     </div>
@@ -180,7 +269,7 @@ const defaultSchema = {
   displayTerms: true,
   customTerms: "",
   displaySignature: true,
-  displayBankDetails: false
+  displayBankDetails: false,
 };
 
 const schema = ref({ ...defaultSchema });
@@ -269,27 +358,31 @@ const generateTemplateHTML = () => {
     <table class="w-full mb-8 text-left border-collapse">
       <thead>
         <tr class="text-xs font-bold uppercase text-white" style="background-color: ${s.themeColor}">
-          ${s.columns.includes('sNo') ? `<th class="p-3 first:rounded-l last:rounded-r">S.No</th>` : ''}
-          ${s.columns.includes('description') ? `<th class="p-3 first:rounded-l last:rounded-r">Item & Description</th>` : ''}
-          ${s.columns.includes('qty') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Qty</th>` : ''}
-          ${s.columns.includes('rate') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Rate</th>` : ''}
-          ${s.columns.includes('discount') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Discount</th>` : ''}
-          ${s.columns.includes('tax') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Tax</th>` : ''}
-          ${s.columns.includes('amount') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Amount</th>` : ''}
+          ${s.columns.includes("sNo") ? `<th class="p-3 first:rounded-l last:rounded-r">S.No</th>` : ""}
+          ${s.columns.includes("description") ? `<th class="p-3 first:rounded-l last:rounded-r">Item & Description</th>` : ""}
+          ${s.columns.includes("qty") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Qty</th>` : ""}
+          ${s.columns.includes("rate") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Rate</th>` : ""}
+          ${s.columns.includes("discount") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Discount</th>` : ""}
+          ${s.columns.includes("tax") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Tax</th>` : ""}
+          ${s.columns.includes("amount") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Amount</th>` : ""}
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100 text-sm">
         <tr v-for="(row, idx) in doc.items" :key="idx" class="hover:bg-gray-50">
-          ${s.columns.includes('sNo') ? `<td class="p-3 text-gray-500">{{ idx + 1 }}</td>` : ''}
-          ${s.columns.includes('description') ? `<td class="p-3">
+          ${s.columns.includes("sNo") ? `<td class="p-3 text-gray-500">{{ idx + 1 }}</td>` : ""}
+          ${
+            s.columns.includes("description")
+              ? `<td class="p-3">
             <p class="font-medium text-gray-900">{{ row.itemName || row.item }}</p>
             <p v-if="row.description" class="text-xs text-gray-500 mt-0.5">{{ row.description }}</p>
-          </td>` : ''}
-          ${s.columns.includes('qty') ? `<td class="p-3 text-right text-gray-600">{{ row.qty }}</td>` : ''}
-          ${s.columns.includes('rate') ? `<td class="p-3 text-right text-gray-600">{{ row.rate }}</td>` : ''}
-          ${s.columns.includes('discount') ? `<td class="p-3 text-right text-gray-600">{{ row.discountAmount || row.discount }}</td>` : ''}
-          ${s.columns.includes('tax') ? `<td class="p-3 text-right text-gray-600">{{ row.taxAmount || row.tax }}</td>` : ''}
-          ${s.columns.includes('amount') ? `<td class="p-3 text-right font-semibold text-gray-900">{{ row.amount }}</td>` : ''}
+          </td>`
+              : ""
+          }
+          ${s.columns.includes("qty") ? `<td class="p-3 text-right text-gray-600">{{ row.qty }}</td>` : ""}
+          ${s.columns.includes("rate") ? `<td class="p-3 text-right text-gray-600">{{ row.rate }}</td>` : ""}
+          ${s.columns.includes("discount") ? `<td class="p-3 text-right text-gray-600">{{ row.discountAmount || row.discount }}</td>` : ""}
+          ${s.columns.includes("tax") ? `<td class="p-3 text-right text-gray-600">{{ row.taxAmount || row.tax }}</td>` : ""}
+          ${s.columns.includes("amount") ? `<td class="p-3 text-right font-semibold text-gray-900">{{ row.amount }}</td>` : ""}
         </tr>
       </tbody>
     </table>
@@ -351,7 +444,7 @@ watch(
   () => props.initialValue,
   (newVal) => {
     loadSchemaFromTemplate(newVal);
-  }
+  },
 );
 
 onMounted(() => {

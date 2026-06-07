@@ -1,14 +1,8 @@
 <template>
   <view v-if="!isLynx">
     <view class="relative group">
-      <view
-        class="bg-surface p-1.5 rounded-md cursor-pointer"
-        @tap="toggleItemsView"
-      >
-        <LucideIcon
-          :name="tableView ? 'grid' : 'list'"
-          class="w-5 h-5 text-main"
-        />
+      <view class="bg-surface p-1.5 rounded-md cursor-pointer" @tap="toggleItemsView">
+        <LucideIcon :name="tableView ? 'grid' : 'list'" class="w-5 h-5 text-main" />
       </view>
       <text
         class="p-2 mb-2 w-20 absolute bottom-full left-1/2 transform -translate-x-1/2 text-center opacity-0 bg-surface text-main text-xs rounded-md transition-opacity duration-300 group-hover:opacity-100"
@@ -35,9 +29,7 @@
     <view
       class="relative group"
       :class="{
-        hidden:
-          !fyo.singles.AccountingSettings?.enableLoyaltyProgram ||
-          !loyaltyProgram,
+        hidden: !fyo.singles.AccountingSettings?.enableLoyaltyProgram || !loyaltyProgram,
       }"
     >
       <view
@@ -68,8 +60,7 @@
       <view
         class="p-0.5 rounded-md bg-canvas-muted cursor-pointer"
         :class="{
-          'opacity-50 cursor-not-allowed':
-            !sinvDoc?.party || !sinvDoc?.items?.length,
+          'opacity-50 cursor-not-allowed': !sinvDoc?.party || !sinvDoc?.items?.length,
         }"
         @tap="openCouponModal"
       >
@@ -131,9 +122,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">P O S Quick Actions</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -226,11 +215,7 @@ const openCouponModal = () => {
 };
 
 const openLoyaltyModal = () => {
-  if (
-    !props.sinvDoc?.items?.length ||
-    !props.sinvDoc?.party ||
-    !props.loyaltyPoints
-  ) {
+  if (!props.sinvDoc?.items?.length || !props.sinvDoc?.party || !props.loyaltyPoints) {
     showValidationToast("applying loyalty points", true);
     return;
   }

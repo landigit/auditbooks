@@ -1,10 +1,6 @@
 ﻿import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { SalesInvoice } from "../SalesInvoice/SalesInvoice";
 import { getItem, getStockMovement } from "models/inventory/tests/helpers";
 import { PricingRule } from "../PricingRule/PricingRule";
@@ -88,22 +84,16 @@ describe("Pricing Rule", () => {
 
     // Create Party
     await fyo.doc.getNewDoc(ModelNameEnum.Party, partyMap.partyOne).sync();
-    expect(
-      await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name),
-    ).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name)).toBe(true);
 
     // Create Pricing Rules
     for (const pricingRule of Object.values(pricingRuleMap)) {
       const prule: any = { ...pricingRule };
-      if (typeof prule.minAmount === "number")
-        prule.minAmount = fyo.pesa(prule.minAmount);
-      if (typeof prule.maxAmount === "number")
-        prule.maxAmount = fyo.pesa(prule.maxAmount);
+      if (typeof prule.minAmount === "number") prule.minAmount = fyo.pesa(prule.minAmount);
+      if (typeof prule.maxAmount === "number") prule.maxAmount = fyo.pesa(prule.maxAmount);
 
       await fyo.doc.getNewDoc(ModelNameEnum.PricingRule, prule).sync();
-      expect(
-        await fyo.db.exists(ModelNameEnum.PricingRule, pricingRule.name),
-      ).toBe(true);
+      expect(await fyo.db.exists(ModelNameEnum.PricingRule, pricingRule.name)).toBe(true);
     }
 
     // Create Locations
@@ -173,9 +163,7 @@ describe("Pricing Rule", () => {
     });
     await sinv.runFormulas();
 
-    expect(sinv.pricingRuleDetail![0].referenceName).toBe(
-      pricingRuleMap[0].name,
-    );
+    expect(sinv.pricingRuleDetail![0].referenceName).toBe(pricingRuleMap[0].name);
     expect(sinv.items![0].rate!.float).toBe(pricingRuleMap[0].discountRate!);
   });
 
@@ -216,9 +204,7 @@ describe("Pricing Rule", () => {
     });
     await sinv.runFormulas();
 
-    expect(sinv.pricingRuleDetail![0].referenceName).toBe(
-      pricingRuleMap[0].name,
-    );
+    expect(sinv.pricingRuleDetail![0].referenceName).toBe(pricingRuleMap[0].name);
     expect(sinv.items![0].rate!.float).toBe(pricingRuleMap[0].discountRate!);
   });
 
@@ -299,9 +285,7 @@ describe("Pricing Rule", () => {
     });
     await sinv.runFormulas();
 
-    expect(sinv.pricingRuleDetail![0].referenceName).toBe(
-      pricingRuleMap[1].name,
-    );
+    expect(sinv.pricingRuleDetail![0].referenceName).toBe(pricingRuleMap[1].name);
   });
 
   test("Pricing Rule is not applied when qty condition is false, rest is true", async () => {
@@ -459,10 +443,7 @@ describe("Pricing Rule", () => {
   });
 
   test("create a product discount giving 1 free item", async () => {
-    const prle1003 = (await fyo.doc.getDoc(
-      ModelNameEnum.PricingRule,
-      "PRLE-1003",
-    )) as PricingRule;
+    const prle1003 = (await fyo.doc.getDoc(ModelNameEnum.PricingRule, "PRLE-1003")) as PricingRule;
     await prle1003.setAndSync("isEnabled", false);
 
     const pricingRuleDoc = (await fyo.doc.getDoc(

@@ -5,10 +5,7 @@
       <SectionHeader>
         <template #title>{{ title }}</template>
         <template #action>
-          <PeriodSelector
-            :value="period"
-            @change="(value) => (period = value)"
-          />
+          <PeriodSelector :value="period" @change="(value) => (period = value)" />
         </template>
       </SectionHeader>
 
@@ -27,9 +24,7 @@
             @tap="() => routeToInvoices('paid')"
           >
             <text>{{ fyo.format(paid, "Currency") }} </text>
-            <text :class="{ 'text-main font-normal': count }">{{
-              t`Paid`
-            }}</text>
+            <text :class="{ 'text-main font-normal': count }">{{ t`Paid` }}</text>
           </view>
 
           <!-- Unpaid -->
@@ -43,9 +38,7 @@
             @tap="() => routeToInvoices('unpaid')"
           >
             <text>{{ fyo.format(unpaid, "Currency") }} </text>
-            <text :class="{ 'text-main font-normal': count }">{{
-              t`Unpaid`
-            }}</text>
+            <text :class="{ 'text-main font-normal': count }">{{ t`Unpaid` }}</text>
           </view>
         </view>
 
@@ -55,10 +48,7 @@
           @mouseenter="show = true"
           @mouseleave="show = false"
         >
-          <view
-            class="w-full h-2.5 transition-all duration-300"
-            :class="unpaidColor"
-          ></view>
+          <view class="w-full h-2.5 transition-all duration-300" :class="unpaidColor"></view>
           <view
             class="absolute inset-y-0 start-0 h-2.5 rounded-full transition-all duration-500 ease-out"
             :class="paidColor"
@@ -99,12 +89,8 @@
         class="flex-1 p-3 rounded-lg bg-canvas-muted border border-border mr-2"
         @tap="() => routeToInvoices('paid')"
       >
-        <text class="text-xs text-description mb-1"
-          >{{ t`Paid` }} ({{ paidCount }})</text
-        >
-        <text class="text-base font-bold text-success">{{
-          fyo.format(paid, "Currency")
-        }}</text>
+        <text class="text-xs text-description mb-1">{{ t`Paid` }} ({{ paidCount }})</text>
+        <text class="text-base font-bold text-success">{{ fyo.format(paid, "Currency") }}</text>
       </view>
 
       <!-- Unpaid Card -->
@@ -112,12 +98,8 @@
         class="flex-1 p-3 rounded-lg bg-canvas-muted border border-border"
         @tap="() => routeToInvoices('unpaid')"
       >
-        <text class="text-xs text-description mb-1"
-          >{{ t`Unpaid` }} ({{ unpaidCount }})</text
-        >
-        <text class="text-base font-bold text-danger">{{
-          fyo.format(unpaid, "Currency")
-        }}</text>
+        <text class="text-xs text-description mb-1">{{ t`Unpaid` }} ({{ unpaidCount }})</text>
+        <text class="text-base font-bold text-danger">{{ fyo.format(unpaid, "Currency") }}</text>
       </view>
     </view>
 
@@ -132,9 +114,7 @@
     <!-- Quick action -->
     <view class="flex-row justify-end mt-1">
       <view class="px-3 py-1 rounded bg-accent" @tap="newInvoice">
-        <text class="text-xs text-white font-semibold">{{
-          t`Create New`
-        }}</text>
+        <text class="text-xs text-white font-semibold">{{ t`Create New` }}</text>
       </view>
     </view>
   </view>
@@ -197,52 +177,35 @@ const color = computed(() => {
 });
 
 const colors = computed(() => {
-  return color.value === "blue"
-    ? "var(--chart-blue-main)"
-    : "var(--chart-pink-main)";
+  return color.value === "blue" ? "var(--chart-blue-main)" : "var(--chart-pink-main)";
 });
 
 const paidColor = computed(() => {
   if (!hasData.value) {
     return "bg-canvas-muted";
   }
-  return color.value === "blue"
-    ? "bg-[var(--chart-blue-main)]"
-    : "bg-[var(--chart-pink-main)]";
+  return color.value === "blue" ? "bg-[var(--chart-blue-main)]" : "bg-[var(--chart-pink-main)]";
 });
 
 const unpaidColor = computed(() => {
   if (!hasData.value) {
     return "bg-canvas-muted";
   }
-  return color.value === "blue"
-    ? "bg-[var(--chart-blue-muted)]"
-    : "bg-[var(--chart-pink-muted)]";
+  return color.value === "blue" ? "bg-[var(--chart-blue-muted)]" : "bg-[var(--chart-pink-muted)]";
 });
 
 // Methods
-const getCounts = async (
-  schemaName: string,
-  fromDate: Dayjs,
-  toDate: Dayjs,
-) => {
+const getCounts = async (schemaName: string, fromDate: Dayjs, toDate: Dayjs) => {
   const outstandingAmounts = await fyo.db.getAllRaw(schemaName, {
     fields: ["outstandingAmount"],
     filters: {
       cancelled: false,
       submitted: true,
-      date: [
-        "<=",
-        toDate.format("YYYY-MM-DD"),
-        ">=",
-        fromDate.format("YYYY-MM-DD"),
-      ],
+      date: ["<=", toDate.format("YYYY-MM-DD"), ">=", fromDate.format("YYYY-MM-DD")],
     },
   });
 
-  const isOutstanding = outstandingAmounts.map((o) =>
-    safeParseFloat(o.outstandingAmount),
-  );
+  const isOutstanding = outstandingAmounts.map((o) => safeParseFloat(o.outstandingAmount));
 
   return {
     countTotal: isOutstanding.length,

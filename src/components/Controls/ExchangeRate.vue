@@ -1,11 +1,6 @@
 <template>
-  <view
-    class="flex items-center bg-canvas-muted border-border rounded-md text-sm p-1 border"
-  >
-    <view
-      class="rate-container gap-2"
-      :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'"
-    >
+  <view class="flex items-center bg-canvas-muted border-border rounded-md text-sm p-1 border">
+    <view class="rate-container gap-2" :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'">
       <input
         class="text-right text-description border-transparent focus:outline-none focus:ring-1 focus:ring-main bg-transparent border"
         v-model="fromValue"
@@ -19,10 +14,7 @@
 
     <text class="mx-1 text-description">=</text>
 
-    <view
-      class="rate-container gap-2"
-      :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'"
-    >
+    <view class="rate-container gap-2" :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'">
       <input
         class="text-right text-description border-transparent focus:outline-none focus:ring-1 focus:ring-main bg-transparent border"
         type="number"
@@ -39,10 +31,7 @@
       class="bg-indicator-green-bg text-indicator-green-text px-2 ms-1 -me-0.5 h-full border-s border-border"
       @tap="swap"
     >
-      <lucide-icon
-        name="refresh-cw"
-        class="w-3 h-3 text-indicator-green-text"
-      />
+      <lucide-icon name="refresh-cw" class="w-3 h-3 text-indicator-green-text" />
     </view>
   </view>
 </template>

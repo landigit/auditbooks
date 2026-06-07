@@ -66,11 +66,7 @@
   />
 
   <view class="flex justify-center">
-    <lucide-icon
-      name="trash"
-      class="w-4 text-xl text-error"
-      @tap="removeAddedItem(row)"
-    />
+    <lucide-icon name="trash" class="w-4 text-xl text-error" @tap="removeAddedItem(row)" />
   </view>
 
   <view></view>
@@ -177,10 +173,7 @@
         />
       </view>
 
-      <view
-        v-if="row.links?.item && row.links?.item.hasBatch"
-        class="px-4 pt-6 col-span-2"
-      >
+      <view v-if="row.links?.item && row.links?.item.hasBatch" class="px-4 pt-6 col-span-2">
         <Link
           :df="{
             fieldname: 'batch',
@@ -198,10 +191,7 @@
         />
       </view>
 
-      <view
-        v-if="row.links?.item && row.links?.item.hasBatch"
-        class="px-4 pt-6 col-span-2"
-      >
+      <view v-if="row.links?.item && row.links?.item.hasBatch" class="px-4 pt-6 col-span-2">
         <Float
           :df="{
             fieldname: 'availableQtyInBatch',
@@ -352,11 +342,7 @@ function setSerialNumber(serialNumber: string) {
   }
   itemSerialNumbers[props.row.item as string] = serialNumber;
 
-  validateSerialNumberCount(
-    serialNumber,
-    props.row.quantity ?? 0,
-    props.row.item!,
-  );
+  validateSerialNumberCount(serialNumber, props.row.quantity ?? 0, props.row.item!);
 }
 
 async function removeAddedItem(row: SalesInvoiceItem) {

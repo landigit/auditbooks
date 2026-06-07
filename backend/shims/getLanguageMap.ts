@@ -130,10 +130,7 @@ async function getLastUpdated(code: string): Promise<Date> {
 }
 
 async function getTranslationFilePath(code: string) {
-  let filePath = path.join(
-    (process as any).resourcesPath || "",
-    `../translations/${code}.csv`,
-  );
+  let filePath = path.join((process as any).resourcesPath || "", `../translations/${code}.csv`);
 
   const exists = await Bun.file(filePath).exists();
   if (!exists) {

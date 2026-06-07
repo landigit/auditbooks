@@ -70,19 +70,13 @@ export function getActions(doc: Doc): Action[] {
   return Model.getActions(doc.fyo);
 }
 
-export async function getSingleValue(
-  fieldname: string,
-  parent: string,
-  fyo: Fyo,
-) {
+export async function getSingleValue(fieldname: string, parent: string, fyo: Fyo) {
   if (!fyo.db.isConnected) {
     return undefined;
   }
 
   const res = await fyo.db.getSingleValues({ fieldname, parent });
-  const singleValue = res.find(
-    (f) => f.fieldname === fieldname && f.parent === parent,
-  );
+  const singleValue = res.find((f) => f.fieldname === fieldname && f.parent === parent);
 
   if (singleValue === undefined) {
     return undefined;
@@ -91,10 +85,7 @@ export async function getSingleValue(
   return singleValue.value;
 }
 
-export function getOptionList(
-  field: Field,
-  doc: Doc | undefined | null,
-): SelectOption[] {
+export function getOptionList(field: Field, doc: Doc | undefined | null): SelectOption[] {
   const list = getRawOptionList(field, doc);
   return list.map((option) => {
     if (typeof option === "string") {
@@ -131,10 +122,7 @@ function getRawOptionList(field: Field, doc: Doc | undefined | null) {
   return getList(doc);
 }
 
-export function getEmptyValuesByFieldTypes(
-  fieldtype: FieldType,
-  fyo: Fyo,
-): DocValue {
+export function getEmptyValuesByFieldTypes(fieldtype: FieldType, fyo: Fyo): DocValue {
   switch (fieldtype) {
     case "Date":
     case "Datetime":

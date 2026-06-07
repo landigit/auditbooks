@@ -21,10 +21,7 @@
         </view>
       </Row>
 
-      <view
-        class="overflow-y-auto custom-scroll custom-scroll-thumb2"
-        style="height: 50vh"
-      >
+      <view class="overflow-y-auto custom-scroll custom-scroll-thumb2" style="height: 50vh">
         <Row
           v-for="row in sinvDoc.items"
           :ratio="ratio"
@@ -33,9 +30,7 @@
           <SelectedItemRow
             :row="row as SalesInvoiceItem"
             :expanded-batch-id="expandedBatchId"
-            @set-expanded-batch-id="
-              (rowName) => $emit('setExpandedBatchId', rowName)
-            "
+            @set-expanded-batch-id="(rowName) => $emit('setExpandedBatchId', rowName)"
             @run-sinv-formulas="runSinvFormulas"
             @apply-pricing-rule="$emit('applyPricingRule')"
             @selected-row="selectedItemRow"
@@ -62,11 +57,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits([
-  "applyPricingRule",
-  "selectedRow",
-  "setExpandedBatchId",
-]);
+const emit = defineEmits(["applyPricingRule", "selectedRow", "setExpandedBatchId"]);
 
 const sinvDoc = inject("sinvDoc") as SalesInvoice;
 

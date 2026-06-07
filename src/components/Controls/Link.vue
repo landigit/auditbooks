@@ -20,10 +20,7 @@ import { getCreateFiltersFromListViewFilters } from "src/utils/misc";
 import { markRaw } from "vue";
 import Badge from "src/components/Badge.vue";
 import AutoComplete from "./AutoComplete.vue";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 
 interface LinkProps extends BaseControlProps {
   focusInput?: boolean;
@@ -105,9 +102,9 @@ const getOptions = async (filters: any) => {
     return [];
   }
 
-  const fields = [
-    ...new Set(["name", schema.titleField, (props.df as any).groupBy]),
-  ].filter(Boolean) as string[];
+  const fields = [...new Set(["name", schema.titleField, (props.df as any).groupBy])].filter(
+    Boolean,
+  ) as string[];
 
   const dbResults = await fyo.db.getAll(schemaName, {
     filters,
@@ -157,15 +154,11 @@ const getLinkSuggestions = async (keyword = "") => {
           actionOnly: true,
         },
       ];
-    } else if (
-      autoCompleteRef.value?.isFocused &&
-      (!doc.value || !(props.df as any).create)
-    ) {
+    } else if (autoCompleteRef.value?.isFocused && (!doc.value || !(props.df as any).create)) {
       optionsList = [
         {
           component: markRaw({
-            template:
-              '<text class="text-description">{{ t`No results found` }}</text>',
+            template: '<text class="text-description">{{ t`No results found` }}</text>',
             setup() {
               return { t };
             },
@@ -240,11 +233,8 @@ const openNewDoc = async () => {
 
 const getCreateFilters = async () => {
   const { schemaName, fieldname } = props.df as any;
-  const getCreateFiltersFunc =
-    fyo.models[schemaName]?.createFilters?.[fieldname];
-  let createFilters = doc.value
-    ? await getCreateFiltersFunc?.(doc.value)
-    : undefined;
+  const getCreateFiltersFunc = fyo.models[schemaName]?.createFilters?.[fieldname];
+  let createFilters = doc.value ? await getCreateFiltersFunc?.(doc.value) : undefined;
 
   if (createFilters !== undefined) {
     return createFilters;

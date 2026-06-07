@@ -45,8 +45,7 @@ function processSource(src: string): { out: string; fixes: number } {
       // Avoid matching methods "method() {" or properties with initializers "prop = value;" or comments or getters/setters.
       // Specifically: starts with word character, optional ? or !, followed by :, then Type, ending with ; (or no initializer).
       // Also it shouldn't already have 'declare' or 'get' or 'set' or 'private' or 'public' or 'readonly' or 'async' or 'static'.
-      const propertyRegex =
-        /^\s+([a-zA-Z_$][a-zA-Z0-9_$]*[?!]?)\s*:\s*([^=;]+);/;
+      const propertyRegex = /^\s+([a-zA-Z_$][a-zA-Z0-9_$]*[?!]?)\s*:\s*([^=;]+);/;
       if (propertyRegex.test(line)) {
         const match = line.match(propertyRegex);
         if (match) {
@@ -101,6 +100,4 @@ for (const filePath of files) {
   }
 }
 
-console.log(
-  `\n✅ Done — ${totalFixes} declare(s) added across ${totalFiles} file(s).`,
-);
+console.log(`\n✅ Done — ${totalFixes} declare(s) added across ${totalFiles} file(s).`);

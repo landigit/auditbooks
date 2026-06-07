@@ -8,9 +8,7 @@ import { Doc } from "./doc";
 
 export function validateEmail(value: DocValue) {
   if (typeof value !== "string") {
-    throw new TypeError(
-      `Invalid email ${String(value)} of type ${typeof value}`,
-    );
+    throw new TypeError(`Invalid email ${String(value)} of type ${typeof value}`);
   }
 
   const isValid = /(.+)@(.+){2,}\.(.+){2,}/.test(value);
@@ -21,9 +19,7 @@ export function validateEmail(value: DocValue) {
 
 export function validatePhoneNumber(value: DocValue) {
   if (typeof value !== "string") {
-    throw new TypeError(
-      `Invalid phone ${String(value)} of type ${typeof value}`,
-    );
+    throw new TypeError(`Invalid phone ${String(value)} of type ${typeof value}`);
   }
 
   const isValid = /[+]{0,1}[\d ]+/.test(value);

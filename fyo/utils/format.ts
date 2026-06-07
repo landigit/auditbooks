@@ -81,16 +81,13 @@ function formatDatetime(value: unknown, fyo: Fyo): string {
     return "";
   }
 
-  const dateFormat =
-    (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
+  const dateFormat = (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
   const dateTime = toDatetime(value);
   if (!dateTime) {
     return "";
   }
 
-  const formattedDatetime = dateTime.format(
-    `${translateDateFormat(dateFormat)} HH:mm:ss`,
-  );
+  const formattedDatetime = dateTime.format(`${translateDateFormat(dateFormat)} HH:mm:ss`);
 
   if (value === "Invalid DateTime") {
     return "";
@@ -104,8 +101,7 @@ function formatDate(value: unknown, fyo: Fyo): string {
     return "";
   }
 
-  const dateFormat =
-    (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
+  const dateFormat = (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
 
   const dateTime = toDatetime(value);
   if (!dateTime) {
@@ -120,21 +116,14 @@ function formatDate(value: unknown, fyo: Fyo): string {
   return formattedDate;
 }
 
-function formatCurrency(
-  value: unknown,
-  field: Field,
-  doc: Doc | null,
-  fyo: Fyo,
-): string {
+function formatCurrency(value: unknown, field: Field, doc: Doc | null, fyo: Fyo): string {
   const currency = getCurrency(field, doc, fyo);
 
   let valueString;
   try {
     valueString = formatNumber(value, fyo);
   } catch (err) {
-    (err as Error).message += ` value: '${String(
-      value,
-    )}', type: ${typeof value}`;
+    (err as Error).message += ` value: '${String(value)}', type: ${typeof value}`;
     throw err;
   }
 
@@ -161,11 +150,7 @@ function formatNumber(value: unknown, fyo: Fyo): string {
   const formattedNumber = numberFormatter.format(floatValue);
 
   if (formattedNumber === "NaN") {
-    throw Error(
-      `invalid value passed to formatNumber: '${String(
-        value,
-      )}' of type ${typeof value}`,
-    );
+    throw Error(`invalid value passed to formatNumber: '${String(value)}' of type ${typeof value}`);
   }
 
   return formattedNumber;
@@ -176,11 +161,9 @@ function getNumberFormatter(fyo: Fyo) {
     return fyo.currencyFormatter;
   }
 
-  const locale =
-    (fyo.singles.SystemSettings?.locale as string) ?? DEFAULT_LOCALE;
+  const locale = (fyo.singles.SystemSettings?.locale as string) ?? DEFAULT_LOCALE;
   const display =
-    (fyo.singles.SystemSettings?.displayPrecision as number) ??
-    DEFAULT_DISPLAY_PRECISION;
+    (fyo.singles.SystemSettings?.displayPrecision as number) ?? DEFAULT_DISPLAY_PRECISION;
 
   return (fyo.currencyFormatter = Intl.NumberFormat(locale, {
     style: "decimal",
@@ -189,8 +172,7 @@ function getNumberFormatter(fyo: Fyo) {
 }
 
 function getCurrency(field: Field, doc: Doc | null, fyo: Fyo): string {
-  const defaultCurrency =
-    fyo.singles.SystemSettings?.currency ?? DEFAULT_CURRENCY;
+  const defaultCurrency = fyo.singles.SystemSettings?.currency ?? DEFAULT_CURRENCY;
 
   let getCurrency = doc?.getCurrencies
     ? Reflect.get(doc.getCurrencies, field.fieldname)

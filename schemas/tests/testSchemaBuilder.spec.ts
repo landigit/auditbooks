@@ -8,12 +8,7 @@ import {
   setSchemaNameOnFields,
 } from "../index";
 import { metaSchemas } from "../schemas";
-import {
-  everyFieldExists,
-  getTestSchemaMap,
-  someFieldExists,
-  subtract,
-} from "./helpers";
+import { everyFieldExists, getTestSchemaMap, someFieldExists, subtract } from "./helpers";
 
 const { appSchemaMap, regionalSchemaMap } = getTestSchemaMap();
 
@@ -39,10 +34,7 @@ describe("Schema Builder Tests", () => {
     expect(regionalSchemaMap.Party.quickEditFields?.length).toBe(8);
   });
 
-  const regionalCombined = getRegionalCombinedSchemas(
-    appSchemaMap,
-    regionalSchemaMap,
-  );
+  const regionalCombined = getRegionalCombinedSchemas(appSchemaMap, regionalSchemaMap);
 
   test("Field Counts Combined", () => {
     expect(regionalCombined.Party.fields?.length).toBe(11);
@@ -55,16 +47,12 @@ describe("Schema Builder Tests", () => {
   test("Schema Equality with App Schemas", () => {
     expect(regionalCombined.Account).toEqual(appSchemaMap.Account);
     expect(regionalCombined.JournalEntry).toEqual(appSchemaMap.JournalEntry);
-    expect(regionalCombined.JournalEntryAccount).toEqual(
-      appSchemaMap.JournalEntryAccount,
-    );
+    expect(regionalCombined.JournalEntryAccount).toEqual(appSchemaMap.JournalEntryAccount);
     expect(regionalCombined.Customer).toEqual(appSchemaMap.Customer);
     expect(regionalCombined.Party).not.toEqual(appSchemaMap.Party);
   });
 
-  const abstractCombined = cleanSchemas(
-    getAbstractCombinedSchemas(regionalCombined),
-  );
+  const abstractCombined = cleanSchemas(getAbstractCombinedSchemas(regionalCombined));
 
   test("Meta Properties Abstract", () => {
     expect(abstractCombined.Customer!.extends).toBeUndefined();
@@ -84,21 +72,14 @@ describe("Schema Builder Tests", () => {
 
   test("Schema Equality with App Schemas Abstract", () => {
     expect(abstractCombined.Account as any).toEqual(appSchemaMap.Account);
-    expect(abstractCombined.JournalEntry as any).toEqual(
-      appSchemaMap.JournalEntry,
-    );
-    expect(abstractCombined.JournalEntryAccount as any).toEqual(
-      appSchemaMap.JournalEntryAccount,
-    );
+    expect(abstractCombined.JournalEntry as any).toEqual(appSchemaMap.JournalEntry);
+    expect(abstractCombined.JournalEntryAccount as any).toEqual(appSchemaMap.JournalEntryAccount);
     expect(abstractCombined.Customer).not.toEqual(appSchemaMap.Customer);
   });
 
   test("Schema Field Existence", () => {
     expect(
-      everyFieldExists(
-        regionalSchemaMap.Party.quickEditFields ?? [],
-        abstractCombined.Customer!,
-      ),
+      everyFieldExists(regionalSchemaMap.Party.quickEditFields ?? [], abstractCombined.Customer!),
     ).toBe(true);
   });
 
@@ -109,9 +90,7 @@ describe("Schema Builder Tests", () => {
   const baseFieldNames = metaSchemaMap.base.fields!.map((f) => f.fieldname);
   const childFieldNames = metaSchemaMap.child.fields!.map((f) => f.fieldname);
   const treeFieldNames = metaSchemaMap.tree.fields!.map((f) => f.fieldname);
-  const submittableFieldNames = metaSchemaMap.submittable.fields!.map(
-    (f) => f.fieldname,
-  );
+  const submittableFieldNames = metaSchemaMap.submittable.fields!.map((f) => f.fieldname);
   const allFieldNames = [
     ...baseFieldNames,
     ...childFieldNames,
@@ -130,18 +109,12 @@ describe("Schema Builder Tests", () => {
   test("Final Schema Field Existence", () => {
     expect(everyFieldExists(baseFieldNames, finalSchemas.Customer!)).toBe(true);
 
-    expect(
-      someFieldExists(
-        subtract(allFieldNames, baseFieldNames),
-        finalSchemas.Customer!,
-      ),
-    ).toBe(false);
+    expect(someFieldExists(subtract(allFieldNames, baseFieldNames), finalSchemas.Customer!)).toBe(
+      false,
+    );
 
     expect(
-      everyFieldExists(
-        [...baseFieldNames, ...submittableFieldNames],
-        finalSchemas.JournalEntry!,
-      ),
+      everyFieldExists([...baseFieldNames, ...submittableFieldNames], finalSchemas.JournalEntry!),
     ).toBe(true);
 
     expect(
@@ -151,23 +124,15 @@ describe("Schema Builder Tests", () => {
       ),
     ).toBe(false);
 
-    expect(
-      everyFieldExists(childFieldNames, finalSchemas.JournalEntryAccount!),
-    ).toBe(true);
+    expect(everyFieldExists(childFieldNames, finalSchemas.JournalEntryAccount!)).toBe(true);
 
     expect(
-      someFieldExists(
-        subtract(allFieldNames, childFieldNames),
-        finalSchemas.JournalEntryAccount!,
-      ),
+      someFieldExists(subtract(allFieldNames, childFieldNames), finalSchemas.JournalEntryAccount!),
     ).toBe(false);
 
-    expect(
-      everyFieldExists(
-        [...treeFieldNames, ...baseFieldNames],
-        finalSchemas.Account!,
-      ),
-    ).toBe(true);
+    expect(everyFieldExists([...treeFieldNames, ...baseFieldNames], finalSchemas.Account!)).toBe(
+      true,
+    );
 
     expect(
       someFieldExists(

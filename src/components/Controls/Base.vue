@@ -31,10 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
@@ -71,11 +68,7 @@ const {
 } = useBaseControl(props as any, emit, inputRef);
 
 onMounted(() => {
-  if (
-    typeof window !== "undefined" &&
-    inputRef.value &&
-    inputType.value === "number"
-  ) {
+  if (typeof window !== "undefined" && inputRef.value && inputType.value === "number") {
     inputRef.value.addEventListener(
       "wheel",
       (e) => {

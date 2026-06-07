@@ -90,11 +90,7 @@ function getCreateList(fyo: Fyo): SearchItem[] {
     ModelNameEnum.PurchaseInvoice,
     ModelNameEnum.JournalEntry,
     ...(hasInventory
-      ? [
-          ModelNameEnum.Shipment,
-          ModelNameEnum.PurchaseReceipt,
-          ModelNameEnum.StockMovement,
-        ]
+      ? [ModelNameEnum.Shipment, ModelNameEnum.PurchaseReceipt, ModelNameEnum.StockMovement]
       : []),
   ].map(
     (schemaName) =>
@@ -315,12 +311,7 @@ function getSetupList(): SearchItem[] {
 }
 
 function getNonDocSearchList(fyo: Fyo) {
-  return [
-    getListViewList(fyo),
-    getCreateList(fyo),
-    getReportList(fyo),
-    getSetupList(),
-  ]
+  return [getListViewList(fyo), getCreateList(fyo), getReportList(fyo), getSetupList()]
     .flat()
     .map((d) => {
       if (d.route && !d.action) {
@@ -452,8 +443,7 @@ export class Search {
         const lower = searchTerm.toLowerCase();
         filtered = recents.filter(
           (item) =>
-            item.label.toLowerCase().includes(lower) ||
-            item.group.toLowerCase().includes(lower),
+            item.label.toLowerCase().includes(lower) || item.group.toLowerCase().includes(lower),
         );
       }
 
@@ -518,11 +508,7 @@ export class Search {
   }
 
   set(filterName: string, value: boolean) {
-    if (
-      filterName === "__proto__" ||
-      filterName === "constructor" ||
-      filterName === "prototype"
-    ) {
+    if (filterName === "__proto__" || filterName === "constructor" || filterName === "prototype") {
       return;
     }
 
@@ -579,11 +565,7 @@ export class Search {
 
   _setSchemaFilters() {
     for (const name in this.searchables) {
-      if (
-        name !== "__proto__" &&
-        name !== "constructor" &&
-        name !== "prototype"
-      ) {
+      if (name !== "__proto__" && name !== "constructor" && name !== "prototype") {
         safeSet(this.filters.schemaFilters, name, true);
       }
     }
@@ -618,12 +600,9 @@ export class Search {
 
     for (const si of this._intermediate.suggestions) {
       const label = si.label;
-      const groupLabel =
-        (si as DocSearchItem).schemaLabel || this._groupLabelMap?.[si.group];
+      const groupLabel = (si as DocSearchItem).schemaLabel || this._groupLabelMap?.[si.group];
       const more = (si as DocSearchItem).more ?? [];
-      const values = [label, more, groupLabel]
-        .flat()
-        .filter(Boolean) as string[];
+      const values = [label, more, groupLabel].flat().filter(Boolean) as string[];
 
       const { isMatch, distance } = this._getMatchAndDistance(input, values);
 
@@ -688,10 +667,7 @@ export class Search {
     keys.sort((a, b) => safeParseFloat(b) - safeParseFloat(a));
     const array: SearchItems = [];
 
-    const showRecent =
-      !input ||
-      input.startsWith("#") ||
-      input.toLowerCase().startsWith("recent");
+    const showRecent = !input || input.startsWith("#") || input.toLowerCase().startsWith("recent");
     if (showRecent && this.filters.groupFilters.Recent) {
       const recentSearchTerm = input?.replace(/^#|recent/gi, "").trim();
       const recentItems = this.getRecentItems(recentSearchTerm);
@@ -712,11 +688,7 @@ export class Search {
     return array;
   }
 
-  _pushDocSearchItems(
-    keywords: Keyword[],
-    array: SearchItems,
-    inputParts: string[],
-  ) {
+  _pushDocSearchItems(keywords: Keyword[], array: SearchItems, inputParts: string[]) {
     if (inputParts.length === 0) {
       return;
     }
@@ -730,17 +702,12 @@ export class Search {
   }
 
   _pushNonDocSearchItems(array: SearchItems, inputParts: string[]) {
-    const filtered = this._nonDocSearchList.filter(
-      (si) => this.filters.groupFilters[si.group],
-    );
+    const filtered = this._nonDocSearchList.filter((si) => this.filters.groupFilters[si.group]);
     const subArray = this._getSubSortedArray(filtered, inputParts);
     array.push(...subArray);
   }
 
-  _getSubSortedArray(
-    items: (SearchItem | Keyword)[],
-    inputParts: string[],
-  ): SearchItems {
+  _getSubSortedArray(items: (SearchItem | Keyword)[], inputParts: string[]): SearchItems {
     const subArray: { item: SearchItems[number]; distance: number }[] = [];
 
     for (const item of items) {
@@ -777,10 +744,7 @@ export class Search {
     }
 
     const values = this._getValueListFromSearchItem(item).filter(Boolean);
-    const { isMatch, distance } = this._getMatchAndDistanceParts(
-      inputParts,
-      values,
-    );
+    const { isMatch, distance } = this._getMatchAndDistanceParts(inputParts, values);
 
     if (!isMatch) {
       return null;
@@ -795,10 +759,7 @@ export class Search {
 
   _getSubArrayItemFromKeyword(item: Keyword, inputParts: string[]) {
     const values = this._getValueListFromKeyword(item).filter(Boolean);
-    const { isMatch, distance } = this._getMatchAndDistanceParts(
-      inputParts,
-      values,
-    );
+    const { isMatch, distance } = this._getMatchAndDistanceParts(inputParts, values);
 
     if (!isMatch) {
       return null;
@@ -816,10 +777,7 @@ export class Search {
   }
 
   _getMatchAndDistance(input: string, values: string[]) {
-    return this._getMatchAndDistanceParts(
-      input.split(" ").filter(Boolean),
-      values,
-    );
+    return this._getMatchAndDistanceParts(input.split(" ").filter(Boolean), values);
   }
 
   _getMatchAndDistanceParts(inputParts: string[], values: string[]) {
@@ -891,10 +849,7 @@ export class Search {
       const searchable = safeGet(this.searchables, sn);
       if (!searchable) continue;
 
-      if (
-        !safeGet(this.filters.schemaFilters, sn) ||
-        !this.filters.groupFilters.Docs
-      ) {
+      if (!safeGet(this.filters.schemaFilters, sn) || !this.filters.groupFilters.Docs) {
         continue;
       }
 
@@ -925,10 +880,7 @@ export class Search {
   _setSearchables() {
     for (const schemaName of Object.keys(this.fyo.schemaMap)) {
       const schema = this.fyo.schemaMap[schemaName];
-      if (
-        !schema?.keywordFields?.length ||
-        safeGet(this.searchables, schemaName)
-      ) {
+      if (!schema?.keywordFields?.length || safeGet(this.searchables, schemaName)) {
         continue;
       }
 
@@ -997,11 +949,7 @@ export class Search {
     this._setPriority(searchable);
   }
 
-  _setKeywordValues(
-    map: RawValueMap,
-    searchable: Searchable,
-    keyword: Keyword,
-  ) {
+  _setKeywordValues(map: RawValueMap, searchable: Searchable, keyword: Keyword) {
     // Set individual field values
     for (const fn of searchable.fields) {
       let value = safeGet(map, fn) as string | undefined;
@@ -1034,10 +982,8 @@ export class Search {
   }
 
   _setPriority(searchable: Searchable) {
-    const keywords =
-      safeGet<Keyword[]>(this.keywords, searchable.schemaName) ?? [];
-    const basePriority =
-      safeGet<number>(this.priorityMap, searchable.schemaName) ?? 0;
+    const keywords = safeGet<Keyword[]>(this.keywords, searchable.schemaName) ?? [];
+    const basePriority = safeGet<number>(this.priorityMap, searchable.schemaName) ?? 0;
 
     for (const k of keywords) {
       k.priority += basePriority;

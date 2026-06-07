@@ -17,14 +17,7 @@ export class Address extends BaseAddress {
           .filter(Boolean)
           .join(", ");
       },
-      dependsOn: [
-        "addressLine1",
-        "addressLine2",
-        "city",
-        "state",
-        "country",
-        "postalCode",
-      ],
+      dependsOn: ["addressLine1", "addressLine2", "city", "state", "country", "postalCode"],
     },
 
     pos: {

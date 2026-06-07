@@ -37,10 +37,7 @@ async function testAndSetRoundOffAccount(dm: DatabaseManager) {
   return;
 }
 
-async function setRoundOffAccountIfExists(
-  roundOffAccount: string,
-  dm: DatabaseManager,
-) {
+async function setRoundOffAccountIfExists(roundOffAccount: string, dm: DatabaseManager) {
   const exists = await dm.db!.exists(ModelNameEnum.Account, roundOffAccount);
   if (!exists) {
     return false;

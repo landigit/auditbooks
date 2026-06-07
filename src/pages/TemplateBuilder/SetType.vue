@@ -7,18 +7,10 @@
         <text class="text-base text-main">
           {{ t`Select the template type.` }}
         </text>
-        <Select
-          :df="df"
-          :value="type"
-          :border="true"
-          :show-label="true"
-          @change="typeChange"
-        />
+        <Select :df="df" :value="type" :border="true" :show-label="true" @change="typeChange" />
       </view>
       <view class="flex border-t border-border p-4">
-        <Button class="ml-auto" type="primary" @tap="done">{{
-          t`Done`
-        }}</Button>
+        <Button class="ml-auto" type="primary" @tap="done">{{ t`Done` }}</Button>
       </view>
     </view>
   </view>
@@ -26,9 +18,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Set Type</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>

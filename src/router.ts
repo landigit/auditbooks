@@ -1,12 +1,7 @@
 import Dashboard from "src/pages/Dashboard/Dashboard.vue";
 import GetStarted from "src/pages/GetStarted.vue";
 import type { HistoryState } from "vue-router";
-import {
-  createRouter,
-  createWebHistory,
-  createMemoryHistory,
-  RouteRecordRaw,
-} from "vue-router";
+import { createRouter, createWebHistory, createMemoryHistory, RouteRecordRaw } from "vue-router";
 import { useAppStore } from "./stores/app";
 
 const routes: RouteRecordRaw[] = [

@@ -1,11 +1,6 @@
 import { t } from "fyo";
 import { Doc } from "fyo/model/doc";
-import {
-  EmptyMessageMap,
-  FormulaMap,
-  ListViewSettings,
-  ListsMap,
-} from "fyo/model/types";
+import { EmptyMessageMap, FormulaMap, ListViewSettings, ListsMap } from "fyo/model/types";
 import { codeStateMap } from "regional/in";
 import { getCountryInfo } from "utils/misc";
 
@@ -24,14 +19,7 @@ export class Address extends Doc {
           .filter(Boolean)
           .join(", ");
       },
-      dependsOn: [
-        "addressLine1",
-        "addressLine2",
-        "city",
-        "state",
-        "country",
-        "postalCode",
-      ],
+      dependsOn: ["addressLine1", "addressLine2", "city", "state", "country", "postalCode"],
     },
   };
 

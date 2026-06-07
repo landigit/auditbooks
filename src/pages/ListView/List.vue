@@ -11,12 +11,7 @@
         >
           <!-- Title Row -->
           <view class="flex items-center sticky top-0 bg-canvas z-10">
-            <view
-              v-if="!isSelectionMode"
-              class="w-8 text-end me-2 text-description"
-            >
-              #
-            </view>
+            <view v-if="!isSelectionMode" class="w-8 text-end me-2 text-description"> # </view>
             <view v-else class="w-8 flex justify-end me-2">
               <Check
                 :df="{
@@ -47,19 +42,14 @@
               </view>
             </Row>
           </view>
-          <view
-            class="border-b border-border sticky top-[var(--h-row-mid)] z-10"
-          />
+          <view class="border-b border-border sticky top-[var(--h-row-mid)] z-10" />
 
           <!-- Data Rows -->
           <view class="flex-1">
             <view v-for="(row, i) in dataSlice" :key="row.name as string">
               <!-- Row Content -->
               <view class="flex hover:bg-surface-hover items-center">
-                <view
-                  v-if="!isSelectionMode"
-                  class="w-8 text-end me-2 text-description"
-                >
+                <view v-if="!isSelectionMode" class="w-8 text-end me-2 text-description">
                   {{ i + pageStart + 1 }}
                 </view>
                 <view v-else class="w-8 flex justify-end me-2">
@@ -79,9 +69,7 @@
                   gap="1rem"
                   class="cursor-pointer text-main flex-1 h-row-mid"
                   :column-count="columns.length"
-                  @tap="
-                    isSelectionMode ? null : emit('openDoc', String(row.name))
-                  "
+                  @tap="isSelectionMode ? null : emit('openDoc', String(row.name))"
                 >
                   <ListCell
                     v-for="(column, c) in columns"
@@ -96,10 +84,7 @@
                   />
                 </Row>
               </view>
-              <view
-                class="border-b border-border"
-                v-if="!(i === dataSlice.length - 1 && i > 13)"
-              />
+              <view class="border-b border-border" v-if="!(i === dataSlice.length - 1 && i > 13)" />
             </view>
           </view>
         </view>
@@ -108,18 +93,11 @@
       <!-- Pagination Footer -->
       <view v-if="data?.length" class="mt-auto flex-shrink-0">
         <view class="border-b border-border" />
-        <Paginator
-          :item-count="data.length"
-          class="px-4"
-          @index-change="setPageIndices"
-        />
+        <Paginator :item-count="data.length" class="px-4" @index-change="setPageIndices" />
       </view>
 
       <!-- Empty State -->
-      <view
-        v-if="!data?.length"
-        class="flex-1 flex flex-col items-center justify-center w-full"
-      >
+      <view v-if="!data?.length" class="flex-1 flex flex-col items-center justify-center w-full">
         <img src="../../assets/img/list-empty-state.svg" alt="" class="w-24" />
         <text class="my-3 text-description">
           {{ t`No entries found` }}
@@ -132,11 +110,7 @@
   </view>
   <view v-else class="flex-1 flex flex-col h-full bg-canvas">
     <!-- Native ScrollView List -->
-    <scroll-view
-      v-if="data?.length"
-      scroll-y="true"
-      class="flex-1 w-full px-4 py-2"
-    >
+    <scroll-view v-if="data?.length" scroll-y="true" class="flex-1 w-full px-4 py-2">
       <view
         v-for="row in data"
         :key="row.name as string"
@@ -151,10 +125,9 @@
             v-if="getRowStatus(row)"
             class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40"
           >
-            <text
-              class="text-xs font-medium text-blue-800 dark:text-blue-200"
-              >{{ getRowStatus(row) }}</text
-            >
+            <text class="text-xs font-medium text-blue-800 dark:text-blue-200">{{
+              getRowStatus(row)
+            }}</text>
           </view>
         </view>
 
@@ -173,10 +146,7 @@
     </scroll-view>
 
     <!-- Empty State -->
-    <view
-      v-if="!data?.length"
-      class="flex-1 flex flex-col items-center justify-center px-6 py-16"
-    >
+    <view v-if="!data?.length" class="flex-1 flex flex-col items-center justify-center px-6 py-16">
       <view
         class="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6 shadow-sm border border-slate-200/50 dark:border-slate-700/50"
       >
@@ -185,21 +155,15 @@
       <text class="text-lg font-bold text-main mb-2 text-center">
         {{ t`No Entries Found` }}
       </text>
-      <text
-        class="text-sm text-description text-center mb-6 max-w-xs leading-relaxed"
-      >
-        {{
-          t`There are no records in this list yet. Start by creating a new entry.`
-        }}
+      <text class="text-sm text-description text-center mb-6 max-w-xs leading-relaxed">
+        {{ t`There are no records in this list yet. Start by creating a new entry.` }}
       </text>
       <view
         v-if="canCreate"
         class="px-6 py-3 bg-blue-600 rounded-xl shadow-md flex flex-row items-center justify-center"
         @tap="emit('makeNewDoc')"
       >
-        <text class="text-white font-semibold text-sm">{{
-          t`Make Entry`
-        }}</text>
+        <text class="text-white font-semibold text-sm">{{ t`Make Entry` }}</text>
       </view>
     </view>
   </view>
@@ -257,9 +221,7 @@ const dataSlice = computed(() => {
 });
 
 const isAllSelected = computed(() => {
-  return (
-    data.value.length > 0 && selectedItems.value.length === data.value.length
-  );
+  return data.value.length > 0 && selectedItems.value.length === data.value.length;
 });
 
 const columns = computed(() => {
@@ -282,13 +244,7 @@ const columns = computed(() => {
 });
 
 // Methods
-const handleStatusFound = ({
-  rowId,
-  status,
-}: {
-  rowId: string;
-  status: string;
-}) => {
+const handleStatusFound = ({ rowId, status }: { rowId: string; status: string }) => {
   statusMap.value[rowId] = status;
 };
 
@@ -299,9 +255,7 @@ const setPageIndices = ({ start, end }: { start: number; end: number }) => {
 
 const updateData = async (filterObj?: Record<string, unknown>) => {
   const baseFilters = JSON.parse(JSON.stringify(toRaw(props.filters)));
-  const activeFilters = JSON.parse(
-    JSON.stringify({ ...baseFilters, ...filterObj }),
-  );
+  const activeFilters = JSON.parse(JSON.stringify({ ...baseFilters, ...filterObj }));
 
   let statusFilter: [string, string] | undefined;
 
@@ -309,8 +263,7 @@ const updateData = async (filterObj?: Record<string, unknown>) => {
     statusFilter = activeFilters["status"] as [string, string];
   }
 
-  const isStatusFilter =
-    Array.isArray(statusFilter) && statusFilter[0] === "like";
+  const isStatusFilter = Array.isArray(statusFilter) && statusFilter[0] === "like";
   if (isStatusFilter) {
     delete activeFilters["status"];
   }
@@ -335,9 +288,7 @@ const updateData = async (filterObj?: Record<string, unknown>) => {
       .filter(([, status]) => status.toLowerCase() === lowercaseStatus)
       .map(([rowId]) => rowId);
 
-    filteredData = tableData.filter((row) =>
-      matchedNames.includes(String(row.name)),
-    );
+    filteredData = tableData.filter((row) => matchedNames.includes(String(row.name)));
   }
 
   data.value = filteredData.map((d) => ({
@@ -377,9 +328,7 @@ const toggleItemSelection = (itemName: string) => {
 };
 
 const toggleSelectAll = (checked: boolean) => {
-  selectedItems.value = checked
-    ? data.value.map((row) => row.name as string)
-    : [];
+  selectedItems.value = checked ? data.value.map((row) => row.name as string) : [];
   emit("selected-items-changed", selectedItems.value);
 };
 
@@ -403,21 +352,14 @@ const getRowSubtitle = (row: any) => {
   const subCol = columns.value.find((col) => {
     const name = col.fieldname;
     return (
-      name !== "name" &&
-      name !== "status" &&
-      name !== "approvalStatus" &&
-      !isNumeric(col.fieldtype)
+      name !== "name" && name !== "status" && name !== "approvalStatus" && !isNumeric(col.fieldtype)
     );
   });
   if (subCol) {
     const val = row[subCol.fieldname];
     return fyo.format(val, subCol as any);
   }
-  return (row.customer ||
-    row.supplier ||
-    row.party ||
-    row.description ||
-    "") as string;
+  return (row.customer || row.supplier || row.party || row.description || "") as string;
 };
 
 const getRowTotal = (row: any) => {

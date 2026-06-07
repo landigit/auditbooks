@@ -37,12 +37,7 @@ interface TransferTwo extends Omit<Transfer, "from" | "to"> {
   location: string;
 }
 
-export function getItem(
-  name: string,
-  rate: number,
-  hasBatch = false,
-  hasSerialNumber = false,
-) {
+export function getItem(name: string, rate: number, hasBatch = false, hasSerialNumber = false) {
   return { name, rate, trackItem: true, hasBatch, hasSerialNumber };
 }
 
@@ -108,22 +103,14 @@ export async function getStockMovement(
   return doc;
 }
 
-export async function getSLEs(
-  referenceName: string,
-  referenceType: string,
-  fyo: Fyo,
-) {
+export async function getSLEs(referenceName: string, referenceType: string, fyo: Fyo) {
   return (await fyo.db.getAllRaw(ModelNameEnum.StockLedgerEntry, {
     filters: { referenceName, referenceType },
     fields: ["date", "name", "item", "location", "rate", "quantity"],
   })) as SLE[];
 }
 
-export async function getALEs(
-  referenceName: string,
-  referenceType: string,
-  fyo: Fyo,
-) {
+export async function getALEs(referenceName: string, referenceType: string, fyo: Fyo) {
   return (await fyo.db.getAllRaw(ModelNameEnum.AccountingLedgerEntry, {
     filters: { referenceName, referenceType },
     fields: ["date", "account", "party", "debit", "credit", "reverted"],

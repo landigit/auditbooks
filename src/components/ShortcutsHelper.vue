@@ -2,9 +2,7 @@
   <view>
     <FormHeader :form-title="t`Shortcuts`" />
     <view class="border-b border-border" />
-    <view
-      class="h-96 overflow-y-auto custom-scroll custom-scroll-thumb2 text-main"
-    >
+    <view class="h-96 overflow-y-auto custom-scroll custom-scroll-thumb2 text-main">
       <template v-for="g in groups" :key="g.label">
         <view class="p-4 w-full">
           <!-- Shortcut Group Header -->
@@ -25,9 +23,7 @@
               style="grid-template-columns: 8rem auto"
             >
               <ShortcutKeys class="text-base" :keys="s.shortcut" />
-              <view class="whitespace-normal text-base">{{
-                s.description
-              }}</view>
+              <view class="whitespace-normal text-base">{{ s.description }}</view>
             </view>
           </view>
           <!-- Shortcut count if collapsed -->

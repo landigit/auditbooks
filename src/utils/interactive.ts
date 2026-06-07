@@ -1,11 +1,6 @@
 import { t } from "fyo";
 import { getColorClass } from "./colors.js";
-import {
-  DialogButton,
-  DialogOptions,
-  ToastOptions,
-  ToastType,
-} from "./types.js";
+import { DialogButton, DialogOptions, ToastOptions, ToastType } from "./types.js";
 
 // Detect Lynx native environment
 export const isLynx =
@@ -13,16 +8,11 @@ export const isLynx =
   ((globalThis as any).lynx ||
     (typeof process !== "undefined" && process.env && process.env.BACKEND_IP));
 
-export async function showDialog<DO extends DialogOptions>(
-  options: DO,
-): Promise<any> {
+export async function showDialog<DO extends DialogOptions>(options: DO): Promise<any> {
   if (isLynx) {
-    console.info(
-      `[Lynx Dialog] Title: ${options.title}, Detail: ${options.detail}`,
-    );
+    console.info(`[Lynx Dialog] Title: ${options.title}, Detail: ${options.detail}`);
     if (options.buttons && options.buttons.length > 0) {
-      const primaryBtn =
-        options.buttons.find((b) => b.isPrimary) || options.buttons[0];
+      const primaryBtn = options.buttons.find((b) => b.isPrimary) || options.buttons[0];
       if (primaryBtn && typeof primaryBtn.action === "function") {
         return await primaryBtn.action();
       }

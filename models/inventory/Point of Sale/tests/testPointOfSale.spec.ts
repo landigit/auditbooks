@@ -1,9 +1,5 @@
 ﻿import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
 import { Payment } from "models/baseModels/Payment/Payment";
 import { ModelNameEnum } from "models/types";
@@ -90,9 +86,7 @@ describe("Point of Sale", () => {
 
     expect(transactedAmountAfterTxn?.Cash).toBe(sinvDocOne.grandTotal?.float);
 
-    expect(transactedAmountAfterTxn?.Transfer).toBe(
-      sinvDocTwo.grandTotal?.float,
-    );
+    expect(transactedAmountAfterTxn?.Transfer).toBe(sinvDocTwo.grandTotal?.float);
   });
 
   closeTestFyoAfterAll(fyo);

@@ -75,12 +75,6 @@
       "target": "Address"
     }
   ],
-  "quickEditFields": [
-    "email",
-    "phone",
-    "address",
-    "defaultAccount",
-    "currency"
-  ],
+  "quickEditFields": ["email", "phone", "address", "defaultAccount", "currency"],
   "keywordFields": ["name"]
 }

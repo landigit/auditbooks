@@ -27,10 +27,7 @@ import { ModelNameEnum } from "models/types";
  *      the app is hidden.
  */
 
-const ignoreList: string[] = [
-  ModelNameEnum.AccountingLedgerEntry,
-  ModelNameEnum.StockLedgerEntry,
-];
+const ignoreList: string[] = [ModelNameEnum.AccountingLedgerEntry, ModelNameEnum.StockLedgerEntry];
 
 export class TelemetryManager {
   private url = "";
@@ -86,11 +83,7 @@ export class TelemetryManager {
   }
 
   private sendBeacon(verb: Verb, noun: Noun, more?: Record<string, unknown>) {
-    if (
-      !this.hasCreds ||
-      this.fyo.skipTelemetryLogging ||
-      ignoreList.includes(noun)
-    ) {
+    if (!this.hasCreds || this.fyo.skipTelemetryLogging || ignoreList.includes(noun)) {
       return;
     }
 
@@ -113,11 +106,7 @@ export class TelemetryManager {
     this.token = tokenString;
   }
 
-  private getTelemtryData(
-    verb: Verb,
-    noun: Noun,
-    more?: Record<string, unknown>,
-  ): Telemetry {
+  private getTelemtryData(verb: Verb, noun: Noun, more?: Record<string, unknown>): Telemetry {
     const countryCode = this.fyo.singles.SystemSettings?.countryCode;
     return {
       country: countryCode ?? "",

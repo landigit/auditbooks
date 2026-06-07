@@ -94,27 +94,24 @@ export const accountRelations = relations(account, ({ one, many }) => ({
   parties: many(party),
 }));
 
-export const accountingLedgerEntryRelations = relations(
-  accountingLedgerEntry,
-  ({ one, many }) => ({
-    accountingLedgerEntry: one(accountingLedgerEntry, {
-      fields: [accountingLedgerEntry.reverts],
-      references: [accountingLedgerEntry.name],
-      relationName: "accountingLedgerEntry_reverts_accountingLedgerEntry_name",
-    }),
-    accountingLedgerEntries: many(accountingLedgerEntry, {
-      relationName: "accountingLedgerEntry_reverts_accountingLedgerEntry_name",
-    }),
-    account: one(account, {
-      fields: [accountingLedgerEntry.account],
-      references: [account.name],
-    }),
-    party: one(party, {
-      fields: [accountingLedgerEntry.party],
-      references: [party.name],
-    }),
+export const accountingLedgerEntryRelations = relations(accountingLedgerEntry, ({ one, many }) => ({
+  accountingLedgerEntry: one(accountingLedgerEntry, {
+    fields: [accountingLedgerEntry.reverts],
+    references: [accountingLedgerEntry.name],
+    relationName: "accountingLedgerEntry_reverts_accountingLedgerEntry_name",
   }),
-);
+  accountingLedgerEntries: many(accountingLedgerEntry, {
+    relationName: "accountingLedgerEntry_reverts_accountingLedgerEntry_name",
+  }),
+  account: one(account, {
+    fields: [accountingLedgerEntry.account],
+    references: [account.name],
+  }),
+  party: one(party, {
+    fields: [accountingLedgerEntry.party],
+    references: [party.name],
+  }),
+}));
 
 export const partyRelations = relations(party, ({ one, many }) => ({
   accountingLedgerEntries: many(accountingLedgerEntry),
@@ -177,15 +174,12 @@ export const taxRelations = relations(tax, ({ many }) => ({
   items: many(item),
 }));
 
-export const uomConversionItemRelations = relations(
-  uomConversionItem,
-  ({ one }) => ({
-    uom: one(uom, {
-      fields: [uomConversionItem.uom],
-      references: [uom.name],
-    }),
+export const uomConversionItemRelations = relations(uomConversionItem, ({ one }) => ({
+  uom: one(uom, {
+    fields: [uomConversionItem.uom],
+    references: [uom.name],
   }),
-);
+}));
 
 export const uomRelations = relations(uom, ({ many }) => ({
   uomConversionItems: many(uomConversionItem),
@@ -231,82 +225,73 @@ export const uomRelations = relations(uom, ({ many }) => ({
   items: many(item),
 }));
 
-export const loyaltyProgramRelations = relations(
-  loyaltyProgram,
-  ({ one, many }) => ({
-    account: one(account, {
-      fields: [loyaltyProgram.expenseAccount],
-      references: [account.name],
-    }),
-    salesInvoices: many(salesInvoice),
-    parties: many(party),
+export const loyaltyProgramRelations = relations(loyaltyProgram, ({ one, many }) => ({
+  account: one(account, {
+    fields: [loyaltyProgram.expenseAccount],
+    references: [account.name],
   }),
-);
+  salesInvoices: many(salesInvoice),
+  parties: many(party),
+}));
 
-export const loyaltyPointEntryRelations = relations(
-  loyaltyPointEntry,
-  ({ one }) => ({
-    salesInvoice: one(salesInvoice, {
-      fields: [loyaltyPointEntry.invoice],
-      references: [salesInvoice.name],
-    }),
-    party: one(party, {
-      fields: [loyaltyPointEntry.customer],
-      references: [party.name],
-    }),
+export const loyaltyPointEntryRelations = relations(loyaltyPointEntry, ({ one }) => ({
+  salesInvoice: one(salesInvoice, {
+    fields: [loyaltyPointEntry.invoice],
+    references: [salesInvoice.name],
   }),
-);
+  party: one(party, {
+    fields: [loyaltyPointEntry.customer],
+    references: [party.name],
+  }),
+}));
 
-export const salesInvoiceRelations = relations(
-  salesInvoice,
-  ({ one, many }) => ({
-    loyaltyPointEntries: many(loyaltyPointEntry),
-    loyaltyProgram: one(loyaltyProgram, {
-      fields: [salesInvoice.loyaltyProgram],
-      references: [loyaltyProgram.name],
-    }),
-    salesQuote: one(salesQuote, {
-      fields: [salesInvoice.quote],
-      references: [salesQuote.name],
-    }),
-    salesInvoice: one(salesInvoice, {
-      fields: [salesInvoice.returnAgainst],
-      references: [salesInvoice.name],
-      relationName: "salesInvoice_returnAgainst_salesInvoice_name",
-    }),
-    salesInvoices: many(salesInvoice, {
-      relationName: "salesInvoice_returnAgainst_salesInvoice_name",
-    }),
-    shipment: one(shipment, {
-      fields: [salesInvoice.backReference],
-      references: [shipment.name],
-      relationName: "salesInvoice_backReference_shipment_name",
-    }),
-    currency: one(currency, {
-      fields: [salesInvoice.currency],
-      references: [currency.name],
-    }),
-    priceList: one(priceList, {
-      fields: [salesInvoice.priceList],
-      references: [priceList.name],
-    }),
-    account: one(account, {
-      fields: [salesInvoice.account],
-      references: [account.name],
-    }),
-    party: one(party, {
-      fields: [salesInvoice.party],
-      references: [party.name],
-    }),
-    numberSery: one(numberSeries, {
-      fields: [salesInvoice.numberSeries],
-      references: [numberSeries.name],
-    }),
-    shipments: many(shipment, {
-      relationName: "shipment_backReference_salesInvoice_name",
-    }),
+export const salesInvoiceRelations = relations(salesInvoice, ({ one, many }) => ({
+  loyaltyPointEntries: many(loyaltyPointEntry),
+  loyaltyProgram: one(loyaltyProgram, {
+    fields: [salesInvoice.loyaltyProgram],
+    references: [loyaltyProgram.name],
   }),
-);
+  salesQuote: one(salesQuote, {
+    fields: [salesInvoice.quote],
+    references: [salesQuote.name],
+  }),
+  salesInvoice: one(salesInvoice, {
+    fields: [salesInvoice.returnAgainst],
+    references: [salesInvoice.name],
+    relationName: "salesInvoice_returnAgainst_salesInvoice_name",
+  }),
+  salesInvoices: many(salesInvoice, {
+    relationName: "salesInvoice_returnAgainst_salesInvoice_name",
+  }),
+  shipment: one(shipment, {
+    fields: [salesInvoice.backReference],
+    references: [shipment.name],
+    relationName: "salesInvoice_backReference_shipment_name",
+  }),
+  currency: one(currency, {
+    fields: [salesInvoice.currency],
+    references: [currency.name],
+  }),
+  priceList: one(priceList, {
+    fields: [salesInvoice.priceList],
+    references: [priceList.name],
+  }),
+  account: one(account, {
+    fields: [salesInvoice.account],
+    references: [account.name],
+  }),
+  party: one(party, {
+    fields: [salesInvoice.party],
+    references: [party.name],
+  }),
+  numberSery: one(numberSeries, {
+    fields: [salesInvoice.numberSeries],
+    references: [numberSeries.name],
+  }),
+  shipments: many(shipment, {
+    relationName: "shipment_backReference_salesInvoice_name",
+  }),
+}));
 
 export const paymentRelations = relations(payment, ({ one }) => ({
   paymentMethod: one(paymentMethod, {
@@ -333,16 +318,13 @@ export const paymentRelations = relations(payment, ({ one }) => ({
   }),
 }));
 
-export const paymentMethodRelations = relations(
-  paymentMethod,
-  ({ one, many }) => ({
-    payments: many(payment),
-    account: one(account, {
-      fields: [paymentMethod.account],
-      references: [account.name],
-    }),
+export const paymentMethodRelations = relations(paymentMethod, ({ one, many }) => ({
+  payments: many(payment),
+  account: one(account, {
+    fields: [paymentMethod.account],
+    references: [account.name],
   }),
-);
+}));
 
 export const numberSeriesRelations = relations(numberSeries, ({ many }) => ({
   payments: many(payment),
@@ -363,15 +345,12 @@ export const journalEntryRelations = relations(journalEntry, ({ one }) => ({
   }),
 }));
 
-export const journalEntryAccountRelations = relations(
-  journalEntryAccount,
-  ({ one }) => ({
-    account: one(account, {
-      fields: [journalEntryAccount.account],
-      references: [account.name],
-    }),
+export const journalEntryAccountRelations = relations(journalEntryAccount, ({ one }) => ({
+  account: one(account, {
+    fields: [journalEntryAccount.account],
+    references: [account.name],
   }),
-);
+}));
 
 export const couponCodeRelations = relations(couponCode, ({ one, many }) => ({
   pricingRule: one(pricingRule, {
@@ -398,15 +377,12 @@ export const pricingRuleRelations = relations(pricingRule, ({ one, many }) => ({
   pricingRuleDetails: many(pricingRuleDetail),
 }));
 
-export const appliedCouponCodesRelations = relations(
-  appliedCouponCodes,
-  ({ one }) => ({
-    couponCode: one(couponCode, {
-      fields: [appliedCouponCodes.coupons],
-      references: [couponCode.name],
-    }),
+export const appliedCouponCodesRelations = relations(appliedCouponCodes, ({ one }) => ({
+  couponCode: one(couponCode, {
+    fields: [appliedCouponCodes.coupons],
+    references: [couponCode.name],
   }),
-);
+}));
 
 export const priceListItemRelations = relations(priceListItem, ({ one }) => ({
   uom: one(uom, {
@@ -457,33 +433,27 @@ export const itemRelations = relations(item, ({ one, many }) => ({
   }),
 }));
 
-export const pricingRuleItemRelations = relations(
-  pricingRuleItem,
-  ({ one }) => ({
-    uom: one(uom, {
-      fields: [pricingRuleItem.unit],
-      references: [uom.name],
-    }),
-    item: one(item, {
-      fields: [pricingRuleItem.item],
-      references: [item.name],
-    }),
+export const pricingRuleItemRelations = relations(pricingRuleItem, ({ one }) => ({
+  uom: one(uom, {
+    fields: [pricingRuleItem.unit],
+    references: [uom.name],
   }),
-);
+  item: one(item, {
+    fields: [pricingRuleItem.item],
+    references: [item.name],
+  }),
+}));
 
-export const pricingRuleDetailRelations = relations(
-  pricingRuleDetail,
-  ({ one }) => ({
-    item: one(item, {
-      fields: [pricingRuleDetail.referenceItem],
-      references: [item.name],
-    }),
-    pricingRule: one(pricingRule, {
-      fields: [pricingRuleDetail.referenceName],
-      references: [pricingRule.name],
-    }),
+export const pricingRuleDetailRelations = relations(pricingRuleDetail, ({ one }) => ({
+  item: one(item, {
+    fields: [pricingRuleDetail.referenceItem],
+    references: [item.name],
   }),
-);
+  pricingRule: one(pricingRule, {
+    fields: [pricingRuleDetail.referenceName],
+    references: [pricingRule.name],
+  }),
+}));
 
 export const taxDetailRelations = relations(taxDetail, ({ one }) => ({
   account_paymentAccount: one(account, {
@@ -528,38 +498,32 @@ export const locationRelations = relations(location, ({ one, many }) => ({
   purchaseReceiptItems: many(purchaseReceiptItem),
 }));
 
-export const stockLedgerEntryRelations = relations(
-  stockLedgerEntry,
-  ({ one }) => ({
-    item: one(item, {
-      fields: [stockLedgerEntry.item],
-      references: [item.name],
-    }),
-    serialNumber: one(serialNumber, {
-      fields: [stockLedgerEntry.serialNumber],
-      references: [serialNumber.name],
-    }),
-    batch: one(batch, {
-      fields: [stockLedgerEntry.batch],
-      references: [batch.name],
-    }),
-    location: one(location, {
-      fields: [stockLedgerEntry.location],
-      references: [location.name],
-    }),
+export const stockLedgerEntryRelations = relations(stockLedgerEntry, ({ one }) => ({
+  item: one(item, {
+    fields: [stockLedgerEntry.item],
+    references: [item.name],
   }),
-);
+  serialNumber: one(serialNumber, {
+    fields: [stockLedgerEntry.serialNumber],
+    references: [serialNumber.name],
+  }),
+  batch: one(batch, {
+    fields: [stockLedgerEntry.batch],
+    references: [batch.name],
+  }),
+  location: one(location, {
+    fields: [stockLedgerEntry.location],
+    references: [location.name],
+  }),
+}));
 
-export const serialNumberRelations = relations(
-  serialNumber,
-  ({ one, many }) => ({
-    stockLedgerEntries: many(stockLedgerEntry),
-    item: one(item, {
-      fields: [serialNumber.item],
-      references: [item.name],
-    }),
+export const serialNumberRelations = relations(serialNumber, ({ one, many }) => ({
+  stockLedgerEntries: many(stockLedgerEntry),
+  item: one(item, {
+    fields: [serialNumber.item],
+    references: [item.name],
   }),
-);
+}));
 
 export const batchRelations = relations(batch, ({ one, many }) => ({
   stockLedgerEntries: many(stockLedgerEntry),
@@ -582,39 +546,36 @@ export const stockMovementRelations = relations(stockMovement, ({ one }) => ({
   }),
 }));
 
-export const stockMovementItemRelations = relations(
-  stockMovementItem,
-  ({ one }) => ({
-    batch: one(batch, {
-      fields: [stockMovementItem.batch],
-      references: [batch.name],
-    }),
-    uom_unit: one(uom, {
-      fields: [stockMovementItem.unit],
-      references: [uom.name],
-      relationName: "stockMovementItem_unit_uom_name",
-    }),
-    uom_transferUnit: one(uom, {
-      fields: [stockMovementItem.transferUnit],
-      references: [uom.name],
-      relationName: "stockMovementItem_transferUnit_uom_name",
-    }),
-    location_toLocation: one(location, {
-      fields: [stockMovementItem.toLocation],
-      references: [location.name],
-      relationName: "stockMovementItem_toLocation_location_name",
-    }),
-    location_fromLocation: one(location, {
-      fields: [stockMovementItem.fromLocation],
-      references: [location.name],
-      relationName: "stockMovementItem_fromLocation_location_name",
-    }),
-    item: one(item, {
-      fields: [stockMovementItem.item],
-      references: [item.name],
-    }),
+export const stockMovementItemRelations = relations(stockMovementItem, ({ one }) => ({
+  batch: one(batch, {
+    fields: [stockMovementItem.batch],
+    references: [batch.name],
   }),
-);
+  uom_unit: one(uom, {
+    fields: [stockMovementItem.unit],
+    references: [uom.name],
+    relationName: "stockMovementItem_unit_uom_name",
+  }),
+  uom_transferUnit: one(uom, {
+    fields: [stockMovementItem.transferUnit],
+    references: [uom.name],
+    relationName: "stockMovementItem_transferUnit_uom_name",
+  }),
+  location_toLocation: one(location, {
+    fields: [stockMovementItem.toLocation],
+    references: [location.name],
+    relationName: "stockMovementItem_toLocation_location_name",
+  }),
+  location_fromLocation: one(location, {
+    fields: [stockMovementItem.fromLocation],
+    references: [location.name],
+    relationName: "stockMovementItem_fromLocation_location_name",
+  }),
+  item: one(item, {
+    fields: [stockMovementItem.item],
+    references: [item.name],
+  }),
+}));
 
 export const posProfileRelations = relations(posProfile, ({ one }) => ({
   printTemplate: one(printTemplate, {
@@ -635,22 +596,16 @@ export const printTemplateRelations = relations(printTemplate, ({ many }) => ({
   posProfiles: many(posProfile),
 }));
 
-export const posClosingShiftRelations = relations(
-  posClosingShift,
-  ({ one }) => ({
-    posOpeningShift: one(posOpeningShift, {
-      fields: [posClosingShift.openingShift],
-      references: [posOpeningShift.name],
-    }),
+export const posClosingShiftRelations = relations(posClosingShift, ({ one }) => ({
+  posOpeningShift: one(posOpeningShift, {
+    fields: [posClosingShift.openingShift],
+    references: [posOpeningShift.name],
   }),
-);
+}));
 
-export const posOpeningShiftRelations = relations(
-  posOpeningShift,
-  ({ many }) => ({
-    posClosingShifts: many(posClosingShift),
-  }),
-);
+export const posOpeningShiftRelations = relations(posOpeningShift, ({ many }) => ({
+  posClosingShifts: many(posClosingShift),
+}));
 
 export const salesQuoteRelations = relations(salesQuote, ({ one, many }) => ({
   salesInvoices: many(salesInvoice),
@@ -708,141 +663,129 @@ export const priceListRelations = relations(priceList, ({ many }) => ({
   salesQuotes: many(salesQuote),
 }));
 
-export const purchaseInvoiceRelations = relations(
-  purchaseInvoice,
-  ({ one, many }) => ({
-    purchaseInvoice: one(purchaseInvoice, {
-      fields: [purchaseInvoice.returnAgainst],
-      references: [purchaseInvoice.name],
-      relationName: "purchaseInvoice_returnAgainst_purchaseInvoice_name",
-    }),
-    purchaseInvoices: many(purchaseInvoice, {
-      relationName: "purchaseInvoice_returnAgainst_purchaseInvoice_name",
-    }),
-    purchaseReceipt: one(purchaseReceipt, {
-      fields: [purchaseInvoice.backReference],
-      references: [purchaseReceipt.name],
-      relationName: "purchaseInvoice_backReference_purchaseReceipt_name",
-    }),
-    currency: one(currency, {
-      fields: [purchaseInvoice.currency],
-      references: [currency.name],
-    }),
-    priceList: one(priceList, {
-      fields: [purchaseInvoice.priceList],
-      references: [priceList.name],
-    }),
-    account: one(account, {
-      fields: [purchaseInvoice.account],
-      references: [account.name],
-    }),
-    party: one(party, {
-      fields: [purchaseInvoice.party],
-      references: [party.name],
-    }),
-    numberSery: one(numberSeries, {
-      fields: [purchaseInvoice.numberSeries],
-      references: [numberSeries.name],
-    }),
-    purchaseReceipts: many(purchaseReceipt, {
-      relationName: "purchaseReceipt_backReference_purchaseInvoice_name",
-    }),
+export const purchaseInvoiceRelations = relations(purchaseInvoice, ({ one, many }) => ({
+  purchaseInvoice: one(purchaseInvoice, {
+    fields: [purchaseInvoice.returnAgainst],
+    references: [purchaseInvoice.name],
+    relationName: "purchaseInvoice_returnAgainst_purchaseInvoice_name",
   }),
-);
+  purchaseInvoices: many(purchaseInvoice, {
+    relationName: "purchaseInvoice_returnAgainst_purchaseInvoice_name",
+  }),
+  purchaseReceipt: one(purchaseReceipt, {
+    fields: [purchaseInvoice.backReference],
+    references: [purchaseReceipt.name],
+    relationName: "purchaseInvoice_backReference_purchaseReceipt_name",
+  }),
+  currency: one(currency, {
+    fields: [purchaseInvoice.currency],
+    references: [currency.name],
+  }),
+  priceList: one(priceList, {
+    fields: [purchaseInvoice.priceList],
+    references: [priceList.name],
+  }),
+  account: one(account, {
+    fields: [purchaseInvoice.account],
+    references: [account.name],
+  }),
+  party: one(party, {
+    fields: [purchaseInvoice.party],
+    references: [party.name],
+  }),
+  numberSery: one(numberSeries, {
+    fields: [purchaseInvoice.numberSeries],
+    references: [numberSeries.name],
+  }),
+  purchaseReceipts: many(purchaseReceipt, {
+    relationName: "purchaseReceipt_backReference_purchaseInvoice_name",
+  }),
+}));
 
-export const purchaseReceiptRelations = relations(
-  purchaseReceipt,
-  ({ one, many }) => ({
-    purchaseInvoices: many(purchaseInvoice, {
-      relationName: "purchaseInvoice_backReference_purchaseReceipt_name",
-    }),
-    purchaseReceipt: one(purchaseReceipt, {
-      fields: [purchaseReceipt.returnAgainst],
-      references: [purchaseReceipt.name],
-      relationName: "purchaseReceipt_returnAgainst_purchaseReceipt_name",
-    }),
-    purchaseReceipts: many(purchaseReceipt, {
-      relationName: "purchaseReceipt_returnAgainst_purchaseReceipt_name",
-    }),
-    purchaseInvoice: one(purchaseInvoice, {
-      fields: [purchaseReceipt.backReference],
-      references: [purchaseInvoice.name],
-      relationName: "purchaseReceipt_backReference_purchaseInvoice_name",
-    }),
-    party: one(party, {
-      fields: [purchaseReceipt.party],
-      references: [party.name],
-    }),
-    numberSery: one(numberSeries, {
-      fields: [purchaseReceipt.numberSeries],
-      references: [numberSeries.name],
-    }),
+export const purchaseReceiptRelations = relations(purchaseReceipt, ({ one, many }) => ({
+  purchaseInvoices: many(purchaseInvoice, {
+    relationName: "purchaseInvoice_backReference_purchaseReceipt_name",
   }),
-);
+  purchaseReceipt: one(purchaseReceipt, {
+    fields: [purchaseReceipt.returnAgainst],
+    references: [purchaseReceipt.name],
+    relationName: "purchaseReceipt_returnAgainst_purchaseReceipt_name",
+  }),
+  purchaseReceipts: many(purchaseReceipt, {
+    relationName: "purchaseReceipt_returnAgainst_purchaseReceipt_name",
+  }),
+  purchaseInvoice: one(purchaseInvoice, {
+    fields: [purchaseReceipt.backReference],
+    references: [purchaseInvoice.name],
+    relationName: "purchaseReceipt_backReference_purchaseInvoice_name",
+  }),
+  party: one(party, {
+    fields: [purchaseReceipt.party],
+    references: [party.name],
+  }),
+  numberSery: one(numberSeries, {
+    fields: [purchaseReceipt.numberSeries],
+    references: [numberSeries.name],
+  }),
+}));
 
-export const salesInvoiceItemRelations = relations(
-  salesInvoiceItem,
-  ({ one }) => ({
-    tax: one(tax, {
-      fields: [salesInvoiceItem.tax],
-      references: [tax.name],
-    }),
-    account: one(account, {
-      fields: [salesInvoiceItem.account],
-      references: [account.name],
-    }),
-    batch: one(batch, {
-      fields: [salesInvoiceItem.batch],
-      references: [batch.name],
-    }),
-    uom_unit: one(uom, {
-      fields: [salesInvoiceItem.unit],
-      references: [uom.name],
-      relationName: "salesInvoiceItem_unit_uom_name",
-    }),
-    uom_transferUnit: one(uom, {
-      fields: [salesInvoiceItem.transferUnit],
-      references: [uom.name],
-      relationName: "salesInvoiceItem_transferUnit_uom_name",
-    }),
-    item: one(item, {
-      fields: [salesInvoiceItem.item],
-      references: [item.name],
-    }),
+export const salesInvoiceItemRelations = relations(salesInvoiceItem, ({ one }) => ({
+  tax: one(tax, {
+    fields: [salesInvoiceItem.tax],
+    references: [tax.name],
   }),
-);
+  account: one(account, {
+    fields: [salesInvoiceItem.account],
+    references: [account.name],
+  }),
+  batch: one(batch, {
+    fields: [salesInvoiceItem.batch],
+    references: [batch.name],
+  }),
+  uom_unit: one(uom, {
+    fields: [salesInvoiceItem.unit],
+    references: [uom.name],
+    relationName: "salesInvoiceItem_unit_uom_name",
+  }),
+  uom_transferUnit: one(uom, {
+    fields: [salesInvoiceItem.transferUnit],
+    references: [uom.name],
+    relationName: "salesInvoiceItem_transferUnit_uom_name",
+  }),
+  item: one(item, {
+    fields: [salesInvoiceItem.item],
+    references: [item.name],
+  }),
+}));
 
-export const purchaseInvoiceItemRelations = relations(
-  purchaseInvoiceItem,
-  ({ one }) => ({
-    tax: one(tax, {
-      fields: [purchaseInvoiceItem.tax],
-      references: [tax.name],
-    }),
-    account: one(account, {
-      fields: [purchaseInvoiceItem.account],
-      references: [account.name],
-    }),
-    batch: one(batch, {
-      fields: [purchaseInvoiceItem.batch],
-      references: [batch.name],
-    }),
-    uom_unit: one(uom, {
-      fields: [purchaseInvoiceItem.unit],
-      references: [uom.name],
-      relationName: "purchaseInvoiceItem_unit_uom_name",
-    }),
-    uom_transferUnit: one(uom, {
-      fields: [purchaseInvoiceItem.transferUnit],
-      references: [uom.name],
-      relationName: "purchaseInvoiceItem_transferUnit_uom_name",
-    }),
-    item: one(item, {
-      fields: [purchaseInvoiceItem.item],
-      references: [item.name],
-    }),
+export const purchaseInvoiceItemRelations = relations(purchaseInvoiceItem, ({ one }) => ({
+  tax: one(tax, {
+    fields: [purchaseInvoiceItem.tax],
+    references: [tax.name],
   }),
-);
+  account: one(account, {
+    fields: [purchaseInvoiceItem.account],
+    references: [account.name],
+  }),
+  batch: one(batch, {
+    fields: [purchaseInvoiceItem.batch],
+    references: [batch.name],
+  }),
+  uom_unit: one(uom, {
+    fields: [purchaseInvoiceItem.unit],
+    references: [uom.name],
+    relationName: "purchaseInvoiceItem_unit_uom_name",
+  }),
+  uom_transferUnit: one(uom, {
+    fields: [purchaseInvoiceItem.transferUnit],
+    references: [uom.name],
+    relationName: "purchaseInvoiceItem_transferUnit_uom_name",
+  }),
+  item: one(item, {
+    fields: [purchaseInvoiceItem.item],
+    references: [item.name],
+  }),
+}));
 
 export const salesQuoteItemRelations = relations(salesQuoteItem, ({ one }) => ({
   tax: one(tax, {
@@ -898,30 +841,27 @@ export const shipmentItemRelations = relations(shipmentItem, ({ one }) => ({
   }),
 }));
 
-export const purchaseReceiptItemRelations = relations(
-  purchaseReceiptItem,
-  ({ one }) => ({
-    batch: one(batch, {
-      fields: [purchaseReceiptItem.batch],
-      references: [batch.name],
-    }),
-    uom_unit: one(uom, {
-      fields: [purchaseReceiptItem.unit],
-      references: [uom.name],
-      relationName: "purchaseReceiptItem_unit_uom_name",
-    }),
-    uom_transferUnit: one(uom, {
-      fields: [purchaseReceiptItem.transferUnit],
-      references: [uom.name],
-      relationName: "purchaseReceiptItem_transferUnit_uom_name",
-    }),
-    location: one(location, {
-      fields: [purchaseReceiptItem.location],
-      references: [location.name],
-    }),
-    item: one(item, {
-      fields: [purchaseReceiptItem.item],
-      references: [item.name],
-    }),
+export const purchaseReceiptItemRelations = relations(purchaseReceiptItem, ({ one }) => ({
+  batch: one(batch, {
+    fields: [purchaseReceiptItem.batch],
+    references: [batch.name],
   }),
-);
+  uom_unit: one(uom, {
+    fields: [purchaseReceiptItem.unit],
+    references: [uom.name],
+    relationName: "purchaseReceiptItem_unit_uom_name",
+  }),
+  uom_transferUnit: one(uom, {
+    fields: [purchaseReceiptItem.transferUnit],
+    references: [uom.name],
+    relationName: "purchaseReceiptItem_transferUnit_uom_name",
+  }),
+  location: one(location, {
+    fields: [purchaseReceiptItem.location],
+    references: [location.name],
+  }),
+  item: one(item, {
+    fields: [purchaseReceiptItem.item],
+    references: [item.name],
+  }),
+}));

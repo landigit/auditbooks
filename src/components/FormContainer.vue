@@ -1,7 +1,5 @@
 <template>
-  <view
-    class="flex bg-canvas overflow-x-auto custom-scroll custom-scroll-thumb1"
-  >
+  <view class="flex bg-canvas overflow-x-auto custom-scroll custom-scroll-thumb1">
     <view class="flex flex-1 flex-col">
       <!-- Page Header (Title, Buttons, etc) -->
       <PageHeader v-if="showHeader" :title="title" :searchborder="searchborder">

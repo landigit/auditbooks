@@ -73,10 +73,7 @@ export class Item extends Doc {
           return "";
         }
 
-        const itemGroupDoc = await this.fyo.doc.getDoc(
-          "ItemGroup",
-          this.itemGroup,
-        );
+        const itemGroupDoc = await this.fyo.doc.getDoc("ItemGroup", this.itemGroup);
         return itemGroupDoc?.hsnCode as string;
       },
       dependsOn: ["itemGroup"],
@@ -163,18 +160,14 @@ export class Item extends Doc {
     }),
     expenseAccount: (doc) => ({
       isGroup: false,
-      rootType: doc.trackItem
-        ? AccountRootTypeEnum.Liability
-        : AccountRootTypeEnum.Expense,
+      rootType: doc.trackItem ? AccountRootTypeEnum.Liability : AccountRootTypeEnum.Expense,
     }),
   };
 
   validations: ValidationMap = {
     barcode: (value: DocValue) => {
       if (value && !(value as string).match(/^\d{12}$/)) {
-        throw new ValidationError(
-          this.fyo.t`Barcode must be exactly 12 digits.`,
-        );
+        throw new ValidationError(this.fyo.t`Barcode must be exactly 12 digits.`);
       }
     },
     rate: (value: DocValue) => {
@@ -197,8 +190,7 @@ export class Item extends Doc {
 
       if (invalidChars.test(series)) {
         throw new ValidationError(
-          this.fyo
-            .t`Serial Number Series cannot contain the following characters: /, ?, &, =, %`,
+          this.fyo.t`Serial Number Series cannot contain the following characters: /, ?, &, =, %`,
         );
       }
     },
@@ -212,8 +204,7 @@ export class Item extends Doc {
 
       if (invalidChars.test(series)) {
         throw new ValidationError(
-          this.fyo
-            .t`Batch Series cannot contain the following characters: /, ?, &, =, %`,
+          this.fyo.t`Batch Series cannot contain the following characters: /, ?, &, =, %`,
         );
       }
     },
@@ -266,13 +257,10 @@ export class Item extends Doc {
     barcode: () => !this.fyo.singles.InventorySettings?.enableBarcodes,
     hasBatch: () => !this.fyo.singles.InventorySettings?.enableBatches,
     hasSerialNumber: () =>
-      !(
-        this.fyo.singles.InventorySettings?.enableSerialNumber && this.trackItem
-      ),
+      !(this.fyo.singles.InventorySettings?.enableSerialNumber && this.trackItem),
     serialNumberSeries: () => !this.hasSerialNumber,
     batchSeries: () => !this.hasBatch,
-    uomConversions: () =>
-      !this.fyo.singles.InventorySettings?.enableUomConversions,
+    uomConversions: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
     itemGroup: () => !this.fyo.singles.AccountingSettings?.enableitemGroup,
   };
 

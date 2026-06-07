@@ -19,12 +19,7 @@ const emit = defineEmits<{
 
 // Reactive State
 const period = ref<PeriodKey>("This Year");
-const periodOptions = ref<PeriodKey[]>([
-  "This Year",
-  "YTD",
-  "This Quarter",
-  "This Month",
-]);
+const periodOptions = ref<PeriodKey[]>(["This Year", "YTD", "This Quarter", "This Month"]);
 
 // Methods
 const setData = async () => {

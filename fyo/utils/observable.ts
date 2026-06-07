@@ -130,9 +130,7 @@ export default class Observable<T> {
   }
 
   _removeListener(type: EventType, event: string, listener: Listener) {
-    const listeners = (this[type].get(event) ?? []).filter(
-      (l) => l !== listener,
-    );
+    const listeners = (this[type].get(event) ?? []).filter((l) => l !== listener);
     this[type].set(event, listeners);
   }
 

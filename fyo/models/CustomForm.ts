@@ -71,8 +71,6 @@ export class CustomForm extends Doc {
       return;
     }
 
-    throw new ValidationError(
-      `At least two options need to be set for the selected fieldtype`,
-    );
+    throw new ValidationError(`At least two options need to be set for the selected fieldtype`);
   }
 }

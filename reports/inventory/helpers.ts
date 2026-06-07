@@ -16,10 +16,7 @@ type Item = string;
 type Location = string;
 type Batch = string;
 
-export async function getRawStockLedgerEntries(
-  fyo: Fyo,
-  filters: QueryFilter = {},
-) {
+export async function getRawStockLedgerEntries(fyo: Fyo, filters: QueryFilter = {}) {
   const fieldnames = [
     "name",
     "date",
@@ -41,9 +38,7 @@ export async function getRawStockLedgerEntries(
   })) as RawStockLedgerEntry[];
 }
 
-export async function getShipmentCOGSAmountFromSLEs(
-  stockTransfer: StockTransfer,
-) {
+export async function getShipmentCOGSAmountFromSLEs(stockTransfer: StockTransfer) {
   const fyo = stockTransfer.fyo;
   const date = stockTransfer.date ?? new Date();
   const items = (stockTransfer.items ?? []).filter((i) => i.item);
@@ -117,10 +112,9 @@ export function getStockLedgerEntries(
   valuationMethod: ValuationMethod,
 ): ComputedStockLedgerEntry[] {
   const computedSLEs: ComputedStockLedgerEntry[] = [];
-  const stockQueues: Record<
-    Item,
-    Record<Location, Record<Batch, StockQueue>>
-  > = Object.create(null);
+  const stockQueues: Record<Item, Record<Location, Record<Batch, StockQueue>>> = Object.create(
+    null,
+  );
 
   for (const sle of rawSLEs) {
     const name = safeParseInt(sle.name);
@@ -134,25 +128,13 @@ export function getStockLedgerEntries(
       continue;
     }
 
-    if (
-      item === "__proto__" ||
-      item === "constructor" ||
-      item === "prototype"
-    ) {
+    if (item === "__proto__" || item === "constructor" || item === "prototype") {
       continue;
     }
-    if (
-      location === "__proto__" ||
-      location === "constructor" ||
-      location === "prototype"
-    ) {
+    if (location === "__proto__" || location === "constructor" || location === "prototype") {
       continue;
     }
-    if (
-      batch === "__proto__" ||
-      batch === "constructor" ||
-      batch === "prototype"
-    ) {
+    if (batch === "__proto__" || batch === "constructor" || batch === "prototype") {
       continue;
     }
 
@@ -253,21 +235,14 @@ export function getStockBalanceEntries(
       continue;
     }
 
-    if (
-      showSerialNumbers &&
-      (!sle.serialNumber || sle.serialNumber.trim() === "")
-    ) {
+    if (showSerialNumbers && (!sle.serialNumber || sle.serialNumber.trim() === "")) {
       continue;
     }
 
     const batch = sle.batch || "";
     const serialNumber = showSerialNumbers ? sle.serialNumber : "";
 
-    if (
-      sle.item === "__proto__" ||
-      sle.item === "constructor" ||
-      sle.item === "prototype"
-    ) {
+    if (sle.item === "__proto__" || sle.item === "constructor" || sle.item === "prototype") {
       continue;
     }
     if (
@@ -277,11 +252,7 @@ export function getStockBalanceEntries(
     ) {
       continue;
     }
-    if (
-      batch === "__proto__" ||
-      batch === "constructor" ||
-      batch === "prototype"
-    ) {
+    if (batch === "__proto__" || batch === "constructor" || batch === "prototype") {
       continue;
     }
     if (
@@ -308,11 +279,7 @@ export function getStockBalanceEntries(
     const batchSbe = Reflect.get(locSbe, batch);
 
     if (Reflect.get(batchSbe, serialNumber) == null) {
-      Reflect.set(
-        batchSbe,
-        serialNumber,
-        getSBE(sle.item, sle.location, batch, serialNumber),
-      );
+      Reflect.set(batchSbe, serialNumber, getSBE(sle.item, sle.location, batch, serialNumber));
     }
     const sbe = Reflect.get(batchSbe, serialNumber);
     const date = sle.date.valueOf();
@@ -377,10 +344,7 @@ function getSBE(
   };
 }
 
-function updateOpeningBalances(
-  sbe: StockBalanceEntry,
-  sle: ComputedStockLedgerEntry,
-) {
+function updateOpeningBalances(sbe: StockBalanceEntry, sle: ComputedStockLedgerEntry) {
   sbe.openingQuantity += sle.quantity;
   sbe.openingValue += sle.valueChange;
 
@@ -388,10 +352,7 @@ function updateOpeningBalances(
   sbe.balanceValue += sle.valueChange;
 }
 
-function updateCurrentBalances(
-  sbe: StockBalanceEntry,
-  sle: ComputedStockLedgerEntry,
-) {
+function updateCurrentBalances(sbe: StockBalanceEntry, sle: ComputedStockLedgerEntry) {
   sbe.balanceQuantity += sle.quantity;
   sbe.balanceValue += sle.valueChange;
 

@@ -33,18 +33,12 @@ export async function connectToDatabase(
     return {
       countryCode: "",
       error,
-      actionSymbol: (await handleDatabaseConnectionError(
-        error,
-        dbPath,
-      )) as Conn["actionSymbol"],
+      actionSymbol: (await handleDatabaseConnectionError(error, dbPath)) as Conn["actionSymbol"],
     };
   }
 }
 
-export async function handleDatabaseConnectionError(
-  error: Error,
-  dbPath: string,
-) {
+export async function handleDatabaseConnectionError(error: Error, dbPath: string) {
   const message = error.message;
   if (typeof message !== "string") {
     throw error;

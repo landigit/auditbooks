@@ -71,12 +71,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
   _syncing = false;
   _addDocToSyncQueue = true;
 
-  constructor(
-    schema: Schema,
-    data: DocValueMap,
-    fyo: Fyo,
-    convertToDocValue = true,
-  ) {
+  constructor(schema: Schema, data: DocValueMap, fyo: Fyo, convertToDocValue = true) {
     super();
     this.fyo = markRaw(fyo);
     this.schema = schema;
@@ -104,9 +99,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
   }
 
   get tableFields(): TargetField[] {
-    return this.schema.fields.filter(
-      (f) => f.fieldtype === FieldTypeEnum.Table,
-    ) as TargetField[];
+    return this.schema.fields.filter((f) => f.fieldtype === FieldTypeEnum.Table) as TargetField[];
   }
 
   get dirty() {
@@ -278,19 +271,12 @@ export class Doc extends Observable<DocValue | Doc[]> {
         for (const row of value) {
           this.push(fieldname, row, convertToDocValue);
         }
-      } else if (
-        fieldtype === FieldTypeEnum.Currency &&
-        typeof value === "number"
-      ) {
+      } else if (fieldtype === FieldTypeEnum.Currency && typeof value === "number") {
         this[fieldname] = this.fyo.pesa(value);
       } else if (value !== undefined && !convertToDocValue) {
         this[fieldname] = value;
       } else if (value !== undefined) {
-        this[fieldname] = Converter.toDocValue(
-          value as RawValue,
-          field,
-          this.fyo,
-        );
+        this[fieldname] = Converter.toDocValue(value as RawValue, field, this.fyo);
       } else {
         this[fieldname] = this[fieldname] ?? null;
       }
@@ -358,10 +344,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
     return hasSet;
   }
 
-  _canSet(
-    fieldname: string,
-    value?: DocValue | Doc[] | DocValueMap[],
-  ): boolean {
+  _canSet(fieldname: string, value?: DocValue | Doc[] | DocValueMap[]): boolean {
     if (fieldname === "numberSeries" && !this.notInserted) {
       return false;
     }
@@ -397,13 +380,9 @@ export class Doc extends Observable<DocValue | Doc[]> {
 
   _setDefaults() {
     for (const field of this.schema.fields) {
-      let defaultValue: DocValue | Doc[] = getPreDefaultValues(
-        field.fieldtype,
-        this.fyo,
-      );
+      let defaultValue: DocValue | Doc[] = getPreDefaultValues(field.fieldtype, this.fyo);
 
-      const defaultFunction =
-        this.fyo.models[this.schemaName]?.defaults?.[field.fieldname];
+      const defaultFunction = this.fyo.models[this.schemaName]?.defaults?.[field.fieldname];
       if (defaultFunction !== undefined) {
         defaultValue = defaultFunction(this);
       } else if (field.default !== undefined) {
@@ -579,9 +558,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       let value = this[field.fieldname] as DocValue | DocValueMap[];
 
       if (Array.isArray(value)) {
-        value = value.map((doc) =>
-          (doc as Doc).getValidDict(filterMeta, filterComputed),
-        );
+        value = value.map((doc) => (doc as Doc).getValidDict(filterMeta, filterComputed));
       }
 
       if (isPesa(value)) {
@@ -645,8 +622,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
     this.links ??= {};
     const linkFields = this.schema.fields.filter(
       ({ fieldtype }) =>
-        fieldtype === FieldTypeEnum.Link ||
-        fieldtype === FieldTypeEnum.DynamicLink,
+        fieldtype === FieldTypeEnum.Link || fieldtype === FieldTypeEnum.DynamicLink,
     );
 
     for (const field of linkFields) {
@@ -785,8 +761,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
     retriggerChildDocApplyChange?: boolean,
   ): Promise<boolean> {
     let changed = await this._callAllTableFieldsApplyFormula(changedFieldname);
-    changed =
-      (await this._applyFormulaForFields(this, changedFieldname)) || changed;
+    changed = (await this._applyFormulaForFields(this, changedFieldname)) || changed;
 
     if (changed && retriggerChildDocApplyChange) {
       await this._callAllTableFieldsApplyFormula(changedFieldname);
@@ -796,9 +771,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
     return changed;
   }
 
-  async _callAllTableFieldsApplyFormula(
-    changedFieldname?: string,
-  ): Promise<boolean> {
+  async _callAllTableFieldsApplyFormula(changedFieldname?: string): Promise<boolean> {
     let changed = false;
 
     for (const { fieldname } of this.tableFields) {
@@ -807,18 +780,13 @@ export class Doc extends Observable<DocValue | Doc[]> {
         continue;
       }
 
-      changed =
-        (await this._callChildDocApplyFormula(childDocs, changedFieldname)) ||
-        changed;
+      changed = (await this._callChildDocApplyFormula(childDocs, changedFieldname)) || changed;
     }
 
     return changed;
   }
 
-  async _callChildDocApplyFormula(
-    childDocs: Doc[],
-    fieldname?: string,
-  ): Promise<boolean> {
+  async _callChildDocApplyFormula(childDocs: Doc[], fieldname?: string): Promise<boolean> {
     let changed = false;
     for (const childDoc of childDocs) {
       if (!childDoc._applyFormula) {
@@ -927,11 +895,7 @@ export class Doc extends Observable<DocValue | Doc[]> {
       if (!item.item) {
         continue;
       }
-      const isFromERP = await this.fyo.getValue(
-        ModelNameEnum.Item,
-        item.item,
-        "datafromErp",
-      );
+      const isFromERP = await this.fyo.getValue(ModelNameEnum.Item, item.item, "datafromErp");
       if (isFromERP) continue;
       else return false;
     }
@@ -957,22 +921,18 @@ export class Doc extends Observable<DocValue | Doc[]> {
 
       if (
         hasERPSyncableItems &&
-        (!(isSalesInvoice && this.isSyncedWithErp) ||
-          (isSalesInvoice && !!this.isReturn))
+        (!(isSalesInvoice && this.isSyncedWithErp) || (isSalesInvoice && !!this.isReturn))
       ) {
         if (isSalesInvoice && !this.isReturn) {
           await this.setAndSync("isSyncedWithErp", true);
         }
 
-        const isDocExistsInQueue = await this.fyo.db.getAll(
-          ModelNameEnum.ERPNextSyncQueue,
-          {
-            filters: {
-              referenceType: this.schemaName,
-              documentName: this.name as string,
-            },
+        const isDocExistsInQueue = await this.fyo.db.getAll(ModelNameEnum.ERPNextSyncQueue, {
+          filters: {
+            referenceType: this.schemaName,
+            documentName: this.name as string,
           },
-        );
+        });
 
         if (!isDocExistsInQueue.length) {
           await this.fyo.doc

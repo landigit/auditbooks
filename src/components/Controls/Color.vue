@@ -25,11 +25,7 @@
           </view>
         </view>
       </PopoverAnchor>
-      <PopoverContent
-        side="bottom"
-        align="end"
-        class="w-auto p-0 overflow-hidden"
-      >
+      <PopoverContent side="bottom" align="end" class="w-auto p-0 overflow-hidden">
         <view class="text-sm p-2 text-center">
           <view>
             <Row :column-count="5" gap="0.5rem">
@@ -61,10 +57,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { t } from "fyo";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 import { Popover, PopoverAnchor, PopoverContent } from "src/components/ui";
 import Row from "src/components/Row.vue";
 

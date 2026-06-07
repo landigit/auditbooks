@@ -24,10 +24,7 @@ function splitCsvBlock(text: string, splitter = "\r\n"): string[] {
   for (let i = 0; i <= text.length; i++) {
     const c = text[i];
 
-    if (
-      c === '"' &&
-      ((c[i + 1] === '"' && c[i + 2] === '"') || c[i + 1] !== '"')
-    ) {
+    if (c === '"' && ((c[i + 1] === '"' && c[i + 2] === '"') || c[i + 1] !== '"')) {
       inDq = !inDq;
     }
 
@@ -59,10 +56,7 @@ export function splitCsvLine(line: string): string[] {
   for (let i = 0; i < line.length; i++) {
     const c = line[i];
 
-    if (
-      c === '"' &&
-      ((c[i + 1] === '"' && c[i + 2] === '"') || c[i + 1] !== '"')
-    ) {
+    if (c === '"' && ((c[i + 1] === '"' && c[i + 2] === '"') || c[i + 1] !== '"')) {
       inDq = !inDq;
     }
 

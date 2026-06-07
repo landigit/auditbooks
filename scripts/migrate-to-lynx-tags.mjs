@@ -3,9 +3,7 @@ import path from "path";
 
 const targetPathArg = process.argv[2];
 if (!targetPathArg) {
-  console.error(
-    "Usage: node scripts/migrate-to-lynx-tags.mjs <file-or-directory-path>",
-  );
+  console.error("Usage: node scripts/migrate-to-lynx-tags.mjs <file-or-directory-path>");
   process.exit(1);
 }
 
@@ -85,15 +83,10 @@ function migrateFile(file) {
       const matches = [...tagContent.matchAll(classRegex)];
       if (matches.length > 1) {
         const classValues = matches.map((m) => m[1]);
-        const combinedClasses = Array.from(
-          new Set(classValues.flatMap((c) => c.split(/\s+/))),
-        )
+        const combinedClasses = Array.from(new Set(classValues.flatMap((c) => c.split(/\s+/))))
           .filter(Boolean)
           .join(" ");
-        const cleanedContent = tagContent.replace(
-          /(?<![:-])\bclass="[^"]*"/g,
-          "",
-        );
+        const cleanedContent = tagContent.replace(/(?<![:-])\bclass="[^"]*"/g, "");
         const cleanedTag = `<${tagName} class="${combinedClasses}"${cleanedContent}>`;
         str = str.slice(0, startIdx) + cleanedTag + str.slice(endIdx);
       }

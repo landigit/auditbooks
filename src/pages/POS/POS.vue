@@ -3,17 +3,11 @@
     <view class="flex-col">
       <PageHeader :title="t`Point of Sale`">
         <slot>
-          <Button
-            class="bg-error hover:bg-error-hover"
-            @tap="toggleModal('ShiftClose')"
-          >
-            <text
-              class="font-medium text-button-primary-text hidden md:inline"
-              >{{ t`Close POS Shift` }}</text
-            >
-            <text class="font-medium text-button-primary-text md:hidden">{{
-              t`Close Shift`
+          <Button class="bg-error hover:bg-error-hover" @tap="toggleModal('ShiftClose')">
+            <text class="font-medium text-button-primary-text hidden md:inline">{{
+              t`Close POS Shift`
             }}</text>
+            <text class="font-medium text-button-primary-text md:hidden">{{ t`Close Shift` }}</text>
           </Button>
         </slot>
       </PageHeader>
@@ -150,10 +144,7 @@
         <text class="BrandText">Point of Sale</text>
       </view>
       <view class="flex flex-row gap-2">
-        <view
-          class="Btn Btn--secondary px-3 py-1.5 rounded-lg"
-          @tap="toggleModal('ShiftClose')"
-        >
+        <view class="Btn Btn--secondary px-3 py-1.5 rounded-lg" @tap="toggleModal('ShiftClose')">
           <text class="BtnText text-xs">Close Shift</text>
         </view>
       </view>
@@ -182,16 +173,12 @@
 
       <!-- Cart Item list -->
       <view class="mb-6">
-        <text class="text-sm font-semibold text-main mb-2"
-          >Cart ({{ totalQuantity }} items)</text
-        >
+        <text class="text-sm font-semibold text-main mb-2">Cart ({{ totalQuantity }} items)</text>
         <view
           v-if="!sinvDoc.items?.length"
           class="p-6 bg-surface border border-border rounded-xl flex items-center justify-center"
         >
-          <text class="text-xs text-description"
-            >Cart is empty. Add items below.</text
-          >
+          <text class="text-xs text-description">Cart is empty. Add items below.</text>
         </view>
         <view v-else class="space-y-3">
           <view
@@ -200,12 +187,9 @@
             class="p-4 bg-surface border border-border rounded-xl flex flex-row justify-between items-center"
           >
             <view class="flex-1 mr-4">
-              <text class="text-sm font-medium text-main">{{
-                item.itemName || item.item
-              }}</text>
+              <text class="text-sm font-medium text-main">{{ item.itemName || item.item }}</text>
               <text class="text-xs text-description mt-0.5"
-                >{{ item.qty }} x
-                {{ formatCurrency(item.rate?.float || item.rate || 0) }}</text
+                >{{ item.qty }} x {{ formatCurrency(item.rate?.float || item.rate || 0) }}</text
               >
             </view>
             <view class="flex flex-row items-center gap-2">
@@ -215,9 +199,7 @@
               >
                 <text class="text-xs font-bold">-</text>
               </view>
-              <text class="text-sm font-semibold text-main w-8 text-center">{{
-                item.qty
-              }}</text>
+              <text class="text-sm font-semibold text-main w-8 text-center">{{ item.qty }}</text>
               <view
                 class="p-1 rounded bg-surface border border-border"
                 @tap="nativeChangeQty(item, 1)"
@@ -240,10 +222,7 @@
             @input="handleItemSearch(itemSearchTerm)"
           />
         </view>
-        <scroll-view
-          scroll-y="true"
-          class="h-64 border border-border rounded-xl bg-surface p-2"
-        >
+        <scroll-view scroll-y="true" class="h-64 border border-border rounded-xl bg-surface p-2">
           <view
             v-for="item in items"
             :key="item.name"
@@ -252,9 +231,7 @@
           >
             <view class="flex-1">
               <text class="text-sm font-medium text-main">{{ item.name }}</text>
-              <text class="text-xs text-description mt-0.5"
-                >Code: {{ item.name }}</text
-              >
+              <text class="text-xs text-description mt-0.5">Code: {{ item.name }}</text>
             </view>
             <text class="text-sm font-semibold text-blue-600">{{
               formatCurrency(item.rate?.float || item.rate || 0)
@@ -277,10 +254,7 @@
         <view class="flex justify-between">
           <text class="text-xs text-description">Discounts</text>
           <text class="text-xs text-red-500"
-            >-
-            {{
-              formatCurrency(itemDiscounts.float || itemDiscounts || 0)
-            }}</text
+            >- {{ formatCurrency(itemDiscounts.float || itemDiscounts || 0) }}</text
           >
         </view>
         <view class="flex justify-between border-t border-border pt-2">
@@ -298,9 +272,7 @@
           :class="disablePayButton ? 'bg-blue-600/50' : 'bg-blue-600'"
           @tap="saveOrder"
         >
-          <text class="BtnText BtnText--primary text-white font-bold"
-            >Checkout & Save</text
-          >
+          <text class="BtnText BtnText--primary text-white font-bold">Checkout & Save</text>
         </view>
       </view>
     </scroll-view>
@@ -324,16 +296,7 @@ import { Shipment } from "models/inventory/Shipment";
 import { routeTo, toggleSidebar } from "src/utils/ui";
 import { shortcutsKey } from "src/utils/injectionKeys";
 import PageHeader from "src/components/PageHeader.vue";
-import {
-  computed,
-  inject,
-  ref,
-  provide,
-  onMounted,
-  onActivated,
-  onDeactivated,
-  watch,
-} from "vue";
+import { computed, inject, ref, provide, onMounted, onActivated, onDeactivated, watch } from "vue";
 import { Payment } from "models/baseModels/Payment/Payment";
 import { ModalName, modalNames } from "src/components/POS/types";
 import { POSProfile } from "models/baseModels/POSProfile/PosProfile";
@@ -358,11 +321,7 @@ import {
   getItemVisibility,
   isLoyaltyProgramExpiredAndMaxed,
 } from "models/helpers";
-import {
-  POSItem,
-  ItemQtyMap,
-  ItemSerialNumbers,
-} from "src/components/POS/types";
+import { POSItem, ItemQtyMap, ItemSerialNumbers } from "src/components/POS/types";
 import { ValidationError } from "fyo/utils/errors";
 import { getExistingActiveSerialNumbersForItem } from "models/inventory/helpers";
 
@@ -418,20 +377,16 @@ const quickQtyKeyUpHandler = ref<((e: KeyboardEvent) => void) | null>(null);
 const selectedItemForBatch = ref("");
 const pendingBatchItem = ref<{ item: POSItem; quantity: number } | null>(null);
 const expandedBatchId = ref<string | undefined>(undefined);
-const itemVisibilityValue = ref<
-  "Inventory Items" | "ERP Sync Items" | "Non-Inventory Items"
->("Inventory Items");
+const itemVisibilityValue = ref<"Inventory Items" | "ERP Sync Items" | "Non-Inventory Items">(
+  "Inventory Items",
+);
 
 // Injections
 const shortcuts = inject(shortcutsKey);
 
 // Computed
-const defaultPOSCashAccount = computed(
-  () => fyo.singles.POSSettings?.cashAccount ?? undefined,
-);
-const isDiscountingEnabled = computed(
-  () => !!fyo.singles.AccountingSettings?.enableDiscounting,
-);
+const defaultPOSCashAccount = computed(() => fyo.singles.POSSettings?.cashAccount ?? undefined);
+const isDiscountingEnabled = computed(() => !!fyo.singles.AccountingSettings?.enableDiscounting);
 const isPosShiftOpen = computed(() => !!fyo.singles.POSSettings?.isShiftOpen);
 const itemVisibility = computed(() => itemVisibilityValue.value);
 const disablePayButton = computed(() => {
@@ -558,30 +513,18 @@ function addQuickQtyListeners() {
   quickQtyKeyDownHandler.value = (e: KeyboardEvent) => onQuickQtyKeyDown(e);
   quickQtyKeyUpHandler.value = (e: KeyboardEvent) => onQuickQtyKeyUp(e);
   if (typeof window !== "undefined") {
-    window.addEventListener(
-      "keydown",
-      quickQtyKeyDownHandler.value as EventListener,
-    );
-    window.addEventListener(
-      "keyup",
-      quickQtyKeyUpHandler.value as EventListener,
-    );
+    window.addEventListener("keydown", quickQtyKeyDownHandler.value as EventListener);
+    window.addEventListener("keyup", quickQtyKeyUpHandler.value as EventListener);
   }
 }
 
 function removeQuickQtyListeners() {
   if (typeof window !== "undefined") {
     if (quickQtyKeyDownHandler.value) {
-      window.removeEventListener(
-        "keydown",
-        quickQtyKeyDownHandler.value as EventListener,
-      );
+      window.removeEventListener("keydown", quickQtyKeyDownHandler.value as EventListener);
     }
     if (quickQtyKeyUpHandler.value) {
-      window.removeEventListener(
-        "keyup",
-        quickQtyKeyUpHandler.value as EventListener,
-      );
+      window.removeEventListener("keyup", quickQtyKeyUpHandler.value as EventListener);
     }
   }
   quickQtyKeyDownHandler.value = null;
@@ -695,8 +638,7 @@ async function onQuickQtyKeyUp(e: KeyboardEvent) {
 
     const existingItems = (sinvDoc.value.items || []).filter(
       (invoiceItem) =>
-        (invoiceItem as InvoiceItem).item === row!.item &&
-        !(invoiceItem as InvoiceItem).isFreeItem,
+        (invoiceItem as InvoiceItem).item === row!.item && !(invoiceItem as InvoiceItem).isFreeItem,
     ) as InvoiceItem[];
 
     await validateQty(sinvDoc.value as SalesInvoice, row, existingItems);
@@ -732,10 +674,7 @@ async function setCustomer(value: string) {
   const loyaltyProgramName = party[0]?.loyaltyProgram as string;
 
   if (loyaltyProgramName) {
-    const isExpiredAndMaxed = await isLoyaltyProgramExpiredAndMaxed(
-      fyo,
-      loyaltyProgramName,
-    );
+    const isExpiredAndMaxed = await isLoyaltyProgramExpiredAndMaxed(fyo, loyaltyProgramName);
     if (isExpiredAndMaxed) {
       loyaltyProgram.value = loyaltyProgramName;
       loyaltyPoints.value = 0;
@@ -779,17 +718,12 @@ async function handleItemSearch(searchTerm: string, addItemState?: boolean) {
   let itemCode = searchTerm;
   let weightPart = "";
 
-  if (
-    isWeightEnabledBarcode &&
-    searchTerm.length === expectedWeightBarcodeLength
-  ) {
+  if (isWeightEnabledBarcode && searchTerm.length === expectedWeightBarcodeLength) {
     const extractedItemCode = searchTerm.slice(
       checkDigits.toString().length,
       checkDigits.toString().length + itemCodeDigits,
     );
-    const weightData = searchTerm.slice(
-      checkDigits.toString().length + itemCodeDigits,
-    );
+    const weightData = searchTerm.slice(checkDigits.toString().length + itemCodeDigits);
 
     if (!isNaN(Number(weightData))) {
       isWeightBarcode = true;
@@ -805,9 +739,7 @@ async function handleItemSearch(searchTerm: string, addItemState?: boolean) {
   let matchedItem = null;
 
   if (isWeightBarcode) {
-    matchedItem = allItems.find(
-      (item) => item.itemCode === itemCode || item.barcode === itemCode,
-    );
+    matchedItem = allItems.find((item) => item.itemCode === itemCode || item.barcode === itemCode);
   } else if (searchTerm.length === 12) {
     matchedItem = allItems.find((item) => item.barcode === searchTerm);
   }
@@ -958,8 +890,7 @@ async function setItems() {
   const visibility = await getItemVisibility(fyo);
 
   const hideUnavailable =
-    posProfile.value?.hideUnavailableItems ??
-    fyo.singles.POSSettings?.hideUnavailableItems;
+    posProfile.value?.hideUnavailableItems ?? fyo.singles.POSSettings?.hideUnavailableItems;
 
   if (visibility === "Inventory Items") {
     filters.trackItem = true;
@@ -1034,15 +965,12 @@ function setPaymentMethod(method: string) {
 }
 
 function setDefaultCustomer() {
-  defaultCustomer.value =
-    posProfile.value?.posCustomer ?? fyo.singles.Defaults?.posCustomer ?? "";
+  defaultCustomer.value = posProfile.value?.posCustomer ?? fyo.singles.Defaults?.posCustomer ?? "";
   sinvDoc.value.party = defaultCustomer.value;
 }
 
 function setItemDiscounts() {
-  itemDiscounts.value = getItemDiscounts(
-    sinvDoc.value.items as SalesInvoiceItem[],
-  );
+  itemDiscounts.value = getItemDiscounts(sinvDoc.value.items as SalesInvoiceItem[]);
 }
 
 async function setItemQtyMap() {
@@ -1058,15 +986,11 @@ function setSinvDoc() {
 }
 
 function setCouponCodeDoc() {
-  coupons.value = fyo.doc.getNewDoc(
-    ModelNameEnum.AppliedCouponCodes,
-  ) as AppliedCouponCodes;
+  coupons.value = fyo.doc.getNewDoc(ModelNameEnum.AppliedCouponCodes) as AppliedCouponCodes;
 }
 
 function setTotalQuantity() {
-  totalQuantity.value = getTotalQuantity(
-    sinvDoc.value.items as SalesInvoiceItem[],
-  );
+  totalQuantity.value = getTotalQuantity(sinvDoc.value.items as SalesInvoiceItem[]);
 }
 
 function ignorePricingRules(): boolean {
@@ -1145,38 +1069,23 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       return;
     }
 
-    const isInventoryItem = await fyo.getValue(
-      ModelNameEnum.Item,
-      itemName,
-      "trackItem",
-    );
+    const isInventoryItem = await fyo.getValue(ModelNameEnum.Item, itemName, "trackItem");
 
     if (isInventoryItem) {
       const availableQty = itemQtyMap.value[itemName]?.availableQty ?? 0;
       if (availableQty <= 0) {
-        throw new ValidationError(
-          t`Item ${itemName} is out of stock (quantity is zero)`,
-        );
+        throw new ValidationError(t`Item ${itemName} is out of stock (quantity is zero)`);
       }
     }
 
     const existingItems =
       sinvDoc.value.items?.filter(
-        (invoiceItem) =>
-          invoiceItem.item === itemName && !invoiceItem.isFreeItem,
+        (invoiceItem) => invoiceItem.item === itemName && !invoiceItem.isFreeItem,
       ) ?? [];
 
-    await validateQty(
-      sinvDoc.value as SalesInvoice,
-      item,
-      existingItems as InvoiceItem[],
-    );
+    await validateQty(sinvDoc.value as SalesInvoice, item, existingItems as InvoiceItem[]);
 
-    const itemsHsncode = (await fyo.getValue(
-      "Item",
-      itemName,
-      "hsnCode",
-    )) as number;
+    const itemsHsncode = (await fyo.getValue("Item", itemName, "hsnCode")) as number;
 
     if (item.hasBatch) {
       const addQty = quantity ?? 1;
@@ -1201,11 +1110,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
             if (item.hasSerialNumber) {
               const qty = currentQty + addQty;
 
-              const serialNumbers = await getExistingActiveSerialNumbersForItem(
-                fyo,
-                itemName,
-                qty,
-              );
+              const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, qty);
 
               if (serialNumbers) {
                 itemSerialNumbers.value[itemName] = serialNumbers;
@@ -1228,11 +1133,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       });
 
       if (item.hasSerialNumber) {
-        const serialNumbers = await getExistingActiveSerialNumbersForItem(
-          fyo,
-          itemName,
-          addQty,
-        );
+        const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, addQty);
 
         if (serialNumbers) {
           itemSerialNumbers.value[itemName] = serialNumbers;
@@ -1263,9 +1164,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       if (isInventoryItem) {
         const availableQty = itemQtyMap.value[itemName]?.availableQty ?? 0;
         if (currentQty + addQty > availableQty) {
-          throw new ValidationError(
-            `Cannot add more than the available quantity for ${itemName}`,
-          );
+          throw new ValidationError(`Cannot add more than the available quantity for ${itemName}`);
         }
       }
 
@@ -1273,11 +1172,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       if (item.hasSerialNumber) {
         const qty = currentQty + addQty;
 
-        const serialNumbers = await getExistingActiveSerialNumbersForItem(
-          fyo,
-          itemName,
-          qty,
-        );
+        const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, qty);
 
         if (serialNumbers) {
           itemSerialNumbers.value[itemName] = serialNumbers;
@@ -1288,11 +1183,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       await applyPricingRule();
       await sinvDoc.value.runFormulas();
       if (isInventoryItem) {
-        await validateQty(
-          sinvDoc.value as SalesInvoice,
-          item,
-          existingItems as InvoiceItem[],
-        );
+        await validateQty(sinvDoc.value as SalesInvoice, item, existingItems as InvoiceItem[]);
       }
       return;
     }
@@ -1310,21 +1201,14 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       ) as SalesInvoiceItem[];
 
       if (itemData.length > 0) {
-        itemData[0].rate = await getItemRateFromPriceList(
-          itemData[0],
-          sinvDoc.value.priceList,
-        );
+        itemData[0].rate = await getItemRateFromPriceList(itemData[0], sinvDoc.value.priceList);
       }
     }
 
     if (item.hasSerialNumber) {
       const qty = quantity ?? 1;
 
-      const serialNumbers = await getExistingActiveSerialNumbersForItem(
-        fyo,
-        itemName,
-        qty,
-      );
+      const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, qty);
 
       if (serialNumbers) {
         itemSerialNumbers.value[itemName] = serialNumbers;
@@ -1359,20 +1243,11 @@ async function handleBatchSelected(batchName: string) {
   pendingBatchItem.value = null;
 
   try {
-    const itemDoc = (await fyo.doc.getDoc(
-      ModelNameEnum.Item,
-      item.name,
-    )) as Item;
+    const itemDoc = (await fyo.doc.getDoc(ModelNameEnum.Item, item.name)) as Item;
     let availableQty = 0;
     if (itemDoc.trackItem) {
       availableQty =
-        (await fyo.db.getStockQuantity(
-          item.name,
-          undefined,
-          undefined,
-          undefined,
-          batchName,
-        )) ?? 0;
+        (await fyo.db.getStockQuantity(item.name, undefined, undefined, undefined, batchName)) ?? 0;
 
       const itemIndex = items.value.findIndex((i) => i.name === item.name);
       if (itemIndex !== -1) {
@@ -1388,11 +1263,7 @@ async function handleBatchSelected(batchName: string) {
           !invoiceItem.isFreeItem,
       ) ?? [];
 
-    await validateQty(
-      sinvDoc.value as SalesInvoice,
-      itemDoc,
-      existingItems as InvoiceItem[],
-    );
+    await validateQty(sinvDoc.value as SalesInvoice, itemDoc, existingItems as InvoiceItem[]);
 
     if (existingItems.length) {
       const currentQty = existingItems[0].quantity ?? 0;
@@ -1462,8 +1333,7 @@ async function makePayment(shouldPrint: boolean) {
   await paymentDoc.value.set("amount", fyo.pesa(paidAmount.value.float));
   await paymentDoc.value.set("referenceType", ModelNameEnum.SalesInvoice);
 
-  const paymentMethodDoc =
-    await paymentDoc.value.loadAndGetLink("paymentMethod");
+  const paymentMethodDoc = await paymentDoc.value.loadAndGetLink("paymentMethod");
 
   if (paymentMethodDoc?.type !== "Cash") {
     await paymentDoc.value.setMultiple({
@@ -1508,11 +1378,7 @@ async function makeStockTransfer() {
   }
 
   for (const item of shipmentDoc.items) {
-    const trackItem = await fyo.getValue(
-      ModelNameEnum.Item,
-      item.item as string,
-      "trackItem",
-    );
+    const trackItem = await fyo.getValue(ModelNameEnum.Item, item.item as string, "trackItem");
 
     if (!trackItem) {
       continue;
@@ -1524,8 +1390,7 @@ async function makeStockTransfer() {
       item.location = fyo.singles.POSSettings?.inventory;
     }
 
-    item.serialNumber =
-      itemSerialNumbers.value[item.item as string] ?? undefined;
+    item.serialNumber = itemSerialNumbers.value[item.item as string] ?? undefined;
   }
 
   shipmentDoc.once("afterSubmit", () => {
@@ -1710,9 +1575,7 @@ function showValidationToast(method: string) {
   showToast({
     type: "error",
     message: t`${
-      !sinvDoc.value.items?.length
-        ? "Please add items"
-        : "Please select a customer"
+      !sinvDoc.value.items?.length ? "Please add items" : "Please select a customer"
     } before ${method}`,
   });
 }
@@ -1741,9 +1604,7 @@ const formatCurrency = (val: any) => {
 const nativeChangeQty = async (invoiceItem: any, delta: number) => {
   const newQty = (invoiceItem.quantity ?? 1) + delta;
   if (newQty <= 0) {
-    sinvDoc.value.items = sinvDoc.value.items?.filter(
-      (row) => row !== invoiceItem,
-    );
+    sinvDoc.value.items = sinvDoc.value.items?.filter((row) => row !== invoiceItem);
   } else {
     await invoiceItem.set("quantity", newQty);
   }

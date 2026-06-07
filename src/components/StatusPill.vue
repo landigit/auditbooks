@@ -29,10 +29,7 @@ const props = defineProps<{
 
 // --- Computed ---
 const showStatus = computed(() => {
-  if (
-    props.doc.schemaName === ModelNameEnum.SalesQuote &&
-    props.doc.isSubmitted
-  ) {
+  if (props.doc.schemaName === ModelNameEnum.SalesQuote && props.doc.isSubmitted) {
     return false;
   }
   return true;
@@ -63,10 +60,7 @@ const text = computed(() => {
   }
 
   if (status.value === "Outstanding") {
-    const outstandingPayment = fyo.format(
-      props.doc.outstandingAmount as Money,
-      "Currency",
-    );
+    const outstandingPayment = fyo.format(props.doc.outstandingAmount as Money, "Currency");
     return t`Unpaid ${outstandingPayment}`;
   }
 
@@ -175,11 +169,7 @@ function getSubmittableStatus(doc: Doc) {
     return "NotTransferred";
   }
 
-  if (
-    doc.isSubmitted &&
-    isInvoice &&
-    doc.outstandingAmount?.isZero() === true
-  ) {
+  if (doc.isSubmitted && isInvoice && doc.outstandingAmount?.isZero() === true) {
     return "Paid";
   }
 
@@ -202,11 +192,7 @@ function getSubmittableStatus(doc: Doc) {
     return "Unpaid";
   }
 
-  if (
-    doc.isSubmitted &&
-    isInvoice &&
-    doc.outstandingAmount?.isZero() !== true
-  ) {
+  if (doc.isSubmitted && isInvoice && doc.outstandingAmount?.isZero() !== true) {
     return "Outstanding";
   }
 

@@ -1,16 +1,7 @@
 import { Fyo } from "fyo";
 import { Doc } from "fyo/model/doc";
-import {
-  Action,
-  FiltersMap,
-  FormulaMap,
-  ListViewSettings,
-  ValidationMap,
-} from "fyo/model/types";
-import {
-  validateEmail,
-  validatePhoneNumber,
-} from "fyo/model/validationFunction";
+import { Action, FiltersMap, FormulaMap, ListViewSettings, ValidationMap } from "fyo/model/types";
+import { validateEmail, validatePhoneNumber } from "fyo/model/validationFunction";
 import { Money } from "pesa";
 import { PartyRole } from "./types";
 import { ModelNameEnum } from "models/types";
@@ -33,20 +24,17 @@ export class Party extends Doc {
     let outstandingAmount = this.fyo.pesa(0);
 
     if (role === "Customer" || role === "Both") {
-      const outstandingReceive =
-        await this._getTotalOutstandingAmount("SalesInvoice");
+      const outstandingReceive = await this._getTotalOutstandingAmount("SalesInvoice");
       outstandingAmount = outstandingAmount.add(outstandingReceive);
     }
 
     if (role === "Supplier") {
-      const outstandingPay =
-        await this._getTotalOutstandingAmount("PurchaseInvoice");
+      const outstandingPay = await this._getTotalOutstandingAmount("PurchaseInvoice");
       outstandingAmount = outstandingAmount.add(outstandingPay);
     }
 
     if (role === "Both") {
-      const outstandingPay =
-        await this._getTotalOutstandingAmount("PurchaseInvoice");
+      const outstandingPay = await this._getTotalOutstandingAmount("PurchaseInvoice");
       outstandingAmount = outstandingAmount.sub(outstandingPay);
     }
 
@@ -66,10 +54,7 @@ export class Party extends Doc {
   async _getTotalLoyaltyPoints() {
     const loyaltyProgramName = this.loyaltyProgram as string;
     if (loyaltyProgramName) {
-      const isExpiredAndMaxed = await isLoyaltyProgramExpiredAndMaxed(
-        this.fyo,
-        loyaltyProgramName,
-      );
+      const isExpiredAndMaxed = await isLoyaltyProgramExpiredAndMaxed(this.fyo, loyaltyProgramName);
       if (isExpiredAndMaxed) {
         return 0;
       }
@@ -98,9 +83,7 @@ export class Party extends Doc {
     return totalLoyaltyPoints;
   }
 
-  async _getTotalOutstandingAmount(
-    schemaName: "SalesInvoice" | "PurchaseInvoice",
-  ) {
+  async _getTotalOutstandingAmount(schemaName: "SalesInvoice" | "PurchaseInvoice") {
     const outstandingAmounts = await this.fyo.db.getAllRaw(schemaName, {
       fields: ["outstandingAmount"],
       filters: {
@@ -111,9 +94,7 @@ export class Party extends Doc {
     });
 
     return outstandingAmounts
-      .map(({ outstandingAmount }) =>
-        this.fyo.pesa(outstandingAmount as number),
-      )
+      .map(({ outstandingAmount }) => this.fyo.pesa(outstandingAmount as number))
       .reduce((a, b) => a.add(b), this.fyo.pesa(0));
   }
 
@@ -195,8 +176,7 @@ export class Party extends Doc {
     return [
       {
         label: fyo.t`Create Purchase`,
-        condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== "Customer",
+        condition: (doc: Doc) => !doc.notInserted && (doc.role as PartyRole) !== "Customer",
         action: async (partyDoc, router) => {
           const doc = fyo.doc.getNewDoc("PurchaseInvoice", {
             party: partyDoc.name,
@@ -217,8 +197,7 @@ export class Party extends Doc {
       },
       {
         label: fyo.t`View Purchases`,
-        condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== "Customer",
+        condition: (doc: Doc) => !doc.notInserted && (doc.role as PartyRole) !== "Customer",
         action: async (partyDoc, router) => {
           await router.push({
             path: "/list/PurchaseInvoice",
@@ -228,8 +207,7 @@ export class Party extends Doc {
       },
       {
         label: fyo.t`Create Sale`,
-        condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== "Supplier",
+        condition: (doc: Doc) => !doc.notInserted && (doc.role as PartyRole) !== "Supplier",
         action: async (partyDoc, router) => {
           const doc = fyo.doc.getNewDoc("SalesInvoice", {
             party: partyDoc.name,
@@ -250,8 +228,7 @@ export class Party extends Doc {
       },
       {
         label: fyo.t`View Sales`,
-        condition: (doc: Doc) =>
-          !doc.notInserted && (doc.role as PartyRole) !== "Supplier",
+        condition: (doc: Doc) => !doc.notInserted && (doc.role as PartyRole) !== "Supplier",
         action: async (partyDoc, router) => {
           await router.push({
             path: "/list/SalesInvoice",

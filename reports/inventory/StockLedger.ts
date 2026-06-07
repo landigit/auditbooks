@@ -37,13 +37,11 @@ export class StockLedger extends Report {
   groupBy: "none" | "item" | "location" = "none";
 
   get hasBatches(): boolean {
-    return !!(this.fyo.singles.InventorySettings as InventorySettings)
-      .enableBatches;
+    return !!(this.fyo.singles.InventorySettings as InventorySettings).enableBatches;
   }
 
   get hasSerialNumbers(): boolean {
-    return !!(this.fyo.singles.InventorySettings as InventorySettings)
-      .enableSerialNumber;
+    return !!(this.fyo.singles.InventorySettings as InventorySettings).enableSerialNumber;
   }
 
   constructor(fyo: Fyo) {
@@ -129,10 +127,7 @@ export class StockLedger extends Report {
         continue;
       }
 
-      if (
-        this.referenceType !== "All" &&
-        row.referenceType !== this.referenceType
-      ) {
+      if (this.referenceType !== "All" && row.referenceType !== this.referenceType) {
         continue;
       }
 
@@ -247,15 +242,9 @@ export class StockLedger extends Report {
   _setObservers() {
     const listener = () => (this.shouldRefresh = true);
 
-    this.fyo.doc.observer.on(
-      `sync:${ModelNameEnum.StockLedgerEntry}`,
-      listener,
-    );
+    this.fyo.doc.observer.on(`sync:${ModelNameEnum.StockLedgerEntry}`, listener);
 
-    this.fyo.doc.observer.on(
-      `delete:${ModelNameEnum.StockLedgerEntry}`,
-      listener,
-    );
+    this.fyo.doc.observer.on(`delete:${ModelNameEnum.StockLedgerEntry}`, listener);
   }
 
   getColumns(): ColumnField[] {

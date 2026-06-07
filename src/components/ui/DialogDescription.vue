@@ -3,9 +3,7 @@ import { type HTMLAttributes, computed } from "vue";
 import { DialogDescription, type DialogDescriptionProps } from "reka-ui";
 import { cn } from "src/utils/cn";
 
-const props = defineProps<
-  DialogDescriptionProps & { class?: HTMLAttributes["class"] }
->();
+const props = defineProps<DialogDescriptionProps & { class?: HTMLAttributes["class"] }>();
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props;
@@ -14,10 +12,7 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
-  <DialogDescription
-    v-bind="delegatedProps"
-    :class="cn('text-sm text-description', props.class)"
-  >
+  <DialogDescription v-bind="delegatedProps" :class="cn('text-sm text-description', props.class)">
     <slot />
   </DialogDescription>
 </template>

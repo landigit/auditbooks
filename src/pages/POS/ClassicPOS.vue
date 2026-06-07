@@ -31,9 +31,7 @@
         :open-modal="openSavedInvoiceModal || false"
         :modal-status="openSavedInvoiceModal || false"
         @toggle-modal="emitEvent('toggleModal', 'SavedInvoice')"
-        @selected-invoice-name="
-          (invName) => emitEvent('selectedInvoiceName', invName)
-        "
+        @selected-invoice-name="(invName) => emitEvent('selectedInvoiceName', invName)"
       />
 
       <CouponCodeModal
@@ -57,24 +55,16 @@
         :open-modal="openPaymentModal"
         @toggle-modal="emitEvent('toggleModal', 'Payment')"
         @set-paid-amount="(amount: Money) => emitEvent('setPaidAmount', amount)"
-        @set-payment-method="
-          (paymentMethod) => emitEvent('setPaymentMethod', paymentMethod)
-        "
+        @set-payment-method="(paymentMethod) => emitEvent('setPaymentMethod', paymentMethod)"
         @set-transfer-ref-no="(ref) => emitEvent('setTransferRefNo', ref)"
-        @set-transfer-clearance-date="
-          (date) => emitEvent('setTransferClearanceDate', date)
-        "
-        @create-transaction="
-          (print, status) => emitEvent('createTransaction', print, status)
-        "
+        @set-transfer-clearance-date="(date) => emitEvent('setTransferClearanceDate', date)"
+        @create-transaction="(print, status) => emitEvent('createTransaction', print, status)"
       />
 
       <ReturnSalesInvoiceModal
         :open-modal="openReturnSalesInvoiceModal || false"
         :modal-status="openReturnSalesInvoiceModal || false"
-        @selected-return-invoice="
-          (value: any) => emitEvent('selectedReturnInvoice', value)
-        "
+        @selected-return-invoice="(value: any) => emitEvent('selectedReturnInvoice', value)"
         @toggle-modal="emitEvent('toggleModal', 'ReturnSalesInvoice')"
       />
 
@@ -107,11 +97,7 @@
                 :show-clear-button="true"
                 @keyup.enter="
                   (event: KeyboardEvent) =>
-                    emitEvent(
-                      'handleItemSearch',
-                      (event.target as HTMLInputElement).value,
-                      true,
-                    )
+                    emitEvent('handleItemSearch', (event.target as HTMLInputElement).value, true)
                 "
                 @change="(item: string) => emitEvent('handleItemSearch', item)"
               />
@@ -155,9 +141,7 @@
                 :applied-coupons-count="appliedCouponsCount"
                 @toggle-view="emitEvent('toggleView')"
                 @emit-route-to-sinv-list="emitEvent('routeToSinvList')"
-                @toggle-modal="
-                  (modalName) => emitEvent('toggleModal', modalName)
-                "
+                @toggle-modal="(modalName) => emitEvent('toggleModal', modalName)"
               />
             </view>
           </view>
@@ -165,9 +149,7 @@
 
         <view class="col-span-7">
           <view class="flex flex-col gap-3" style="height: calc(100vh - 6rem)">
-            <view
-              class="p-4 bg-surface border rounded-md grow h-full border-border"
-            >
+            <view class="p-4 bg-surface border rounded-md grow h-full border-border">
               <!-- Customer Search -->
               <MultiLabelLink
                 v-if="sinvDoc?.fieldMap"
@@ -182,9 +164,7 @@
 
               <SelectedItemTable
                 :expanded-batch-id="expandedBatchId"
-                @set-expanded-batch-id="
-                  (rowName) => emit('setExpandedBatchId', rowName)
-                "
+                @set-expanded-batch-id="(rowName) => emit('setExpandedBatchId', rowName)"
                 @apply-pricing-rule="emitEvent('applyPricingRule')"
                 @selected-row="(row) => emit('selectedRow', row)"
               />
@@ -219,9 +199,7 @@
                       :value="additionalDiscounts"
                       :read-only="true"
                       :text-right="true"
-                      @change="
-                        (amount: Money) => (additionalDiscounts = amount)
-                      "
+                      @change="(amount: Money) => (additionalDiscounts = amount)"
                     />
                   </view>
 
@@ -254,16 +232,13 @@
                       class="w-full"
                       :style="{
                         backgroundColor:
-                          profile?.saveButtonColour ||
-                          fyo.singles.Defaults?.saveButtonColour,
+                          profile?.saveButtonColour || fyo.singles.Defaults?.saveButtonColour,
                       }"
                       :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
                       @tap="emit('saveInvoiceAction')"
                     >
                       <slot>
-                        <text
-                          class="uppercase text-lg text-button-primary-text font-semibold"
-                        >
+                        <text class="uppercase text-lg text-button-primary-text font-semibold">
                           {{ t`Save` }}
                         </text>
                       </slot>
@@ -272,16 +247,13 @@
                       class="w-full"
                       :style="{
                         backgroundColor:
-                          profile?.cancelButtonColour ||
-                          fyo.singles.Defaults?.cancelButtonColour,
+                          profile?.cancelButtonColour || fyo.singles.Defaults?.cancelButtonColour,
                       }"
                       :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
                       @tap="() => emit('clearValues')"
                     >
                       <slot>
-                        <text
-                          class="uppercase text-lg text-button-primary-text font-semibold"
-                        >
+                        <text class="uppercase text-lg text-button-primary-text font-semibold">
                           {{ t`Cancel` }}
                         </text>
                       </slot>
@@ -295,16 +267,13 @@
                       class="w-full"
                       :style="{
                         backgroundColor:
-                          profile?.heldButtonColour ||
-                          fyo.singles.Defaults?.heldButtonColour,
+                          profile?.heldButtonColour || fyo.singles.Defaults?.heldButtonColour,
                       }"
                       :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
                       @tap="emitEvent('toggleModal', 'SavedInvoice', true)"
                     >
                       <slot>
-                        <text
-                          class="uppercase text-lg text-button-primary-text font-semibold"
-                        >
+                        <text class="uppercase text-lg text-button-primary-text font-semibold">
                           {{ t`held` }}
                         </text>
                       </slot>
@@ -315,17 +284,12 @@
                       class="w-full py-5"
                       :style="{
                         backgroundColor:
-                          profile?.returnButtonColour ||
-                          fyo.singles.Defaults?.returnButtonColour,
+                          profile?.returnButtonColour || fyo.singles.Defaults?.returnButtonColour,
                       }"
-                      @tap="
-                        emitEvent('toggleModal', 'ReturnSalesInvoice', true)
-                      "
+                      @tap="emitEvent('toggleModal', 'ReturnSalesInvoice', true)"
                     >
                       <slot>
-                        <text
-                          class="uppercase text-lg text-button-primary-text font-semibold"
-                        >
+                        <text class="uppercase text-lg text-button-primary-text font-semibold">
                           {{ t`Return` }}
                         </text>
                       </slot>
@@ -335,16 +299,13 @@
                       class="w-full"
                       :style="{
                         backgroundColor:
-                          profile?.payButton ||
-                          fyo.singles.Defaults?.payButtonColour,
+                          profile?.payButton || fyo.singles.Defaults?.payButtonColour,
                       }"
                       :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
                       @tap="emitEvent('handlePaymentAction')"
                     >
                       <slot>
-                        <text
-                          class="uppercase text-lg text-button-primary-text font-semibold"
-                        >
+                        <text class="uppercase text-lg text-button-primary-text font-semibold">
                           {{ t`Pay` }}
                         </text>
                       </slot>
@@ -355,15 +316,12 @@
                     class="w-full mt-2 py-5"
                     :style="{
                       backgroundColor:
-                        profile?.payButtonColour ||
-                        fyo.singles.Defaults?.payButtonColour,
+                        profile?.payButtonColour || fyo.singles.Defaults?.payButtonColour,
                     }"
                     @tap="emitEvent('handlePaymentAction')"
                   >
                     <slot>
-                      <text
-                        class="uppercase text-lg text-button-primary-text font-semibold"
-                      >
+                      <text class="uppercase text-lg text-button-primary-text font-semibold">
                         {{ t`Pay` }}
                       </text>
                     </slot>
@@ -380,9 +338,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Classic P O S</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>

@@ -13,18 +13,13 @@
         </FormHeader>
 
         <!-- Section Container -->
-        <view
-          v-if="hasDoc"
-          class="overflow-auto custom-scroll custom-scroll-thumb1 window-no-drag"
-        >
+        <view v-if="hasDoc" class="overflow-auto custom-scroll custom-scroll-thumb1 window-no-drag">
           <CommonFormSection
             v-for="([name, fields], idx) in activeGroup.entries()"
             :key="name + idx"
             ref="section"
             class="p-4"
-            :class="
-              idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''
-            "
+            :class="idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''"
             :show-title="activeGroup.size > 1 && name !== t`Default`"
             :title="name"
             :fields="fields"
@@ -42,12 +37,9 @@
           <text v-if="loading" class="text-base text-description">
             {{ t`Loading instance...` }}
           </text>
-          <Button
-            v-if="!loading"
-            class="w-24 border border-border"
-            @tap="cancel"
-            >{{ t`Cancel` }}</Button
-          >
+          <Button v-if="!loading" class="w-24 border border-border" @tap="cancel">{{
+            t`Cancel`
+          }}</Button>
           <Button
             v-if="store.isDevelopment && !loading"
             class="w-24 ml-auto mr-4 border border-border"
@@ -71,9 +63,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Setup Wizard</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -143,10 +133,7 @@ const activeGroup = computed(() => {
   if (!hasDoc.value) {
     return new Map<string, Field[]>();
   }
-  const groupedFields = getFieldsGroupedByTabAndSection(
-    doc.value.schema,
-    doc.value,
-  );
+  const groupedFields = getFieldsGroupedByTabAndSection(doc.value.schema, doc.value);
   return [...groupedFields.values()][0];
 });
 
@@ -195,10 +182,7 @@ const submit = async () => {
 
   loading.value = true;
   fyo.telemetry.log(Verb.Completed, ModelNameEnum.SetupWizard);
-  emit(
-    "setup-complete",
-    doc.value.getValidDict() as unknown as SetupWizardOptions,
-  );
+  emit("setup-complete", doc.value.getValidDict() as unknown as SetupWizardOptions);
 };
 
 const cancel = () => {

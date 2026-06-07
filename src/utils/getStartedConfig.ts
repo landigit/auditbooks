@@ -53,8 +53,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           icon: "arrow-up-right",
           fieldname: "openingBalanceChecked",
           description: t`Set up your opening balances before performing any accounting entries`,
-          documentation:
-            "https://landigit.com/auditbooks/setup-opening-balances",
+          documentation: "https://landigit.com/auditbooks/setup-opening-balances",
         },
         {
           key: "Add Taxes",
@@ -63,8 +62,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
           fieldname: "taxesAdded",
           description: t`Set up your tax templates for your sales or purchase transactions`,
           action: () => routeTo("/list/Tax"),
-          documentation:
-            "https://landigit.com/auditbooks/create-initial-entries#add-taxes",
+          documentation: "https://landigit.com/auditbooks/create-initial-entries#add-taxes",
         },
       ],
     },
@@ -84,8 +82,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
               },
             }),
           fieldname: "salesItemCreated",
-          documentation:
-            "https://landigit.com/auditbooks/create-initial-entries#add-sales-items",
+          documentation: "https://landigit.com/auditbooks/create-initial-entries#add-sales-items",
         },
         {
           key: "Add Customers",
@@ -100,8 +97,7 @@ export function getGetStartedConfig(): GetStartedConfigItem[] {
               },
             }),
           fieldname: "customerCreated",
-          documentation:
-            "https://landigit.com/auditbooks/create-initial-entries#add-customers",
+          documentation: "https://landigit.com/auditbooks/create-initial-entries#add-customers",
         },
         {
           key: "Create Sales Invoice",

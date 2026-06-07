@@ -1,11 +1,7 @@
 <template>
   <view class="flex items-center z-10" @tap="openHelpLink">
     <text class="me-1"><slot></slot></text>
-    <LucideIcon
-      v-if="icon"
-      class="h-5 w-5 ms-3 text-indicator-blue-text"
-      name="help-circle"
-    />
+    <LucideIcon v-if="icon" class="h-5 w-5 ms-3 text-indicator-blue-text" name="help-circle" />
   </view>
 </template>
 

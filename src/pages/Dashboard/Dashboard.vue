@@ -68,18 +68,9 @@
         @change="(value) => (period = value)"
       />
     </view>
-    <scroll-view
-      scroll-y="true"
-      class="flex-1"
-      style="height: 0; min-height: 0"
-    >
-      <Cashflow
-        :common-period="period || undefined"
-        @period-change="handlePeriodChange"
-      />
-      <view
-        style="height: 1px; background: var(--color-border); margin: 0 16px"
-      />
+    <scroll-view scroll-y="true" class="flex-1" style="height: 0; min-height: 0">
+      <Cashflow :common-period="period || undefined" @period-change="handlePeriodChange" />
+      <view style="height: 1px; background: var(--color-border); margin: 0 16px" />
       <view class="flex flex-row">
         <view class="flex-1">
           <UnpaidInvoices
@@ -97,22 +88,14 @@
           />
         </view>
       </view>
-      <view
-        style="height: 1px; background: var(--color-border); margin: 0 16px"
-      />
+      <view style="height: 1px; background: var(--color-border); margin: 0 16px" />
       <view class="flex flex-row">
         <view class="flex-1">
-          <ProfitAndLoss
-            :common-period="period || undefined"
-            @period-change="handlePeriodChange"
-          />
+          <ProfitAndLoss :common-period="period || undefined" @period-change="handlePeriodChange" />
         </view>
         <view style="width: 1px; background: var(--color-border)" />
         <view class="flex-1">
-          <Expenses
-            :common-period="period || undefined"
-            @period-change="handlePeriodChange"
-          />
+          <Expenses :common-period="period || undefined" @period-change="handlePeriodChange" />
         </view>
       </view>
       <view style="height: 32px" />

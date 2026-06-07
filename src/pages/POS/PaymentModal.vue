@@ -11,9 +11,7 @@
           :border="true"
           :text-right="true"
           :value="paidAmount"
-          @change="
-            (amount: Money) => emit('setPaidAmount', (amount as Money).float)
-          "
+          @change="(amount: Money) => emit('setPaidAmount', (amount as Money).float)"
         />
         <view v-if="paymentMethods.length" class="grid grid-cols-2 gap-6">
           <Button
@@ -33,9 +31,7 @@
           v-else
           class="flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-700"
         >
-          <text class="text-sm font-semibold text-main">{{
-            t`No Payment Methods Found`
-          }}</text>
+          <text class="text-sm font-semibold text-main">{{ t`No Payment Methods Found` }}</text>
           <text class="text-xs text-description text-center mt-1">
             {{ t`Please configure payment methods in settings first.` }}
           </text>
@@ -167,9 +163,7 @@
               @tap="submitTransaction"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-button-primary-text font-semibold"
-                >
+                <text class="uppercase text-lg text-button-primary-text font-semibold">
                   {{ t`Submit` }}
                 </text>
               </slot>
@@ -186,9 +180,7 @@
               @tap="cancelTransaction"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-button-primary-text font-semibold"
-                >
+                <text class="uppercase text-lg text-button-primary-text font-semibold">
                   {{ t`Cancel` }}
                 </text>
               </slot>
@@ -205,9 +197,7 @@
               @tap="payTransaction"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-button-primary-text font-semibold"
-                >
+                <text class="uppercase text-lg text-button-primary-text font-semibold">
                   {{ t`Pay` }}
                 </text>
               </slot>
@@ -224,9 +214,7 @@
               @tap="payAndPrintTransaction"
             >
               <slot>
-                <text
-                  class="uppercase text-lg text-button-primary-text font-semibold"
-                >
+                <text class="uppercase text-lg text-button-primary-text font-semibold">
                   {{ t`Pay & Print` }}
                 </text>
               </slot>
@@ -240,9 +228,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Payment Modal</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -333,10 +319,7 @@ const showPaidChange = computed((): boolean => {
     return false;
   }
 
-  if (
-    fyo.pesa(paidAmount.float).eq(fyo.pesa(0)) &&
-    transferAmount.eq(fyo.pesa(0))
-  ) {
+  if (fyo.pesa(paidAmount.float).eq(fyo.pesa(0)) && transferAmount.eq(fyo.pesa(0))) {
     return false;
   }
 

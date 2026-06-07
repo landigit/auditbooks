@@ -2,10 +2,7 @@
   <view class="overflow-hidden flex flex-col h-full">
     <!-- Report Outer Container -->
     <view v-if="dataSlice.length" class="overflow-hidden flex-1 flex flex-col">
-      <WithScroll
-        class="overflow-auto w-full flex-1"
-        style="scrollbar-gutter: stable"
-      >
+      <WithScroll class="overflow-auto w-full flex-1" style="scrollbar-gutter: stable">
         <!--Title Row -->
         <view
           class="sticky top-0 bg-canvas z-10 w-max flex items-center text-main border-b border-border px-4"

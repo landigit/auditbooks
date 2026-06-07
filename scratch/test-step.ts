@@ -13,9 +13,7 @@ async function test() {
   console.log("3. Connecting main db...");
   await db.connect();
 
-  console.log(
-    '4. Trying to call db.getAll("CustomField") before schema is set...',
-  );
+  console.log('4. Trying to call db.getAll("CustomField") before schema is set...');
   try {
     await db.getAll("CustomField");
   } catch (err: any) {
@@ -28,9 +26,7 @@ async function test() {
 
   console.log("6. Testing query after setting schemaMap...");
   try {
-    const res = await db.client!.execute(
-      "select count(*) as count from sqlite_master",
-    );
+    const res = await db.client!.execute("select count(*) as count from sqlite_master");
     console.log("Query result:", res.rows);
   } catch (err) {
     console.error("Query failed:", err);

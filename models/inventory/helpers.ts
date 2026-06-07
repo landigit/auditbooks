@@ -14,9 +14,7 @@ import type { SerialNumberStatus } from "./types";
 import BatchSeries from "fyo/models/BatchSeries";
 import SerialNumberSeries from "fyo/models/SerialNumberSeries";
 
-export async function validateBatch(
-  doc: StockMovement | StockTransfer | Invoice,
-) {
+export async function validateBatch(doc: StockMovement | StockTransfer | Invoice) {
   if (doc.schemaName === ModelNameEnum.SalesQuote) {
     return;
   }
@@ -29,17 +27,10 @@ export async function validateBatch(
   ) {
     for (const row of doc.items ?? []) {
       if (row.item && row.batch) {
-        const hasBatch = await doc.fyo.getValue(
-          ModelNameEnum.Item,
-          row.item,
-          "hasBatch",
-        );
+        const hasBatch = await doc.fyo.getValue(ModelNameEnum.Item, row.item, "hasBatch");
 
         if (hasBatch) {
-          const batchExists = await doc.fyo.db.exists(
-            ModelNameEnum.Batch,
-            row.batch,
-          );
+          const batchExists = await doc.fyo.db.exists(ModelNameEnum.Batch, row.batch);
 
           if (!batchExists) {
             await createBatch(doc.fyo, row.item, row.batch);
@@ -54,9 +45,7 @@ export async function validateBatch(
   }
 }
 
-async function validateItemRowBatch(
-  doc: StockMovementItem | StockTransferItem | InvoiceItem,
-) {
+async function validateItemRowBatch(doc: StockMovementItem | StockTransferItem | InvoiceItem) {
   const idx = doc.idx ?? 0;
   const item = doc.item;
   const batch = doc.batch;
@@ -98,9 +87,7 @@ export async function validateSerialNumber(doc: StockMovement | StockTransfer) {
   }
 }
 
-async function validateItemRowSerialNumber(
-  row: StockMovementItem | StockTransferItem,
-) {
+async function validateItemRowSerialNumber(row: StockMovementItem | StockTransferItem) {
   if (row.parentdoc?.schemaName === ModelNameEnum.SalesQuote) {
     return;
   }
@@ -111,11 +98,7 @@ async function validateItemRowSerialNumber(
     return;
   }
 
-  const hasSerialNumber = await row.fyo.getValue(
-    ModelNameEnum.Item,
-    item,
-    "hasSerialNumber",
-  );
+  const hasSerialNumber = await row.fyo.getValue(ModelNameEnum.Item, item, "hasSerialNumber");
 
   if (hasSerialNumber && !row.serialNumber) {
     throw new ValidationError(
@@ -170,10 +153,7 @@ async function validateItemRowSerialNumber(
       continue;
     }
 
-    const snDoc = await row.fyo.doc.getDoc(
-      ModelNameEnum.SerialNumber,
-      serialNumber,
-    );
+    const snDoc = await row.fyo.doc.getDoc(ModelNameEnum.SerialNumber, serialNumber);
 
     if (!(snDoc instanceof SerialNumber)) {
       continue;
@@ -190,26 +170,12 @@ async function validateItemRowSerialNumber(
     const isReturn = !!row.parentdoc?.returnAgainst;
     const isSubmitted = !!row.parentdoc?.submitted;
 
-    if (
-      schemaName === "PurchaseReceipt" &&
-      status !== "Inactive" &&
-      !isSubmitted &&
-      !isReturn
-    ) {
-      throw new ValidationError(
-        t`Serial Number ${serialNumber} is not Inactive`,
-      );
+    if (schemaName === "PurchaseReceipt" && status !== "Inactive" && !isSubmitted && !isReturn) {
+      throw new ValidationError(t`Serial Number ${serialNumber} is not Inactive`);
     }
 
-    if (
-      schemaName === "Shipment" &&
-      status !== "Active" &&
-      !isSubmitted &&
-      !isReturn
-    ) {
-      throw new ValidationError(
-        t`Serial Number ${serialNumber} is not Active.`,
-      );
+    if (schemaName === "Shipment" && status !== "Active" && !isSubmitted && !isReturn) {
+      throw new ValidationError(t`Serial Number ${serialNumber} is not Active.`);
     }
   }
 }
@@ -340,11 +306,7 @@ function getSerialNumberStatus(
     return isCancel ? "Inactive" : "Active";
   }
 
-  return getSerialNumberStatusForStockMovement(
-    doc as StockMovement,
-    item,
-    isCancel,
-  );
+  return getSerialNumberStatusForStockMovement(doc as StockMovement, item, isCancel);
 }
 
 function getSerialNumberStatusForStockMovement(
@@ -381,21 +343,13 @@ export async function generateSerialNumbersForItem(
     return "";
   }
 
-  const hasSerialNumber = await fyo.getValue(
-    ModelNameEnum.Item,
-    item,
-    "hasSerialNumber",
-  );
+  const hasSerialNumber = await fyo.getValue(ModelNameEnum.Item, item, "hasSerialNumber");
 
   if (!hasSerialNumber) {
     return "";
   }
 
-  const serialNumberSeries = await fyo.getValue(
-    ModelNameEnum.Item,
-    item,
-    "serialNumberSeries",
-  );
+  const serialNumberSeries = await fyo.getValue(ModelNameEnum.Item, item, "serialNumberSeries");
 
   if (!serialNumberSeries || typeof serialNumberSeries !== "string") {
     return "";
@@ -406,10 +360,7 @@ export async function generateSerialNumbersForItem(
     return "";
   }
 
-  const exists = await fyo.db.exists(
-    ModelNameEnum.SerialNumberSeries,
-    seriesName,
-  );
+  const exists = await fyo.db.exists(ModelNameEnum.SerialNumberSeries, seriesName);
 
   if (!exists) {
     return "";
@@ -426,8 +377,7 @@ export async function generateSerialNumbersForItem(
   let currentValue = await getHighestSerialNumberForItem(fyo, item, seriesName);
 
   if (currentValue === null) {
-    currentValue =
-      ((seriesDoc.current as number) || (seriesDoc.start as number)) - 1;
+    currentValue = ((seriesDoc.current as number) || (seriesDoc.start as number)) - 1;
   }
 
   while (serialNumbers.length < quantity) {
@@ -435,10 +385,7 @@ export async function generateSerialNumbersForItem(
 
     const serialNumber = getPaddedName(seriesName, currentValue, padZeros);
 
-    const snExists = await fyo.db.exists(
-      ModelNameEnum.SerialNumber,
-      serialNumber,
-    );
+    const snExists = await fyo.db.exists(ModelNameEnum.SerialNumber, serialNumber);
 
     if (!snExists) {
       serialNumbers.push(serialNumber);
@@ -499,28 +446,21 @@ export async function getExistingActiveSerialNumbersForItem(
     return "";
   }
 
-  const hasSerialNumber = await fyo.getValue(
-    ModelNameEnum.Item,
-    item,
-    "hasSerialNumber",
-  );
+  const hasSerialNumber = await fyo.getValue(ModelNameEnum.Item, item, "hasSerialNumber");
 
   if (!hasSerialNumber) {
     return "";
   }
 
-  const stockLedgerEntries = (await fyo.db.getAllRaw(
-    ModelNameEnum.StockLedgerEntry,
-    {
-      fields: ["serialNumber", "date", "quantity"],
-      filters: {
-        item: item,
-        serialNumber: ["!=", ""],
-      },
-      orderBy: ["date", "created", "name"],
-      order: "asc",
+  const stockLedgerEntries = (await fyo.db.getAllRaw(ModelNameEnum.StockLedgerEntry, {
+    fields: ["serialNumber", "date", "quantity"],
+    filters: {
+      item: item,
+      serialNumber: ["!=", ""],
     },
-  )) as { serialNumber: string; date: string; quantity: number }[];
+    orderBy: ["date", "created", "name"],
+    order: "asc",
+  })) as { serialNumber: string; date: string; quantity: number }[];
 
   if (!stockLedgerEntries || stockLedgerEntries.length === 0) {
     return "";
@@ -567,11 +507,7 @@ export async function getSuggestedBatchName(
   itemName: string,
 ): Promise<string | undefined> {
   try {
-    const batchSeries = await fyo.getValue(
-      ModelNameEnum.Item,
-      itemName,
-      "batchSeries",
-    );
+    const batchSeries = await fyo.getValue(ModelNameEnum.Item, itemName, "batchSeries");
 
     if (!batchSeries) {
       return undefined;
@@ -592,10 +528,7 @@ export async function getSuggestedBatchName(
         .sync();
     }
 
-    const batchSeriesDoc = (await fyo.doc.getDoc(
-      "BatchSeries",
-      seriesName,
-    )) as BatchSeries;
+    const batchSeriesDoc = (await fyo.doc.getDoc("BatchSeries", seriesName)) as BatchSeries;
 
     const padZeros = (batchSeriesDoc.padZeros as number) ?? 4;
 
@@ -629,9 +562,7 @@ export async function getSuggestedBatchName(
       nextNumber = (batchSeriesDoc.start as number) ?? 1001;
     }
 
-    const batchName = `${seriesName}${nextNumber
-      .toString()
-      .padStart(padZeros, "0")}`;
+    const batchName = `${seriesName}${nextNumber.toString().padStart(padZeros, "0")}`;
 
     return batchName;
   } catch (error) {
@@ -639,11 +570,7 @@ export async function getSuggestedBatchName(
   }
 }
 
-export async function createBatch(
-  fyo: Fyo,
-  itemName: string,
-  batchName: string,
-): Promise<boolean> {
+export async function createBatch(fyo: Fyo, itemName: string, batchName: string): Promise<boolean> {
   try {
     const batchExists = await fyo.db.exists(ModelNameEnum.Batch, batchName);
     if (batchExists) {
@@ -657,18 +584,11 @@ export async function createBatch(
 
     await batchDoc.sync();
 
-    const batchSeries = await fyo.getValue(
-      ModelNameEnum.Item,
-      itemName,
-      "batchSeries",
-    );
+    const batchSeries = await fyo.getValue(ModelNameEnum.Item, itemName, "batchSeries");
 
     if (batchSeries) {
       const seriesName = (batchSeries as string).trim();
-      const batchSeriesDoc = (await fyo.doc.getDoc(
-        "BatchSeries",
-        seriesName,
-      )) as BatchSeries;
+      const batchSeriesDoc = (await fyo.doc.getDoc("BatchSeries", seriesName)) as BatchSeries;
 
       const num = parseInt(batchName, 10);
       if (!isNaN(num)) {

@@ -73,12 +73,6 @@
       "section": "Items"
     }
   ],
-  "quickEditFields": [
-    "numberSeries",
-    "date",
-    "movementType",
-    "amount",
-    "items"
-  ],
+  "quickEditFields": ["numberSeries", "date", "movementType", "amount", "items"],
   "keywordFields": ["name", "movementType"]
 }

@@ -40,27 +40,17 @@
           />
 
           <view class="mt-4 grid grid-cols-2 gap-4 items-end">
-            <Button
-              class="w-full py-5 bg-indicator-red-bg"
-              @tap="router.back()"
-            >
+            <Button class="w-full py-5 bg-indicator-red-bg" @tap="router.back()">
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-red-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-red-text font-semibold">
                   {{ t`Back` }}
                 </text>
               </slot>
             </Button>
 
-            <Button
-              class="w-full py-5 bg-indicator-green-bg"
-              @tap="handleSubmit"
-            >
+            <Button class="w-full py-5 bg-indicator-green-bg" @tap="handleSubmit">
               <slot>
-                <text
-                  class="uppercase text-lg text-indicator-green-text font-semibold"
-                >
+                <text class="uppercase text-lg text-indicator-green-text font-semibold">
                   {{ t`Submit` }}
                 </text>
               </slot>
@@ -74,9 +64,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Open P O S Shift Modal</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>

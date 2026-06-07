@@ -29,10 +29,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 import { safeParsePesa } from "utils/index";
 import { isPesa } from "fyo/utils";
 import { fyo } from "src/initFyo";
@@ -61,8 +58,11 @@ const parse = (value: unknown): Money => {
   return safeParsePesa(value, fyo);
 };
 
-const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } =
-  useBaseControl(props as any, emit, inputRef);
+const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } = useBaseControl(
+  props as any,
+  emit,
+  inputRef,
+);
 
 const currency = computed<string | undefined>(() => {
   if (props.value) {

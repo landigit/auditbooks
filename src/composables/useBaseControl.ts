@@ -8,11 +8,7 @@ export function isNumeric(fieldtype: any): boolean {
   if (fieldtype && typeof fieldtype !== "string") {
     fieldtype = fieldtype.fieldtype;
   }
-  return [
-    FieldTypeEnum.Int,
-    FieldTypeEnum.Float,
-    FieldTypeEnum.Currency,
-  ].includes(fieldtype);
+  return [FieldTypeEnum.Int, FieldTypeEnum.Float, FieldTypeEnum.Currency].includes(fieldtype);
 }
 
 export interface BaseControlProps {

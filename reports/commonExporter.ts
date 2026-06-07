@@ -32,10 +32,7 @@ export default function getCommonExportActions(report: Report): Action[] {
 }
 
 async function exportReport(extention: ExportExtention, report: Report) {
-  const { filePath, canceled } = await getSavePath(
-    report.reportName,
-    extention,
-  );
+  const { filePath, canceled } = await getSavePath(report.reportName, extention);
 
   if (canceled || !filePath) {
     return;
@@ -69,8 +66,7 @@ function getJsonData(report: Report): string {
   };
 
   const columns = report.columns;
-  const displayPrecision =
-    (report.fyo.singles.SystemSettings?.displayPrecision as number) ?? 2;
+  const displayPrecision = (report.fyo.singles.SystemSettings?.displayPrecision as number) ?? 2;
 
   /**
    * Set columns as list of fieldname, label
@@ -92,15 +88,8 @@ function getJsonData(report: Report): string {
     for (let c = 0; c < row.cells.length; c++) {
       const col = Reflect.get(columns, c);
       const { label } = col;
-      const cell = getValueFromCell(
-        Reflect.get(row.cells, c),
-        displayPrecision,
-      );
-      if (
-        label === "__proto__" ||
-        label === "constructor" ||
-        label === "prototype"
-      ) {
+      const cell = getValueFromCell(Reflect.get(row.cells, c), displayPrecision);
+      if (label === "__proto__" || label === "constructor" || label === "prototype") {
         continue;
       }
       Reflect.set(rowObj, label, cell);
@@ -113,11 +102,7 @@ function getJsonData(report: Report): string {
    * Set filter map
    */
   for (const { fieldname } of report.filters) {
-    if (
-      fieldname === "__proto__" ||
-      fieldname === "constructor" ||
-      fieldname === "prototype"
-    ) {
+    if (fieldname === "__proto__" || fieldname === "constructor" || fieldname === "prototype") {
       continue;
     }
     const value = report.get(fieldname);
@@ -146,8 +131,7 @@ export function getCsvData(report: Report): string {
 }
 
 function convertReportToCSVMatrix(report: Report): unknown[][] {
-  const displayPrecision =
-    (report.fyo.singles.SystemSettings?.displayPrecision as number) ?? 2;
+  const displayPrecision = (report.fyo.singles.SystemSettings?.displayPrecision as number) ?? 2;
   const reportData = report.reportData;
   const columns = report.columns;
 
@@ -161,10 +145,7 @@ function convertReportToCSVMatrix(report: Report): unknown[][] {
 
     const csvrow: unknown[] = [];
     for (let c = 0; c < row.cells.length; c++) {
-      const cell = getValueFromCell(
-        Reflect.get(row.cells, c),
-        displayPrecision,
-      );
+      const cell = getValueFromCell(Reflect.get(row.cells, c), displayPrecision);
       csvrow.push(cell);
     }
 
@@ -201,11 +182,7 @@ function getValueFromCell(cell: ReportCell, displayPrecision: number) {
   return rawValue;
 }
 
-export async function saveExportData(
-  data: string,
-  filePath: string,
-  message?: string,
-) {
+export async function saveExportData(data: string, filePath: string, message?: string) {
   await ipc.saveData(data, filePath);
   message ??= t`Export Successful`;
   showExportInFolder(message, filePath);

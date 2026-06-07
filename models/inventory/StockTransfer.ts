@@ -1,13 +1,7 @@
 import { t } from "fyo";
 import { Attachment, DocValueMap } from "fyo/core/types";
 import { Doc } from "fyo/model/doc";
-import {
-  ChangeArg,
-  DefaultMap,
-  FiltersMap,
-  FormulaMap,
-  HiddenMap,
-} from "fyo/model/types";
+import { ChangeArg, DefaultMap, FiltersMap, FormulaMap, HiddenMap } from "fyo/model/types";
 import { ValidationError } from "fyo/utils/errors";
 import { LedgerPosting } from "models/Transactional/LedgerPosting";
 import { Defaults } from "models/baseModels/Defaults/Defaults";
@@ -82,10 +76,7 @@ export abstract class StockTransfer extends Transfer {
       return this.getSum("items", "amount", false);
     }
 
-    const docData = await this.fyo.doc.getDoc(
-      this.invoiceSchemaName,
-      this.backReference,
-    );
+    const docData = await this.fyo.doc.getDoc(this.invoiceSchemaName, this.backReference);
 
     const totalDiscount = this.getTotalDiscount(docData);
 
@@ -121,9 +112,7 @@ export abstract class StockTransfer extends Transfer {
     let discountAmount = this.fyo.pesa(0);
     for (const item of this.items ?? []) {
       if (!(item.itemDiscountAmount as Money).isZero()) {
-        discountAmount = discountAmount.add(
-          (item.itemDiscountAmount as Money) ?? this.fyo.pesa(0),
-        );
+        discountAmount = discountAmount.add((item.itemDiscountAmount as Money) ?? this.fyo.pesa(0));
       } else if (!doc.discountAfterTax) {
         const amt = (item.amount ?? this.fyo.pesa(0)).mul(
           ((item.itemDiscountPercent as number) ?? 0) / 100,
@@ -150,13 +139,10 @@ export abstract class StockTransfer extends Transfer {
   };
 
   hidden: HiddenMap = {
-    backReference: () =>
-      !(this.backReference || !(this.isSubmitted || this.isCancelled)),
+    backReference: () => !(this.backReference || !(this.isSubmitted || this.isCancelled)),
     terms: () => !(this.terms || !(this.isSubmitted || this.isCancelled)),
-    attachment: () =>
-      !(this.attachment || !(this.isSubmitted || this.isCancelled)),
-    returnAgainst: () =>
-      (this.isSubmitted || this.isCancelled) && !this.returnAgainst,
+    attachment: () => !(this.attachment || !(this.isSubmitted || this.isCancelled)),
+    returnAgainst: () => (this.isSubmitted || this.isCancelled) && !this.returnAgainst,
   };
 
   static defaults: DefaultMap = {
@@ -268,9 +254,7 @@ export abstract class StockTransfer extends Transfer {
 
     const messages: string[] = [];
     for (const setting of settings) {
-      const value = this.fyo.singles.InventorySettings?.[setting] as
-        | string
-        | undefined;
+      const value = this.fyo.singles.InventorySettings?.[setting] as string | undefined;
       const field = this.fyo.getField(ModelNameEnum.InventorySettings, setting);
       if (!value) {
         messages.push(t`${field.label} account not set in Inventory Settings.`);
@@ -319,14 +303,9 @@ export abstract class StockTransfer extends Transfer {
       return;
     }
 
-    const schemaName = this.isSales
-      ? ModelNameEnum.SalesInvoice
-      : ModelNameEnum.PurchaseInvoice;
+    const schemaName = this.isSales ? ModelNameEnum.SalesInvoice : ModelNameEnum.PurchaseInvoice;
 
-    const invoice = (await this.fyo.doc.getDoc(
-      schemaName,
-      this.backReference,
-    )) as Invoice;
+    const invoice = (await this.fyo.doc.getDoc(schemaName, this.backReference)) as Invoice;
     const transferMap = this._getTransferMap();
 
     for (const row of invoice.items ?? []) {
@@ -335,27 +314,15 @@ export abstract class StockTransfer extends Transfer {
       const notTransferred = (row.stockNotTransferred as number) ?? 0;
 
       const transferred = transferMap[item];
-      if (
-        typeof transferred !== "number" ||
-        typeof notTransferred !== "number"
-      ) {
+      if (typeof transferred !== "number" || typeof notTransferred !== "number") {
         continue;
       }
 
       if (this.isCancelled) {
-        await row.set(
-          "stockNotTransferred",
-          Math.min(notTransferred + transferred, quantity),
-        );
-        transferMap[item] = Math.max(
-          transferred + notTransferred - quantity,
-          0,
-        );
+        await row.set("stockNotTransferred", Math.min(notTransferred + transferred, quantity));
+        transferMap[item] = Math.max(transferred + notTransferred - quantity, 0);
       } else {
-        await row.set(
-          "stockNotTransferred",
-          Math.max(notTransferred - transferred, 0),
-        );
+        await row.set("stockNotTransferred", Math.max(notTransferred - transferred, 0));
         transferMap[item] = Math.max(transferred - notTransferred, 0);
       }
     }
@@ -374,10 +341,7 @@ export abstract class StockTransfer extends Transfer {
       return;
     }
 
-    const referenceDoc = await this.fyo.doc.getDoc(
-      this.schemaName,
-      linkedReference.name,
-    );
+    const referenceDoc = await this.fyo.doc.getDoc(this.schemaName, linkedReference.name);
 
     const isReturned = this.isSubmitted;
     await referenceDoc.setAndSync({ isReturned });
@@ -449,10 +413,7 @@ export abstract class StockTransfer extends Transfer {
 
   async setFieldsFromBackReference() {
     const backReference = this.backReference;
-    const { target } = this.fyo.getField(
-      this.schemaName,
-      "backReference",
-    ) as TargetField;
+    const { target } = this.fyo.getField(this.schemaName, "backReference") as TargetField;
 
     if (!backReference || !target) {
       return;
@@ -599,25 +560,16 @@ export abstract class StockTransfer extends Transfer {
         continue;
       }
 
-      const returnedItem: ReturnDocItem | undefined =
-        returnBalanceItemsQty[item.item as string];
+      const returnedItem: ReturnDocItem | undefined = returnBalanceItemsQty[item.item as string];
 
       let quantity = returnedItem.quantity;
-      let serialNumber: string | undefined =
-        returnedItem.serialNumbers?.join("\n");
+      let serialNumber: string | undefined = returnedItem.serialNumbers?.join("\n");
 
-      if (
-        item.batch &&
-        returnedItem.batches &&
-        returnedItem.batches[item.batch as string]
-      ) {
+      if (item.batch && returnedItem.batches && returnedItem.batches[item.batch as string]) {
         quantity = returnedItem.batches[item.batch as string].quantity;
 
         if (returnedItem.batches[item.batch as string].serialNumbers) {
-          serialNumber =
-            returnedItem.batches[item.batch as string].serialNumbers?.join(
-              "\n",
-            );
+          serialNumber = returnedItem.batches[item.batch as string].serialNumbers?.join("\n");
         }
       }
 
@@ -637,10 +589,7 @@ export abstract class StockTransfer extends Transfer {
       returnAgainst: docData.name,
     } as DocValueMap;
 
-    const newReturnDoc = this.fyo.doc.getNewDoc(
-      this.schema.name,
-      returnDocData,
-    ) as StockTransfer;
+    const newReturnDoc = this.fyo.doc.getNewDoc(this.schema.name, returnDocData) as StockTransfer;
 
     await newReturnDoc.runFormulas();
     return newReturnDoc;
@@ -658,10 +607,7 @@ async function validateSerialNumberStatus(doc: StockTransfer) {
       continue;
     }
 
-    const snDoc = await doc.fyo.doc.getDoc(
-      ModelNameEnum.SerialNumber,
-      serialNumber,
-    );
+    const snDoc = await doc.fyo.doc.getDoc(ModelNameEnum.SerialNumber, serialNumber);
 
     if (!(snDoc instanceof SerialNumber)) {
       continue;
@@ -675,19 +621,12 @@ async function validateSerialNumberStatus(doc: StockTransfer) {
       return;
     }
 
-    if (
-      doc.schemaName === ModelNameEnum.PurchaseReceipt &&
-      status !== "Inactive"
-    ) {
-      throw new ValidationError(
-        t`Serial Number ${serialNumber} is not Inactive`,
-      );
+    if (doc.schemaName === ModelNameEnum.PurchaseReceipt && status !== "Inactive") {
+      throw new ValidationError(t`Serial Number ${serialNumber} is not Inactive`);
     }
 
     if (doc.schemaName === ModelNameEnum.Shipment && status !== "Active") {
-      throw new ValidationError(
-        t`Serial Number ${serialNumber} is not Active.`,
-      );
+      throw new ValidationError(t`Serial Number ${serialNumber} is not Active.`);
     }
   }
 }

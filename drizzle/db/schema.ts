@@ -216,12 +216,7 @@ export const uomConversionItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("UOMConversionItem_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("UOMConversionItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const loyaltyProgram = sqliteTable("LoyaltyProgram", {
@@ -283,12 +278,7 @@ export const collectionRulesItems = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("CollectionRulesItems_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("CollectionRulesItems_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const payment = sqliteTable("Payment", {
@@ -367,9 +357,7 @@ export const paymentFor = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("PaymentFor_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("PaymentFor_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const journalEntry = sqliteTable("JournalEntry", {
@@ -412,12 +400,7 @@ export const journalEntryAccount = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("JournalEntryAccount_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("JournalEntryAccount_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const itemEnquiry = sqliteTable("ItemEnquiry", {
@@ -468,12 +451,7 @@ export const appliedCouponCodes = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("AppliedCouponCodes_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("AppliedCouponCodes_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const priceList = sqliteTable("PriceList", {
@@ -507,9 +485,7 @@ export const priceListItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("PriceListItem_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("PriceListItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const pricingRule = sqliteTable("PricingRule", {
@@ -574,12 +550,7 @@ export const pricingRuleItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("PricingRuleItem_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("PricingRuleItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const pricingRuleDetail = sqliteTable(
@@ -599,12 +570,7 @@ export const pricingRuleDetail = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("PricingRuleDetail_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("PricingRuleDetail_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const tax = sqliteTable("Tax", {
@@ -635,9 +601,7 @@ export const taxDetail = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("TaxDetail_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("TaxDetail_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const taxSummary = sqliteTable(
@@ -661,9 +625,7 @@ export const taxSummary = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("TaxSummary_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("TaxSummary_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const location = sqliteTable("Location", {
@@ -772,12 +734,7 @@ export const stockMovementItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("StockMovementItem_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("StockMovementItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const batch = sqliteTable("Batch", {
@@ -834,9 +791,7 @@ export const customField = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("CustomField_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("CustomField_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const posProfile = sqliteTable("POSProfile", {
@@ -1064,10 +1019,10 @@ export const purchaseInvoice = sqliteTable(
     isReturned: numeric().default("0"),
     isFullyReturned: numeric().default("0"),
     isSyncedWithErp: numeric().default("0"),
-    backReference: text().references(
-      (): AnySQLiteColumn => purchaseReceipt.name,
-      { onDelete: "restrict", onUpdate: "cascade" },
-    ),
+    backReference: text().references((): AnySQLiteColumn => purchaseReceipt.name, {
+      onDelete: "restrict",
+      onUpdate: "cascade",
+    }),
     returnAgainst: text(),
     createdBy: text().notNull(),
     modifiedBy: text().notNull(),
@@ -1185,12 +1140,7 @@ export const salesInvoiceItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("SalesInvoiceItem_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("SalesInvoiceItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const purchaseInvoiceItem = sqliteTable(
@@ -1246,12 +1196,7 @@ export const purchaseInvoiceItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("PurchaseInvoiceItem_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("PurchaseInvoiceItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const salesQuoteItem = sqliteTable(
@@ -1307,9 +1252,7 @@ export const salesQuoteItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("SalesQuoteItem_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("SalesQuoteItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const shipment = sqliteTable(
@@ -1404,9 +1347,7 @@ export const shipmentItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("ShipmentItem_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("ShipmentItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const purchaseReceipt = sqliteTable(
@@ -1431,10 +1372,10 @@ export const purchaseReceipt = sqliteTable(
     terms: text(),
     attachment: text(),
     isReturned: numeric().default("0"),
-    backReference: text().references(
-      (): AnySQLiteColumn => purchaseInvoice.name,
-      { onDelete: "restrict", onUpdate: "cascade" },
-    ),
+    backReference: text().references((): AnySQLiteColumn => purchaseInvoice.name, {
+      onDelete: "restrict",
+      onUpdate: "cascade",
+    }),
     returnAgainst: text(),
     createdBy: text().notNull(),
     modifiedBy: text().notNull(),
@@ -1501,12 +1442,7 @@ export const purchaseReceiptItem = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("PurchaseReceiptItem_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("PurchaseReceiptItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const closingAmounts = sqliteTable(
@@ -1523,9 +1459,7 @@ export const closingAmounts = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("ClosingAmounts_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("ClosingAmounts_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const closingCash = sqliteTable(
@@ -1539,9 +1473,7 @@ export const closingCash = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("ClosingCash_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("ClosingCash_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const defaultCashDenominations = sqliteTable(
@@ -1555,10 +1487,7 @@ export const defaultCashDenominations = sqliteTable(
     parentFieldname: text().notNull(),
   },
   (table) => [
-    index("DefaultCashDenominations_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
+    index("DefaultCashDenominations_parent_idx").on(table.parent, table.parentSchemaName),
   ],
 );
 
@@ -1573,9 +1502,7 @@ export const openingAmounts = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("OpeningAmounts_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("OpeningAmounts_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const openingCash = sqliteTable(
@@ -1589,9 +1516,7 @@ export const openingCash = sqliteTable(
     parentSchemaName: text().notNull(),
     parentFieldname: text().notNull(),
   },
-  (table) => [
-    index("OpeningCash_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("OpeningCash_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const patchRun = sqliteTable("PatchRun", {
@@ -1710,12 +1635,7 @@ export const cashDenominations = sqliteTable(
     parentFieldname: text(),
     denomination: real().notNull(),
   },
-  (table) => [
-    index("CashDenominations_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("CashDenominations_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const invoice = sqliteTable(
@@ -1750,9 +1670,7 @@ export const invoice = sqliteTable(
     isFullyReturned: integer().default(0),
     isSyncedWithErp: integer().default(0),
   },
-  (table) => [
-    index("Invoice_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("Invoice_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const invoiceItem = sqliteTable(
@@ -1789,9 +1707,7 @@ export const invoiceItem = sqliteTable(
     hsnCode: integer(),
     stockNotTransferred: real(),
   },
-  (table) => [
-    index("InvoiceItem_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("InvoiceItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const posShiftAmounts = sqliteTable(
@@ -1808,12 +1724,7 @@ export const posShiftAmounts = sqliteTable(
     parentFieldname: text(),
     paymentMethod: text().notNull(),
   },
-  (table) => [
-    index("POSShiftAmounts_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("POSShiftAmounts_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const stockTransfer = sqliteTable(
@@ -1834,9 +1745,7 @@ export const stockTransfer = sqliteTable(
     terms: text(),
     isReturned: integer().default(0),
   },
-  (table) => [
-    index("StockTransfer_parent_idx").on(table.parent, table.parentSchemaName),
-  ],
+  (table) => [index("StockTransfer_parent_idx").on(table.parent, table.parentSchemaName)],
 );
 
 export const stockTransferItem = sqliteTable(
@@ -1867,10 +1776,5 @@ export const stockTransferItem = sqliteTable(
     description: text(),
     hsnCode: integer(),
   },
-  (table) => [
-    index("StockTransferItem_parent_idx").on(
-      table.parent,
-      table.parentSchemaName,
-    ),
-  ],
+  (table) => [index("StockTransferItem_parent_idx").on(table.parent, table.parentSchemaName)],
 );

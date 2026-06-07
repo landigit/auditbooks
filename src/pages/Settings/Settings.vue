@@ -15,18 +15,13 @@
         </FormHeader>
 
         <!-- Section Container -->
-        <view
-          v-if="doc"
-          class="flex-1 overflow-auto custom-scroll custom-scroll-thumb1"
-        >
+        <view v-if="doc" class="flex-1 overflow-auto custom-scroll custom-scroll-thumb1">
           <CommonFormSection
             v-for="([name, fields], idx) in activeGroup.entries()"
             :key="name + idx"
             ref="section"
             class="p-4"
-            :class="
-              idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''
-            "
+            :class="idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''"
             :show-title="activeGroup.size > 1 && name !== t`Default`"
             :title="name"
             :fields="fields"
@@ -80,9 +75,7 @@
         :key="name + idx"
         ref="section"
         class="mb-4"
-        :class="
-          idx !== 0 && activeGroup.size > 1 ? 'border-t border-border pt-4' : ''
-        "
+        :class="idx !== 0 && activeGroup.size > 1 ? 'border-t border-border pt-4' : ''"
         :show-title="activeGroup.size > 1 && name !== t`Default`"
         :title="name"
         :fields="fields"
@@ -121,15 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  inject,
-  provide,
-  onMounted,
-  onActivated,
-  onDeactivated,
-} from "vue";
+import { ref, computed, inject, provide, onMounted, onActivated, onDeactivated } from "vue";
 import { useRoute } from "vue-router";
 import { isLynx } from "src/utils/interactive";
 import { DocValue } from "fyo/core/types";

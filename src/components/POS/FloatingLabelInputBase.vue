@@ -23,10 +23,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
@@ -47,8 +44,11 @@ const emit = defineEmits<{
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
-const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } =
-  useBaseControl(props as any, emit, inputRef);
+const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } = useBaseControl(
+  props as any,
+  emit,
+  inputRef,
+);
 
 defineExpose({
   focus,

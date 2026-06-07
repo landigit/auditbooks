@@ -12,26 +12,18 @@ const isSystemDark = ref(
     : false,
 );
 if (typeof window !== "undefined" && window.matchMedia) {
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", (e) => {
-      isSystemDark.value = e.matches;
-    });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    isSystemDark.value = e.matches;
+  });
 }
 
 export const useAppStore = defineStore("app", () => {
   const _platform = ref("");
   const platform = computed(() => {
-    return _platform.value === "win32"
-      ? "Windows"
-      : _platform.value === "darwin"
-        ? "Mac"
-        : "Linux";
+    return _platform.value === "win32" ? "Windows" : _platform.value === "darwin" ? "Mac" : "Linux";
   });
 
-  const showSidebar = ref(
-    typeof window !== "undefined" ? window.innerWidth >= 768 : true,
-  );
+  const showSidebar = ref(typeof window !== "undefined" ? window.innerWidth >= 768 : true);
 
   if (typeof window !== "undefined" && window.matchMedia) {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
@@ -62,19 +54,11 @@ export const useAppStore = defineStore("app", () => {
   const dbPath = ref("");
   const companyName = ref("");
   const docsPath = ref("");
-  const reports = ref(
-    {} as Record<keyof typeof reportsMap, Report | undefined>,
-  );
+  const reports = ref({} as Record<keyof typeof reportsMap, Report | undefined>);
   const appFlags = ref({} as Record<string, boolean>);
   const historyState = reactive({
-    forward:
-      typeof history !== "undefined"
-        ? !!(history.state as HistoryState)?.forward
-        : false,
-    back:
-      typeof history !== "undefined"
-        ? !!(history.state as HistoryState)?.back
-        : false,
+    forward: typeof history !== "undefined" ? !!(history.state as HistoryState)?.forward : false,
+    back: typeof history !== "undefined" ? !!(history.state as HistoryState)?.back : false,
   });
 
   function toggleSidebar(value?: boolean) {

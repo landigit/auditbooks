@@ -74,14 +74,9 @@
 
       <view class="row-start-6 grid grid-cols-2 gap-4 mt-4">
         <view class="col-span-2">
-          <Button
-            class="w-full p-5 bg-indicator-red-bg"
-            @tap="emit('toggleModal', 'SavedInvoice')"
-          >
+          <Button class="w-full p-5 bg-indicator-red-bg" @tap="emit('toggleModal', 'SavedInvoice')">
             <slot>
-              <text
-                class="uppercase text-lg text-indicator-red-text font-semibold"
-              >
+              <text class="uppercase text-lg text-indicator-red-text font-semibold">
                 {{ t`Cancel` }}
               </text>
             </slot>
@@ -94,9 +89,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Saved Invoice Modal</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -173,13 +166,9 @@ const tableFields = computed<Field[]>(() => {
 });
 
 const filteredInvoices = computed(() => {
-  const invoices = savedInvoiceList.value
-    ? savedInvoices.value
-    : submittedInvoices.value;
+  const invoices = savedInvoiceList.value ? savedInvoices.value : submittedInvoices.value;
   return invoices.filter((invoice) =>
-    (invoice.name as string)
-      .toLowerCase()
-      .includes(invoiceSearchTerm.value.toLowerCase()),
+    (invoice.name as string).toLowerCase().includes(invoiceSearchTerm.value.toLowerCase()),
   );
 });
 

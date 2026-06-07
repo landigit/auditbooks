@@ -4,13 +4,7 @@ import { Primitive, type PrimitiveProps } from "reka-ui";
 import { cn } from "src/utils/cn";
 
 interface Props extends PrimitiveProps {
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   class?: HTMLAttributes["class"];
 }

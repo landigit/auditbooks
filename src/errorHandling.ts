@@ -59,10 +59,7 @@ function getToastProps(errorLogObj: ErrorLog) {
   return props;
 }
 
-export function getErrorLogObject(
-  error: Error,
-  more: Record<string, unknown>,
-): ErrorLog {
+export function getErrorLogObject(error: Error, more: Record<string, unknown>): ErrorLog {
   const { name, stack, message, cause } = error;
   if (cause) {
     more.cause = cause;
@@ -161,9 +158,7 @@ export async function showErrorDialog(title?: string, content?: string) {
 }
 
 // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(
-  func: T,
-) {
+export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(func: T) {
   type Return = ReturnType<T> extends Promise<infer P> ? P : true;
   return async function errorHandled(...args: Parameters<T>): Promise<Return> {
     try {
@@ -180,9 +175,7 @@ export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(
 }
 
 // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-export function getErrorHandledSync<T extends (...args: any[]) => any>(
-  func: T,
-) {
+export function getErrorHandledSync<T extends (...args: any[]) => any>(func: T) {
   type Return = ReturnType<T> extends Promise<infer P> ? P : ReturnType<T>;
   return function errorHandledSync(...args: Parameters<T>) {
     try {
@@ -206,18 +199,11 @@ function getFeatureFlags(): string[] {
 
     return Object.entries(doc as Doc).reduce(
       (acc, [key, value]) => {
-        const fieldsArray = ((safeGet(fyo.schemaMap, docName) as any)?.fields ??
-          []) as any[];
-        const fieldsMap = new Map<string, any>(
-          fieldsArray.map((f: any) => [f.fieldname, f]),
-        );
+        const fieldsArray = ((safeGet(fyo.schemaMap, docName) as any)?.fields ?? []) as any[];
+        const fieldsMap = new Map<string, any>(fieldsArray.map((f: any) => [f.fieldname, f]));
 
         const field = fieldsMap.get(key);
-        if (
-          typeof value === "boolean" &&
-          !field?.hidden &&
-          !key.startsWith("_")
-        ) {
+        if (typeof value === "boolean" && !field?.hidden && !key.startsWith("_")) {
           safeSet(acc, key, value);
         }
         return acc;
@@ -259,8 +245,7 @@ function getFeatureFlags(): string[] {
 }
 
 function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
-  const baseUrl =
-    "https://github.com/landigit/auditbooks/issues/new?labels=bug";
+  const baseUrl = "https://github.com/landigit/auditbooks/issues/new?labels=bug";
 
   const body = [
     "<h2>Description</h2>",

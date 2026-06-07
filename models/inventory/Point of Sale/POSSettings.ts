@@ -1,9 +1,6 @@
 import { Doc } from "fyo/model/doc";
 import { FiltersMap, HiddenMap } from "fyo/model/types";
-import {
-  AccountRootTypeEnum,
-  AccountTypeEnum,
-} from "models/baseModels/Account/types";
+import { AccountRootTypeEnum, AccountTypeEnum } from "models/baseModels/Account/types";
 
 export class POSSettings extends Doc {
   declare isShiftOpen?: boolean;
@@ -35,21 +32,16 @@ export class POSSettings extends Doc {
   };
 
   hidden: HiddenMap = {
-    weightEnabledBarcode: () =>
-      !this.fyo.singles.InventorySettings?.enableBarcodes,
+    weightEnabledBarcode: () => !this.fyo.singles.InventorySettings?.enableBarcodes,
     checkDigits: () =>
-      !this.fyo.singles.InventorySettings?.enableBarcodes ||
-      !this.weightEnabledBarcode,
+      !this.fyo.singles.InventorySettings?.enableBarcodes || !this.weightEnabledBarcode,
     itemCodeDigits: () =>
-      !this.fyo.singles.InventorySettings?.enableBarcodes ||
-      !this.weightEnabledBarcode,
+      !this.fyo.singles.InventorySettings?.enableBarcodes || !this.weightEnabledBarcode,
     itemWeightDigits: () =>
-      !this.fyo.singles.InventorySettings?.enableBarcodes ||
-      !this.weightEnabledBarcode,
+      !this.fyo.singles.InventorySettings?.enableBarcodes || !this.weightEnabledBarcode,
     itemVisibility: () =>
       !this.fyo.singles.AccountingSettings?.enablePointOfSaleWithOutInventory ||
       !!this.fyo.singles.AccountingSettings?.enableERPNextSync,
-    itemVisibilityERP: () =>
-      !this.fyo.singles.AccountingSettings?.enableERPNextSync,
+    itemVisibilityERP: () => !this.fyo.singles.AccountingSettings?.enableERPNextSync,
   };
 }

@@ -50,11 +50,7 @@ export class DocHandler {
    * Doc Operations
    */
 
-  async getDoc(
-    schemaName: string,
-    name?: string,
-    options = { skipDocumentCache: false },
-  ) {
+  async getDoc(schemaName: string, name?: string, options = { skipDocumentCache: false }) {
     if (name === undefined) {
       name = schemaName;
     }

@@ -2,21 +2,11 @@
   <view v-if="!isLynx">
     <view class="flex flex-col overflow-y-hidden">
       <PageHeader :title="t`Set Up Your Workspace`" />
-      <view
-        class="flex-1 overflow-y-auto overflow-x-hidden custom-scroll custom-scroll-thumb1"
-      >
-        <view
-          v-for="section in sections"
-          :key="section.label"
-          class="p-4 border-b border-border"
-        >
+      <view class="flex-1 overflow-y-auto overflow-x-hidden custom-scroll custom-scroll-thumb1">
+        <view v-for="section in sections" :key="section.label" class="p-4 border-b border-border">
           <text class="font-medium text-main">{{ section.label }}</text>
           <view class="flex mt-4 gap-4">
-            <view
-              v-for="item in section.items"
-              :key="item.label"
-              class="w-full md:w-1/3 sm:w-1/2"
-            >
+            <view v-for="item in section.items" :key="item.label" class="w-full md:w-1/3 sm:w-1/2">
               <view
                 class="flex flex-col justify-between min-h-40 p-4 border border-border text-main rounded-lg"
                 @mouseenter="() => (activeCard = item.key)"
@@ -29,21 +19,13 @@
                     :size="24"
                     class="mb-4 text-description"
                   />
-                  <LucideIcon
-                    v-else
-                    name="check-circle-2"
-                    :size="24"
-                    class="mb-4 text-green-500"
-                  />
+                  <LucideIcon v-else name="check-circle-2" :size="24" class="mb-4 text-green-500" />
                   <text class="font-medium">{{ item.label }}</text>
                   <text class="mt-2 text-sm text-description">
                     {{ item.description }}
                   </text>
                 </view>
-                <view
-                  v-if="!isCompleted(item)"
-                  class="flex mt-4 overflow-hidden"
-                >
+                <view v-if="!isCompleted(item)" class="flex mt-4 overflow-hidden">
                   <Button
                     v-if="item.action"
                     class="leading-tight text-base"
@@ -77,9 +59,7 @@
     </view>
     <scroll-view scroll-y="true" class="DeskContent px-4 py-2">
       <view v-for="section in sections" :key="section.label" class="mb-6">
-        <text class="text-base font-semibold text-main mb-3">{{
-          section.label
-        }}</text>
+        <text class="text-base font-semibold text-main mb-3">{{ section.label }}</text>
         <view class="space-y-4">
           <view
             v-for="item in section.items"
@@ -90,12 +70,8 @@
               <text v-if="isCompleted(item)" class="text-xl mr-3">✅</text>
               <text v-else class="text-xl mr-3">🔘</text>
               <view class="flex-1">
-                <text class="font-medium text-main text-sm">{{
-                  item.label
-                }}</text>
-                <text class="text-xs text-description mt-1">{{
-                  item.description
-                }}</text>
+                <text class="font-medium text-main text-sm">{{ item.label }}</text>
+                <text class="text-xs text-description mt-1">{{ item.description }}</text>
               </view>
             </view>
             <view v-if="!isCompleted(item)" class="flex flex-row gap-3 mt-2">
@@ -217,10 +193,7 @@ const checkForCompletedTasks = async () => {
 const handleDocumentation = async ({ key, documentation }: ListItem) => {
   if (documentation) {
     if (documentation.startsWith("https://landigit.com/auditbooks/")) {
-      const path = documentation.replace(
-        "https://landigit.com/auditbooks/",
-        "",
-      );
+      const path = documentation.replace("https://landigit.com/auditbooks/", "");
       router.push(`/help/${path}`);
     } else {
       ipc.openLink(documentation);

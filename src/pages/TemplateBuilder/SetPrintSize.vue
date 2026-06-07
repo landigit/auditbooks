@@ -9,13 +9,7 @@
             t`Select a pre-defined page size, or set a custom page size for your Print Template.`
           }}
         </text>
-        <Select
-          :df="df"
-          :value="size"
-          :border="true"
-          :show-label="true"
-          @change="sizeChange"
-        />
+        <Select :df="df" :value="size" :border="true" :show-label="true" @change="sizeChange" />
         <view class="flex gap-4 w-full">
           <Float
             class="w-full"
@@ -36,9 +30,7 @@
         </view>
       </view>
       <view class="flex border-t border-border p-4">
-        <Button class="ml-auto" type="primary" @tap="done">{{
-          t`Done`
-        }}</Button>
+        <Button class="ml-auto" type="primary" @tap="done">{{ t`Done` }}</Button>
       </view>
     </view>
   </view>
@@ -46,9 +38,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Set Print Size</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>

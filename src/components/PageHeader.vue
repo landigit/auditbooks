@@ -2,10 +2,7 @@
   <view
     v-if="!isLynx"
     class="px-4 flex justify-between items-center h-row-largest flex-shrink-0 bg-surface border-b border-border"
-    :class="[
-      border ? '' : 'md:border-b-0',
-      store.platform !== 'Windows' ? 'window-drag' : '',
-    ]"
+    :class="[border ? '' : 'md:border-b-0', store.platform !== 'Windows' ? 'window-drag' : '']"
   >
     <Transition
       enter-active-class="transition-all duration-150 ease-out"
@@ -17,11 +14,7 @@
       class="border-none"
     >
       <view
-        v-if="
-          !store.showSidebar &&
-          store.platform === 'Mac' &&
-          store.languageDirection !== 'rtl'
-        "
+        v-if="!store.showSidebar && store.platform === 'Mac' && store.languageDirection !== 'rtl'"
         class="h-full w-tl"
         :class="spacerClass"
       />
@@ -29,11 +22,7 @@
 
     <view
       class="flex items-center window-no-drag gap-2 md:gap-4 me-auto min-w-0"
-      :class="
-        store.platform === 'Mac' && store.languageDirection === 'rtl'
-          ? 'me-18'
-          : ''
-      "
+      :class="store.platform === 'Mac' && store.languageDirection === 'rtl' ? 'me-18' : ''"
     >
       <!-- Hamburger menu toggle -->
       <view
@@ -55,9 +44,7 @@
       </text>
 
       <!-- Left Slot -->
-      <view
-        class="flex items-stretch window-no-drag gap-2 md:gap-4 flex-shrink-0 min-w-0"
-      >
+      <view class="flex items-stretch window-no-drag gap-2 md:gap-4 flex-shrink-0 min-w-0">
         <slot name="left" />
       </view>
     </view>
@@ -65,11 +52,7 @@
     <!-- Right (regular) Slot -->
     <view
       class="flex items-stretch window-no-drag gap-1.5 md:gap-2 ms-auto flex-shrink-0"
-      :class="
-        store.platform === 'Mac' && store.languageDirection === 'rtl'
-          ? 'me-18'
-          : ''
-      "
+      :class="store.platform === 'Mac' && store.languageDirection === 'rtl' ? 'me-18' : ''"
     >
       <slot />
     </view>
@@ -109,9 +92,7 @@ const props = withDefaults(
 
 const store = useAppStore();
 
-const PageHeaderNavGroup = defineAsyncComponent(
-  () => import("./PageHeaderNavGroup.vue"),
-);
+const PageHeaderNavGroup = defineAsyncComponent(() => import("./PageHeaderNavGroup.vue"));
 
 // Computed Properties
 const spacerClass = computed(() => {

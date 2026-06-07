@@ -58,9 +58,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async setRawCustomFields() {
     try {
-      this.rawCustomFields = (await this.db?.getAll(
-        "CustomField",
-      )) as RawCustomField[];
+      this.rawCustomFields = (await this.db?.getAll("CustomField")) as RawCustomField[];
     } catch {}
   }
 
@@ -130,9 +128,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
     await runPatches(patches.post, this, version);
   }
 
-  async #getPatchesToExecute(
-    version: string,
-  ): Promise<{ pre: Patch[]; post: Patch[] }> {
+  async #getPatchesToExecute(version: string): Promise<{ pre: Patch[]; post: Patch[] }> {
     if (this.db === undefined) {
       return { pre: [], post: [] };
     }

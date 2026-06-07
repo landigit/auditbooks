@@ -1,10 +1,6 @@
 ﻿import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { getItem, getStockMovement } from "models/inventory/tests/helpers";
 import { SalesInvoice } from "../SalesInvoice/SalesInvoice";
 import { assertThrows } from "backend/database/tests/helpers";
@@ -117,22 +113,16 @@ describe("Coupon Codes", () => {
 
     // Create Party
     await fyo.doc.getNewDoc(ModelNameEnum.Party, partyMap.partyOne).sync();
-    expect(
-      await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name),
-    ).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name)).toBe(true);
 
     // Create Pricing Rules
     for (const pricingRule of Object.values(pricingRuleMap)) {
       const prule: any = { ...pricingRule };
-      if (typeof prule.minAmount === "number")
-        prule.minAmount = fyo.pesa(prule.minAmount);
-      if (typeof prule.maxAmount === "number")
-        prule.maxAmount = fyo.pesa(prule.maxAmount);
+      if (typeof prule.minAmount === "number") prule.minAmount = fyo.pesa(prule.minAmount);
+      if (typeof prule.maxAmount === "number") prule.maxAmount = fyo.pesa(prule.maxAmount);
 
       await fyo.doc.getNewDoc(ModelNameEnum.PricingRule, prule).sync();
-      expect(
-        await fyo.db.exists(ModelNameEnum.PricingRule, pricingRule.name),
-      ).toBe(true);
+      expect(await fyo.db.exists(ModelNameEnum.PricingRule, pricingRule.name)).toBe(true);
     }
 
     await fyo.singles.AccountingSettings?.setAndSync("enablePricingRule", true);
@@ -171,15 +161,11 @@ describe("Coupon Codes", () => {
     // Create Coupon Codes
     for (const couponCode of Object.values(couponCodesMap)) {
       const ccode: any = { ...couponCode };
-      if (typeof ccode.minAmount === "number")
-        ccode.minAmount = fyo.pesa(ccode.minAmount);
-      if (typeof ccode.maxAmount === "number")
-        ccode.maxAmount = fyo.pesa(ccode.maxAmount);
+      if (typeof ccode.minAmount === "number") ccode.minAmount = fyo.pesa(ccode.minAmount);
+      if (typeof ccode.maxAmount === "number") ccode.maxAmount = fyo.pesa(ccode.maxAmount);
 
       await fyo.doc.getNewDoc(ModelNameEnum.CouponCode, ccode).sync();
-      expect(
-        await fyo.db.exists(ModelNameEnum.CouponCode, couponCode.name),
-      ).toBe(true);
+      expect(await fyo.db.exists(ModelNameEnum.CouponCode, couponCode.name)).toBe(true);
     }
 
     await fyo.singles.AccountingSettings?.setAndSync("enableCouponCode", true);
@@ -188,10 +174,7 @@ describe("Coupon Codes", () => {
 
   test("disabled coupon codes is not applied", async () => {
     // First disable the coupon
-    const ccode = await fyo.doc.getDoc(
-      ModelNameEnum.CouponCode,
-      couponCodesMap[0].name,
-    );
+    const ccode = await fyo.doc.getDoc(ModelNameEnum.CouponCode, couponCodesMap[0].name);
     await ccode.setAndSync("isEnabled", false);
 
     const sinv = fyo.doc.getNewDoc(ModelNameEnum.SalesInvoice, {
@@ -248,9 +231,7 @@ describe("Coupon Codes", () => {
     await sinv.runFormulas();
 
     expect(sinv.pricingRuleDetail?.length).toBe(1);
-    expect(sinv.pricingRuleDetail![0].referenceName).toBe(
-      pricingRuleMap[0].name,
-    );
+    expect(sinv.pricingRuleDetail![0].referenceName).toBe(pricingRuleMap[0].name);
   });
 
   test("Coupon not applied: incorrect items added.", async () => {

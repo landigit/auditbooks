@@ -10,9 +10,7 @@ import { Payment } from "../Payment/Payment";
 
 export class PaymentFor extends Doc {
   declare parentdoc?: Payment | undefined;
-  declare referenceType?:
-    | ModelNameEnum.SalesInvoice
-    | ModelNameEnum.PurchaseInvoice;
+  declare referenceType?: ModelNameEnum.SalesInvoice | ModelNameEnum.PurchaseInvoice;
   declare referenceName?: string;
   declare amount?: Money;
 
@@ -41,10 +39,7 @@ export class PaymentFor extends Doc {
           return this.referenceName;
         }
 
-        const exists = await this.fyo.db.exists(
-          this.referenceType,
-          this.referenceName,
-        );
+        const exists = await this.fyo.db.exists(this.referenceType, this.referenceName);
 
         if (!exists) {
           return null;
@@ -78,9 +73,7 @@ export class PaymentFor extends Doc {
 
   static filters: FiltersMap = {
     referenceName: (doc) => {
-      const zero =
-        "0." +
-        "0".repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11);
+      const zero = "0." + "0".repeat(doc.fyo.singles.SystemSettings?.internalPrecision ?? 11);
 
       const baseFilters = {
         outstandingAmount: ["!=", zero],
@@ -99,10 +92,7 @@ export class PaymentFor extends Doc {
 
   validations: ValidationMap = {
     referenceName: async (value: DocValue) => {
-      const exists = await this.fyo.db.exists(
-        this.referenceType!,
-        value as string,
-      );
+      const exists = await this.fyo.db.exists(this.referenceType!, value as string);
       if (exists) {
         return;
       }
@@ -110,10 +100,7 @@ export class PaymentFor extends Doc {
       const referenceType = this.referenceType ?? ModelNameEnum.SalesInvoice;
       const label = this.fyo.schemaMap[referenceType]?.label ?? referenceType;
 
-      throw new NotFoundError(
-        t`${label} ${value as string} does not exist`,
-        false,
-      );
+      throw new NotFoundError(t`${label} ${value as string} does not exist`, false);
     },
   };
 }

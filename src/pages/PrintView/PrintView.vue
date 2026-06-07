@@ -44,23 +44,14 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Print View</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  onMounted,
-  onActivated,
-  onUnmounted,
-  onDeactivated,
-} from "vue";
+import { ref, computed, onMounted, onActivated, onUnmounted, onDeactivated } from "vue";
 import { Doc } from "fyo/model/doc";
 import { Action } from "fyo/model/types";
 import { PrintTemplate } from "models/baseModels/PrintTemplate";
@@ -154,10 +145,7 @@ const actions = computed<Action[]>(() => {
       label: templateDocName,
       group: t`View`,
       action: async () => {
-        const route = getFormRoute(
-          ModelNameEnum.PrintTemplate,
-          templateDocName,
-        );
+        const route = getFormRoute(ModelNameEnum.PrintTemplate, templateDocName);
         await routeTo(route);
       },
     });
@@ -224,10 +212,7 @@ const onTemplateNameChange = async (value: string | null) => {
 
   templateName.value = value;
   try {
-    templateDoc.value = await fyo.doc.getDoc(
-      ModelNameEnum.PrintTemplate,
-      templateName.value,
-    );
+    templateDoc.value = await fyo.doc.getDoc(ModelNameEnum.PrintTemplate, templateName.value);
   } catch (error) {
     await handleErrorWithDialog(error);
   }
@@ -244,25 +229,17 @@ const setTemplateList = async () => {
 
 const setTemplateFromDefault = async () => {
   const defaultName =
-    props.schemaName[0].toLowerCase() +
-    props.schemaName.slice(1) +
-    ModelNameEnum.PrintTemplate;
+    props.schemaName[0].toLowerCase() + props.schemaName.slice(1) + ModelNameEnum.PrintTemplate;
 
   let templateNameVal;
 
-  if (
-    props.schemaName == ModelNameEnum.SalesInvoice &&
-    (doc.value as Doc).isPOS
-  ) {
+  if (props.schemaName == ModelNameEnum.SalesInvoice && (doc.value as Doc).isPOS) {
     templateNameVal = fyo.singles.Defaults?.posPrintTemplate;
 
     const posProfileName = fyo.singles.POSSettings?.posProfile as string;
 
     if (posProfileName) {
-      const posProfile = await fyo.doc.getDoc(
-        ModelNameEnum.POSProfile,
-        posProfileName,
-      );
+      const posProfile = await fyo.doc.getDoc(ModelNameEnum.POSProfile, posProfileName);
 
       if (posProfile.posPrintTemplate) {
         templateNameVal = posProfile.posPrintTemplate;
@@ -288,9 +265,7 @@ const initialize = async () => {
   }
 
   if (doc.value) {
-    values.value = await getPrintTemplatePropValues(
-      doc.value as unknown as Doc,
-    );
+    values.value = await getPrintTemplatePropValues(doc.value as unknown as Doc);
   }
 };
 

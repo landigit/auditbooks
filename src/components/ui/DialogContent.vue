@@ -10,9 +10,7 @@ import {
 } from "reka-ui";
 import { cn } from "src/utils/cn";
 
-const props = defineProps<
-  DialogContentProps & { class?: HTMLAttributes["class"] }
->();
+const props = defineProps<DialogContentProps & { class?: HTMLAttributes["class"] }>();
 const emits = defineEmits<DialogContentEmits>();
 
 const delegatedProps = computed(() => {
@@ -25,9 +23,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
 <template>
   <DialogPortal>
-    <DialogOverlay
-      class="fixed inset-0 z-50 bg-[var(--color-backdrop)] dialog-overlay"
-    />
+    <DialogOverlay class="fixed inset-0 z-50 bg-[var(--color-backdrop)] dialog-overlay" />
     <DialogContent
       v-bind="forwarded"
       :class="

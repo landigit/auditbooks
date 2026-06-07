@@ -46,68 +46,44 @@ export default defineConfig({
       [normalizePath(path.resolve(__dirname, "./src/initFyo"))]: normalizePath(
         path.resolve(__dirname, "./src/initFyo-lynx.ts"),
       ),
-      [normalizePath(path.resolve(__dirname, "./src/utils/interactive"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/utils/interactive-lynx.ts"),
-        ),
-      [normalizePath(path.resolve(__dirname, "./src/pages/Desk.vue"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
-        ),
-      [normalizePath(path.resolve(__dirname, "./src/components/Dialog.vue"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
-        ),
-      [normalizePath(path.resolve(__dirname, "./src/components/Toast.vue"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
-        ),
-      [normalizePath(
-        path.resolve(__dirname, "./src/components/LucideIcon.vue"),
-      )]: normalizePath(
+      [normalizePath(path.resolve(__dirname, "./src/utils/interactive"))]: normalizePath(
+        path.resolve(__dirname, "./src/utils/interactive-lynx.ts"),
+      ),
+      [normalizePath(path.resolve(__dirname, "./src/pages/Desk.vue"))]: normalizePath(
         path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
       ),
-      [normalizePath(path.resolve(__dirname, "./src/components/Button.vue"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
-        ),
-      [normalizePath(path.resolve(__dirname, "./src/components/Modal.vue"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
-        ),
-      [normalizePath(path.resolve(__dirname, "./src/components/Loading.vue"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
-        ),
-      [normalizePath(
-        path.resolve(
-          __dirname,
-          "./src/components/Controls/LanguageSelector.vue",
-        ),
-      )]: normalizePath(
+      [normalizePath(path.resolve(__dirname, "./src/components/Dialog.vue"))]: normalizePath(
         path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
       ),
-      [normalizePath(path.resolve(__dirname, "./src/components/ui/index.ts"))]:
-        normalizePath(
-          path.resolve(__dirname, "./src/components/ui/index-mock.ts"),
-        ),
+      [normalizePath(path.resolve(__dirname, "./src/components/Toast.vue"))]: normalizePath(
+        path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
+      ),
+      [normalizePath(path.resolve(__dirname, "./src/components/LucideIcon.vue"))]: normalizePath(
+        path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
+      ),
+      [normalizePath(path.resolve(__dirname, "./src/components/Button.vue"))]: normalizePath(
+        path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
+      ),
+      [normalizePath(path.resolve(__dirname, "./src/components/Modal.vue"))]: normalizePath(
+        path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
+      ),
+      [normalizePath(path.resolve(__dirname, "./src/components/Loading.vue"))]: normalizePath(
+        path.resolve(__dirname, "./src/components/Mock-lynx.vue"),
+      ),
+      [normalizePath(path.resolve(__dirname, "./src/components/Controls/LanguageSelector.vue"))]:
+        normalizePath(path.resolve(__dirname, "./src/components/Mock-lynx.vue")),
+      [normalizePath(path.resolve(__dirname, "./src/components/ui/index.ts"))]: normalizePath(
+        path.resolve(__dirname, "./src/components/ui/index-mock.ts"),
+      ),
 
       // Standard string aliases
-      vue: normalizePath(
-        path.resolve(__dirname, "./src/utils/vue-lynx-wrapper.ts"),
-      ),
+      vue: normalizePath(path.resolve(__dirname, "./src/utils/vue-lynx-wrapper.ts")),
       "src/components/ui": normalizePath(
         path.resolve(__dirname, "./src/components/ui/index-mock.ts"),
       ),
-      "reka-ui": normalizePath(
-        path.resolve(__dirname, "./src/components/Mock-reka-ui.ts"),
-      ),
-      "src/router": normalizePath(
-        path.resolve(__dirname, "./src/router-lynx.ts"),
-      ),
-      "src/initFyo": normalizePath(
-        path.resolve(__dirname, "./src/initFyo-lynx.ts"),
-      ),
+      "reka-ui": normalizePath(path.resolve(__dirname, "./src/components/Mock-reka-ui.ts")),
+      "src/router": normalizePath(path.resolve(__dirname, "./src/router-lynx.ts")),
+      "src/initFyo": normalizePath(path.resolve(__dirname, "./src/initFyo-lynx.ts")),
       "src/utils/interactive": normalizePath(
         path.resolve(__dirname, "./src/utils/interactive-lynx.ts"),
       ),

@@ -15,8 +15,7 @@ export default defineConfig({
     pluginVue({
       vueLoaderOptions: {
         compilerOptions: {
-          isCustomElement: (tag) =>
-            ["view", "text", "image", "scroll-view"].includes(tag),
+          isCustomElement: (tag) => ["view", "text", "image", "scroll-view"].includes(tag),
         },
       },
     }),
@@ -87,9 +86,8 @@ export default defineConfig({
       appendPlugins(
         new ProvidePlugin({
           ipc: [path.resolve(__dirname, "./src/ipc-polyfill"), "ipc"],
-        })
+        }),
       );
     },
   },
 });
-

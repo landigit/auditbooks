@@ -10,12 +10,7 @@ import { ModelNameEnum } from "models/types";
 import setupInstance from "src/setup/setupInstance";
 import { getMapFromList, safeParseInt } from "utils";
 import { getFiscalYear } from "utils/misc";
-import {
-  flow,
-  getFlowConstant,
-  getRandomDates,
-  purchaseItemPartyMap,
-} from "./helpers";
+import { flow, getFlowConstant, getRandomDates, purchaseItemPartyMap } from "./helpers";
 import items from "./items.json";
 import logo from "./logo";
 import parties from "./parties.json";
@@ -52,10 +47,7 @@ export async function setupDummyInstance(
   await generateDynamicEntries(fyo, years, baseCount, notifier);
   await setOtherSettings(fyo);
 
-  const instanceId = (await fyo.getValue(
-    ModelNameEnum.SystemSettings,
-    "instanceId",
-  )) as string;
+  const instanceId = (await fyo.getValue(ModelNameEnum.SystemSettings, "instanceId")) as string;
   await fyo.singles.SystemSettings?.setAndSync("hideGetStarted", true);
 
   fyo.skipTelemetryLogging = false;
@@ -231,12 +223,7 @@ function getSalesInvoiceDates(years: number, baseCount: number): Date[] {
   return dates;
 }
 
-async function getSalesInvoices(
-  fyo: Fyo,
-  years: number,
-  baseCount: number,
-  notifier?: Notifier,
-) {
+async function getSalesInvoices(fyo: Fyo, years: number, baseCount: number, notifier?: Notifier) {
   const invoices: SalesInvoice[] = [];
   const salesItems = items.filter((i) => i.for !== "Purchases");
   const customers = parties.filter((i) => i.role !== "Supplier");
@@ -258,10 +245,7 @@ async function getSalesInvoices(
       `Creating Sales Invoices, ${d} out of ${dates.length}`,
       safeParseInt(d) / dates.length,
     );
-    const customer = Reflect.get(
-      customers,
-      Math.floor(Math.random() * customers.length),
-    );
+    const customer = Reflect.get(customers, Math.floor(Math.random() * customers.length));
 
     const doc = fyo.doc.getNewDoc(
       ModelNameEnum.SalesInvoice,
@@ -280,10 +264,7 @@ async function getSalesInvoices(
      */
     const numItems = Math.ceil(Math.random() * 5);
     for (let i = 0; i < numItems; i++) {
-      const item = Reflect.get(
-        salesItems,
-        Math.floor(Math.random() * salesItems.length),
-      );
+      const item = Reflect.get(salesItems, Math.floor(Math.random() * salesItems.length));
       if ((doc.items ?? []).find((i) => i.item === item.name)) {
         continue;
       }
@@ -387,8 +368,7 @@ async function getSalesPurchaseInvoices(
           Reflect.set(
             acc,
             item.item as string,
-            (Reflect.get(acc, item.item as string) as number) +
-              (item.quantity as number),
+            (Reflect.get(acc, item.item as string) as number) + (item.quantity as number),
           );
         }
 
@@ -402,8 +382,7 @@ async function getSalesPurchaseInvoices(
      */
     Object.keys(itemGrouped).forEach((name) => {
       const quantity = Reflect.get(itemGrouped, name);
-      if (Reflect.get(purchaseQty, name) == null)
-        Reflect.set(purchaseQty, name, 0);
+      if (Reflect.get(purchaseQty, name) == null) Reflect.set(purchaseQty, name, 0);
       let prevQty = Reflect.get(purchaseQty, name) as number;
 
       if (prevQty <= quantity) {
@@ -458,10 +437,7 @@ async function getSalesPurchaseInvoices(
   return invoices;
 }
 
-async function getNonSalesPurchaseInvoices(
-  fyo: Fyo,
-  years: number,
-): Promise<PurchaseInvoice[]> {
+async function getNonSalesPurchaseInvoices(fyo: Fyo, years: number): Promise<PurchaseInvoice[]> {
   const purchaseItems = items.filter((i) => i.for !== "Sales");
   const itemMap = getMapFromList(purchaseItems, "name");
   const periodic: Record<string, number> = {

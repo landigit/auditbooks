@@ -1,9 +1,6 @@
 <template>
   <view style="min-width: 192px; max-width: 300px">
-    <view
-      class="p-2 flex justify-between"
-      :class="values.length ? 'border-b border-border' : ''"
-    >
+    <view class="p-2 flex justify-between" :class="values.length ? 'border-b border-border' : ''">
       <text
         v-if="schema?.naming !== 'random' && !schema?.isChild"
         class="font-semibold text-base text-main"

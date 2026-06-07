@@ -26,9 +26,7 @@ const props = withDefaults(
 );
 
 const lightColor = computed(() => {
-  return props.active
-    ? "var(--icon-light-active)"
-    : "var(--icon-light-passive)";
+  return props.active ? "var(--icon-light-active)" : "var(--icon-light-passive)";
 });
 
 const darkColor = computed(() => {

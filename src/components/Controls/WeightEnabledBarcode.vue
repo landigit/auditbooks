@@ -66,10 +66,7 @@ async function selectItem(code: string) {
   const itemCodeDigits = fyo.singles.POSSettings?.itemCodeDigits as number;
   const itemWeightDigits = fyo.singles.POSSettings?.itemWeightDigits as number;
 
-  if (
-    cleanBarcode.length !==
-    checkDigitsStr.length + itemCodeDigits + itemWeightDigits
-  ) {
+  if (cleanBarcode.length !== checkDigitsStr.length + itemCodeDigits + itemWeightDigits) {
     return error(t`Barcode ${cleanBarcode} has an invalid length.`);
   }
 
@@ -78,10 +75,7 @@ async function selectItem(code: string) {
   }
 
   const filters: Record<string, string> = {
-    itemCode: cleanBarcode.slice(
-      checkDigitsStr.length,
-      checkDigitsStr.length + itemCodeDigits,
-    ),
+    itemCode: cleanBarcode.slice(checkDigitsStr.length, checkDigitsStr.length + itemCodeDigits),
   };
 
   const fields = ["name", "unit"];
@@ -94,11 +88,7 @@ async function selectItem(code: string) {
   }
 
   const quantity = isWeightEnabled
-    ? parseBarcode(
-        cleanBarcode,
-        unit as string,
-        checkDigitsStr.length + itemCodeDigits,
-      )
+    ? parseBarcode(cleanBarcode, unit as string, checkDigitsStr.length + itemCodeDigits)
     : 1;
 
   success(t`${name as string} quantity ${quantity} added.`);

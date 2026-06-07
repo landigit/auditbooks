@@ -24,15 +24,9 @@ export abstract class LedgerReport extends Report {
   _setObservers() {
     const listener = () => (this.shouldRefresh = true);
 
-    this.fyo.doc.observer.on(
-      `sync:${ModelNameEnum.AccountingLedgerEntry}`,
-      listener,
-    );
+    this.fyo.doc.observer.on(`sync:${ModelNameEnum.AccountingLedgerEntry}`, listener);
 
-    this.fyo.doc.observer.on(
-      `delete:${ModelNameEnum.AccountingLedgerEntry}`,
-      listener,
-    );
+    this.fyo.doc.observer.on(`delete:${ModelNameEnum.AccountingLedgerEntry}`, listener);
   }
 
   _getGroupByKey() {
@@ -90,15 +84,12 @@ export abstract class LedgerReport extends Report {
     ];
 
     const filters = await this._getQueryFilters();
-    const entries = (await this.fyo.db.getAllRaw(
-      ModelNameEnum.AccountingLedgerEntry,
-      {
-        fields,
-        filters,
-        orderBy: ["date", "created"],
-        order: this.ascending ? "asc" : "desc",
-      },
-    )) as RawLedgerEntry[];
+    const entries = (await this.fyo.db.getAllRaw(ModelNameEnum.AccountingLedgerEntry, {
+      fields,
+      filters,
+      orderBy: ["date", "created"],
+      order: this.ascending ? "asc" : "desc",
+    })) as RawLedgerEntry[];
 
     this._rawData = entries.map((entry) => {
       return {

@@ -4,11 +4,7 @@
 import { t } from "fyo";
 import { Doc } from "fyo/model/doc";
 import { isPesa } from "fyo/utils";
-import {
-  BaseError,
-  DuplicateEntryError,
-  LinkValidationError,
-} from "fyo/utils/errors";
+import { BaseError, DuplicateEntryError, LinkValidationError } from "fyo/utils/errors";
 import { Field, FieldType, FieldTypeEnum, NumberField } from "schemas/types";
 import { fyo } from "src/initFyo";
 import { safeGet, safeSet } from "utils/index";
@@ -29,8 +25,7 @@ export function stringifyCircular(
     }
 
     if (cacheValue.includes(value)) {
-      const circularKey: string =
-        cacheKey[cacheValue.indexOf(value)] || "{self}";
+      const circularKey: string = cacheKey[cacheValue.indexOf(value)] || "{self}";
       return ignoreCircular ? undefined : `[Circular:${circularKey}]`;
     }
 
@@ -110,9 +105,7 @@ export function getErrorMessage(e: Error, doc?: Doc): string {
   return errorMessage;
 }
 
-export function isNumeric(
-  fieldtype: FieldType,
-): fieldtype is NumberField["fieldtype"];
+export function isNumeric(fieldtype: FieldType): fieldtype is NumberField["fieldtype"];
 export function isNumeric(fieldtype: Field): fieldtype is NumberField;
 export function isNumeric(
   fieldtype: Field | FieldType,
@@ -130,10 +123,7 @@ export function isNumeric(
   return numericTypes.includes(fieldtype);
 }
 
-export function truncate(
-  str: string,
-  options: { length: number; omission?: string },
-): string {
+export function truncate(str: string, options: { length: number; omission?: string }): string {
   const { length, omission = "..." } = options;
   if (str.length <= length) {
     return str;

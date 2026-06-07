@@ -20,10 +20,7 @@ function getFetch(): typeof fetch {
   if (typeof fetch === "function") {
     return fetch;
   }
-  if (
-    typeof globalThis !== "undefined" &&
-    typeof globalThis.fetch === "function"
-  ) {
+  if (typeof globalThis !== "undefined" && typeof globalThis.fetch === "function") {
     return globalThis.fetch;
   }
   if (typeof window !== "undefined" && typeof window.fetch === "function") {
@@ -55,10 +52,7 @@ async function callBackend(action: string, args: unknown[] = []): Promise<any> {
   }
 }
 
-async function callBackendWrapped(
-  action: string,
-  args: unknown[] = [],
-): Promise<any> {
+async function callBackendWrapped(action: string, args: unknown[] = []): Promise<any> {
   try {
     const response = await getFetch()(BACKEND_URL, {
       method: "POST",
@@ -108,10 +102,7 @@ const storeInstance = {
       console.error("[Lynx IPC] Failed to load configurations:", err);
     }
   },
-  get<K extends keyof ConfigMap>(
-    key: K,
-    defaultValue?: ConfigMap[K],
-  ): ConfigMap[K] | undefined {
+  get<K extends keyof ConfigMap>(key: K, defaultValue?: ConfigMap[K]): ConfigMap[K] | undefined {
     const val = configStore[`config:${key}`];
     if (val === undefined) return defaultValue;
     return val;
@@ -127,10 +118,7 @@ const storeInstance = {
     const storeKey = `config:${key}`;
     delete configStore[storeKey];
     callBackend(IPC_ACTIONS.STORE_DELETE, [storeKey]).catch((err) => {
-      console.error(
-        `[Lynx IPC] Failed to persist config delete for ${key}:`,
-        err,
-      );
+      console.error(`[Lynx IPC] Failed to persist config delete for ${key}:`, err);
     });
   },
 };
@@ -138,9 +126,7 @@ const storeInstance = {
 export const lynxIpc: IPC = {
   desktop: false,
   reloadWindow() {
-    console.warn(
-      "[Lynx IPC] reloadWindow: window reloading is not supported in native Lynx.",
-    );
+    console.warn("[Lynx IPC] reloadWindow: window reloading is not supported in native Lynx.");
   },
   minimizeWindow() {
     console.log("[Lynx IPC] minimizeWindow (stub)");
@@ -175,21 +161,13 @@ export const lynxIpc: IPC = {
   async selectFile(options: SelectFileOptions): Promise<SelectFileReturn> {
     return callBackend(IPC_ACTIONS.SELECT_FILE, [options]);
   },
-  async getSaveFilePath(
-    options: any,
-  ): Promise<{ canceled: boolean; filePath?: string }> {
+  async getSaveFilePath(options: any): Promise<{ canceled: boolean; filePath?: string }> {
     const defaultPath = options?.defaultPath || "saved_file.db";
-    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [
-      defaultPath,
-    ]);
+    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [defaultPath]);
     return { canceled: false, filePath: resolvedPath };
   },
-  async getOpenFilePath(
-    options: any,
-  ): Promise<{ canceled: boolean; filePaths: string[] }> {
-    const response = await callBackend(IPC_ACTIONS.GET_OPEN_FILEPATH, [
-      options,
-    ]);
+  async getOpenFilePath(options: any): Promise<{ canceled: boolean; filePaths: string[] }> {
+    const response = await callBackend(IPC_ACTIONS.GET_OPEN_FILEPATH, [options]);
     return { canceled: response.canceled, filePaths: response.filePaths };
   },
   async checkDbAccess(filePath: string): Promise<boolean> {
@@ -210,25 +188,11 @@ export const lynxIpc: IPC = {
   showItemInFolder(filePath: string) {
     console.log("[Lynx IPC] showItemInFolder (stub):", filePath);
   },
-  async makePDF(
-    html: string,
-    savePath: string,
-    width: number,
-    height: number,
-  ): Promise<boolean> {
-    await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [
-      html,
-      savePath,
-      width,
-      height,
-    ]);
+  async makePDF(html: string, savePath: string, width: number, height: number): Promise<boolean> {
+    await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [html, savePath, width, height]);
     return true;
   },
-  async printDocument(
-    _html: string,
-    _width: number,
-    _height: number,
-  ): Promise<boolean> {
+  async printDocument(_html: string, _width: number, _height: number): Promise<boolean> {
     console.warn(
       "[Lynx IPC] printDocument: direct document printing is not supported in native Lynx.",
     );
@@ -263,9 +227,7 @@ export const lynxIpc: IPC = {
   async sendAPIRequest(
     endpoint: string,
     options: RequestInit | undefined,
-  ): Promise<
-    { [key: string]: string | number | boolean | Date | object | object[] }[]
-  > {
+  ): Promise<{ [key: string]: string | number | boolean | Date | object | object[] }[]> {
     return callBackend(IPC_ACTIONS.SEND_API_REQUEST, [endpoint, options]);
   },
 
@@ -284,28 +246,16 @@ export const lynxIpc: IPC = {
     async getSchema(): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_SCHEMA);
     },
-    async create(
-      dbPath: string,
-      countryCode?: string,
-    ): Promise<BackendResponse> {
+    async create(dbPath: string, countryCode?: string): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_CREATE, [dbPath, countryCode]);
     },
-    async connect(
-      dbPath: string,
-      countryCode?: string,
-    ): Promise<BackendResponse> {
+    async connect(dbPath: string, countryCode?: string): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_CONNECT, [dbPath, countryCode]);
     },
-    async call(
-      method: DatabaseMethod,
-      ...args: unknown[]
-    ): Promise<BackendResponse> {
+    async call(method: DatabaseMethod, ...args: unknown[]): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_CALL, [method, ...args]);
     },
-    async bespoke(
-      method: string,
-      ...args: unknown[]
-    ): Promise<BackendResponse> {
+    async bespoke(method: string, ...args: unknown[]): Promise<BackendResponse> {
       return callBackendWrapped(IPC_ACTIONS.DB_BESPOKE, [method, ...args]);
     },
   },

@@ -3,24 +3,16 @@
   <header class="bg-gray-100 px-12 py-10">
     <!-- Company Details -->
     <section class="flex items-center">
-      <img
-        v-if="print.displayLogo"
-        class="h-12 max-w-32 object-contain mr-4"
-        :src="print.logo"
-      />
+      <img v-if="print.displayLogo" class="h-12 max-w-32 object-contain mr-4" :src="print.logo" />
 
       <div>
-        <p class="font-semibold text-xl" :style="{ color: print.color }">
-          {{ print.companyName }}
-        </p>
+        <p class="font-semibold text-xl" :style="{ color: print.color }">{{ print.companyName }}</p>
 
         <p class="text-sm text-gray-800" v-if="print.address">
           {{ print.links.address.addressDisplay }}
         </p>
 
-        <p class="text-sm text-gray-800" v-if="print.gstin">
-          GSTIN: {{ print.gstin }}
-        </p>
+        <p class="text-sm text-gray-800" v-if="print.gstin">GSTIN: {{ print.gstin }}</p>
       </div>
     </section>
 
@@ -46,9 +38,7 @@
         <div class="w-2/3 text-gray-800" v-if="doc.party">
           <p class="font-semibold">{{ doc.party }}</p>
 
-          <p v-if="doc.links.party.address">
-            {{ doc.links.party.links.address.addressDisplay }}
-          </p>
+          <p v-if="doc.links.party.address">{{ doc.links.party.links.address.addressDisplay }}</p>
 
           <p v-if="doc.links.party.gstin">GSTIN: {{ doc.links.party.gstin }}</p>
         </div>
@@ -65,22 +55,14 @@
 
       <div class="col-span-2 row-start-2 font-bold">{{t`Payment Method`}}</div>
       <div class="col-start-3 row-start-2">:</div>
-      <div class="col-span-4 col-start-4 row-start-2">
-        {{ doc.paymentMethod }}
-      </div>
+      <div class="col-span-4 col-start-4 row-start-2">{{ doc.paymentMethod }}</div>
     </div>
   </section>
 
   <section class="w-1/2 px-12 pb-6 text-lg" v-if="doc.taxes.length">
-    <p class="flex justify-center font-semibold text-lg mt-2">
-      {{t`Tax Summary`}}
-    </p>
+    <p class="flex justify-center font-semibold text-lg mt-2">{{t`Tax Summary`}}</p>
 
-    <div
-      class="flex justify-between pl-5 text-base"
-      v-for="tax in doc?.taxes"
-      :key="tax.name"
-    >
+    <div class="flex justify-between pl-5 text-base" v-for="tax in doc?.taxes" :key="tax.name">
       <p>{{ tax.account }}</p>
       <p>{{ tax.amount }}</p>
     </div>
@@ -124,14 +106,9 @@
     </section>
 
     <!-- Terms and Conditions -->
-    <section
-      class="mt-12"
-      v-if="print.displaytermsandconditions && print.termsAndConditions"
-    >
+    <section class="mt-12" v-if="print.displaytermsandconditions && print.termsAndConditions">
       <h3 class="text-lg font-semibold">{{t`Terms and Conditions`}}</h3>
-      <p class="mt-4 text-lg whitespace-pre-line">
-        {{ print.termsAndConditions }}
-      </p>
+      <p class="mt-4 text-lg whitespace-pre-line">{{ print.termsAndConditions }}</p>
     </section>
   </footer>
 </main>

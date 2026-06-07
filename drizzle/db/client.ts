@@ -19,10 +19,7 @@ if (process.env.NODE_ENV !== "test" && !process.env.VITEST) {
     client.run("PRAGMA journal_mode=WAL");
     client.run("PRAGMA synchronous=NORMAL");
   } catch (err) {
-    console.error(
-      "Failed to configure SQLite client optimization pragmas:",
-      err,
-    );
+    console.error("Failed to configure SQLite client optimization pragmas:", err);
   }
 }
 
@@ -36,20 +33,14 @@ export * as schema from "./schema";
 export * as relations from "./relations";
 
 // Core Inferred Database Row Models
-export type AccountingLedgerEntry = InferSelectModel<
-  typeof schema.accountingLedgerEntry
->;
-export type NewAccountingLedgerEntry = InferInsertModel<
-  typeof schema.accountingLedgerEntry
->;
+export type AccountingLedgerEntry = InferSelectModel<typeof schema.accountingLedgerEntry>;
+export type NewAccountingLedgerEntry = InferInsertModel<typeof schema.accountingLedgerEntry>;
 
 export type SalesInvoice = InferSelectModel<typeof schema.salesInvoice>;
 export type NewSalesInvoice = InferInsertModel<typeof schema.salesInvoice>;
 
 export type PurchaseInvoice = InferSelectModel<typeof schema.purchaseInvoice>;
-export type NewPurchaseInvoice = InferInsertModel<
-  typeof schema.purchaseInvoice
->;
+export type NewPurchaseInvoice = InferInsertModel<typeof schema.purchaseInvoice>;
 
 export type Account = InferSelectModel<typeof schema.account>;
 export type NewAccount = InferInsertModel<typeof schema.account>;

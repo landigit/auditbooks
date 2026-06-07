@@ -61,11 +61,7 @@ export abstract class BaseGSTR extends Report {
       const reportRow: ReportRow = { cells: [] };
 
       for (const { fieldname, fieldtype, width } of this.columns) {
-        if (
-          fieldname === "__proto__" ||
-          fieldname === "constructor" ||
-          fieldname === "prototype"
-        ) {
+        if (fieldname === "__proto__" || fieldname === "constructor" || fieldname === "prototype") {
           continue;
         }
         const align = isNumeric(fieldtype) ? "right" : "left";
@@ -154,14 +150,10 @@ export abstract class BaseGSTR extends Report {
   }
 
   async getGstrRow(entryName: string): Promise<GSTRRow> {
-    const entry = (await this.fyo.doc.getDoc(
-      this.schemaName,
-      entryName,
-    )) as Invoice;
-    const gstin = (await this.fyo.getValue(
-      ModelNameEnum.AccountingSettings,
-      "gstin",
-    )) as string | null;
+    const entry = (await this.fyo.doc.getDoc(this.schemaName, entryName)) as Invoice;
+    const gstin = (await this.fyo.getValue(ModelNameEnum.AccountingSettings, "gstin")) as
+      | string
+      | null;
 
     const party = (await this.fyo.doc.getDoc("Party", entry.party)) as Party;
 
@@ -182,11 +174,7 @@ export abstract class BaseGSTR extends Report {
     let inState = false;
     if (gstin) {
       const code = gstin.slice(0, 2);
-      if (
-        code !== "__proto__" &&
-        code !== "constructor" &&
-        code !== "prototype"
-      ) {
+      if (code !== "__proto__" && code !== "constructor" && code !== "prototype") {
         inState = codeStateMap[code] === place;
       }
     }
@@ -280,11 +268,7 @@ export abstract class BaseGSTR extends Report {
         fieldname: "place",
         options: Object.keys(codeStateMap)
           .map((code) => {
-            if (
-              code === "__proto__" ||
-              code === "constructor" ||
-              code === "prototype"
-            ) {
+            if (code === "__proto__" || code === "constructor" || code === "prototype") {
               return { value: code, label: "" };
             }
             return {

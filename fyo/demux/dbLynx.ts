@@ -9,17 +9,9 @@ import type { SchemaMap } from "schemas/types";
 import type { DatabaseDemuxBase, DatabaseMethod } from "utils/db/types";
 import type { BackendResponse } from "utils/ipc/types";
 import { getSchemas } from "schemas";
-import {
-  getDefaultMetaFieldValueMap,
-  sqliteTypeMap,
-} from "utils/db/lynxHelpers";
+import { getDefaultMetaFieldValueMap, sqliteTypeMap } from "utils/db/lynxHelpers";
 import type { FieldValueMap, SingleValue } from "backend/database/types";
-import {
-  type Field,
-  FieldTypeEnum,
-  type RawValue,
-  type Schema,
-} from "schemas/types";
+import { type Field, FieldTypeEnum, type RawValue, type Schema } from "schemas/types";
 import { getRandomString } from "utils";
 
 // ============================================================================
@@ -42,19 +34,13 @@ interface NativeSqliteModule {
     onSuccess: (result: SqlResult) => void,
     onError: (msg: string) => void,
   ): void;
-  closeDatabase(
-    onSuccess: (ok: boolean) => void,
-    onError: (msg: string) => void,
-  ): void;
+  closeDatabase(onSuccess: (ok: boolean) => void, onError: (msg: string) => void): void;
   deleteDatabase(
     filename: string,
     onSuccess: (ok: boolean) => void,
     onError: (msg: string) => void,
   ): void;
-  listDatabases(
-    onSuccess: (files: string[]) => void,
-    onError: (msg: string) => void,
-  ): void;
+  listDatabases(onSuccess: (files: string[]) => void, onError: (msg: string) => void): void;
 }
 
 // ============================================================================
@@ -155,8 +141,7 @@ function getFiltersArray(filters: Record<string, unknown>) {
       }
     }
     out.push([field, operator, comparisonValue]);
-    if (Array.isArray(value) && value.length > 2)
-      out.push([field, value[2] as string, value[3]]);
+    if (Array.isArray(value) && value.length > 2) out.push([field, value[2] as string, value[3]]);
   }
   return out;
 }
@@ -213,11 +198,7 @@ class LynxDatabaseCore {
   }
 
   // -- get --
-  async get(
-    schemaName: string,
-    name = "",
-    fields?: string | string[],
-  ): Promise<FieldValueMap> {
+  async get(schemaName: string, name = "", fields?: string | string[]): Promise<FieldValueMap> {
     const schema = this.schemaMap[schemaName] as Schema | undefined;
     if (schema?.isSingle) return this.getSingle(schemaName);
     if (typeof fields === "string") fields = [fields];
@@ -228,28 +209,19 @@ class LynxDatabaseCore {
     }
     const tableFields = this.getTableFields(schemaName);
     const tableFieldNames = tableFields.map((f: any) => f.fieldname as string);
-    const nonTableFields = (fields as string[]).filter(
-      (f) => !tableFieldNames.includes(f),
-    );
+    const nonTableFields = (fields as string[]).filter((f) => !tableFieldNames.includes(f));
     const fvm: FieldValueMap = nonTableFields.length
       ? ((await this.getOne(schemaName, name, nonTableFields)) ?? {})
       : {};
-    const childFields = tableFields.filter((f: any) =>
-      (fields as string[]).includes(f.fieldname),
-    );
+    const childFields = tableFields.filter((f: any) => (fields as string[]).includes(f.fieldname));
     if (childFields.length) await this.loadChildren(name, fvm, childFields);
     return fvm;
   }
 
   // -- getAll --
-  async getAll(
-    schemaName: string,
-    options: any = {},
-  ): Promise<FieldValueMap[]> {
+  async getAll(schemaName: string, options: any = {}): Promise<FieldValueMap[]> {
     const schema = this.schemaMap[schemaName] as Schema | undefined;
-    const hasCreated = schema?.fields?.some(
-      (f: any) => f.fieldname === "created",
-    );
+    const hasCreated = schema?.fields?.some((f: any) => f.fieldname === "created");
     const {
       fields = ["name"],
       filters,
@@ -298,9 +270,7 @@ class LynxDatabaseCore {
             }
             args.push(...nonNull);
           } else if (hasNull) {
-            conditions.push(
-              sqlOp === "IN" ? `"${field}" IS NULL` : `"${field}" IS NOT NULL`,
-            );
+            conditions.push(sqlOp === "IN" ? `"${field}" IS NULL` : `"${field}" IS NOT NULL`);
           }
         } else if (val === null && (op === "=" || op === "is")) {
           conditions.push(`"${field}" IS NULL`);
@@ -339,9 +309,7 @@ class LynxDatabaseCore {
   async getSingleValues(
     ...fieldnames: ({ fieldname: string; parent?: string } | string)[]
   ): Promise<SingleValue<RawValue>> {
-    const list = fieldnames.map((f) =>
-      typeof f === "string" ? { fieldname: f } : f,
-    );
+    const list = fieldnames.map((f) => (typeof f === "string" ? { fieldname: f } : f));
     const conditions: string[] = [];
     const args: unknown[] = [];
     for (const { fieldname, parent } of list) {
@@ -365,15 +333,11 @@ class LynxDatabaseCore {
   }
 
   // -- rename --
-  async rename(
-    schemaName: string,
-    oldName: string,
-    newName: string,
-  ): Promise<void> {
-    await this.client.execute(
-      `UPDATE "${schemaName}" SET "name" = ? WHERE "name" = ?`,
-      [newName, oldName],
-    );
+  async rename(schemaName: string, oldName: string, newName: string): Promise<void> {
+    await this.client.execute(`UPDATE "${schemaName}" SET "name" = ? WHERE "name" = ?`, [
+      newName,
+      oldName,
+    ]);
   }
 
   // -- update --
@@ -398,18 +362,14 @@ class LynxDatabaseCore {
   }
 
   // -- deleteAll --
-  async deleteAll(
-    schemaName: string,
-    filters: Record<string, unknown>,
-  ): Promise<number> {
+  async deleteAll(schemaName: string, filters: Record<string, unknown>): Promise<number> {
     let sql = `DELETE FROM "${schemaName}"`;
     const args: unknown[] = [];
     if (filters && Object.keys(filters).length > 0) {
       const fa = getFiltersArray(filters);
       const conditions: string[] = [];
       for (const [field, op, val] of fa) {
-        if (val === null && (op === "=" || op === "is"))
-          conditions.push(`"${field}" IS NULL`);
+        if (val === null && (op === "=" || op === "is")) conditions.push(`"${field}" IS NULL`);
         else if (val === null) conditions.push(`"${field}" IS NOT NULL`);
         else {
           conditions.push(`"${field}" ${op} ?`);
@@ -585,15 +545,9 @@ class LynxDatabaseCore {
     const fks: string[] = [];
     for (const field of schema.fields) {
       if (field.fieldtype === FieldTypeEnum.Table || field.computed) continue;
-      const sqlType =
-        this.typeMap[field.fieldtype as keyof typeof sqliteTypeMap];
+      const sqlType = this.typeMap[field.fieldtype as keyof typeof sqliteTypeMap];
       if (!sqlType) continue;
-      const t =
-        sqlType === "integer"
-          ? "INTEGER"
-          : sqlType === "float"
-            ? "REAL"
-            : "TEXT";
+      const t = sqlType === "integer" ? "INTEGER" : sqlType === "float" ? "REAL" : "TEXT";
       let def = `"${field.fieldname}" ${t}`;
       if (field.fieldname === "name") {
         def += " PRIMARY KEY NOT NULL";
@@ -609,9 +563,7 @@ class LynxDatabaseCore {
       }
       columnDefs.push(def);
       if (field.fieldtype === FieldTypeEnum.Link && field.target) {
-        const target = this.schemaMap[field.target as string] as
-          | Schema
-          | undefined;
+        const target = this.schemaMap[field.target as string] as Schema | undefined;
         if (target) {
           fks.push(
             `FOREIGN KEY ("${field.fieldname}") REFERENCES "${target.name}"("name") ON UPDATE CASCADE ON DELETE RESTRICT`,
@@ -620,16 +572,13 @@ class LynxDatabaseCore {
       }
     }
     const all = [...columnDefs, ...fks].join(", ");
-    await this.client.execute(
-      `CREATE TABLE IF NOT EXISTS "${schemaName}" (${all})`,
-    );
+    await this.client.execute(`CREATE TABLE IF NOT EXISTS "${schemaName}" (${all})`);
   }
 
   private async addColumn(schemaName: string, field: Field): Promise<void> {
     const sqlType = this.typeMap[field.fieldtype as keyof typeof sqliteTypeMap];
     if (!sqlType) return;
-    const t =
-      sqlType === "integer" ? "INTEGER" : sqlType === "float" ? "REAL" : "TEXT";
+    const t = sqlType === "integer" ? "INTEGER" : sqlType === "float" ? "REAL" : "TEXT";
     let def = `ALTER TABLE "${schemaName}" ADD COLUMN "${field.fieldname}" ${t}`;
     if (field.required) def += " NOT NULL";
     if (field.default !== undefined) {
@@ -642,9 +591,7 @@ class LynxDatabaseCore {
     await this.client.execute(def);
   }
 
-  private async getColumnDiff(
-    schemaName: string,
-  ): Promise<{ added: Field[]; removed: string[] }> {
+  private async getColumnDiff(schemaName: string): Promise<{ added: Field[]; removed: string[] }> {
     const r = await this.client.execute(`PRAGMA table_info("${schemaName}")`);
     const existing = r.rows.map((row) => row.name as string);
     const schema = this.schemaMap[schemaName] as Schema | undefined;
@@ -693,15 +640,10 @@ class LynxDatabaseCore {
 
   private getTableFields(schemaName: string): Field[] {
     const schema = this.schemaMap[schemaName] as Schema | undefined;
-    return (schema?.fields ?? []).filter(
-      (f: any) => f.fieldtype === FieldTypeEnum.Table,
-    );
+    return (schema?.fields ?? []).filter((f: any) => f.fieldtype === FieldTypeEnum.Table);
   }
 
-  private async insertOne(
-    schemaName: string,
-    fvm: FieldValueMap,
-  ): Promise<void> {
+  private async insertOne(schemaName: string, fvm: FieldValueMap): Promise<void> {
     const schema = this.schemaMap[schemaName] as Schema | undefined;
     const cols = (schema?.fields ?? [])
       .filter(
@@ -720,10 +662,7 @@ class LynxDatabaseCore {
     );
   }
 
-  private async updateOne(
-    schemaName: string,
-    fvm: FieldValueMap,
-  ): Promise<void> {
+  private async updateOne(schemaName: string, fvm: FieldValueMap): Promise<void> {
     const schema = this.schemaMap[schemaName] as Schema | undefined;
     const cols = (schema?.fields ?? [])
       .filter(
@@ -737,10 +676,10 @@ class LynxDatabaseCore {
       .filter((c) => fvm[c] !== undefined);
     if (!cols.length) return;
     const set = cols.map((c) => `"${c}" = ?`).join(", ");
-    await this.client.execute(
-      `UPDATE "${schemaName}" SET ${set} WHERE "name" = ?`,
-      [...cols.map((c) => fvm[c] ?? null), fvm.name],
-    );
+    await this.client.execute(`UPDATE "${schemaName}" SET ${set} WHERE "name" = ?`, [
+      ...cols.map((c) => fvm[c] ?? null),
+      fvm.name,
+    ]);
   }
 
   private async getOne(
@@ -757,19 +696,11 @@ class LynxDatabaseCore {
   }
 
   private async deleteOne(schemaName: string, name: string): Promise<void> {
-    await this.client.execute(`DELETE FROM "${schemaName}" WHERE "name" = ?`, [
-      name,
-    ]);
+    await this.client.execute(`DELETE FROM "${schemaName}" WHERE "name" = ?`, [name]);
   }
 
-  private async deleteChildren(
-    childSchema: string,
-    parentName: string,
-  ): Promise<void> {
-    await this.client.execute(
-      `DELETE FROM "${childSchema}" WHERE "parent" = ?`,
-      [parentName],
-    );
+  private async deleteChildren(childSchema: string, parentName: string): Promise<void> {
+    await this.client.execute(`DELETE FROM "${childSchema}" WHERE "parent" = ?`, [parentName]);
   }
 
   private async getSingle(schemaName: string): Promise<FieldValueMap> {
@@ -778,15 +709,11 @@ class LynxDatabaseCore {
       [schemaName],
     );
     const out: FieldValueMap = {};
-    for (const row of r.rows)
-      out[row.fieldname as string] = row.value as RawValue;
+    for (const row of r.rows) out[row.fieldname as string] = row.value as RawValue;
     return out;
   }
 
-  private async updateSingleValues(
-    schemaName: string,
-    fvm: FieldValueMap,
-  ): Promise<void> {
+  private async updateSingleValues(schemaName: string, fvm: FieldValueMap): Promise<void> {
     const meta = getDefaultMetaFieldValueMap();
     for (const [fieldname, value] of Object.entries(fvm)) {
       const ex = await this.client.execute(
@@ -820,9 +747,7 @@ class LynxDatabaseCore {
   }
 
   private async deleteSingle(schemaName: string): Promise<void> {
-    await this.client.execute(`DELETE FROM "SingleValue" WHERE "parent" = ?`, [
-      schemaName,
-    ]);
+    await this.client.execute(`DELETE FROM "SingleValue" WHERE "parent" = ?`, [schemaName]);
   }
 
   private async loadChildren(
@@ -846,8 +771,7 @@ class LynxDatabaseCore {
   ): Promise<void> {
     for (const tf of this.getTableFields(schemaName)) {
       const children = (fvm[(tf as any).fieldname] as FieldValueMap[]) ?? [];
-      if (isUpdate)
-        await this.deleteChildren((tf as any).target, fvm.name as string);
+      if (isUpdate) await this.deleteChildren((tf as any).target, fvm.name as string);
       for (const child of children) {
         await this.insertOne((tf as any).target, {
           ...child,
@@ -880,18 +804,12 @@ export class LynxDemux implements DatabaseDemuxBase {
     return this.ipcCall<SchemaMap>(() => ipc.db.getSchema());
   }
 
-  async createNewDatabase(
-    dbPath: string,
-    countryCode?: string,
-  ): Promise<string> {
+  async createNewDatabase(dbPath: string, countryCode?: string): Promise<string> {
     if (this.isNative) return this.openOrCreate(dbPath, countryCode ?? "in");
     return this.ipcCall<string>(() => ipc.db.create(dbPath, countryCode));
   }
 
-  async connectToDatabase(
-    dbPath: string,
-    countryCode?: string,
-  ): Promise<string> {
+  async connectToDatabase(dbPath: string, countryCode?: string): Promise<string> {
     if (this.isNative) return this.openOrCreate(dbPath, countryCode);
     return this.ipcCall<string>(() => ipc.db.connect(dbPath, countryCode));
   }
@@ -912,10 +830,7 @@ export class LynxDemux implements DatabaseDemuxBase {
 
   // ---- Private helpers ----
 
-  private async openOrCreate(
-    dbPath: string,
-    countryCode = "in",
-  ): Promise<string> {
+  private async openOrCreate(dbPath: string, countryCode = "in"): Promise<string> {
     const filename = dbPath.split(/[\\/]/).pop() ?? dbPath;
     const client = new NativeSqliteClient(this.mod!);
     await client.open(filename);

@@ -8,11 +8,7 @@
       :show-overflow="true"
       class="mx-auto shadow-lg"
     >
-      <ErrorBoundary
-        v-if="!error"
-        :propagate="false"
-        @error-captured="handleErrorCaptured"
-      >
+      <ErrorBoundary v-if="!error" :propagate="false" @error-captured="handleErrorCaptured">
         <!-- Template -->
         <component
           :is="templateComponent"
@@ -23,17 +19,12 @@
       </ErrorBoundary>
 
       <!-- Compilation Error -->
-      <view
-        v-else
-        class="h-full bg-indicator-red-bg w-full text-2xl text-main flex flex-col gap-4"
-      >
+      <view v-else class="h-full bg-indicator-red-bg w-full text-2xl text-main flex flex-col gap-4">
         <text class="text-4xl font-bold text-error p-4 border-b border-error">
           {{ error.name }}
         </text>
         <text class="px-4 font-semibold">{{ error.message }}</text>
-        <pre v-if="error.detail" class="px-4 text-xl text-description">{{
-          error.detail
-        }}</pre>
+        <pre v-if="error.detail" class="px-4 text-xl text-description">{{ error.detail }}</pre>
       </view>
     </ScaledContainer>
   </view>
@@ -41,9 +32,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Print Container</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>
@@ -93,9 +82,7 @@ const props = withDefaults(
 const scaledContainer = ref<InstanceType<typeof ScaledContainer> | null>(null);
 
 // Reactive State
-const error = ref<{ name: string; message: string; detail?: string } | null>(
-  null,
-);
+const error = ref<{ name: string; message: string; detail?: string } | null>(null);
 
 // Computed Properties
 const templateComponent = computed(() => {

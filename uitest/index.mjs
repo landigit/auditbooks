@@ -27,12 +27,8 @@ const appSourcePath = path.join(root, "dist_electron", "build", "main.js");
     const changeDb = window.getByTestId("change-db");
     const createNew = window.getByTestId("create-new-file");
 
-    const changeDbPromise = changeDb
-      .waitFor({ state: "visible" })
-      .then(() => "change-db");
-    const createNewPromise = createNew
-      .waitFor({ state: "visible" })
-      .then(() => "create-new-file");
+    const changeDbPromise = changeDb.waitFor({ state: "visible" }).then(() => "change-db");
+    const createNewPromise = createNew.waitFor({ state: "visible" }).then(() => "create-new-file");
 
     const el = await Promise.race([changeDbPromise, createNewPromise]);
     if (el === "change-db") {

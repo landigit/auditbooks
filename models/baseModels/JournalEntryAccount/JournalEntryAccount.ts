@@ -16,11 +16,7 @@ export class JournalEntryAccount extends Doc {
     }
 
     const totalType = this.parentdoc!.getSum("accounts", type, false) as Money;
-    const totalOtherType = this.parentdoc!.getSum(
-      "accounts",
-      otherType,
-      false,
-    ) as Money;
+    const totalOtherType = this.parentdoc!.getSum("accounts", otherType, false) as Money;
 
     if (totalType.lt(totalOtherType)) {
       return totalOtherType.sub(totalType);

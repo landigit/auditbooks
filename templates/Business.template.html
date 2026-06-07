@@ -3,22 +3,14 @@
   <header class="bg-gray-100 px-12 py-10">
     <!-- Company Details -->
     <section class="flex items-center">
-      <img
-        v-if="print.displayLogo"
-        class="h-12 max-w-32 object-contain mr-4"
-        :src="print.logo"
-      />
+      <img v-if="print.displayLogo" class="h-12 max-w-32 object-contain mr-4" :src="print.logo" />
 
       <div>
-        <p class="font-semibold text-xl" :style="{ color: print.color }">
-          {{ print.companyName }}
-        </p>
+        <p class="font-semibold text-xl" :style="{ color: print.color }">{{ print.companyName }}</p>
         <p class="text-sm text-gray-800" v-if="print.address">
           {{ print.links.address.addressDisplay }}
         </p>
-        <p class="text-sm text-gray-800" v-if="print.gstin">
-          GSTIN: {{ print.gstin }}
-        </p>
+        <p class="text-sm text-gray-800" v-if="print.gstin">GSTIN: {{ print.gstin }}</p>
       </div>
     </section>
 
@@ -47,9 +39,7 @@
 
         <div class="w-2/3 text-gray-800" v-if="doc.party">
           <p class="font-semibold">{{ doc.party }}</p>
-          <p v-if="doc.links.party.address">
-            {{ doc.links.party.links.address.addressDisplay }}
-          </p>
+          <p v-if="doc.links.party.address">{{ doc.links.party.links.address.addressDisplay }}</p>
           <p v-if="doc.links.party.gstin">GSTIN: {{ doc.links.party.gstin }}</p>
         </div>
       </section>
@@ -69,11 +59,7 @@
     </section>
 
     <!-- Body Rows -->
-    <section
-      class="flex py-1 text-gray-800"
-      v-for="row in doc.items"
-      :key="row.name"
-    >
+    <section class="flex py-1 text-gray-800" v-for="row in doc.items" :key="row.name">
       <div class="w-3/12">{{ row.item }}</div>
       <div class="w-3/12" v-if="doc.description">{{ row.description }}</div>
       <div class="w-3/12 text-right" v-if="doc.showHSN">{{ row.hsnCode }}</div>
@@ -97,10 +83,7 @@
       </div>
 
       <!-- Discount (if applied before tax) -->
-      <div
-        class="text-right py-3"
-        v-if="doc.totalDiscount && !doc.discountAfterTax"
-      >
+      <div class="text-right py-3" v-if="doc.totalDiscount && !doc.discountAfterTax">
         <h3 class="text-gray-800">{{ t`Discount` }}</h3>
         <p class="text-xl mt-2">{{ doc.totalDiscount }}</p>
       </div>
@@ -112,19 +95,13 @@
       </div>
 
       <!-- Discount (if applied after tax) -->
-      <div
-        class="text-right py-3"
-        v-if="doc.totalDiscount && doc.discountAfterTax"
-      >
+      <div class="text-right py-3" v-if="doc.totalDiscount && doc.discountAfterTax">
         <h3 class="text-gray-800">{{ t`Discount` }}</h3>
         <p class="text-xl mt-2">{{ doc.totalDiscount }}</p>
       </div>
 
       <!-- Grand Total -->
-      <div
-        class="py-3 px-4 text-right text-white"
-        :style="{ backgroundColor: print.color }"
-      >
+      <div class="py-3 px-4 text-right text-white" :style="{ backgroundColor: print.color }">
         <h3>{{ t`Grand Total` }}</h3>
         <p class="text-2xl mt-2 font-semibold">{{ doc.grandTotal }}</p>
       </div>
@@ -142,14 +119,9 @@
     </div>
 
     <!-- Terms and Conditions -->
-    <section
-      class="mt-12"
-      v-if="print.displaytermsandconditions && print.termsAndConditions"
-    >
+    <section class="mt-12" v-if="print.displaytermsandconditions && print.termsAndConditions">
       <h3 class="text-lg font-semibold">{{t`Terms and Conditions`}}</h3>
-      <p class="mt-4 text-lg whitespace-pre-line">
-        {{ print.termsAndConditions }}
-      </p>
+      <p class="mt-4 text-lg whitespace-pre-line">{{ print.termsAndConditions }}</p>
     </section>
   </footer>
 </main>

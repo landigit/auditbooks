@@ -14,11 +14,7 @@
         :class="[config.containerBorder]"
         style="pointer-events: auto"
       >
-        <LucideIcon
-          :name="config.iconName"
-          class="w-6 h-6 me-3"
-          :class="config.iconColor"
-        />
+        <LucideIcon :name="config.iconName" class="w-6 h-6 me-3" :class="config.iconColor" />
         <view :class="actionText ? 'cursor-pointer' : ''" @tap="actionClicked">
           <text class="text-base">{{ message }}</text>
           <view v-if="actionText" class="text-sm text-muted hover:text-main">

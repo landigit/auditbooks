@@ -35,21 +35,11 @@
     </PageHeader>
 
     <!-- Template Builder Body -->
-    <view
-      v-if="doc"
-      class="w-full bg-canvas-muted grid"
-      :style="templateBuilderBodyStyles"
-    >
+    <view v-if="doc" class="w-full bg-canvas-muted grid" :style="templateBuilderBodyStyles">
       <!-- Template Display Area -->
-      <view
-        class="overflow-auto no-scrollbar flex flex-col"
-        :style="templateDisplayStyles"
-      >
+      <view class="overflow-auto no-scrollbar flex flex-col" :style="templateDisplayStyles">
         <!-- Template Container -->
-        <view
-          v-if="canDisplayPreview"
-          class="p-4 overflow-auto custom-scroll custom-scroll-thumb1"
-        >
+        <view v-if="canDisplayPreview" class="p-4 overflow-auto custom-scroll custom-scroll-thumb1">
           <PrintContainer
             ref="printContainer"
             :print-schema-name="displayDoc!.schemaName"
@@ -124,10 +114,7 @@
       />
 
       <!-- Template Panel -->
-      <view
-        class="border-l border-border bg-surface flex flex-col"
-        :style="templateDisplayStyles"
-      >
+      <view class="border-l border-border bg-surface flex flex-col" :style="templateDisplayStyles">
         <!-- Template Editor -->
         <view class="min-h-0">
           <TemplateEditor
@@ -182,18 +169,10 @@
         </view>
       </view>
     </view>
-    <Modal
-      v-if="doc"
-      :open-modal="showSizeModal"
-      @closemodal="showSizeModal = !showSizeModal"
-    >
+    <Modal v-if="doc" :open-modal="showSizeModal" @closemodal="showSizeModal = !showSizeModal">
       <SetPrintSize :doc="doc" @done="showSizeModal = !showSizeModal" />
     </Modal>
-    <Modal
-      v-if="doc"
-      :open-modal="showTypeModal"
-      @closemodal="showTypeModal = !showTypeModal"
-    >
+    <Modal v-if="doc" :open-modal="showTypeModal" @closemodal="showTypeModal = !showTypeModal">
       <SetType :doc="doc" @done="showTypeModal = !showTypeModal" />
     </Modal>
   </view>
@@ -207,9 +186,7 @@
       </view>
     </view>
     <view class="flex-1 flex flex-col items-center justify-center p-6">
-      <text class="text-sm font-semibold text-main mb-2">{{
-        doc?.name || name
-      }}</text>
+      <text class="text-sm font-semibold text-main mb-2">{{ doc?.name || name }}</text>
       <text class="text-xs text-description text-center">
         Template editing is available on Web / Desktop only.
       </text>
@@ -218,15 +195,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  onMounted,
-  onActivated,
-  onDeactivated,
-  inject,
-  provide,
-} from "vue";
+import { ref, computed, onMounted, onActivated, onDeactivated, inject, provide } from "vue";
 import { EditorView } from "codemirror";
 import { Doc } from "fyo/model/doc";
 import { ModelNameEnum } from "models/types";
@@ -434,10 +403,7 @@ const toggleShowHints = () => {
 
 const getEditModeScale = (): number => {
   const div = printContainer.value?.$el;
-  if (
-    typeof HTMLDivElement === "undefined" ||
-    !(div instanceof HTMLDivElement)
-  ) {
+  if (typeof HTMLDivElement === "undefined" || !(div instanceof HTMLDivElement)) {
     return scale.value;
   }
 
@@ -557,10 +523,7 @@ const setDoc = async () => {
     return;
   }
 
-  doc.value = await getDocFromNameIfExistsElseNew(
-    ModelNameEnum.PrintTemplate,
-    props.name,
-  );
+  doc.value = await getDocFromNameIfExistsElseNew(ModelNameEnum.PrintTemplate, props.name);
 };
 
 const setType = async (value: unknown) => {

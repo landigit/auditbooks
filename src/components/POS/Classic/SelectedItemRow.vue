@@ -185,9 +185,7 @@
         :show-label="true"
         :border="true"
         :value="row.itemDiscountAmount"
-        :read-only="
-          isDiscountsReadOnly((row.itemDiscountPercent as number) > 0)
-        "
+        :read-only="isDiscountsReadOnly((row.itemDiscountPercent as number) > 0)"
         @change="(value: number) => setItemDiscount('amount', value)"
       />
     </view>
@@ -211,10 +209,7 @@
 
     <view class=""></view>
 
-    <view
-      v-if="row.links?.item && row.links?.item.hasBatch"
-      class="pl-6 px-4 pt-6 col-span-2"
-    >
+    <view v-if="row.links?.item && row.links?.item.hasBatch" class="pl-6 px-4 pt-6 col-span-2">
       <Link
         :df="{
           fieldname: 'batch',
@@ -330,12 +325,7 @@ const hasSerialNumber = computed(
 const isReadOnly = computed(() => props.row.isFreeItem);
 
 const showAvlQuantityInBatch = computed(
-  () =>
-    !!(
-      props.row.links?.item &&
-      props.row.links?.item.hasBatch &&
-      itemVisibility.value
-    ),
+  () => !!(props.row.links?.item && props.row.links?.item.hasBatch && itemVisibility.value),
 );
 
 watch(
@@ -389,10 +379,7 @@ watch(
 watch(
   () => props.row.transferQuantity,
   async (newTransferQuantity, oldTransferQuantity) => {
-    if (
-      pendingTransferUnitChange.value &&
-      newTransferQuantity !== transferUnitChangeOldQty.value
-    ) {
+    if (pendingTransferUnitChange.value && newTransferQuantity !== transferUnitChangeOldQty.value) {
       pendingTransferUnitChange.value = false;
       transferUnitChangeOldQty.value = 0;
 
@@ -438,16 +425,12 @@ onMounted(async () => {
   const posProfileName = fyo.singles.POSSettings?.posProfile;
 
   if (posProfileName) {
-    const profile = await fyo.doc.getDoc(
-      ModelNameEnum.POSProfile,
-      posProfileName as string,
-    );
+    const profile = await fyo.doc.getDoc(ModelNameEnum.POSProfile, posProfileName as string);
 
     profileDiscountSetting.value =
       !!profile?.canEditDiscount || !!fyo.singles.POSSettings?.canEditDiscount;
 
-    profileRateSetting.value =
-      !!profile?.canChangeRate || !!fyo.singles.POSSettings?.canChangeRate;
+    profileRateSetting.value = !!profile?.canChangeRate || !!fyo.singles.POSSettings?.canChangeRate;
 
     itemVisibility.value = await getItemVisibility(fyo);
   } else {
@@ -574,17 +557,10 @@ function setSerialNumber(serialNumber: string) {
   props.row.set("serialNumber", serialNumber);
   itemSerialNumbers[props.row.item as string] = serialNumber;
 
-  validateSerialNumberCount(
-    serialNumber,
-    Math.abs(props.row.quantity ?? 0),
-    props.row.item!,
-  );
+  validateSerialNumberCount(serialNumber, Math.abs(props.row.quantity ?? 0), props.row.item!);
 }
 
-async function fetchSerialNumbers(
-  forceRefetch = false,
-  useDirectQuantity = false,
-) {
+async function fetchSerialNumbers(forceRefetch = false, useDirectQuantity = false) {
   if (!hasSerialNumber.value) {
     return;
   }
@@ -605,9 +581,7 @@ async function fetchSerialNumbers(
   const existingSerialNumbers = itemSerialNumbers[props.row.item as string];
 
   if (existingSerialNumbers && !forceRefetch) {
-    const existingCount = existingSerialNumbers
-      .split("\n")
-      .filter((s) => s.trim()).length;
+    const existingCount = existingSerialNumbers.split("\n").filter((s) => s.trim()).length;
 
     if (existingCount === quantity) {
       return;
@@ -652,8 +626,7 @@ function setRate(rate: Money) {
 
 async function setQuantity(quantity: number) {
   const hasManualDiscount = props.row.setItemDiscountAmount;
-  const isPercentageDiscount =
-    !hasManualDiscount && props.row.itemDiscountPercent !== 0;
+  const isPercentageDiscount = !hasManualDiscount && props.row.itemDiscountPercent !== 0;
   const manualDiscountAmount = props.row.itemDiscountAmount;
   const manualDiscountPercent = props.row.itemDiscountPercent;
 
@@ -671,18 +644,13 @@ async function setQuantity(quantity: number) {
 
   const existingItems =
     (props.row.parentdoc as SalesInvoice).items?.filter(
-      (invoiceItem: InvoiceItem) =>
-        invoiceItem.item === props.row.item && !invoiceItem.isFreeItem,
+      (invoiceItem: InvoiceItem) => invoiceItem.item === props.row.item && !invoiceItem.isFreeItem,
     ) ?? [];
 
   quantity = props.row.quantity ?? 1;
 
   try {
-    await validateQty(
-      props.row.parentdoc as SalesInvoice,
-      props.row,
-      existingItems,
-    );
+    await validateQty(props.row.parentdoc as SalesInvoice, props.row, existingItems);
   } catch (error) {
     props.row.set("quantity", quantity);
 

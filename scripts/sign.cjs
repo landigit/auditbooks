@@ -20,9 +20,7 @@ async function sign(configuration) {
   const certPassword = process.env.CSC_KEY_PASSWORD;
 
   if (!certPassword) {
-    console.warn(
-      "⚠️ Warning: CSC_KEY_PASSWORD environment variable is not set. Skipping signing.",
-    );
+    console.warn("⚠️ Warning: CSC_KEY_PASSWORD environment variable is not set. Skipping signing.");
     return;
   }
 

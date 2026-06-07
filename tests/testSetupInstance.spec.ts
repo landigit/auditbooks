@@ -3,11 +3,7 @@ import dayjs from "dayjs";
 import setupInstance from "src/setup/setupInstance";
 import { describe, expect, test, afterAll } from "@rstest/core";
 import { getValueMapFromList } from "utils";
-import {
-  getTestDbPath,
-  getTestFyo,
-  getTestSetupWizardOptions,
-} from "./helpers";
+import { getTestDbPath, getTestFyo, getTestSetupWizardOptions } from "./helpers";
 
 describe("Setup Instance Tests", () => {
   const dbPath = getTestDbPath();

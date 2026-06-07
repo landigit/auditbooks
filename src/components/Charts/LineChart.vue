@@ -34,13 +34,7 @@
           :key="j + '-xlabels'"
           :style="fontStyle"
           class="text-description"
-          :y="
-            viewBoxHeight -
-            axisPadding +
-            yLabelOffset +
-            fontStyle.fontSize / 2 -
-            bottom
-          "
+          :y="viewBoxHeight - axisPadding + yLabelOffset + fontStyle.fontSize / 2 - bottom"
           :x="xs[i - 1]"
           text-anchor="middle"
         >
@@ -110,10 +104,7 @@
         :cx="cx"
         :cy="cy"
         :fill="colors[yi]"
-        style="
-          filter: brightness(115%)
-            drop-shadow(0px 2px 3px var(--color-chart-shadow));
-        "
+        style="filter: brightness(115%) drop-shadow(0px 2px 3px var(--color-chart-shadow))"
       />
     </svg>
     <Tooltip
@@ -245,8 +236,7 @@ const xs = computed(() => {
       (_, i) =>
         padding.value +
         props.left +
-        (i * (viewBoxWidth.value - props.left - 2 * padding.value)) /
-          (count.value - 1 || 1),
+        (i * (viewBoxWidth.value - props.left - 2 * padding.value)) / (count.value - 1 || 1),
     );
 });
 
@@ -319,8 +309,7 @@ const gradY = (i: number) => {
 
 const yScalerLocation = (i: number) => {
   return (
-    ((props.yLabelDivisions - i) *
-      (props.viewBoxHeight - padding.value * 2 - props.bottom)) /
+    ((props.yLabelDivisions - i) * (props.viewBoxHeight - padding.value * 2 - props.bottom)) /
       props.yLabelDivisions +
     padding.value
   );
@@ -329,9 +318,7 @@ const yScalerLocation = (i: number) => {
 const yScalerValue = (i: number) => {
   const minVal = hMin.value;
   const maxVal = hMax.value;
-  return props.formatY(
-    (i * (maxVal - minVal)) / props.yLabelDivisions + minVal,
-  );
+  return props.formatY((i * (maxVal - minVal)) / props.yLabelDivisions + minVal);
 };
 
 const getLine = (i: number) => {
@@ -368,13 +355,7 @@ const update = (event: MouseEvent) => {
   }
 
   const { x, y } = getSvgXY(event);
-  const {
-    xi: pXi,
-    yi: pYi,
-    cx: pCx,
-    cy: pCy,
-    d,
-  } = getPointIndexAndCoords(x, y);
+  const { xi: pXi, yi: pYi, cx: pCx, cy: pCy, d } = getPointIndexAndCoords(x, y);
 
   if (d === undefined || d > props.tooltipDispDistThreshold) {
     xi.value = -1;
@@ -412,9 +393,7 @@ const getPointIndexAndCoords = (x: number, y: number) => {
   const pys = ys.value.map((yarr) => yarr[xiVal]);
   const dists = pys.map((py) => euclideanDistance(x, y, px, py));
   const minDist = Math.min(...dists);
-  const matchingIndices = dists
-    .map((j, idx) => [j - minDist, idx])
-    .filter(([j, _]) => j === 0);
+  const matchingIndices = dists.map((j, idx) => [j - minDist, idx]).filter(([j, _]) => j === 0);
   const lastMatch = matchingIndices.at(-1);
   const yiVal = lastMatch ? lastMatch[1] : -1;
   return { xi: xiVal, yi: yiVal, cx: px, cy: pys[yiVal], d: minDist };

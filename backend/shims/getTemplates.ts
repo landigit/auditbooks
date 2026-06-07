@@ -14,13 +14,9 @@ export async function getTemplates(posTemplateWidth?: number) {
     const bunFile = Bun.file(filePath);
     const template = await bunFile.text();
     const lastModified = bunFile.lastModified;
-    const modifiedDate =
-      lastModified !== undefined ? new Date(lastModified) : new Date();
+    const modifiedDate = lastModified !== undefined ? new Date(lastModified) : new Date();
 
-    const width =
-      file?.split("-")[1]?.split(".")[0] === "POS"
-        ? (posTemplateWidth ?? 0)
-        : 0;
+    const width = file?.split("-")[1]?.split(".")[0] === "POS" ? (posTemplateWidth ?? 0) : 0;
     const height = file?.split("-")[1]?.split(".")[0] === "POS" ? 22 : 0;
 
     templates.push({

@@ -1,21 +1,9 @@
-import {
-  AccountRootType,
-  AccountRootTypeEnum,
-} from "./baseModels/Account/types";
-import {
-  Action,
-  ColumnConfig,
-  DocStatus,
-  LeadStatus,
-  RenderData,
-} from "fyo/model/types";
+import { AccountRootType, AccountRootTypeEnum } from "./baseModels/Account/types";
+import { Action, ColumnConfig, DocStatus, LeadStatus, RenderData } from "fyo/model/types";
 import { Fyo, t } from "fyo";
 import { InvoiceStatus, ModelNameEnum } from "./types";
 
-import {
-  ApplicableCouponCodes,
-  ApplicablePricingRules,
-} from "./baseModels/Invoice/types";
+import { ApplicableCouponCodes, ApplicablePricingRules } from "./baseModels/Invoice/types";
 import { AppliedCouponCodes } from "./baseModels/AppliedCouponCodes/AppliedCouponCodes";
 import { CollectionRulesItems } from "./baseModels/CollectionRulesItems/CollectionRulesItems";
 import { CouponCode } from "./baseModels/CouponCode/CouponCode";
@@ -48,10 +36,7 @@ import {
   getStockLedgerEntries,
 } from "reports/inventory/helpers";
 import { LoyaltyPointEntry } from "./baseModels/LoyaltyPointEntry/LoyaltyPointEntry";
-import {
-  generateSerialNumbersForItem,
-  generateBatchForItem,
-} from "./inventory/helpers";
+import { generateSerialNumbersForItem, generateBatchForItem } from "./inventory/helpers";
 
 function escapeHtml(str: unknown): string {
   if (typeof str !== "string") {
@@ -65,10 +50,7 @@ function escapeHtml(str: unknown): string {
     .replace(/'/g, "&#039;");
 }
 
-export function getQuoteActions(
-  fyo: Fyo,
-  schemaName: ModelNameEnum.SalesQuote,
-): Action[] {
+export function getQuoteActions(fyo: Fyo, schemaName: ModelNameEnum.SalesQuote): Action[] {
   return [getMakeInvoiceAction(fyo, schemaName)];
 }
 
@@ -91,8 +73,7 @@ export function getInvoiceActions(
 export async function getItemQtyMap(doc: SalesInvoice): Promise<ItemQtyMap> {
   const itemQtyMap: ItemQtyMap = {};
   const valuationMethod =
-    (doc.fyo.singles.InventorySettings?.valuationMethod as ValuationMethod) ??
-    ValuationMethod.FIFO;
+    (doc.fyo.singles.InventorySettings?.valuationMethod as ValuationMethod) ?? ValuationMethod.FIFO;
 
   const rawSLEs = await getRawStockLedgerEntries(doc.fyo);
   const rawData = getStockLedgerEntries(rawSLEs, valuationMethod);
@@ -101,10 +82,7 @@ export async function getItemQtyMap(doc: SalesInvoice): Promise<ItemQtyMap> {
   let inventoryLocation: string | undefined;
 
   if (posProfileName) {
-    const posProfile = await doc.fyo.doc.getDoc(
-      ModelNameEnum.POSProfile,
-      posProfileName as string,
-    );
+    const posProfile = await doc.fyo.doc.getDoc(ModelNameEnum.POSProfile, posProfileName as string);
 
     inventoryLocation = posProfile?.inventory as string | undefined;
   } else {
@@ -139,10 +117,7 @@ export async function getItemVisibility(fyo: Fyo): Promise<ItemVisibility> {
   }
 
   if (posProfileName) {
-    const posProfile = await fyo.doc.getDoc(
-      ModelNameEnum.POSProfile,
-      posProfileName,
-    );
+    const posProfile = await fyo.doc.getDoc(ModelNameEnum.POSProfile, posProfileName);
     return posProfile?.itemVisibility as ItemVisibility;
   }
 
@@ -189,10 +164,7 @@ export function getMakeStockTransferAction(
 
 export function getMakeInvoiceAction(
   fyo: Fyo,
-  schemaName:
-    | ModelNameEnum.Shipment
-    | ModelNameEnum.PurchaseReceipt
-    | ModelNameEnum.SalesQuote,
+  schemaName: ModelNameEnum.Shipment | ModelNameEnum.PurchaseReceipt | ModelNameEnum.SalesQuote,
 ): Action {
   let label = fyo.t`Sales Invoice`;
   if (schemaName === ModelNameEnum.PurchaseReceipt) {
@@ -257,8 +229,7 @@ export function getMakePaymentAction(fyo: Fyo): Action {
   return {
     label: fyo.t`Payment`,
     group: fyo.t`Create`,
-    condition: (doc: Doc) =>
-      doc.isSubmitted && !(doc.outstandingAmount as Money).isZero(),
+    condition: (doc: Doc) => doc.isSubmitted && !(doc.outstandingAmount as Money).isZero(),
     action: async (doc, router) => {
       const schemaName = doc.schema.name;
       const payment = (doc as Invoice).getPayment();
@@ -316,10 +287,7 @@ export function getLedgerLinkAction(fyo: Fyo, isStock = false): Action {
   };
 }
 
-export function getLedgerLink(
-  doc: Doc,
-  reportClassName: "GeneralLedger" | "StockLedger",
-) {
+export function getLedgerLink(doc: Doc, reportClassName: "GeneralLedger" | "StockLedger") {
   return {
     name: "Report",
     params: {
@@ -397,10 +365,7 @@ export function getLeadStatusColumn(): ColumnConfig {
   };
 }
 
-export const statusColor: Record<
-  DocStatus | InvoiceStatus | LeadStatus,
-  string | undefined
-> = {
+export const statusColor: Record<DocStatus | InvoiceStatus | LeadStatus, string | undefined> = {
   "": "gray",
   Draft: "gray",
   Open: "gray",
@@ -469,9 +434,7 @@ export function getStatusTextOfLead(status: LeadStatus): string {
   }
 }
 
-export function getLeadStatus(
-  doc?: Lead | Doc | RenderData,
-): LeadStatus | DocStatus {
+export function getLeadStatus(doc?: Lead | Doc | RenderData): LeadStatus | DocStatus {
   if (!doc) {
     return "";
   }
@@ -479,9 +442,7 @@ export function getLeadStatus(
   return doc.status as LeadStatus;
 }
 
-export function getDocStatus(
-  doc?: RenderData | Doc,
-): DocStatus | InvoiceStatus {
+export function getDocStatus(doc?: RenderData | Doc): DocStatus | InvoiceStatus {
   if (!doc) {
     return "";
   }
@@ -544,11 +505,7 @@ export function getInvoiceStatus(doc: RenderData | Doc): InvoiceStatus {
     return "ReturnIssued";
   }
 
-  if (
-    doc.submitted &&
-    !doc.cancelled &&
-    (doc.outstandingAmount as Money).isZero()
-  ) {
+  if (doc.submitted && !doc.cancelled && (doc.outstandingAmount as Money).isZero()) {
     return "Paid";
   }
 
@@ -857,10 +814,7 @@ export async function addItem<M extends ModelsWithItems>(name: string, doc: M) {
     }
   }
 
-  if (
-    doc instanceof StockTransfer &&
-    doc.schemaName === ModelNameEnum.PurchaseReceipt
-  ) {
+  if (doc instanceof StockTransfer && doc.schemaName === ModelNameEnum.PurchaseReceipt) {
     const serialNumbers = await generateSerialNumbersForItem(doc.fyo, name, 1);
     if (serialNumbers) {
       await item.set("serialNumber", serialNumbers);
@@ -895,12 +849,7 @@ export async function getReturnLoyaltyPoints(doc: Invoice) {
 
 export async function getReturnQtyTotal(
   doc: Invoice,
-): Promise<
-  Record<
-    string,
-    number | { quantity: number; batches?: Record<string, number> }
-  >
-> {
+): Promise<Record<string, number | { quantity: number; batches?: Record<string, number> }>> {
   const returnDocs = await doc.fyo.db.getAll(doc.schemaName, {
     fields: ["*"],
     filters: {
@@ -990,9 +939,7 @@ export async function createLoyaltyPointEntry(doc: Invoice) {
 
   const expiryDate = new Date(Date.now());
 
-  expiryDate.setDate(
-    expiryDate.getDate() + (loyaltyProgramDoc.expiryDuration || 0),
-  );
+  expiryDate.setDate(expiryDate.getDate() + (loyaltyProgramDoc.expiryDuration || 0));
 
   let loyaltyProgramTier;
   let loyaltyPoint: number;
@@ -1013,19 +960,16 @@ export async function createLoyaltyPointEntry(doc: Invoice) {
     loyaltyPoint = Math.round(doc?.grandTotal?.float || 0) * collectionFactor;
   }
 
-  const newLoyaltyPointEntry = doc.fyo.doc.getNewDoc(
-    ModelNameEnum.LoyaltyPointEntry,
-    {
-      loyaltyProgram: doc.loyaltyProgram,
-      customer: doc.party,
-      invoice: doc.name,
-      postingDate: doc.date,
-      purchaseAmount: doc.grandTotal,
-      expiryDate: expiryDate,
-      loyaltyProgramTier: loyaltyProgramTier?.tierName,
-      loyaltyPoints: loyaltyPoint,
-    },
-  );
+  const newLoyaltyPointEntry = doc.fyo.doc.getNewDoc(ModelNameEnum.LoyaltyPointEntry, {
+    loyaltyProgram: doc.loyaltyProgram,
+    customer: doc.party,
+    invoice: doc.name,
+    postingDate: doc.date,
+    purchaseAmount: doc.grandTotal,
+    expiryDate: expiryDate,
+    loyaltyProgramTier: loyaltyProgramTier?.tierName,
+    loyaltyPoints: loyaltyPoint,
+  });
 
   return await newLoyaltyPointEntry.sync();
 }
@@ -1066,10 +1010,7 @@ export function getLoyaltyProgramTier(
       }
 
       if (minimumSpent.lte(grandTotal)) {
-        if (
-          !loyaltyProgramTier ||
-          minimumSpent.gt(loyaltyProgramTier.minimumTotalSpent as Money)
-        ) {
+        if (!loyaltyProgramTier || minimumSpent.gt(loyaltyProgramTier.minimumTotalSpent as Money)) {
           loyaltyProgramTier = row;
         }
       }
@@ -1087,9 +1028,7 @@ export async function removeLoyaltyPoint(doc: Doc) {
     fields: ["name", "loyaltyPoints", "expiryDate"],
     filters: {
       loyaltyProgram: doc.loyaltyProgram as string,
-      invoice: doc.isReturn
-        ? (doc.returnAgainst as string)
-        : (doc.name as string),
+      invoice: doc.isReturn ? (doc.returnAgainst as string) : (doc.name as string),
     },
   })) as { name: string; loyaltyPoints: number; expiryDate: Date }[];
 
@@ -1103,30 +1042,23 @@ export async function removeLoyaltyPoint(doc: Doc) {
   )) as LoyaltyPointEntry;
 
   const newLoyaltyPoint =
-    (lPEntryDoc?.loyaltyPoints as number) +
-    Math.abs(doc.loyaltyPoints as number);
+    (lPEntryDoc?.loyaltyPoints as number) + Math.abs(doc.loyaltyPoints as number);
 
   if (newLoyaltyPoint !== 0) {
-    const newLoyaltyPointEntry = doc.fyo.doc.getNewDoc(
-      ModelNameEnum.LoyaltyPointEntry,
-      {
-        loyaltyProgram: lPEntryDoc.loyaltyProgram,
-        customer: lPEntryDoc.customer,
-        invoice: lPEntryDoc.invoice,
-        postingDate: lPEntryDoc.date as Date,
-        purchaseAmount: lPEntryDoc.purchaseAmount,
-        expiryDate: lPEntryDoc.expiryDate,
-        loyaltyProgramTier: lPEntryDoc.loyaltyProgramTier,
-        loyaltyPoints: newLoyaltyPoint,
-      },
-    );
+    const newLoyaltyPointEntry = doc.fyo.doc.getNewDoc(ModelNameEnum.LoyaltyPointEntry, {
+      loyaltyProgram: lPEntryDoc.loyaltyProgram,
+      customer: lPEntryDoc.customer,
+      invoice: lPEntryDoc.invoice,
+      postingDate: lPEntryDoc.date as Date,
+      purchaseAmount: lPEntryDoc.purchaseAmount,
+      expiryDate: lPEntryDoc.expiryDate,
+      loyaltyProgramTier: lPEntryDoc.loyaltyProgramTier,
+      loyaltyPoints: newLoyaltyPoint,
+    });
     await newLoyaltyPointEntry.sync();
   }
 
-  const party = (await doc.fyo.doc.getDoc(
-    ModelNameEnum.Party,
-    doc.party as string,
-  )) as Party;
+  const party = (await doc.fyo.doc.getDoc(ModelNameEnum.Party, doc.party as string)) as Party;
 
   await lPEntryDoc.delete();
   await party.updateLoyaltyPoints();
@@ -1177,10 +1109,7 @@ export async function validateQty(
 
   if (item.batch) {
     const batchQty = Reflect.get(itemMapData, item.batch as string) ?? 0;
-    if (
-      (existingItems && !itemMapData) ||
-      batchQty < (existingItems[0]?.quantity as number)
-    ) {
+    if ((existingItems && !itemMapData) || batchQty < (existingItems[0]?.quantity as number)) {
       throw new ValidationError(
         t`Item ${itemName} only has ${batchQty} Quantity in batch ${item.batch as string}`,
       );
@@ -1190,9 +1119,7 @@ export async function validateQty(
       (existingItems && !itemMapData) ||
       itemMapData.availableQty < (existingItems[0]?.quantity as number)
     ) {
-      throw new ValidationError(
-        t`Item ${itemName} only has ${itemMapData.availableQty} Quantity`,
-      );
+      throw new ValidationError(t`Item ${itemName} only has ${itemMapData.availableQty} Quantity`);
     }
   }
 
@@ -1229,19 +1156,16 @@ export async function getPricingRulesOfCoupons(
     return;
   }
 
-  const pricingRuleDocsForItem = (await doc.fyo.db.getAll(
-    ModelNameEnum.PricingRule,
-    {
-      fields: ["*"],
-      filters: {
-        name: ["in", pricingRuleDocNames as string[]],
-        isEnabled: true,
-        isCouponCodeBased: true,
-      },
-      orderBy: "priority",
-      order: "desc",
+  const pricingRuleDocsForItem = (await doc.fyo.db.getAll(ModelNameEnum.PricingRule, {
+    fields: ["*"],
+    filters: {
+      name: ["in", pricingRuleDocNames as string[]],
+      isEnabled: true,
+      isCouponCodeBased: true,
     },
-  )) as PricingRule[];
+    orderBy: "priority",
+    order: "desc",
+  })) as PricingRule[];
 
   return pricingRuleDocsForItem;
 }
@@ -1250,11 +1174,7 @@ export async function getPricingRule(
   doc: Invoice,
   couponName?: string,
 ): Promise<ApplicablePricingRules[] | undefined> {
-  if (
-    !doc.fyo.singles.AccountingSettings?.enablePricingRule ||
-    !doc.isSales ||
-    !doc.items
-  ) {
+  if (!doc.fyo.singles.AccountingSettings?.enablePricingRule || !doc.isSales || !doc.items) {
     return;
   }
 
@@ -1277,31 +1197,27 @@ export async function getPricingRule(
 
     let pricingRuleDocsForItem;
 
-    const pricingRuleDocs = (await doc.fyo.db.getAll(
-      ModelNameEnum.PricingRule,
-      {
-        fields: ["*"],
-        filters: {
-          name: ["in", pricingRuleDocNames],
-          isEnabled: true,
-          isCouponCodeBased: false,
-        },
-        orderBy: "priority",
-        order: "desc",
+    const pricingRuleDocs = (await doc.fyo.db.getAll(ModelNameEnum.PricingRule, {
+      fields: ["*"],
+      filters: {
+        name: ["in", pricingRuleDocNames],
+        isEnabled: true,
+        isCouponCodeBased: false,
       },
-    )) as PricingRule[];
+      orderBy: "priority",
+      order: "desc",
+    })) as PricingRule[];
 
     if (pricingRuleDocs.length) {
       pricingRuleDocsForItem = pricingRuleDocs;
     }
 
     if (!pricingRuleDocs.length || couponName) {
-      const couponPricingRules: PricingRule[] | undefined =
-        await getPricingRulesOfCoupons(
-          doc as SalesInvoice,
-          couponName,
-          pricingRuleDocNames,
-        );
+      const couponPricingRules: PricingRule[] | undefined = await getPricingRulesOfCoupons(
+        doc as SalesInvoice,
+        couponName,
+        pricingRuleDocNames,
+      );
 
       pricingRuleDocsForItem = couponPricingRules as PricingRule[];
     }
@@ -1361,10 +1277,7 @@ export async function getItemRateFromPriceList(
     return;
   }
 
-  const priceList = await doc.fyo.doc.getDoc(
-    ModelNameEnum.PriceList,
-    priceListName,
-  );
+  const priceList = await doc.fyo.doc.getDoc(ModelNameEnum.PriceList, priceListName);
 
   if (!(priceList instanceof PriceList)) {
     return;
@@ -1398,9 +1311,7 @@ export function filterPricingRules(
   const filteredPricingRules: PricingRule[] = [];
 
   for (const pricingRuleDoc of pricingRuleDocsForItem) {
-    if (
-      canApplyPricingRule(pricingRuleDoc, doc.date as Date, quantity, amount)
-    ) {
+    if (canApplyPricingRule(pricingRuleDoc, doc.date as Date, quantity, amount)) {
       filteredPricingRules.push(pricingRuleDoc);
     }
   }
@@ -1428,17 +1339,11 @@ export function canApplyPricingRule(
   }
 
   // Filter by Amount
-  if (
-    !pricingRuleDoc.minAmount?.isZero() &&
-    amount.lte(pricingRuleDoc.minAmount as Money)
-  ) {
+  if (!pricingRuleDoc.minAmount?.isZero() && amount.lte(pricingRuleDoc.minAmount as Money)) {
     return false;
   }
 
-  if (
-    !pricingRuleDoc.maxAmount?.isZero() &&
-    amount.gte(pricingRuleDoc.maxAmount as Money)
-  ) {
+  if (!pricingRuleDoc.maxAmount?.isZero() && amount.gte(pricingRuleDoc.maxAmount as Money)) {
     return false;
   }
 
@@ -1468,17 +1373,11 @@ export function canApplyCouponCode(
   sinvDate: Date,
 ): boolean {
   // Filter by Amount
-  if (
-    !couponCodeData.minAmount?.isZero() &&
-    amount.lte(couponCodeData.minAmount as Money)
-  ) {
+  if (!couponCodeData.minAmount?.isZero() && amount.lte(couponCodeData.minAmount as Money)) {
     return false;
   }
 
-  if (
-    !couponCodeData.maxAmount?.isZero() &&
-    amount.gte(couponCodeData.maxAmount as Money)
-  ) {
+  if (!couponCodeData.maxAmount?.isZero() && amount.gte(couponCodeData.maxAmount as Money)) {
     return false;
   }
 
@@ -1505,10 +1404,7 @@ export async function removeUnusedCoupons(sinvDoc: SalesInvoice) {
 
   const applicableCouponCodes = await Promise.all(
     sinvDoc.coupons?.map(async (coupon) => {
-      return await getApplicableCouponCodesName(
-        coupon.coupons as string,
-        sinvDoc,
-      );
+      return await getApplicableCouponCodesName(coupon.coupons as string, sinvDoc);
     }),
   );
 
@@ -1525,20 +1421,14 @@ export async function removeUnusedCoupons(sinvDoc: SalesInvoice) {
   );
 }
 
-export async function getApplicableCouponCodesName(
-  couponName: string,
-  sinvDoc: SalesInvoice,
-) {
-  const couponCodeDatas = (await sinvDoc.fyo.db.getAll(
-    ModelNameEnum.CouponCode,
-    {
-      fields: ["*"],
-      filters: {
-        name: couponName,
-        isEnabled: true,
-      },
+export async function getApplicableCouponCodesName(couponName: string, sinvDoc: SalesInvoice) {
+  const couponCodeDatas = (await sinvDoc.fyo.db.getAll(ModelNameEnum.CouponCode, {
+    fields: ["*"],
+    filters: {
+      name: couponName,
+      isEnabled: true,
     },
-  )) as CouponCode[];
+  })) as CouponCode[];
 
   if (!couponCodeDatas || !couponCodeDatas.length) {
     return [];
@@ -1551,9 +1441,7 @@ export async function getApplicableCouponCodesName(
   }
 
   return applicablePricingRules
-    ?.filter(
-      (rule) => rule?.pricingRule?.name === couponCodeDatas[0].pricingRule,
-    )
+    ?.filter((rule) => rule?.pricingRule?.name === couponCodeDatas[0].pricingRule)
     .map((rule) => ({
       pricingRule: rule.pricingRule.name,
       coupon: couponCodeDatas[0].name,
@@ -1580,15 +1468,11 @@ export async function validateCouponCode(
   });
 
   if (!coupon[0]?.isEnabled) {
-    throw new ValidationError(
-      "Coupon code cannot be applied as it is not enabled",
-    );
+    throw new ValidationError("Coupon code cannot be applied as it is not enabled");
   }
 
   if ((coupon[0]?.maximumUse as number) <= (coupon[0]?.used as number)) {
-    throw new ValidationError(
-      "Coupon code has been used maximum number of times",
-    );
+    throw new ValidationError("Coupon code has been used maximum number of times");
   }
 
   if (!doc.parentdoc) {
@@ -1601,14 +1485,10 @@ export async function validateCouponCode(
   );
 
   if (!applicableCouponCodesNames?.length) {
-    throw new ValidationError(
-      t`Coupon ${value} is not applicable for applied items.`,
-    );
+    throw new ValidationError(t`Coupon ${value} is not applicable for applied items.`);
   }
 
-  const couponExist = doc.parentdoc?.coupons?.some(
-    (coupon) => coupon?.coupons === value,
-  );
+  const couponExist = doc.parentdoc?.coupons?.some((coupon) => coupon?.coupons === value);
 
   if (couponExist) {
     throw new ValidationError(t`${value} already applied.`);
@@ -1637,22 +1517,15 @@ export async function validateCouponCode(
   }
 
   if ((coupon[0].validFrom as Date) > (doc.parentdoc?.date as Date)) {
-    throw new ValidationError(
-      t`Valid From Date should be less than Valid To Date.`,
-    );
+    throw new ValidationError(t`Valid From Date should be less than Valid To Date.`);
   }
 
   if ((coupon[0].validTo as Date) < (doc.parentdoc?.date as Date)) {
-    throw new ValidationError(
-      t`Valid To Date should be greater than Valid From Date.`,
-    );
+    throw new ValidationError(t`Valid To Date should be greater than Valid From Date.`);
   }
 }
 
-export async function validateLoyaltyProgram(
-  doc: Invoice,
-  loyaltyProgramName: string,
-) {
+export async function validateLoyaltyProgram(doc: Invoice, loyaltyProgramName: string) {
   const loyaltyProgram = await doc.fyo.db.getAll(ModelNameEnum.LoyaltyProgram, {
     fields: ["fromDate", "toDate", "maximumUse", "used", "isEnabled"],
     filters: { name: loyaltyProgramName },
@@ -1660,16 +1533,12 @@ export async function validateLoyaltyProgram(
 
   if (
     (loyaltyProgram[0]?.maximumUse as number) > 0 &&
-    (loyaltyProgram[0]?.used as number) >=
-      (loyaltyProgram[0]?.maximumUse as number)
+    (loyaltyProgram[0]?.used as number) >= (loyaltyProgram[0]?.maximumUse as number)
   ) {
     return;
   }
 
-  if (
-    loyaltyProgram[0].fromDate &&
-    (doc.date as Date) < (loyaltyProgram[0].fromDate as Date)
-  ) {
+  if (loyaltyProgram[0].fromDate && (doc.date as Date) < (loyaltyProgram[0].fromDate as Date)) {
     throw new ValidationError("Loyalty program is not yet active");
   }
 
@@ -1697,9 +1566,7 @@ export function removeFreeItems(sinvDoc: SalesInvoice) {
 
   for (const item of sinvDoc.items) {
     if (item.isFreeItem) {
-      sinvDoc.items = sinvDoc.items?.filter(
-        (invoiceItem) => invoiceItem.name !== item.name,
-      );
+      sinvDoc.items = sinvDoc.items?.filter((invoiceItem) => invoiceItem.name !== item.name);
     }
   }
 }
@@ -1714,9 +1581,7 @@ export async function updatePricingRule(sinvDoc: SalesInvoice) {
     return;
   }
 
-  const appliedPricingRuleCount = sinvDoc?.items?.filter(
-    (val) => val.isFreeItem,
-  ).length;
+  const appliedPricingRuleCount = sinvDoc?.items?.filter((val) => val.isFreeItem).length;
 
   setTimeout(() => {
     void (async () => {
@@ -1728,9 +1593,7 @@ export async function updatePricingRule(sinvDoc: SalesInvoice) {
   }, 1);
 }
 
-export function getPricingRulesConflicts(
-  pricingRules: PricingRule[],
-): undefined | boolean {
+export function getPricingRulesConflicts(pricingRules: PricingRule[]): undefined | boolean {
   const pricingRuleDocs = Array.from(pricingRules);
 
   const firstPricingRule = pricingRuleDocs.shift();
@@ -1783,8 +1646,7 @@ export async function isLoyaltyProgramExpiredAndMaxed(
   currentDate.setHours(0, 0, 0, 0);
 
   const toDate = program.toDate as Date;
-  const isExpired =
-    toDate && new Date(toDate).getTime() < currentDate.getTime();
+  const isExpired = toDate && new Date(toDate).getTime() < currentDate.getTime();
 
   const maximumUse = (program.maximumUse as number) || 0;
   const used = (program.used as number) || 0;

@@ -1,9 +1,5 @@
 import assert from "assert";
-import {
-  addMetaFields,
-  cleanSchemas,
-  getAbstractCombinedSchemas,
-} from "../../../schemas";
+import { addMetaFields, cleanSchemas, getAbstractCombinedSchemas } from "../../../schemas";
 import SingleValue from "../../../schemas/core/SingleValue.json";
 import { SchemaMap, SchemaStub, SchemaStubMap } from "../../../schemas/types";
 
@@ -175,10 +171,7 @@ export function getBaseMeta() {
   };
 }
 
-export async function assertThrows(
-  func: () => Promise<unknown>,
-  message?: string,
-) {
+export async function assertThrows(func: () => Promise<unknown>, message?: string) {
   let threw = true;
   try {
     await func();
@@ -193,10 +186,7 @@ export async function assertThrows(
   }
 }
 
-export async function assertDoesNotThrow(
-  func: () => Promise<unknown>,
-  message?: string,
-) {
+export async function assertDoesNotThrow(func: () => Promise<unknown>, message?: string) {
   try {
     await func();
   } catch (err) {

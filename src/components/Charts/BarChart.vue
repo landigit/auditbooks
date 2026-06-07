@@ -43,13 +43,7 @@
           :key="j + '-xlabels'"
           :style="fontStyle"
           class="text-description"
-          :y="
-            viewBoxHeight -
-            axisPadding +
-            yLabelOffset +
-            props.fontSize / 2 -
-            bottom
-          "
+          :y="viewBoxHeight - axisPadding + yLabelOffset + props.fontSize / 2 - bottom"
           :x="xs[i - 1]"
           text-anchor="middle"
         >
@@ -76,12 +70,7 @@
           <rect x="0" y="0" :width="viewBoxWidth" :height="z" />
         </clipPath>
         <clipPath id="negative-rect-clip">
-          <rect
-            x="0"
-            :y="z"
-            :width="viewBoxWidth"
-            :height="viewBoxHeight - z"
-          />
+          <rect x="0" :y="z" :width="viewBoxWidth" :height="viewBoxHeight - z" />
         </clipPath>
       </defs>
 
@@ -247,8 +236,7 @@ const xs = computed(() => {
       (_, i) =>
         padding.value +
         props.left +
-        (i * (viewBoxWidth.value - props.left - 2 * padding.value)) /
-          (cnt - 1 || 1),
+        (i * (viewBoxWidth.value - props.left - 2 * padding.value)) / (cnt - 1 || 1),
     );
 });
 
@@ -309,13 +297,9 @@ const rects = computed<RectInfo[][]>(() =>
   xy.value.map(([x, yValues], i) => yValues.map((y, j) => getRect(x, y, i, j))),
 );
 
-const positiveRects = computed(() =>
-  rects.value.flat().filter(({ isPositive }) => isPositive),
-);
+const positiveRects = computed(() => rects.value.flat().filter(({ isPositive }) => isPositive));
 
-const negativeRects = computed(() =>
-  rects.value.flat().filter(({ isPositive }) => !isPositive),
-);
+const negativeRects = computed(() => rects.value.flat().filter(({ isPositive }) => !isPositive));
 
 const hMin = computed(() => Math.min(props.yMin ?? min.value, 0));
 
@@ -334,10 +318,7 @@ function getViewBoxY(value: number): number {
   if (percent === -Infinity || isNaN(percent)) {
     percent = 0;
   }
-  return (
-    padding.value +
-    percent * (props.viewBoxHeight - 2 * padding.value - props.bottom)
-  );
+  return padding.value + percent * (props.viewBoxHeight - 2 * padding.value - props.bottom);
 }
 
 function getRect(px: number, py: number, i: number, j: number): RectInfo {
@@ -365,8 +346,7 @@ function getColor(j: number, isPositive: boolean): string {
 
 function yScalerLocation(i: number): number {
   return (
-    ((props.yLabelDivisions - i) *
-      (props.viewBoxHeight - padding.value * 2 - props.bottom)) /
+    ((props.yLabelDivisions - i) * (props.viewBoxHeight - padding.value * 2 - props.bottom)) /
       props.yLabelDivisions +
     padding.value
   );
@@ -375,9 +355,7 @@ function yScalerLocation(i: number): number {
 function yScalerValue(i: number): string {
   const minVal = hMin.value;
   const maxVal = hMax.value;
-  return props.formatY(
-    (i * (maxVal - minVal)) / props.yLabelDivisions + minVal,
-  );
+  return props.formatY((i * (maxVal - minVal)) / props.yLabelDivisions + minVal);
 }
 
 function getRandomColor(): string {

@@ -61,19 +61,10 @@ const sizeClasses = computed(() => {
             !modelValue && 'text-description',
           )
         "
-        :aria-label="
-          modelValue
-            ? `Selected date: ${df.format(modelValue)}`
-            : 'Select a date'
-        "
+        :aria-label="modelValue ? `Selected date: ${df.format(modelValue)}` : 'Select a date'"
       >
-        <view
-          class="flex items-center gap-2 overflow-hidden whitespace-nowrap text-sm"
-        >
-          <lucide-icon
-            name="calendar"
-            class="h-4 w-4 opacity-50 flex-shrink-0"
-          />
+        <view class="flex items-center gap-2 overflow-hidden whitespace-nowrap text-sm">
+          <lucide-icon name="calendar" class="h-4 w-4 opacity-50 flex-shrink-0" />
           <text class="truncate">{{
             modelValue ? df.format(modelValue) : placeholder || "Pick a date"
           }}</text>

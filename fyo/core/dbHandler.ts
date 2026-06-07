@@ -20,12 +20,7 @@ import {
 import { schemaTranslateables } from "utils/translationHelpers";
 import { LanguageMap } from "utils/types";
 import { Converter } from "./converter";
-import {
-  DatabaseDemuxConstructor,
-  DocValue,
-  DocValueMap,
-  RawValueMap,
-} from "./types";
+import { DatabaseDemuxConstructor, DocValue, DocValueMap, RawValueMap } from "./types";
 import { ReturnDocItem } from "models/inventory/types";
 import { Money } from "pesa";
 
@@ -101,56 +96,28 @@ export class DatabaseHandler extends DatabaseBase {
     this.#fieldMap = {};
   }
 
-  async insert(
-    schemaName: string,
-    docValueMap: DocValueMap,
-  ): Promise<DocValueMap> {
-    let rawValueMap = this.converter.toRawValueMap(
-      schemaName,
-      docValueMap,
-    ) as RawValueMap;
-    rawValueMap = (await this.#demux.call(
-      "insert",
-      schemaName,
-      rawValueMap,
-    )) as RawValueMap;
+  async insert(schemaName: string, docValueMap: DocValueMap): Promise<DocValueMap> {
+    let rawValueMap = this.converter.toRawValueMap(schemaName, docValueMap) as RawValueMap;
+    rawValueMap = (await this.#demux.call("insert", schemaName, rawValueMap)) as RawValueMap;
     this.observer.trigger(`insert:${schemaName}`, docValueMap);
     return this.converter.toDocValueMap(schemaName, rawValueMap) as DocValueMap;
   }
 
   // Read
-  async get(
-    schemaName: string,
-    name: string,
-    fields?: string | string[],
-  ): Promise<DocValueMap> {
-    const rawValueMap = (await this.#demux.call(
-      "get",
-      schemaName,
-      name,
-      fields,
-    )) as RawValueMap;
+  async get(schemaName: string, name: string, fields?: string | string[]): Promise<DocValueMap> {
+    const rawValueMap = (await this.#demux.call("get", schemaName, name, fields)) as RawValueMap;
     this.observer.trigger(`get:${schemaName}`, { name, fields });
     return this.converter.toDocValueMap(schemaName, rawValueMap) as DocValueMap;
   }
 
-  async getAll(
-    schemaName: string,
-    options: GetAllOptions = {},
-  ): Promise<DocValueMap[]> {
+  async getAll(schemaName: string, options: GetAllOptions = {}): Promise<DocValueMap[]> {
     const rawValueMap = await this.#getAll(schemaName, options);
 
     this.observer.trigger(`getAll:${schemaName}`, options);
-    return this.converter.toDocValueMap(
-      schemaName,
-      rawValueMap,
-    ) as DocValueMap[];
+    return this.converter.toDocValueMap(schemaName, rawValueMap) as DocValueMap[];
   }
 
-  async getAllRaw(
-    schemaName: string,
-    options: GetAllOptions = {},
-  ): Promise<RawValueMap[]> {
+  async getAllRaw(schemaName: string, options: GetAllOptions = {}): Promise<RawValueMap[]> {
     const all = await this.#getAll(schemaName, options);
 
     this.observer.trigger(`getAllRaw:${schemaName}`, options);
@@ -181,10 +148,7 @@ export class DatabaseHandler extends DatabaseBase {
     return docSingleValue;
   }
 
-  async count(
-    schemaName: string,
-    options: GetAllOptions = {},
-  ): Promise<number> {
+  async count(schemaName: string, options: GetAllOptions = {}): Promise<number> {
     const rawValueMap = await this.#getAll(schemaName, options);
     const count = rawValueMap.length;
 
@@ -193,11 +157,7 @@ export class DatabaseHandler extends DatabaseBase {
   }
 
   // Update
-  async rename(
-    schemaName: string,
-    oldName: string,
-    newName: string,
-  ): Promise<void> {
+  async rename(schemaName: string, oldName: string, newName: string): Promise<void> {
     await this.#demux.call("rename", schemaName, oldName, newName);
 
     this.observer.trigger(`rename:${schemaName}`, { oldName, newName });
@@ -218,11 +178,7 @@ export class DatabaseHandler extends DatabaseBase {
   }
 
   async deleteAll(schemaName: string, filters: QueryFilter): Promise<number> {
-    const count = (await this.#demux.call(
-      "deleteAll",
-      schemaName,
-      filters,
-    )) as number;
+    const count = (await this.#demux.call("deleteAll", schemaName, filters)) as number;
 
     this.observer.trigger(`deleteAll:${schemaName}`, filters);
     return count;
@@ -230,11 +186,7 @@ export class DatabaseHandler extends DatabaseBase {
 
   // Other
   async exists(schemaName: string, name?: string): Promise<boolean> {
-    const doesExist = (await this.#demux.call(
-      "exists",
-      schemaName,
-      name,
-    )) as boolean;
+    const doesExist = (await this.#demux.call("exists", schemaName, name)) as boolean;
 
     this.observer.trigger(`exists:${schemaName}`, name);
     return doesExist;
@@ -256,23 +208,14 @@ export class DatabaseHandler extends DatabaseBase {
 
   async getLastInserted(schemaName: string): Promise<number> {
     if (this.schemaMap[schemaName]?.naming !== "autoincrement") {
-      throw new ValueError(
-        `invalid schema, ${schemaName} does not have autoincrement naming`,
-      );
+      throw new ValueError(`invalid schema, ${schemaName} does not have autoincrement naming`);
     }
 
-    return (await this.#demux.callBespoke(
-      "getLastInserted",
-      schemaName,
-    )) as number;
+    return (await this.#demux.callBespoke("getLastInserted", schemaName)) as number;
   }
 
   async getTopExpenses(fromDate: string, toDate: string): Promise<TopExpenses> {
-    return (await this.#demux.callBespoke(
-      "getTopExpenses",
-      fromDate,
-      toDate,
-    )) as TopExpenses;
+    return (await this.#demux.callBespoke("getTopExpenses", fromDate, toDate)) as TopExpenses;
   }
 
   async getTotalOutstanding(
@@ -289,17 +232,10 @@ export class DatabaseHandler extends DatabaseBase {
   }
 
   async getCashflow(fromDate: string, toDate: string): Promise<Cashflow> {
-    return (await this.#demux.callBespoke(
-      "getCashflow",
-      fromDate,
-      toDate,
-    )) as Cashflow;
+    return (await this.#demux.callBespoke("getCashflow", fromDate, toDate)) as Cashflow;
   }
 
-  async getIncomeAndExpenses(
-    fromDate: string,
-    toDate: string,
-  ): Promise<IncomeExpense> {
+  async getIncomeAndExpenses(fromDate: string, toDate: string): Promise<IncomeExpense> {
     return (await this.#demux.callBespoke(
       "getIncomeAndExpenses",
       fromDate,
@@ -308,9 +244,7 @@ export class DatabaseHandler extends DatabaseBase {
   }
 
   async getTotalCreditAndDebit(): Promise<TotalCreditAndDebit[]> {
-    return (await this.#demux.callBespoke(
-      "getTotalCreditAndDebit",
-    )) as TotalCreditAndDebit[];
+    return (await this.#demux.callBespoke("getTotalCreditAndDebit")) as TotalCreditAndDebit[];
   }
 
   async getStockQuantity(
@@ -359,15 +293,8 @@ export class DatabaseHandler extends DatabaseBase {
   /**
    * Internal methods
    */
-  async #getAll(
-    schemaName: string,
-    options: GetAllOptions = {},
-  ): Promise<RawValueMap[]> {
-    return (await this.#demux.call(
-      "getAll",
-      schemaName,
-      options,
-    )) as RawValueMap[];
+  async #getAll(schemaName: string, options: GetAllOptions = {}): Promise<RawValueMap[]> {
+    return (await this.#demux.call("getAll", schemaName, options)) as RawValueMap[];
   }
 
   #setFieldMap() {

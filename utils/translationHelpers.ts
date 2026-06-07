@@ -2,13 +2,7 @@
  * Properties of a schema which are to be translated,
  * irrespective of nesting.
  */
-export const schemaTranslateables = [
-  "label",
-  "description",
-  "placeholder",
-  "section",
-  "tab",
-];
+export const schemaTranslateables = ["label", "description", "placeholder", "section", "tab"];
 
 export function getIndexFormat(inp: string | string[] | unknown) {
   /**

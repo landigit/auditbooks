@@ -26,9 +26,7 @@ const delegatedProps = computed(() => {
 <template>
   <ScrollAreaRoot
     v-bind="delegatedProps"
-    :class="
-      cn('relative overflow-hidden h-full w-full flex flex-col', props.class)
-    "
+    :class="cn('relative overflow-hidden h-full w-full flex flex-col', props.class)"
   >
     <ScrollAreaViewport class="h-full w-full rounded-[inherit] overflow-auto">
       <slot />

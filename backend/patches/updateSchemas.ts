@@ -33,11 +33,7 @@ async function selectAll(client: BunSqliteClient, tableName: string) {
   }
 }
 
-async function batchInsert(
-  client: BunSqliteClient,
-  tableName: string,
-  values: any[],
-) {
+async function batchInsert(client: BunSqliteClient, tableName: string, values: any[]) {
   if (values.length === 0) return;
   for (const val of values) {
     const columns = Object.keys(val)
@@ -117,10 +113,7 @@ async function execute(dm: DatabaseManager) {
   await replaceDatabaseCore(dm, destDm);
 }
 
-async function replaceDatabaseCore(
-  dm: DatabaseManager,
-  destDm: DatabaseManager,
-) {
+async function replaceDatabaseCore(dm: DatabaseManager, destDm: DatabaseManager) {
   const newDbPath = destDm.db!.dbPath; // new db with new schema
   const oldDbPath = dm.db!.dbPath; // old db to be replaced
 
@@ -142,10 +135,7 @@ async function replaceDatabaseCore(
   const normalizedOldDbPath = path.normalize(path.resolve(oldDbPath));
   const baseDir = path.dirname(normalizedOldDbPath);
 
-  if (
-    !normalizedNewDbPath.startsWith(baseDir) ||
-    !normalizedOldDbPath.startsWith(baseDir)
-  ) {
+  if (!normalizedNewDbPath.startsWith(baseDir) || !normalizedOldDbPath.startsWith(baseDir)) {
     throw new Error("Path traversal detected: invalid database path");
   }
 
@@ -170,16 +160,8 @@ async function copyData(
   const schemaMap = destDm.getSchemaMap();
   await destClient.execute("PRAGMA foreign_keys=OFF");
   await copySingleValues(sourceClient, destClient, schemaMap);
-  await copyParty(
-    sourceClient,
-    destClient,
-    Reflect.get(schemaMap, ModelNameEnum.Party)!,
-  );
-  await copyItem(
-    sourceClient,
-    destClient,
-    Reflect.get(schemaMap, ModelNameEnum.Item)!,
-  );
+  await copyParty(sourceClient, destClient, Reflect.get(schemaMap, ModelNameEnum.Party)!);
+  await copyItem(sourceClient, destClient, Reflect.get(schemaMap, ModelNameEnum.Item)!);
   await copyChildTables(sourceClient, destClient, schemaMap);
   await copyOtherTables(sourceClient, destClient, schemaMap);
   await copyTransactionalTables(sourceClient, destClient, schemaMap);
@@ -246,10 +228,7 @@ async function copyLedgerEntries(
   destClient: BunSqliteClient,
   schema: Schema,
 ) {
-  const values = await selectAll(
-    sourceClient,
-    ModelNameEnum.AccountingLedgerEntry,
-  );
+  const values = await selectAll(sourceClient, ModelNameEnum.AccountingLedgerEntry);
   await copyValues(
     destClient,
     ModelNameEnum.AccountingLedgerEntry,
@@ -276,14 +255,7 @@ async function copyOtherTables(
 
   for (const sn of schemaNames) {
     const values = await selectAll(sourceClient, sn);
-    await copyValues(
-      destClient,
-      sn,
-      values,
-      [],
-      {},
-      Reflect.get(schemaMap, sn),
-    );
+    await copyValues(destClient, sn, values, [], {}, Reflect.get(schemaMap, sn));
   }
 }
 
@@ -323,14 +295,7 @@ async function copyTransactionalTables(
         v.party = v.supplier;
       }
     });
-    await copyValues(
-      destClient,
-      sn,
-      values,
-      [],
-      childTableColumnMap,
-      Reflect.get(schemaMap, sn),
-    );
+    await copyValues(destClient, sn, values, [], childTableColumnMap, Reflect.get(schemaMap, sn));
   }
 }
 
@@ -345,14 +310,7 @@ async function copyChildTables(
 
   for (const sn of childSchemaNames) {
     const values = await selectAll(sourceClient, sn);
-    await copyValues(
-      destClient,
-      sn,
-      values,
-      [],
-      childTableColumnMap,
-      Reflect.get(schemaMap, sn),
-    );
+    await copyValues(destClient, sn, values, [], childTableColumnMap, Reflect.get(schemaMap, sn));
   }
 }
 
@@ -474,10 +432,7 @@ async function getCountryCode(client: BunSqliteClient) {
 
 function notNullify(map: any, schema: Schema) {
   for (const field of schema.fields) {
-    if (
-      !field.required ||
-      !getIsNullOrUndef(Reflect.get(map, field.fieldname))
-    ) {
+    if (!field.required || !getIsNullOrUndef(Reflect.get(map, field.fieldname))) {
       continue;
     }
 

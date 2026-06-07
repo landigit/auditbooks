@@ -20,10 +20,7 @@ import { fuzzyMatch } from "src/utils";
 import { getCreateFiltersFromListViewFilters } from "src/utils/misc";
 import { markRaw } from "vue";
 import AutoComplete from "./AutoComplete.vue";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 
 interface MultiLabelLinkProps extends BaseControlProps {
   thirdLink?: string;
@@ -112,12 +109,7 @@ const getOptions = async () => {
   const filters = await getFilters();
 
   const fields = [
-    ...new Set([
-      "name",
-      props.secondaryLink,
-      schema.titleField,
-      (props.df as any).groupBy,
-    ]),
+    ...new Set(["name", props.secondaryLink, schema.titleField, (props.df as any).groupBy]),
   ].filter(Boolean) as string[];
 
   const dbResults = await fyo.db.getAll(schemaName, {
@@ -130,8 +122,7 @@ const getOptions = async () => {
       const option: any = {
         label:
           r[props.secondaryLink as string] && props.showSecondaryLink
-            ? `${r[schema.titleField as string]}  ` +
-              `  ${r[props.secondaryLink as string]}`
+            ? `${r[schema.titleField as string]}  ` + `  ${r[props.secondaryLink as string]}`
             : r[schema.titleField as string],
         value: r.name,
         value2: r[props.secondaryLink as string],
@@ -166,8 +157,7 @@ const getSuggestions = async (keyword = "") => {
     return [
       {
         component: markRaw({
-          template:
-            '<text class="text-description">{{ t`No results found` }}</text>',
+          template: '<text class="text-description">{{ t`No results found` }}</text>',
           setup() {
             return { t };
           },
@@ -227,11 +217,8 @@ const openNewDoc = async () => {
 const getCreateFilters = async () => {
   const { schemaName, fieldname } = props.df as any;
 
-  const getCreateFiltersFunc =
-    fyo.models[schemaName]?.createFilters?.[fieldname];
-  let createFilters = doc.value
-    ? await getCreateFiltersFunc?.(doc.value)
-    : undefined;
+  const getCreateFiltersFunc = fyo.models[schemaName]?.createFilters?.[fieldname];
+  let createFilters = doc.value ? await getCreateFiltersFunc?.(doc.value) : undefined;
 
   if (createFilters !== undefined) {
     return createFilters;

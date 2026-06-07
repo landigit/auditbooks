@@ -1,21 +1,12 @@
 import { Fyo } from "fyo";
 import { RawValueMap } from "fyo/core/types";
-import {
-  Field,
-  FieldType,
-  FieldTypeEnum,
-  RawValue,
-  TargetField,
-} from "schemas/types";
+import { Field, FieldType, FieldTypeEnum, RawValue, TargetField } from "schemas/types";
 import { generateCSV } from "utils/csvParser";
 import { GetAllOptions, QueryFilter } from "utils/db/types";
 import { getMapFromList, safeParseFloat } from "utils/index";
 import { ExportField, ExportTableField } from "./types";
 
-const excludedFieldTypes: FieldType[] = [
-  FieldTypeEnum.AttachImage,
-  FieldTypeEnum.Attachment,
-];
+const excludedFieldTypes: FieldType[] = [FieldTypeEnum.AttachImage, FieldTypeEnum.Attachment];
 
 interface CsvHeader {
   label: string;
@@ -24,10 +15,7 @@ interface CsvHeader {
   parentFieldname?: string;
 }
 
-export function getExportFields(
-  fields: Field[],
-  exclude: string[] = [],
-): ExportField[] {
+export function getExportFields(fields: Field[], exclude: string[] = []): ExportField[] {
   return fields
     .filter((f) => !f.computed && f.label && !exclude.includes(f.fieldname))
     .map((field) => {
@@ -42,10 +30,7 @@ export function getExportFields(
     });
 }
 
-export function getExportTableFields(
-  fields: Field[],
-  fyo: Fyo,
-): ExportTableField[] {
+export function getExportTableFields(fields: Field[], fyo: Fyo): ExportTableField[] {
   return fields
     .filter((f) => f.fieldtype === FieldTypeEnum.Table)
     .map((f) => {
@@ -71,14 +56,7 @@ export async function getJsonExportData(
   filters: QueryFilter,
   fyo: Fyo,
 ): Promise<string> {
-  const data = await getExportData(
-    schemaName,
-    fields,
-    tableFields,
-    limit,
-    filters,
-    fyo,
-  );
+  const data = await getExportData(schemaName, fields, tableFields, limit, filters, fyo);
   convertParentDataToJsonExport(data.parentData, data.childTableData);
   return JSON.stringify(data.parentData);
 }
@@ -112,9 +90,7 @@ export async function getCsvExportData(
       continue;
     }
 
-    const baseRowData = headers.parent.map(
-      (f) => (parentRow[f.fieldname] as RawValue) ?? "",
-    );
+    const baseRowData = headers.parent.map((f) => (parentRow[f.fieldname] as RawValue) ?? "");
 
     const tableFieldRowMap = parentNameMap[parentName];
     if (!tableFieldRowMap || !Object.keys(tableFieldRowMap ?? {}).length) {
@@ -149,11 +125,7 @@ export async function getCsvExportData(
   return generateCSV(rows);
 }
 
-function getCsvHeaders(
-  schemaName: string,
-  fields: ExportField[],
-  tableFields: ExportTableField[],
-) {
+function getCsvHeaders(schemaName: string, fields: ExportField[], tableFields: ExportTableField[]) {
   const headers = {
     parent: [] as CsvHeader[],
     child: [] as CsvHeader[],
@@ -213,20 +185,9 @@ async function getExportData(
   filters: QueryFilter,
   fyo: Fyo,
 ) {
-  const parentData = await getParentData(
-    schemaName,
-    filters,
-    fields,
-    limit,
-    fyo,
-  );
+  const parentData = await getParentData(schemaName, filters, fields, limit, fyo);
   const parentNames = parentData.map((f) => f.name as string).filter(Boolean);
-  const childTableData = await getAllChildTableData(
-    tableFields,
-    fields,
-    parentNames,
-    fyo,
-  );
+  const childTableData = await getAllChildTableData(tableFields, fields, parentNames, fyo);
   return { parentData, childTableData };
 }
 
@@ -330,9 +291,7 @@ async function getChildTableData(
 }
 
 function convertRawPesaToFloat(data: RawValueMap[], fields: ExportField[]) {
-  const currencyFields = fields.filter(
-    (f) => f.fieldtype === FieldTypeEnum.Currency,
-  );
+  const currencyFields = fields.filter((f) => f.fieldtype === FieldTypeEnum.Currency);
 
   for (const row of data) {
     for (const { fieldname } of currencyFields) {

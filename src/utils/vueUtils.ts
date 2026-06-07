@@ -1,12 +1,5 @@
 import { Keys } from "utils/types";
-import {
-  onActivated,
-  onDeactivated,
-  onMounted,
-  onUnmounted,
-  reactive,
-  ref,
-} from "vue";
+import { onActivated, onDeactivated, onMounted, onUnmounted, reactive, ref } from "vue";
 import { getIsMac } from "./misc";
 import { Shortcuts } from "./shortcuts";
 import { DocRef } from "./types";
@@ -33,19 +26,13 @@ export function useKeys() {
   const keydownListener = (e: KeyboardEvent) => {
     const notMods = !(e.altKey || e.metaKey || e.ctrlKey);
     const isHTMLInput =
-      typeof HTMLInputElement !== "undefined" &&
-      e.target instanceof HTMLInputElement;
+      typeof HTMLInputElement !== "undefined" && e.target instanceof HTMLInputElement;
     if (isHTMLInput && notMods) {
       return;
     }
 
-    const isHTMLElement =
-      typeof HTMLElement !== "undefined" && e.target instanceof HTMLElement;
-    if (
-      isHTMLElement &&
-      (e.target as any).contentEditable === "true" &&
-      notMods
-    ) {
+    const isHTMLElement = typeof HTMLElement !== "undefined" && e.target instanceof HTMLElement;
+    if (isHTMLElement && (e.target as any).contentEditable === "true" && notMods) {
       return;
     }
 

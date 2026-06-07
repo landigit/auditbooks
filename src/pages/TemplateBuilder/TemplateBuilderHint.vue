@@ -44,9 +44,7 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Template Builder Hint</text>
-        <text class="Subtitle"
-          >This page is not supported on Mobile Native yet.</text
-        >
+        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
       </view>
     </view>
   </view>

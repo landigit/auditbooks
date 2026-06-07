@@ -19,9 +19,7 @@ import {
 } from "reka-ui";
 import { cn } from "src/utils/cn";
 
-const props = defineProps<
-  CalendarRootProps & { class?: HTMLAttributes["class"] }
->();
+const props = defineProps<CalendarRootProps & { class?: HTMLAttributes["class"] }>();
 const emits = defineEmits<CalendarRootEmits>();
 
 const delegatedProps = computed(() => {
@@ -62,9 +60,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
       </CalendarNext>
     </CalendarHeader>
 
-    <view
-      class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0"
-    >
+    <view class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
       <CalendarGrid
         v-for="month in grid"
         :key="month.value.toString()"

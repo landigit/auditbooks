@@ -102,9 +102,7 @@ export class StockManager {
       throw new ValidationError(t`Quantity needs to be set`);
     }
     if (!details.isReturn && details.quantity <= 0) {
-      throw new ValidationError(
-        t`Quantity (${details.quantity}) has to be greater than zero`,
-      );
+      throw new ValidationError(t`Quantity (${details.quantity}) has to be greater than zero`);
     }
   }
 
@@ -114,9 +112,7 @@ export class StockManager {
     }
 
     if (details.rate.lt(0)) {
-      throw new ValidationError(
-        t`Rate (${details.rate.float}) has to be greater than zero`,
-      );
+      throw new ValidationError(t`Rate (${details.rate.float}) has to be greater than zero`);
     }
   }
 
@@ -133,11 +129,7 @@ export class StockManager {
   }
 
   async #validateStockAvailability(details: SMIDetails) {
-    const trackItem = await this.fyo.getValue(
-      ModelNameEnum.Item,
-      details.item,
-      "trackItem",
-    );
+    const trackItem = await this.fyo.getValue(ModelNameEnum.Item, details.item, "trackItem");
 
     if (!details.fromLocation || !trackItem) {
       return;
@@ -317,9 +309,7 @@ class StockManagerItem {
       quantity = -1;
     }
 
-    return serialNumbers.map((sn) =>
-      this.#getStockLedgerEntry(location, quantity, sn),
-    );
+    return serialNumbers.map((sn) => this.#getStockLedgerEntry(location, quantity, sn));
   }
 
   #getStockLedgerEntry(

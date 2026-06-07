@@ -67,16 +67,10 @@
         />
       </view>
 
-      <view
-        v-if="errorMessage"
-        class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg"
-      >
+      <view v-if="errorMessage" class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
         <text class="text-xs text-error">{{ errorMessage }}</text>
       </view>
-      <view
-        v-else-if="helpMessage"
-        class="p-3 bg-surface border border-border rounded-lg"
-      >
+      <view v-else-if="helpMessage" class="p-3 bg-surface border border-border rounded-lg">
         <text class="text-xs text-description">{{ helpMessage }}</text>
       </view>
     </view>

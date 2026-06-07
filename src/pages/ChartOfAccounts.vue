@@ -3,9 +3,7 @@
     <view class="flex flex-col h-full">
       <PageHeader :title="t`Chart of Accounts`">
         <Button v-if="!isAllExpanded" @tap="expand">{{ t`Expand` }}</Button>
-        <Button v-if="!isAllCollapsed" @tap="collapse">{{
-          t`Collapse`
-        }}</Button>
+        <Button v-if="!isAllCollapsed" @tap="collapse">{{ t`Collapse` }}</Button>
       </PageHeader>
 
       <!-- Chart of Accounts -->
@@ -31,10 +29,7 @@
               class="text-description group-hover:text-main transition-colors"
             />
             <view class="flex items-baseline">
-              <view
-                class="ms-4"
-                :class="[!account.parentAccount && 'font-semibold']"
-              >
+              <view class="ms-4" :class="[!account.parentAccount && 'font-semibold']">
                 {{ account.name }}
               </view>
 
@@ -64,10 +59,7 @@
             </view>
 
             <!-- Account Balance String -->
-            <text
-              v-if="!account.isGroup"
-              class="ms-auto text-base text-description"
-            >
+            <text v-if="!account.isGroup" class="ms-auto text-base text-description">
               {{ getBalanceString(account) }}
             </text>
           </view>
@@ -94,9 +86,7 @@
                 type="text"
                 :disabled="insertingAccount"
                 @keydown.esc="cancelAddingAccount(account)"
-                @keydown.enter="
-                  createNewAccount(account, account.addingGroupAccount)
-                "
+                @keydown.enter="createNewAccount(account, account.addingGroupAccount)"
               />
               <view
                 v-if="!insertingAccount"
@@ -154,16 +144,10 @@
             @tap="onClick(account)"
           >
             <view class="flex flex-col">
-              <text
-                class="text-sm text-main"
-                :class="{ 'font-semibold': !account.parentAccount }"
-              >
+              <text class="text-sm text-main" :class="{ 'font-semibold': !account.parentAccount }">
                 {{ account.name }}
               </text>
-              <text
-                v-if="!account.isGroup"
-                class="text-[10px] text-description mt-0.5"
-              >
+              <text v-if="!account.isGroup" class="text-[10px] text-description mt-0.5">
                 {{ getBalanceString(account) }}
               </text>
             </view>
@@ -176,18 +160,14 @@
               class="px-2 py-1 rounded bg-blue-500/10 border border-blue-500/20 active:opacity-70 cursor-pointer"
               @tap="addAccount(account, 'addingAccount')"
             >
-              <text class="text-[10px] font-semibold text-blue-600"
-                >+ Account</text
-              >
+              <text class="text-[10px] font-semibold text-blue-600">+ Account</text>
             </view>
             <view
               v-if="account.isGroup"
               class="px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 active:opacity-70 cursor-pointer"
               @tap="addAccount(account, 'addingGroupAccount')"
             >
-              <text class="text-[10px] font-semibold text-emerald-600"
-                >+ Group</text
-              >
+              <text class="text-[10px] font-semibold text-emerald-600">+ Group</text>
             </view>
             <view
               class="px-2 py-1 rounded bg-red-500/10 border border-red-500/20 active:opacity-70 cursor-pointer"
@@ -205,9 +185,7 @@
           class="py-3 border-b border-border flex flex-row items-center"
           :style="getGroupStyle(account.level + 1)"
         >
-          <text class="text-lg mr-2">{{
-            account.addingGroupAccount ? "📁" : "⚪"
-          }}</text>
+          <text class="text-lg mr-2">{{ account.addingGroupAccount ? "📁" : "⚪" }}</text>
           <input
             :ref="(el) => setInputRef(el, account.name)"
             v-model="newAccountName"
@@ -236,15 +214,7 @@
   </view>
 </template>
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  inject,
-  nextTick,
-  onMounted,
-  onActivated,
-  onDeactivated,
-} from "vue";
+import { ref, computed, inject, nextTick, onMounted, onActivated, onDeactivated } from "vue";
 import { useRoute } from "vue-router";
 import router from "src/router";
 import { isLynx } from "src/utils/interactive";
@@ -298,16 +268,12 @@ const setInputRef = (el: any, name: string) => {
 // Reactive State definitions
 const isAllCollapsed = ref(true);
 const isAllExpanded = ref(false);
-const root = ref<null | { label: string; balance: number; currency: string }>(
-  null,
-);
+const root = ref<null | { label: string; balance: number; currency: string }>(null);
 const accounts = ref<AccountItem[]>([]);
 const schemaName = ref("Account");
 const newAccountName = ref("");
 const insertingAccount = ref(false);
-const totals = ref<
-  Record<string, { totalCredit: number; totalDebit: number } | undefined>
->({});
+const totals = ref<Record<string, { totalCredit: number; totalDebit: number } | undefined>>({});
 const refetchTotals = ref(false);
 const settings = ref<null | TreeViewSettings>(null);
 
@@ -315,11 +281,7 @@ const settings = ref<null | TreeViewSettings>(null);
 const allAccounts = computed(() => {
   const list: AccountItem[] = [];
 
-  (function getAccounts(
-    accs: AccountItem[],
-    level: number,
-    location: number[],
-  ) {
+  (function getAccounts(accs: AccountItem[], level: number, location: number[]) {
     for (let i = 0; i < accs.length; i++) {
       const account = accs[i];
 
@@ -363,9 +325,7 @@ const setTotalDebitAndCredit = async () => {
   totals.value = getMapFromList(totalsList, "account");
 };
 
-const getChildren = async (
-  parent: null | string = null,
-): Promise<AccountItem[]> => {
+const getChildren = async (parent: null | string = null): Promise<AccountItem[]> => {
   const children = await fyo.db.getAll(ModelNameEnum.Account, {
     filters: {
       parentAccount: parent,
@@ -385,8 +345,7 @@ const getChildren = async (
 };
 
 const fetchAccounts = async () => {
-  settings.value =
-    fyo.models[ModelNameEnum.Account]?.getTreeSettings(fyo) ?? null;
+  settings.value = fyo.models[ModelNameEnum.Account]?.getTreeSettings(fyo) ?? null;
   const currency = fyo.singles.SystemSettings?.currency ?? "";
   const label = (await settings.value?.getRootLabel()) ?? "";
 
@@ -429,10 +388,7 @@ const toggle = async (account: AccountItem, expand: boolean) => {
   await toggleChildren(account);
 };
 
-const toggleAll = async (
-  accs: AccountItem | AccountItem[],
-  expand: boolean,
-) => {
+const toggleAll = async (accs: AccountItem | AccountItem[], expand: boolean) => {
   if (!Array.isArray(accs)) {
     await toggle(accs, expand);
     accs = accs.children ?? [];
@@ -455,11 +411,7 @@ const collapse = async () => {
   isAllCollapsed.value = true;
 };
 
-const removeAccount = (
-  name: string,
-  account?: AccountItem,
-  parentAccount?: AccountItem,
-) => {
+const removeAccount = (name: string, account?: AccountItem, parentAccount?: AccountItem) => {
   if (account == null && parentAccount == null) {
     return;
   }
@@ -567,8 +519,7 @@ const addAccount = async (parentAccount: AccountItem, key: AccKey) => {
     parentAccount.expanded = true;
   }
   // activate editing of type 'key' and deactivate other type
-  let otherKey: AccKey =
-    key === "addingAccount" ? "addingGroupAccount" : "addingAccount";
+  let otherKey: AccKey = key === "addingAccount" ? "addingGroupAccount" : "addingAccount";
   parentAccount[key] = true;
   parentAccount[otherKey] = false;
 
@@ -583,10 +534,7 @@ const cancelAddingAccount = (parentAccount: AccountItem) => {
   newAccountName.value = "";
 };
 
-const createNewAccount = async (
-  parentAccount: AccountItem,
-  isGroup: boolean,
-) => {
+const createNewAccount = async (parentAccount: AccountItem, isGroup: boolean) => {
   insertingAccount.value = true;
 
   const accountName = newAccountName.value.trim();
@@ -624,9 +572,7 @@ const createNewAccount = async (
 };
 
 const isQuickEditOpen = (account: AccountItem) => {
-  const query = isLynx
-    ? router.currentRoute.value.params || {}
-    : route?.query || {};
+  const query = isLynx ? router.currentRoute.value.params || {} : route?.query || {};
   const { edit, schemaName, name } = query;
   return !!(edit && schemaName === "Account" && name === account.name);
 };

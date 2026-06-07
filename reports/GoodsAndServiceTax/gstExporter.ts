@@ -141,10 +141,7 @@ async function exportReport(extention: ExportExtention, report: BaseGSTR) {
     return;
   }
 
-  const { filePath, canceled } = await getSavePath(
-    report.reportName,
-    extention,
-  );
+  const { filePath, canceled } = await getSavePath(report.reportName, extention);
 
   if (canceled || !filePath) {
     return;
@@ -167,10 +164,7 @@ async function exportReport(extention: ExportExtention, report: BaseGSTR) {
 }
 
 async function getCanExport(report: BaseGSTR) {
-  const gstin = await report.fyo.getValue(
-    ModelNameEnum.AccountingSettings,
-    "gstin",
-  );
+  const gstin = await report.fyo.getValue(ModelNameEnum.AccountingSettings, "gstin");
   if (gstin) {
     return true;
   }
@@ -187,10 +181,7 @@ async function getCanExport(report: BaseGSTR) {
 export async function getGstrJsonData(report: BaseGSTR): Promise<string> {
   const toDate = report.toDate!;
   const transferType = report.transferType!;
-  const gstin = await report.fyo.getValue(
-    ModelNameEnum.AccountingSettings,
-    "gstin",
-  );
+  const gstin = await report.fyo.getValue(ModelNameEnum.AccountingSettings, "gstin");
 
   const gstData: GSTData = {
     version: "GST3.0.4",
@@ -220,9 +211,7 @@ async function generateB2bData(report: BaseGSTR): Promise<B2BCustomer[]> {
       : ModelNameEnum.PurchaseInvoiceItem;
 
   const parentSchemaName =
-    report.gstrType === "GSTR-1"
-      ? ModelNameEnum.SalesInvoice
-      : ModelNameEnum.PurchaseInvoice;
+    report.gstrType === "GSTR-1" ? ModelNameEnum.SalesInvoice : ModelNameEnum.PurchaseInvoice;
 
   for (const row of report.gstrRows ?? []) {
     const invRecord: B2BInvRecord = {
@@ -250,9 +239,7 @@ async function generateB2bData(report: BaseGSTR): Promise<B2BCustomer[]> {
     items.forEach((item) => {
       const hsnCode = item.hsnCode as number;
       const tax = item.tax as string;
-      const baseAmount = fyo
-        .pesa((item.amount as string) ?? 0)
-        .mul(exchangeRate);
+      const baseAmount = fyo.pesa((item.amount as string) ?? 0).mul(exchangeRate);
 
       const itemRecord: B2BItmRecord = {
         num: hsnCode,
@@ -295,9 +282,7 @@ async function generateB2bData(report: BaseGSTR): Promise<B2BCustomer[]> {
   return b2b;
 }
 
-async function generateB2clData(
-  report: BaseGSTR,
-): Promise<B2CLStateInvoiceRecord[]> {
+async function generateB2clData(report: BaseGSTR): Promise<B2CLStateInvoiceRecord[]> {
   const fyo = report.fyo;
   const b2cl: B2CLStateInvoiceRecord[] = [];
   const stateCodeMap = invertMap(codeStateMap);
@@ -308,16 +293,10 @@ async function generateB2clData(
       : ModelNameEnum.PurchaseInvoiceItem;
 
   const parentSchemaName =
-    report.gstrType === "GSTR-1"
-      ? ModelNameEnum.SalesInvoice
-      : ModelNameEnum.PurchaseInvoice;
+    report.gstrType === "GSTR-1" ? ModelNameEnum.SalesInvoice : ModelNameEnum.PurchaseInvoice;
 
   for (const row of report.gstrRows ?? []) {
-    if (
-      row.place === "__proto__" ||
-      row.place === "constructor" ||
-      row.place === "prototype"
-    ) {
+    if (row.place === "__proto__" || row.place === "constructor" || row.place === "prototype") {
       continue;
     }
     const invRecord: B2CLInvRecord = {
@@ -342,9 +321,7 @@ async function generateB2clData(
     items.forEach((item) => {
       const hsnCode = item.hsnCode as number;
       const tax = item.tax as string;
-      const baseAmount = fyo
-        .pesa((item.amount as string) ?? 0)
-        .mul(exchangeRate);
+      const baseAmount = fyo.pesa((item.amount as string) ?? 0).mul(exchangeRate);
 
       const itemRecord: B2CLItmRecord = {
         num: hsnCode,
@@ -385,11 +362,7 @@ function generateB2csData(report: BaseGSTR): B2CSInvRecord[] {
   const b2cs: B2CSInvRecord[] = [];
 
   for (const row of report.gstrRows ?? []) {
-    if (
-      row.place === "__proto__" ||
-      row.place === "constructor" ||
-      row.place === "prototype"
-    ) {
+    if (row.place === "__proto__" || row.place === "constructor" || row.place === "prototype") {
       continue;
     }
     const invRecord: B2CSInvRecord = {

@@ -4,9 +4,7 @@
     style="height: 83vh"
   >
     <!-- Items Grid -->
-    <view
-      class="gap-2 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-    >
+    <view class="gap-2 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <view
         class="p-1 border border-border flex flex-col text-sm text-center"
         @tap="handleChange(item as POSItem)"
@@ -47,9 +45,7 @@
         <text class="text-lg font-medium text-main">{{ item.name }}</text>
 
         <text class="text-lg font-medium text-main">
-          {{
-            item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined
-          }}
+          {{ item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined }}
           {{ item.rate }}
         </text>
       </view>

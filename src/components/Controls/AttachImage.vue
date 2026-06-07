@@ -36,10 +36,7 @@
       style="background: var(--color-backdrop); backdrop-filter: blur(2px)"
     >
       <view class="bg-surface-hover p-0.5 rounded mb-1" @tap="handleClick">
-        <LucideIcon
-          :name="shouldClear ? 'x' : 'upload'"
-          class="w-4 h-4 text-description"
-        />
+        <LucideIcon :name="shouldClear ? 'x' : 'upload'" class="w-4 h-4 text-description" />
       </view>
     </view>
   </view>
@@ -49,10 +46,7 @@
 import { computed, ref } from "vue";
 import { fyo } from "src/initFyo";
 import { getDataURL } from "src/utils/misc";
-import {
-  BaseControlProps,
-  useBaseControl,
-} from "src/composables/useBaseControl";
+import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
 import LucideIcon from "../LucideIcon.vue";
 
 interface AttachImageProps extends BaseControlProps {
@@ -88,11 +82,7 @@ const mime_types: Record<string, string> = {
 };
 
 const inputRef = ref<HTMLElement | null>(null);
-const { isReadOnly, triggerChange, focus } = useBaseControl(
-  props as any,
-  emit,
-  inputRef,
-);
+const { isReadOnly, triggerChange, focus } = useBaseControl(props as any, emit, inputRef);
 
 const imageSizeStyle = computed(() => {
   if (props.size === "form") {

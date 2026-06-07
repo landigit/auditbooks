@@ -1,9 +1,5 @@
 ﻿import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { ItemEnquiry } from "models/baseModels/ItemEnquiry/ItemEnquiry";
 import { ModelNameEnum } from "models/types";
 
@@ -21,10 +17,7 @@ describe("Item Enquiry", () => {
       similarProduct: "Ink",
     };
 
-    const newEnquiry = fyo.doc.getNewDoc(
-      ModelNameEnum.ItemEnquiry,
-      initialData,
-    ) as ItemEnquiry;
+    const newEnquiry = fyo.doc.getNewDoc(ModelNameEnum.ItemEnquiry, initialData) as ItemEnquiry;
     await newEnquiry.sync();
 
     const createdEnquiry = (await fyo.doc.getDoc(

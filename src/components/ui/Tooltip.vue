@@ -12,12 +12,9 @@ import TooltipContent from "./TooltipContent.vue";
 
 import { useRoute } from "vue-router";
 
-const props = withDefaults(
-  defineProps<TooltipRootProps & { open?: boolean }>(),
-  {
-    delayDuration: 300,
-  },
-);
+const props = withDefaults(defineProps<TooltipRootProps & { open?: boolean }>(), {
+  delayDuration: 300,
+});
 const emits = defineEmits<TooltipRootEmits>();
 
 const forwarded = useForwardPropsEmits(props, emits);

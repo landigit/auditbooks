@@ -25,13 +25,10 @@ const props = withDefaults(defineProps<RowProps>(), {
 const style = computed(() => {
   const obj: Record<string, string> = {};
   if (props.columnCount) {
-    obj["grid-template-columns"] =
-      `repeat(${props.columnCount}, ${props.columnWidth})`;
+    obj["grid-template-columns"] = `repeat(${props.columnCount}, ${props.columnWidth})`;
   }
   if (props.ratio.length) {
-    obj["grid-template-columns"] = props.ratio
-      .map((r) => `minmax(0, ${r}fr)`)
-      .join(" ");
+    obj["grid-template-columns"] = props.ratio.map((r) => `minmax(0, ${r}fr)`).join(" ");
   }
   if (props.gridTemplateColumns) {
     obj["grid-template-columns"] = props.gridTemplateColumns;

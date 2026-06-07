@@ -57,38 +57,22 @@
 
         <view class="FormGroup">
           <text class="FormLabel">Company Name *</text>
-          <input
-            class="FormInput"
-            v-model="setupForm.companyName"
-            placeholder="e.g. Acme Corp"
-          />
+          <input class="FormInput" v-model="setupForm.companyName" placeholder="e.g. Acme Corp" />
         </view>
 
         <view class="FormGroup">
           <text class="FormLabel">Full Name *</text>
-          <input
-            class="FormInput"
-            v-model="setupForm.fullname"
-            placeholder="e.g. John Doe"
-          />
+          <input class="FormInput" v-model="setupForm.fullname" placeholder="e.g. John Doe" />
         </view>
 
         <view class="FormGroup">
           <text class="FormLabel">Email Address *</text>
-          <input
-            class="FormInput"
-            v-model="setupForm.email"
-            placeholder="e.g. john@acme.com"
-          />
+          <input class="FormInput" v-model="setupForm.email" placeholder="e.g. john@acme.com" />
         </view>
 
         <view class="FormGroup">
           <text class="FormLabel">Bank Name *</text>
-          <input
-            class="FormInput"
-            v-model="setupForm.bankName"
-            placeholder="e.g. HDFC Bank"
-          />
+          <input class="FormInput" v-model="setupForm.bankName" placeholder="e.g. HDFC Bank" />
         </view>
 
         <view class="FormActions">
@@ -155,11 +139,7 @@
                 </text>
                 <view
                   class="MetricBadge"
-                  :class="
-                    stats.netProfit >= 0
-                      ? 'MetricBadge--profit'
-                      : 'MetricBadge--loss'
-                  "
+                  :class="stats.netProfit >= 0 ? 'MetricBadge--profit' : 'MetricBadge--loss'"
                 >
                   <text class="MetricBadgeText">{{
                     stats.netProfit >= 0 ? "Profit" : "Loss"
@@ -251,9 +231,7 @@
 
             <view class="DataList">
               <view v-if="!invoiceList.length" class="EmptyState">
-                <text class="EmptyText"
-                  >No invoices found. Tap + to create one.</text
-                >
+                <text class="EmptyText">No invoices found. Tap + to create one.</text>
               </view>
               <view
                 v-for="item in invoiceList"
@@ -274,9 +252,7 @@
                   <text class="DataRowSubtitle">{{ item.party }}</text>
                 </view>
                 <view class="DataRowSide">
-                  <text class="DataRowValue">{{
-                    formatCurrency(item.grandTotal)
-                  }}</text>
+                  <text class="DataRowValue">{{ formatCurrency(item.grandTotal) }}</text>
                   <text class="DataRowMeta">{{ item.postingDate }}</text>
                 </view>
               </view>
@@ -302,9 +278,7 @@
 
             <view class="DataList">
               <view v-if="!customerList.length" class="EmptyState">
-                <text class="EmptyText"
-                  >No customers found. Tap + to add one.</text
-                >
+                <text class="EmptyText">No customers found. Tap + to add one.</text>
               </view>
               <view
                 v-for="item in customerList"
@@ -379,9 +353,7 @@
                 </view>
                 <view class="DataRowSide">
                   <text class="DataRowMeta">Rate</text>
-                  <text class="DataRowValue text-blue">{{
-                    formatCurrency(item.rate)
-                  }}</text>
+                  <text class="DataRowValue text-blue">{{ formatCurrency(item.rate) }}</text>
                 </view>
               </view>
             </view>
@@ -460,10 +432,7 @@ import { routeTo } from "./utils/ui";
 import { useKeys } from "./utils/vueUtils";
 import { useAppStore } from "./stores/app";
 import { setTheme, setFont } from "src/utils/theme";
-import {
-  registerInstanceToERPNext,
-  updateERPNSyncSettings,
-} from "./utils/erpnextSync";
+import { registerInstanceToERPNext, updateERPNSyncSettings } from "./utils/erpnextSync";
 import { ERPNextSyncSettings } from "models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings";
 import { ErrorLogEnum } from "fyo/telemetry/types";
 import router from "src/router";
@@ -536,9 +505,7 @@ provide(
   computed(() => appStore.languageDirection),
 );
 
-const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
-  null,
-);
+const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(null);
 const activeScreen = ref<Screen | null>(null);
 
 const language = computed(() => appStore.language);
@@ -559,10 +526,7 @@ onMounted(async () => {
 async function setInitialScreen(): Promise<void> {
   const lastSelectedFilePath = fyo.config.get("lastSelectedFilePath", null);
 
-  if (
-    typeof lastSelectedFilePath !== "string" ||
-    !lastSelectedFilePath.length
-  ) {
+  if (typeof lastSelectedFilePath !== "string" || !lastSelectedFilePath.length) {
     activeScreen.value = Screen.DatabaseSelector;
     return;
   }
@@ -623,9 +587,7 @@ async function fileSelected(filePath: string): Promise<void> {
   }
 }
 
-async function setupComplete(
-  setupWizardOptions: SetupWizardOptions,
-): Promise<void> {
+async function setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
   const companyName = setupWizardOptions.companyName;
   const filePath = await ipc.getDbDefaultPath(companyName);
   await setupInstance(filePath, setupWizardOptions, fyo);
@@ -634,19 +596,13 @@ async function setupComplete(
 }
 
 async function showSetupWizardOrDesk(filePath: string): Promise<void> {
-  const { countryCode, error, actionSymbol } = await connectToDatabase(
-    fyo,
-    filePath,
-  );
+  const { countryCode, error, actionSymbol } = await connectToDatabase(fyo, filePath);
 
   if (!countryCode && error && actionSymbol) {
     return await handleConnectionFailed(error, actionSymbol);
   }
 
-  const setupCompleteVal = await fyo.getValue(
-    ModelNameEnum.AccountingSettings,
-    "setupComplete",
-  );
+  const setupCompleteVal = await fyo.getValue(ModelNameEnum.AccountingSettings, "setupComplete");
 
   if (!setupCompleteVal) {
     activeScreen.value = Screen.SetupWizard;
@@ -669,23 +625,17 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
       try {
         await registerInstanceToERPNext(fyo);
         await updateERPNSyncSettings(fyo);
-        await ipc.initScheduler(
-          `${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`,
-        );
+        await ipc.initScheduler(`${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`);
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
 
         try {
-          const existing = await fyo.db.getAll(
-            ErrorLogEnum.IntegrationErrorLog,
-            {
-              filters: {
-                error: errorMessage,
-              },
-              limit: 1,
+          const existing = await fyo.db.getAll(ErrorLogEnum.IntegrationErrorLog, {
+            filters: {
+              error: errorMessage,
             },
-          );
+            limit: 1,
+          });
 
           if (!existing.length) {
             await fyo.doc
@@ -788,12 +738,13 @@ async function handleSetupSubmit() {
   showLoading.value = true;
   loadingMessage.value = "Setting up database, this may take a moment...";
   try {
-    let filePath = (appStore.dbPath ||
-      fyo.config.get("lastSelectedFilePath")) as string | undefined;
+    let filePath = (appStore.dbPath || fyo.config.get("lastSelectedFilePath")) as
+      | string
+      | undefined;
     if (!filePath) {
-      filePath = (await (globalThis as any).ipc.getDbDefaultPath(
-        setupForm.value.companyName,
-      )) as string | undefined;
+      filePath = (await (globalThis as any).ipc.getDbDefaultPath(setupForm.value.companyName)) as
+        | string
+        | undefined;
     }
     if (!filePath) {
       showLoading.value = false;
@@ -812,32 +763,21 @@ async function handleSetupSubmit() {
 }
 
 async function loadDashboardStats() {
-  stats.value.companyName =
-    (fyo.singles.AccountingSettings?.companyName as string) || "My Company";
-  stats.value.currency =
-    (fyo.singles.SystemSettings?.currency as string) || "INR";
+  stats.value.companyName = (fyo.singles.AccountingSettings?.companyName as string) || "My Company";
+  stats.value.currency = (fyo.singles.SystemSettings?.currency as string) || "INR";
 
   try {
     const startOfYear = dayjs().startOf("year").format("YYYY-MM-DD");
     const endOfYear = dayjs().endOf("year").format("YYYY-MM-DD");
-    const res = (await fyo.db.getIncomeAndExpenses(
-      startOfYear,
-      endOfYear,
-    )) as any;
+    const res = (await fyo.db.getIncomeAndExpenses(startOfYear, endOfYear)) as any;
 
     let incTotal = 0;
     let expTotal = 0;
     if (res.income) {
-      incTotal = res.income.reduce(
-        (sum: number, row: any) => sum + Number(row.balance || 0),
-        0,
-      );
+      incTotal = res.income.reduce((sum: number, row: any) => sum + Number(row.balance || 0), 0);
     }
     if (res.expense) {
-      expTotal = res.expense.reduce(
-        (sum: number, row: any) => sum + Number(row.balance || 0),
-        0,
-      );
+      expTotal = res.expense.reduce((sum: number, row: any) => sum + Number(row.balance || 0), 0);
     }
 
     stats.value.totalIncome = incTotal;
@@ -850,8 +790,7 @@ async function loadDashboardStats() {
 
 function formatCurrency(val: number) {
   try {
-    const currencySym =
-      stats.value.currency === "INR" ? "₹" : stats.value.currency || "$";
+    const currencySym = stats.value.currency === "INR" ? "₹" : stats.value.currency || "$";
     return (
       currencySym +
       " " +
@@ -895,9 +834,7 @@ const activeRouteProps = computed(() => {
 });
 
 // Lynx Native Multipage/Tab State
-const currentTab = ref<"dashboard" | "invoices" | "customers" | "items">(
-  "dashboard",
-);
+const currentTab = ref<"dashboard" | "invoices" | "customers" | "items">("dashboard");
 const invoiceList = ref<any[]>([]);
 const customerList = ref<any[]>([]);
 const itemList = ref<any[]>([]);
@@ -905,13 +842,7 @@ const itemList = ref<any[]>([]);
 async function fetchInvoiceList() {
   try {
     const data = await fyo.db.getAll(ModelNameEnum.SalesInvoice, {
-      fields: [
-        "name",
-        "party",
-        "postingDate",
-        "grandTotal",
-        "outstandingAmount",
-      ],
+      fields: ["name", "party", "postingDate", "grandTotal", "outstandingAmount"],
       orderBy: ["postingDate"],
       order: "desc",
     });
@@ -944,9 +875,7 @@ async function fetchItemList() {
   }
 }
 
-async function switchTab(
-  tab: "dashboard" | "invoices" | "customers" | "items",
-) {
+async function switchTab(tab: "dashboard" | "invoices" | "customers" | "items") {
   currentTab.value = tab;
   if (tab === "dashboard") {
     await loadDashboardStats();

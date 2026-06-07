@@ -37,8 +37,7 @@ export async function registerInstanceToERPNext(fyo: Fyo) {
   }
 
   deviceID = syncSettingsDoc.deviceID;
-  const registerInstance = fyo.singles.ERPNextSyncSettings
-    ?.registerInstance as string;
+  const registerInstance = fyo.singles.ERPNextSyncSettings?.registerInstance as string;
 
   const response = (await sendAPIRequest(
     `${baseURL}/api/method/books_integration.api.${registerInstance}`,
@@ -56,8 +55,7 @@ export async function registerInstanceToERPNext(fyo: Fyo) {
   )) as unknown as ERPNextSyncSettingsAPIResponse;
 
   if (!response.message.success) {
-    const errorMsg =
-      response.message.message || "Failed to register instance to ERPNext";
+    const errorMsg = response.message.message || "Failed to register instance to ERPNext";
     throw new ValidationError(errorMsg);
   }
 }
@@ -77,15 +75,13 @@ export async function updateERPNSyncSettings(fyo: Fyo) {
   const deviceID = syncSettingsDoc.deviceID;
 
   if (!baseURL || !authToken || !deviceID) {
-    const errorMsg =
-      "Missing baseURL, authToken, or deviceID for ERPNext sync settings update";
+    const errorMsg = "Missing baseURL, authToken, or deviceID for ERPNext sync settings update";
     throw new ValidationError(errorMsg);
   }
 
   const res = await getERPNSyncSettings(fyo, baseURL, authToken);
   if (!res || !res.message || !res.message.success) {
-    const errorMsg =
-      res?.message?.message || "Failed to fetch sync settings from ERPNext";
+    const errorMsg = res?.message?.message || "Failed to fetch sync settings from ERPNext";
     throw new ValidationError(errorMsg);
   }
 
@@ -120,8 +116,7 @@ async function getERPNSyncSettings(
 
 export async function initERPNSync(fyo: Fyo) {
   const isSyncEnabled = fyo.singles.ERPNextSyncSettings?.isEnabled;
-  const initialSyncData =
-    fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
+  const initialSyncData = fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
   if (!isSyncEnabled) {
     const errorMsg = "ERPNext sync is not enabled";
     throw new Error(errorMsg);
@@ -169,8 +164,7 @@ export async function syncDocumentsFromERPNext(fyo: Fyo, shouldThrow = false) {
 
   const docsToSync = await getDocsFromERPNext(fyo, baseURL, token, deviceID);
   if (!docsToSync?.message.success) {
-    const errorMsg =
-      docsToSync?.message.message || "Failed to fetch documents from ERPNext";
+    const errorMsg = docsToSync?.message.message || "Failed to fetch documents from ERPNext";
     if (shouldThrow) {
       throw new ValidationError(errorMsg);
     }
@@ -319,9 +313,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
 
       for (const uomDoc of doc.uomConversions as DocValueMap[]) {
         if (!uomDoc.uom || !uomDoc.conversionFactor) {
-          throw new ValidationError(
-            `Invalid UOM conversion data: missing uom or conversionFactor`,
-          );
+          throw new ValidationError(`Invalid UOM conversion data: missing uom or conversionFactor`);
         }
         await (newDoc as Doc).append("uomConversions", {
           uom: uomDoc.uom,
@@ -340,9 +332,7 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
           const unitValue = row.unit;
 
           if (itemValue == null || unitValue == null) {
-            throw new ValidationError(
-              `Price list item missing required fields: item or unit`,
-            );
+            throw new ValidationError(`Price list item missing required fields: item or unit`);
           }
           const key = `${String(itemValue)}::${String(unitValue)}`;
           if (uniqueKeys.has(key)) {
@@ -357,38 +347,34 @@ async function appendDocValues(newDoc: DocValueMap, doc: DocValueMap) {
     case ModelNameEnum.PricingRule:
       const itemSet = new Set<string>();
 
-      (newDoc as Doc).appliedItems = (
-        newDoc as PricingRule
-      ).appliedItems?.filter((row: PricingRuleItem) => {
-        const key = `${row.item as string}::${row.unit as string}`;
+      (newDoc as Doc).appliedItems = (newDoc as PricingRule).appliedItems?.filter(
+        (row: PricingRuleItem) => {
+          const key = `${row.item as string}::${row.unit as string}`;
 
-        if (itemSet.has(key)) {
-          return false;
-        }
+          if (itemSet.has(key)) {
+            return false;
+          }
 
-        itemSet.add(key);
-        return true;
-      });
+          itemSet.add(key);
+          return true;
+        },
+      );
 
       const docItemSet = new Set<string>(
         (doc as PricingRule).appliedItems?.map(
-          (row: PricingRuleItem) =>
-            `${row.item as string}::${row.unit as string}`,
+          (row: PricingRuleItem) => `${row.item as string}::${row.unit as string}`,
         ) || [],
       );
 
-      (newDoc as PricingRule).appliedItems = (
-        newDoc as PricingRule
-      ).appliedItems?.filter((row: PricingRuleItem) =>
-        docItemSet.has(`${row.item as string}::${row.unit as string}`),
+      (newDoc as PricingRule).appliedItems = (newDoc as PricingRule).appliedItems?.filter(
+        (row: PricingRuleItem) => docItemSet.has(`${row.item as string}::${row.unit as string}`),
       );
       break;
   }
 }
 
 async function performPreSync(fyo: Fyo, doc: DocValueMap) {
-  const initialSyncData =
-    fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
+  const initialSyncData = fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
   const isInitialSync = !initialSyncData;
   switch (doc.doctype) {
     case ModelNameEnum.Item:
@@ -396,10 +382,7 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
         throw new ValidationError(`Item missing required field: unit`);
       }
 
-      const isUnitExists = await fyo.db.exists(
-        ModelNameEnum.UOM,
-        doc.unit as string,
-      );
+      const isUnitExists = await fyo.db.exists(ModelNameEnum.UOM, doc.unit as string);
 
       const isUnitExistsInQueue = (
         await fyo.db.getAll(ModelNameEnum.FetchFromERPNextQueue, {
@@ -428,10 +411,7 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
               name: doc.itemGroup,
             };
 
-            const itemGroupDoc = fyo.doc.getNewDoc(
-              ModelNameEnum.ItemGroup,
-              itemGroupData,
-            );
+            const itemGroupDoc = fyo.doc.getNewDoc(ModelNameEnum.ItemGroup, itemGroupData);
             itemGroupDoc._addDocToSyncQueue = false;
             await itemGroupDoc.sync();
           } else {
@@ -446,15 +426,10 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
       if (doc.uomConversions) {
         for (const row of doc.uomConversions as DocValueMap[]) {
           if (!row.uom) {
-            throw new ValidationError(
-              `UOM conversion missing required field: uom`,
-            );
+            throw new ValidationError(`UOM conversion missing required field: uom`);
           }
 
-          const isUnitExists = await fyo.db.exists(
-            ModelNameEnum.UOM,
-            row.uom as string,
-          );
+          const isUnitExists = await fyo.db.exists(ModelNameEnum.UOM, row.uom as string);
 
           if (!isUnitExists) {
             const data = {
@@ -470,10 +445,7 @@ async function performPreSync(fyo: Fyo, doc: DocValueMap) {
 
     case "Customer":
     case "Supplier":
-      const isAddressExists = await fyo.db.exists(
-        ModelNameEnum.Address,
-        doc.address as string,
-      );
+      const isAddressExists = await fyo.db.exists(ModelNameEnum.Address, doc.address as string);
 
       if (!isAddressExists) {
         await addToFetchFromERPNextQueue(fyo, {
@@ -553,8 +525,7 @@ async function updateExistingDocument(
 
 export async function performInitialFullSync(fyo: Fyo) {
   const isEnabled = fyo.singles.ERPNextSyncSettings?.isEnabled;
-  const initialSyncData =
-    fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
+  const initialSyncData = fyo.singles.ERPNextSyncSettings?.initialSyncData ?? true;
 
   if (!isEnabled) {
     const errorMsg = "ERPNext sync is not enabled";
@@ -626,8 +597,7 @@ export async function performInitialFullSync(fyo: Fyo) {
             await createNewDocument(fyo, doc, baseURL, token, deviceID);
           }
         } catch (error) {
-          const errorMsg =
-            error instanceof Error ? error.message : String(error);
+          const errorMsg = error instanceof Error ? error.message : String(error);
           failedDocs.push(`${docName} (${docType}): ${errorMsg}`);
 
           const fullErrorMsg = `Failed to process document ${String(
@@ -652,8 +622,7 @@ async function getAllDocsForInitialSync(
   token: string,
   deviceID: string,
 ): Promise<DocValueMap[]> {
-  const fetchFromERPNextQueue = fyo.singles.ERPNextSyncSettings
-    ?.fetchFromERPNextQueue as string;
+  const fetchFromERPNextQueue = fyo.singles.ERPNextSyncSettings?.fetchFromERPNextQueue as string;
 
   if (!fetchFromERPNextQueue) {
     const errorMsg = "Fetch from ERPNext queue endpoint not configured";
@@ -670,9 +639,7 @@ async function getAllDocsForInitialSync(
   })) as unknown as ERPNSyncDocsResponse;
 
   if (!response?.message?.success || !response.message.data) {
-    const errorMsg =
-      response?.message?.message ||
-      "Failed to fetch documents for initial sync";
+    const errorMsg = response?.message?.message || "Failed to fetch documents for initial sync";
     throw new ValidationError(errorMsg);
   }
   return response.message.data;
@@ -695,14 +662,10 @@ async function preSyncSalesInvoice(fyo: Fyo, doc: SalesInvoice) {
   if (doc.items) {
     for (const item of doc.items) {
       if (!item.unit) {
-        throw new ValidationError(
-          `Sales invoice item missing required field: unit`,
-        );
+        throw new ValidationError(`Sales invoice item missing required field: unit`);
       }
       if (!item.item) {
-        throw new ValidationError(
-          `Sales invoice item missing required field: item`,
-        );
+        throw new ValidationError(`Sales invoice item missing required field: item`);
       }
 
       const isUnitExists = await fyo.db.exists(ModelNameEnum.UOM, item.unit);
@@ -722,10 +685,7 @@ async function preSyncSalesInvoice(fyo: Fyo, doc: SalesInvoice) {
       }
 
       if (item.batch) {
-        const isBatchExists = await fyo.db.exists(
-          ModelNameEnum.Batch,
-          item.batch,
-        );
+        const isBatchExists = await fyo.db.exists(ModelNameEnum.Batch, item.batch);
 
         if (!isBatchExists) {
           await addToFetchFromERPNextQueue(fyo, {
@@ -738,10 +698,7 @@ async function preSyncSalesInvoice(fyo: Fyo, doc: SalesInvoice) {
   }
 
   if (doc.priceList) {
-    const isPriceListExists = await fyo.db.exists(
-      ModelNameEnum.PriceList,
-      doc.priceList,
-    );
+    const isPriceListExists = await fyo.db.exists(ModelNameEnum.PriceList, doc.priceList);
 
     if (!isPriceListExists) {
       await addToFetchFromERPNextQueue(fyo, {
@@ -783,10 +740,7 @@ export async function syncDocumentsToERPNext(fyo: Fyo) {
   }
 
   for (const doc of syncQueueItems) {
-    const referenceDoc = await fyo.doc.getDoc(
-      doc.referenceType as ModelNameEnum,
-      doc.documentName,
-    );
+    const referenceDoc = await fyo.doc.getDoc(doc.referenceType as ModelNameEnum, doc.documentName);
 
     if (!referenceDoc) {
       continue;
@@ -821,16 +775,11 @@ export async function syncDocumentsToERPNext(fyo: Fyo) {
   )) as unknown as InsertDocsAPIResponse;
 
   if (!res.message.success) {
-    throw new Error(
-      `ERPNext API error: ${String(JSON.stringify(res.message))}`,
-    );
+    throw new Error(`ERPNext API error: ${String(JSON.stringify(res.message))}`);
   }
 
   for (const doc of syncQueueItems) {
-    const syncQueueDoc = await fyo.doc.getDoc(
-      ModelNameEnum.ERPNextSyncQueue,
-      doc.name,
-    );
+    const syncQueueDoc = await fyo.doc.getDoc(ModelNameEnum.ERPNextSyncQueue, doc.name);
 
     await syncQueueDoc.delete();
   }
@@ -842,8 +791,7 @@ async function getDocsFromERPNext(
   token: string,
   deviceID: string,
 ): Promise<ERPNSyncDocsResponse | undefined> {
-  const fetchFromERPNextQueue =
-    fyo.singles.ERPNextSyncSettings?.fetchFromERPNextQueue;
+  const fetchFromERPNextQueue = fyo.singles.ERPNextSyncSettings?.fetchFromERPNextQueue;
 
   return (await sendAPIRequest(
     `${baseURL}/api/method/books_integration.api.${
@@ -932,39 +880,20 @@ function changeDocDataType(
   return updatedDoc as DocValueMap;
 }
 
-function checkDocDataTypes(
-  fyo: Fyo,
-  doc: DocValueMap | Doc,
-): DocValueMap | Doc {
+function checkDocDataTypes(fyo: Fyo, doc: DocValueMap | Doc): DocValueMap | Doc {
   switch (doc.doctype) {
     case ModelNameEnum.Item: {
       const fields = ["rate"];
 
-      const updatedDoc = changeDocDataType(
-        fyo,
-        doc,
-        fields,
-        ModelNameEnum.Currency,
-      );
+      const updatedDoc = changeDocDataType(fyo, doc, fields, ModelNameEnum.Currency);
 
       return updatedDoc;
     }
 
     case ModelNameEnum.PricingRule: {
-      const fields = [
-        "minAmount",
-        "maxAmount",
-        "discountAmount",
-        "discountRate",
-        "freeItemRate",
-      ];
+      const fields = ["minAmount", "maxAmount", "discountAmount", "discountRate", "freeItemRate"];
 
-      const updatedDoc = changeDocDataType(
-        fyo,
-        doc,
-        fields,
-        ModelNameEnum.Currency,
-      );
+      const updatedDoc = changeDocDataType(fyo, doc, fields, ModelNameEnum.Currency);
       return updatedDoc;
     }
 
@@ -1070,9 +999,7 @@ export interface ERPNextSyncSettingsAPIResponse {
   };
 }
 
-function parseSyncSettingsData(
-  res: ERPNextSyncSettingsAPIResponse,
-): DocValueMap {
+function parseSyncSettingsData(res: ERPNextSyncSettingsAPIResponse): DocValueMap {
   return {
     integrationAppVersion: res.message.app_version,
     isEnabled: !!res.message.data.enable_sync,

@@ -5,17 +5,14 @@
         <Button
           v-if="
             schemaName === 'Item' &&
-            (!isSelectionMode ||
-              (isSelectionMode && selectedItems.length === 0))
+            (!isSelectionMode || (isSelectionMode && selectedItems.length === 0))
           "
           @tap="toggleSelectionMode"
         >
           {{ t`Select` }}
         </Button>
         <view
-          v-if="
-            isSelectionMode && schemaName === 'Item' && selectedItems.length > 0
-          "
+          v-if="isSelectionMode && schemaName === 'Item' && selectedItems.length > 0"
           class="relative"
         >
           <Button class="w-40" @tap="toggleDropdown"> Create </Button>
@@ -41,11 +38,7 @@
         >
           {{ t`Export` }}
         </Button>
-        <FilterDropdown
-          ref="filterDropdown"
-          :schema-name="schemaName"
-          @change="applyFilter"
-        />
+        <FilterDropdown ref="filterDropdown" :schema-name="schemaName" @change="applyFilter" />
         <Button
           v-if="canCreate"
           ref="makeNewDocButton"
@@ -71,10 +64,7 @@
         @make-new-doc="makeNewDoc"
         @selected-items-changed="updateSelectedItems"
       />
-      <Modal
-        :open-modal="openExportModal"
-        @closemodal="openExportModal = false"
-      >
+      <Modal :open-modal="openExportModal" @closemodal="openExportModal = false">
         <ExportWizard
           class="w-form"
           :schema-name="schemaName"
@@ -122,10 +112,7 @@ import PageHeader from "src/components/PageHeader.vue";
 import { fyo } from "src/initFyo";
 import { t } from "fyo";
 import { shortcutsKey } from "src/utils/injectionKeys";
-import {
-  docsPathMap,
-  getCreateFiltersFromListViewFilters,
-} from "src/utils/misc";
+import { docsPathMap, getCreateFiltersFromListViewFilters } from "src/utils/misc";
 import { getFormRoute, routeTo } from "src/utils/ui";
 import { QueryFilter } from "utils/db/types";
 import { useAppStore } from "src/stores/app";
@@ -198,12 +185,8 @@ const setShortcuts = () => {
     return;
   }
 
-  shortcuts.pmod.set(context.value, ["KeyN"], () =>
-    makeNewDocButton.value?.$el.click(),
-  );
-  shortcuts.pmod.set(context.value, ["KeyE"], () =>
-    exportButton.value?.$el.click(),
-  );
+  shortcuts.pmod.set(context.value, ["KeyN"], () => makeNewDocButton.value?.$el.click());
+  shortcuts.pmod.set(context.value, ["KeyE"], () => exportButton.value?.$el.click());
 };
 
 const updatedData = (filtersVal: QueryFilter) => {

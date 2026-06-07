@@ -16,9 +16,7 @@
           {{ t`Welcome to Auditbooks` }}
         </text>
         <text class="text-description text-base select-none">
-          {{
-            t`Create a new company or select an existing one from your computer`
-          }}
+          {{ t`Create a new company or select an existing one from your computer` }}
         </text>
       </view>
 
@@ -31,9 +29,7 @@
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
         @tap="newDatabase"
       >
-        <view
-          class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
-        >
+        <view class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center">
           <lucide-icon name="plus" class="text-indicator-blue-text w-5 h-5" />
         </view>
 
@@ -53,13 +49,8 @@
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
         @tap="existingDatabase"
       >
-        <view
-          class="w-8 h-8 rounded-full bg-indicator-green-bg relative flex-center"
-        >
-          <lucide-icon
-            name="upload"
-            class="w-4 h-4 text-indicator-green-text"
-          />
+        <view class="w-8 h-8 rounded-full bg-indicator-green-bg relative flex-center">
+          <lucide-icon name="upload" class="w-4 h-4 text-indicator-green-text" />
         </view>
         <view class="flex flex-col">
           <text class="font-medium text-main">
@@ -78,13 +69,8 @@
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
         @tap="createDemo"
       >
-        <view
-          class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
-        >
-          <lucide-icon
-            name="monitor"
-            class="w-4 h-4 text-indicator-blue-text"
-          />
+        <view class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center">
+          <lucide-icon name="monitor" class="w-4 h-4 text-indicator-blue-text" />
         </view>
         <view class="flex flex-col">
           <text class="font-medium text-main">
@@ -121,9 +107,7 @@
                 {{ formatDate(file.modified) }}
               </text>
             </view>
-            <text
-              class="text-sm text-description overflow-x-auto no-scrollbar whitespace-nowrap"
-            >
+            <text class="text-sm text-description overflow-x-auto no-scrollbar whitespace-nowrap">
               {{ truncate(file.dbPath) }}
             </text>
           </view>
@@ -167,8 +151,8 @@
       <view class="p-4 text-main w-form">
         <text class="text-xl font-semibold select-none">Set Base Count</text>
         <text class="text-base mt-2">
-          Base Count is a lower bound on the number of entries made when
-          creating the dummy instance.
+          Base Count is a lower bound on the number of entries made when creating the dummy
+          instance.
         </text>
         <view class="flex my-12 justify-center items-baseline gap-4 text-base">
           <text for="basecount" class="text-description">Base Count</text>
@@ -248,9 +232,7 @@
 
       <!-- Recent Databases List -->
       <view class="FileListContainer">
-        <text class="ListHeader" v-if="files.length">{{
-          t`Recent Companies`
-        }}</text>
+        <text class="ListHeader" v-if="files.length">{{ t`Recent Companies` }}</text>
         <view class="FileListView">
           <view
             v-for="(file, i) in files"
@@ -286,11 +268,7 @@ dayjs.extend(relativeTime);
 import { fyo } from "src/initFyo";
 import { showDialog, isLynx } from "src/utils/interactive";
 import { updateConfigFiles } from "src/utils/misc";
-import {
-  deleteDb as deleteDbFile,
-  getSavePath,
-  getSelectedFilePath,
-} from "src/utils/ui";
+import { deleteDb as deleteDbFile, getSavePath, getSelectedFilePath } from "src/utils/ui";
 import type { ConfigFilesWithModified } from "utils/types";
 import LanguageSelector from "src/components/Controls/LanguageSelector.vue";
 import Loading from "src/components/Loading.vue";
@@ -328,9 +306,7 @@ const formatDate = (isoDate: string) => {
 
 const setFiles = async () => {
   const dbList = (await ipc.getDbList()) || [];
-  files.value = dbList.sort(
-    (a, b) => Date.parse(b.modified) - Date.parse(a.modified),
-  );
+  files.value = dbList.sort((a, b) => Date.parse(b.modified) - Date.parse(a.modified));
 };
 
 const deleteDb = async (i: number) => {
@@ -375,16 +351,10 @@ const startDummyInstanceSetup = async () => {
   }
 
   creatingDemo.value = true;
-  await setupDummyInstance(
-    filePath,
-    fyo,
-    1,
-    baseCount.value,
-    (message, percent) => {
-      creationMessage.value = message;
-      creationPercent.value = percent;
-    },
-  );
+  await setupDummyInstance(filePath, fyo, 1, baseCount.value, (message, percent) => {
+    creationMessage.value = message;
+    creationPercent.value = percent;
+  });
 
   updateConfigFiles(fyo);
   await fyo.purgeCache();

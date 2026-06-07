@@ -1,11 +1,7 @@
 ﻿import { assertThrows } from "backend/database/tests/helpers";
 import { ModelNameEnum } from "models/types";
 import { describe, expect, test } from "@rstest/core";
-import {
-  closeTestFyoAfterAll,
-  getTestFyo,
-  setupTestFyoBeforeAll,
-} from "tests/helpers";
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from "tests/helpers";
 import { getSerialNumbers } from "../helpers";
 import { MovementTypeEnum } from "../types";
 import { getItem, getStockMovement } from "./helpers";
@@ -64,20 +60,14 @@ describe("Serial Numbers", () => {
 
     // Create Party
     await fyo.doc.getNewDoc(ModelNameEnum.Party, partyMap.partyOne).sync();
-    expect(
-      await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name),
-    ).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.Party, partyMap.partyOne.name)).toBe(true);
 
     // Create SerialNumbers
     for (const serialNumber of Object.values(serialNumberMap)) {
       const doc = fyo.doc.getNewDoc(ModelNameEnum.SerialNumber, serialNumber);
       await doc.sync();
 
-      const status = await fyo.getValue(
-        ModelNameEnum.SerialNumber,
-        serialNumber.name,
-        "status",
-      );
+      const status = await fyo.getValue(ModelNameEnum.SerialNumber, serialNumber.name, "status");
 
       expect(status).toBe("Inactive");
     }
@@ -85,8 +75,7 @@ describe("Serial Numbers", () => {
 
   test("serialNumber enabled item, create stock movement, material receipt", async () => {
     const { rate } = itemMap.Pen;
-    const serialNumber =
-      serialNumberMap.serialOne.name + "\n" + serialNumberMap.serialTwo.name;
+    const serialNumber = serialNumberMap.serialOne.name + "\n" + serialNumberMap.serialTwo.name;
     const stockMovement = await getStockMovement(
       MovementTypeEnum.MaterialReceipt,
       new Date("2022-11-03T09:57:04.528"),
@@ -363,11 +352,7 @@ describe("Serial Numbers", () => {
 
     await (await doc.sync()).submit();
     for (const sn of serialNumbers) {
-      const status = await fyo.getValue(
-        ModelNameEnum.SerialNumber,
-        sn,
-        "status",
-      );
+      const status = await fyo.getValue(ModelNameEnum.SerialNumber, sn, "status");
       expect(status).toBe("Delivered");
     }
 
@@ -384,11 +369,7 @@ describe("Serial Numbers", () => {
 
     await doc.cancel();
     for (const sn of serialNumbers) {
-      const status = await fyo.getValue(
-        ModelNameEnum.SerialNumber,
-        sn,
-        "status",
-      );
+      const status = await fyo.getValue(ModelNameEnum.SerialNumber, sn, "status");
       expect(status).toBe("Active");
     }
   });
@@ -413,21 +394,13 @@ describe("Serial Numbers", () => {
 
     await (await doc.sync()).submit();
     for (const sn of serialNumbers) {
-      const status = await fyo.getValue(
-        ModelNameEnum.SerialNumber,
-        sn,
-        "status",
-      );
+      const status = await fyo.getValue(ModelNameEnum.SerialNumber, sn, "status");
       expect(status).toBe("Active");
     }
 
     await doc.cancel();
     for (const sn of serialNumbers) {
-      const status = await fyo.getValue(
-        ModelNameEnum.SerialNumber,
-        sn,
-        "status",
-      );
+      const status = await fyo.getValue(ModelNameEnum.SerialNumber, sn, "status");
       expect(status).toBe("Inactive");
     }
   });

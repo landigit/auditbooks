@@ -37,25 +37,20 @@ const server = Bun.serve({
         const fileName = decodeURIComponent(
           (req.headers.get("x-file-name") as string) || "uploaded.db",
         );
-        const safeFileName = path
-          .basename(fileName)
-          .replace(/[^a-zA-Z0-9._\- ]/g, "_");
+        const safeFileName = path.basename(fileName).replace(/[^a-zA-Z0-9._\- ]/g, "_");
         const dbsDir = path.resolve("dbs");
         const destPath = path.join(dbsDir, safeFileName);
 
         const arrayBuffer = await req.arrayBuffer();
         await Bun.write(destPath, arrayBuffer);
 
-        return new Response(
-          JSON.stringify({ filePath: destPath, name: safeFileName }),
-          {
-            status: 200,
-            headers: {
-              ...corsHeaders,
-              "Content-Type": "application/json",
-            },
+        return new Response(JSON.stringify({ filePath: destPath, name: safeFileName }), {
+          status: 200,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
           },
-        );
+        });
       } catch (err: any) {
         console.error("[Dev Backend] Upload error:", err);
         return new Response(JSON.stringify({ error: err.message }), {
@@ -79,10 +74,7 @@ const server = Bun.serve({
           case IPC_ACTIONS.DB_CREATE: {
             const dbPath = args[0];
             const countryCode = args[1];
-            const code = await databaseManager.createNewDatabase(
-              dbPath,
-              countryCode,
-            );
+            const code = await databaseManager.createNewDatabase(dbPath, countryCode);
             result = { data: code };
             break;
           }
@@ -90,23 +82,16 @@ const server = Bun.serve({
             const dbPath = args[0];
             const countryCode = args[1];
             try {
-              const code = await databaseManager.connectToDatabase(
-                dbPath,
-                countryCode,
-              );
+              const code = await databaseManager.connectToDatabase(dbPath, countryCode);
               result = { data: code };
             } catch (err: any) {
               const isCorrupt =
-                err?.code === "SQLITE_CORRUPT" ||
-                err?.message?.includes("malformed");
+                err?.code === "SQLITE_CORRUPT" || err?.message?.includes("malformed");
               if (isCorrupt) {
-                console.error(
-                  `[Dev Backend] DB is corrupt or malformed: ${dbPath}`,
-                );
-                throw Object.assign(
-                  new Error(`Database file is corrupt or malformed: ${dbPath}`),
-                  { code: "SQLITE_CORRUPT" },
-                );
+                console.error(`[Dev Backend] DB is corrupt or malformed: ${dbPath}`);
+                throw Object.assign(new Error(`Database file is corrupt or malformed: ${dbPath}`), {
+                  code: "SQLITE_CORRUPT",
+                });
               }
               throw err;
             }
@@ -122,10 +107,7 @@ const server = Bun.serve({
           case IPC_ACTIONS.DB_BESPOKE: {
             const method = args[0];
             const methodArgs = args.slice(1);
-            const data = await databaseManager.callBespoke(
-              method,
-              ...methodArgs,
-            );
+            const data = await databaseManager.callBespoke(method, ...methodArgs);
             result = { data };
             break;
           }

@@ -5,7 +5,4 @@ import SwissSchemas from "./ch";
 /**
  * Regional Schemas are exported by country code.
  */
-export default { in: IndianSchemas, ch: SwissSchemas } as Record<
-  string,
-  SchemaStub[]
->;
+export default { in: IndianSchemas, ch: SwissSchemas } as Record<string, SchemaStub[]>;

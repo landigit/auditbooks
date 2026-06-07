@@ -10,11 +10,7 @@ const withOpacity = (variableName: string): any => {
 };
 
 const config: Config = {
-  content: [
-    "./src/**/*.{vue,js,ts,jsx,tsx}",
-    "./templates/**/*.template.html",
-    "./index.html",
-  ],
+  content: ["./src/**/*.{vue,js,ts,jsx,tsx}", "./templates/**/*.template.html", "./index.html"],
   safelist: [
     "text-left",
     "text-center",

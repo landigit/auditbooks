@@ -62,15 +62,8 @@ export class SetupWizard extends Doc {
   formulas: FormulaMap = {
     fiscalYearStart: {
       formula: (fieldname?: string) => {
-        if (
-          fieldname === "fiscalYearEnd" &&
-          this.fiscalYearEnd &&
-          !this.fiscalYearStart
-        ) {
-          return dayjs(this.fiscalYearEnd)
-            .subtract(1, "year")
-            .add(1, "day")
-            .toDate();
+        if (fieldname === "fiscalYearEnd" && this.fiscalYearEnd && !this.fiscalYearStart) {
+          return dayjs(this.fiscalYearEnd).subtract(1, "year").add(1, "day").toDate();
         }
 
         if (!this.country) {
@@ -78,24 +71,15 @@ export class SetupWizard extends Doc {
         }
 
         const countryInfo = getCountryInfo();
-        const fyStart =
-          Reflect.get(countryInfo, this.country as string)?.fiscal_year_start ??
-          "";
+        const fyStart = Reflect.get(countryInfo, this.country as string)?.fiscal_year_start ?? "";
         return getFiscalYear(fyStart, true);
       },
       dependsOn: ["country", "fiscalYearEnd"],
     },
     fiscalYearEnd: {
       formula: (fieldname?: string) => {
-        if (
-          fieldname === "fiscalYearStart" &&
-          this.fiscalYearStart &&
-          !this.fiscalYearEnd
-        ) {
-          return dayjs(this.fiscalYearStart)
-            .add(1, "year")
-            .subtract(1, "day")
-            .toDate();
+        if (fieldname === "fiscalYearStart" && this.fiscalYearStart && !this.fiscalYearEnd) {
+          return dayjs(this.fiscalYearStart).add(1, "year").subtract(1, "day").toDate();
         }
 
         if (!this.country) {
@@ -103,9 +87,7 @@ export class SetupWizard extends Doc {
         }
 
         const countryInfo = getCountryInfo();
-        const fyEnd =
-          Reflect.get(countryInfo, this.country as string)?.fiscal_year_end ??
-          "";
+        const fyEnd = Reflect.get(countryInfo, this.country as string)?.fiscal_year_end ?? "";
         return getFiscalYear(fyEnd, false);
       },
       dependsOn: ["country", "fiscalYearStart"],
@@ -124,9 +106,7 @@ export class SetupWizard extends Doc {
         }
 
         const currencyList = getCurrencyList();
-        const currency = currencyList.find(
-          ({ countryCode }) => countryCode === code,
-        );
+        const currency = currencyList.find(({ countryCode }) => countryCode === code);
 
         if (currency === undefined) {
           return currencyList[0].name;
