@@ -1,5 +1,5 @@
 import { handleError } from "src/errorHandling";
-import { fyo } from "src/initFyo";
+import { fyo, ipc } from "src/initFyo";
 import { syncDocumentsToERPNext } from "src/utils/erpnextSync";
 import { useAppStore } from "src/stores/app";
 

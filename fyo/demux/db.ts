@@ -2,6 +2,7 @@ import { DatabaseError, NotImplemented } from "fyo/utils/errors";
 import { SchemaMap } from "schemas/types";
 import { DatabaseDemuxBase, DatabaseMethod } from "utils/db/types";
 import { BackendResponse } from "utils/ipc/types";
+import { ipc } from "./ipc";
 
 export class DatabaseDemux extends DatabaseDemuxBase {
   #isElectron = false;

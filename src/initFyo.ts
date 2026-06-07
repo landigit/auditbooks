@@ -1,4 +1,5 @@
 import { Fyo } from "fyo";
+import { ipc as polyfillIpc } from "./ipc-polyfill";
 
 /**
  * Global fyo: this is meant to be used only by the app. For
@@ -6,4 +7,4 @@ import { Fyo } from "fyo";
  */
 
 export const fyo = new Fyo({ isTest: false, isElectron: true });
-export const ipc = (window as any).ipc;
+export const ipc = polyfillIpc;

@@ -13,6 +13,8 @@
     "dev:lynx": "rspeedy dev",
     "build": "rsbuild build",
     "build:lynx": "rspeedy build",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
     "type": "vue-tsc --noEmit",
     "lint": "rslint .",
     "lint:fix": "rslint . --fix && prettier --write .",
@@ -40,7 +42,7 @@
     "tailwind-merge": "3.5.0",
     "vue": "3.5.33",
     "vue-lynx": "0.4.0",
-    "vue-router": "5"
+    "vue-router": "4"
   },
   "devDependencies": {
     "@codemirror/language": "^6.12.3",
@@ -53,6 +55,7 @@
     "@rsbuild/plugin-vue": "^1.2.6",
     "@rslint/core": "^0.5.3",
     "@rstest/core": "^0.10.3",
+    "@tauri-apps/cli": "^2.11.2",
     "@types/assert": "1.5.11",
     "@types/node": "20.19.39",
     "@typescript-eslint/utils": "8.59.1",

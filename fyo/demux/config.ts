@@ -6,7 +6,8 @@ export class Config {
   constructor(isElectron: boolean) {
     this.config = new Map();
     if (isElectron) {
-      this.config = ipc.store;
+      const globalIpc = typeof window !== "undefined" ? ((window as any).fyoIpc || (window as any).ipc) : undefined;
+      this.config = globalIpc ? globalIpc.store : new Map();
     }
   }
 

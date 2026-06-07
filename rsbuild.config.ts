@@ -1,8 +1,7 @@
 import { defineConfig } from "@rsbuild/core";
 import { pluginVue } from "@rsbuild/plugin-vue";
+import { ProvidePlugin } from "@rspack/core";
 import path from "path";
-
-import VueRouterRspack from "unplugin-vue-router/rspack";
 
 let port = 6969;
 let host = "127.0.0.1"; // Changed from 0.0.0.0 — don't expose to LAN
@@ -13,11 +12,6 @@ if (process.env.VITE_PORT && process.env.VITE_HOST) {
 
 export default defineConfig({
   plugins: [
-    VueRouterRspack({
-      routesFolder: "src/pages",
-      extensions: [".vue"],
-      dts: "src/typed-router.d.ts",
-    }),
     pluginVue({
       vueLoaderOptions: {
         compilerOptions: {
@@ -88,4 +82,14 @@ export default defineConfig({
       },
     },
   },
+  tools: {
+    rspack: (_config, { appendPlugins }) => {
+      appendPlugins(
+        new ProvidePlugin({
+          ipc: [path.resolve(__dirname, "./src/ipc-polyfill"), "ipc"],
+        })
+      );
+    },
+  },
 });
+

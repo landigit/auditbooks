@@ -1,5 +1,6 @@
 import { AuthDemuxBase } from "utils/auth/types";
 import { Creds } from "utils/types";
+import { ipc } from "./ipc";
 
 export class AuthDemux extends AuthDemuxBase {
   #isElectron = false;

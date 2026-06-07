@@ -7,7 +7,7 @@ package-lock.json
 /.agents/
 /books/
 lynx/dist/
-
+agents.md
 
 # local env files
 .env

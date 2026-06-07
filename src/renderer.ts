@@ -7,7 +7,7 @@ import App from "./App.vue";
 import Badge from "./components/Badge.vue";
 import LucideIcon from "./components/LucideIcon.vue";
 import { handleError, sendError } from "./errorHandling";
-import { fyo } from "./initFyo";
+import { fyo, ipc } from "./initFyo";
 import { outsideClickDirective } from "./renderer/helpers";
 import registerIpcRendererListeners from "./renderer/registerIpcRendererListeners";
 import router from "./router";
