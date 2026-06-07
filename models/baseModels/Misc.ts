@@ -1,5 +1,5 @@
-import { Doc } from "fyo/model/doc";
-import { HiddenMap } from "fyo/model/types";
+import { Doc } from 'fyo/model/doc';
+import { HiddenMap } from 'fyo/model/types';
 
 export class Misc extends Doc {
   declare openCount?: number;

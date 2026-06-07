@@ -1,4 +1,4 @@
-import { DatabaseManager } from "../database/manager";
+import { DatabaseManager } from '../database/manager';
 
 async function execute(dm: DatabaseManager) {
   if (!dm.db || !dm.db.client) {

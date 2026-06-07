@@ -1,4 +1,7 @@
-export async function sendAPIRequest(endpoint: string, options: RequestInit | undefined) {
+export async function sendAPIRequest(
+  endpoint: string,
+  options: RequestInit | undefined
+) {
   return (await fetch(endpoint, options)).json() as unknown as {
     [key: string]: string | number | boolean;
   }[];

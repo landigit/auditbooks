@@ -1,15 +1,15 @@
-import type { IPC } from "utils/ipc/types";
-import { IPC_ACTIONS } from "utils/messages";
+import type { IPC } from 'utils/ipc/types';
+import { IPC_ACTIONS } from 'utils/messages';
 
-const BACKEND_URL = "http://localhost:6970/api/ipc";
+const BACKEND_URL = 'http://localhost:6970/api/ipc';
 
 // Helper to route IPC calls to our lightweight local HTTP backend
 async function callBackend(action: string, args: unknown[] = []): Promise<any> {
   try {
     const response = await fetch(BACKEND_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ action, args }),
     });
@@ -28,12 +28,15 @@ async function callBackend(action: string, args: unknown[] = []): Promise<any> {
 }
 
 // Helper for action listeners expecting a BackendResponse structure: { data?: unknown, error?: unknown }
-async function callBackendWrapped(action: string, args: unknown[] = []): Promise<any> {
+async function callBackendWrapped(
+  action: string,
+  args: unknown[] = []
+): Promise<any> {
   try {
     const response = await fetch(BACKEND_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ action, args }),
     });
@@ -44,7 +47,7 @@ async function callBackendWrapped(action: string, args: unknown[] = []): Promise
       } catch {
         return {
           error: {
-            name: "Error",
+            name: 'Error',
             message: `HTTP error! status: ${response.status}`,
           },
         };
@@ -54,7 +57,7 @@ async function callBackendWrapped(action: string, args: unknown[] = []): Promise
   } catch (error: any) {
     return {
       error: {
-        name: error.name || "Error",
+        name: error.name || 'Error',
         message: error.message || String(error),
         stack: error.stack,
       },
@@ -65,7 +68,7 @@ async function callBackendWrapped(action: string, args: unknown[] = []): Promise
 // Basic localStorage store implementation
 const storeInstance = {
   get(key: string) {
-    if (typeof localStorage === "undefined") return undefined;
+    if (typeof localStorage === 'undefined') return undefined;
     const val = localStorage.getItem(`config:${key}`);
     if (val === null) return undefined;
     try {
@@ -75,11 +78,11 @@ const storeInstance = {
     }
   },
   set(key: string, value: any) {
-    if (typeof localStorage === "undefined") return;
+    if (typeof localStorage === 'undefined') return;
     localStorage.setItem(`config:${key}`, JSON.stringify(value));
   },
   delete(key: string) {
-    if (typeof localStorage === "undefined") return;
+    if (typeof localStorage === 'undefined') return;
     localStorage.removeItem(`config:${key}`);
   },
 };
@@ -87,15 +90,15 @@ const storeInstance = {
 const webIpc: IPC = {
   desktop: false,
   reloadWindow() {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       window.location.reload();
     }
   },
   minimizeWindow() {
-    console.log("minimizeWindow (stub)");
+    console.log('minimizeWindow (stub)');
   },
   toggleMaximize() {
-    console.log("toggleMaximize (stub)");
+    console.log('toggleMaximize (stub)');
   },
   isMaximized() {
     return Promise.resolve(false);
@@ -104,7 +107,7 @@ const webIpc: IPC = {
     return Promise.resolve(false);
   },
   closeWindow() {
-    console.log("closeWindow (stub)");
+    console.log('closeWindow (stub)');
   },
   async getCreds() {
     return callBackend(IPC_ACTIONS.GET_CREDS);
@@ -122,36 +125,41 @@ const webIpc: IPC = {
     return callBackend(IPC_ACTIONS.SELECT_FILE, [options]);
   },
   async getSaveFilePath(options: any) {
-    const defaultPath = options?.defaultPath || "";
-    if (defaultPath.toLowerCase().endsWith(".pdf") || defaultPath.toLowerCase().includes(".pdf")) {
+    const defaultPath = options?.defaultPath || '';
+    if (
+      defaultPath.toLowerCase().endsWith('.pdf') ||
+      defaultPath.toLowerCase().includes('.pdf')
+    ) {
       return { canceled: false, filePath: defaultPath };
     }
 
-    const defaultName = defaultPath.replace(".db", "") || "company";
-    if (typeof window === "undefined") {
+    const defaultName = defaultPath.replace('.db', '') || 'company';
+    if (typeof window === 'undefined') {
       return { canceled: true, filePath: undefined };
     }
-    const name = window.prompt("Enter company/file name:", defaultName);
+    const name = window.prompt('Enter company/file name:', defaultName);
     if (!name) return { canceled: true, filePath: undefined };
     const safeName = name
-      .replace(/\.books\.db$/i, "")
-      .replace(/\.books$/i, "")
-      .replace(/\.db$/i, "")
-      .replace(/[^a-zA-Z0-9 ._-]/g, "_");
-    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [safeName]);
+      .replace(/\.books\.db$/i, '')
+      .replace(/\.books$/i, '')
+      .replace(/\.db$/i, '')
+      .replace(/[^a-zA-Z0-9 ._-]/g, '_');
+    const resolvedPath = await callBackend(IPC_ACTIONS.GET_DB_DEFAULT_PATH, [
+      safeName,
+    ]);
     return { canceled: false, filePath: resolvedPath };
   },
   async getOpenFilePath(_options: any) {
-    if (typeof document === "undefined") {
+    if (typeof document === 'undefined') {
       return { canceled: true, filePaths: [], filePath: null };
     }
     // In web dev mode, open a real browser file picker for .db files,
     // upload the selected file to the backend, and return its server path.
     return new Promise<any>((resolve) => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".db";
-      input.style.display = "none";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.db';
+      input.style.display = 'none';
       document.body.appendChild(input);
 
       input.onchange = async () => {
@@ -163,14 +171,14 @@ const webIpc: IPC = {
         }
         try {
           const arrayBuffer = await file.arrayBuffer();
-          const response = await fetch("http://localhost:6970/api/upload-db", {
-            method: "POST",
-            headers: { "X-File-Name": encodeURIComponent(file.name) },
+          const response = await fetch('http://localhost:6970/api/upload-db', {
+            method: 'POST',
+            headers: { 'X-File-Name': encodeURIComponent(file.name) },
             body: arrayBuffer,
           });
           const result = await response.json();
           if (!response.ok || result.error) {
-            throw new Error(result.error || "Upload failed");
+            throw new Error(result.error || 'Upload failed');
           }
           resolve({
             canceled: false,
@@ -180,7 +188,7 @@ const webIpc: IPC = {
             success: true,
           });
         } catch (err) {
-          console.error("DB file upload failed:", err);
+          console.error('DB file upload failed:', err);
           resolve({ canceled: true, filePaths: [], filePath: null });
         }
       };
@@ -197,11 +205,11 @@ const webIpc: IPC = {
     return callBackend(IPC_ACTIONS.CHECK_DB_ACCESS, [filePath]);
   },
   async checkForUpdates() {
-    console.log("checkForUpdates (stub)");
+    console.log('checkForUpdates (stub)');
   },
   openLink(link: string) {
-    if (typeof window !== "undefined") {
-      window.open(link, "_blank");
+    if (typeof window !== 'undefined') {
+      window.open(link, '_blank');
     }
   },
   async deleteFile(filePath: string) {
@@ -211,7 +219,7 @@ const webIpc: IPC = {
     return callBackend(IPC_ACTIONS.SAVE_DATA, [data, savePath]);
   },
   showItemInFolder(filePath: string) {
-    console.log("showItemInFolder (stub):", filePath);
+    console.log('showItemInFolder (stub):', filePath);
   },
   async makePDF(html: string, savePath: string, width: number, height: number) {
     const base64Data = await callBackend(IPC_ACTIONS.SAVE_HTML_AS_PDF, [
@@ -220,10 +228,11 @@ const webIpc: IPC = {
       width,
       height,
     ]);
-    if (base64Data && typeof document !== "undefined") {
-      const link = document.createElement("a");
+    if (base64Data && typeof document !== 'undefined') {
+      const link = document.createElement('a');
       link.href = `data:application/pdf;base64,${base64Data}`;
-      const fileName = savePath.split(/[\\/]/).pop()?.replace(".db", "") || "document.pdf";
+      const fileName =
+        savePath.split(/[\\/]/).pop()?.replace('.db', '') || 'document.pdf';
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
@@ -232,12 +241,12 @@ const webIpc: IPC = {
     return true;
   },
   async printDocument(html: string, _width: number, _height: number) {
-    if (typeof document === "undefined") return false;
-    const iframe = document.createElement("iframe");
-    iframe.style.position = "fixed";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
-    iframe.style.border = "none";
+    if (typeof document === 'undefined') return false;
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
     document.body.appendChild(iframe);
 
     const doc = iframe.contentWindow?.document || iframe.contentDocument;
@@ -267,22 +276,22 @@ const webIpc: IPC = {
   async getEnv() {
     return {
       isDevelopment: true,
-      platform: "browser",
-      version: "0.37.8",
+      platform: 'browser',
+      version: '0.37.8',
     };
   },
   openExternalUrl(url: string) {
-    if (typeof window !== "undefined") {
-      window.open(url, "_blank");
+    if (typeof window !== 'undefined') {
+      window.open(url, '_blank');
     }
   },
   async showError(title: string, content: string) {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       alert(`${title}: ${content}`);
     }
   },
   async sendError(body: string) {
-    console.error("sendError (stub):", body);
+    console.error('sendError (stub):', body);
   },
   async sendAPIRequest(endpoint: string, options: any) {
     return callBackend(IPC_ACTIONS.SEND_API_REQUEST, [endpoint, options]);
@@ -325,23 +334,26 @@ const webIpc: IPC = {
 // Export IPC bridge as a safe reference
 export let ipc: IPC;
 
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   (window as any).fyoIpc = webIpc;
 }
 
-if (typeof window !== "undefined" && window.ipc && (window.ipc as any).store) {
+if (typeof window !== 'undefined' && window.ipc && (window.ipc as any).store) {
   ipc = window.ipc as any;
 } else {
   ipc = webIpc;
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     try {
-      Object.defineProperty(window, "ipc", {
+      Object.defineProperty(window, 'ipc', {
         value: webIpc,
         writable: true,
         configurable: true,
       });
     } catch (e) {
-      console.warn("Could not redefine window.ipc, using local polyfilled ipc reference", e);
+      console.warn(
+        'Could not redefine window.ipc, using local polyfilled ipc reference',
+        e
+      );
     }
   }
 }

@@ -1,68 +1,84 @@
-import { defineStore } from "pinia";
-import { RTL_LANGUAGES } from "fyo/utils/consts";
-import { Theme } from "src/utils/theme";
-import { ref, computed, reactive } from "vue";
-import type { HistoryState } from "vue-router";
-import type { reports as reportsMap } from "reports/index";
-import type { Report } from "reports/Report";
+import { defineStore } from 'pinia';
+import { RTL_LANGUAGES } from 'fyo/utils/consts';
+import { Theme } from 'src/utils/theme';
+import { ref, computed, reactive } from 'vue';
+import type { HistoryState } from 'vue-router';
+import type { reports as reportsMap } from 'reports/index';
+import type { Report } from 'reports/Report';
 
 const isSystemDark = ref(
-  typeof window !== "undefined" && window.matchMedia
-    ? window.matchMedia("(prefers-color-scheme: dark)").matches
-    : false,
+  typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : false
 );
-if (typeof window !== "undefined" && window.matchMedia) {
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-    isSystemDark.value = e.matches;
-  });
+if (typeof window !== 'undefined' && window.matchMedia) {
+  window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (e) => {
+      isSystemDark.value = e.matches;
+    });
 }
 
-export const useAppStore = defineStore("app", () => {
-  const _platform = ref("");
+export const useAppStore = defineStore('app', () => {
+  const _platform = ref('');
   const platform = computed(() => {
-    return _platform.value === "win32" ? "Windows" : _platform.value === "darwin" ? "Mac" : "Linux";
+    return _platform.value === 'win32'
+      ? 'Windows'
+      : _platform.value === 'darwin'
+        ? 'Mac'
+        : 'Linux';
   });
 
-  const showSidebar = ref(typeof window !== "undefined" ? window.innerWidth >= 768 : true);
+  const showSidebar = ref(
+    typeof window !== 'undefined' ? window.innerWidth >= 768 : true
+  );
 
-  if (typeof window !== "undefined" && window.matchMedia) {
-    const mediaQuery = window.matchMedia("(min-width: 768px)");
-    mediaQuery.addEventListener("change", (e) => {
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    const mediaQuery = window.matchMedia('(min-width: 768px)');
+    mediaQuery.addEventListener('change', (e) => {
       showSidebar.value = e.matches;
     });
   }
-  const theme = ref<Theme>("auto");
+  const theme = ref<Theme>('auto');
 
   const isDark = computed(() => {
-    if (theme.value === "auto") {
+    if (theme.value === 'auto') {
       return isSystemDark.value;
     }
-    return theme.value === "dark";
+    return theme.value === 'dark';
   });
 
-  const language = ref("English");
+  const language = ref('English');
   const languageDirection = computed(() => {
-    return RTL_LANGUAGES.includes(language.value) ? "rtl" : "ltr";
+    return RTL_LANGUAGES.includes(language.value) ? 'rtl' : 'ltr';
   });
 
   const isDevelopment = ref(false);
-  const appVersion = ref("");
-  const instanceId = ref("");
-  const deviceId = ref("");
+  const appVersion = ref('');
+  const instanceId = ref('');
+  const deviceId = ref('');
   const openCount = ref(0);
   const skipTelemetryLogging = ref(false);
-  const dbPath = ref("");
-  const companyName = ref("");
-  const docsPath = ref("");
-  const reports = ref({} as Record<keyof typeof reportsMap, Report | undefined>);
+  const dbPath = ref('');
+  const companyName = ref('');
+  const docsPath = ref('');
+  const reports = ref(
+    {} as Record<keyof typeof reportsMap, Report | undefined>
+  );
   const appFlags = ref({} as Record<string, boolean>);
   const historyState = reactive({
-    forward: typeof history !== "undefined" ? !!(history.state as HistoryState)?.forward : false,
-    back: typeof history !== "undefined" ? !!(history.state as HistoryState)?.back : false,
+    forward:
+      typeof history !== 'undefined'
+        ? !!(history.state as HistoryState)?.forward
+        : false,
+    back:
+      typeof history !== 'undefined'
+        ? !!(history.state as HistoryState)?.back
+        : false,
   });
 
   function toggleSidebar(value?: boolean) {
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       showSidebar.value = value;
     } else {
       showSidebar.value = !showSidebar.value;

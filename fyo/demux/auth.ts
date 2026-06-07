@@ -1,6 +1,6 @@
-import { AuthDemuxBase } from "utils/auth/types";
-import { Creds } from "utils/types";
-import { ipc } from "./ipc";
+import { AuthDemuxBase } from 'utils/auth/types';
+import { Creds } from 'utils/types';
+import { ipc } from './ipc';
 
 export class AuthDemux extends AuthDemuxBase {
   #isElectron = false;
@@ -13,7 +13,7 @@ export class AuthDemux extends AuthDemuxBase {
     if (this.#isElectron) {
       return await ipc.getCreds();
     } else {
-      return { errorLogUrl: "", tokenString: "", telemetryUrl: "" };
+      return { errorLogUrl: '', tokenString: '', telemetryUrl: '' };
     }
   }
 }

@@ -21,8 +21,12 @@
         v-if="loading"
         class="flex flex-col items-center justify-center p-8 text-description h-64"
       >
-        <view class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></view>
-        <text class="text-sm text-description">{{ t`Loading linked entries...` }}</text>
+        <view
+          class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"
+        ></view>
+        <text class="text-sm text-description">{{
+          t`Loading linked entries...`
+        }}</text>
       </view>
 
       <!-- Linked Entry List -->
@@ -30,7 +34,11 @@
         v-else-if="sequence.length"
         class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2"
       >
-        <view v-for="sn of sequence" :key="sn" class="border-b border-border p-4 overflow-auto">
+        <view
+          v-for="sn of sequence"
+          :key="sn"
+          class="border-b border-border p-4 overflow-auto"
+        >
           <!-- Header with count and schema label -->
           <view
             class="flex justify-between cursor-pointer"
@@ -39,7 +47,9 @@
           >
             <text class="text-base text-description font-semibold select-none">
               {{ fyo.schemaMap[sn]?.label ?? sn
-              }}<text class="font-normal">{{ ` – ${entries[sn].details.length}` }}</text>
+              }}<text class="font-normal">{{
+                ` – ${entries[sn].details.length}`
+              }}</text>
             </text>
             <lucide-icon
               :name="entries[sn].collapsed ? 'chevron-up' : 'chevron-down'"
@@ -67,7 +77,7 @@
 
                 <!-- Date -->
                 <text v-if="e.date" class="text-xs text-description">
-                  {{ fyo.format(e.date, "Date") }}
+                  {{ fyo.format(e.date, 'Date') }}
                 </text>
               </view>
               <view class="flex gap-2 mt-1 pill-container flex-wrap">
@@ -77,14 +87,14 @@
                   class="pill"
                   :class="colorClass('draft')"
                 >
-                  {{ t`Cr. ${fyo.format(e.credit, "Currency")}` }}
+                  {{ t`Cr. ${fyo.format(e.credit, 'Currency')}` }}
                 </text>
                 <text
                   v-else-if="isPesa(e.debit) && e.debit.isPositive()"
                   class="pill"
                   :class="colorClass('draft')"
                 >
-                  {{ t`Dr. ${fyo.format(e.debit, "Currency")}` }}
+                  {{ t`Dr. ${fyo.format(e.debit, 'Currency')}` }}
                 </text>
 
                 <!-- Party or EntryType or Account -->
@@ -99,31 +109,38 @@
                 <text v-if="e.item" class="pill" :class="colorClass('draft')">
                   {{ e.item }}
                 </text>
-                <text v-if="e.location" class="pill" :class="colorClass('draft')">
+                <text
+                  v-if="e.location"
+                  class="pill"
+                  :class="colorClass('draft')"
+                >
                   {{ e.location }}
                 </text>
 
                 <!-- Amounts -->
                 <text
-                  v-if="isPesa(e.outstandingAmount) && e.outstandingAmount.isPositive()"
+                  v-if="
+                    isPesa(e.outstandingAmount) &&
+                    e.outstandingAmount.isPositive()
+                  "
                   class="pill no-scrollbar"
                   :class="colorClass('unpaid')"
                 >
-                  {{ t`Unpaid ${fyo.format(e.outstandingAmount, "Currency")}` }}
+                  {{ t`Unpaid ${fyo.format(e.outstandingAmount, 'Currency')}` }}
                 </text>
                 <text
                   v-else-if="isPesa(e.grandTotal) && e.grandTotal.isPositive()"
                   class="pill no-scrollbar"
                   :class="colorClass('success')"
                 >
-                  {{ fyo.format(e.grandTotal, "Currency") }}
+                  {{ fyo.format(e.grandTotal, 'Currency') }}
                 </text>
                 <text
                   v-else-if="isPesa(e.amount) && e.amount.isPositive()"
                   class="pill no-scrollbar"
                   :class="colorClass('success')"
                 >
-                  {{ fyo.format(e.amount, "Currency") }}
+                  {{ fyo.format(e.amount, 'Currency') }}
                 </text>
 
                 <!-- Quantities -->
@@ -132,14 +149,16 @@
                   class="pill no-scrollbar"
                   :class="colorClass('unpaid')"
                 >
-                  {{ t`Pending qty. ${fyo.format(e.stockNotTransferred, "Float")}` }}
+                  {{
+                    t`Pending qty. ${fyo.format(e.stockNotTransferred, 'Float')}`
+                  }}
                 </text>
                 <text
                   v-else-if="typeof e.quantity === 'number' && e.quantity"
                   class="pill no-scrollbar"
                   :class="colorClass('draft')"
                 >
-                  {{ t`Qty. ${fyo.format(e.quantity, "Float")}` }}
+                  {{ t`Qty. ${fyo.format(e.quantity, 'Float')}` }}
                 </text>
               </view>
             </view>
@@ -165,10 +184,19 @@
     </view>
 
     <!-- Scrollable content -->
-    <scroll-view scroll-y="true" class="flex-1" style="height: 0; min-height: 0">
+    <scroll-view
+      scroll-y="true"
+      class="flex-1"
+      style="height: 0; min-height: 0"
+    >
       <!-- Loading Spinner -->
-      <view v-if="loading" class="flex-col items-center justify-center p-8 text-description h-64">
-        <text class="text-sm text-description mb-2">{{ t`Loading linked entries...` }}</text>
+      <view
+        v-if="loading"
+        class="flex-col items-center justify-center p-8 text-description h-64"
+      >
+        <text class="text-sm text-description mb-2">{{
+          t`Loading linked entries...`
+        }}</text>
       </view>
 
       <!-- Linked Entry List -->
@@ -184,10 +212,12 @@
             @tap="entries[sn].collapsed = !entries[sn].collapsed"
           >
             <text class="text-sm text-main font-semibold">
-              {{ fyo.schemaMap[sn]?.label ?? sn }} ({{ entries[sn].details.length }})
+              {{ fyo.schemaMap[sn]?.label ?? sn }} ({{
+                entries[sn].details.length
+              }})
             </text>
             <text class="text-xs text-description">
-              {{ entries[sn].collapsed ? "▲" : "▼" }}
+              {{ entries[sn].collapsed ? '▲' : '▼' }}
             </text>
           </view>
 
@@ -203,7 +233,7 @@
               <view class="flex-row justify-between items-center mb-1">
                 <text class="font-bold text-sm text-main">{{ e.name }}</text>
                 <text v-if="e.date" class="text-xs text-description">
-                  {{ fyo.format(e.date, "Date") }}
+                  {{ fyo.format(e.date, 'Date') }}
                 </text>
               </view>
 
@@ -214,13 +244,13 @@
                   v-if="isPesa(e.credit) && e.credit.isPositive()"
                   class="text-xs px-2 py-0.5 rounded bg-success-muted text-success"
                 >
-                  {{ t`Cr. ${fyo.format(e.credit, "Currency")}` }}
+                  {{ t`Cr. ${fyo.format(e.credit, 'Currency')}` }}
                 </text>
                 <text
                   v-else-if="isPesa(e.debit) && e.debit.isPositive()"
                   class="text-xs px-2 py-0.5 rounded bg-success-muted text-success"
                 >
-                  {{ t`Dr. ${fyo.format(e.debit, "Currency")}` }}
+                  {{ t`Dr. ${fyo.format(e.debit, 'Currency')}` }}
                 </text>
 
                 <!-- Party or EntryType or Account -->
@@ -233,22 +263,25 @@
 
                 <!-- Amounts -->
                 <text
-                  v-if="isPesa(e.outstandingAmount) && e.outstandingAmount.isPositive()"
+                  v-if="
+                    isPesa(e.outstandingAmount) &&
+                    e.outstandingAmount.isPositive()
+                  "
                   class="text-xs px-2 py-0.5 rounded bg-danger-muted text-danger font-semibold"
                 >
-                  {{ t`Unpaid ${fyo.format(e.outstandingAmount, "Currency")}` }}
+                  {{ t`Unpaid ${fyo.format(e.outstandingAmount, 'Currency')}` }}
                 </text>
                 <text
                   v-else-if="isPesa(e.grandTotal) && e.grandTotal.isPositive()"
                   class="text-xs px-2 py-0.5 rounded bg-success-muted text-success font-semibold"
                 >
-                  {{ fyo.format(e.grandTotal, "Currency") }}
+                  {{ fyo.format(e.grandTotal, 'Currency') }}
                 </text>
                 <text
                   v-else-if="isPesa(e.amount) && e.amount.isPositive()"
                   class="text-xs px-2 py-0.5 rounded bg-success-muted text-success font-semibold"
                 >
-                  {{ fyo.format(e.amount, "Currency") }}
+                  {{ fyo.format(e.amount, 'Currency') }}
                 </text>
 
                 <!-- Quantities -->
@@ -256,13 +289,15 @@
                   v-if="e.stockNotTransferred"
                   class="text-xs px-2 py-0.5 rounded bg-danger-muted text-danger"
                 >
-                  {{ t`Pending qty. ${fyo.format(e.stockNotTransferred, "Float")}` }}
+                  {{
+                    t`Pending qty. ${fyo.format(e.stockNotTransferred, 'Float')}`
+                  }}
                 </text>
                 <text
                   v-else-if="typeof e.quantity === 'number' && e.quantity"
                   class="text-xs px-2 py-0.5 rounded bg-neutral-muted text-main"
                 >
-                  {{ t`Qty. ${fyo.format(e.quantity, "Float")}` }}
+                  {{ t`Qty. ${fyo.format(e.quantity, 'Float')}` }}
                 </text>
               </view>
             </view>
@@ -290,20 +325,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject, onMounted, onUnmounted } from "vue";
-import { Doc } from "fyo/model/doc";
-import { isPesa } from "fyo/utils";
-import { ModelNameEnum } from "models/types";
-import Button from "src/components/Button.vue";
-import { getBgTextColorClass } from "src/utils/colors";
-import { getLinkedEntries } from "src/utils/doc";
-import { shortcutsKey } from "src/utils/injectionKeys";
-import { getFormRoute, routeTo } from "src/utils/ui";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
-import { isLynx } from "src/utils/interactive";
+import { ref, computed, inject, onMounted, onUnmounted } from 'vue';
+import { Doc } from 'fyo/model/doc';
+import { isPesa } from 'fyo/utils';
+import { ModelNameEnum } from 'models/types';
+import Button from 'src/components/Button.vue';
+import { getBgTextColorClass } from 'src/utils/colors';
+import { getLinkedEntries } from 'src/utils/doc';
+import { shortcutsKey } from 'src/utils/injectionKeys';
+import { getFormRoute, routeTo } from 'src/utils/ui';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
+import { isLynx } from 'src/utils/interactive';
 
-const COMPONENT_NAME = "LinkedEntries";
+const COMPONENT_NAME = 'LinkedEntries';
 
 // Define Props & Emits
 const props = defineProps<{
@@ -311,19 +346,23 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "close"): void;
+  (e: 'close'): void;
 }>();
 
 // State definition
 const shortcuts = inject(shortcutsKey);
 const loading = ref(true);
-const entries = ref<Record<string, { collapsed: boolean; details: Record<string, any>[] }>>({});
+const entries = ref<
+  Record<string, { collapsed: boolean; details: Record<string, any>[] }>
+>({});
 
 const colorClass = getBgTextColorClass;
 
 // Computed properties
 const sequence = computed<string[]>(() => {
-  const seq: string[] = linkSequence.filter((s) => !!entries.value[s]?.details?.length);
+  const seq: string[] = linkSequence.filter(
+    (s) => !!entries.value[s]?.details?.length
+  );
 
   for (const s in entries.value) {
     if (seq.includes(s)) {
@@ -353,10 +392,10 @@ const setLinkedEntries = async () => {
         return null;
       }
 
-      const fields = linkEntryDisplayFields[key] ?? ["name"];
+      const fields = linkEntryDisplayFields[key] ?? ['name'];
       const details = await fyo.db.getAll(key, {
         fields,
-        filters: { name: ["in", entryNames] },
+        filters: { name: ['in', entryNames] },
       });
 
       return {
@@ -368,7 +407,10 @@ const setLinkedEntries = async () => {
 
     const results = await Promise.all(fetchPromises);
 
-    const newEntries: Record<string, { collapsed: boolean; details: Record<string, any>[] }> = {};
+    const newEntries: Record<
+      string,
+      { collapsed: boolean; details: Record<string, any>[] }
+    > = {};
     for (const res of results) {
       if (res) {
         newEntries[res.key] = {
@@ -380,7 +422,7 @@ const setLinkedEntries = async () => {
 
     entries.value = newEntries;
   } catch (error) {
-    console.error("Error fetching linked entries:", error);
+    console.error('Error fetching linked entries:', error);
   } finally {
     loading.value = false;
   }
@@ -389,7 +431,7 @@ const setLinkedEntries = async () => {
 // Lifecycles
 onMounted(async () => {
   await setLinkedEntries();
-  shortcuts?.set(COMPONENT_NAME, ["Escape"], () => emit("close"));
+  shortcuts?.set(COMPONENT_NAME, ['Escape'], () => emit('close'));
 });
 
 onUnmounted(() => {
@@ -421,31 +463,43 @@ const linkSequence = [
 const linkEntryDisplayFields: Record<string, string[]> = {
   // Invoices
   [ModelNameEnum.SalesInvoice]: [
-    "name",
-    "date",
-    "party",
-    "grandTotal",
-    "outstandingAmount",
-    "stockNotTransferred",
+    'name',
+    'date',
+    'party',
+    'grandTotal',
+    'outstandingAmount',
+    'stockNotTransferred',
   ],
   [ModelNameEnum.PurchaseInvoice]: [
-    "name",
-    "date",
-    "party",
-    "grandTotal",
-    "outstandingAmount",
-    "stockNotTransferred",
+    'name',
+    'date',
+    'party',
+    'grandTotal',
+    'outstandingAmount',
+    'stockNotTransferred',
   ],
   // Stock Transfers
-  [ModelNameEnum.Shipment]: ["name", "date", "party", "grandTotal"],
-  [ModelNameEnum.PurchaseReceipt]: ["name", "date", "party", "grandTotal"],
+  [ModelNameEnum.Shipment]: ['name', 'date', 'party', 'grandTotal'],
+  [ModelNameEnum.PurchaseReceipt]: ['name', 'date', 'party', 'grandTotal'],
   // Other Transactional
-  [ModelNameEnum.Payment]: ["name", "date", "party", "amount"],
-  [ModelNameEnum.JournalEntry]: ["name", "date", "entryType"],
-  [ModelNameEnum.StockMovement]: ["name", "date", "amount"],
+  [ModelNameEnum.Payment]: ['name', 'date', 'party', 'amount'],
+  [ModelNameEnum.JournalEntry]: ['name', 'date', 'entryType'],
+  [ModelNameEnum.StockMovement]: ['name', 'date', 'amount'],
   // Ledgers
-  [ModelNameEnum.AccountingLedgerEntry]: ["name", "date", "account", "credit", "debit"],
-  [ModelNameEnum.StockLedgerEntry]: ["name", "date", "item", "location", "quantity"],
+  [ModelNameEnum.AccountingLedgerEntry]: [
+    'name',
+    'date',
+    'account',
+    'credit',
+    'debit',
+  ],
+  [ModelNameEnum.StockLedgerEntry]: [
+    'name',
+    'date',
+    'item',
+    'location',
+    'quantity',
+  ],
 };
 </script>
 

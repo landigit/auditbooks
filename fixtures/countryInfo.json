@@ -478,7 +478,13 @@
     "currency": "CNY",
     "currency_name": "Yuan Renminbi",
     "date_format": "yyyy-MM-dd",
-    "timezones": ["Asia/Chongqing", "Asia/Harbin", "Asia/Kashgar", "Asia/Shanghai", "Asia/Urumqi"],
+    "timezones": [
+      "Asia/Chongqing",
+      "Asia/Harbin",
+      "Asia/Kashgar",
+      "Asia/Shanghai",
+      "Asia/Urumqi"
+    ],
     "locale": "ii-CN"
   },
   "Christmas Island": {
@@ -965,7 +971,12 @@
     "currency_fraction_units": 100,
     "currency_name": "Rupiah",
     "currency_symbol": "Rp",
-    "timezones": ["Asia/Jakarta", "Asia/Jayapura", "Asia/Makassar", "Asia/Pontianak"],
+    "timezones": [
+      "Asia/Jakarta",
+      "Asia/Jayapura",
+      "Asia/Makassar",
+      "Asia/Pontianak"
+    ],
     "locale": "id-ID"
   },
   "Iran": {
@@ -1080,7 +1091,13 @@
     "currency_fraction_units": 100,
     "currency_name": "Tenge",
     "currency_symbol": "₸",
-    "timezones": ["Asia/Almaty", "Asia/Aqtau", "Asia/Aqtobe", "Asia/Oral", "Asia/Qyzylorda"]
+    "timezones": [
+      "Asia/Almaty",
+      "Asia/Aqtau",
+      "Asia/Aqtobe",
+      "Asia/Oral",
+      "Asia/Qyzylorda"
+    ]
   },
   "Kenya": {
     "code": "ke",
@@ -2070,7 +2087,12 @@
     "currency_fraction_units": 100,
     "currency_name": "Ukrainian Hryvnia",
     "currency_symbol": "₴",
-    "timezones": ["Europe/Kiev", "Europe/Simferopol", "Europe/Uzhgorod", "Europe/Zaporozhye"],
+    "timezones": [
+      "Europe/Kiev",
+      "Europe/Simferopol",
+      "Europe/Uzhgorod",
+      "Europe/Zaporozhye"
+    ],
     "locale": "ru-UA"
   },
   "United Arab Emirates": {

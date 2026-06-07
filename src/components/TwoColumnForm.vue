@@ -41,7 +41,10 @@
             :text-end="false"
             @change="async (value) => await onChange(df, value)"
           />
-          <view v-if="errors[df.fieldname]" class="text-sm text-error mt-2 ps-2">
+          <view
+            v-if="errors[df.fieldname]"
+            class="text-sm text-error mt-2 ps-2"
+          >
             {{ errors[df.fieldname] }}
           </view>
         </view>
@@ -52,15 +55,15 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed, watch, onMounted } from "vue";
-import { Doc } from "fyo/model/doc";
-import FormControl from "src/components/Controls/FormControl.vue";
-import { getErrorMessage } from "src/utils";
-import { evaluateHidden } from "src/utils/doc";
-import Table from "./Controls/Table.vue";
-import { Field } from "schemas/types";
-import { DocValue } from "fyo/core/types";
-import { useAppStore } from "src/stores/app";
+import { ref, computed, watch, onMounted } from 'vue';
+import { Doc } from 'fyo/model/doc';
+import FormControl from 'src/components/Controls/FormControl.vue';
+import { getErrorMessage } from 'src/utils';
+import { evaluateHidden } from 'src/utils/doc';
+import Table from './Controls/Table.vue';
+import { Field } from 'schemas/types';
+import { DocValue } from 'fyo/core/types';
+import { useAppStore } from 'src/stores/app';
 
 // --- Props & Emits ---
 const props = withDefaults(
@@ -72,7 +75,7 @@ const props = withDefaults(
   {
     fields: () => [],
     columnRatio: () => [1, 1],
-  },
+  }
 );
 
 // --- State ---
@@ -83,9 +86,11 @@ const controls = ref<any[]>([]);
 
 // --- Computed ---
 const style = computed(() => {
-  let templateColumns = (props.columnRatio || [1, 1]).map((r) => `minmax(0, ${r}fr)`).join(" ");
+  let templateColumns = (props.columnRatio || [1, 1])
+    .map((r) => `minmax(0, ${r}fr)`)
+    .join(' ');
   return {
-    "grid-template-columns": templateColumns,
+    'grid-template-columns': templateColumns,
   };
 });
 
@@ -94,7 +99,7 @@ watch(
   () => props.doc,
   () => {
     setFormFields();
-  },
+  }
 );
 
 // --- Expose ---
@@ -103,7 +108,7 @@ defineExpose({ onChange });
 // --- Lifecycle ---
 onMounted(() => {
   setFormFields();
-  if (typeof window !== "undefined" && store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-ignore
     window.tcf = { formFields, errors, props };
   }
@@ -111,15 +116,15 @@ onMounted(() => {
 
 // --- Methods ---
 function getFieldHeight(field: Field) {
-  if (["AttachImage", "Text"].includes(field.fieldtype)) {
-    return "calc((var(--h-row-mid) + 1px) * 2)";
+  if (['AttachImage', 'Text'].includes(field.fieldtype)) {
+    return 'calc((var(--h-row-mid) + 1px) * 2)';
   }
 
   if (errors.value[field.fieldname]) {
-    return "calc((var(--h-row-mid) + 1px) * 2)";
+    return 'calc((var(--h-row-mid) + 1px) * 2)';
   }
 
-  return "calc(var(--h-row-mid) + 1px)";
+  return 'calc(var(--h-row-mid) + 1px)';
 }
 
 async function onChange(field: Field, value: DocValue) {
@@ -153,6 +158,8 @@ function setFormFields() {
     fieldList = props.doc.schema.fields.filter((f) => f.required);
   }
 
-  formFields.value = fieldList.filter((field) => field && !evaluateHidden(field, props.doc));
+  formFields.value = fieldList.filter(
+    (field) => field && !evaluateHidden(field, props.doc)
+  );
 }
 </script>

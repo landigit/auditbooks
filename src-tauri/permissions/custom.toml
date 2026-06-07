@@ -1,0 +1,12 @@
+[[permission]]
+identifier = "allow-custom-commands"
+description = "Allows invoking custom app commands"
+
+[permission.commands]
+allow = [
+  "get_env",
+  "get_app_data_dir",
+  "check_db_access",
+  "delete_file",
+  "save_data",
+]

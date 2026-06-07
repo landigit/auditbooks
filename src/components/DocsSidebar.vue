@@ -5,7 +5,10 @@
     <!-- Search -->
     <view class="p-4 border-b border-border">
       <view class="relative">
-        <lucide-icon name="search" class="absolute left-3 top-2.5 h-4 w-4 text-muted" />
+        <lucide-icon
+          name="search"
+          class="absolute left-3 top-2.5 h-4 w-4 text-muted"
+        />
         <input
           v-model="searchQuery"
           type="text"
@@ -51,13 +54,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { docsNavigation, DocNode } from "src/utils/docsNavigation";
+import { ref, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { docsNavigation, DocNode } from 'src/utils/docsNavigation';
 
 const router = useRouter();
 const route = useRoute();
-const searchQuery = ref("");
+const searchQuery = ref('');
 const nav = ref(docsNavigation.map((g) => ({ ...g, isExpanded: true })));
 
 const filteredNav = computed(() => {
@@ -67,7 +70,7 @@ const filteredNav = computed(() => {
   return nav.value
     .map((group) => {
       const filteredChildren = group.children?.filter((child) =>
-        child.title.toLowerCase().includes(query),
+        child.title.toLowerCase().includes(query)
       );
       return {
         ...group,
@@ -84,13 +87,15 @@ const toggleGroup = (group: any) => {
 
 const navigateTo = (item: DocNode) => {
   if (item.path) {
-    router.push({ name: "Help", params: { path: item.path } });
+    router.push({ name: 'Help', params: { path: item.path } });
   }
 };
 
 const isActive = (item: DocNode) => {
   const currentPath = route.params.path;
-  const normalizedCurrent = Array.isArray(currentPath) ? currentPath.join("/") : currentPath;
+  const normalizedCurrent = Array.isArray(currentPath)
+    ? currentPath.join('/')
+    : currentPath;
   return normalizedCurrent === item.path;
 };
 </script>

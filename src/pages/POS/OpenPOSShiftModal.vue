@@ -40,17 +40,27 @@
           />
 
           <view class="mt-4 grid grid-cols-2 gap-4 items-end">
-            <Button class="w-full py-5 bg-indicator-red-bg" @tap="router.back()">
+            <Button
+              class="w-full py-5 bg-indicator-red-bg"
+              @tap="router.back()"
+            >
               <slot>
-                <text class="uppercase text-lg text-indicator-red-text font-semibold">
+                <text
+                  class="uppercase text-lg text-indicator-red-text font-semibold"
+                >
                   {{ t`Back` }}
                 </text>
               </slot>
             </Button>
 
-            <Button class="w-full py-5 bg-indicator-green-bg" @tap="handleSubmit">
+            <Button
+              class="w-full py-5 bg-indicator-green-bg"
+              @tap="handleSubmit"
+            >
               <slot>
-                <text class="uppercase text-lg text-indicator-green-text font-semibold">
+                <text
+                  class="uppercase text-lg text-indicator-green-text font-semibold"
+                >
                   {{ t`Submit` }}
                 </text>
               </slot>
@@ -64,31 +74,33 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Open P O S Shift Modal</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, provide } from "vue";
-import Button from "src/components/Button.vue";
-import Modal from "src/components/Modal.vue";
-import Table from "src/components/Controls/Table.vue";
-import { AccountTypeEnum } from "models/baseModels/Account/types";
-import { ModelNameEnum } from "models/types";
-import { Money } from "pesa";
-import { POSOpeningShift } from "models/inventory/Point of Sale/POSOpeningShift";
-import { fyo } from "src/initFyo";
-import { showToast } from "src/utils/interactive";
-import { t } from "fyo";
-import { ValidationError } from "fyo/utils/errors";
-import { getPOSOpeningShiftDoc } from "src/utils/pos";
-import { useRouter } from "vue-router";
+import { ref, computed, onMounted, provide } from 'vue';
+import Button from 'src/components/Button.vue';
+import Modal from 'src/components/Modal.vue';
+import Table from 'src/components/Controls/Table.vue';
+import { AccountTypeEnum } from 'models/baseModels/Account/types';
+import { ModelNameEnum } from 'models/types';
+import { Money } from 'pesa';
+import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
+import { fyo } from 'src/initFyo';
+import { showToast } from 'src/utils/interactive';
+import { t } from 'fyo';
+import { ValidationError } from 'fyo/utils/errors';
+import { getPOSOpeningShiftDoc } from 'src/utils/pos';
+import { useRouter } from 'vue-router';
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "toggleModal", modal: string): void;
+  (e: 'toggleModal', modal: string): void;
 }>();
 
 // Router Instance
@@ -100,8 +112,8 @@ const isValuesSeeded = ref(false);
 
 // Provide context to child elements
 provide(
-  "doc",
-  computed(() => posShiftDoc.value),
+  'doc',
+  computed(() => posShiftDoc.value)
 );
 
 // Computed Properties
@@ -131,7 +143,7 @@ const seedDefaultCashDenomiations = async () => {
   }
 
   for (const row of denominations) {
-    await posShiftDoc.value.append("openingCash", {
+    await posShiftDoc.value.append('openingCash', {
       denomination: row.denomination,
       count: 0,
     });
@@ -147,11 +159,11 @@ const seedPaymentMethods = async () => {
 
   const paymentMethods = (
     (await fyo.db.getAll(ModelNameEnum.PaymentMethod, {
-      fields: ["name"],
+      fields: ['name'],
     })) as { name: string }[]
   ).map((doc) => ({ paymentMethod: doc.name, amount: fyo.pesa(0) }));
 
-  await posShiftDoc.value.set("openingAmounts", paymentMethods);
+  await posShiftDoc.value.set('openingAmounts', paymentMethods);
 };
 
 const seedDefaults = async () => {
@@ -173,7 +185,7 @@ const setOpeningCashAmount = () => {
   }
 
   posShiftDoc.value.openingAmounts.map((row) => {
-    if (row.paymentMethod === "Cash") {
+    if (row.paymentMethod === 'Cash') {
       row.amount = posShiftDoc.value?.openingCashAmount;
     }
   });
@@ -195,20 +207,20 @@ const handleSubmit = async () => {
     });
 
     await posShiftDoc.value?.sync();
-    await fyo.singles.POSSettings?.setAndSync("isShiftOpen", true);
+    await fyo.singles.POSSettings?.setAndSync('isShiftOpen', true);
 
     if (!posShiftDoc.value?.openingCashAmount.isZero()) {
       const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
-        entryType: "Journal Entry",
+        entryType: 'Journal Entry',
       });
 
-      await jvDoc.append("accounts", {
+      await jvDoc.append('accounts', {
         account: posCashAccount.value,
         debit: posShiftDoc.value?.openingCashAmount as Money,
         credit: fyo.pesa(0),
       });
 
-      await jvDoc.append("accounts", {
+      await jvDoc.append('accounts', {
         account: AccountTypeEnum.Cash,
         debit: fyo.pesa(0),
         credit: posShiftDoc.value?.openingCashAmount as Money,
@@ -217,12 +229,12 @@ const handleSubmit = async () => {
       await (await jvDoc.sync()).submit();
     }
 
-    emit("toggleModal", "ShiftOpen");
+    emit('toggleModal', 'ShiftOpen');
   } catch (error) {
     showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
-      duration: "short",
+      duration: 'short',
     });
     return;
   }

@@ -1,7 +1,7 @@
-import { ListViewSettings } from "fyo/model/types";
-import { ClosingAmounts } from "./ClosingAmounts";
-import { ClosingCash } from "./ClosingCash";
-import { Doc } from "fyo/model/doc";
+import { ListViewSettings } from 'fyo/model/types';
+import { ClosingAmounts } from './ClosingAmounts';
+import { ClosingCash } from './ClosingCash';
+import { Doc } from 'fyo/model/doc';
 
 export class POSClosingShift extends Doc {
   declare closingAmounts?: ClosingAmounts[];
@@ -28,7 +28,7 @@ export class POSClosingShift extends Doc {
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ["name", "closingDate"],
+      columns: ['name', 'closingDate'],
     };
   }
 }

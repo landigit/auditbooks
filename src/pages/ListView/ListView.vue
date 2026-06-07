@@ -5,14 +5,17 @@
         <Button
           v-if="
             schemaName === 'Item' &&
-            (!isSelectionMode || (isSelectionMode && selectedItems.length === 0))
+            (!isSelectionMode ||
+              (isSelectionMode && selectedItems.length === 0))
           "
           @tap="toggleSelectionMode"
         >
           {{ t`Select` }}
         </Button>
         <view
-          v-if="isSelectionMode && schemaName === 'Item' && selectedItems.length > 0"
+          v-if="
+            isSelectionMode && schemaName === 'Item' && selectedItems.length > 0
+          "
           class="relative"
         >
           <Button class="w-40" @tap="toggleDropdown"> Create </Button>
@@ -38,7 +41,11 @@
         >
           {{ t`Export` }}
         </Button>
-        <FilterDropdown ref="filterDropdown" :schema-name="schemaName" @change="applyFilter" />
+        <FilterDropdown
+          ref="filterDropdown"
+          :schema-name="schemaName"
+          @change="applyFilter"
+        />
         <Button
           v-if="canCreate"
           ref="makeNewDocButton"
@@ -64,7 +71,10 @@
         @make-new-doc="makeNewDoc"
         @selected-items-changed="updateSelectedItems"
       />
-      <Modal :open-modal="openExportModal" @closemodal="openExportModal = false">
+      <Modal
+        :open-modal="openExportModal"
+        @closemodal="openExportModal = false"
+      >
         <ExportWizard
           class="w-form"
           :schema-name="schemaName"
@@ -101,25 +111,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onActivated, onDeactivated, inject } from "vue";
-import { Field } from "schemas/types";
-import Button from "src/components/Button.vue";
-import ExportWizard from "src/components/ExportWizard.vue";
-import FilterDropdown from "src/components/FilterDropdown.vue";
-import Modal from "src/components/Modal.vue";
-import PageHeader from "src/components/PageHeader.vue";
+import { ref, computed, onActivated, onDeactivated, inject } from 'vue';
+import { Field } from 'schemas/types';
+import Button from 'src/components/Button.vue';
+import ExportWizard from 'src/components/ExportWizard.vue';
+import FilterDropdown from 'src/components/FilterDropdown.vue';
+import Modal from 'src/components/Modal.vue';
+import PageHeader from 'src/components/PageHeader.vue';
 
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
-import { shortcutsKey } from "src/utils/injectionKeys";
-import { docsPathMap, getCreateFiltersFromListViewFilters } from "src/utils/misc";
-import { getFormRoute, routeTo } from "src/utils/ui";
-import { QueryFilter } from "utils/db/types";
-import { useAppStore } from "src/stores/app";
-import List from "./List.vue";
-import { Money } from "pesa";
-import { ModelNameEnum } from "models/types";
-import LucideIcon from "src/components/LucideIcon.vue";
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
+import { shortcutsKey } from 'src/utils/injectionKeys';
+import {
+  docsPathMap,
+  getCreateFiltersFromListViewFilters,
+} from 'src/utils/misc';
+import { getFormRoute, routeTo } from 'src/utils/ui';
+import { QueryFilter } from 'utils/db/types';
+import { useAppStore } from 'src/stores/app';
+import List from './List.vue';
+import { Money } from 'pesa';
+import { ModelNameEnum } from 'models/types';
+import LucideIcon from 'src/components/LucideIcon.vue';
 
 // Define Props
 const props = withDefaults(
@@ -129,8 +142,8 @@ const props = withDefaults(
     pageTitle?: string;
   }>(),
   {
-    pageTitle: "",
-  },
+    pageTitle: '',
+  }
 );
 
 // Inject Dependencies
@@ -153,7 +166,7 @@ const selectedItems = ref<string[]>([]);
 
 // Computed Properties
 const context = computed(() => {
-  return "ListView-" + props.schemaName;
+  return 'ListView-' + props.schemaName;
 });
 
 const title = computed(() => {
@@ -173,9 +186,9 @@ const canCreate = computed<boolean>(() => {
 
 const actionOptions = computed(() => {
   return [
-    { value: "SalesQuote", label: "Sales Quote" },
-    { value: "SalesInvoice", label: "Sales Invoice" },
-    { value: "PurchaseInvoice", label: "Purchase Invoice" },
+    { value: 'SalesQuote', label: 'Sales Quote' },
+    { value: 'SalesInvoice', label: 'Sales Invoice' },
+    { value: 'PurchaseInvoice', label: 'Purchase Invoice' },
   ];
 });
 
@@ -185,8 +198,12 @@ const setShortcuts = () => {
     return;
   }
 
-  shortcuts.pmod.set(context.value, ["KeyN"], () => makeNewDocButton.value?.$el.click());
-  shortcuts.pmod.set(context.value, ["KeyE"], () => exportButton.value?.$el.click());
+  shortcuts.pmod.set(context.value, ['KeyN'], () =>
+    makeNewDocButton.value?.$el.click()
+  );
+  shortcuts.pmod.set(context.value, ['KeyE'], () =>
+    exportButton.value?.$el.click()
+  );
 };
 
 const updatedData = (filtersVal: QueryFilter) => {
@@ -238,7 +255,7 @@ const createInvoice = async (value: string) => {
     const doc = fyo.doc.getNewDoc(value);
 
     for (const itemName of selectedItems.value) {
-      const itemDoc = await fyo.doc.getDoc("Item", itemName);
+      const itemDoc = await fyo.doc.getDoc('Item', itemName);
 
       const itemRow = {
         item: itemName,
@@ -246,7 +263,7 @@ const createInvoice = async (value: string) => {
         quantity: 1,
       };
 
-      await doc.append("items", itemRow);
+      await doc.append('items', itemRow);
     }
 
     const route = getFormRoute(value, doc.name!);
@@ -265,7 +282,7 @@ const getListConfig = (schemaNameVal: string) => {
   const config = fyo.models[schemaNameVal]?.getListViewSettings?.(fyo);
   if (config?.columns === undefined) {
     return {
-      columns: ["name"],
+      columns: ['name'],
     };
   }
   return config;
@@ -274,9 +291,9 @@ const getListConfig = (schemaNameVal: string) => {
 // Lifecycles
 onActivated(() => {
   listConfig.value = getListConfig(props.schemaName);
-  store.docsPath = docsPathMap[props.schemaName] ?? docsPathMap.Entries ?? "";
+  store.docsPath = docsPathMap[props.schemaName] ?? docsPathMap.Entries ?? '';
 
-  if (store.isDevelopment && typeof window !== "undefined") {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-expect-error
     window.lv = {
       listConfig,
@@ -300,7 +317,7 @@ onActivated(() => {
 });
 
 onDeactivated(() => {
-  store.docsPath = "";
+  store.docsPath = '';
   shortcuts?.delete(context.value);
 });
 </script>

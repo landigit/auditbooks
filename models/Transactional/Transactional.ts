@@ -1,6 +1,6 @@
-import { Doc } from "fyo/model/doc";
-import { ModelNameEnum } from "models/types";
-import { LedgerPosting } from "./LedgerPosting";
+import { Doc } from 'fyo/model/doc';
+import { ModelNameEnum } from 'models/types';
+import { LedgerPosting } from './LedgerPosting';
 
 /**
  * # Transactional
@@ -76,16 +76,22 @@ export abstract class Transactional extends Doc {
       return;
     }
 
-    const ledgerEntryIds = (await this.fyo.db.getAll(ModelNameEnum.AccountingLedgerEntry, {
-      fields: ["name"],
-      filters: {
-        referenceType: this.schemaName,
-        referenceName: this.name!,
-      },
-    })) as { name: string }[];
+    const ledgerEntryIds = (await this.fyo.db.getAll(
+      ModelNameEnum.AccountingLedgerEntry,
+      {
+        fields: ['name'],
+        filters: {
+          referenceType: this.schemaName,
+          referenceName: this.name!,
+        },
+      }
+    )) as { name: string }[];
 
     for (const { name } of ledgerEntryIds) {
-      const ledgerEntryDoc = await this.fyo.doc.getDoc(ModelNameEnum.AccountingLedgerEntry, name);
+      const ledgerEntryDoc = await this.fyo.doc.getDoc(
+        ModelNameEnum.AccountingLedgerEntry,
+        name
+      );
       await ledgerEntryDoc.delete();
     }
   }

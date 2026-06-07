@@ -1,16 +1,16 @@
-import { t } from "fyo";
-import type { Doc } from "fyo/model/doc";
-import { BaseError } from "fyo/utils/errors";
-import { ErrorLog } from "fyo/utils/types";
-import { showDialog } from "src/utils/interactive";
-import { truncate } from "src/utils";
-import { fyo } from "./initFyo";
-import router from "./router";
-import { getErrorMessage, stringifyCircular } from "./utils";
-import type { DialogOptions, ToastOptions } from "./utils/types";
-import { ModelNameEnum } from "models/types";
-import { useAppStore } from "./stores/app";
-import { safeGet, safeSet } from "utils/index";
+import { t } from 'fyo';
+import type { Doc } from 'fyo/model/doc';
+import { BaseError } from 'fyo/utils/errors';
+import { ErrorLog } from 'fyo/utils/types';
+import { showDialog } from 'src/utils/interactive';
+import { truncate } from 'src/utils';
+import { fyo } from './initFyo';
+import router from './router';
+import { getErrorMessage, stringifyCircular } from './utils';
+import type { DialogOptions, ToastOptions } from './utils/types';
+import { ModelNameEnum } from 'models/types';
+import { useAppStore } from './stores/app';
+import { safeGet, safeSet } from 'utils/index';
 
 function shouldNotStore(error: Error) {
   const shouldLog = (error as BaseError).shouldStore ?? true;
@@ -42,7 +42,7 @@ export async function sendError(errorLogObj: ErrorLog) {
 
   if (store.isDevelopment) {
     // oxlint-disable-next-line no-console
-    console.log("sendError", body);
+    console.log('sendError', body);
   }
 
   await ipc.sendError(JSON.stringify(body));
@@ -51,7 +51,7 @@ export async function sendError(errorLogObj: ErrorLog) {
 function getToastProps(errorLogObj: ErrorLog) {
   const props: ToastOptions = {
     message: errorLogObj.name ?? t`Error`,
-    type: "error",
+    type: 'error',
     actionText: t`Report Error`,
     action: () => reportIssue(errorLogObj),
   };
@@ -59,7 +59,10 @@ function getToastProps(errorLogObj: ErrorLog) {
   return props;
 }
 
-export function getErrorLogObject(error: Error, more: Record<string, unknown>): ErrorLog {
+export function getErrorLogObject(
+  error: Error,
+  more: Record<string, unknown>
+): ErrorLog {
   const { name, stack, message, cause } = error;
   if (cause) {
     more.cause = cause;
@@ -76,7 +79,7 @@ export async function handleError(
   logToConsole: boolean,
   error: Error,
   more: Record<string, unknown> = {},
-  notifyUser = true,
+  notifyUser = true
 ) {
   if (logToConsole) {
     // oxlint-disable-next-line no-console
@@ -92,7 +95,7 @@ export async function handleError(
 
   if (notifyUser) {
     const toastProps = getToastProps(errorLogObj);
-    const { showToast } = await import("src/utils/interactive");
+    const { showToast } = await import('src/utils/interactive');
     showToast(toastProps);
   }
 }
@@ -101,7 +104,7 @@ export async function handleErrorWithDialog(
   error: unknown,
   doc?: Doc,
   reportError?: boolean,
-  dontThrow?: boolean,
+  dontThrow?: boolean
 ) {
   if (!(error instanceof Error)) {
     return;
@@ -114,7 +117,7 @@ export async function handleErrorWithDialog(
   const options: DialogOptions = {
     title: label,
     detail: errorMessage,
-    type: "error",
+    type: 'error',
   };
 
   if (reportError) {
@@ -158,7 +161,9 @@ export async function showErrorDialog(title?: string, content?: string) {
 }
 
 // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(func: T) {
+export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(
+  func: T
+) {
   type Return = ReturnType<T> extends Promise<infer P> ? P : true;
   return async function errorHandled(...args: Parameters<T>): Promise<Return> {
     try {
@@ -175,7 +180,9 @@ export function getErrorHandled<T extends (...args: any[]) => Promise<any>>(func
 }
 
 // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-export function getErrorHandledSync<T extends (...args: any[]) => any>(func: T) {
+export function getErrorHandledSync<T extends (...args: any[]) => any>(
+  func: T
+) {
   type Return = ReturnType<T> extends Promise<infer P> ? P : ReturnType<T>;
   return function errorHandledSync(...args: Parameters<T>) {
     try {
@@ -199,27 +206,34 @@ function getFeatureFlags(): string[] {
 
     return Object.entries(doc as Doc).reduce(
       (acc, [key, value]) => {
-        const fieldsArray = ((safeGet(fyo.schemaMap, docName) as any)?.fields ?? []) as any[];
-        const fieldsMap = new Map<string, any>(fieldsArray.map((f: any) => [f.fieldname, f]));
+        const fieldsArray = (safeGet(fyo.schemaMap, docName)?.fields ??
+          []) as any[];
+        const fieldsMap = new Map<string, any>(
+          fieldsArray.map((f: any) => [f.fieldname, f])
+        );
 
         const field = fieldsMap.get(key);
-        if (typeof value === "boolean" && !field?.hidden && !key.startsWith("_")) {
+        if (
+          typeof value === 'boolean' &&
+          !field?.hidden &&
+          !key.startsWith('_')
+        ) {
           safeSet(acc, key, value);
         }
         return acc;
       },
-      Object.create(null) as Record<string, boolean>,
+      Object.create(null) as Record<string, boolean>
     );
   };
 
   const sections = [
     {
-      name: "Accounting",
+      name: 'Accounting',
       flags: getBooleanFields(ModelNameEnum.AccountingSettings),
     },
-    { name: "POS", flags: getBooleanFields(ModelNameEnum.POSSettings) },
+    { name: 'POS', flags: getBooleanFields(ModelNameEnum.POSSettings) },
     {
-      name: "Inventory",
+      name: 'Inventory',
       flags: getBooleanFields(ModelNameEnum.InventorySettings),
     },
   ]
@@ -227,43 +241,44 @@ function getFeatureFlags(): string[] {
     .filter(({ flags }) => Object.keys(flags).length > 0)
     .flatMap(({ name, flags }) => [
       `**${name} Settings**:`,
-      "```json",
+      '```json',
       JSON.stringify(flags, null, 2),
-      "```",
-      "",
+      '```',
+      '',
     ]);
 
   return sections.length
     ? [
-        "<details>",
-        "<summary><strong>Feature Flags</strong></summary>",
-        "",
+        '<details>',
+        '<summary><strong>Feature Flags</strong></summary>',
+        '',
         ...sections,
-        "</details>",
+        '</details>',
       ]
     : [];
 }
 
 function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
-  const baseUrl = "https://github.com/landigit/auditbooks/issues/new?labels=bug";
+  const baseUrl =
+    'https://github.com/landigit/auditbooks/issues/new?labels=bug';
 
   const body = [
-    "<h2>Description</h2>",
-    "Add some description...",
-    "",
-    "<h2>Steps to Reproduce</h2>",
-    "Add steps to reproduce the error...",
-    "",
-    "<h2>Info</h2>",
-    "",
+    '<h2>Description</h2>',
+    'Add some description...',
+    '',
+    '<h2>Steps to Reproduce</h2>',
+    'Add steps to reproduce the error...',
+    '',
+    '<h2>Info</h2>',
+    '',
   ];
 
   if (errorLogObj) {
-    body.push(`**Error**: _${errorLogObj.name}: ${errorLogObj.message}_`, "");
+    body.push(`**Error**: _${errorLogObj.name}: ${errorLogObj.message}_`, '');
   }
 
   if (errorLogObj?.stack) {
-    body.push("**Stack**:", "```", errorLogObj.stack, "```", "");
+    body.push('**Stack**:', '```', errorLogObj.stack, '```', '');
   }
 
   const store = useAppStore();
@@ -271,13 +286,13 @@ function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
   body.push(`**Platform**: \`${store.platform}\``);
   body.push(`**Path**: \`${router.currentRoute.value.fullPath}\``);
 
-  body.push(`**Language**: \`${fyo.config.get("language") ?? "-"}\``);
+  body.push(`**Language**: \`${fyo.config.get('language') ?? '-'}\``);
   if (fyo.singles.SystemSettings?.countryCode) {
     body.push(`**Country**: \`${fyo.singles.SystemSettings.countryCode}\``);
   }
-  body.push("", ...getFeatureFlags());
+  body.push('', ...getFeatureFlags());
 
-  const encodedBody = encodeURIComponent(body.join("\n"));
+  const encodedBody = encodeURIComponent(body.join('\n'));
   return `${baseUrl}&body=${encodedBody}`;
 }
 
@@ -292,47 +307,47 @@ function getErrorLabel(error: Error) {
     return t`Error`;
   }
 
-  if (name === "BaseError") {
+  if (name === 'BaseError') {
     return t`Error`;
   }
 
-  if (name === "ValidationError") {
+  if (name === 'ValidationError') {
     return t`Validation Error`;
   }
 
-  if (name === "NotFoundError") {
+  if (name === 'NotFoundError') {
     return t`Not Found`;
   }
 
-  if (name === "ForbiddenError") {
+  if (name === 'ForbiddenError') {
     return t`Forbidden Error`;
   }
 
-  if (name === "DuplicateEntryError") {
+  if (name === 'DuplicateEntryError') {
     return t`Duplicate Entry`;
   }
 
-  if (name === "LinkValidationError") {
+  if (name === 'LinkValidationError') {
     return t`Link Validation Error`;
   }
 
-  if (name === "MandatoryError") {
+  if (name === 'MandatoryError') {
     return t`Mandatory Error`;
   }
 
-  if (name === "DatabaseError") {
+  if (name === 'DatabaseError') {
     return t`Database Error`;
   }
 
-  if (name === "CannotCommitError") {
+  if (name === 'CannotCommitError') {
     return t`Cannot Commit Error`;
   }
 
-  if (name === "NotImplemented") {
+  if (name === 'NotImplemented') {
     return t`Error`;
   }
 
-  if (name === "ToDebugError") {
+  if (name === 'ToDebugError') {
     return t`Error`;
   }
 

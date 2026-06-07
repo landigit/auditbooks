@@ -12,5 +12,5 @@
 </template>
 
 <script setup lang="ts">
-import { isLynx } from "src/utils/interactive";
+import { isLynx } from 'src/utils/interactive';
 </script>

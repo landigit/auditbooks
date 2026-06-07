@@ -11,7 +11,9 @@
           :border="true"
           :text-right="true"
           :value="paidAmount"
-          @change="(amount: Money) => emit('setPaidAmount', (amount as Money).float)"
+          @change="
+            (amount: Money) => emit('setPaidAmount', (amount as Money).float)
+          "
         />
         <view v-if="paymentMethods.length" class="grid grid-cols-2 gap-6">
           <Button
@@ -31,7 +33,9 @@
           v-else
           class="flex flex-col items-center justify-center p-6 bg-slate-50 dark:bg-slate-800 rounded-xl border border-dashed border-slate-300 dark:border-slate-700"
         >
-          <text class="text-sm font-semibold text-main">{{ t`No Payment Methods Found` }}</text>
+          <text class="text-sm font-semibold text-main">{{
+            t`No Payment Methods Found`
+          }}</text>
           <text class="text-xs text-description text-center mt-1">
             {{ t`Please configure payment methods in settings first.` }}
           </text>
@@ -163,7 +167,9 @@
               @tap="submitTransaction"
             >
               <slot>
-                <text class="uppercase text-lg text-button-primary-text font-semibold">
+                <text
+                  class="uppercase text-lg text-button-primary-text font-semibold"
+                >
                   {{ t`Submit` }}
                 </text>
               </slot>
@@ -180,7 +186,9 @@
               @tap="cancelTransaction"
             >
               <slot>
-                <text class="uppercase text-lg text-button-primary-text font-semibold">
+                <text
+                  class="uppercase text-lg text-button-primary-text font-semibold"
+                >
                   {{ t`Cancel` }}
                 </text>
               </slot>
@@ -197,7 +205,9 @@
               @tap="payTransaction"
             >
               <slot>
-                <text class="uppercase text-lg text-button-primary-text font-semibold">
+                <text
+                  class="uppercase text-lg text-button-primary-text font-semibold"
+                >
                   {{ t`Pay` }}
                 </text>
               </slot>
@@ -214,7 +224,9 @@
               @tap="payAndPrintTransaction"
             >
               <slot>
-                <text class="uppercase text-lg text-button-primary-text font-semibold">
+                <text
+                  class="uppercase text-lg text-button-primary-text font-semibold"
+                >
                   {{ t`Pay & Print` }}
                 </text>
               </slot>
@@ -228,54 +240,56 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Payment Modal</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, inject } from "vue";
-import Button from "src/components/Button.vue";
-import Currency from "src/components/Controls/Currency.vue";
-import Data from "src/components/Controls/Data.vue";
-import DateField from "src/components/Controls/Date.vue";
-import Modal from "src/components/Modal.vue";
-import { Money } from "pesa";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { fyo } from "src/initFyo";
-import { isPesa } from "fyo/utils";
-import { ModelNameEnum } from "models/types";
-import { showToast } from "src/utils/interactive";
-import { t } from "fyo";
+import { ref, computed, onMounted, inject } from 'vue';
+import Button from 'src/components/Button.vue';
+import Currency from 'src/components/Controls/Currency.vue';
+import Data from 'src/components/Controls/Data.vue';
+import DateField from 'src/components/Controls/Date.vue';
+import Modal from 'src/components/Modal.vue';
+import { Money } from 'pesa';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { fyo } from 'src/initFyo';
+import { isPesa } from 'fyo/utils';
+import { ModelNameEnum } from 'models/types';
+import { showToast } from 'src/utils/interactive';
+import { t } from 'fyo';
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "createTransaction", print?: boolean, pay?: boolean): void;
-  (e: "setPaidAmount", value: any): void;
-  (e: "setPaymentMethod", value: string): void;
-  (e: "setTransferClearanceDate", value: Date): void;
-  (e: "setTransferRefNo", value: string): void;
-  (e: "toggleModal", modal: string): void;
+  (e: 'createTransaction', print?: boolean, pay?: boolean): void;
+  (e: 'setPaidAmount', value: any): void;
+  (e: 'setPaymentMethod', value: string): void;
+  (e: 'setTransferClearanceDate', value: Date): void;
+  (e: 'setTransferRefNo', value: string): void;
+  (e: 'toggleModal', modal: string): void;
 }>();
 
 // App Store / Context Injections
-const paidAmount = inject("paidAmount") as Money;
-const paymentMethod = inject("paymentMethod") as string;
-const isDiscountingEnabled = inject("isDiscountingEnabled") as boolean;
-const itemDiscounts = inject("itemDiscounts") as Money;
-const transferAmount = inject("transferAmount") as Money;
-const sinvDoc = inject("sinvDoc") as SalesInvoice;
-const transferRefNo = inject("transferRefNo") as string;
-const transferClearanceDate = inject("transferClearanceDate") as Date;
-const totalTaxedAmount = inject("totalTaxedAmount") as Money;
+const paidAmount = inject('paidAmount') as Money;
+const paymentMethod = inject('paymentMethod') as string;
+const isDiscountingEnabled = inject('isDiscountingEnabled') as boolean;
+const itemDiscounts = inject('itemDiscounts') as Money;
+const transferAmount = inject('transferAmount') as Money;
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+const transferRefNo = inject('transferRefNo') as string;
+const transferClearanceDate = inject('transferClearanceDate') as Date;
+const totalTaxedAmount = inject('totalTaxedAmount') as Money;
 
 // Reactive State
 const paymentMethods = ref<string[]>([]);
 
 // Computed Properties
 const isPaymentMethodIsCash = computed((): boolean => {
-  return paymentMethod === "Cash";
+  return paymentMethod === 'Cash';
 });
 
 const balanceAmount = computed((): Money => {
@@ -319,7 +333,10 @@ const showPaidChange = computed((): boolean => {
     return false;
   }
 
-  if (fyo.pesa(paidAmount.float).eq(fyo.pesa(0)) && transferAmount.eq(fyo.pesa(0))) {
+  if (
+    fyo.pesa(paidAmount.float).eq(fyo.pesa(0)) &&
+    transferAmount.eq(fyo.pesa(0))
+  ) {
     return false;
   }
 
@@ -337,15 +354,15 @@ const showPaidChange = computed((): boolean => {
 // Methods
 const setPaymentMethodAndAmount = (paymentMethodValue?: string) => {
   if (paymentMethodValue) {
-    emit("setPaymentMethod", paymentMethodValue);
-    emit("setPaidAmount", (sinvDoc.outstandingAmount as Money).float);
+    emit('setPaymentMethod', paymentMethodValue);
+    emit('setPaidAmount', (sinvDoc.outstandingAmount as Money).float);
   }
 };
 
 const setPaymentMethods = async () => {
   paymentMethods.value = (
     (await fyo.db.getAll(ModelNameEnum.PaymentMethod, {
-      fields: ["name"],
+      fields: ['name'],
     })) as { name: string }[]
   ).map((d) => d.name);
 };
@@ -353,40 +370,40 @@ const setPaymentMethods = async () => {
 const submitTransaction = () => {
   if (!paymentMethod) {
     showToast({
-      type: "error",
+      type: 'error',
       message: fyo.t`Please select a payment method before submitting.`,
     });
     return;
   }
-  emit("createTransaction");
+  emit('createTransaction');
 };
 
 const payTransaction = () => {
   if (!paymentMethod) {
     showToast({
-      type: "error",
+      type: 'error',
       message: fyo.t`Please select a payment method before proceeding with payment.`,
     });
     return;
   }
-  emit("createTransaction", false, true);
+  emit('createTransaction', false, true);
 };
 
 const payAndPrintTransaction = () => {
   if (!paymentMethod) {
     showToast({
-      type: "error",
+      type: 'error',
       message: fyo.t`Please select a payment method before proceeding with payment.`,
     });
     return;
   }
 
-  emit("createTransaction", true, true);
+  emit('createTransaction', true, true);
 };
 
 const cancelTransaction = () => {
-  emit("setPaidAmount", 0);
-  emit("toggleModal", "Payment");
+  emit('setPaidAmount', 0);
+  emit('toggleModal', 'Payment');
 };
 
 // Lifecycles

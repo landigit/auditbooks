@@ -1,7 +1,7 @@
-import { RawCustomField } from "backend/database/types";
-import { getListFromMap, getMapFromList } from "utils";
-import regionalSchemas from "./regional";
-import { appSchemas, coreSchemas, metaSchemas } from "./schemas";
+import { RawCustomField } from 'backend/database/types';
+import { getListFromMap, getMapFromList } from 'utils';
+import regionalSchemas from './regional';
+import { appSchemas, coreSchemas, metaSchemas } from './schemas';
 import type {
   DynamicLinkField,
   Field,
@@ -11,19 +11,19 @@ import type {
   SchemaStub,
   SchemaStubMap,
   TargetField,
-} from "./types";
+} from './types';
 
 const NAME_FIELD = {
-  fieldname: "name",
+  fieldname: 'name',
   label: `ID`,
-  fieldtype: "Data",
+  fieldtype: 'Data',
   required: true,
   readOnly: true,
 };
 
 export function getSchemas(
-  countryCode = "-",
-  rawCustomFields: RawCustomField[],
+  countryCode = '-',
+  rawCustomFields: RawCustomField[]
 ): Readonly<SchemaMap> {
   const builtCoreSchemas = getCoreSchemas();
   const builtAppSchemas = getAppSchemas(countryCode);
@@ -56,8 +56,12 @@ function removeFields(schemaMap: SchemaMap): SchemaMap {
     for (const fieldname of schema.removeFields) {
       schema.fields = schema.fields.filter((f) => f.fieldname !== fieldname);
       schema.tableFields = schema.tableFields?.filter((fn) => fn !== fieldname);
-      schema.quickEditFields = schema.quickEditFields?.filter((fn) => fn !== fieldname);
-      schema.keywordFields = schema.keywordFields?.filter((fn) => fn !== fieldname);
+      schema.quickEditFields = schema.quickEditFields?.filter(
+        (fn) => fn !== fieldname
+      );
+      schema.keywordFields = schema.keywordFields?.filter(
+        (fn) => fn !== fieldname
+      );
 
       if (schema.linkDisplayField === fieldname) {
         delete schema.linkDisplayField;
@@ -86,7 +90,7 @@ function deepFreeze(schemaMap: SchemaMap) {
 }
 
 export function addMetaFields(schemaMap: SchemaMap): SchemaMap {
-  const metaSchemaMap = getMapFromList(structuredClone(metaSchemas), "name");
+  const metaSchemaMap = getMapFromList(structuredClone(metaSchemas), 'name');
 
   const base = metaSchemaMap.base;
   const tree = getCombined(metaSchemaMap.tree, base);
@@ -120,7 +124,7 @@ export function addMetaFields(schemaMap: SchemaMap): SchemaMap {
 
 function addTitleField(schemaMap: SchemaMap) {
   for (const schemaName in schemaMap) {
-    schemaMap[schemaName]!.titleField ??= "name";
+    schemaMap[schemaName]!.titleField ??= 'name';
   }
 }
 
@@ -131,7 +135,7 @@ function addNameField(schemaMap: SchemaMap) {
       continue;
     }
 
-    const pkField = schema.fields.find((f) => f.fieldname === "name");
+    const pkField = schema.fields.find((f) => f.fieldname === 'name');
     if (pkField !== undefined) {
       continue;
     }
@@ -141,15 +145,18 @@ function addNameField(schemaMap: SchemaMap) {
 }
 
 function getCoreSchemas(): SchemaMap {
-  const rawSchemaMap = getMapFromList(structuredClone(coreSchemas), "name");
+  const rawSchemaMap = getMapFromList(structuredClone(coreSchemas), 'name');
   const coreSchemaMap = getAbstractCombinedSchemas(rawSchemaMap);
   return cleanSchemas(coreSchemaMap);
 }
 
 function getAppSchemas(countryCode: string): SchemaMap {
-  const appSchemaMap = getMapFromList(structuredClone(appSchemas), "name");
+  const appSchemaMap = getMapFromList(structuredClone(appSchemas), 'name');
   const regionalSchemaMap = getRegionalSchemaMap(countryCode);
-  const combinedSchemas = getRegionalCombinedSchemas(appSchemaMap, regionalSchemaMap);
+  const combinedSchemas = getRegionalCombinedSchemas(
+    appSchemaMap,
+    regionalSchemaMap
+  );
   const schemaMap = getAbstractCombinedSchemas(combinedSchemas);
   return cleanSchemas(schemaMap);
 }
@@ -169,12 +176,21 @@ export function cleanSchemas(schemaMap: SchemaMap): SchemaMap {
   return schemaMap;
 }
 
-function getCombined(extendingSchema: SchemaStub, abstractSchema: SchemaStub): SchemaStub {
+function getCombined(
+  extendingSchema: SchemaStub,
+  abstractSchema: SchemaStub
+): SchemaStub {
   abstractSchema = structuredClone(abstractSchema);
   extendingSchema = structuredClone(extendingSchema);
 
-  const abstractFields = getMapFromList(abstractSchema.fields ?? [], "fieldname");
-  const extendingFields = getMapFromList(extendingSchema.fields ?? [], "fieldname");
+  const abstractFields = getMapFromList(
+    abstractSchema.fields ?? [],
+    'fieldname'
+  );
+  const extendingFields = getMapFromList(
+    extendingSchema.fields ?? [],
+    'fieldname'
+  );
 
   const combined = Object.assign(abstractSchema, extendingSchema);
 
@@ -187,17 +203,22 @@ function getCombined(extendingSchema: SchemaStub, abstractSchema: SchemaStub): S
 }
 
 export function getAbstractCombinedSchemas(schemas: SchemaStubMap): SchemaMap {
-  const abstractSchemaNames: string[] = Object.keys(schemas).filter((n) => schemas[n].isAbstract);
+  const abstractSchemaNames: string[] = Object.keys(schemas).filter(
+    (n) => schemas[n].isAbstract
+  );
 
   const extendingSchemaNames: string[] = Object.keys(schemas).filter((n) =>
-    abstractSchemaNames.includes(schemas[n].extends ?? ""),
+    abstractSchemaNames.includes(schemas[n].extends ?? '')
   );
 
   const completeSchemas: Schema[] = Object.keys(schemas)
-    .filter((n) => !abstractSchemaNames.includes(n) && !extendingSchemaNames.includes(n))
+    .filter(
+      (n) =>
+        !abstractSchemaNames.includes(n) && !extendingSchemaNames.includes(n)
+    )
     .map((n) => schemas[n] as Schema);
 
-  const schemaMap = getMapFromList(completeSchemas, "name") as SchemaMap;
+  const schemaMap = getMapFromList(completeSchemas, 'name') as SchemaMap;
 
   for (const name of extendingSchemaNames) {
     const extendingSchema = schemas[name] as Schema;
@@ -215,7 +236,7 @@ export function getAbstractCombinedSchemas(schemas: SchemaStubMap): SchemaMap {
 
 export function getRegionalCombinedSchemas(
   appSchemaMap: SchemaStubMap,
-  regionalSchemaMap: SchemaStubMap,
+  regionalSchemaMap: SchemaStubMap
 ): SchemaStubMap {
   const combined = { ...appSchemaMap };
 
@@ -234,15 +255,20 @@ export function getRegionalCombinedSchemas(
 }
 
 function getRegionalSchemaMap(countryCode: string): SchemaStubMap {
-  const countrySchemas = structuredClone(regionalSchemas[countryCode]) as SchemaStub[] | undefined;
+  const countrySchemas = structuredClone(regionalSchemas[countryCode]) as
+    | SchemaStub[]
+    | undefined;
   if (countrySchemas === undefined) {
     return {};
   }
 
-  return getMapFromList(countrySchemas, "name");
+  return getMapFromList(countrySchemas, 'name');
 }
 
-function addCustomFields(schemaMap: SchemaMap, rawCustomFields: RawCustomField[]): void {
+function addCustomFields(
+  schemaMap: SchemaMap,
+  rawCustomFields: RawCustomField[]
+): void {
   const fieldMap = getFieldMapFromRawCustomFields(rawCustomFields, schemaMap);
   for (const schemaName in fieldMap) {
     const fields = fieldMap[schemaName];
@@ -250,7 +276,10 @@ function addCustomFields(schemaMap: SchemaMap, rawCustomFields: RawCustomField[]
   }
 }
 
-function getFieldMapFromRawCustomFields(rawCustomFields: RawCustomField[], schemaMap: SchemaMap) {
+function getFieldMapFromRawCustomFields(
+  rawCustomFields: RawCustomField[],
+  schemaMap: SchemaMap
+) {
   const schemaFieldMap: Record<string, Record<string, Field>> = {};
 
   return rawCustomFields.reduce(
@@ -268,9 +297,12 @@ function getFieldMapFromRawCustomFields(rawCustomFields: RawCustomField[], schem
         default: defaultValue,
         target,
         references,
-      },
+      }
     ) => {
-      schemaFieldMap[parent] ??= getMapFromList(schemaMap[parent]?.fields ?? [], "fieldname");
+      schemaFieldMap[parent] ??= getMapFromList(
+        schemaMap[parent]?.fields ?? [],
+        'fieldname'
+      );
 
       if (!schemaFieldMap[parent] || schemaFieldMap[parent][fieldname]) {
         return map;
@@ -278,7 +310,7 @@ function getFieldMapFromRawCustomFields(rawCustomFields: RawCustomField[], schem
 
       map[parent] ??= [];
       const options = rawOptions
-        ?.split("\n")
+        ?.split('\n')
         .map((o) => {
           const value = o.trim();
           return { value, label: value };
@@ -298,15 +330,15 @@ function getFieldMapFromRawCustomFields(rawCustomFields: RawCustomField[], schem
         (field as OptionField).options = options;
       }
 
-      if (typeof isRequired === "number" || typeof isRequired === "boolean") {
+      if (typeof isRequired === 'number' || typeof isRequired === 'boolean') {
         field.required = Boolean(isRequired);
       }
 
-      if (typeof target === "string") {
+      if (typeof target === 'string') {
         (field as TargetField).target = target;
       }
 
-      if (typeof references === "string") {
+      if (typeof references === 'string') {
         (field as DynamicLinkField).references = references;
       }
 
@@ -321,6 +353,6 @@ function getFieldMapFromRawCustomFields(rawCustomFields: RawCustomField[], schem
       map[parent].push(field);
       return map;
     },
-    {} as Record<string, Field[]>,
+    {} as Record<string, Field[]>
   );
 }

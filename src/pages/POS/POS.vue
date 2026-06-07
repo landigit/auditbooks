@@ -3,11 +3,17 @@
     <view class="flex-col">
       <PageHeader :title="t`Point of Sale`">
         <slot>
-          <Button class="bg-error hover:bg-error-hover" @tap="toggleModal('ShiftClose')">
-            <text class="font-medium text-button-primary-text hidden md:inline">{{
-              t`Close POS Shift`
+          <Button
+            class="bg-error hover:bg-error-hover"
+            @tap="toggleModal('ShiftClose')"
+          >
+            <text
+              class="font-medium text-button-primary-text hidden md:inline"
+              >{{ t`Close POS Shift` }}</text
+            >
+            <text class="font-medium text-button-primary-text md:hidden">{{
+              t`Close Shift`
             }}</text>
-            <text class="font-medium text-button-primary-text md:hidden">{{ t`Close Shift` }}</text>
           </Button>
         </slot>
       </PageHeader>
@@ -144,7 +150,10 @@
         <text class="BrandText">Point of Sale</text>
       </view>
       <view class="flex flex-row gap-2">
-        <view class="Btn Btn--secondary px-3 py-1.5 rounded-lg" @tap="toggleModal('ShiftClose')">
+        <view
+          class="Btn Btn--secondary px-3 py-1.5 rounded-lg"
+          @tap="toggleModal('ShiftClose')"
+        >
           <text class="BtnText text-xs">Close Shift</text>
         </view>
       </view>
@@ -173,12 +182,16 @@
 
       <!-- Cart Item list -->
       <view class="mb-6">
-        <text class="text-sm font-semibold text-main mb-2">Cart ({{ totalQuantity }} items)</text>
+        <text class="text-sm font-semibold text-main mb-2"
+          >Cart ({{ totalQuantity }} items)</text
+        >
         <view
           v-if="!sinvDoc.items?.length"
           class="p-6 bg-surface border border-border rounded-xl flex items-center justify-center"
         >
-          <text class="text-xs text-description">Cart is empty. Add items below.</text>
+          <text class="text-xs text-description"
+            >Cart is empty. Add items below.</text
+          >
         </view>
         <view v-else class="space-y-3">
           <view
@@ -187,9 +200,12 @@
             class="p-4 bg-surface border border-border rounded-xl flex flex-row justify-between items-center"
           >
             <view class="flex-1 mr-4">
-              <text class="text-sm font-medium text-main">{{ item.itemName || item.item }}</text>
+              <text class="text-sm font-medium text-main">{{
+                item.itemName || item.item
+              }}</text>
               <text class="text-xs text-description mt-0.5"
-                >{{ item.qty }} x {{ formatCurrency(item.rate?.float || item.rate || 0) }}</text
+                >{{ item.qty }} x
+                {{ formatCurrency(item.rate?.float || item.rate || 0) }}</text
               >
             </view>
             <view class="flex flex-row items-center gap-2">
@@ -199,7 +215,9 @@
               >
                 <text class="text-xs font-bold">-</text>
               </view>
-              <text class="text-sm font-semibold text-main w-8 text-center">{{ item.qty }}</text>
+              <text class="text-sm font-semibold text-main w-8 text-center">{{
+                item.qty
+              }}</text>
               <view
                 class="p-1 rounded bg-surface border border-border"
                 @tap="nativeChangeQty(item, 1)"
@@ -222,7 +240,10 @@
             @input="handleItemSearch(itemSearchTerm)"
           />
         </view>
-        <scroll-view scroll-y="true" class="h-64 border border-border rounded-xl bg-surface p-2">
+        <scroll-view
+          scroll-y="true"
+          class="h-64 border border-border rounded-xl bg-surface p-2"
+        >
           <view
             v-for="item in items"
             :key="item.name"
@@ -231,7 +252,9 @@
           >
             <view class="flex-1">
               <text class="text-sm font-medium text-main">{{ item.name }}</text>
-              <text class="text-xs text-description mt-0.5">Code: {{ item.name }}</text>
+              <text class="text-xs text-description mt-0.5"
+                >Code: {{ item.name }}</text
+              >
             </view>
             <text class="text-sm font-semibold text-blue-600">{{
               formatCurrency(item.rate?.float || item.rate || 0)
@@ -254,7 +277,10 @@
         <view class="flex justify-between">
           <text class="text-xs text-description">Discounts</text>
           <text class="text-xs text-red-500"
-            >- {{ formatCurrency(itemDiscounts.float || itemDiscounts || 0) }}</text
+            >-
+            {{
+              formatCurrency(itemDiscounts.float || itemDiscounts || 0)
+            }}</text
           >
         </view>
         <view class="flex justify-between border-t border-border pt-2">
@@ -272,7 +298,9 @@
           :class="disablePayButton ? 'bg-blue-600/50' : 'bg-blue-600'"
           @tap="saveOrder"
         >
-          <text class="BtnText BtnText--primary text-white font-bold">Checkout & Save</text>
+          <text class="BtnText BtnText--primary text-white font-bold"
+            >Checkout & Save</text
+          >
         </view>
       </view>
     </scroll-view>
@@ -280,30 +308,39 @@
 </template>
 
 <script setup lang="ts">
-import { t } from "fyo";
-import router from "src/router";
-import { isLynx } from "src/utils/interactive";
-import AutoComplete from "src/components/Controls/AutoComplete.vue";
-import { Money } from "pesa";
-import { fyo } from "src/initFyo";
-import ModernPOS from "./ModernPOS.vue";
-import ClassicPOS from "./ClassicPOS.vue";
-import { ModelNameEnum } from "models/types";
-import Button from "src/components/Button.vue";
-import { showToast } from "src/utils/interactive";
-import { Item } from "models/baseModels/Item/Item";
-import { Shipment } from "models/inventory/Shipment";
-import { routeTo, toggleSidebar } from "src/utils/ui";
-import { shortcutsKey } from "src/utils/injectionKeys";
-import PageHeader from "src/components/PageHeader.vue";
-import { computed, inject, ref, provide, onMounted, onActivated, onDeactivated, watch } from "vue";
-import { Payment } from "models/baseModels/Payment/Payment";
-import { ModalName, modalNames } from "src/components/POS/types";
-import { POSProfile } from "models/baseModels/POSProfile/PosProfile";
-import { InvoiceItem } from "models/baseModels/InvoiceItem/InvoiceItem";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
-import { AppliedCouponCodes } from "models/baseModels/AppliedCouponCodes/AppliedCouponCodes";
+import { t } from 'fyo';
+import router from 'src/router';
+import { isLynx } from 'src/utils/interactive';
+import AutoComplete from 'src/components/Controls/AutoComplete.vue';
+import { Money } from 'pesa';
+import { fyo } from 'src/initFyo';
+import ModernPOS from './ModernPOS.vue';
+import ClassicPOS from './ClassicPOS.vue';
+import { ModelNameEnum } from 'models/types';
+import Button from 'src/components/Button.vue';
+import { showToast } from 'src/utils/interactive';
+import { Item } from 'models/baseModels/Item/Item';
+import { Shipment } from 'models/inventory/Shipment';
+import { routeTo, toggleSidebar } from 'src/utils/ui';
+import { shortcutsKey } from 'src/utils/injectionKeys';
+import PageHeader from 'src/components/PageHeader.vue';
+import {
+  computed,
+  inject,
+  ref,
+  provide,
+  onMounted,
+  onActivated,
+  onDeactivated,
+  watch,
+} from 'vue';
+import { Payment } from 'models/baseModels/Payment/Payment';
+import { ModalName, modalNames } from 'src/components/POS/types';
+import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
+import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
 import {
   validateSinv,
   getItemDiscounts,
@@ -311,7 +348,7 @@ import {
   getTotalQuantity,
   getTotalTaxedAmount,
   validateIsPosSettingsSet,
-} from "src/utils/pos";
+} from 'src/utils/pos';
 import {
   validateQty,
   getItemQtyMap,
@@ -320,12 +357,16 @@ import {
   getItemRateFromPriceList,
   getItemVisibility,
   isLoyaltyProgramExpiredAndMaxed,
-} from "models/helpers";
-import { POSItem, ItemQtyMap, ItemSerialNumbers } from "src/components/POS/types";
-import { ValidationError } from "fyo/utils/errors";
-import { getExistingActiveSerialNumbersForItem } from "models/inventory/helpers";
+} from 'models/helpers';
+import {
+  POSItem,
+  ItemQtyMap,
+  ItemSerialNumbers,
+} from 'src/components/POS/types';
+import { ValidationError } from 'fyo/utils/errors';
+import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
 
-const COMPONENT_NAME = "POS";
+const COMPONENT_NAME = 'POS';
 
 // State (data)
 const tableView = ref(true);
@@ -352,12 +393,12 @@ const totalTaxedAmount = ref<Money>(fyo.pesa(0));
 
 const loyaltyPoints = ref(0);
 const appliedLoyaltyPoints = ref(0);
-const loyaltyProgram = ref("");
+const loyaltyProgram = ref('');
 
 const appliedCouponsCount = ref(0);
 
-const itemSearchTerm = ref("");
-const selectedItemGroup = ref("");
+const itemSearchTerm = ref('');
+const selectedItemGroup = ref('');
 const paymentMethod = ref<string | undefined>(undefined);
 const transferRefNo = ref<string | undefined>(undefined);
 const defaultCustomer = ref<string | undefined>(undefined);
@@ -370,23 +411,27 @@ const itemQtyMap = ref<ItemQtyMap>({} as ItemQtyMap);
 const coupons = ref<AppliedCouponCodes>({} as AppliedCouponCodes);
 const itemSerialNumbers = ref<ItemSerialNumbers>({} as ItemSerialNumbers);
 const quickQtyActive = ref(false);
-const quickQtyBuffer = ref("");
+const quickQtyBuffer = ref('');
 const quickQtyRow = ref<SalesInvoiceItem | null>(null);
 const quickQtyKeyDownHandler = ref<((e: KeyboardEvent) => void) | null>(null);
 const quickQtyKeyUpHandler = ref<((e: KeyboardEvent) => void) | null>(null);
-const selectedItemForBatch = ref("");
+const selectedItemForBatch = ref('');
 const pendingBatchItem = ref<{ item: POSItem; quantity: number } | null>(null);
 const expandedBatchId = ref<string | undefined>(undefined);
-const itemVisibilityValue = ref<"Inventory Items" | "ERP Sync Items" | "Non-Inventory Items">(
-  "Inventory Items",
-);
+const itemVisibilityValue = ref<
+  'Inventory Items' | 'ERP Sync Items' | 'Non-Inventory Items'
+>('Inventory Items');
 
 // Injections
 const shortcuts = inject(shortcutsKey);
 
 // Computed
-const defaultPOSCashAccount = computed(() => fyo.singles.POSSettings?.cashAccount ?? undefined);
-const isDiscountingEnabled = computed(() => !!fyo.singles.AccountingSettings?.enableDiscounting);
+const defaultPOSCashAccount = computed(
+  () => fyo.singles.POSSettings?.cashAccount ?? undefined
+);
+const isDiscountingEnabled = computed(
+  () => !!fyo.singles.AccountingSettings?.enableDiscounting
+);
 const isPosShiftOpen = computed(() => !!fyo.singles.POSSettings?.isShiftOpen);
 const itemVisibility = computed(() => itemVisibilityValue.value);
 const disablePayButton = computed(() => {
@@ -398,64 +443,64 @@ const disablePayButton = computed(() => {
 
 // Provides
 provide(
-  "doc",
-  computed(() => sinvDoc.value),
+  'doc',
+  computed(() => sinvDoc.value)
 );
 provide(
-  "sinvDoc",
-  computed(() => sinvDoc.value),
+  'sinvDoc',
+  computed(() => sinvDoc.value)
 );
 provide(
-  "coupons",
-  computed(() => coupons.value),
+  'coupons',
+  computed(() => coupons.value)
 );
 provide(
-  "itemQtyMap",
-  computed(() => itemQtyMap.value),
+  'itemQtyMap',
+  computed(() => itemQtyMap.value)
 );
 provide(
-  "paidAmount",
-  computed(() => paidAmount.value),
+  'paidAmount',
+  computed(() => paidAmount.value)
 );
 provide(
-  "paymentMethod",
-  computed(() => paymentMethod.value),
+  'paymentMethod',
+  computed(() => paymentMethod.value)
 );
 provide(
-  "transferRefNo",
-  computed(() => transferRefNo.value),
+  'transferRefNo',
+  computed(() => transferRefNo.value)
 );
 provide(
-  "itemDiscounts",
-  computed(() => itemDiscounts.value),
+  'itemDiscounts',
+  computed(() => itemDiscounts.value)
 );
 provide(
-  "transferAmount",
-  computed(() => transferAmount.value),
+  'transferAmount',
+  computed(() => transferAmount.value)
 );
 provide(
-  "appliedCoupons",
-  computed(() => sinvDoc.value.coupons),
+  'appliedCoupons',
+  computed(() => sinvDoc.value.coupons)
 );
 provide(
-  "totalTaxedAmount",
-  computed(() => totalTaxedAmount.value),
+  'totalTaxedAmount',
+  computed(() => totalTaxedAmount.value)
 );
 provide(
-  "itemSerialNumbers",
-  computed(() => itemSerialNumbers.value),
+  'itemSerialNumbers',
+  computed(() => itemSerialNumbers.value)
 );
 provide(
-  "isDiscountingEnabled",
-  computed(() => isDiscountingEnabled.value),
+  'isDiscountingEnabled',
+  computed(() => isDiscountingEnabled.value)
 );
 provide(
-  "transferClearanceDate",
-  computed(() => transferClearanceDate.value),
+  'transferClearanceDate',
+  computed(() => transferClearanceDate.value)
 );
 provide(
-  "posSettings",
-  computed(() => fyo.singles.POSSettings),
+  'posSettings',
+  computed(() => fyo.singles.POSSettings)
 );
 
 // Watchers
@@ -467,7 +512,7 @@ watch(
     }
     updateValues();
   },
-  { deep: true },
+  { deep: true }
 );
 
 // Lifecycle
@@ -475,9 +520,9 @@ onMounted(async () => {
   await setItems();
   await loadPOSProfile();
   itemVisibilityValue.value = (await getItemVisibility(fyo)) as
-    | "Inventory Items"
-    | "ERP Sync Items"
-    | "Non-Inventory Items";
+    | 'Inventory Items'
+    | 'ERP Sync Items'
+    | 'Non-Inventory Items';
 });
 
 onActivated(async () => {
@@ -512,19 +557,31 @@ function setExpandedBatchId(rowName: string | undefined) {
 function addQuickQtyListeners() {
   quickQtyKeyDownHandler.value = (e: KeyboardEvent) => onQuickQtyKeyDown(e);
   quickQtyKeyUpHandler.value = (e: KeyboardEvent) => onQuickQtyKeyUp(e);
-  if (typeof window !== "undefined") {
-    window.addEventListener("keydown", quickQtyKeyDownHandler.value as EventListener);
-    window.addEventListener("keyup", quickQtyKeyUpHandler.value as EventListener);
+  if (typeof window !== 'undefined') {
+    window.addEventListener(
+      'keydown',
+      quickQtyKeyDownHandler.value as EventListener
+    );
+    window.addEventListener(
+      'keyup',
+      quickQtyKeyUpHandler.value as EventListener
+    );
   }
 }
 
 function removeQuickQtyListeners() {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     if (quickQtyKeyDownHandler.value) {
-      window.removeEventListener("keydown", quickQtyKeyDownHandler.value as EventListener);
+      window.removeEventListener(
+        'keydown',
+        quickQtyKeyDownHandler.value as EventListener
+      );
     }
     if (quickQtyKeyUpHandler.value) {
-      window.removeEventListener("keyup", quickQtyKeyUpHandler.value as EventListener);
+      window.removeEventListener(
+        'keyup',
+        quickQtyKeyUpHandler.value as EventListener
+      );
     }
   }
   quickQtyKeyDownHandler.value = null;
@@ -553,7 +610,7 @@ function onQuickQtyKeyDown(e: KeyboardEvent) {
   if (
     target &&
     notMods &&
-    ((target instanceof HTMLInputElement && target.type !== "button") ||
+    ((target instanceof HTMLInputElement && target.type !== 'button') ||
       target instanceof HTMLTextAreaElement ||
       target.isContentEditable)
   ) {
@@ -564,9 +621,9 @@ function onQuickQtyKeyDown(e: KeyboardEvent) {
     return;
   }
 
-  if (e.code === "KeyQ" && !quickQtyActive.value) {
+  if (e.code === 'KeyQ' && !quickQtyActive.value) {
     quickQtyActive.value = true;
-    quickQtyBuffer.value = "";
+    quickQtyBuffer.value = '';
     return;
   }
 
@@ -575,18 +632,18 @@ function onQuickQtyKeyDown(e: KeyboardEvent) {
   }
 
   if (/^Digit[0-9]$/.test(e.code)) {
-    quickQtyBuffer.value += e.code.replace("Digit", "");
+    quickQtyBuffer.value += e.code.replace('Digit', '');
     e.preventDefault();
     return;
   }
 
   if (/^Numpad[0-9]$/.test(e.code)) {
-    quickQtyBuffer.value += e.code.replace("Numpad", "");
+    quickQtyBuffer.value += e.code.replace('Numpad', '');
     e.preventDefault();
     return;
   }
 
-  if (e.code === "Backspace") {
+  if (e.code === 'Backspace') {
     quickQtyBuffer.value = quickQtyBuffer.value.slice(0, -1);
     e.preventDefault();
     return;
@@ -594,14 +651,14 @@ function onQuickQtyKeyDown(e: KeyboardEvent) {
 }
 
 async function onQuickQtyKeyUp(e: KeyboardEvent) {
-  if (e.code !== "KeyQ" || !quickQtyActive.value) {
+  if (e.code !== 'KeyQ' || !quickQtyActive.value) {
     return;
   }
 
   quickQtyActive.value = false;
 
   const buffer = quickQtyBuffer.value;
-  quickQtyBuffer.value = "";
+  quickQtyBuffer.value = '';
 
   if (!buffer || !buffer.length) {
     return;
@@ -626,28 +683,29 @@ async function onQuickQtyKeyUp(e: KeyboardEvent) {
 
   if (!row.isReturn && qty <= 0) {
     showToast({
-      type: "error",
+      type: 'error',
       message: t`Quantity must be greater than zero.`,
-      duration: "short",
+      duration: 'short',
     });
     return;
   }
 
   try {
-    await row.set("quantity", qty);
+    await row.set('quantity', qty);
 
     const existingItems = (sinvDoc.value.items || []).filter(
       (invoiceItem) =>
-        (invoiceItem as InvoiceItem).item === row!.item && !(invoiceItem as InvoiceItem).isFreeItem,
+        (invoiceItem as InvoiceItem).item === row!.item &&
+        !(invoiceItem as InvoiceItem).isFreeItem
     ) as InvoiceItem[];
 
     await validateQty(sinvDoc.value as SalesInvoice, row, existingItems);
   } catch (error) {
-    await row.set("quantity", prevQty);
+    await row.set('quantity', prevQty);
     showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
-      duration: "short",
+      duration: 'short',
     });
     return;
   }
@@ -660,21 +718,24 @@ async function onQuickQtyKeyUp(e: KeyboardEvent) {
 
 async function setCustomer(value: string) {
   if (!value) {
-    sinvDoc.value.party = "";
+    sinvDoc.value.party = '';
     return;
   }
 
   sinvDoc.value.party = value;
 
   const party = await fyo.db.getAll(ModelNameEnum.Party, {
-    fields: ["loyaltyProgram", "loyaltyPoints"],
+    fields: ['loyaltyProgram', 'loyaltyPoints'],
     filters: { name: value },
   });
 
   const loyaltyProgramName = party[0]?.loyaltyProgram as string;
 
   if (loyaltyProgramName) {
-    const isExpiredAndMaxed = await isLoyaltyProgramExpiredAndMaxed(fyo, loyaltyProgramName);
+    const isExpiredAndMaxed = await isLoyaltyProgramExpiredAndMaxed(
+      fyo,
+      loyaltyProgramName
+    );
     if (isExpiredAndMaxed) {
       loyaltyProgram.value = loyaltyProgramName;
       loyaltyPoints.value = 0;
@@ -695,7 +756,7 @@ async function loadPOSProfile() {
 
   posProfile.value = (await fyo.doc.getDoc(
     ModelNameEnum.POSProfile,
-    posProfileName as string,
+    posProfileName as string
   )) as POSProfile;
 }
 
@@ -707,7 +768,7 @@ async function handleItemSearch(searchTerm: string, addItemState?: boolean) {
   const posSettings = fyo.singles.POSSettings;
   const isWeightEnabledBarcode = posSettings?.weightEnabledBarcode;
 
-  const checkDigits = posSettings?.checkDigits || "";
+  const checkDigits = posSettings?.checkDigits || '';
   const itemCodeDigits = posSettings?.itemCodeDigits || 0;
   const weightDigits = posSettings?.itemWeightDigits || 0;
 
@@ -716,14 +777,19 @@ async function handleItemSearch(searchTerm: string, addItemState?: boolean) {
 
   let isWeightBarcode = false;
   let itemCode = searchTerm;
-  let weightPart = "";
+  let weightPart = '';
 
-  if (isWeightEnabledBarcode && searchTerm.length === expectedWeightBarcodeLength) {
+  if (
+    isWeightEnabledBarcode &&
+    searchTerm.length === expectedWeightBarcodeLength
+  ) {
     const extractedItemCode = searchTerm.slice(
       checkDigits.toString().length,
-      checkDigits.toString().length + itemCodeDigits,
+      checkDigits.toString().length + itemCodeDigits
     );
-    const weightData = searchTerm.slice(checkDigits.toString().length + itemCodeDigits);
+    const weightData = searchTerm.slice(
+      checkDigits.toString().length + itemCodeDigits
+    );
 
     if (!isNaN(Number(weightData))) {
       isWeightBarcode = true;
@@ -733,13 +799,15 @@ async function handleItemSearch(searchTerm: string, addItemState?: boolean) {
   }
 
   const allItems = await fyo.db.getAll(ModelNameEnum.Item, {
-    fields: ["name", "barcode", "itemCode", "unit"],
+    fields: ['name', 'barcode', 'itemCode', 'unit'],
   });
 
   let matchedItem = null;
 
   if (isWeightBarcode) {
-    matchedItem = allItems.find((item) => item.itemCode === itemCode || item.barcode === itemCode);
+    matchedItem = allItems.find(
+      (item) => item.itemCode === itemCode || item.barcode === itemCode
+    );
   } else if (searchTerm.length === 12) {
     matchedItem = allItems.find((item) => item.barcode === searchTerm);
   }
@@ -752,7 +820,7 @@ async function handleItemSearch(searchTerm: string, addItemState?: boolean) {
 
   if (isWeightBarcode && weightPart) {
     const weightValue = parseInt(weightPart, 10);
-    if ((matchedItem.unit as string)?.toLowerCase() === "kg") {
+    if ((matchedItem.unit as string)?.toLowerCase() === 'kg') {
       quantity = weightValue / 1000;
     } else {
       quantity = weightValue;
@@ -762,7 +830,7 @@ async function handleItemSearch(searchTerm: string, addItemState?: boolean) {
   const itemDoc = getItem(matchedItem.name as string);
   if (itemDoc && addItemState) {
     await addItem(itemDoc as POSItem, quantity);
-    itemSearchTerm.value = "";
+    itemSearchTerm.value = '';
   }
 }
 
@@ -798,23 +866,23 @@ function isModalOpen() {
 }
 
 function setShortcuts() {
-  shortcuts?.shift.set(COMPONENT_NAME, ["KeyS"], async () => {
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyS'], async () => {
     await routeToSinvList();
   });
 
-  shortcuts?.shift.set(COMPONENT_NAME, ["KeyV"], () => {
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyV'], () => {
     toggleView();
   });
 
-  shortcuts?.shift.set(COMPONENT_NAME, ["KeyP"], () => {
-    toggleModal("PriceList");
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyP'], () => {
+    toggleModal('PriceList');
   });
 
-  shortcuts?.pmodShift.set(COMPONENT_NAME, ["KeyH"], () => {
-    toggleModal("SavedInvoice");
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyH'], () => {
+    toggleModal('SavedInvoice');
   });
 
-  shortcuts?.pmodShift.set(COMPONENT_NAME, ["Backspace"], async () => {
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ['Backspace'], async () => {
     const modalStatus = isModalOpen();
 
     if (!modalStatus) {
@@ -822,13 +890,13 @@ function setShortcuts() {
     }
   });
 
-  shortcuts?.pmodShift.set(COMPONENT_NAME, ["KeyP"], () => {
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyP'], () => {
     if (!disablePayButton.value) {
-      toggleModal("Payment");
+      toggleModal('Payment');
     }
   });
 
-  shortcuts?.pmodShift.set(COMPONENT_NAME, ["KeyS"], async () => {
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyS'], async () => {
     const modalStatus = isModalOpen();
 
     if (!modalStatus && sinvDoc.value.party && sinvDoc.value.items?.length) {
@@ -836,7 +904,7 @@ function setShortcuts() {
     }
   });
 
-  shortcuts?.shift.set(COMPONENT_NAME, ["KeyL"], () => {
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyL'], () => {
     if (
       fyo.singles.AccountingSettings?.enablePriceList &&
       loyaltyPoints.value &&
@@ -844,17 +912,17 @@ function setShortcuts() {
       sinvDoc.value.items?.length &&
       loyaltyProgram.value
     ) {
-      toggleModal("LoyaltyProgram", true);
+      toggleModal('LoyaltyProgram', true);
     }
   });
 
-  shortcuts?.shift.set(COMPONENT_NAME, ["KeyC"], () => {
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyC'], () => {
     if (
       fyo.singles.AccountingSettings?.enableCouponCode &&
       sinvDoc.value?.party &&
       sinvDoc.value?.items?.length
     ) {
-      toggleModal("CouponCode");
+      toggleModal('CouponCode');
     }
   });
 }
@@ -866,15 +934,15 @@ async function saveOrder() {
     await sinvDoc.value.sync();
   } catch (error) {
     return showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
 
   showToast({
-    type: "success",
+    type: 'success',
     message: t`Sales Invoice ${sinvDoc.value.name as string} is Saved`,
-    duration: "short",
+    duration: 'short',
   });
 
   await afterSync();
@@ -890,13 +958,14 @@ async function setItems() {
   const visibility = await getItemVisibility(fyo);
 
   const hideUnavailable =
-    posProfile.value?.hideUnavailableItems ?? fyo.singles.POSSettings?.hideUnavailableItems;
+    posProfile.value?.hideUnavailableItems ??
+    fyo.singles.POSSettings?.hideUnavailableItems;
 
-  if (visibility === "Inventory Items") {
+  if (visibility === 'Inventory Items') {
     filters.trackItem = true;
-  } else if (visibility === "ERP Sync Items") {
+  } else if (visibility === 'ERP Sync Items') {
     filters.datafromErp = true;
-  } else if (visibility === "Non-Inventory Items") {
+  } else if (visibility === 'Non-Inventory Items') {
     filters.trackItem = false;
     filters.datafromErp = false;
   }
@@ -940,7 +1009,7 @@ async function setItems() {
 async function selectedReturnInvoice(invoiceName: string) {
   const salesInvoiceDoc = (await fyo.doc.getDoc(
     ModelNameEnum.SalesInvoice,
-    invoiceName,
+    invoiceName
   )) as SalesInvoice;
 
   let returnDoc = (await salesInvoiceDoc.getReturnDoc()) as SalesInvoice;
@@ -965,12 +1034,15 @@ function setPaymentMethod(method: string) {
 }
 
 function setDefaultCustomer() {
-  defaultCustomer.value = posProfile.value?.posCustomer ?? fyo.singles.Defaults?.posCustomer ?? "";
+  defaultCustomer.value =
+    posProfile.value?.posCustomer ?? fyo.singles.Defaults?.posCustomer ?? '';
   sinvDoc.value.party = defaultCustomer.value;
 }
 
 function setItemDiscounts() {
-  itemDiscounts.value = getItemDiscounts(sinvDoc.value.items as SalesInvoiceItem[]);
+  itemDiscounts.value = getItemDiscounts(
+    sinvDoc.value.items as SalesInvoiceItem[]
+  );
 }
 
 async function setItemQtyMap() {
@@ -986,11 +1058,15 @@ function setSinvDoc() {
 }
 
 function setCouponCodeDoc() {
-  coupons.value = fyo.doc.getNewDoc(ModelNameEnum.AppliedCouponCodes) as AppliedCouponCodes;
+  coupons.value = fyo.doc.getNewDoc(
+    ModelNameEnum.AppliedCouponCodes
+  ) as AppliedCouponCodes;
 }
 
 function setTotalQuantity() {
-  totalQuantity.value = getTotalQuantity(sinvDoc.value.items as SalesInvoiceItem[]);
+  totalQuantity.value = getTotalQuantity(
+    sinvDoc.value.items as SalesInvoiceItem[]
+  );
 }
 
 function ignorePricingRules(): boolean {
@@ -1010,21 +1086,21 @@ function setCouponsCount(value: number) {
 
 async function setLoyaltyPoints(value: number) {
   appliedLoyaltyPoints.value = value;
-  await sinvDoc.value.set("redeemLoyaltyPoints", true);
+  await sinvDoc.value.set('redeemLoyaltyPoints', true);
   await sinvDoc.value.runFormulas();
 }
 
 async function selectedInvoiceName(doc: SalesInvoice) {
   const salesInvoiceDoc = (await fyo.doc.getDoc(
     ModelNameEnum.SalesInvoice,
-    doc.name,
+    doc.name
   )) as SalesInvoice;
 
   sinvDoc.value = salesInvoiceDoc;
-  toggleModal("SavedInvoice", false);
+  toggleModal('SavedInvoice', false);
 
   if (doc.submitted) {
-    toggleModal("Payment");
+    toggleModal('Payment');
   }
 }
 
@@ -1065,27 +1141,42 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       selectedItemForBatch.value = itemName;
       pendingBatchItem.value = { item, quantity: quantity ?? 1 };
 
-      toggleModal("BatchSelection", true);
+      toggleModal('BatchSelection', true);
       return;
     }
 
-    const isInventoryItem = await fyo.getValue(ModelNameEnum.Item, itemName, "trackItem");
+    const isInventoryItem = await fyo.getValue(
+      ModelNameEnum.Item,
+      itemName,
+      'trackItem'
+    );
 
     if (isInventoryItem) {
       const availableQty = itemQtyMap.value[itemName]?.availableQty ?? 0;
       if (availableQty <= 0) {
-        throw new ValidationError(t`Item ${itemName} is out of stock (quantity is zero)`);
+        throw new ValidationError(
+          t`Item ${itemName} is out of stock (quantity is zero)`
+        );
       }
     }
 
     const existingItems =
       sinvDoc.value.items?.filter(
-        (invoiceItem) => invoiceItem.item === itemName && !invoiceItem.isFreeItem,
+        (invoiceItem) =>
+          invoiceItem.item === itemName && !invoiceItem.isFreeItem
       ) ?? [];
 
-    await validateQty(sinvDoc.value as SalesInvoice, item, existingItems as InvoiceItem[]);
+    await validateQty(
+      sinvDoc.value as SalesInvoice,
+      item,
+      existingItems as InvoiceItem[]
+    );
 
-    const itemsHsncode = (await fyo.getValue("Item", itemName, "hsnCode")) as number;
+    const itemsHsncode = (await fyo.getValue(
+      'Item',
+      itemName,
+      'hsnCode'
+    )) as number;
 
     if (item.hasBatch) {
       const addQty = quantity ?? 1;
@@ -1097,7 +1188,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
             undefined,
             undefined,
             undefined,
-            existingItem.batch,
+            existingItem.batch
           );
           if (
             existingItem.batch != null &&
@@ -1105,16 +1196,20 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
             availableQty > (existingItem.quantity as number)
           ) {
             const currentQty = existingItem.quantity ?? 0;
-            await existingItem.set("quantity", currentQty + addQty);
+            await existingItem.set('quantity', currentQty + addQty);
 
             if (item.hasSerialNumber) {
               const qty = currentQty + addQty;
 
-              const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, qty);
+              const serialNumbers = await getExistingActiveSerialNumbersForItem(
+                fyo,
+                itemName,
+                qty
+              );
 
               if (serialNumbers) {
                 itemSerialNumbers.value[itemName] = serialNumbers;
-                await existingItem.set("serialNumber", serialNumbers);
+                await existingItem.set('serialNumber', serialNumbers);
               }
             }
 
@@ -1125,7 +1220,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
         }
       }
 
-      await sinvDoc.value.append("items", {
+      await sinvDoc.value.append('items', {
         rate: item.rate,
         item: itemName,
         quantity: addQty,
@@ -1133,18 +1228,22 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       });
 
       if (item.hasSerialNumber) {
-        const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, addQty);
+        const serialNumbers = await getExistingActiveSerialNumbersForItem(
+          fyo,
+          itemName,
+          addQty
+        );
 
         if (serialNumbers) {
           itemSerialNumbers.value[itemName] = serialNumbers;
 
           const newItemRows = sinvDoc.value.items?.filter(
-            (row) => row.item === itemName && !row.isFreeItem,
+            (row) => row.item === itemName && !row.isFreeItem
           );
 
           if (newItemRows && newItemRows.length > 0) {
             const newRow = newItemRows[newItemRows.length - 1];
-            await newRow.set("serialNumber", serialNumbers);
+            await newRow.set('serialNumber', serialNumbers);
           }
         }
       }
@@ -1164,31 +1263,41 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
       if (isInventoryItem) {
         const availableQty = itemQtyMap.value[itemName]?.availableQty ?? 0;
         if (currentQty + addQty > availableQty) {
-          throw new ValidationError(`Cannot add more than the available quantity for ${itemName}`);
+          throw new ValidationError(
+            `Cannot add more than the available quantity for ${itemName}`
+          );
         }
       }
 
-      await existingItems[0].set("quantity", currentQty + addQty);
+      await existingItems[0].set('quantity', currentQty + addQty);
       if (item.hasSerialNumber) {
         const qty = currentQty + addQty;
 
-        const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, qty);
+        const serialNumbers = await getExistingActiveSerialNumbersForItem(
+          fyo,
+          itemName,
+          qty
+        );
 
         if (serialNumbers) {
           itemSerialNumbers.value[itemName] = serialNumbers;
-          await existingItems[0].set("serialNumber", serialNumbers);
+          await existingItems[0].set('serialNumber', serialNumbers);
         }
       }
 
       await applyPricingRule();
       await sinvDoc.value.runFormulas();
       if (isInventoryItem) {
-        await validateQty(sinvDoc.value as SalesInvoice, item, existingItems as InvoiceItem[]);
+        await validateQty(
+          sinvDoc.value as SalesInvoice,
+          item,
+          existingItems as InvoiceItem[]
+        );
       }
       return;
     }
 
-    await sinvDoc.value.append("items", {
+    await sinvDoc.value.append('items', {
       rate: item.rate,
       item: itemName,
       quantity: quantity ? quantity : 1,
@@ -1197,29 +1306,36 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
 
     if (sinvDoc.value.priceList) {
       const itemData = sinvDoc.value.items?.filter(
-        (val) => val.item == itemName,
+        (val) => val.item == itemName
       ) as SalesInvoiceItem[];
 
       if (itemData.length > 0) {
-        itemData[0].rate = await getItemRateFromPriceList(itemData[0], sinvDoc.value.priceList);
+        itemData[0].rate = await getItemRateFromPriceList(
+          itemData[0],
+          sinvDoc.value.priceList
+        );
       }
     }
 
     if (item.hasSerialNumber) {
       const qty = quantity ?? 1;
 
-      const serialNumbers = await getExistingActiveSerialNumbersForItem(fyo, itemName, qty);
+      const serialNumbers = await getExistingActiveSerialNumbersForItem(
+        fyo,
+        itemName,
+        qty
+      );
 
       if (serialNumbers) {
         itemSerialNumbers.value[itemName] = serialNumbers;
 
         const newItemRows = sinvDoc.value.items?.filter(
-          (row) => row.item === itemName && !row.isFreeItem,
+          (row) => row.item === itemName && !row.isFreeItem
         );
 
         if (newItemRows && newItemRows.length > 0) {
           const newRow = newItemRows[newItemRows.length - 1];
-          await newRow.set("serialNumber", serialNumbers);
+          await newRow.set('serialNumber', serialNumbers);
         }
       }
     }
@@ -1228,7 +1344,7 @@ async function addItem(item: POSItem | undefined, quantity?: number) {
     await sinvDoc.value.runFormulas();
   } catch (error) {
     return showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
@@ -1243,11 +1359,20 @@ async function handleBatchSelected(batchName: string) {
   pendingBatchItem.value = null;
 
   try {
-    const itemDoc = (await fyo.doc.getDoc(ModelNameEnum.Item, item.name)) as Item;
+    const itemDoc = (await fyo.doc.getDoc(
+      ModelNameEnum.Item,
+      item.name
+    )) as Item;
     let availableQty = 0;
     if (itemDoc.trackItem) {
       availableQty =
-        (await fyo.db.getStockQuantity(item.name, undefined, undefined, undefined, batchName)) ?? 0;
+        (await fyo.db.getStockQuantity(
+          item.name,
+          undefined,
+          undefined,
+          undefined,
+          batchName
+        )) ?? 0;
 
       const itemIndex = items.value.findIndex((i) => i.name === item.name);
       if (itemIndex !== -1) {
@@ -1260,17 +1385,21 @@ async function handleBatchSelected(batchName: string) {
         (invoiceItem) =>
           invoiceItem.item === item.name &&
           invoiceItem.batch === batchName &&
-          !invoiceItem.isFreeItem,
+          !invoiceItem.isFreeItem
       ) ?? [];
 
-    await validateQty(sinvDoc.value as SalesInvoice, itemDoc, existingItems as InvoiceItem[]);
+    await validateQty(
+      sinvDoc.value as SalesInvoice,
+      itemDoc,
+      existingItems as InvoiceItem[]
+    );
 
     if (existingItems.length) {
       const currentQty = existingItems[0].quantity ?? 0;
       const addQty = quantity ?? 1;
-      await existingItems[0].set("quantity", currentQty + addQty);
+      await existingItems[0].set('quantity', currentQty + addQty);
     } else {
-      await sinvDoc.value.append("items", {
+      await sinvDoc.value.append('items', {
         rate: item.rate as Money,
         item: item.name,
         quantity: quantity ?? 1,
@@ -1285,7 +1414,7 @@ async function handleBatchSelected(batchName: string) {
     await setItemQtyMap();
   } catch (error) {
     showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
@@ -1299,7 +1428,7 @@ async function createTransaction(shouldPrint = false, isPay = false) {
 
     const visibility = await getItemVisibility(fyo);
 
-    if (sinvDoc.value.stockNotTransferred && visibility === "Inventory Items") {
+    if (sinvDoc.value.stockNotTransferred && visibility === 'Inventory Items') {
       await makeStockTransfer();
     }
 
@@ -1315,7 +1444,7 @@ async function createTransaction(shouldPrint = false, isPay = false) {
     await setItems();
   } catch (error) {
     showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
@@ -1329,30 +1458,31 @@ async function makePayment(shouldPrint: boolean) {
 
   const pMethod = paymentMethod.value;
 
-  await paymentDoc.value.set("paymentMethod", pMethod);
-  await paymentDoc.value.set("amount", fyo.pesa(paidAmount.value.float));
-  await paymentDoc.value.set("referenceType", ModelNameEnum.SalesInvoice);
+  await paymentDoc.value.set('paymentMethod', pMethod);
+  await paymentDoc.value.set('amount', fyo.pesa(paidAmount.value.float));
+  await paymentDoc.value.set('referenceType', ModelNameEnum.SalesInvoice);
 
-  const paymentMethodDoc = await paymentDoc.value.loadAndGetLink("paymentMethod");
+  const paymentMethodDoc =
+    await paymentDoc.value.loadAndGetLink('paymentMethod');
 
-  if (paymentMethodDoc?.type !== "Cash") {
+  if (paymentMethodDoc?.type !== 'Cash') {
     await paymentDoc.value.setMultiple({
       referenceId: transferRefNo.value,
       clearanceDate: transferClearanceDate.value,
     });
   }
 
-  if (paymentMethodDoc?.type === "Cash") {
+  if (paymentMethodDoc?.type === 'Cash') {
     await paymentDoc.value.setMultiple({
       paymentAccount: defaultPOSCashAccount.value,
     });
   }
 
-  paymentDoc.value.once("afterSubmit", () => {
+  paymentDoc.value.once('afterSubmit', () => {
     showToast({
-      type: "success",
+      type: 'success',
       message: t`Payment ${paymentDoc.value.name as string} is Saved`,
-      duration: "short",
+      duration: 'short',
     });
   });
 
@@ -1365,7 +1495,7 @@ async function makePayment(shouldPrint: boolean) {
     }
   } catch (error) {
     return showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
@@ -1378,7 +1508,11 @@ async function makeStockTransfer() {
   }
 
   for (const item of shipmentDoc.items) {
-    const trackItem = await fyo.getValue(ModelNameEnum.Item, item.item as string, "trackItem");
+    const trackItem = await fyo.getValue(
+      ModelNameEnum.Item,
+      item.item as string,
+      'trackItem'
+    );
 
     if (!trackItem) {
       continue;
@@ -1390,14 +1524,15 @@ async function makeStockTransfer() {
       item.location = fyo.singles.POSSettings?.inventory;
     }
 
-    item.serialNumber = itemSerialNumbers.value[item.item as string] ?? undefined;
+    item.serialNumber =
+      itemSerialNumbers.value[item.item as string] ?? undefined;
   }
 
-  shipmentDoc.once("afterSubmit", () => {
+  shipmentDoc.once('afterSubmit', () => {
     showToast({
-      type: "success",
+      type: 'success',
       message: t`Shipment ${shipmentDoc.name as string} is Submitted`,
-      duration: "short",
+      duration: 'short',
     });
   });
 
@@ -1406,18 +1541,18 @@ async function makeStockTransfer() {
     await shipmentDoc.submit();
   } catch (error) {
     return showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
 }
 
 async function submitSinvDoc() {
-  sinvDoc.value.once("afterSubmit", () => {
+  sinvDoc.value.once('afterSubmit', () => {
     showToast({
-      type: "success",
+      type: 'success',
       message: t`Sales Invoice ${sinvDoc.value.name as string} is Submitted`,
-      duration: "short",
+      duration: 'short',
     });
   });
 
@@ -1428,7 +1563,7 @@ async function submitSinvDoc() {
     await sinvDoc.value.submit();
   } catch (error) {
     return showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
@@ -1445,7 +1580,7 @@ async function afterTransaction() {
     await clearValues();
     setSinvDoc();
   }
-  toggleModal("Payment", false);
+  toggleModal('Payment', false);
 }
 
 async function clearValues() {
@@ -1457,7 +1592,7 @@ async function clearValues() {
   await setItems();
 
   if (!defaultCustomer.value) {
-    sinvDoc.value.party = "";
+    sinvDoc.value.party = '';
   }
 }
 
@@ -1527,7 +1662,7 @@ async function applyPricingRule() {
 
     if (freeItemQty <= 0) {
       sinvDoc.value.items = sinvDoc.value.items?.filter(
-        (val) => !(val.isFreeItem && val.item == pRule.pricingRule.freeItem),
+        (val) => !(val.isFreeItem && val.item == pRule.pricingRule.freeItem)
       );
 
       outOfStockFreeItems.push(pRule.pricingRule.freeItem as string);
@@ -1539,14 +1674,14 @@ async function applyPricingRule() {
   }
 
   showToast({
-    type: "error",
-    message: t`Free items out of stock: ${outOfStockFreeItems.join(", ")}`,
+    type: 'error',
+    message: t`Free items out of stock: ${outOfStockFreeItems.join(', ')}`,
   });
 }
 
 async function routeToSinvList() {
   if (!sinvDoc.value.items?.length) {
-    return await routeTo("/list/SalesInvoice");
+    return await routeTo('/list/SalesInvoice');
   }
 
   openAlertModal.value = true;
@@ -1556,16 +1691,16 @@ async function handleSaveAndContinue() {
   try {
     if (!sinvDoc.value.party) {
       return showToast({
-        type: "error",
+        type: 'error',
         message: t`Please add a customer before saving`,
       });
     }
     await saveInvoiceAction();
-    toggleModal("Alert", false);
-    await routeTo("/list/SalesInvoice");
+    toggleModal('Alert', false);
+    await routeTo('/list/SalesInvoice');
   } catch (error) {
     showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
@@ -1573,16 +1708,18 @@ async function handleSaveAndContinue() {
 
 function showValidationToast(method: string) {
   showToast({
-    type: "error",
+    type: 'error',
     message: t`${
-      !sinvDoc.value.items?.length ? "Please add items" : "Please select a customer"
+      !sinvDoc.value.items?.length
+        ? 'Please add items'
+        : 'Please select a customer'
     } before ${method}`,
   });
 }
 
 async function saveInvoiceAction() {
   if (!sinvDoc.value.items?.length || !sinvDoc.value.party) {
-    showValidationToast("saving");
+    showValidationToast('saving');
     return;
   }
   await saveOrder();
@@ -1590,23 +1727,25 @@ async function saveInvoiceAction() {
 
 function handlePaymentAction() {
   if (!sinvDoc.value.items?.length || !sinvDoc.value.party) {
-    showValidationToast("payment");
+    showValidationToast('payment');
     return;
   }
 
-  toggleModal("Payment", true);
+  toggleModal('Payment', true);
 }
 
 const formatCurrency = (val: any) => {
-  return fyo.format(val, "Currency");
+  return fyo.format(val, 'Currency');
 };
 
 const nativeChangeQty = async (invoiceItem: any, delta: number) => {
   const newQty = (invoiceItem.quantity ?? 1) + delta;
   if (newQty <= 0) {
-    sinvDoc.value.items = sinvDoc.value.items?.filter((row) => row !== invoiceItem);
+    sinvDoc.value.items = sinvDoc.value.items?.filter(
+      (row) => row !== invoiceItem
+    );
   } else {
-    await invoiceItem.set("quantity", newQty);
+    await invoiceItem.set('quantity', newQty);
   }
   await applyPricingRule();
   await sinvDoc.value.runFormulas();

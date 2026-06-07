@@ -1,5 +1,7 @@
 <template>
-  <view class="flex bg-canvas overflow-x-auto custom-scroll custom-scroll-thumb1">
+  <view
+    class="flex bg-canvas overflow-x-auto custom-scroll custom-scroll-thumb1"
+  >
     <view class="flex flex-1 flex-col">
       <!-- Page Header (Title, Buttons, etc) -->
       <PageHeader v-if="showHeader" :title="title" :searchborder="searchborder">
@@ -28,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import PageHeader from "./PageHeader.vue";
+import PageHeader from './PageHeader.vue';
 
 // Define Props directly without variable assignment (prevent TS6133)
 withDefaults(
@@ -39,10 +41,10 @@ withDefaults(
     searchborder?: boolean;
   }>(),
   {
-    title: "",
+    title: '',
     useFullWidth: false,
     showHeader: true,
     searchborder: true,
-  },
+  }
 );
 </script>

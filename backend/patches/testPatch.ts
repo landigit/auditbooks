@@ -1,4 +1,4 @@
-import { DatabaseManager } from "../database/manager";
+import { DatabaseManager } from '../database/manager';
 
 // oxlint-disable-next-line @typescript-eslint/no-unused-vars
 async function execute(_dm: DatabaseManager) {

@@ -23,16 +23,27 @@
       :align="right ? 'end' : 'start'"
       class="bg-surface text-main rounded w-[var(--reka-popover-trigger-width)] min-w-40 overflow-hidden p-0 border border-border shadow-lg"
     >
-      <view class="bg-surface text-main rounded w-full min-w-40 overflow-hidden">
-        <view class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm">
+      <view
+        class="bg-surface text-main rounded w-full min-w-40 overflow-hidden"
+      >
+        <view
+          class="p-1 max-h-64 overflow-auto custom-scroll custom-scroll-thumb2 text-sm"
+        >
           <view v-if="isLoading" class="p-2 text-description italic">
             {{ t`Loading...` }}
           </view>
-          <view v-else-if="dropdownItems.length === 0" class="p-2 text-description italic">
+          <view
+            v-else-if="dropdownItems.length === 0"
+            class="p-2 text-description italic"
+          >
             {{ getEmptyMessage() }}
           </view>
           <template v-else>
-            <view v-for="(d, index) in dropdownItems" :key="`key-${index}`" ref="itemsRef">
+            <view
+              v-for="(d, index) in dropdownItems"
+              :key="`key-${index}`"
+              ref="itemsRef"
+            >
               <view
                 v-if="d.isGroup"
                 class="px-2 pt-3 pb-1 text-xs uppercase text-muted font-semibold tracking-wider"
@@ -60,14 +71,14 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed, watch } from "vue";
-import { useRouter } from "vue-router";
-import { Doc } from "fyo/model/doc";
-import { Field } from "schemas/types";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
-import { DropdownItem } from "src/utils/types";
-import { Popover, PopoverAnchor, PopoverContent } from "src/components/ui";
+import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { Doc } from 'fyo/model/doc';
+import { Field } from 'schemas/types';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
+import { DropdownItem } from 'src/utils/types';
+import { Popover, PopoverAnchor, PopoverContent } from 'src/components/ui';
 
 // --- Props & Emits ---
 const props = withDefaults(
@@ -84,11 +95,11 @@ const props = withDefaults(
     isLoading: false,
     df: null,
     doc: null,
-  },
+  }
 );
 
 const emit = defineEmits<{
-  (e: "update:open", val: boolean): void;
+  (e: 'update:open', val: boolean): void;
 }>();
 
 // --- State ---
@@ -102,7 +113,7 @@ const dropdownItems = computed<DropdownItem[]>(() => {
   const groupedItems = getGroupedItems(props.items ?? []);
   const groupNames = Object.keys(groupedItems).filter(Boolean).sort();
 
-  const flatItems: DropdownItem[] = groupedItems[""] ?? [];
+  const flatItems: DropdownItem[] = groupedItems[''] ?? [];
   for (let group of groupNames) {
     flatItems.push({
       label: group,
@@ -136,7 +147,9 @@ function getEmptyMessage(): string {
     return t`Empty`;
   }
 
-  const emptyMessage = fyo.models[schemaName]?.emptyMessages?.[fieldname]?.(props.doc);
+  const emptyMessage = fyo.models[schemaName]?.emptyMessages?.[fieldname]?.(
+    props.doc
+  );
 
   if (!emptyMessage) {
     return t`Empty`;
@@ -160,7 +173,7 @@ async function selectItem(d?: DropdownItem): Promise<void> {
 }
 
 function toggleDropdown(flag?: boolean): void {
-  if (typeof flag !== "boolean") {
+  if (typeof flag !== 'boolean') {
     flag = !isShown.value;
   }
 
@@ -191,7 +204,10 @@ function highlightItemUp(e?: Event): void {
 
 function highlightItemDown(e?: Event): void {
   e?.preventDefault();
-  highlightedIndex.value = Math.min(dropdownItems.value.length - 1, highlightedIndex.value + 1);
+  highlightedIndex.value = Math.min(
+    dropdownItems.value.length - 1,
+    highlightedIndex.value + 1
+  );
 }
 
 function scrollToHighlighted(): void {
@@ -205,13 +221,15 @@ function scrollToHighlighted(): void {
     return;
   }
 
-  highlightedElement.scrollIntoView({ block: "nearest" });
+  highlightedElement.scrollIntoView({ block: 'nearest' });
 }
 
-function getGroupedItems(itemsList: DropdownItem[]): Record<string, DropdownItem[]> {
+function getGroupedItems(
+  itemsList: DropdownItem[]
+): Record<string, DropdownItem[]> {
   const groupedItems: Record<string, DropdownItem[]> = {};
   for (let item of itemsList) {
-    const group = item.group ?? "";
+    const group = item.group ?? '';
 
     groupedItems[group] ??= [];
     groupedItems[group].push(item);

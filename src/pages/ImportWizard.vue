@@ -17,7 +17,12 @@
       >
         <lucide-icon name="plus" class="w-4 h-4" />
       </Button>
-      <Button v-if="hasImporter" :title="t`Save Template`" :icon="true" @tap="saveTemplate">
+      <Button
+        v-if="hasImporter"
+        :title="t`Save Template`"
+        :icon="true"
+        @tap="saveTemplate"
+      >
         <lucide-icon name="download" class="w-4 h-4" />
       </Button>
       <Button
@@ -71,15 +76,20 @@
           :class="fileName ? 'text-main font-semibold' : 'text-description'"
         >
           <text v-if="fileName" class="font-normal">{{ t`Selected` }} </text>
-          {{ helperMessage }}{{ fileName ? "," : "" }}
-          <text v-if="fileName" class="font-normal"> {{ t`check values and click on` }} </text
-          >{{ " " }}<text v-if="fileName">{{ t`Import Data.` }}</text>
-          <text v-if="hasImporter && importer.valueMatrix.length > 0" class="font-normal">{{
-            " " +
-            (importer.valueMatrix.length === 2
-              ? t`${importer.valueMatrix.length} row added.`
-              : t`${importer.valueMatrix.length} rows added.`)
-          }}</text>
+          {{ helperMessage }}{{ fileName ? ',' : '' }}
+          <text v-if="fileName" class="font-normal">
+            {{ t`check values and click on` }} </text
+          >{{ ' ' }}<text v-if="fileName">{{ t`Import Data.` }}</text>
+          <text
+            v-if="hasImporter && importer.valueMatrix.length > 0"
+            class="font-normal"
+            >{{
+              ' ' +
+              (importer.valueMatrix.length === 2
+                ? t`${importer.valueMatrix.length} row added.`
+                : t`${importer.valueMatrix.length} rows added.`)
+            }}</text
+          >
         </text>
       </view>
 
@@ -104,7 +114,9 @@
             :border="true"
             :df="gridColumnTitleDf"
             :value="importer.assignedTemplateFields[index]!"
-            @change="(value: string | null) => importer.setTemplateField(index, value)"
+            @change="
+              (value: string | null) => importer.setTemplateField(index, value)
+            "
           />
         </view>
 
@@ -117,7 +129,10 @@
         >
           <!-- Grid Value Row Cells, Allow Editing Values -->
           <template v-for="(row, ridx) of importer.valueMatrix" :key="ridx">
-            <view class="index-cell group cursor-pointer" @tap="importer.removeRow(ridx)">
+            <view
+              class="index-cell group cursor-pointer"
+              @tap="importer.removeRow(ridx)"
+            >
               <lucide-icon
                 name="x"
                 class="w-4 h-4 hidden group-hover:inline-block -me-1"
@@ -159,7 +174,11 @@
                 v-else
                 :class="val.error ? 'border border-error/30 rounded-md' : ''"
                 :title="getFieldTitle(val)"
-                :df="importer.templateFieldsMap.get(importer.assignedTemplateFields[cidx]!)"
+                :df="
+                  importer.templateFieldsMap.get(
+                    importer.assignedTemplateFields[cidx]!
+                  )
+                "
                 size="small"
                 :rows="1"
                 :border="true"
@@ -195,7 +214,10 @@
     />
 
     <!-- Pick Column Modal -->
-    <Modal :open-modal="showColumnPicker" @closemodal="showColumnPicker = false">
+    <Modal
+      :open-modal="showColumnPicker"
+      @closemodal="showColumnPicker = false"
+    >
       <view class="w-form">
         <!-- Pick Column Header -->
         <FormHeader :form-title="t`Pick Import Columns`" />
@@ -211,7 +233,11 @@
             {{ key }}
           </text>
           <view class="grid grid-cols-3 border border-border rounded mt-1">
-            <view v-for="tf of value" :key="tf.fieldKey" class="flex items-center">
+            <view
+              v-for="tf of value"
+              :key="tf.fieldKey"
+              class="flex items-center"
+            >
               <Check
                 :df="{
                   fieldtype: 'Check',
@@ -234,7 +260,9 @@
           <text class="text-sm text-description">
             {{ t`${numColumnsPicked} fields selected` }}
           </text>
-          <Button type="primary" @tap="showColumnPicker = false">{{ t`Done` }}</Button>
+          <Button type="primary" @tap="showColumnPicker = false">{{
+            t`Done`
+          }}</Button>
         </view>
       </view>
     </Modal>
@@ -311,18 +339,25 @@
         </view>
 
         <!-- Fallback Div -->
-        <view v-if="failed.length === 0 && success.length === 0" class="p-4 text-base text-main">
+        <view
+          v-if="failed.length === 0 && success.length === 0"
+          class="p-4 text-base text-main"
+        >
           {{ t`No entries were imported.` }}
         </view>
 
         <!-- Footer Button -->
         <view class="flex justify-between p-4">
-          <Button v-if="failed.length > 0" @tap="clearSuccessfullyImportedEntries">{{
-            t`Fix Failed`
-          }}</Button>
-          <Button v-if="failed.length === 0 && success.length > 0" @tap="showMe">{{
-            t`Show Me`
-          }}</Button>
+          <Button
+            v-if="failed.length > 0"
+            @tap="clearSuccessfullyImportedEntries"
+            >{{ t`Fix Failed` }}</Button
+          >
+          <Button
+            v-if="failed.length === 0 && success.length > 0"
+            @tap="showMe"
+            >{{ t`Show Me` }}</Button
+          >
           <Button @tap="clear">{{ t`Done` }}</Button>
         </view>
       </view>
@@ -342,7 +377,9 @@
         <view
           v-if="canImportData"
           class="px-3 py-1.5 rounded-lg bg-blue-600 cursor-pointer active:opacity-75"
-          :class="errorMessage.length > 0 || isMakingEntries ? 'opacity-50' : ''"
+          :class="
+            errorMessage.length > 0 || isMakingEntries ? 'opacity-50' : ''
+          "
           @tap="importData"
         >
           <text class="text-xs text-white font-semibold">{{ t`Import` }}</text>
@@ -351,7 +388,11 @@
     </PageHeader>
 
     <!-- Content -->
-    <scroll-view scroll-y="true" class="flex-1" style="height: 0; min-height: 0">
+    <scroll-view
+      scroll-y="true"
+      class="flex-1"
+      style="height: 0; min-height: 0"
+    >
       <view class="p-4 flex-col gap-4">
         <!-- Schema Selector -->
         <view class="bg-surface p-4 rounded-xl border border-border flex-col">
@@ -389,7 +430,9 @@
               <text class="text-sm font-bold text-main truncate">{{
                 fileName ? fileName : t`No file selected`
               }}</text>
-              <text class="text-xs text-description mt-0.5">{{ helperMessage }}</text>
+              <text class="text-xs text-description mt-0.5">{{
+                helperMessage
+              }}</text>
             </view>
             <view
               class="px-3 py-1.5 rounded-lg bg-blue-600 cursor-pointer active:opacity-80"
@@ -402,8 +445,13 @@
           </view>
 
           <!-- Error Alert if any -->
-          <view v-if="errorMessage" class="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-            <text class="text-xs text-red-600 font-semibold">{{ errorMessage }}</text>
+          <view
+            v-if="errorMessage"
+            class="p-4 rounded-xl bg-red-500/10 border border-red-500/20"
+          >
+            <text class="text-xs text-red-600 font-semibold">{{
+              errorMessage
+            }}</text>
           </view>
 
           <!-- Columns Pick Action -->
@@ -412,8 +460,12 @@
             class="p-4 bg-surface border border-border rounded-xl flex-row justify-between items-center cursor-pointer active:bg-surface-hover"
             @tap="showColumnPicker = true"
           >
-            <text class="text-sm text-main font-semibold">{{ t`Pick Import Columns` }}</text>
-            <text class="text-xs text-description">{{ numColumnsPicked }} fields selected</text>
+            <text class="text-sm text-main font-semibold">{{
+              t`Pick Import Columns`
+            }}</text>
+            <text class="text-xs text-description"
+              >{{ numColumnsPicked }} fields selected</text
+            >
           </view>
 
           <!-- Column Mapping -->
@@ -421,7 +473,9 @@
             v-if="hasImporter && file"
             class="bg-surface p-4 rounded-xl border border-border flex-col gap-3"
           >
-            <text class="text-sm font-semibold text-description">{{ t`Map CSV Columns` }}</text>
+            <text class="text-sm font-semibold text-description">{{
+              t`Map CSV Columns`
+            }}</text>
             <view class="flex-col gap-3">
               <view
                 v-for="index in columnIterator"
@@ -429,13 +483,15 @@
                 class="flex-col gap-1 border-b border-border/50 pb-3 last:border-b-0 last:pb-0"
               >
                 <view class="flex-row justify-between items-center mb-1">
-                  <text class="text-xs font-bold text-main">Column #{{ index + 1 }}</text>
+                  <text class="text-xs font-bold text-main"
+                    >Column #{{ index + 1 }}</text
+                  >
                   <text class="text-xs text-description italic">
                     Sample:
                     {{
                       importer.valueMatrix[0]?.[index]?.rawValue != null
                         ? String(importer.valueMatrix[0][index].rawValue)
-                        : "empty"
+                        : 'empty'
                     }}
                   </text>
                 </view>
@@ -445,27 +501,41 @@
                   :border="true"
                   :df="gridColumnTitleDf"
                   :value="importer.assignedTemplateFields[index]!"
-                  @change="(value: string | null) => importer.setTemplateField(index, value)"
+                  @change="
+                    (value: string | null) =>
+                      importer.setTemplateField(index, value)
+                  "
                 />
               </view>
             </view>
           </view>
 
           <!-- Imported Rows Preview List -->
-          <view v-if="hasImporter && importer.valueMatrix.length" class="flex-col gap-2 mt-2">
-            <text class="text-sm font-semibold text-description mb-1">{{ t`Rows Preview` }}</text>
+          <view
+            v-if="hasImporter && importer.valueMatrix.length"
+            class="flex-col gap-2 mt-2"
+          >
+            <text class="text-sm font-semibold text-description mb-1">{{
+              t`Rows Preview`
+            }}</text>
             <view
               v-for="(row, ridx) of importer.valueMatrix"
               :key="ridx"
               class="bg-surface p-4 rounded-xl border border-border flex-col gap-2"
             >
-              <view class="flex-row justify-between items-center border-b border-border pb-2">
-                <text class="text-xs font-bold text-description">Row #{{ ridx + 1 }}</text>
+              <view
+                class="flex-row justify-between items-center border-b border-border pb-2"
+              >
+                <text class="text-xs font-bold text-description"
+                  >Row #{{ ridx + 1 }}</text
+                >
                 <view
                   class="px-2.5 py-1 rounded bg-red-500/10 border border-red-500/20 active:opacity-75 cursor-pointer"
                   @tap="importer.removeRow(ridx)"
                 >
-                  <text class="text-[10px] text-red-600 font-semibold">Delete</text>
+                  <text class="text-[10px] text-red-600 font-semibold"
+                    >Delete</text
+                  >
                 </view>
               </view>
 
@@ -480,12 +550,16 @@
                     <text class="text-xs text-description">
                       {{
                         importer.assignedTemplateFields[cidx]
-                          ? importer.templateFieldsMap.get(importer.assignedTemplateFields[cidx])
-                              ?.label
-                          : "Unassigned"
+                          ? importer.templateFieldsMap.get(
+                              importer.assignedTemplateFields[cidx]
+                            )?.label
+                          : 'Unassigned'
                       }}
                     </text>
-                    <text v-if="val.error" class="text-[10px] text-red-500 font-bold">
+                    <text
+                      v-if="val.error"
+                      class="text-[10px] text-red-500 font-bold"
+                    >
                       Invalid value
                     </text>
                   </view>
@@ -493,8 +567,14 @@
                   <!-- If the column is assigned, show editable input -->
                   <FormControl
                     v-if="importer.assignedTemplateFields[cidx]"
-                    :class="val.error ? 'border border-red-500/30 rounded-lg' : ''"
-                    :df="importer.templateFieldsMap.get(importer.assignedTemplateFields[cidx])"
+                    :class="
+                      val.error ? 'border border-red-500/30 rounded-lg' : ''
+                    "
+                    :df="
+                      importer.templateFieldsMap.get(
+                        importer.assignedTemplateFields[cidx]
+                      )
+                    "
                     size="small"
                     :rows="1"
                     :border="true"
@@ -508,14 +588,17 @@
                     "
                   />
                   <!-- Otherwise, show unassigned raw text input -->
-                  <view v-else class="px-3 py-2 rounded-lg bg-canvas-muted border border-border">
+                  <view
+                    v-else
+                    class="px-3 py-2 rounded-lg bg-canvas-muted border border-border"
+                  >
                     <text class="text-xs text-description truncate">
                       {{
                         val.value != null
                           ? String(val.value)
                           : val.rawValue != null
                             ? String(val.rawValue)
-                            : ""
+                            : ''
                       }}
                     </text>
                   </view>
@@ -535,20 +618,30 @@
       <view
         class="bg-canvas border border-border rounded-2xl w-full max-w-md p-4 flex-col max-h-[85vh]"
       >
-        <text class="text-lg font-bold text-main mb-3">{{ t`Pick Import Columns` }}</text>
+        <text class="text-lg font-bold text-main mb-3">{{
+          t`Pick Import Columns`
+        }}</text>
         <view class="border-b border-border mb-3" />
 
-        <scroll-view scroll-y="true" class="flex-1 mb-3" style="height: 0; min-height: 0">
+        <scroll-view
+          scroll-y="true"
+          class="flex-1 mb-3"
+          style="height: 0; min-height: 0"
+        >
           <view class="flex-col gap-4">
             <view
               v-for="[key, value] of columnPickerFieldsMap.entries()"
               :key="key"
               class="flex-col gap-1.5"
             >
-              <text class="text-xs font-bold text-description uppercase tracking-wider">
+              <text
+                class="text-xs font-bold text-description uppercase tracking-wider"
+              >
                 {{ key }}
               </text>
-              <view class="border border-border rounded-xl bg-surface p-3 flex-col gap-2.5">
+              <view
+                class="border border-border rounded-xl bg-surface p-3 flex-col gap-2.5"
+              >
                 <view
                   v-for="tf of value"
                   :key="tf.fieldKey"
@@ -556,7 +649,9 @@
                 >
                   <view class="flex-row items-center gap-1.5 flex-1 mr-2">
                     <text class="text-sm text-main">{{ tf.label }}</text>
-                    <text v-if="tf.required" class="text-red-500 font-bold">*</text>
+                    <text v-if="tf.required" class="text-red-500 font-bold"
+                      >*</text
+                    >
                   </view>
                   <Check
                     :df="{
@@ -595,8 +690,12 @@
       v-if="complete"
       class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-50 p-4"
     >
-      <view class="bg-surface border border-border rounded-2xl w-full max-w-sm p-4 flex-col">
-        <text class="text-lg font-bold text-main mb-3">{{ t`Import Complete` }}</text>
+      <view
+        class="bg-surface border border-border rounded-2xl w-full max-w-sm p-4 flex-col"
+      >
+        <text class="text-lg font-bold text-main mb-3">{{
+          t`Import Complete`
+        }}</text>
         <view class="border-b border-border mb-3" />
 
         <!-- Success list -->
@@ -604,12 +703,16 @@
           <text class="text-sm font-semibold text-emerald-600 mb-1"
             >Success ({{ success.length }}):</text
           >
-          <text class="text-xs text-main font-medium">{{ success.join(", ") }}</text>
+          <text class="text-xs text-main font-medium">{{
+            success.join(', ')
+          }}</text>
         </view>
 
         <!-- Failed list -->
         <view v-if="failed.length" class="mb-3">
-          <text class="text-sm font-semibold text-red-600 mb-1">Failed ({{ failed.length }}):</text>
+          <text class="text-sm font-semibold text-red-600 mb-1"
+            >Failed ({{ failed.length }}):</text
+          >
           <view v-for="f in failed" :key="f.name" class="mb-1">
             <text class="text-xs text-red-600 font-bold">{{ f.name }}: </text>
             <text class="text-xs text-description">{{ f.error.message }}</text>
@@ -623,7 +726,9 @@
             class="px-3 py-1.5 rounded-lg bg-surface border border-border cursor-pointer active:opacity-75"
             @tap="clearSuccessfullyImportedEntries"
           >
-            <text class="text-xs text-main font-semibold">{{ t`Fix Failed` }}</text>
+            <text class="text-xs text-main font-semibold">{{
+              t`Fix Failed`
+            }}</text>
           </view>
           <view
             class="px-4 py-1.5 rounded-lg bg-blue-600 cursor-pointer active:opacity-85"
@@ -638,33 +743,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onActivated, onDeactivated } from "vue";
-import { isLynx } from "src/utils/interactive";
-import { DocValue } from "fyo/core/types";
-import { Action } from "fyo/model/types";
-import { Verb } from "fyo/telemetry/types";
-import { ValidationError } from "fyo/utils/errors";
-import { ModelNameEnum } from "models/types";
-import { OptionField, RawValue, SelectOption } from "schemas/types";
-import Button from "src/components/Button.vue";
-import AutoComplete from "src/components/Controls/AutoComplete.vue";
-import Check from "src/components/Controls/Check.vue";
-import Data from "src/components/Controls/Data.vue";
-import FormControl from "src/components/Controls/FormControl.vue";
-import Select from "src/components/Controls/Select.vue";
-import DropdownWithActions from "src/components/DropdownWithActions.vue";
-import FormHeader from "src/components/FormHeader.vue";
-import Modal from "src/components/Modal.vue";
-import PageHeader from "src/components/PageHeader.vue";
-import { Importer, TemplateField, getColumnLabel } from "src/importer";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
-import { showDialog } from "src/utils/interactive";
-import { docsPathMap } from "src/utils/misc";
-import { getSavePath, selectTextFile } from "src/utils/ui";
-import { useAppStore } from "src/stores/app";
-import Loading from "../components/Loading.vue";
-import router from "src/router";
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onActivated,
+  onDeactivated,
+} from 'vue';
+import { isLynx } from 'src/utils/interactive';
+import { DocValue } from 'fyo/core/types';
+import { Action } from 'fyo/model/types';
+import { Verb } from 'fyo/telemetry/types';
+import { ValidationError } from 'fyo/utils/errors';
+import { ModelNameEnum } from 'models/types';
+import { OptionField, RawValue, SelectOption } from 'schemas/types';
+import Button from 'src/components/Button.vue';
+import AutoComplete from 'src/components/Controls/AutoComplete.vue';
+import Check from 'src/components/Controls/Check.vue';
+import Data from 'src/components/Controls/Data.vue';
+import FormControl from 'src/components/Controls/FormControl.vue';
+import Select from 'src/components/Controls/Select.vue';
+import DropdownWithActions from 'src/components/DropdownWithActions.vue';
+import FormHeader from 'src/components/FormHeader.vue';
+import Modal from 'src/components/Modal.vue';
+import PageHeader from 'src/components/PageHeader.vue';
+import { Importer, TemplateField, getColumnLabel } from 'src/importer';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
+import { showDialog } from 'src/utils/interactive';
+import { docsPathMap } from 'src/utils/misc';
+import { getSavePath, selectTextFile } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
+import Loading from '../components/Loading.vue';
+import router from 'src/router';
 
 // App Store
 const store = useAppStore();
@@ -677,10 +789,10 @@ const successOldName = ref<string[]>([]);
 const failed = ref<{ name: string; error: Error }[]>([]);
 const file = ref<null | { name: string; filePath: string; text: string }>(null);
 const nullOrImporter = ref<any>(null);
-const importType = ref("");
+const importType = ref('');
 const isMakingEntries = ref(false);
 const percentLoading = ref(0);
-const messageLoading = ref("");
+const messageLoading = ref('');
 
 // Computed properties
 const gridTemplateColumn = computed(() => {
@@ -734,14 +846,14 @@ const requiredNotSelected = computed<string[]>(() => {
 
 const errorMessage = computed<string>(() => {
   if (duplicates.value.length) {
-    return t`Duplicate columns found: ${duplicates.value.join(", ")}`;
+    return t`Duplicate columns found: ${duplicates.value.join(', ')}`;
   }
 
   if (requiredNotSelected.value.length) {
-    return t`Required fields not selected: ${requiredNotSelected.value.join(", ")}`;
+    return t`Required fields not selected: ${requiredNotSelected.value.join(', ')}`;
   }
 
-  return "";
+  return '';
 });
 
 const canImportData = computed(() => {
@@ -771,7 +883,7 @@ const columnCount = computed(() => {
 
   return Math.min(
     importer.value.assignedTemplateFields.length,
-    importer.value.valueMatrix[0].length,
+    importer.value.valueMatrix[0].length
   );
 });
 
@@ -789,7 +901,8 @@ const numColumnsPicked = computed(() => {
   if (!hasImporter.value) {
     return 0;
   }
-  return [...importer.value.templateFieldsPicked.values()].filter(Boolean).length;
+  return [...importer.value.templateFieldsPicked.values()].filter(Boolean)
+    .length;
 });
 
 const columnPickerFieldsMap = computed(() => {
@@ -842,7 +955,7 @@ const importableSchemaNames = computed(() => {
       ModelNameEnum.StockMovement,
       ModelNameEnum.Shipment,
       ModelNameEnum.PurchaseReceipt,
-      ModelNameEnum.Location,
+      ModelNameEnum.Location
     );
   }
 
@@ -873,7 +986,7 @@ const actions = computed<Action[]>(() => {
   const pickColumnsAction = {
     label: t`Pick Import Columns`,
     component: {
-      template: "<text>{{ t`Pick Import Columns` }}</text>",
+      template: '<text>{{ t`Pick Import Columns` }}</text>',
     },
     action: () => (showColumnPicker.value = true),
   };
@@ -892,7 +1005,7 @@ const actions = computed<Action[]>(() => {
 
 const fileName = computed(() => {
   if (!file.value) {
-    return "";
+    return '';
   }
 
   return file.value.name;
@@ -902,7 +1015,7 @@ const helperMessage = computed(() => {
   if (!importType.value) {
     return t`Set an Import Type`;
   } else if (!fileName.value) {
-    return "";
+    return '';
   }
 
   return fileName.value;
@@ -920,8 +1033,8 @@ const gridColumnTitleDf = computed<OptionField>(() => {
   const options: SelectOption[] = [];
   if (!hasImporter.value) {
     return {
-      fieldname: "col",
-      fieldtype: "Select",
+      fieldname: 'col',
+      fieldtype: 'Select',
       options,
     } as OptionField;
   }
@@ -937,10 +1050,10 @@ const gridColumnTitleDf = computed<OptionField>(() => {
     options.push({ value: val, label });
   }
 
-  options.push({ value: "", label: t`None` });
+  options.push({ value: '', label: t`None` });
   return {
-    fieldname: "col",
-    fieldtype: "Select",
+    fieldname: 'col',
+    fieldtype: 'Select',
     options,
   } as OptionField;
 });
@@ -971,7 +1084,11 @@ watch(columnCount, (val) => {
 });
 
 // Methods
-const getFieldTitle = (vmi: { value?: DocValue; rawValue?: RawValue; error?: boolean }): string => {
+const getFieldTitle = (vmi: {
+  value?: DocValue;
+  rawValue?: RawValue;
+  error?: boolean;
+}): string => {
   const title: string[] = [];
   if (vmi.value != null) {
     title.push(t`Value: ${String(vmi.value)}`);
@@ -989,7 +1106,7 @@ const getFieldTitle = (vmi: { value?: DocValue; rawValue?: RawValue; error?: boo
     return t`No Value`;
   }
 
-  return title.join(", ");
+  return title.join(', ');
 };
 
 const pickColumn = (fieldKey: string, value: boolean): void => {
@@ -998,7 +1115,9 @@ const pickColumn = (fieldKey: string, value: boolean): void => {
     return;
   }
 
-  const idx = importer.value.assignedTemplateFields.findIndex((f: any) => f === fieldKey);
+  const idx = importer.value.assignedTemplateFields.findIndex(
+    (f: any) => f === fieldKey
+  );
 
   if (idx >= 0) {
     importer.value.assignedTemplateFields[idx] = null;
@@ -1038,17 +1157,17 @@ const clear = (): void => {
   successOldName.value = [];
   failed.value = [];
   nullOrImporter.value = null;
-  importType.value = "";
+  importType.value = '';
   complete.value = false;
   isMakingEntries.value = false;
   percentLoading.value = 0;
-  messageLoading.value = "";
+  messageLoading.value = '';
 };
 
 const saveTemplate = async (): Promise<void> => {
   const template = importer.value.getCSVTemplate();
-  const templateName = importType.value + " " + t`Template`;
-  const { canceled, filePath } = await getSavePath(templateName, "csv");
+  const templateName = importType.value + ' ' + t`Template`;
+  const { canceled, filePath } = await getSavePath(templateName, 'csv');
 
   if (canceled || !filePath) {
     return;
@@ -1062,7 +1181,7 @@ const preImportValidations = async (): Promise<boolean> => {
   if (errorMessage.value.length) {
     await showDialog({
       title,
-      type: "error",
+      type: 'error',
       detail: errorMessage.value,
     });
     return false;
@@ -1072,8 +1191,8 @@ const preImportValidations = async (): Promise<boolean> => {
   if (cellErrors.length) {
     await showDialog({
       title,
-      type: "error",
-      detail: t`Following cells have errors: ${cellErrors.join(", ")}.`,
+      type: 'error',
+      detail: t`Following cells have errors: ${cellErrors.join(', ')}.`,
     });
     return false;
   }
@@ -1082,10 +1201,10 @@ const preImportValidations = async (): Promise<boolean> => {
   if (absentLinks.length) {
     await showDialog({
       title,
-      type: "error",
+      type: 'error',
       detail: t`Following links do not exist: ${absentLinks
         .map((l: any) => `(${l.schemaLabel ?? l.schemaName}, ${l.name})`)
-        .join(", ")}.`,
+        .join(', ')}.`,
     });
     return false;
   }
@@ -1101,7 +1220,7 @@ const askShouldSubmit = async (): Promise<boolean> => {
   let shouldSubmit = false;
   await showDialog({
     title: t`Submit entries?`,
-    type: "info",
+    type: 'info',
     details: t`Should entries be submitted after syncing?`,
     buttons: [
       {
@@ -1138,7 +1257,7 @@ const importData = async (): Promise<void> => {
   let doneCount = 0;
   for (const doc of importer.value.docs) {
     setLoadingStatus(doneCount, importer.value.docs.length);
-    const oldName = doc.name ?? "";
+    const oldName = doc.name ?? '';
     try {
       await doc.sync();
       if (shouldSubmit) {
@@ -1163,16 +1282,20 @@ const importData = async (): Promise<void> => {
 const clearSuccessfullyImportedEntries = () => {
   const sName = importer.value.schemaName;
   const nameFieldKey = `${sName}.name`;
-  const nameIndex = importer.value.assignedTemplateFields.findIndex((n: any) => n === nameFieldKey);
+  const nameIndex = importer.value.assignedTemplateFields.findIndex(
+    (n: any) => n === nameFieldKey
+  );
 
-  const failedEntriesValueMatrix = importer.value.valueMatrix.filter((row: any) => {
-    const value = row[nameIndex].value;
-    if (typeof value !== "string") {
-      return false;
+  const failedEntriesValueMatrix = importer.value.valueMatrix.filter(
+    (row: any) => {
+      const value = row[nameIndex].value;
+      if (typeof value !== 'string') {
+        return false;
+      }
+
+      return !successOldName.value.includes(value);
     }
-
-    return !successOldName.value.includes(value);
-  });
+  );
 
   setImportType(importType.value);
   importer.value.valueMatrix = failedEntriesValueMatrix;
@@ -1192,11 +1315,13 @@ const setLoadingStatus = (entriesMade: number, totalEntries: number): void => {
   percentLoading.value = entriesMade / totalEntries;
   messageLoading.value = isMakingEntries.value
     ? `${entriesMade} entries made out of ${totalEntries}...`
-    : "";
+    : '';
 };
 
 const selectFile = async (): Promise<void> => {
-  const { text, name, filePath } = await selectTextFile([{ name: "CSV", extensions: ["csv"] }]);
+  const { text, name, filePath } = await selectTextFile([
+    { name: 'CSV', extensions: ['csv'] },
+  ]);
 
   if (!text) {
     return;
@@ -1207,7 +1332,7 @@ const selectFile = async (): Promise<void> => {
     await showDialog({
       title: t`Cannot read file`,
       detail: t`Bad import data, could not read file.`,
-      type: "error",
+      type: 'error',
     });
     return;
   }
@@ -1221,7 +1346,7 @@ const selectFile = async (): Promise<void> => {
 
 // Lifecycles
 onMounted(() => {
-  if (store.isDevelopment && typeof window !== "undefined") {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-expect-error
     window.iw = {
       showColumnPicker,
@@ -1259,11 +1384,11 @@ onMounted(() => {
 });
 
 onActivated(() => {
-  store.docsPath = docsPathMap.ImportWizard ?? "";
+  store.docsPath = docsPathMap.ImportWizard ?? '';
 });
 
 onDeactivated(() => {
-  store.docsPath = "";
+  store.docsPath = '';
   if (!complete.value) {
     return;
   }

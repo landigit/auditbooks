@@ -19,10 +19,10 @@
 </template>
 
 <script setup lang="ts">
-import { inject, watch, onUnmounted } from "vue";
+import { inject, watch, onUnmounted } from 'vue';
 
 defineOptions({ inheritAttrs: false });
-import { shortcutsKey } from "src/utils/injectionKeys";
+import { shortcutsKey } from 'src/utils/injectionKeys';
 
 // Define Props
 const props = withDefaults(
@@ -33,12 +33,12 @@ const props = withDefaults(
   {
     openModal: false,
     setCloseListener: false,
-  },
+  }
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "closemodal"): void;
+  (e: 'closemodal'): void;
 }>();
 
 const shortcuts = inject(shortcutsKey);
@@ -49,14 +49,14 @@ watch(
   () => props.openModal,
   (value: boolean) => {
     if (value) {
-      shortcuts?.set(context, ["Escape"], () => {
-        emit("closemodal");
+      shortcuts?.set(context, ['Escape'], () => {
+        emit('closemodal');
       });
     } else {
       shortcuts?.delete(context);
     }
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 onUnmounted(() => {

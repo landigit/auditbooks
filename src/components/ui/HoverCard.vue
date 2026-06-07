@@ -4,7 +4,7 @@ import {
   type HoverCardRootEmits,
   type HoverCardRootProps,
   useForwardPropsEmits,
-} from "reka-ui";
+} from 'reka-ui';
 
 const props = withDefaults(defineProps<HoverCardRootProps>(), {
   openDelay: 500,

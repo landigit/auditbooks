@@ -70,7 +70,9 @@
               @tap="setCouponCode()"
             >
               <slot>
-                <text class="uppercase text-lg text-indicator-green-text font-semibold">
+                <text
+                  class="uppercase text-lg text-indicator-green-text font-semibold"
+                >
                   {{ t`Save` }}
                 </text>
               </slot>
@@ -86,7 +88,9 @@
               @tap="cancelApplyCouponCode()"
             >
               <slot>
-                <text class="uppercase text-lg text-indicator-red-text font-semibold">
+                <text
+                  class="uppercase text-lg text-indicator-red-text font-semibold"
+                >
                   {{ t`Cancel` }}
                 </text>
               </slot>
@@ -100,44 +104,46 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Coupon Code Modal</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject } from "vue";
-import Button from "src/components/Button.vue";
-import Modal from "src/components/Modal.vue";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { showToast } from "src/utils/interactive";
-import { AppliedCouponCodes } from "models/baseModels/AppliedCouponCodes/AppliedCouponCodes";
-import Link from "src/components/Controls/Link.vue";
-import { ModelNameEnum } from "models/types";
-import { validateCouponCode } from "models/helpers";
-import { Field } from "schemas/types";
-import FormControl from "src/components/Controls/FormControl.vue";
-import Row from "src/components/Row.vue";
-import { InvoiceItem } from "models/baseModels/InvoiceItem/InvoiceItem";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
+import { ref, computed, inject } from 'vue';
+import Button from 'src/components/Button.vue';
+import Modal from 'src/components/Modal.vue';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { showToast } from 'src/utils/interactive';
+import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import Link from 'src/components/Controls/Link.vue';
+import { ModelNameEnum } from 'models/types';
+import { validateCouponCode } from 'models/helpers';
+import { Field } from 'schemas/types';
+import FormControl from 'src/components/Controls/FormControl.vue';
+import Row from 'src/components/Row.vue';
+import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "setCouponsCount", value: number): void;
-  (e: "toggleModal", value: string): void;
-  (e: "applyPricingRule"): void;
+  (e: 'setCouponsCount', value: number): void;
+  (e: 'toggleModal', value: string): void;
+  (e: 'applyPricingRule'): void;
 }>();
 
 // App Store / Context Injections
-const sinvDoc = inject("sinvDoc") as SalesInvoice;
-const coupons = inject("coupons") as AppliedCouponCodes;
-const appliedCoupons = inject("appliedCoupons") as AppliedCouponCodes[];
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+const coupons = inject('coupons') as AppliedCouponCodes;
+const appliedCoupons = inject('appliedCoupons') as AppliedCouponCodes[];
 
 // Reactive State
 const validationError = ref(false);
-const couponCode = ref("");
+const couponCode = ref('');
 
 // Computed Properties
 const ratio = computed(() => {
@@ -147,8 +153,8 @@ const ratio = computed(() => {
 const tableFields = computed<Field[]>(() => {
   return [
     {
-      fieldname: "coupons",
-      fieldtype: "Link",
+      fieldname: 'coupons',
+      fieldtype: 'Link',
       required: true,
       readOnly: true,
     },
@@ -168,27 +174,33 @@ const updateCouponCode = async (value: string | Event) => {
     }
 
     couponCode.value = value as string;
-    const appliedCouponCodes = fyo.doc.getNewDoc(ModelNameEnum.AppliedCouponCodes);
+    const appliedCouponCodes = fyo.doc.getNewDoc(
+      ModelNameEnum.AppliedCouponCodes
+    );
 
-    await validateCouponCode(appliedCouponCodes as AppliedCouponCodes, couponCode.value, sinvDoc);
+    await validateCouponCode(
+      appliedCouponCodes as AppliedCouponCodes,
+      couponCode.value,
+      sinvDoc
+    );
 
-    await sinvDoc.append("coupons", { coupons: couponCode.value });
+    await sinvDoc.append('coupons', { coupons: couponCode.value });
 
-    emit("applyPricingRule");
-    couponCode.value = "";
+    emit('applyPricingRule');
+    couponCode.value = '';
     validationError.value = false;
   } catch (error) {
     validationError.value = true;
 
     showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
   }
 };
 
 const setCouponCode = () => {
-  emit("toggleModal", "CouponCode");
+  emit('toggleModal', 'CouponCode');
 };
 
 const removeAppliedCoupon = async (coupon: AppliedCouponCodes) => {
@@ -198,14 +210,14 @@ const removeAppliedCoupon = async (coupon: AppliedCouponCodes) => {
     item.setItemDiscountAmount = false;
   });
 
-  await coupon?.parentdoc?.remove("coupons", coupon.idx as number);
+  await coupon?.parentdoc?.remove('coupons', coupon.idx as number);
 
-  emit("applyPricingRule");
-  emit("setCouponsCount", (coupons as any)?.length || 0);
+  emit('applyPricingRule');
+  emit('setCouponsCount', (coupons as any)?.length || 0);
 };
 
 const cancelApplyCouponCode = () => {
-  couponCode.value = "";
-  emit("toggleModal", "CouponCode");
+  couponCode.value = '';
+  emit('toggleModal', 'CouponCode');
 };
 </script>

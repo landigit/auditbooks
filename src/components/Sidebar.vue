@@ -6,7 +6,11 @@
         class="px-4 flex flex-row items-center justify-between h-row-largest border-b border-border"
         :class="[
           store.platform !== 'Windows' ? 'window-drag' : '',
-          store.platform === 'Mac' ? (languageDirection === 'rtl' ? 'pe-20' : 'ps-20') : '',
+          store.platform === 'Mac'
+            ? languageDirection === 'rtl'
+              ? 'pe-20'
+              : 'ps-20'
+            : '',
         ]"
       >
         <text
@@ -40,7 +44,9 @@
           />
           <view
             class="ms-2 text-lg"
-            :class="isGroupActive(group) && !group.items ? 'text-main' : 'text-muted'"
+            :class="
+              isGroupActive(group) && !group.items ? 'text-main' : 'text-muted'
+            "
           >
             {{ group.label }}
           </view>
@@ -146,22 +152,22 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed, onMounted, onUnmounted, inject } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { reportIssue } from "src/errorHandling";
-import { fyo } from "src/initFyo";
-import { languageDirectionKey, shortcutsKey } from "src/utils/injectionKeys";
-import { getSidebarConfig } from "src/utils/sidebarConfig";
-import { SidebarConfig, SidebarItem, SidebarRoot } from "src/utils/types";
-import { routeTo, toggleSidebar } from "src/utils/ui";
-import { useAppStore } from "src/stores/app";
-import Icon from "./Icon.vue";
-import Modal from "./Modal.vue";
-import ShortcutsHelper from "./ShortcutsHelper.vue";
-import { t } from "fyo";
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { reportIssue } from 'src/errorHandling';
+import { fyo } from 'src/initFyo';
+import { languageDirectionKey, shortcutsKey } from 'src/utils/injectionKeys';
+import { getSidebarConfig } from 'src/utils/sidebarConfig';
+import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
+import { routeTo, toggleSidebar } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
+import Icon from './Icon.vue';
+import Modal from './Modal.vue';
+import ShortcutsHelper from './ShortcutsHelper.vue';
+import { t } from 'fyo';
 
 // --- Types ---
-const COMPONENT_NAME = "Sidebar";
+const COMPONENT_NAME = 'Sidebar';
 
 // --- Props & Emits ---
 const props = withDefaults(
@@ -169,13 +175,13 @@ const props = withDefaults(
     theme?: string;
   }>(),
   {
-    theme: "auto",
-  },
+    theme: 'auto',
+  }
 );
 
 const emit = defineEmits<{
-  (e: "change-db-file"): void;
-  (e: "toggle-darkmode"): void;
+  (e: 'change-db-file'): void;
+  (e: 'toggle-darkmode'): void;
 }>();
 
 // --- State ---
@@ -185,7 +191,7 @@ const store = useAppStore();
 const languageDirection = inject(languageDirectionKey);
 const shortcuts = inject(shortcutsKey);
 
-const companyName = ref("");
+const companyName = ref('');
 const groups = ref<SidebarConfig>([]);
 const viewShortcuts = ref(false);
 const activeGroup = ref<SidebarRoot | null>(null);
@@ -193,30 +199,32 @@ const showDevMode = ref(false);
 
 // --- Computed ---
 const resolvedIsDark = computed(() => {
-  return props.theme === "dark" || (props.theme === "auto" && store.isDark);
+  return props.theme === 'dark' || (props.theme === 'auto' && store.isDark);
 });
 
 // --- Lifecycle ---
 onMounted(async () => {
-  const { companyName: cName } = await fyo.doc.getDoc("AccountingSettings");
+  const { companyName: cName } = await fyo.doc.getDoc('AccountingSettings');
   companyName.value = cName as string;
   groups.value = await getSidebarConfig();
 
   setActiveGroup();
   router.afterEach(() => {
     setActiveGroup();
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
       store.toggleSidebar(false);
     }
   });
 
-  shortcuts?.shift.set(COMPONENT_NAME, ["KeyH"], () => {
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyH'], () => {
     if (document.body === document.activeElement) {
       toggleSidebar();
     }
   });
-  shortcuts?.set(COMPONENT_NAME, ["F1"], () => openDocumentation());
-  shortcuts?.pmodShift.set(COMPONENT_NAME, ["KeyD"], () => emit("toggle-darkmode"));
+  shortcuts?.set(COMPONENT_NAME, ['F1'], () => openDocumentation());
+  shortcuts?.pmodShift.set(COMPONENT_NAME, ['KeyD'], () =>
+    emit('toggle-darkmode')
+  );
 
   showDevMode.value = store.isDevelopment;
 });
@@ -235,114 +243,114 @@ function getIconStyle(iconName: string, active: boolean) {
   > = isDark
     ? {
         dashboard: {
-          light: "var(--color-blue-300)",
-          dark: "var(--color-blue-400)",
-          lightPassive: "var(--color-blue-400)",
-          darkPassive: "var(--color-blue-500)",
+          light: 'var(--color-blue-300)',
+          dark: 'var(--color-blue-400)',
+          lightPassive: 'var(--color-blue-400)',
+          darkPassive: 'var(--color-blue-500)',
         },
-        "common-entries": {
-          light: "var(--color-teal-300)",
-          dark: "var(--color-teal-400)",
-          lightPassive: "var(--color-teal-400)",
-          darkPassive: "var(--color-teal-500)",
+        'common-entries': {
+          light: 'var(--color-teal-300)',
+          dark: 'var(--color-teal-400)',
+          lightPassive: 'var(--color-teal-400)',
+          darkPassive: 'var(--color-teal-500)',
         },
         sales: {
-          light: "var(--color-green-300)",
-          dark: "var(--color-green-400)",
-          lightPassive: "var(--color-green-400)",
-          darkPassive: "var(--color-green-500)",
+          light: 'var(--color-green-300)',
+          dark: 'var(--color-green-400)',
+          lightPassive: 'var(--color-green-400)',
+          darkPassive: 'var(--color-green-500)',
         },
         purchase: {
-          light: "var(--color-red-300)",
-          dark: "var(--color-red-400)",
-          lightPassive: "var(--color-red-400)",
-          darkPassive: "var(--color-red-500)",
+          light: 'var(--color-red-300)',
+          dark: 'var(--color-red-400)',
+          lightPassive: 'var(--color-red-400)',
+          darkPassive: 'var(--color-red-500)',
         },
         inventory: {
-          light: "var(--color-amber-300)",
-          dark: "var(--color-amber-400)",
-          lightPassive: "var(--color-amber-400)",
-          darkPassive: "var(--color-amber-500)",
+          light: 'var(--color-amber-300)',
+          dark: 'var(--color-amber-400)',
+          lightPassive: 'var(--color-amber-400)',
+          darkPassive: 'var(--color-amber-500)',
         },
         gst: {
-          light: "var(--color-violet-300)",
-          dark: "var(--color-violet-400)",
-          lightPassive: "var(--color-violet-400)",
-          darkPassive: "var(--color-violet-500)",
+          light: 'var(--color-violet-300)',
+          dark: 'var(--color-violet-400)',
+          lightPassive: 'var(--color-violet-400)',
+          darkPassive: 'var(--color-violet-500)',
         },
         pos: {
-          light: "var(--color-indigo-300)",
-          dark: "var(--color-indigo-400)",
-          lightPassive: "var(--color-indigo-400)",
-          darkPassive: "var(--color-indigo-500)",
+          light: 'var(--color-indigo-300)',
+          dark: 'var(--color-indigo-400)',
+          lightPassive: 'var(--color-indigo-400)',
+          darkPassive: 'var(--color-indigo-500)',
         },
         reports: {
-          light: "var(--color-orange-300)",
-          dark: "var(--color-orange-400)",
-          lightPassive: "var(--color-orange-400)",
-          darkPassive: "var(--color-orange-500)",
+          light: 'var(--color-orange-300)',
+          dark: 'var(--color-orange-400)',
+          lightPassive: 'var(--color-orange-400)',
+          darkPassive: 'var(--color-orange-500)',
         },
         settings: {
-          light: "var(--color-purple-300)",
-          dark: "var(--color-purple-400)",
-          lightPassive: "var(--color-purple-400)",
-          darkPassive: "var(--color-purple-500)",
+          light: 'var(--color-purple-300)',
+          dark: 'var(--color-purple-400)',
+          lightPassive: 'var(--color-purple-400)',
+          darkPassive: 'var(--color-purple-500)',
         },
       }
     : {
         dashboard: {
-          light: "var(--color-blue-400)",
-          dark: "var(--color-blue-600)",
-          lightPassive: "var(--color-blue-600)",
-          darkPassive: "var(--color-blue-800)",
+          light: 'var(--color-blue-400)',
+          dark: 'var(--color-blue-600)',
+          lightPassive: 'var(--color-blue-600)',
+          darkPassive: 'var(--color-blue-800)',
         },
-        "common-entries": {
-          light: "var(--color-teal-400)",
-          dark: "var(--color-teal-600)",
-          lightPassive: "var(--color-teal-600)",
-          darkPassive: "var(--color-teal-800)",
+        'common-entries': {
+          light: 'var(--color-teal-400)',
+          dark: 'var(--color-teal-600)',
+          lightPassive: 'var(--color-teal-600)',
+          darkPassive: 'var(--color-teal-800)',
         },
         sales: {
-          light: "var(--color-green-400)",
-          dark: "var(--color-green-600)",
-          lightPassive: "var(--color-green-600)",
-          darkPassive: "var(--color-green-800)",
+          light: 'var(--color-green-400)',
+          dark: 'var(--color-green-600)',
+          lightPassive: 'var(--color-green-600)',
+          darkPassive: 'var(--color-green-800)',
         },
         purchase: {
-          light: "var(--color-red-400)",
-          dark: "var(--color-red-600)",
-          lightPassive: "var(--color-red-600)",
-          darkPassive: "var(--color-red-800)",
+          light: 'var(--color-red-400)',
+          dark: 'var(--color-red-600)',
+          lightPassive: 'var(--color-red-600)',
+          darkPassive: 'var(--color-red-800)',
         },
         inventory: {
-          light: "var(--color-amber-400)",
-          dark: "var(--color-amber-600)",
-          lightPassive: "var(--color-amber-600)",
-          darkPassive: "var(--color-amber-800)",
+          light: 'var(--color-amber-400)',
+          dark: 'var(--color-amber-600)',
+          lightPassive: 'var(--color-amber-600)',
+          darkPassive: 'var(--color-amber-800)',
         },
         gst: {
-          light: "var(--color-violet-400)",
-          dark: "var(--color-violet-600)",
-          lightPassive: "var(--color-violet-600)",
-          darkPassive: "var(--color-violet-800)",
+          light: 'var(--color-violet-400)',
+          dark: 'var(--color-violet-600)',
+          lightPassive: 'var(--color-violet-600)',
+          darkPassive: 'var(--color-violet-800)',
         },
         pos: {
-          light: "var(--color-indigo-400)",
-          dark: "var(--color-indigo-600)",
-          lightPassive: "var(--color-indigo-600)",
-          darkPassive: "var(--color-indigo-800)",
+          light: 'var(--color-indigo-400)',
+          dark: 'var(--color-indigo-600)',
+          lightPassive: 'var(--color-indigo-600)',
+          darkPassive: 'var(--color-indigo-800)',
         },
         reports: {
-          light: "var(--color-orange-400)",
-          dark: "var(--color-orange-600)",
-          lightPassive: "var(--color-orange-600)",
-          darkPassive: "var(--color-orange-800)",
+          light: 'var(--color-orange-400)',
+          dark: 'var(--color-orange-600)',
+          lightPassive: 'var(--color-orange-600)',
+          darkPassive: 'var(--color-orange-800)',
         },
         settings: {
-          light: "var(--color-purple-400)",
-          dark: "var(--color-purple-600)",
-          lightPassive: "var(--color-purple-600)",
-          darkPassive: "var(--color-purple-800)",
+          light: 'var(--color-purple-400)',
+          dark: 'var(--color-purple-600)',
+          lightPassive: 'var(--color-purple-600)',
+          darkPassive: 'var(--color-purple-800)',
         },
       };
 
@@ -353,19 +361,19 @@ function getIconStyle(iconName: string, active: boolean) {
 
   if (active) {
     return {
-      "--icon-light-active": colors.light,
-      "--icon-dark-active": colors.dark,
+      '--icon-light-active': colors.light,
+      '--icon-dark-active': colors.dark,
     };
   } else {
     return {
-      "--icon-light-passive": colors.lightPassive,
-      "--icon-dark-passive": colors.darkPassive,
+      '--icon-light-passive': colors.lightPassive,
+      '--icon-dark-passive': colors.darkPassive,
     };
   }
 }
 function openDocumentation() {
   router.push({
-    name: "Help",
+    name: 'Help',
     params: { path: store.docsPath },
   });
 }
@@ -375,7 +383,7 @@ function setActiveGroup() {
   const fallBackGroup = activeGroup.value;
   activeGroup.value =
     groups.value.find((g) => {
-      if (fullPath.startsWith(g.route) && g.route !== "/") {
+      if (fullPath.startsWith(g.route) && g.route !== '/') {
         return true;
       }
 
@@ -385,7 +393,7 @@ function setActiveGroup() {
 
       if (g.items) {
         let activeItem = g.items.filter(
-          ({ route }) => route === fullPath || fullPath.startsWith(route),
+          ({ route }) => route === fullPath || fullPath.startsWith(route)
         );
 
         if (activeItem.length) {
@@ -402,7 +410,8 @@ function isItemActive(item: SidebarItem) {
   const params = route.params;
   const routeMatch = currentRoute === item.route;
 
-  const schemaNameMatch = item.schemaName && params.schemaName === item.schemaName;
+  const schemaNameMatch =
+    item.schemaName && params.schemaName === item.schemaName;
 
   const isMatch = routeMatch || schemaNameMatch;
   if (params.name && item.schemaName && !isMatch) {

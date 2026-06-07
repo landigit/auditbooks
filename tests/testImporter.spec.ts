@@ -1,25 +1,25 @@
-﻿import { assertDoesNotThrow } from "backend/database/tests/helpers";
-import { readFileSync } from "fs";
-import { ModelNameEnum } from "models/types";
-import { join } from "path";
-import { Importer } from "src/importer";
-import { describe, expect, test } from "@rstest/core";
-import { closeTestFyo, getTestFyo, setupTestFyo } from "./helpers";
+﻿import { assertDoesNotThrow } from 'backend/database/tests/helpers';
+import { readFileSync } from 'fs';
+import { ModelNameEnum } from 'models/types';
+import { join } from 'path';
+import { Importer } from 'src/importer';
+import { describe, expect, test } from 'vitest';
+import { closeTestFyo, getTestFyo, setupTestFyo } from './helpers';
 
-describe("Importer Tests", () => {
+describe('Importer Tests', () => {
   const fyo = getTestFyo();
 
   setupTestFyo(fyo, __filename);
 
-  test("importer init", () => {
+  test('importer init', () => {
     const importer = new Importer(ModelNameEnum.SalesInvoice, fyo);
-    expect(typeof importer.getCSVTemplate()).toBe("string");
+    expect(typeof importer.getCSVTemplate()).toBe('string');
   });
 
-  test("import Items", async () => {
+  test('import Items', async () => {
     const importer = new Importer(ModelNameEnum.Item, fyo);
-    const csvPath = join(__dirname, "items.csv");
-    const data = readFileSync(csvPath, { encoding: "utf-8" });
+    const csvPath = join(__dirname, 'items.csv');
+    const data = readFileSync(csvPath, { encoding: 'utf-8' });
     expect(importer.selectFile(data)).toBe(true);
     expect((await importer.checkLinks()).length).toBe(0);
     expect(() => importer.populateDocs()).not.toThrow();
@@ -28,10 +28,10 @@ describe("Importer Tests", () => {
     }
   });
 
-  test("import Party", async () => {
+  test('import Party', async () => {
     const importer = new Importer(ModelNameEnum.Party, fyo);
-    const csvPath = join(__dirname, "parties.csv");
-    const data = readFileSync(csvPath, { encoding: "utf-8" });
+    const csvPath = join(__dirname, 'parties.csv');
+    const data = readFileSync(csvPath, { encoding: 'utf-8' });
     expect(importer.selectFile(data)).toBe(true);
     expect((await importer.checkLinks()).length).toBe(0);
     expect(() => importer.populateDocs()).not.toThrow();
@@ -40,10 +40,10 @@ describe("Importer Tests", () => {
     }
   });
 
-  test("import SalesInvoices", async () => {
+  test('import SalesInvoices', async () => {
     const importer = new Importer(ModelNameEnum.SalesInvoice, fyo);
-    const csvPath = join(__dirname, "sales_invoices.csv");
-    const data = readFileSync(csvPath, { encoding: "utf-8" });
+    const csvPath = join(__dirname, 'sales_invoices.csv');
+    const data = readFileSync(csvPath, { encoding: 'utf-8' });
 
     expect(importer.selectFile(data)).toBe(true);
     expect((await importer.checkLinks()).length).toBe(0);
@@ -55,7 +55,7 @@ describe("Importer Tests", () => {
       names.push(doc.name);
     }
 
-    expect(names.every((n) => n?.startsWith("SINV-"))).toBe(true);
+    expect(names.every((n) => n?.startsWith('SINV-'))).toBe(true);
   });
 
   closeTestFyo(fyo, __filename);

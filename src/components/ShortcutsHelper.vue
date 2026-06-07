@@ -2,7 +2,9 @@
   <view>
     <FormHeader :form-title="t`Shortcuts`" />
     <view class="border-b border-border" />
-    <view class="h-96 overflow-y-auto custom-scroll custom-scroll-thumb2 text-main">
+    <view
+      class="h-96 overflow-y-auto custom-scroll custom-scroll-thumb2 text-main"
+    >
       <template v-for="g in groups" :key="g.label">
         <view class="p-4 w-full">
           <!-- Shortcut Group Header -->
@@ -23,7 +25,9 @@
               style="grid-template-columns: 8rem auto"
             >
               <ShortcutKeys class="text-base" :keys="s.shortcut" />
-              <view class="whitespace-normal text-base">{{ s.description }}</view>
+              <view class="whitespace-normal text-base">{{
+                s.description
+              }}</view>
             </view>
           </view>
           <!-- Shortcut count if collapsed -->
@@ -42,11 +46,11 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, onMounted } from "vue";
-import { t } from "fyo";
-import { ShortcutKey } from "src/utils/ui";
-import FormHeader from "./FormHeader.vue";
-import ShortcutKeys from "./ShortcutKeys.vue";
+import { ref, onMounted } from 'vue';
+import { t } from 'fyo';
+import { ShortcutKey } from 'src/utils/ui';
+import FormHeader from './FormHeader.vue';
+import ShortcutKeys from './ShortcutKeys.vue';
 
 // --- Types ---
 type Group = {
@@ -68,7 +72,7 @@ onMounted(() => {
       collapsed: false,
       shortcuts: [
         {
-          shortcut: [ShortcutKey.pmod, "K"],
+          shortcut: [ShortcutKey.pmod, 'K'],
           description: t`Open Quick Search`,
         },
         {
@@ -76,11 +80,11 @@ onMounted(() => {
           description: t`Go back to the previous page`,
         },
         {
-          shortcut: [ShortcutKey.shift, "H"],
+          shortcut: [ShortcutKey.shift, 'H'],
           description: t`Toggle sidebar`,
         },
         {
-          shortcut: ["F1"],
+          shortcut: ['F1'],
           description: t`Open Documentation`,
         },
       ],
@@ -91,11 +95,11 @@ onMounted(() => {
       collapsed: false,
       shortcuts: [
         {
-          shortcut: [ShortcutKey.pmod, "S"],
+          shortcut: [ShortcutKey.pmod, 'S'],
           description: [
             t`Save or Submit an entry.`,
             t`An entry is submitted only if it is submittable and is in the saved state.`,
-          ].join(" "),
+          ].join(' '),
         },
         {
           shortcut: [ShortcutKey.pmod, ShortcutKey.delete],
@@ -103,14 +107,14 @@ onMounted(() => {
             t`Cancel or Delete an entry.`,
             t`An entry is cancelled only if it is in the submitted state.`,
             t`A submittable entry is deleted only if it is in the cancelled state.`,
-          ].join(" "),
+          ].join(' '),
         },
         {
-          shortcut: [ShortcutKey.pmod, "P"],
+          shortcut: [ShortcutKey.pmod, 'P'],
           description: t`Open Print View if Print is available.`,
         },
         {
-          shortcut: [ShortcutKey.pmod, "L"],
+          shortcut: [ShortcutKey.pmod, 'L'],
           description: t`Toggle Linked Entries widget, not available in Quick Edit view.`,
         },
       ],
@@ -121,11 +125,11 @@ onMounted(() => {
       collapsed: false,
       shortcuts: [
         {
-          shortcut: [ShortcutKey.pmod, "N"],
+          shortcut: [ShortcutKey.pmod, 'N'],
           description: t`Create a new entry of the same type as the List View`,
         },
         {
-          shortcut: [ShortcutKey.pmod, "E"],
+          shortcut: [ShortcutKey.pmod, 'E'],
           description: t`Open the Export Wizard modal`,
         },
       ],
@@ -137,23 +141,23 @@ onMounted(() => {
       shortcuts: [
         { shortcut: [ShortcutKey.esc], description: t`Close Quick Search` },
         {
-          shortcut: [ShortcutKey.pmod, "1"],
+          shortcut: [ShortcutKey.pmod, '1'],
           description: t`Toggle the Docs filter`,
         },
         {
-          shortcut: [ShortcutKey.pmod, "2"],
+          shortcut: [ShortcutKey.pmod, '2'],
           description: t`Toggle the List filter`,
         },
         {
-          shortcut: [ShortcutKey.pmod, "3"],
+          shortcut: [ShortcutKey.pmod, '3'],
           description: t`Toggle the Create filter`,
         },
         {
-          shortcut: [ShortcutKey.pmod, "4"],
+          shortcut: [ShortcutKey.pmod, '4'],
           description: t`Toggle the Report filter`,
         },
         {
-          shortcut: [ShortcutKey.pmod, "5"],
+          shortcut: [ShortcutKey.pmod, '5'],
           description: t`Toggle the Page filter`,
         },
       ],
@@ -168,19 +172,19 @@ onMounted(() => {
           description: t`Apply and view changes made to the print template`,
         },
         {
-          shortcut: [ShortcutKey.ctrl, "E"],
+          shortcut: [ShortcutKey.ctrl, 'E'],
           description: t`Toggle Edit Mode`,
         },
         {
-          shortcut: [ShortcutKey.ctrl, "H"],
+          shortcut: [ShortcutKey.ctrl, 'H'],
           description: t`Toggle Key Hints`,
         },
         {
-          shortcut: [ShortcutKey.ctrl, "+"],
+          shortcut: [ShortcutKey.ctrl, '+'],
           description: t`Increase print template display scale`,
         },
         {
-          shortcut: [ShortcutKey.ctrl, "-"],
+          shortcut: [ShortcutKey.ctrl, '-'],
           description: t`Decrease print template display scale`,
         },
       ],
@@ -191,39 +195,39 @@ onMounted(() => {
       collapsed: false,
       shortcuts: [
         {
-          shortcut: [ShortcutKey.shift, "V"],
+          shortcut: [ShortcutKey.shift, 'V'],
           description: t`Toggle between Grid and List view`,
         },
         {
-          shortcut: [ShortcutKey.shift, "S"],
+          shortcut: [ShortcutKey.shift, 'S'],
           description: t`Open Sales Invoice List`,
         },
         {
-          shortcut: [ShortcutKey.shift, "L"],
+          shortcut: [ShortcutKey.shift, 'L'],
           description: t`Set Loyalty Program`,
         },
         {
-          shortcut: [ShortcutKey.shift, "C"],
+          shortcut: [ShortcutKey.shift, 'C'],
           description: t`Set Coupon Code`,
         },
         {
-          shortcut: [ShortcutKey.shift, "P"],
+          shortcut: [ShortcutKey.shift, 'P'],
           description: t`Set Price List`,
         },
         {
-          shortcut: ["Q", "0-9"],
+          shortcut: ['Q', '0-9'],
           description: t`Hold Q and type digits to set selected item quantity`,
         },
         {
-          shortcut: [ShortcutKey.pmod, ShortcutKey.shift, "H"],
+          shortcut: [ShortcutKey.pmod, ShortcutKey.shift, 'H'],
           description: t`Open Saved or Submitted Invoice List.`,
         },
         {
-          shortcut: [ShortcutKey.pmod, ShortcutKey.shift, "S"],
+          shortcut: [ShortcutKey.pmod, ShortcutKey.shift, 'S'],
           description: t`If any entry form is open, save the details. Otherwise, save the invoice.`,
         },
         {
-          shortcut: [ShortcutKey.pmod, ShortcutKey.shift, "P"],
+          shortcut: [ShortcutKey.pmod, ShortcutKey.shift, 'P'],
           description: t`Create Payment.`,
         },
         {

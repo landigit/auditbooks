@@ -74,9 +74,14 @@
 
       <view class="row-start-6 grid grid-cols-2 gap-4 mt-4">
         <view class="col-span-2">
-          <Button class="w-full p-5 bg-indicator-red-bg" @tap="emit('toggleModal', 'SavedInvoice')">
+          <Button
+            class="w-full p-5 bg-indicator-red-bg"
+            @tap="emit('toggleModal', 'SavedInvoice')"
+          >
             <slot>
-              <text class="uppercase text-lg text-indicator-red-text font-semibold">
+              <text
+                class="uppercase text-lg text-indicator-red-text font-semibold"
+              >
                 {{ t`Cancel` }}
               </text>
             </slot>
@@ -89,24 +94,26 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Saved Invoice Modal</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onActivated, inject } from "vue";
-import Button from "src/components/Button.vue";
-import Modal from "src/components/Modal.vue";
-import Row from "src/components/Row.vue";
-import FormControl from "src/components/Controls/FormControl.vue";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { ModelNameEnum } from "models/types";
-import { Field } from "schemas/types";
-import { Money } from "pesa";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
+import { ref, computed, watch, onMounted, onActivated, inject } from 'vue';
+import Button from 'src/components/Button.vue';
+import Modal from 'src/components/Modal.vue';
+import Row from 'src/components/Row.vue';
+import FormControl from 'src/components/Controls/FormControl.vue';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { ModelNameEnum } from 'models/types';
+import { Field } from 'schemas/types';
+import { Money } from 'pesa';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 // Define Props
 const props = defineProps<{
@@ -115,18 +122,18 @@ const props = defineProps<{
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "toggleModal", value: string): void;
-  (e: "selectedInvoiceName", value: any): void;
+  (e: 'toggleModal', value: string): void;
+  (e: 'selectedInvoiceName', value: any): void;
 }>();
 
 // App Store / Context Injections
-const sinvDoc = inject<any>("sinvDoc");
+const sinvDoc = inject<any>('sinvDoc');
 
 // Reactive State
 const savedInvoiceList = ref(true);
 const savedInvoices = ref<any[]>([]);
 const submittedInvoices = ref<any[]>([]);
-const invoiceSearchTerm = ref("");
+const invoiceSearchTerm = ref('');
 
 // Computed Properties
 const ratio = computed(() => {
@@ -136,39 +143,43 @@ const ratio = computed(() => {
 const tableFields = computed<Field[]>(() => {
   return [
     {
-      fieldname: "name",
-      label: "Name",
-      fieldtype: "Link",
-      target: "SalesInvoice",
+      fieldname: 'name',
+      label: 'Name',
+      fieldtype: 'Link',
+      target: 'SalesInvoice',
       readOnly: true,
     },
     {
-      fieldname: "party",
-      fieldtype: "Link",
-      label: "Customer",
-      target: "Party",
-      placeholder: "Customer",
+      fieldname: 'party',
+      fieldtype: 'Link',
+      label: 'Customer',
+      target: 'Party',
+      placeholder: 'Customer',
       readOnly: true,
     },
     {
-      fieldname: "date",
-      label: "Date",
-      fieldtype: "Date",
+      fieldname: 'date',
+      label: 'Date',
+      fieldtype: 'Date',
       readOnly: true,
     },
     {
-      fieldname: "grandTotal",
-      label: "Grand Total",
-      fieldtype: "Currency",
+      fieldname: 'grandTotal',
+      label: 'Grand Total',
+      fieldtype: 'Currency',
       readOnly: true,
     },
   ] as Field[];
 });
 
 const filteredInvoices = computed(() => {
-  const invoices = savedInvoiceList.value ? savedInvoices.value : submittedInvoices.value;
+  const invoices = savedInvoiceList.value
+    ? savedInvoices.value
+    : submittedInvoices.value;
   return invoices.filter((invoice) =>
-    (invoice.name as string).toLowerCase().includes(invoiceSearchTerm.value.toLowerCase()),
+    (invoice.name as string)
+      .toLowerCase()
+      .includes(invoiceSearchTerm.value.toLowerCase())
   );
 });
 
@@ -187,28 +198,28 @@ const setSubmittedInvoices = async () => {
   })) as SalesInvoice[];
 
   submittedInvoices.value = invoices.filter(
-    (invoice) => !(invoice.outstandingAmount as Money).isZero(),
+    (invoice) => !(invoice.outstandingAmount as Money).isZero()
   );
 };
 
 const _selectedInvoice = async (row: SalesInvoice) => {
   let selectedInvoiceDoc = (await fyo.doc.getDoc(
     ModelNameEnum.SalesInvoice,
-    row.name,
+    row.name
   )) as SalesInvoice;
 
-  if (sinvDoc && "value" in sinvDoc) {
+  if (sinvDoc && 'value' in sinvDoc) {
     sinvDoc.value = selectedInvoiceDoc;
   } else if (sinvDoc) {
     // If it's a direct object instead of a ref
     Object.assign(sinvDoc, selectedInvoiceDoc);
   }
-  emit("toggleModal", "SavedInvoice");
+  emit('toggleModal', 'SavedInvoice');
 };
 
 const handleEnterKey = () => {
   if (filteredInvoices.value.length === 1) {
-    emit("selectedInvoiceName", filteredInvoices.value[0]);
+    emit('selectedInvoiceName', filteredInvoices.value[0]);
   }
 };
 
@@ -220,7 +231,7 @@ watch(
       await setSavedInvoices();
       await setSubmittedInvoices();
     }
-  },
+  }
 );
 
 // Lifecycles

@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, getCurrentInstance } from "vue";
+import { ref, onMounted, getCurrentInstance } from 'vue';
 
 interface LoadingProps {
   open?: boolean;
@@ -54,7 +54,7 @@ interface LoadingProps {
 withDefaults(defineProps<LoadingProps>(), {
   open: false,
   percent: 0.5,
-  message: "",
+  message: '',
   fullWidth: false,
   showX: true,
 });

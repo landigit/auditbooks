@@ -1,7 +1,10 @@
 <template>
   <view class="overflow-x-auto w-full custom-scroll custom-scroll-thumb1">
     <view class="min-w-[600px] md:min-w-0">
-      <Row :ratio="ratio" class="w-full px-2 mt-2 border rounded-t text-description border-border">
+      <Row
+        :ratio="ratio"
+        class="w-full px-2 mt-2 border rounded-t text-description border-border"
+      >
         <view
           v-if="tableFields"
           v-for="df in tableFields"
@@ -27,7 +30,9 @@
           <ModernPOSSelectedItemRow
             :row="row as SalesInvoiceItem"
             :expanded-batch-id="expandedBatchId"
-            @set-expanded-batch-id="(rowName) => $emit('setExpandedBatchId', rowName)"
+            @set-expanded-batch-id="
+              (rowName) => $emit('setExpandedBatchId', rowName)
+            "
             @selected-row="selectedItemRow"
             @run-sinv-formulas="runSinvFormulas"
             @apply-pricing-rule="$emit('applyPricingRule')"
@@ -40,14 +45,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from "vue";
-import Row from "src/components/Row.vue";
-import ModernPOSSelectedItemRow from "./ModernPOSSelectedItemRow.vue";
-import { isNumeric } from "src/utils";
-import { t } from "fyo";
-import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { Field } from "schemas/types";
+import { computed, inject } from 'vue';
+import Row from 'src/components/Row.vue';
+import ModernPOSSelectedItemRow from './ModernPOSSelectedItemRow.vue';
+import { isNumeric } from 'src/utils';
+import { t } from 'fyo';
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { Field } from 'schemas/types';
 
 defineProps({
   expandedBatchId: {
@@ -56,9 +61,14 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["toggleModal", "selectedRow", "applyPricingRule", "setExpandedBatchId"]);
+const emit = defineEmits([
+  'toggleModal',
+  'selectedRow',
+  'applyPricingRule',
+  'setExpandedBatchId',
+]);
 
-const sinvDoc = inject("sinvDoc") as SalesInvoice;
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
 
 const ratio = computed(() => {
   return [0.1, 0.8, 0.4, 0.8, 0.8, 0.3];
@@ -67,46 +77,46 @@ const ratio = computed(() => {
 const tableFields = computed(() => {
   return [
     {
-      fieldname: "toggler",
-      fieldtype: "Link",
-      label: " ",
+      fieldname: 'toggler',
+      fieldtype: 'Link',
+      label: ' ',
     },
     {
-      fieldname: "item",
-      fieldtype: "Link",
+      fieldname: 'item',
+      fieldtype: 'Link',
       label: t`Item`,
-      placeholder: "Item",
+      placeholder: 'Item',
       required: true,
-      schemaName: "Item",
+      schemaName: 'Item',
     },
     {
-      fieldname: "quantity",
+      fieldname: 'quantity',
       label: t`Quantity`,
-      placeholder: "Quantity",
-      fieldtype: "Int",
+      placeholder: 'Quantity',
+      fieldtype: 'Int',
       required: true,
-      schemaName: "",
+      schemaName: '',
     },
     {
-      fieldname: "rate",
+      fieldname: 'rate',
       label: t`Rate`,
-      placeholder: "Rate",
-      fieldtype: "Currency",
+      placeholder: 'Rate',
+      fieldtype: 'Currency',
       required: true,
-      schemaName: "",
+      schemaName: '',
     },
     {
-      fieldname: "amount",
+      fieldname: 'amount',
       label: t`Amount`,
-      placeholder: "Amount",
-      fieldtype: "Currency",
+      placeholder: 'Amount',
+      fieldtype: 'Currency',
       required: true,
-      schemaName: "",
+      schemaName: '',
     },
     {
-      fieldname: "removeItem",
-      fieldtype: "Link",
-      label: " ",
+      fieldname: 'removeItem',
+      fieldtype: 'Link',
+      label: ' ',
     },
   ];
 });
@@ -116,6 +126,6 @@ async function runSinvFormulas() {
 }
 
 function selectedItemRow(row: SalesInvoiceItem, field: string) {
-  emit("selectedRow", row, field);
+  emit('selectedRow', row, field);
 }
 </script>

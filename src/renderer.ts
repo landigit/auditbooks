@@ -1,28 +1,28 @@
-import "./ipc-polyfill";
-import { CUSTOM_EVENTS } from "utils/messages";
-import { UnexpectedLogObject } from "utils/types";
-import { App as VueApp, createApp } from "vue";
-import { createPinia } from "pinia";
-import App from "./App.vue";
-import Badge from "./components/Badge.vue";
-import LucideIcon from "./components/LucideIcon.vue";
-import { handleError, sendError } from "./errorHandling";
-import { fyo, ipc } from "./initFyo";
-import { outsideClickDirective } from "./renderer/helpers";
-import registerIpcRendererListeners from "./renderer/registerIpcRendererListeners";
-import router from "./router";
-import { stringifyCircular } from "./utils";
-import { setLanguageMap } from "./utils/language";
-import { useAppStore } from "./stores/app";
+import './ipc-polyfill';
+import { CUSTOM_EVENTS } from 'utils/messages';
+import { UnexpectedLogObject } from 'utils/types';
+import { App as VueApp, createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import Badge from './components/Badge.vue';
+import LucideIcon from './components/LucideIcon.vue';
+import { handleError, sendError } from './errorHandling';
+import { fyo, ipc } from './initFyo';
+import { outsideClickDirective } from './renderer/helpers';
+import registerIpcRendererListeners from './renderer/registerIpcRendererListeners';
+import router from './router';
+import { stringifyCircular } from './utils';
+import { setLanguageMap } from './utils/language';
+import { useAppStore } from './stores/app';
 
 // Click to Tap Polyfill for Web Browser
-if (typeof window !== "undefined" && typeof document !== "undefined") {
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   document.addEventListener(
-    "click",
+    'click',
     (e) => {
       const target = e.target as HTMLElement | null;
       if (target) {
-        const tapEvent = new CustomEvent("tap", {
+        const tapEvent = new CustomEvent('tap', {
           bubbles: true,
           cancelable: true,
           detail: e,
@@ -33,7 +33,7 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
         }
       }
     },
-    { capture: true },
+    { capture: true }
   );
 }
 
@@ -45,16 +45,16 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
 
   const appStore = useAppStore();
   const fyoProps = [
-    "isDevelopment",
-    "skipTelemetryLogging",
-    "appVersion",
-    "platform",
-    "language",
-    "instanceId",
-    "deviceId",
-    "openCount",
-    "appFlags",
-    "reports",
+    'isDevelopment',
+    'skipTelemetryLogging',
+    'appVersion',
+    'platform',
+    'language',
+    'instanceId',
+    'deviceId',
+    'openCount',
+    'appFlags',
+    'reports',
   ];
 
   for (const prop of fyoProps) {
@@ -65,11 +65,11 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
     });
   }
 
-  const language = fyo.config.get("language") as string;
+  const language = fyo.config.get('language') as string;
   if (language) {
     await setLanguageMap(language);
   }
-  appStore.language = language || "English";
+  appStore.language = language || 'English';
 
   registerIpcRendererListeners();
   const { isDevelopment, platform, version } = await ipc.getEnv();
@@ -86,10 +86,10 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
   setErrorHandlers(app);
 
   app.use(router);
-  app.component("LucideIcon", LucideIcon);
-  app.component("FeatherIcon", LucideIcon);
-  app.component("Badge", Badge);
-  app.directive("on-outside-click", outsideClickDirective);
+  app.component('LucideIcon', LucideIcon);
+  app.component('FeatherIcon', LucideIcon);
+  app.component('Badge', Badge);
+  app.directive('on-outside-click', outsideClickDirective);
   app.mixin({
     computed: {
       fyo() {
@@ -99,7 +99,7 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
         return appStore.platform;
       },
       isLynx() {
-        return false;
+        return true;
       },
     },
     methods: {
@@ -109,15 +109,18 @@ if (typeof window !== "undefined" && typeof document !== "undefined") {
   });
 
   await fyo.telemetry.logOpened();
-  app.mount("#app");
+  app.mount('#app');
 })();
 
 function setErrorHandlers(app: VueApp) {
   window.onerror = (message, source, lineno, colno, error) => {
-    if (typeof message === "string" && message.includes("ResizeObserver loop")) {
+    if (
+      typeof message === 'string' &&
+      message.includes('ResizeObserver loop')
+    ) {
       return;
     }
-    error = error ?? new Error("triggered in window.onerror");
+    error = error ?? new Error('triggered in window.onerror');
     // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     handleError(true, error, { message, source, lineno, colno });
   };
@@ -172,13 +175,13 @@ function setOnWindow(isDevelopment: boolean) {
 
 function getPlatformName(platform: string) {
   switch (platform) {
-    case "win32":
-      return "Windows";
-    case "darwin":
-      return "Mac";
-    case "linux":
-      return "Linux";
+    case 'win32':
+      return 'Windows';
+    case 'darwin':
+      return 'Mac';
+    case 'linux':
+      return 'Linux';
     default:
-      return "Linux";
+      return 'Linux';
   }
 }

@@ -1,11 +1,11 @@
-import { Fyo } from "fyo";
-import { Action, ListViewSettings } from "fyo/model/types";
-import { LedgerPosting } from "models/Transactional/LedgerPosting";
-import { ModelNameEnum } from "models/types";
-import { getInvoiceActions, getTransactionStatusColumn } from "../../helpers";
-import { Invoice } from "../Invoice/Invoice";
-import { PurchaseInvoiceItem } from "../PurchaseInvoiceItem/PurchaseInvoiceItem";
-import { createBatch } from "models/inventory/helpers";
+import { Fyo } from 'fyo';
+import { Action, ListViewSettings } from 'fyo/model/types';
+import { LedgerPosting } from 'models/Transactional/LedgerPosting';
+import { ModelNameEnum } from 'models/types';
+import { getInvoiceActions, getTransactionStatusColumn } from '../../helpers';
+import { Invoice } from '../Invoice/Invoice';
+import { PurchaseInvoiceItem } from '../PurchaseInvoiceItem/PurchaseInvoiceItem';
+import { createBatch } from 'models/inventory/helpers';
 
 export class PurchaseInvoice extends Invoice {
   declare items?: PurchaseInvoiceItem[];
@@ -24,7 +24,11 @@ export class PurchaseInvoice extends Invoice {
         continue;
       }
 
-      const hasBatch = await this.fyo.getValue(ModelNameEnum.Item, item.item, "hasBatch");
+      const hasBatch = await this.fyo.getValue(
+        ModelNameEnum.Item,
+        item.item,
+        'hasBatch'
+      );
 
       if (hasBatch) {
         batchesToCreate.push({
@@ -67,9 +71,8 @@ export class PurchaseInvoice extends Invoice {
     }
 
     const discountAmount = this.getTotalDiscount();
-    const discountAccount = this.fyo.singles.AccountingSettings?.discountAccount as
-      | string
-      | undefined;
+    const discountAccount = this.fyo.singles.AccountingSettings
+      ?.discountAccount as string | undefined;
     if (discountAccount && discountAmount.isPositive()) {
       if (this.isReturn) {
         await posting.debit(discountAccount, discountAmount.mul(exchangeRate));
@@ -85,12 +88,12 @@ export class PurchaseInvoice extends Invoice {
   static getListViewSettings(): ListViewSettings {
     return {
       columns: [
-        "name",
+        'name',
         getTransactionStatusColumn(),
-        "party",
-        "date",
-        "baseGrandTotal",
-        "outstandingAmount",
+        'party',
+        'date',
+        'baseGrandTotal',
+        'outstandingAmount',
       ],
     };
   }

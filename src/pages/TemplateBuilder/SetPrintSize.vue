@@ -9,7 +9,13 @@
             t`Select a pre-defined page size, or set a custom page size for your Print Template.`
           }}
         </text>
-        <Select :df="df" :value="size" :border="true" :show-label="true" @change="sizeChange" />
+        <Select
+          :df="df"
+          :value="size"
+          :border="true"
+          :show-label="true"
+          @change="sizeChange"
+        />
         <view class="flex gap-4 w-full">
           <Float
             class="w-full"
@@ -30,7 +36,9 @@
         </view>
       </view>
       <view class="flex border-t border-border p-4">
-        <Button class="ml-auto" type="primary" @tap="done">{{ t`Done` }}</Button>
+        <Button class="ml-auto" type="primary" @tap="done">{{
+          t`Done`
+        }}</Button>
       </view>
     </view>
   </view>
@@ -38,23 +46,25 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Set Print Size</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { PrintTemplate } from "models/baseModels/PrintTemplate";
-import { OptionField } from "schemas/types";
-import Button from "src/components/Button.vue";
-import Float from "src/components/Controls/Float.vue";
-import Select from "src/components/Controls/Select.vue";
-import FormHeader from "src/components/FormHeader.vue";
-import { paperSizeMap, printSizes } from "src/utils/ui";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
+import { ref, computed, onMounted } from 'vue';
+import { PrintTemplate } from 'models/baseModels/PrintTemplate';
+import { OptionField } from 'schemas/types';
+import Button from 'src/components/Button.vue';
+import Float from 'src/components/Controls/Float.vue';
+import Select from 'src/components/Controls/Select.vue';
+import FormHeader from 'src/components/FormHeader.vue';
+import { paperSizeMap, printSizes } from 'src/utils/ui';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 type SizeName = (typeof printSizes)[number];
 
@@ -65,22 +75,22 @@ const props = defineProps<{
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "done"): void;
+  (e: 'done'): void;
 }>();
 
 // Reactive State
-const size = ref("A4");
+const size = ref('A4');
 const width = ref(21);
 const height = ref(29.7);
 
 // Computed Properties
 const df = computed<OptionField>(() => {
   return {
-    label: "Page Size",
-    fieldname: "size",
-    fieldtype: "Select",
+    label: 'Page Size',
+    fieldname: 'size',
+    fieldtype: 'Select',
     options: printSizes.map((value) => ({ value, label: value })),
-    default: "A4",
+    default: 'A4',
   };
 });
 
@@ -95,26 +105,26 @@ const sizeChange = (v: string) => {
   width.value = paperSize.width;
 };
 
-const valueChange = (v: number, name: "width" | "height") => {
-  if (name === "width") {
+const valueChange = (v: number, name: 'width' | 'height') => {
+  if (name === 'width') {
     if (width.value === v) {
       return;
     }
-    size.value = "Custom";
+    size.value = 'Custom';
     width.value = v;
   } else {
     if (height.value === v) {
       return;
     }
-    size.value = "Custom";
+    size.value = 'Custom';
     height.value = v;
   }
 };
 
 const done = async () => {
-  await props.doc.set("width", width.value);
-  await props.doc.set("height", height.value);
-  emit("done");
+  await props.doc.set('width', width.value);
+  await props.doc.set('height', height.value);
+  emit('done');
 };
 
 // Lifecycles
@@ -122,13 +132,13 @@ onMounted(() => {
   width.value = props.doc.width ?? 21;
   height.value = props.doc.height ?? 29.7;
 
-  size.value = "";
+  size.value = '';
   Object.entries(paperSizeMap).forEach(([name, paperSize]) => {
     if (width.value === paperSize.width && height.value === paperSize.height) {
       size.value = name;
     }
   });
 
-  size.value ||= "Custom";
+  size.value ||= 'Custom';
 });
 </script>

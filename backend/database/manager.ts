@@ -1,17 +1,17 @@
-import fs from "fs";
-import { DatabaseError } from "fyo/utils/errors";
-import path from "path";
-import pkg from "../../package.json";
-import { DatabaseDemuxBase, DatabaseMethod } from "utils/db/types";
-import { getMapFromList } from "utils/index";
-import { Version } from "utils/version";
-import { getSchemas } from "../../schemas";
-import { databaseMethodSet, unlinkIfExists } from "../helpers";
-import patches from "../patches";
-import { BespokeQueries } from "./bespoke";
-import DatabaseCore from "./core";
-import { runPatches } from "./runPatch";
-import { BespokeFunction, Patch, RawCustomField } from "./types";
+import fs from 'fs';
+import { DatabaseError } from 'fyo/utils/errors';
+import path from 'path';
+import pkg from '../../package.json';
+import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
+import { getMapFromList } from 'utils/index';
+import { Version } from 'utils/version';
+import { getSchemas } from '../../schemas';
+import { databaseMethodSet, unlinkIfExists } from '../helpers';
+import patches from '../patches';
+import { BespokeQueries } from './bespoke';
+import DatabaseCore from './core';
+import { runPatches } from './runPatch';
+import { BespokeFunction, Patch, RawCustomField } from './types';
 
 export class DatabaseManager extends DatabaseDemuxBase {
   db?: DatabaseCore;
@@ -23,15 +23,15 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   getSchemaMap() {
     if (this.#isInitialized) {
-      return this.db?.schemaMap ?? getSchemas("-", this.rawCustomFields);
+      return this.db?.schemaMap ?? getSchemas('-', this.rawCustomFields);
     }
 
-    return getSchemas("-", this.rawCustomFields);
+    return getSchemas('-', this.rawCustomFields);
   }
 
   async createNewDatabase(dbPath: string, countryCode: string) {
     if (this.db) {
-      await this.call("close");
+      await this.call('close');
     }
     await unlinkIfExists(dbPath);
     return await this.connectToDatabase(dbPath, countryCode);
@@ -39,7 +39,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async connectToDatabase(dbPath: string, countryCode?: string) {
     if (this.db) {
-      await this.call("close");
+      await this.call('close');
     }
     countryCode = await this._connect(dbPath, countryCode);
     await this.#migrate();
@@ -58,7 +58,9 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async setRawCustomFields() {
     try {
-      this.rawCustomFields = (await this.db?.getAll("CustomField")) as RawCustomField[];
+      this.rawCustomFields = (await this.db?.getAll(
+        'CustomField'
+      )) as RawCustomField[];
     } catch {}
   }
 
@@ -77,13 +79,13 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async #executeMigration(isFirstRun?: boolean) {
     isFirstRun ??= await this.#getIsFirstRun();
-    let version = "0.0.0";
+    let version = '0.0.0';
 
     if (isFirstRun) {
       try {
-        version = pkg.version || "0.37.8";
+        version = pkg.version || '0.37.8';
       } catch {
-        version = "0.37.8";
+        version = '0.37.8';
       }
 
       try {
@@ -92,17 +94,17 @@ export class DatabaseManager extends DatabaseDemuxBase {
           sql: `INSERT OR REPLACE INTO "SingleValue" (name, parent, fieldname, value, createdBy, modifiedBy, created, modified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           args: [
             `SystemSettings.version`,
-            "SystemSettings",
-            "version",
+            'SystemSettings',
+            'version',
             version,
-            "__SYSTEM__",
-            "__SYSTEM__",
+            '__SYSTEM__',
+            '__SYSTEM__',
             now,
             now,
           ],
         });
       } catch (err) {
-        console.error("Failed to set initial version:", err);
+        console.error('Failed to set initial version:', err);
       }
     } else {
       version = await this.#getAppVersion();
@@ -128,20 +130,22 @@ export class DatabaseManager extends DatabaseDemuxBase {
     await runPatches(patches.post, this, version);
   }
 
-  async #getPatchesToExecute(version: string): Promise<{ pre: Patch[]; post: Patch[] }> {
+  async #getPatchesToExecute(
+    version: string
+  ): Promise<{ pre: Patch[]; post: Patch[] }> {
     if (this.db === undefined) {
       return { pre: [], post: [] };
     }
 
-    const query = (await this.db.getAll("PatchRun", {
-      fields: ["name", "version", "failed"],
+    const query = (await this.db.getAll('PatchRun', {
+      fields: ['name', 'version', 'failed'],
     })) as {
       name: string;
       version?: string;
       failed?: boolean;
     }[];
 
-    const runPatchesMap = getMapFromList(query, "name");
+    const runPatchesMap = getMapFromList(query, 'name');
     /**
      * A patch is run only if:
      * - it hasn't run and was added in a future version
@@ -180,7 +184,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
     // @ts-expect-error
     const response = await Reflect.get(this.db, method).call(this.db, ...args);
-    if (method === "close") {
+    if (method === 'close') {
       delete this.db;
     }
 
@@ -198,7 +202,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
     const queryFunction: BespokeFunction = Reflect.get(
       BespokeQueries,
-      method as keyof BespokeFunction,
+      method as keyof BespokeFunction
     );
     return await queryFunction(this.db!, ...args);
   }
@@ -242,29 +246,29 @@ export class DatabaseManager extends DatabaseDemuxBase {
       try {
         await fs.promises.copyFile(dbPath, backupPath);
       } catch (copyErr) {
-        console.error("Failed to create backup:", copyErr);
+        console.error('Failed to create backup:', copyErr);
       }
     }
   }
 
   async #getBackupFilePath() {
     const { dbPath } = this.db ?? {};
-    if (dbPath === ":memory:" || !dbPath) {
+    if (dbPath === ':memory:' || !dbPath) {
       return null;
     }
 
     let fileName = path.parse(dbPath).name;
-    if (fileName.endsWith(".books")) {
+    if (fileName.endsWith('.books')) {
       fileName = fileName.slice(0, -6);
     }
 
     const resolvedDbPath = path.normalize(path.resolve(dbPath));
     const baseDir = path.dirname(resolvedDbPath);
-    const backupFolder = path.normalize(path.resolve(baseDir, "backups"));
+    const backupFolder = path.normalize(path.resolve(baseDir, 'backups'));
     if (!backupFolder.startsWith(baseDir)) {
-      throw new Error("Path traversal detected");
+      throw new Error('Path traversal detected');
     }
-    const date = new Date().toISOString().split("T")[0];
+    const date = new Date().toISOString().split('T')[0];
     const version = await this.#getAppVersion();
     const backupFile = `${fileName}_${version}_${date}.db`;
     fs.mkdirSync(backupFolder, { recursive: true });
@@ -273,15 +277,15 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async #getAppVersion(): Promise<string> {
     if (!this.db || !this.db.client) {
-      return "0.0.0";
+      return '0.0.0';
     }
 
     const query = await this.db.getSingleValues({
-      fieldname: "version",
-      parent: "SystemSettings",
+      fieldname: 'version',
+      parent: 'SystemSettings',
     });
     const value = query[0]?.value;
-    return (value as string) || "0.0.0";
+    return (value as string) || '0.0.0';
   }
 }
 

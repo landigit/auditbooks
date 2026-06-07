@@ -1,13 +1,16 @@
-import { Fyo } from "fyo";
-import { DocValue } from "fyo/core/types";
-import { isPesa } from "fyo/utils";
-import { deepEqual, getIsNullOrUndef } from "utils";
-import { Field, FieldType, FieldTypeEnum } from "schemas/types";
-import { Doc } from "./doc";
-import { FormulaMap } from "./types";
+import { Fyo } from 'fyo';
+import { DocValue } from 'fyo/core/types';
+import { isPesa } from 'fyo/utils';
+import { deepEqual, getIsNullOrUndef } from 'utils';
+import { Field, FieldType, FieldTypeEnum } from 'schemas/types';
+import { Doc } from './doc';
+import { FormulaMap } from './types';
 
-export function areDocValuesEqual(dvOne: DocValue | Doc[], dvTwo: DocValue | Doc[]): boolean {
-  if (["string", "number"].includes(typeof dvOne) || dvOne instanceof Date) {
+export function areDocValuesEqual(
+  dvOne: DocValue | Doc[],
+  dvTwo: DocValue | Doc[]
+): boolean {
+  if (['string', 'number'].includes(typeof dvOne) || dvOne instanceof Date) {
     return dvOne === dvTwo;
   }
 
@@ -22,7 +25,10 @@ export function areDocValuesEqual(dvOne: DocValue | Doc[], dvTwo: DocValue | Doc
   return deepEqual(dvOne, dvTwo);
 }
 
-export function getPreDefaultValues(fieldtype: FieldType, fyo: Fyo): DocValue | Doc[] {
+export function getPreDefaultValues(
+  fieldtype: FieldType,
+  fyo: Fyo
+): DocValue | Doc[] {
   switch (fieldtype) {
     case FieldTypeEnum.Table:
       return [] as Doc[];
@@ -47,10 +53,10 @@ export function getMissingMandatoryMessage(doc: Doc) {
         return isNullOrUndef || (value as Doc[])?.length === 0;
       }
 
-      return isNullOrUndef || value === "";
+      return isNullOrUndef || value === '';
     })
     .map((f) => f.label ?? f.fieldname)
-    .join(", ");
+    .join(', ');
 
   if (message && doc.schema.isChild && doc.parentdoc && doc.parentFieldname) {
     const parentfield = doc.parentdoc.fieldMap[doc.parentFieldname];
@@ -106,7 +112,11 @@ export function shouldApplyFormula(field: Field, doc: Doc, fieldname?: string) {
   return getIsNullOrUndef(value);
 }
 
-function shouldApplyFormulaPreSync(fieldname: string, dependsOn: string[], doc: Doc): boolean {
+function shouldApplyFormulaPreSync(
+  fieldname: string,
+  dependsOn: string[],
+  doc: Doc
+): boolean {
   if (isDocValueTruthy(doc.get(fieldname))) {
     return false;
   }
@@ -145,12 +155,14 @@ export function getFormulaSequence(formulas: FormulaMap) {
       acc[k] = [...(formulas[k]?.dependsOn ?? [])];
       return acc;
     },
-    {} as Record<string, string[] | undefined>,
+    {} as Record<string, string[] | undefined>
   );
   return sequenceDependencies(depMap);
 }
 
-function sequenceDependencies(depMap: Record<string, string[] | undefined>): string[] {
+function sequenceDependencies(
+  depMap: Record<string, string[] | undefined>
+): string[] {
   /**
    * Sufficiently okay algo to sequence dependents after
    * their dependencies

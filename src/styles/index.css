@@ -3,36 +3,36 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-weight: 100 900;
   font-display: swap;
   font-style: normal;
-  src: url("src/assets/fonts/Inter.var.woff2") format("woff2");
+  src: url('src/assets/fonts/Inter.var.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: "GoogleSansFlex";
+  font-family: 'GoogleSansFlex';
   font-weight: 100 900;
   font-display: swap;
   font-style: normal;
-  src: url("src/assets/fonts/GoogleSansFlex.Var.woff2") format("woff2");
+  src: url('src/assets/fonts/GoogleSansFlex.Var.woff2') format('woff2');
 }
 
 @font-face {
-  font-family: "RedHatText";
+  font-family: 'RedHatText';
   font-weight: 100 900;
   font-display: swap;
   font-style: normal;
-  src: url("src/assets/fonts/RedHatText-Var.woff2") format("woff2");
+  src: url('src/assets/fonts/RedHatText-Var.woff2') format('woff2');
 }
 
 * {
   outline-color: var(--color-pink-400);
-  font-variation-settings: "slnt" 0deg;
+  font-variation-settings: 'slnt' 0deg;
 }
 
 .italic {
-  font-variation-settings: "slnt" 10deg;
+  font-variation-settings: 'slnt' 10deg;
 }
 @layer base {
   :root {
@@ -194,7 +194,7 @@
     --text-3xl: 26px;
     --text-4xl: 30px;
 
-    --font-sans: var(--app-font), "Inter", sans-serif;
+    --font-sans: var(--app-font), 'Inter', sans-serif;
 
     /* Spacing */
     --spacing-7: 1.75rem;
@@ -325,7 +325,7 @@
     --color-error-rgb: 204, 41, 41; /* #cc2929 */
     --color-indicator-blue-bg-rgb: 51, 161, 255; /* #33a1ff */
 
-    --app-font: "GoogleSansFlex";
+    --app-font: 'GoogleSansFlex';
     --w-form: 600px;
     --w-app: 1200px;
     --w-sidebar: 14rem;
@@ -442,12 +442,12 @@
     color-scheme: dark;
   }
 
-  html.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  html.dark input[type='date']::-webkit-calendar-picker-indicator {
     background-color: transparent;
     color-scheme: dark;
   }
 
-  input[type="number"]::-webkit-inner-spin-button {
+  input[type='number']::-webkit-inner-spin-button {
     appearance: none;
   }
 }
@@ -543,7 +543,7 @@
 }
 
 .show-mandatory::after {
-  content: "*";
+  content: '*';
   display: inline-block;
   width: 0px;
   height: 0px;
@@ -614,13 +614,13 @@
 }
 
 /* RTL Support */
-[dir="rtl"] .rtl-rotate-180 {
+[dir='rtl'] .rtl-rotate-180 {
   transform: rotate(180deg);
 }
-[dir="rtl"] .custom-scroll::-webkit-scrollbar-track:vertical {
+[dir='rtl'] .custom-scroll::-webkit-scrollbar-track:vertical {
   border-right: solid 1px var(--color-border);
 }
-.dark [dir="rtl"] .custom-scroll::-webkit-scrollbar-track:vertical {
+.dark [dir='rtl'] .custom-scroll::-webkit-scrollbar-track:vertical {
   border-right: solid 1px var(--color-gray-850);
 }
 

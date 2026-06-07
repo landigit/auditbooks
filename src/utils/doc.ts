@@ -1,13 +1,16 @@
-import { Doc } from "fyo/model/doc";
-import { Field, TargetField } from "schemas/types";
-import { GetAllOptions } from "utils/db/types";
+import { Doc } from 'fyo/model/doc';
+import { Field, TargetField } from 'schemas/types';
+import { GetAllOptions } from 'utils/db/types';
 
 export function evaluateReadOnly(field: Field, doc?: Doc) {
-  if (doc?.inserted && field.fieldname === "numberSeries") {
+  if (doc?.inserted && field.fieldname === 'numberSeries') {
     return true;
   }
 
-  if (field.fieldname === "name" && (doc?.inserted || doc?.schema.naming !== "manual")) {
+  if (
+    field.fieldname === 'name' &&
+    (doc?.inserted || doc?.schema.naming !== 'manual')
+  ) {
     return true;
   }
 
@@ -19,26 +22,26 @@ export function evaluateReadOnly(field: Field, doc?: Doc) {
     return true;
   }
 
-  return evaluateFieldMeta(field, doc, "readOnly");
+  return evaluateFieldMeta(field, doc, 'readOnly');
 }
 
 export function evaluateHidden(field: Field, doc?: Doc) {
-  return evaluateFieldMeta(field, doc, "hidden");
+  return evaluateFieldMeta(field, doc, 'hidden');
 }
 
 export function evaluateInvisible(field: Field, doc?: Doc) {
-  return evaluateFieldMeta(field, doc, "invisible");
+  return evaluateFieldMeta(field, doc, 'invisible');
 }
 
 export function evaluateRequired(field: Field, doc?: Doc) {
-  return evaluateFieldMeta(field, doc, "required");
+  return evaluateFieldMeta(field, doc, 'required');
 }
 
 function evaluateFieldMeta(
   field: Field,
   doc?: Doc,
-  meta?: "required" | "hidden" | "invisible" | "readOnly",
-  defaultValue = false,
+  meta?: 'required' | 'hidden' | 'invisible' | 'readOnly',
+  defaultValue = false
 ) {
   if (meta === undefined) {
     return defaultValue;
@@ -51,16 +54,20 @@ function evaluateFieldMeta(
 
   const docRecord = doc as Record<string, unknown> | undefined;
   const metaKey = meta as string;
-  const metaObj = docRecord?.[metaKey] as Record<string, (() => boolean) | undefined> | undefined;
+  const metaObj = docRecord?.[metaKey] as
+    | Record<string, (() => boolean) | undefined>
+    | undefined;
   const evalFunction = metaObj?.[field.fieldname];
-  if (typeof evalFunction === "function") {
+  if (typeof evalFunction === 'function') {
     return evalFunction();
   }
 
   return defaultValue;
 }
 
-export async function getLinkedEntries(doc: Doc): Promise<Record<string, string[]>> {
+export async function getLinkedEntries(
+  doc: Doc
+): Promise<Record<string, string[]>> {
   // TODO: Normalize this function.
   const fyo = doc.fyo;
   const target = doc.schemaName;
@@ -69,13 +76,15 @@ export async function getLinkedEntries(doc: Doc): Promise<Record<string, string[
     .filter((sch) => !sch?.isSingle)
     .map((sch) => sch?.fields)
     .flat()
-    .filter((f) => f?.fieldtype === "Link" && f.target === target) as TargetField[];
+    .filter(
+      (f) => f?.fieldtype === 'Link' && f.target === target
+    ) as TargetField[];
 
   const dynamicLinkingFields = Object.values(fyo.schemaMap)
     .filter((sch) => !sch?.isSingle)
     .map((sch) => sch?.fields)
     .flat()
-    .filter((f) => f?.fieldtype === "DynamicLink");
+    .filter((f) => f?.fieldtype === 'DynamicLink');
 
   type Detail = { name: string; created: string };
   type ChildEntryDetail = {
@@ -93,18 +102,18 @@ export async function getLinkedEntries(doc: Doc): Promise<Record<string, string[
 
     const options: GetAllOptions = {
       filters: { [field.fieldname]: doc.name! },
-      fields: ["name"],
+      fields: ['name'],
     };
 
-    if (field.fieldtype === "DynamicLink") {
+    if (field.fieldtype === 'DynamicLink') {
       options.filters![field.references] = doc.schemaName!;
     }
 
     const schema = fyo.schemaMap[field.schemaName];
     if (schema?.isChild) {
-      options.fields!.push("parent", "parentSchemaName");
+      options.fields!.push('parent', 'parentSchemaName');
     } else {
-      options.fields?.push("created");
+      options.fields?.push('created');
     }
 
     if (schema?.isSubmittable) {
@@ -120,7 +129,7 @@ export async function getLinkedEntries(doc: Doc): Promise<Record<string, string[
     }
 
     for (const d of details) {
-      if ("parent" in d) {
+      if ('parent' in d) {
         childEntries[field.schemaName] ??= [];
         childEntries[field.schemaName].push(d);
       } else {
@@ -135,13 +144,13 @@ export async function getLinkedEntries(doc: Doc): Promise<Record<string, string[
     .map((c) => `${c.parentSchemaName}.${c.parent}`);
   const parentsSet = new Set(parents);
   for (const p of parentsSet) {
-    const i = p.indexOf(".");
+    const i = p.indexOf('.');
     const schemaName = p.slice(0, i);
     const name = p.slice(i + 1);
 
     const details = (await fyo.db.getAllRaw(schemaName, {
       filters: { name },
-      fields: ["name", "created"],
+      fields: ['name', 'created'],
     })) as Detail[];
 
     entries[schemaName] ??= [];

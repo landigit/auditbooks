@@ -2,16 +2,21 @@
   <view v-if="!isLynx">
     <Modal class="h-auto" :set-close-listener="false">
       <view class="px-5" style="width: 30vw">
-        <text class="text-center text-description font-semibold py-3">Keyboard</text>
+        <text class="text-center text-description font-semibold py-3"
+          >Keyboard</text
+        >
         <view class="border-b border-border" />
         <view class="mx-6 my-3">
           <component
             :is="selectedItemRow?.fieldMap[selectedItemField!].fieldtype"
             ref="dynamicInput"
             :df="{
-              fieldname: selectedItemRow?.fieldMap[selectedItemField!].fieldname as string,
-              fieldtype: selectedItemRow?.fieldMap[selectedItemField!].fieldtype,
-              label: selectedItemRow?.fieldMap[selectedItemField!].label as string,
+              fieldname: selectedItemRow?.fieldMap[selectedItemField!]
+                .fieldname as string,
+              fieldtype:
+                selectedItemRow?.fieldMap[selectedItemField!].fieldtype,
+              label: selectedItemRow?.fieldMap[selectedItemField!]
+                .label as string,
             }"
             class="mb-3"
             :border="true"
@@ -132,7 +137,9 @@
                 @tap="saveSelectedItem()"
               >
                 <slot>
-                  <text class="uppercase text-lg text-indicator-green-text font-semibold">
+                  <text
+                    class="uppercase text-lg text-indicator-green-text font-semibold"
+                  >
                     {{ t`Save` }}
                   </text>
                 </slot>
@@ -148,7 +155,9 @@
                 @tap="closeKeyboardModal()"
               >
                 <slot>
-                  <text class="uppercase text-lg text-indicator-red-text font-semibold">
+                  <text
+                    class="uppercase text-lg text-indicator-red-text font-semibold"
+                  >
                     {{ t`Cancel` }}
                   </text>
                 </slot>
@@ -163,25 +172,27 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Keyboard Modal</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, inject, nextTick } from "vue";
-import Modal from "src/components/Modal.vue";
-import { ModelNameEnum } from "models/types";
-import Button from "src/components/Button.vue";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
-import { ValidationError } from "fyo/utils/errors";
-import { showToast } from "src/utils/interactive";
-import { validateQty } from "models/helpers";
-import { InvoiceItem } from "models/baseModels/InvoiceItem/InvoiceItem";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
+import { ref, watch, onMounted, inject, nextTick } from 'vue';
+import Modal from 'src/components/Modal.vue';
+import { ModelNameEnum } from 'models/types';
+import Button from 'src/components/Button.vue';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { ValidationError } from 'fyo/utils/errors';
+import { showToast } from 'src/utils/interactive';
+import { validateQty } from 'models/helpers';
+import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 // Define Props
 const props = withDefaults(
@@ -192,24 +203,24 @@ const props = withDefaults(
   }>(),
   {
     modalStatus: false,
-    selectedItemField: "",
-  },
+    selectedItemField: '',
+  }
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "toggleModal", value: string): void;
-  (e: "applyPricingRule"): void;
+  (e: 'toggleModal', value: string): void;
+  (e: 'applyPricingRule'): void;
 }>();
 
 // App Store / Context Injections
-const sinvDoc = inject("sinvDoc") as SalesInvoice;
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
 
 // Template Refs
 const dynamicInput = ref<any>(null);
 
 // Reactive State
-const selectedValue = ref("");
+const selectedValue = ref('');
 
 // Methods
 const focusInput = async () => {
@@ -220,30 +231,32 @@ const focusInput = async () => {
 };
 
 const appendValue = async (value: string) => {
-  if (value === "-") {
-    selectedValue.value = selectedValue.value.startsWith("-")
+  if (value === '-') {
+    selectedValue.value = selectedValue.value.startsWith('-')
       ? selectedValue.value
       : `-${selectedValue.value}`;
-  } else if (value === "+") {
-    selectedValue.value = selectedValue.value.startsWith("-")
+  } else if (value === '+') {
+    selectedValue.value = selectedValue.value.startsWith('-')
       ? selectedValue.value.slice(1)
       : selectedValue.value;
   } else {
-    selectedValue.value = selectedValue.value === "0" ? value : selectedValue.value + value;
+    selectedValue.value =
+      selectedValue.value === '0' ? value : selectedValue.value + value;
   }
 
   await focusInput();
 };
 
 const updateSelectedValue = () => {
-  selectedValue.value = "";
+  selectedValue.value = '';
 
   if (!props.selectedItemRow || !props.selectedItemField) {
     return;
   }
 
   if (
-    props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype !== ModelNameEnum.Currency
+    props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype !==
+    ModelNameEnum.Currency
   ) {
     selectedValue.value = props.selectedItemRow[
       props.selectedItemField as keyof SalesInvoiceItem
@@ -262,79 +275,82 @@ const saveSelectedItem = async () => {
     }
 
     if (
-      props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype === ModelNameEnum.Currency
+      props.selectedItemRow.fieldMap[props.selectedItemField].fieldtype ===
+      ModelNameEnum.Currency
     ) {
-      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] = fyo.pesa(
-        Number(selectedValue.value),
-      ) as any;
+      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
+        fyo.pesa(Number(selectedValue.value)) as any;
 
-      if (props.selectedItemField === "rate") {
+      if (props.selectedItemField === 'rate') {
         props.selectedItemRow.setRate = fyo.pesa(Number(selectedValue.value));
 
         await sinvDoc.runFormulas();
-        emit("toggleModal", "Keyboard");
+        emit('toggleModal', 'Keyboard');
         return;
       }
 
-      if (props.selectedItemField === "itemDiscountAmount") {
+      if (props.selectedItemField === 'itemDiscountAmount') {
         if (sinvDoc.grandTotal?.lte(selectedValue.value)) {
           props.selectedItemRow.itemDiscountAmount = fyo.pesa(Number(0));
 
           throw new ValidationError(
             fyo.t`Discount Amount (${fyo.format(
               selectedValue.value,
-              "Currency",
-            )}) cannot be greated than Amount (${fyo.format(sinvDoc.grandTotal, "Currency")}).`,
+              'Currency'
+            )}) cannot be greated than Amount (${fyo.format(sinvDoc.grandTotal, 'Currency')}).`
           );
         }
 
-        await props.selectedItemRow.set("setItemDiscountAmount", true);
+        await props.selectedItemRow.set('setItemDiscountAmount', true);
         await props.selectedItemRow.set(
-          "itemDiscountAmount",
-          fyo.pesa(Number(selectedValue.value)),
+          'itemDiscountAmount',
+          fyo.pesa(Number(selectedValue.value))
         );
       }
     } else {
-      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] = Number(
-        selectedValue.value,
-      ) as any;
+      props.selectedItemRow[props.selectedItemField as keyof SalesInvoiceItem] =
+        Number(selectedValue.value) as any;
 
-      if (props.selectedItemField === "itemDiscountPercent") {
+      if (props.selectedItemField === 'itemDiscountPercent') {
         if (Number(selectedValue.value) > 100) {
-          await props.selectedItemRow?.set("itemDiscountPercent", 0);
+          await props.selectedItemRow?.set('itemDiscountPercent', 0);
 
           throw new ValidationError(
-            fyo.t`Discount Percent (${selectedValue.value}) cannot be greater than 100.`,
+            fyo.t`Discount Percent (${selectedValue.value}) cannot be greater than 100.`
           );
         }
 
-        await props.selectedItemRow?.set("setItemDiscountAmount", false);
-        await props.selectedItemRow?.set("itemDiscountPercent", selectedValue.value);
+        await props.selectedItemRow?.set('setItemDiscountAmount', false);
+        await props.selectedItemRow?.set(
+          'itemDiscountPercent',
+          selectedValue.value
+        );
       }
 
-      if (props.selectedItemField === "quantity") {
+      if (props.selectedItemField === 'quantity') {
         const existingItems =
           sinvDoc.items?.filter(
             (invoiceItem: InvoiceItem) =>
-              invoiceItem.item === props.selectedItemRow?.item && !invoiceItem.isFreeItem,
+              invoiceItem.item === props.selectedItemRow?.item &&
+              !invoiceItem.isFreeItem
           ) ?? [];
 
         await validateQty(sinvDoc, props.selectedItemRow, existingItems);
 
-        emit("applyPricingRule");
+        emit('applyPricingRule');
       }
     }
 
     await sinvDoc.runFormulas();
-    emit("toggleModal", "Keyboard");
+    emit('toggleModal', 'Keyboard');
   } catch (error) {
     showToast({
-      type: "error",
+      type: 'error',
       message: t`${error as string}`,
     });
 
-    if (props.selectedItemField === "quantity") {
-      emit("applyPricingRule");
+    if (props.selectedItemField === 'quantity') {
+      emit('applyPricingRule');
     }
   }
 };
@@ -345,13 +361,13 @@ const deleteLast = async () => {
 };
 
 const reset = async () => {
-  selectedValue.value = "";
+  selectedValue.value = '';
   await focusInput();
 };
 
 const closeKeyboardModal = async () => {
   await reset();
-  emit("toggleModal", "Keyboard");
+  emit('toggleModal', 'Keyboard');
 };
 
 // Watchers
@@ -363,7 +379,7 @@ watch(
       await focusInput();
     }
     updateSelectedValue();
-  },
+  }
 );
 
 // Lifecycles

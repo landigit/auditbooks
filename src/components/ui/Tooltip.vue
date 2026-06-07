@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue';
 import {
   TooltipProvider,
   TooltipRoot,
@@ -7,14 +7,17 @@ import {
   type TooltipRootEmits,
   type TooltipRootProps,
   useForwardPropsEmits,
-} from "reka-ui";
-import TooltipContent from "./TooltipContent.vue";
+} from 'reka-ui';
+import TooltipContent from './TooltipContent.vue';
 
-import { useRoute } from "vue-router";
+import { useRoute } from 'vue-router';
 
-const props = withDefaults(defineProps<TooltipRootProps & { open?: boolean }>(), {
-  delayDuration: 300,
-});
+const props = withDefaults(
+  defineProps<TooltipRootProps & { open?: boolean }>(),
+  {
+    delayDuration: 300,
+  }
+);
 const emits = defineEmits<TooltipRootEmits>();
 
 const forwarded = useForwardPropsEmits(props, emits);
@@ -57,7 +60,7 @@ watch(
   () => props.open,
   (val) => {
     if (val !== undefined) isOpen.value = val;
-  },
+  }
 );
 watch(internalOpen, (val) => {
   isOpen.value = val;
@@ -70,7 +73,7 @@ watch(
   () => {
     internalOpen.value = false;
     isOpen.value = false;
-  },
+  }
 );
 </script>
 

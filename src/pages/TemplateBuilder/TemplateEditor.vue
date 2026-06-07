@@ -6,22 +6,28 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Template Editor</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, markRaw } from "vue";
-import { autocompletion, CompletionContext } from "@codemirror/autocomplete";
-import { vue } from "@codemirror/lang-vue";
-import { HighlightStyle, syntaxHighlighting, syntaxTree } from "@codemirror/language";
-import { Compartment, EditorState } from "@codemirror/state";
-import { EditorView, ViewUpdate } from "@codemirror/view";
-import { tags } from "@lezer/highlight";
-import { basicSetup } from "codemirror";
-import { useAppStore } from "src/stores/app";
+import { ref, watch, onMounted, markRaw } from 'vue';
+import { autocompletion, CompletionContext } from '@codemirror/autocomplete';
+import { vue } from '@codemirror/lang-vue';
+import {
+  HighlightStyle,
+  syntaxHighlighting,
+  syntaxTree,
+} from '@codemirror/language';
+import { Compartment, EditorState } from '@codemirror/state';
+import { EditorView, ViewUpdate } from '@codemirror/view';
+import { tags } from '@lezer/highlight';
+import { basicSetup } from 'codemirror';
+import { useAppStore } from 'src/stores/app';
 
 // Define Props
 const props = withDefaults(
@@ -33,13 +39,13 @@ const props = withDefaults(
   {
     disabled: false,
     hints: undefined,
-  },
+  }
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "input", value: string): void;
-  (e: "blur", value: string): void;
+  (e: 'input', value: string): void;
+  (e: 'blur', value: string): void;
 }>();
 
 // Template Refs
@@ -54,11 +60,11 @@ const store = useAppStore();
 // Methods
 const updateListener = (update: ViewUpdate) => {
   if (update.docChanged) {
-    emit("input", view.value?.state.doc.toString() ?? "");
+    emit('input', view.value?.state.doc.toString() ?? '');
   }
 
   if (update.focusChanged && !view.value?.hasFocus) {
-    emit("blur", view.value?.state.doc.toString() ?? "");
+    emit('blur', view.value?.state.doc.toString() ?? '');
   }
 };
 
@@ -77,23 +83,23 @@ const init = () => {
   const editable = new Compartment();
 
   const highlightStyle = HighlightStyle.define([
-    { tag: tags.typeName, color: "var(--color-syntax-type)" },
-    { tag: tags.angleBracket, color: "var(--color-syntax-angle)" },
-    { tag: tags.attributeName, color: "var(--color-syntax-attr-name)" },
-    { tag: tags.attributeValue, color: "var(--color-syntax-attr-value)" },
+    { tag: tags.typeName, color: 'var(--color-syntax-type)' },
+    { tag: tags.angleBracket, color: 'var(--color-syntax-angle)' },
+    { tag: tags.attributeName, color: 'var(--color-syntax-attr-name)' },
+    { tag: tags.attributeValue, color: 'var(--color-syntax-attr-value)' },
     {
       tag: tags.comment,
-      color: "var(--color-syntax-comment)",
-      fontStyle: "italic",
+      color: 'var(--color-syntax-comment)',
+      fontStyle: 'italic',
     },
-    { tag: tags.keyword, color: "var(--color-syntax-keyword)" },
-    { tag: tags.variableName, color: "var(--color-syntax-variable)" },
-    { tag: tags.string, color: "var(--color-syntax-string)" },
+    { tag: tags.keyword, color: 'var(--color-syntax-keyword)' },
+    { tag: tags.variableName, color: 'var(--color-syntax-variable)' },
+    { tag: tags.string, color: 'var(--color-syntax-string)' },
   ]);
   const completions = getCompletionsFromHints(props.hints ?? {});
 
   if (!container.value) {
-    throw new Error("container is not initialized");
+    throw new Error('container is not initialized');
   }
 
   const editorView = new EditorView({
@@ -120,7 +126,7 @@ watch(
   () => props.disabled,
   (value: boolean) => {
     setDisabled(value);
-  },
+  }
 );
 
 // Lifecycles
@@ -129,7 +135,7 @@ onMounted(() => {
     init();
   }
 
-  if (typeof window !== "undefined" && store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-expect-error
     window.te = {
       editorState,
@@ -152,7 +158,7 @@ function getCompletionsFromHints(hints: Record<string, unknown>) {
     }
 
     const node = syntaxTree(context.state as any).resolveInner(context.pos);
-    const aptLocation = ["ScriptAttributeValue", "SingleExpression"];
+    const aptLocation = ['ScriptAttributeValue', 'SingleExpression'];
 
     if (!aptLocation.includes(node.name)) {
       return null;
@@ -175,8 +181,11 @@ type CompletionOption = {
   detail: string;
 };
 
-function hintsToCompletionOptions(hints: object, prefix?: string): CompletionOption[] {
-  prefix ??= "";
+function hintsToCompletionOptions(
+  hints: object,
+  prefix?: string
+): CompletionOption[] {
+  prefix ??= '';
   const list: CompletionOption[] = [];
 
   for (const [key, value] of Object.entries(hints)) {
@@ -199,30 +208,30 @@ function hintsToCompletionOptions(hints: object, prefix?: string): CompletionOpt
 function getCompletionOption(
   key: string,
   value: unknown,
-  prefix: string,
+  prefix: string
 ): null | CompletionOption | CompletionOption[] {
   let label = key;
   if (prefix.length) {
-    label = prefix + "." + key;
+    label = prefix + '.' + key;
   }
 
   if (Array.isArray(value)) {
     return {
       label,
-      type: "variable",
-      detail: "Child Table",
+      type: 'variable',
+      detail: 'Child Table',
     };
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return {
       label,
-      type: "variable",
+      type: 'variable',
       detail: value,
     };
   }
 
-  if (typeof value === "object" && value !== null) {
+  if (typeof value === 'object' && value !== null) {
     return hintsToCompletionOptions(value, label);
   }
 

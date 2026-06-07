@@ -16,7 +16,10 @@
           class="w-4 h-4 text-description"
         />
       </view>
-      <view v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-1 md:grid-cols-2">
+      <view
+        v-if="!collapsed"
+        class="grid gap-4 gap-x-8 grid-cols-1 md:grid-cols-2"
+      >
         <view
           v-for="field of fields"
           :key="field.fieldname"
@@ -58,7 +61,10 @@
                 $emit('row-change', field, value, parentfield)
             "
           />
-          <view v-if="errors?.[field.fieldname]" class="text-sm text-error mt-1">
+          <view
+            v-if="errors?.[field.fieldname]"
+            class="text-sm text-error mt-1"
+          >
             {{ errors[field.fieldname] }}
           </view>
         </view>
@@ -72,10 +78,16 @@
     </view>
     <!-- Fields list -->
     <view class="flex flex-col gap-4">
-      <view v-for="field of fields" :key="field.fieldname" class="flex flex-col">
+      <view
+        v-for="field of fields"
+        :key="field.fieldname"
+        class="flex flex-col"
+      >
         <!-- If it's a Table fieldtype (e.g. Sales Invoice Items) -->
         <view v-if="field.fieldtype === 'Table'" class="flex flex-col">
-          <text class="text-description text-sm mb-2 font-semibold">{{ field.label }}</text>
+          <text class="text-description text-sm mb-2 font-semibold">{{
+            field.label
+          }}</text>
           <!-- Table Row items rendered as custom card list with delete/add -->
           <view
             v-for="(rowItem, idx) in tableValue(doc[field.fieldname])"
@@ -85,14 +97,18 @@
           >
             <view class="flex flex-col">
               <text class="text-sm font-medium text-main">{{
-                (rowItem as any).item || (rowItem as any).account || `Row ${idx + 1}`
+                (rowItem as any).item ||
+                (rowItem as any).account ||
+                `Row ${idx + 1}`
               }}</text>
               <text class="text-xs text-description">
                 Qty: {{ (rowItem as any).quantity ?? 1 }} | Rate:
-                {{ (rowItem as any).rate ?? "0.00" }}
+                {{ (rowItem as any).rate ?? '0.00' }}
               </text>
             </view>
-            <text class="font-bold text-main">{{ (rowItem as any).amount ?? "" }}</text>
+            <text class="font-bold text-main">{{
+              (rowItem as any).amount ?? ''
+            }}</text>
           </view>
           <!-- Add Row button -->
           <view
@@ -118,23 +134,25 @@
               @input="(e) => onNativeInput(field, e)"
             />
           </view>
-          <text v-if="errors?.[field.fieldname]" class="text-xs text-error mt-1">{{
-            errors[field.fieldname]
-          }}</text>
+          <text
+            v-if="errors?.[field.fieldname]"
+            class="text-xs text-error mt-1"
+            >{{ errors[field.fieldname] }}</text
+          >
         </view>
       </view>
     </view>
   </view>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { isLynx } from "src/utils/interactive";
-import { DocValue } from "fyo/core/types";
-import { Doc } from "fyo/model/doc";
-import { Field } from "schemas/types";
-import FormControl from "src/components/Controls/FormControl.vue";
-import Table from "src/components/Controls/Table.vue";
-import { focusOrSelectFormControl } from "src/utils/ui";
+import { ref, onMounted } from 'vue';
+import { isLynx } from 'src/utils/interactive';
+import { DocValue } from 'fyo/core/types';
+import { Doc } from 'fyo/model/doc';
+import { Field } from 'schemas/types';
+import FormControl from 'src/components/Controls/FormControl.vue';
+import Table from 'src/components/Controls/Table.vue';
+import { focusOrSelectFormControl } from 'src/utils/ui';
 
 // Define Props
 const props = withDefaults(
@@ -147,17 +165,17 @@ const props = withDefaults(
     fields: Field[];
   }>(),
   {
-    title: "",
+    title: '',
     showTitle: false,
     collapsible: true,
-  },
+  }
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "editrow", doc: any): void;
-  (e: "value-change", field: Field, value: DocValue): void;
-  (e: "row-change", field: Field, value: DocValue, parentfield: Field): void;
+  (e: 'editrow', doc: any): void;
+  (e: 'value-change', field: Field, value: DocValue): void;
+  (e: 'row-change', field: Field, value: DocValue, parentfield: Field): void;
 }>();
 
 // Reactive State
@@ -185,7 +203,7 @@ const toggleCollapsed = () => {
 
 const onNativeInput = (field: Field, e: any) => {
   const val = e.detail?.value !== undefined ? e.detail.value : e.target?.value;
-  emit("value-change", field, val);
+  emit('value-change', field, val);
 };
 
 // Lifecycles

@@ -1,6 +1,11 @@
 <template>
-  <view class="flex items-center bg-canvas-muted border-border rounded-md text-sm p-1 border">
-    <view class="rate-container gap-2" :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'">
+  <view
+    class="flex items-center bg-canvas-muted border-border rounded-md text-sm p-1 border"
+  >
+    <view
+      class="rate-container gap-2"
+      :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'"
+    >
       <input
         class="text-right text-description border-transparent focus:outline-none focus:ring-1 focus:ring-main bg-transparent border"
         v-model="fromValue"
@@ -14,7 +19,10 @@
 
     <text class="mx-1 text-description">=</text>
 
-    <view class="rate-container gap-2" :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'">
+    <view
+      class="rate-container gap-2"
+      :class="disabled ? 'bg-canvas-muted' : 'bg-canvas'"
+    >
       <input
         class="text-right text-description border-transparent focus:outline-none focus:ring-1 focus:ring-main bg-transparent border"
         type="number"
@@ -31,22 +39,25 @@
       class="bg-indicator-green-bg text-indicator-green-text px-2 ms-1 -me-0.5 h-full border-s border-border"
       @tap="swap"
     >
-      <lucide-icon name="refresh-cw" class="w-3 h-3 text-indicator-green-text" />
+      <lucide-icon
+        name="refresh-cw"
+        class="w-3 h-3 text-indicator-green-text"
+      />
     </view>
   </view>
 </template>
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { safeParseFloat } from "utils/index";
+import { ref, computed } from 'vue';
+import { safeParseFloat } from 'utils/index';
 
 const props = defineProps({
   disabled: { type: Boolean, default: false },
-  fromCurrency: { type: String, default: "USD" },
-  toCurrency: { type: String, default: "INR" },
+  fromCurrency: { type: String, default: 'USD' },
+  toCurrency: { type: String, default: 'INR' },
   exchangeRate: { type: Number, default: 75 },
 });
 
-const emit = defineEmits(["change"]);
+const emit = defineEmits(['change']);
 
 const fromValue = ref(1);
 const isSwapped = ref(false);
@@ -82,12 +93,12 @@ function rightChange(e: Event) {
     exchangeRate = fromValue.value / value;
   }
 
-  emit("change", exchangeRate);
+  emit('change', exchangeRate);
 }
 </script>
 <style scoped>
 @reference "../../styles/index.css";
-input[type="number"] {
+input[type='number'] {
   @apply w-12 bg-transparent p-0.5;
 }
 

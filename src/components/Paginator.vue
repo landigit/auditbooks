@@ -1,8 +1,13 @@
 <template>
-  <view class="grid grid-cols-3 text-main text-sm select-none items-center" style="height: 50px">
+  <view
+    class="grid grid-cols-3 text-main text-sm select-none items-center"
+    style="height: 50px"
+  >
     <!-- Length Display -->
     <view class="justify-self-start">
-      {{ `${(pageNo - 1) * count + 1} - ${Math.min(pageNo * count, itemCount)}` }}
+      {{
+        `${(pageNo - 1) * count + 1} - ${Math.min(pageNo * count, itemCount)}`
+      }}
     </view>
 
     <!-- Pagination Selector -->
@@ -10,7 +15,9 @@
       <LucideIcon
         name="chevron-left"
         class="w-4 h-4 rtl-rotate-180"
-        :class="pageNo > 1 ? 'text-description cursor-pointer' : 'text-transparent'"
+        :class="
+          pageNo > 1 ? 'text-description cursor-pointer' : 'text-transparent'
+        "
         @tap="() => setPageNo(Math.max(1, pageNo - 1))"
       />
       <view class="flex gap-1 bg-canvas-muted rounded">
@@ -20,7 +27,9 @@
           :value="pageNo"
           min="1"
           :max="maxPages"
-          @change="(e: Event) => setPageNo((e.target as HTMLInputElement).value)"
+          @change="
+            (e: Event) => setPageNo((e.target as HTMLInputElement).value)
+          "
           @input="(e: Event) => setPageNo((e.target as HTMLInputElement).value)"
         />
         <text class="text-description">/</text>
@@ -31,18 +40,27 @@
       <LucideIcon
         name="chevron-right"
         class="w-4 h-4 rtl-rotate-180"
-        :class="pageNo < maxPages ? 'text-description cursor-pointer' : 'text-transparent'"
+        :class="
+          pageNo < maxPages
+            ? 'text-description cursor-pointer'
+            : 'text-transparent'
+        "
         @tap="() => setPageNo(Math.min(maxPages, pageNo + 1))"
       />
     </view>
 
     <!-- Count Selector -->
-    <view v-if="filteredCounts.length" class="border border-border rounded flex justify-self-end">
+    <view
+      v-if="filteredCounts.length"
+      class="border border-border rounded flex justify-self-end"
+    >
       <template v-for="c in filteredCounts" :key="c + '-count'">
         <view
           class="w-9"
           :class="
-            count === c || (count === itemCount && c === -1) ? 'rounded bg-surface-hover' : ''
+            count === c || (count === itemCount && c === -1)
+              ? 'rounded bg-surface-hover'
+              : ''
           "
           @tap="setCount(c)"
         >
@@ -55,9 +73,9 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed, onMounted } from "vue";
-import LucideIcon from "src/components/LucideIcon.vue";
-import { t } from "fyo";
+import { ref, computed, onMounted } from 'vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
+import { t } from 'fyo';
 
 // --- Props & Emits ---
 const props = withDefaults(
@@ -68,11 +86,11 @@ const props = withDefaults(
   {
     itemCount: 0,
     allowedCounts: () => [50, 100, 500, -1],
-  },
+  }
 );
 
 const emit = defineEmits<{
-  (e: "index-change", indices: { start: number; end: number }): void;
+  (e: 'index-change', indices: { start: number; end: number }): void;
 }>();
 
 // --- State ---
@@ -109,7 +127,7 @@ function filterCount(c: number) {
 }
 
 function setPageNo(value: string | number) {
-  let parsedValue = typeof value === "string" ? parseInt(value) : value;
+  let parsedValue = typeof value === 'string' ? parseInt(value) : value;
 
   if (isNaN(parsedValue)) {
     return;
@@ -131,7 +149,7 @@ function setCount(c: number) {
 
 function emitIndices() {
   const indices = getSliceIndices();
-  emit("index-change", indices);
+  emit('index-change', indices);
 }
 
 function getSliceIndices() {

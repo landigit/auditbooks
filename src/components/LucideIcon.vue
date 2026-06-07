@@ -1,10 +1,15 @@
 <template>
-  <component :is="iconComponent" :size="size" :stroke-width="strokeWidth" class="lucide-icon" />
+  <component
+    :is="iconComponent"
+    :size="size"
+    :stroke-width="strokeWidth"
+    class="lucide-icon"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import * as icons from "@lucide/vue";
+import { computed } from 'vue';
+import * as icons from '@lucide/vue';
 
 interface LucideIconProps {
   name: string;
@@ -18,14 +23,16 @@ const props = withDefaults(defineProps<LucideIconProps>(), {
 });
 
 const toPascalCase = (str: string) =>
-  str.replace(/(^\w|-\w)/g, (match) => match.replace(/-/, "").toUpperCase());
+  str.replace(/(^\w|-\w)/g, (match) => match.replace(/-/, '').toUpperCase());
 
 const iconComponent = computed(() => {
   const iconName = toPascalCase(props.name);
   const Icon = (icons as Record<string, any>)[iconName];
 
   if (!Icon) {
-    console.warn(`[Lucide] Icon "${props.name}" (mapped to "${iconName}") not found.`);
+    console.warn(
+      `[Lucide] Icon "${props.name}" (mapped to "${iconName}") not found.`
+    );
     return null;
   }
 

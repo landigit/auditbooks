@@ -44,15 +44,17 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Template Builder Hint</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { PrintTemplateHint } from "src/utils/printTemplates";
+import { ref, onMounted } from 'vue';
+import { PrintTemplateHint } from 'src/utils/printTemplates';
 
 type HintRow = {
   key: string;
@@ -69,9 +71,9 @@ const props = withDefaults(
     level?: number;
   }>(),
   {
-    prefix: "",
+    prefix: '',
     level: 0,
-  },
+  }
 );
 
 // Reactive State
@@ -97,7 +99,7 @@ onMounted(() => {
     .map(([key, value]) => ({
       key,
       value,
-      isCollapsible: typeof value === "object",
+      isCollapsible: typeof value === 'object',
       collapsed: props.level > 0,
     }))
     .sort((a, b) => Number(a.isCollapsible) - Number(b.isCollapsible));

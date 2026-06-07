@@ -1,10 +1,10 @@
-import { defineComponent, h } from "vue";
+import { defineComponent, h } from 'vue';
 
 // Safe dummy component for all UI exports in Lynx native build
 const DummyComponent = defineComponent({
-  name: "DummyUiComponent",
+  name: 'DummyUiComponent',
   setup(_, { slots }) {
-    return () => (slots.default ? slots.default() : h("view"));
+    return () => (slots.default ? slots.default() : h('view'));
   },
 });
 

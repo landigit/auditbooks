@@ -57,22 +57,38 @@
 
         <view class="FormGroup">
           <text class="FormLabel">Company Name *</text>
-          <input class="FormInput" v-model="setupForm.companyName" placeholder="e.g. Acme Corp" />
+          <input
+            class="FormInput"
+            v-model="setupForm.companyName"
+            placeholder="e.g. Acme Corp"
+          />
         </view>
 
         <view class="FormGroup">
           <text class="FormLabel">Full Name *</text>
-          <input class="FormInput" v-model="setupForm.fullname" placeholder="e.g. John Doe" />
+          <input
+            class="FormInput"
+            v-model="setupForm.fullname"
+            placeholder="e.g. John Doe"
+          />
         </view>
 
         <view class="FormGroup">
           <text class="FormLabel">Email Address *</text>
-          <input class="FormInput" v-model="setupForm.email" placeholder="e.g. john@acme.com" />
+          <input
+            class="FormInput"
+            v-model="setupForm.email"
+            placeholder="e.g. john@acme.com"
+          />
         </view>
 
         <view class="FormGroup">
           <text class="FormLabel">Bank Name *</text>
-          <input class="FormInput" v-model="setupForm.bankName" placeholder="e.g. HDFC Bank" />
+          <input
+            class="FormInput"
+            v-model="setupForm.bankName"
+            placeholder="e.g. HDFC Bank"
+          />
         </view>
 
         <view class="FormActions">
@@ -139,10 +155,14 @@
                 </text>
                 <view
                   class="MetricBadge"
-                  :class="stats.netProfit >= 0 ? 'MetricBadge--profit' : 'MetricBadge--loss'"
+                  :class="
+                    stats.netProfit >= 0
+                      ? 'MetricBadge--profit'
+                      : 'MetricBadge--loss'
+                  "
                 >
                   <text class="MetricBadgeText">{{
-                    stats.netProfit >= 0 ? "Profit" : "Loss"
+                    stats.netProfit >= 0 ? 'Profit' : 'Loss'
                   }}</text>
                 </view>
               </view>
@@ -231,7 +251,9 @@
 
             <view class="DataList">
               <view v-if="!invoiceList.length" class="EmptyState">
-                <text class="EmptyText">No invoices found. Tap + to create one.</text>
+                <text class="EmptyText"
+                  >No invoices found. Tap + to create one.</text
+                >
               </view>
               <view
                 v-for="item in invoiceList"
@@ -252,7 +274,9 @@
                   <text class="DataRowSubtitle">{{ item.party }}</text>
                 </view>
                 <view class="DataRowSide">
-                  <text class="DataRowValue">{{ formatCurrency(item.grandTotal) }}</text>
+                  <text class="DataRowValue">{{
+                    formatCurrency(item.grandTotal)
+                  }}</text>
                   <text class="DataRowMeta">{{ item.postingDate }}</text>
                 </view>
               </view>
@@ -278,7 +302,9 @@
 
             <view class="DataList">
               <view v-if="!customerList.length" class="EmptyState">
-                <text class="EmptyText">No customers found. Tap + to add one.</text>
+                <text class="EmptyText"
+                  >No customers found. Tap + to add one.</text
+                >
               </view>
               <view
                 v-for="item in customerList"
@@ -297,7 +323,7 @@
                 <view class="DataRowMain">
                   <text class="DataRowTitle">{{ item.name }}</text>
                   <text class="DataRowSubtitle">{{
-                    item.phone || item.email || "No contact details"
+                    item.phone || item.email || 'No contact details'
                   }}</text>
                 </view>
                 <view class="DataRowSide">
@@ -353,7 +379,9 @@
                 </view>
                 <view class="DataRowSide">
                   <text class="DataRowMeta">Rate</text>
-                  <text class="DataRowValue text-blue">{{ formatCurrency(item.rate) }}</text>
+                  <text class="DataRowValue text-blue">{{
+                    formatCurrency(item.rate)
+                  }}</text>
                 </view>
               </view>
             </view>
@@ -406,75 +434,78 @@
   </view>
 </template>
 <script setup lang="ts">
-import { ref, shallowRef, computed, provide, onMounted } from "vue";
-import dayjs from "dayjs";
-import { ModelNameEnum } from "models/types";
-import WindowsTitleBar from "./components/WindowsTitleBar.vue";
-import { handleErrorWithDialog } from "./errorHandling";
-import { fyo } from "./initFyo";
-import { t } from "fyo";
-import DatabaseSelector from "./pages/DatabaseSelector.vue";
-import Desk from "./pages/Desk.vue";
-import SetupWizard from "./pages/SetupWizard/SetupWizard.vue";
-import setupInstance from "./setup/setupInstance";
-import { SetupWizardOptions } from "./setup/types";
-import "./styles/index.css";
-import { connectToDatabase, dbErrorActionSymbols } from "./utils/db";
-import { initializeInstance } from "./utils/initialization";
-import * as injectionKeys from "./utils/injectionKeys";
-import { showDialog, showToast, isLynx } from "./utils/interactive";
-import { setLanguageMap } from "./utils/language";
-import { updateConfigFiles } from "./utils/misc";
-import { updatePrintTemplates } from "./utils/printTemplates";
-import { Search } from "./utils/search";
-import { Shortcuts } from "./utils/shortcuts";
-import { routeTo } from "./utils/ui";
-import { useKeys } from "./utils/vueUtils";
-import { useAppStore } from "./stores/app";
-import { setTheme, setFont } from "src/utils/theme";
-import { registerInstanceToERPNext, updateERPNSyncSettings } from "./utils/erpnextSync";
-import { ERPNextSyncSettings } from "models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings";
-import { ErrorLogEnum } from "fyo/telemetry/types";
-import router from "src/router";
-import CommonForm from "./pages/CommonForm/CommonForm.vue";
-import ListView from "./pages/ListView/ListView.vue";
-import POS from "./pages/POS/POS.vue";
-import Settings from "./pages/Settings/Settings.vue";
-import Report from "./pages/Report.vue";
-import ChartOfAccounts from "./pages/ChartOfAccounts.vue";
-import Calendar from "./pages/Calendar.vue";
-import HelpView from "./pages/HelpView.vue";
-import ImportWizard from "./pages/ImportWizard.vue";
-import TemplateBuilder from "./pages/TemplateBuilder/TemplateBuilder.vue";
-import CustomizeForm from "./pages/CustomizeForm/CustomizeForm.vue";
-import PrintView from "./pages/PrintView/PrintView.vue";
-import ReportPrintView from "./pages/PrintView/ReportPrintView.vue";
-import GetStarted from "./pages/GetStarted.vue";
+import { ref, shallowRef, computed, provide, onMounted } from 'vue';
+import dayjs from 'dayjs';
+import { ModelNameEnum } from 'models/types';
+import WindowsTitleBar from './components/WindowsTitleBar.vue';
+import { handleErrorWithDialog } from './errorHandling';
+import { fyo } from './initFyo';
+import { t } from 'fyo';
+import DatabaseSelector from './pages/DatabaseSelector.vue';
+import Desk from './pages/Desk.vue';
+import SetupWizard from './pages/SetupWizard/SetupWizard.vue';
+import setupInstance from './setup/setupInstance';
+import { SetupWizardOptions } from './setup/types';
+import './styles/index.css';
+import { connectToDatabase, dbErrorActionSymbols } from './utils/db';
+import { initializeInstance } from './utils/initialization';
+import * as injectionKeys from './utils/injectionKeys';
+import { showDialog, showToast, isLynx } from './utils/interactive';
+import { setLanguageMap } from './utils/language';
+import { updateConfigFiles } from './utils/misc';
+import { updatePrintTemplates } from './utils/printTemplates';
+import { Search } from './utils/search';
+import { Shortcuts } from './utils/shortcuts';
+import { routeTo } from './utils/ui';
+import { useKeys } from './utils/vueUtils';
+import { useAppStore } from './stores/app';
+import { setTheme, setFont } from 'src/utils/theme';
+import {
+  registerInstanceToERPNext,
+  updateERPNSyncSettings,
+} from './utils/erpnextSync';
+import { ERPNextSyncSettings } from 'models/baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
+import { ErrorLogEnum } from 'fyo/telemetry/types';
+import router from 'src/router';
+import CommonForm from './pages/CommonForm/CommonForm.vue';
+import ListView from './pages/ListView/ListView.vue';
+import POS from './pages/POS/POS.vue';
+import Settings from './pages/Settings/Settings.vue';
+import Report from './pages/Report.vue';
+import ChartOfAccounts from './pages/ChartOfAccounts.vue';
+import Calendar from './pages/Calendar.vue';
+import HelpView from './pages/HelpView.vue';
+import ImportWizard from './pages/ImportWizard.vue';
+import TemplateBuilder from './pages/TemplateBuilder/TemplateBuilder.vue';
+import CustomizeForm from './pages/CustomizeForm/CustomizeForm.vue';
+import PrintView from './pages/PrintView/PrintView.vue';
+import ReportPrintView from './pages/PrintView/ReportPrintView.vue';
+import GetStarted from './pages/GetStarted.vue';
 
 enum Screen {
-  Desk = "Desk",
-  DatabaseSelector = "DatabaseSelector",
-  SetupWizard = "SetupWizard",
+  Desk = 'Desk',
+  DatabaseSelector = 'DatabaseSelector',
+  SetupWizard = 'SetupWizard',
 }
 
 // Setup Form State for Lynx
 const setupForm = ref({
-  companyName: "",
-  fullname: "",
-  email: "",
-  bankName: "",
-  country: "India",
-  currency: "INR",
-  chartOfAccounts: "India - Chart of Accounts",
+  companyName: '',
+  fullname: '',
+  email: '',
+  bankName: '',
+  country: 'India',
+  currency: 'INR',
+  chartOfAccounts: 'India - Chart of Accounts',
   logo: null as string | null,
-  fiscalYearStart: "",
-  fiscalYearEnd: "",
+  fiscalYearStart: '',
+  fiscalYearEnd: '',
 });
 
 // Dashboard State for Lynx
 const stats = ref({
-  companyName: "",
-  currency: "",
+  companyName: '',
+  currency: '',
   netProfit: 0,
   totalIncome: 0,
   totalExpenses: 0,
@@ -490,7 +521,7 @@ const isFormValid = computed(() => {
 });
 
 const showLoading = ref(false);
-const loadingMessage = ref("");
+const loadingMessage = ref('');
 
 const keys = useKeys();
 const searcher = shallowRef<null | Search>(null);
@@ -502,10 +533,12 @@ provide(injectionKeys.searcherKey, searcher);
 provide(injectionKeys.shortcutsKey, shortcuts);
 provide(
   injectionKeys.languageDirectionKey,
-  computed(() => appStore.languageDirection),
+  computed(() => appStore.languageDirection)
 );
 
-const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(null);
+const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
+  null
+);
 const activeScreen = ref<Screen | null>(null);
 
 const language = computed(() => appStore.language);
@@ -515,7 +548,7 @@ const languageDirection = computed(() => appStore.languageDirection);
 onMounted(async () => {
   await setInitialScreen();
   if (!isLynx) {
-    const themeSetting = (fyo.singles.SystemSettings?.theme as any) || "auto";
+    const themeSetting = (fyo.singles.SystemSettings?.theme as any) || 'auto';
     const fontSetting = fyo.singles.SystemSettings?.font;
     setTheme(themeSetting);
     setFont(fontSetting as string);
@@ -524,9 +557,12 @@ onMounted(async () => {
 });
 
 async function setInitialScreen(): Promise<void> {
-  const lastSelectedFilePath = fyo.config.get("lastSelectedFilePath", null);
+  const lastSelectedFilePath = fyo.config.get('lastSelectedFilePath', null);
 
-  if (typeof lastSelectedFilePath !== "string" || !lastSelectedFilePath.length) {
+  if (
+    typeof lastSelectedFilePath !== 'string' ||
+    !lastSelectedFilePath.length
+  ) {
     activeScreen.value = Screen.DatabaseSelector;
     return;
   }
@@ -549,7 +585,7 @@ async function setDesk(filePath: string): Promise<void> {
     appStore.dbPath = filePath;
     appStore.companyName = (await fyo.getValue(
       ModelNameEnum.AccountingSettings,
-      "companyName",
+      'companyName'
     )) as string;
     await setSearcher();
     updateConfigFiles(fyo);
@@ -557,7 +593,7 @@ async function setDesk(filePath: string): Promise<void> {
     appStore.dbPath = filePath;
     appStore.companyName = (await fyo.getValue(
       ModelNameEnum.AccountingSettings,
-      "companyName",
+      'companyName'
     )) as string;
   }
 }
@@ -567,15 +603,15 @@ function newDatabase() {
 }
 
 async function fileSelected(filePath: string): Promise<void> {
-  fyo.config.set("lastSelectedFilePath", filePath);
-  if (filePath !== ":memory:" && !(await ipc.checkDbAccess(filePath))) {
+  fyo.config.set('lastSelectedFilePath', filePath);
+  if (filePath !== ':memory:' && !(await ipc.checkDbAccess(filePath))) {
     await showDialog({
       title: t`Cannot open file`,
-      type: "error",
+      type: 'error',
       detail: t`Auditbooks does not have access to the selected file: ${filePath}`,
     });
 
-    fyo.config.set("lastSelectedFilePath", null);
+    fyo.config.set('lastSelectedFilePath', null);
     return;
   }
 
@@ -587,22 +623,30 @@ async function fileSelected(filePath: string): Promise<void> {
   }
 }
 
-async function setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
+async function setupComplete(
+  setupWizardOptions: SetupWizardOptions
+): Promise<void> {
   const companyName = setupWizardOptions.companyName;
   const filePath = await ipc.getDbDefaultPath(companyName);
   await setupInstance(filePath, setupWizardOptions, fyo);
-  fyo.config.set("lastSelectedFilePath", filePath);
+  fyo.config.set('lastSelectedFilePath', filePath);
   await setDesk(filePath);
 }
 
 async function showSetupWizardOrDesk(filePath: string): Promise<void> {
-  const { countryCode, error, actionSymbol } = await connectToDatabase(fyo, filePath);
+  const { countryCode, error, actionSymbol } = await connectToDatabase(
+    fyo,
+    filePath
+  );
 
   if (!countryCode && error && actionSymbol) {
     return await handleConnectionFailed(error, actionSymbol);
   }
 
-  const setupCompleteVal = await fyo.getValue(ModelNameEnum.AccountingSettings, "setupComplete");
+  const setupCompleteVal = await fyo.getValue(
+    ModelNameEnum.AccountingSettings,
+    'setupComplete'
+  );
 
   if (!setupCompleteVal) {
     activeScreen.value = Screen.SetupWizard;
@@ -614,7 +658,7 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
     await updatePrintTemplates(fyo);
 
     const syncSettingsDoc = (await fyo.doc.getDoc(
-      ModelNameEnum.ERPNextSyncSettings,
+      ModelNameEnum.ERPNextSyncSettings
     )) as ERPNextSyncSettings;
 
     const baseURL = syncSettingsDoc.baseURL;
@@ -625,17 +669,23 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
       try {
         await registerInstanceToERPNext(fyo);
         await updateERPNSyncSettings(fyo);
-        await ipc.initScheduler(`${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`);
+        await ipc.initScheduler(
+          `${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`
+        );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
 
         try {
-          const existing = await fyo.db.getAll(ErrorLogEnum.IntegrationErrorLog, {
-            filters: {
-              error: errorMessage,
-            },
-            limit: 1,
-          });
+          const existing = await fyo.db.getAll(
+            ErrorLogEnum.IntegrationErrorLog,
+            {
+              filters: {
+                error: errorMessage,
+              },
+              limit: 1,
+            }
+          );
 
           if (!existing.length) {
             await fyo.doc
@@ -643,8 +693,8 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
                 error: errorMessage,
                 data: JSON.stringify({
                   instance: fyo.singles.ERPNextSyncSettings?.deviceID,
-                  operation: "register_instance",
-                  trigger: "showSetupWizardOrDesk",
+                  operation: 'register_instance',
+                  trigger: 'showSetupWizardOrDesk',
                   baseURL: baseURL,
                 }),
               })
@@ -653,7 +703,7 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
         } catch (logError) {
           throw logError;
         }
-        showToast({ message: "Connection Failed", type: "error" });
+        showToast({ message: 'Connection Failed', type: 'error' });
       }
     }
   } else {
@@ -679,39 +729,39 @@ async function handleConnectionFailed(error: Error, actionSymbol: symbol) {
 }
 
 async function setDeskRoute(): Promise<void> {
-  const { onboardingComplete } = await fyo.doc.getDoc("GetStarted");
-  const { hideGetStarted } = await fyo.doc.getDoc("SystemSettings");
+  const { onboardingComplete } = await fyo.doc.getDoc('GetStarted');
+  const { hideGetStarted } = await fyo.doc.getDoc('SystemSettings');
 
-  let route = "/get-started";
+  let route = '/get-started';
   if (hideGetStarted || onboardingComplete) {
-    route = localStorage.getItem("lastRoute") || "/";
+    route = localStorage.getItem('lastRoute') || '/';
   }
 
   await routeTo(route);
 }
 
 async function showDbSelector(): Promise<void> {
-  if (typeof localStorage !== "undefined") {
+  if (typeof localStorage !== 'undefined') {
     localStorage.clear();
   }
-  fyo.config.set("lastSelectedFilePath", null);
+  fyo.config.set('lastSelectedFilePath', null);
   fyo.telemetry.stop();
   await fyo.purgeCache();
   activeScreen.value = Screen.DatabaseSelector;
-  appStore.dbPath = "";
+  appStore.dbPath = '';
   searcher.value = null;
-  appStore.companyName = "";
+  appStore.companyName = '';
 }
 
 async function toggleDarkMode() {
   const isCurrentlyDark = appStore.isDark;
 
-  appStore.theme = isCurrentlyDark ? "light" : "dark";
+  appStore.theme = isCurrentlyDark ? 'light' : 'dark';
 
   setTheme(appStore.theme);
 
-  const doc = await fyo.doc.getDoc("SystemSettings");
-  await doc.set("theme", appStore.theme);
+  const doc = await fyo.doc.getDoc('SystemSettings');
+  await doc.set('theme', appStore.theme);
   await doc.sync();
 }
 
@@ -722,27 +772,26 @@ function handleSetupCancel() {
 
 function fillDemoData() {
   setupForm.value.companyName = "Lin's Things";
-  setupForm.value.fullname = "Lin Slovenly";
-  setupForm.value.email = "lin@lthings.com";
-  setupForm.value.bankName = "Max Finance";
-  setupForm.value.country = "India";
-  setupForm.value.currency = "INR";
-  setupForm.value.chartOfAccounts = "India - Chart of Accounts";
+  setupForm.value.fullname = 'Lin Slovenly';
+  setupForm.value.email = 'lin@lthings.com';
+  setupForm.value.bankName = 'Max Finance';
+  setupForm.value.country = 'India';
+  setupForm.value.currency = 'INR';
+  setupForm.value.chartOfAccounts = 'India - Chart of Accounts';
   setupForm.value.logo = null;
-  setupForm.value.fiscalYearStart = "2026-04-01";
-  setupForm.value.fiscalYearEnd = "2027-03-31";
+  setupForm.value.fiscalYearStart = '2026-04-01';
+  setupForm.value.fiscalYearEnd = '2027-03-31';
 }
 
 async function handleSetupSubmit() {
   if (!isFormValid.value) return;
   showLoading.value = true;
-  loadingMessage.value = "Setting up database, this may take a moment...";
+  loadingMessage.value = 'Setting up database, this may take a moment...';
   try {
-    let filePath = (appStore.dbPath || fyo.config.get("lastSelectedFilePath")) as
-      | string
-      | undefined;
+    let filePath = (appStore.dbPath ||
+      fyo.config.get('lastSelectedFilePath')) as string | undefined;
     if (!filePath) {
-      filePath = (await (globalThis as any).ipc.getDbDefaultPath(setupForm.value.companyName)) as
+      filePath = (await ipc.getDbDefaultPath(setupForm.value.companyName)) as
         | string
         | undefined;
     }
@@ -751,71 +800,83 @@ async function handleSetupSubmit() {
       return;
     }
     await setupInstance(filePath, setupForm.value, fyo);
-    fyo.config.set("lastSelectedFilePath", filePath);
+    fyo.config.set('lastSelectedFilePath', filePath);
     appStore.dbPath = filePath;
     await loadDashboardStats();
     await setDesk(filePath);
   } catch (err) {
-    console.error("Setup failed:", err);
+    console.error('Setup failed:', err);
   } finally {
     showLoading.value = false;
   }
 }
 
 async function loadDashboardStats() {
-  stats.value.companyName = (fyo.singles.AccountingSettings?.companyName as string) || "My Company";
-  stats.value.currency = (fyo.singles.SystemSettings?.currency as string) || "INR";
+  stats.value.companyName =
+    (fyo.singles.AccountingSettings?.companyName as string) || 'My Company';
+  stats.value.currency =
+    (fyo.singles.SystemSettings?.currency as string) || 'INR';
 
   try {
-    const startOfYear = dayjs().startOf("year").format("YYYY-MM-DD");
-    const endOfYear = dayjs().endOf("year").format("YYYY-MM-DD");
-    const res = (await fyo.db.getIncomeAndExpenses(startOfYear, endOfYear)) as any;
+    const startOfYear = dayjs().startOf('year').format('YYYY-MM-DD');
+    const endOfYear = dayjs().endOf('year').format('YYYY-MM-DD');
+    const res = (await fyo.db.getIncomeAndExpenses(
+      startOfYear,
+      endOfYear
+    )) as any;
 
     let incTotal = 0;
     let expTotal = 0;
     if (res.income) {
-      incTotal = res.income.reduce((sum: number, row: any) => sum + Number(row.balance || 0), 0);
+      incTotal = res.income.reduce(
+        (sum: number, row: any) => sum + Number(row.balance || 0),
+        0
+      );
     }
     if (res.expense) {
-      expTotal = res.expense.reduce((sum: number, row: any) => sum + Number(row.balance || 0), 0);
+      expTotal = res.expense.reduce(
+        (sum: number, row: any) => sum + Number(row.balance || 0),
+        0
+      );
     }
 
     stats.value.totalIncome = incTotal;
     stats.value.totalExpenses = expTotal;
     stats.value.netProfit = incTotal - expTotal;
   } catch (err) {
-    console.error("Failed to load dashboard stats:", err);
+    console.error('Failed to load dashboard stats:', err);
   }
 }
 
 function formatCurrency(val: number) {
   try {
-    const currencySym = stats.value.currency === "INR" ? "₹" : stats.value.currency || "$";
+    const currencySym =
+      stats.value.currency === 'INR' ? '₹' : stats.value.currency || '$';
     return (
       currencySym +
-      " " +
+      ' ' +
       Number(val).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })
     );
   } catch {
-    return (stats.value.currency || "$") + " " + val.toFixed(2);
+    return (stats.value.currency || '$') + ' ' + val.toFixed(2);
   }
 }
 
 const componentMap: Record<string, any> = {
   CommonForm,
   ListView,
-  "Point of Sale": POS,
+  'Point of Sale': POS,
   Settings,
   Report,
-  "Chart Of Accounts": ChartOfAccounts,
+  'Chart Of Accounts': ChartOfAccounts,
   Calendar,
   Help: HelpView,
-  "Import Wizard": ImportWizard,
-  "Template Builder": TemplateBuilder,
-  "Customize Form": CustomizeForm,
+  'Import Wizard': ImportWizard,
+  'Template Builder': TemplateBuilder,
+  'Customize Form': CustomizeForm,
   PrintView,
   ReportPrintView,
   GetStarted,
@@ -823,7 +884,7 @@ const componentMap: Record<string, any> = {
 
 const activeComponent = computed(() => {
   const name = router.currentRoute.value.name;
-  if (typeof name === "string") {
+  if (typeof name === 'string') {
     return componentMap[name];
   }
   return null;
@@ -834,7 +895,9 @@ const activeRouteProps = computed(() => {
 });
 
 // Lynx Native Multipage/Tab State
-const currentTab = ref<"dashboard" | "invoices" | "customers" | "items">("dashboard");
+const currentTab = ref<'dashboard' | 'invoices' | 'customers' | 'items'>(
+  'dashboard'
+);
 const invoiceList = ref<any[]>([]);
 const customerList = ref<any[]>([]);
 const itemList = ref<any[]>([]);
@@ -842,48 +905,56 @@ const itemList = ref<any[]>([]);
 async function fetchInvoiceList() {
   try {
     const data = await fyo.db.getAll(ModelNameEnum.SalesInvoice, {
-      fields: ["name", "party", "postingDate", "grandTotal", "outstandingAmount"],
-      orderBy: ["postingDate"],
-      order: "desc",
+      fields: [
+        'name',
+        'party',
+        'postingDate',
+        'grandTotal',
+        'outstandingAmount',
+      ],
+      orderBy: ['postingDate'],
+      order: 'desc',
     });
     invoiceList.value = data || [];
   } catch (err) {
-    console.error("Failed to load invoices:", err);
+    console.error('Failed to load invoices:', err);
   }
 }
 
 async function fetchCustomerList() {
   try {
     const data = await fyo.db.getAll(ModelNameEnum.Party, {
-      fields: ["name", "email", "phone", "outstandingAmount"],
-      filters: { role: "Customer" },
+      fields: ['name', 'email', 'phone', 'outstandingAmount'],
+      filters: { role: 'Customer' },
     });
     customerList.value = data || [];
   } catch (err) {
-    console.error("Failed to load customers:", err);
+    console.error('Failed to load customers:', err);
   }
 }
 
 async function fetchItemList() {
   try {
     const data = await fyo.db.getAll(ModelNameEnum.Item, {
-      fields: ["name", "itemName", "rate"],
+      fields: ['name', 'itemName', 'rate'],
     });
     itemList.value = data || [];
   } catch (err) {
-    console.error("Failed to load items:", err);
+    console.error('Failed to load items:', err);
   }
 }
 
-async function switchTab(tab: "dashboard" | "invoices" | "customers" | "items") {
+async function switchTab(
+  tab: 'dashboard' | 'invoices' | 'customers' | 'items'
+) {
   currentTab.value = tab;
-  if (tab === "dashboard") {
+  if (tab === 'dashboard') {
     await loadDashboardStats();
-  } else if (tab === "invoices") {
+  } else if (tab === 'invoices') {
     await fetchInvoiceList();
-  } else if (tab === "customers") {
+  } else if (tab === 'customers') {
     await fetchCustomerList();
-  } else if (tab === "items") {
+  } else if (tab === 'items') {
     await fetchItemList();
   }
 }

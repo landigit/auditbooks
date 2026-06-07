@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue';
 import {
   PopoverRoot,
   type PopoverRootEmits,
   type PopoverRootProps,
   useForwardPropsEmits,
-} from "reka-ui";
+} from 'reka-ui';
 
-const props = withDefaults(defineProps<PopoverRootProps & { open?: boolean }>(), {
-  modal: false,
-});
+const props = withDefaults(
+  defineProps<PopoverRootProps & { open?: boolean }>(),
+  {
+    modal: false,
+  }
+);
 const emits = defineEmits<PopoverRootEmits>();
 
 const forwarded = useForwardPropsEmits(props, emits);
@@ -19,18 +22,22 @@ watch(
   () => props.open,
   (val) => {
     if (val !== undefined) isOpen.value = val;
-  },
+  }
 );
 
 const handleUpdateOpen = (val: boolean) => {
   isOpen.value = val;
-  emits("update:open", val);
+  emits('update:open', val);
 };
 </script>
 
 <template>
   <view v-bind="$attrs">
-    <PopoverRoot v-bind="forwarded" :open="isOpen" @update:open="handleUpdateOpen">
+    <PopoverRoot
+      v-bind="forwarded"
+      :open="isOpen"
+      @update:open="handleUpdateOpen"
+    >
       <slot />
     </PopoverRoot>
   </view>

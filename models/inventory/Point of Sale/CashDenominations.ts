@@ -1,5 +1,5 @@
-import { Doc } from "fyo/model/doc";
-import { Money } from "pesa";
+import { Doc } from 'fyo/model/doc';
+import { Money } from 'pesa';
 
 export abstract class CashDenominations extends Doc {
   declare denomination?: Money;

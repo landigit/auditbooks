@@ -1,5 +1,5 @@
-import { Fyo } from "fyo";
-import { LynxDemux } from "fyo/demux/dbLynx";
+import { Fyo } from 'fyo';
+import { LynxDemux } from 'fyo/demux/dbLynx';
 
 /**
  * Global fyo for the Lynx native app.

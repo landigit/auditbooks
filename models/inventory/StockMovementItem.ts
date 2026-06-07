@@ -1,5 +1,5 @@
-import { t } from "fyo";
-import { DocValue } from "fyo/core/types";
+import { t } from 'fyo';
+import { DocValue } from 'fyo/core/types';
 import {
   ChangeArg,
   FiltersMap,
@@ -8,16 +8,16 @@ import {
   ReadOnlyMap,
   RequiredMap,
   ValidationMap,
-} from "fyo/model/types";
-import { ValidationError } from "fyo/utils/errors";
-import { ModelNameEnum } from "models/types";
-import { Money } from "pesa";
-import { safeParseFloat } from "utils/index";
-import { generateSerialNumbersForItem, getSuggestedBatchName } from "./helpers";
-import { StockMovement } from "./StockMovement";
-import { TransferItem } from "./TransferItem";
-import { MovementTypeEnum } from "./types";
-import { Doc } from "fyo/model/doc";
+} from 'fyo/model/types';
+import { ValidationError } from 'fyo/utils/errors';
+import { ModelNameEnum } from 'models/types';
+import { Money } from 'pesa';
+import { safeParseFloat } from 'utils/index';
+import { generateSerialNumbersForItem, getSuggestedBatchName } from './helpers';
+import { StockMovement } from './StockMovement';
+import { TransferItem } from './TransferItem';
+import { MovementTypeEnum } from './types';
+import { Doc } from 'fyo/model/doc';
 
 export class StockMovementItem extends TransferItem {
   declare name?: string;
@@ -58,16 +58,25 @@ export class StockMovementItem extends TransferItem {
   static filters: FiltersMap = {
     item: () => ({ trackItem: true }),
     transferUnit: async (doc: Doc) => {
-      const conversionItems = await doc.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
-        fields: ["uom"],
-        filters: { parent: doc.item as string },
-      });
+      const conversionItems = await doc.fyo.db.getAll(
+        ModelNameEnum.UOMConversionItem,
+        {
+          fields: ['uom'],
+          filters: { parent: doc.item as string },
+        }
+      );
       const conversionUoms = conversionItems.map((i) => i.uom) as string[];
 
-      const baseUnit = await doc.fyo.getValue(ModelNameEnum.Item, doc.item as string, "unit");
-      const validUoms = [...conversionUoms, baseUnit].filter(Boolean) as string[];
+      const baseUnit = await doc.fyo.getValue(
+        ModelNameEnum.Item,
+        doc.item as string,
+        'unit'
+      );
+      const validUoms = [...conversionUoms, baseUnit].filter(
+        Boolean
+      ) as string[];
       return {
-        name: ["in", validUoms],
+        name: ['in', validUoms],
       };
     },
     batch: async (doc: Doc) => {
@@ -75,19 +84,26 @@ export class StockMovementItem extends TransferItem {
       let hasBatch = false;
 
       if (doc.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt) {
-        hasBatch = !!(await doc.fyo.getValue(ModelNameEnum.Item, doc.item as string, "hasBatch"));
+        hasBatch = !!(await doc.fyo.getValue(
+          ModelNameEnum.Item,
+          doc.item as string,
+          'hasBatch'
+        ));
 
         if (hasBatch) {
-          suggestedBatch = await getSuggestedBatchName(doc.fyo, doc.item as string);
+          suggestedBatch = await getSuggestedBatchName(
+            doc.fyo,
+            doc.item as string
+          );
 
           if (suggestedBatch) {
-            await doc.set("batch", suggestedBatch);
+            await doc.set('batch', suggestedBatch);
           }
         }
       }
 
       const batches = await doc.fyo.db.getAll(ModelNameEnum.Batch, {
-        fields: ["name"],
+        fields: ['name'],
         filters: { item: doc.item as string },
       });
       const existingBatchNames = batches.map((b) => b.name) as string[];
@@ -100,7 +116,7 @@ export class StockMovementItem extends TransferItem {
       const finalBatchList = Array.from(allBatches);
 
       return {
-        name: ["in", finalBatchList],
+        name: ['in', finalBatchList],
       };
     },
   };
@@ -121,7 +137,9 @@ export class StockMovementItem extends TransferItem {
     }
 
     if (batchDoc.item !== this.item) {
-      throw new ValidationError(t`Batch ${this.batch} does not belong to Item ${this.item}`);
+      throw new ValidationError(
+        t`Batch ${this.batch} does not belong to Item ${this.item}`
+      );
     }
   }
 
@@ -132,13 +150,13 @@ export class StockMovementItem extends TransferItem {
           return this.rate;
         }
 
-        return await this.fyo.getValue(ModelNameEnum.Item, this.item, "rate");
+        return await this.fyo.getValue(ModelNameEnum.Item, this.item, 'rate');
       },
-      dependsOn: ["item"],
+      dependsOn: ['item'],
     },
     amount: {
       formula: () => this.rate!.mul(this.quantity!),
-      dependsOn: ["item", "rate", "quantity"],
+      dependsOn: ['item', 'rate', 'quantity'],
     },
     fromLocation: {
       formula: () => {
@@ -146,14 +164,15 @@ export class StockMovementItem extends TransferItem {
           return null;
         }
 
-        const defaultLocation = this.fyo.singles.InventorySettings?.defaultLocation;
+        const defaultLocation =
+          this.fyo.singles.InventorySettings?.defaultLocation;
         if (defaultLocation && !this.fromLocation && this.isIssue) {
           return defaultLocation;
         }
 
         return this.toLocation;
       },
-      dependsOn: ["movementType"],
+      dependsOn: ['movementType'],
     },
     toLocation: {
       formula: () => {
@@ -161,38 +180,40 @@ export class StockMovementItem extends TransferItem {
           return null;
         }
 
-        const defaultLocation = this.fyo.singles.InventorySettings?.defaultLocation;
+        const defaultLocation =
+          this.fyo.singles.InventorySettings?.defaultLocation;
         if (defaultLocation && !this.toLocation && this.isReceipt) {
           return defaultLocation;
         }
 
         return this.toLocation;
       },
-      dependsOn: ["movementType"],
+      dependsOn: ['movementType'],
     },
     unit: {
-      formula: async () => await this.fyo.getValue("Item", this.item as string, "unit"),
-      dependsOn: ["item"],
+      formula: async () =>
+        await this.fyo.getValue('Item', this.item as string, 'unit'),
+      dependsOn: ['item'],
     },
     transferUnit: {
       formula: async (fieldname) => {
-        if (fieldname === "quantity" || fieldname === "unit") {
+        if (fieldname === 'quantity' || fieldname === 'unit') {
           return this.unit;
         }
 
-        return await this.fyo.getValue("Item", this.item as string, "unit");
+        return await this.fyo.getValue('Item', this.item as string, 'unit');
       },
-      dependsOn: ["item", "unit"],
+      dependsOn: ['item', 'unit'],
     },
     transferQuantity: {
       formula: (fieldname) => {
-        if (fieldname === "quantity" || this.unit === this.transferUnit) {
+        if (fieldname === 'quantity' || this.unit === this.transferUnit) {
           return this.quantity;
         }
 
         return this.transferQuantity;
       },
-      dependsOn: ["item", "quantity"],
+      dependsOn: ['item', 'quantity'],
     },
     quantity: {
       formula: async (fieldname) => {
@@ -200,11 +221,14 @@ export class StockMovementItem extends TransferItem {
           return this.quantity;
         }
 
-        const itemDoc = await this.fyo.doc.getDoc(ModelNameEnum.Item, this.item);
-        const unitDoc = itemDoc.getLink("uom");
+        const itemDoc = await this.fyo.doc.getDoc(
+          ModelNameEnum.Item,
+          this.item
+        );
+        const unitDoc = itemDoc.getLink('uom');
 
         let quantity: number = this.quantity ?? 1;
-        if (fieldname === "transferQuantity") {
+        if (fieldname === 'transferQuantity') {
           quantity = this.transferQuantity! * this.unitConversionFactor!;
         }
 
@@ -214,7 +238,12 @@ export class StockMovementItem extends TransferItem {
 
         return safeParseFloat(quantity);
       },
-      dependsOn: ["quantity", "transferQuantity", "transferUnit", "unitConversionFactor"],
+      dependsOn: [
+        'quantity',
+        'transferQuantity',
+        'transferUnit',
+        'unitConversionFactor',
+      ],
     },
     unitConversionFactor: {
       formula: async () => {
@@ -222,14 +251,17 @@ export class StockMovementItem extends TransferItem {
           return 1;
         }
 
-        const conversionFactor = await this.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
-          fields: ["conversionFactor"],
-          filters: { parent: this.item! },
-        });
+        const conversionFactor = await this.fyo.db.getAll(
+          ModelNameEnum.UOMConversionItem,
+          {
+            fields: ['conversionFactor'],
+            filters: { parent: this.item! },
+          }
+        );
 
         return safeParseFloat(conversionFactor[0]?.conversionFactor ?? 1);
       },
-      dependsOn: ["transferUnit"],
+      dependsOn: ['transferUnit'],
     },
   };
 
@@ -240,7 +272,9 @@ export class StockMovementItem extends TransferItem {
       }
 
       if (value && this.toLocation) {
-        throw new ValidationError(this.fyo.t`Only From or To can be set for Manufacture`);
+        throw new ValidationError(
+          this.fyo.t`Only From or To can be set for Manufacture`
+        );
       }
     },
     toLocation: (value) => {
@@ -249,17 +283,24 @@ export class StockMovementItem extends TransferItem {
       }
 
       if (value && this.fromLocation) {
-        throw new ValidationError(this.fyo.t`Only From or To can be set for Manufacture`);
+        throw new ValidationError(
+          this.fyo.t`Only From or To can be set for Manufacture`
+        );
       }
     },
     batch: async () => {
       if (!this.item || !this.batch) return;
 
-      const batchDoc = await this.fyo.doc.getDoc(ModelNameEnum.Batch, this.batch);
+      const batchDoc = await this.fyo.doc.getDoc(
+        ModelNameEnum.Batch,
+        this.batch
+      );
       if (!batchDoc) return;
 
       if (batchDoc.item !== this.item) {
-        throw new ValidationError(t`Batch ${this.batch} does not belong to Item ${this.item}`);
+        throw new ValidationError(
+          t`Batch ${this.batch} does not belong to Item ${this.item}`
+        );
       }
     },
     transferUnit: async (value: DocValue) => {
@@ -268,13 +309,13 @@ export class StockMovementItem extends TransferItem {
       }
 
       const item = await this.fyo.db.getAll(ModelNameEnum.UOMConversionItem, {
-        fields: ["parent"],
+        fields: ['parent'],
         filters: { uom: value as string, parent: this.item },
       });
 
       if (item.length < 1)
         throw new ValidationError(
-          t`Transfer Unit ${value as string} is not applicable for Item ${this.item}`,
+          t`Transfer Unit ${value as string} is not applicable for Item ${this.item}`
         );
     },
   };
@@ -292,13 +333,16 @@ export class StockMovementItem extends TransferItem {
   override hidden: HiddenMap = {
     batch: () => !this.fyo.singles.InventorySettings?.enableBatches,
     serialNumber: () => !this.fyo.singles.InventorySettings?.enableSerialNumber,
-    transferUnit: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
-    transferQuantity: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
-    unitConversionFactor: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
+    transferUnit: () =>
+      !this.fyo.singles.InventorySettings?.enableUomConversions,
+    transferQuantity: () =>
+      !this.fyo.singles.InventorySettings?.enableUomConversions,
+    unitConversionFactor: () =>
+      !this.fyo.singles.InventorySettings?.enableUomConversions,
   };
 
   static createFilters: FiltersMap = {
-    item: () => ({ trackItem: true, itemType: "Product" }),
+    item: () => ({ trackItem: true, itemType: 'Product' }),
   };
 
   override async change(ch: ChangeArg): Promise<void> {
@@ -310,16 +354,23 @@ export class StockMovementItem extends TransferItem {
       this.quantity &&
       this.quantity > 0;
 
-    if (ch.changed === "item") {
-      await this.set("serialNumber", "");
+    if (ch.changed === 'item') {
+      await this.set('serialNumber', '');
 
-      if (this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt && this.item) {
-        const hasBatch = await this.fyo.getValue(ModelNameEnum.Item, this.item, "hasBatch");
+      if (
+        this.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt &&
+        this.item
+      ) {
+        const hasBatch = await this.fyo.getValue(
+          ModelNameEnum.Item,
+          this.item,
+          'hasBatch'
+        );
 
         if (hasBatch) {
           const batchName = await getSuggestedBatchName(this.fyo, this.item);
           if (batchName) {
-            await this.set("batch", batchName);
+            await this.set('batch', batchName);
           }
         }
       }
@@ -329,9 +380,9 @@ export class StockMovementItem extends TransferItem {
       }
     }
 
-    if (ch.changed === "quantity") {
+    if (ch.changed === 'quantity') {
       if (!this.quantity || this.quantity <= 0) {
-        await this.set("serialNumber", "");
+        await this.set('serialNumber', '');
       } else if (shouldGenerateSerialNumbers) {
         await this.generateAndSetSerialNumbers();
       }
@@ -346,11 +397,11 @@ export class StockMovementItem extends TransferItem {
     const serialNumbers = await generateSerialNumbersForItem(
       this.fyo,
       this.item,
-      Math.abs(this.quantity),
+      Math.abs(this.quantity)
     );
 
     if (serialNumbers) {
-      await this.set("serialNumber", serialNumbers);
+      await this.set('serialNumber', serialNumbers);
     }
   }
 }

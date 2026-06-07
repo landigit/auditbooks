@@ -1,6 +1,6 @@
-import { FormulaMap, ListsMap } from "fyo/model/types";
-import { Address as BaseAddress } from "models/baseModels/Address/Address";
-import { codeStateMap } from "regional/in";
+import { FormulaMap, ListsMap } from 'fyo/model/types';
+import { Address as BaseAddress } from 'models/baseModels/Address/Address';
+import { codeStateMap } from 'regional/in';
 
 export class Address extends BaseAddress {
   formulas: FormulaMap = {
@@ -15,9 +15,16 @@ export class Address extends BaseAddress {
           this.postalCode,
         ]
           .filter(Boolean)
-          .join(", ");
+          .join(', ');
       },
-      dependsOn: ["addressLine1", "addressLine2", "city", "state", "country", "postalCode"],
+      dependsOn: [
+        'addressLine1',
+        'addressLine2',
+        'city',
+        'state',
+        'country',
+        'postalCode',
+      ],
     },
 
     pos: {
@@ -27,9 +34,9 @@ export class Address extends BaseAddress {
         if (stateList.includes(state)) {
           return state;
         }
-        return "";
+        return '';
       },
-      dependsOn: ["state"],
+      dependsOn: ['state'],
     },
   };
 

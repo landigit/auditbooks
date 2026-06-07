@@ -1,30 +1,41 @@
-import { Fyo } from "fyo";
-import { DocValueMap } from "fyo/core/types";
-import { Doc } from "fyo/model/doc";
-import { createNumberSeries } from "fyo/model/naming";
-import { DEFAULT_CURRENCY, DEFAULT_LOCALE, DEFAULT_SERIES_START } from "fyo/utils/consts";
-import { AccountRootTypeEnum, AccountTypeEnum } from "models/baseModels/Account/types";
-import { AccountingSettings } from "models/baseModels/AccountingSettings/AccountingSettings";
-import { numberSeriesDefaultsMap } from "models/baseModels/Defaults/Defaults";
-import { InventorySettings } from "models/inventory/InventorySettings";
-import { ValuationMethod } from "models/inventory/types";
-import { ModelNameEnum } from "models/types";
-import { createRegionalRecords } from "src/regional";
-import { initializeInstance, setCurrencySymbols } from "src/utils/initialization";
-import { useAppStore } from "src/stores/app";
-import { getRandomString } from "utils";
-import { getDefaultLocations, getDefaultUOMs } from "utils/defaults";
-import { getCountryCodeFromCountry, getCountryInfo } from "utils/misc";
-import { CountryInfo } from "utils/types";
-import { CreateCOA } from "./createCOA";
-import { SetupWizardOptions } from "./types";
+import { Fyo } from 'fyo';
+import { DocValueMap } from 'fyo/core/types';
+import { Doc } from 'fyo/model/doc';
+import { createNumberSeries } from 'fyo/model/naming';
+import {
+  DEFAULT_CURRENCY,
+  DEFAULT_LOCALE,
+  DEFAULT_SERIES_START,
+} from 'fyo/utils/consts';
+import {
+  AccountRootTypeEnum,
+  AccountTypeEnum,
+} from 'models/baseModels/Account/types';
+import { AccountingSettings } from 'models/baseModels/AccountingSettings/AccountingSettings';
+import { numberSeriesDefaultsMap } from 'models/baseModels/Defaults/Defaults';
+import { InventorySettings } from 'models/inventory/InventorySettings';
+import { ValuationMethod } from 'models/inventory/types';
+import { ModelNameEnum } from 'models/types';
+import { createRegionalRecords } from 'src/regional';
+import {
+  initializeInstance,
+  setCurrencySymbols,
+} from 'src/utils/initialization';
+import { useAppStore } from 'src/stores/app';
+import { getRandomString } from 'utils';
+import { getDefaultLocations, getDefaultUOMs } from 'utils/defaults';
+import { getCountryCodeFromCountry, getCountryInfo } from 'utils/misc';
+import { CountryInfo } from 'utils/types';
+import { CreateCOA } from './createCOA';
+import { SetupWizardOptions } from './types';
 
 export default async function setupInstance(
   dbPath: string,
   setupWizardOptions: SetupWizardOptions,
-  fyo: Fyo,
+  fyo: Fyo
 ) {
-  const { companyName, country, bankName, chartOfAccounts } = setupWizardOptions;
+  const { companyName, country, bankName, chartOfAccounts } =
+    setupWizardOptions;
   let appStore: any;
   try {
     appStore = useAppStore();
@@ -44,7 +55,7 @@ export default async function setupInstance(
   await updateInventorySettings(fyo);
 
   if (fyo.isElectron) {
-    const { updatePrintTemplates } = await import("src/utils/printTemplates");
+    const { updatePrintTemplates } = await import('src/utils/printTemplates');
     await updatePrintTemplates(fyo);
   }
 
@@ -86,9 +97,11 @@ async function updateAccountingSettings(
     fiscalYearStart,
     fiscalYearEnd,
   }: SetupWizardOptions,
-  fyo: Fyo,
+  fyo: Fyo
 ) {
-  const accountingSettings = (await fyo.doc.getDoc("AccountingSettings")) as AccountingSettings;
+  const accountingSettings = (await fyo.doc.getDoc(
+    'AccountingSettings'
+  )) as AccountingSettings;
   await accountingSettings.setAndSync({
     companyName,
     country,
@@ -101,8 +114,11 @@ async function updateAccountingSettings(
   return accountingSettings;
 }
 
-async function updatePrintSettings({ logo, companyName, email }: SetupWizardOptions, fyo: Fyo) {
-  const printSettings = await fyo.doc.getDoc("PrintSettings");
+async function updatePrintSettings(
+  { logo, companyName, email }: SetupWizardOptions,
+  fyo: Fyo
+) {
+  const printSettings = await fyo.doc.getDoc('PrintSettings');
   await printSettings.setAndSync({
     logo,
     companyName,
@@ -113,14 +129,15 @@ async function updatePrintSettings({ logo, companyName, email }: SetupWizardOpti
 
 async function updateSystemSettings(
   { country, currency: companyCurrency }: SetupWizardOptions,
-  fyo: Fyo,
+  fyo: Fyo
 ) {
   const countryInfo = getCountryInfo();
   const countryOptions = Reflect.get(countryInfo, country) as CountryInfo;
-  const currency = companyCurrency ?? countryOptions.currency ?? DEFAULT_CURRENCY;
+  const currency =
+    companyCurrency ?? countryOptions.currency ?? DEFAULT_CURRENCY;
   const locale = countryOptions.locale ?? DEFAULT_LOCALE;
   const countryCode = getCountryCodeFromCountry(country);
-  const systemSettings = await fyo.doc.getDoc("SystemSettings");
+  const systemSettings = await fyo.doc.getDoc('SystemSettings');
   const instanceId = getRandomString();
 
   await systemSettings.setAndSync({
@@ -151,13 +168,13 @@ async function createCurrencyRecords(fyo: Fyo) {
 
     const docObject = {
       name: currency,
-      fraction: currency_fraction ?? "",
+      fraction: currency_fraction ?? '',
       fractionUnits: currency_fraction_units ?? 100,
       smallestValue: smallest_currency_fraction_value ?? 0.01,
-      symbol: currency_symbol ?? "",
+      symbol: currency_symbol ?? '',
     };
 
-    const doc = checkAndCreateDoc("Currency", docObject, fyo);
+    const doc = checkAndCreateDoc('Currency', docObject, fyo);
     promises.push(doc);
     queue.push(currency);
   }
@@ -168,7 +185,7 @@ async function createAccountRecords(
   bankName: string,
   country: string,
   chartOfAccounts: string,
-  fyo: Fyo,
+  fyo: Fyo
 ) {
   const createCOA = new CreateCOA(chartOfAccounts, fyo);
   await createCOA.run();
@@ -177,18 +194,21 @@ async function createAccountRecords(
     name: bankName,
     rootType: AccountRootTypeEnum.Asset,
     parentAccount,
-    accountType: "Bank",
+    accountType: 'Bank',
     isGroup: false,
   };
 
-  await checkAndCreateDoc("Account", bankAccountDoc, fyo);
+  await checkAndCreateDoc('Account', bankAccountDoc, fyo);
   await createDiscountAccount(fyo);
   await setDefaultAccounts(fyo);
 }
 
 export async function createDiscountAccount(fyo: Fyo) {
   const incomeAccountName = fyo.t`Indirect Income`;
-  const accountExists = await fyo.db.exists(ModelNameEnum.Account, incomeAccountName);
+  const accountExists = await fyo.db.exists(
+    ModelNameEnum.Account,
+    incomeAccountName
+  );
 
   if (!accountExists) {
     return;
@@ -199,20 +219,27 @@ export async function createDiscountAccount(fyo: Fyo) {
     name: discountAccountName,
     rootType: AccountRootTypeEnum.Income,
     parentAccount: incomeAccountName,
-    accountType: "Income Account",
+    accountType: 'Income Account',
     isGroup: false,
   };
 
   await checkAndCreateDoc(ModelNameEnum.Account, discountAccountDoc, fyo);
-  await fyo.singles.AccountingSettings!.setAndSync("discountAccount", discountAccountName);
+  await fyo.singles.AccountingSettings!.setAndSync(
+    'discountAccount',
+    discountAccountName
+  );
 }
 
 async function setDefaultAccounts(fyo: Fyo) {
-  await setDefaultAccount("writeOffAccount", fyo.t`Write Off`, fyo);
-  const isSet = await setDefaultAccount("roundOffAccount", fyo.t`Rounded Off`, fyo);
+  await setDefaultAccount('writeOffAccount', fyo.t`Write Off`, fyo);
+  const isSet = await setDefaultAccount(
+    'roundOffAccount',
+    fyo.t`Rounded Off`,
+    fyo
+  );
 
   if (!isSet) {
-    await setDefaultAccount("roundOffAccount", fyo.t`Round Off`, fyo);
+    await setDefaultAccount('roundOffAccount', fyo.t`Round Off`, fyo);
   }
 }
 
@@ -227,13 +254,13 @@ async function setDefaultAccount(key: string, accountName: string, fyo: Fyo) {
 }
 
 async function completeSetup(_companyName: string, fyo: Fyo) {
-  await fyo.singles.AccountingSettings!.setAndSync("setupComplete", true);
+  await fyo.singles.AccountingSettings!.setAndSync('setupComplete', true);
 }
 
 async function checkAndCreateDoc(
   schemaName: string,
   docObject: DocValueMap,
-  fyo: Fyo,
+  fyo: Fyo
 ): Promise<Doc | undefined> {
   const canCreate = await checkIfExactRecordAbsent(schemaName, docObject, fyo);
   if (!canCreate) {
@@ -244,12 +271,16 @@ async function checkAndCreateDoc(
   return doc.sync();
 }
 
-async function checkIfExactRecordAbsent(schemaName: string, docMap: DocValueMap, fyo: Fyo) {
+async function checkIfExactRecordAbsent(
+  schemaName: string,
+  docMap: DocValueMap,
+  fyo: Fyo
+) {
   const name = docMap.name as string;
   const newDocObject = Object.assign({}, docMap);
 
   const rows = await fyo.db.getAllRaw(schemaName, {
-    fields: ["*"],
+    fields: ['*'],
     filters: { name },
   });
 
@@ -273,18 +304,18 @@ async function checkIfExactRecordAbsent(schemaName: string, docMap: DocValueMap,
 }
 
 async function getBankAccountParentName(country: string, fyo: Fyo) {
-  const parentBankAccount = await fyo.db.getAllRaw("Account", {
-    fields: ["*"],
-    filters: { isGroup: true, accountType: "Bank" },
+  const parentBankAccount = await fyo.db.getAllRaw('Account', {
+    fields: ['*'],
+    filters: { isGroup: true, accountType: 'Bank' },
   });
 
   if (parentBankAccount.length === 0) {
     // This should not happen if the fixtures are correct.
-    return "Bank Accounts";
+    return 'Bank Accounts';
   } else if (parentBankAccount.length > 1) {
     switch (country) {
-      case "Indonesia":
-        return "Bank Rupiah - 1121.000";
+      case 'Indonesia':
+        return 'Bank Rupiah - 1121.000';
       default:
         break;
     }
@@ -297,7 +328,7 @@ async function createDefaultNumberSeries(fyo: Fyo) {
   const numberSeriesFields = Object.values(fyo.schemaMap)
     .map((f) => f?.fields)
     .flat()
-    .filter((f) => f?.fieldname === "numberSeries");
+    .filter((f) => f?.fieldname === 'numberSeries');
 
   for (const field of numberSeriesFields) {
     const defaultValue = field?.default as string | undefined;
@@ -306,10 +337,18 @@ async function createDefaultNumberSeries(fyo: Fyo) {
       continue;
     }
 
-    await createNumberSeries(defaultValue, schemaName, DEFAULT_SERIES_START, fyo);
+    await createNumberSeries(
+      defaultValue,
+      schemaName,
+      DEFAULT_SERIES_START,
+      fyo
+    );
 
     const defaultKey = Reflect.get(numberSeriesDefaultsMap, schemaName);
-    if (!defaultKey || (fyo.singles.Defaults && Reflect.get(fyo.singles.Defaults, defaultKey))) {
+    if (
+      !defaultKey ||
+      (fyo.singles.Defaults && Reflect.get(fyo.singles.Defaults, defaultKey))
+    ) {
       continue;
     }
 
@@ -319,20 +358,21 @@ async function createDefaultNumberSeries(fyo: Fyo) {
 
 async function updateInventorySettings(fyo: Fyo) {
   const inventorySettings = (await fyo.doc.getDoc(
-    ModelNameEnum.InventorySettings,
+    ModelNameEnum.InventorySettings
   )) as InventorySettings;
 
   if (!inventorySettings.valuationMethod) {
-    await inventorySettings.set("valuationMethod", ValuationMethod.FIFO);
+    await inventorySettings.set('valuationMethod', ValuationMethod.FIFO);
   }
   const accountTypeDefaultMap = {
-    [AccountTypeEnum.Stock]: "stockInHand",
-    [AccountTypeEnum["Stock Received But Not Billed"]]: "stockReceivedButNotBilled",
-    [AccountTypeEnum["Cost of Goods Sold"]]: "costOfGoodsSold",
+    [AccountTypeEnum.Stock]: 'stockInHand',
+    [AccountTypeEnum['Stock Received But Not Billed']]:
+      'stockReceivedButNotBilled',
+    [AccountTypeEnum['Cost of Goods Sold']]: 'costOfGoodsSold',
   } as Record<string, string>;
 
   for (const accountType in accountTypeDefaultMap) {
-    const accounts = (await fyo.db.getAllRaw("Account", {
+    const accounts = (await fyo.db.getAllRaw('Account', {
       filters: { accountType, isGroup: false },
     })) as { name: string }[];
 
@@ -346,7 +386,7 @@ async function updateInventorySettings(fyo: Fyo) {
 
   const location = fyo.t`Stores`;
   if (await fyo.db.exists(ModelNameEnum.Location, location)) {
-    await inventorySettings.set("defaultLocation", location);
+    await inventorySettings.set('defaultLocation', location);
   }
 
   await inventorySettings.sync();
@@ -360,18 +400,18 @@ async function createDefaultPaymentMethods(bankName: string, fyo: Fyo) {
 
   const paymentMethods = [
     {
-      name: "Cash",
-      type: "Cash",
+      name: 'Cash',
+      type: 'Cash',
       account: cashAccount,
     },
     {
-      name: "Bank",
-      type: "Bank",
+      name: 'Bank',
+      type: 'Bank',
       account: bankName,
     },
     {
-      name: "Transfer",
-      type: "Bank",
+      name: 'Transfer',
+      type: 'Bank',
       account: bankName,
     },
   ];

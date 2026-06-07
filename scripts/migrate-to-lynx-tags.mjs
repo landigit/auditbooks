@@ -1,9 +1,11 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 const targetPathArg = process.argv[2];
 if (!targetPathArg) {
-  console.error("Usage: node scripts/migrate-to-lynx-tags.mjs <file-or-directory-path>");
+  console.error(
+    'Usage: node scripts/migrate-to-lynx-tags.mjs <file-or-directory-path>'
+  );
   process.exit(1);
 }
 
@@ -15,25 +17,25 @@ function migrateFile(file) {
     return;
   }
 
-  let content = fs.readFileSync(file, "utf8");
+  let content = fs.readFileSync(file, 'utf8');
 
   // Regexp replacements to map HTML nodes and event listeners to Lynx compatible tags
   let newContent = content
-    .replace(/<div(\s|>)/g, "<view$1")
-    .replace(/<\/div[\s\r\n]*>/g, "</view>")
-    .replace(/<span(\s|>)/g, "<text$1")
-    .replace(/<\/span[\s\r\n]*>/g, "</text>")
-    .replace(/<p(\s|>)/g, "<text$1")
-    .replace(/<\/p[\s\r\n]*>/g, "</text>")
-    .replace(/<h[1-6](\s|>)/g, "<text$1")
-    .replace(/<\/h[1-6][\s\r\n]*>/g, "</text>")
-    .replace(/<label(\s|>)/g, "<text$1")
-    .replace(/<\/label[\s\r\n]*>/g, "</text>")
-    .replace(/<button(\s|>)/g, "<view$1")
-    .replace(/<\/button[\s\r\n]*>/g, "</view>")
+    .replace(/<div(\s|>)/g, '<view$1')
+    .replace(/<\/div[\s\r\n]*>/g, '</view>')
+    .replace(/<span(\s|>)/g, '<text$1')
+    .replace(/<\/span[\s\r\n]*>/g, '</text>')
+    .replace(/<p(\s|>)/g, '<text$1')
+    .replace(/<\/p[\s\r\n]*>/g, '</text>')
+    .replace(/<h[1-6](\s|>)/g, '<text$1')
+    .replace(/<\/h[1-6][\s\r\n]*>/g, '</text>')
+    .replace(/<label(\s|>)/g, '<text$1')
+    .replace(/<\/label[\s\r\n]*>/g, '</text>')
+    .replace(/<button(\s|>)/g, '<view$1')
+    .replace(/<\/button[\s\r\n]*>/g, '</view>')
     .replace(/<hr(\s|>)/g, '<view class="border-b border-border"$1')
     .replace(/<hr\s*\/>/g, '<view class="border-b border-border" />')
-    .replace(/@click(\.stop|\.prevent)?=/g, "@tap$1=");
+    .replace(/@click(\.stop|\.prevent)?=/g, '@tap$1=');
 
   // Fix duplicate class attributes on view/text elements (including multiline and intermediate attributes)
   function findTags(str, tagName) {
@@ -59,7 +61,7 @@ function migrateFile(file) {
           inDoubleQuotes = !inDoubleQuotes;
         } else if (char === "'" && !inDoubleQuotes) {
           inSingleQuotes = !inSingleQuotes;
-        } else if (char === ">" && !inDoubleQuotes && !inSingleQuotes) {
+        } else if (char === '>' && !inDoubleQuotes && !inSingleQuotes) {
           tagEndIdx = i;
           break;
         }
@@ -83,10 +85,15 @@ function migrateFile(file) {
       const matches = [...tagContent.matchAll(classRegex)];
       if (matches.length > 1) {
         const classValues = matches.map((m) => m[1]);
-        const combinedClasses = Array.from(new Set(classValues.flatMap((c) => c.split(/\s+/))))
+        const combinedClasses = Array.from(
+          new Set(classValues.flatMap((c) => c.split(/\s+/)))
+        )
           .filter(Boolean)
-          .join(" ");
-        const cleanedContent = tagContent.replace(/(?<![:-])\bclass="[^"]*"/g, "");
+          .join(' ');
+        const cleanedContent = tagContent.replace(
+          /(?<![:-])\bclass="[^"]*"/g,
+          ''
+        );
         const cleanedTag = `<${tagName} class="${combinedClasses}"${cleanedContent}>`;
         str = str.slice(0, startIdx) + cleanedTag + str.slice(endIdx);
       }
@@ -94,11 +101,11 @@ function migrateFile(file) {
     return str;
   }
 
-  newContent = cleanDuplicateClassesForTag("view", newContent);
-  newContent = cleanDuplicateClassesForTag("text", newContent);
+  newContent = cleanDuplicateClassesForTag('view', newContent);
+  newContent = cleanDuplicateClassesForTag('text', newContent);
 
   if (content !== newContent) {
-    fs.writeFileSync(file, newContent, "utf8");
+    fs.writeFileSync(file, newContent, 'utf8');
     console.log(`[Success] Migrated: ${file}`);
   } else {
     console.log(`[Skip] No changes needed: ${file}`);
@@ -108,7 +115,7 @@ function migrateFile(file) {
 function processPath(targetPath) {
   const stat = fs.statSync(targetPath);
   if (stat.isFile()) {
-    if (targetPath.endsWith(".vue")) {
+    if (targetPath.endsWith('.vue')) {
       migrateFile(targetPath);
     }
   } else if (stat.isDirectory()) {
@@ -121,4 +128,4 @@ function processPath(targetPath) {
 
 console.log(`Starting tag migration on target path: ${resolvedPath}`);
 processPath(resolvedPath);
-console.log("Migration finished!");
+console.log('Migration finished!');

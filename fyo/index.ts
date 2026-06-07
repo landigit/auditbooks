@@ -1,35 +1,35 @@
-import { getMoneyMaker, MoneyMaker } from "pesa";
-import { Field, FieldType } from "schemas/types";
-import { getIsNullOrUndef } from "utils";
-import { markRaw } from "vue";
-import { AuthHandler } from "./core/authHandler";
-import { DatabaseHandler } from "./core/dbHandler";
-import { DocHandler } from "./core/docHandler";
-import { DocValue, FyoConfig } from "./core/types";
-import { Config } from "./demux/config";
-import { Doc } from "./model/doc";
-import { ModelMap } from "./model/types";
-import { TelemetryManager } from "./telemetry/telemetry";
+import { getMoneyMaker, MoneyMaker } from 'pesa';
+import { Field, FieldType } from 'schemas/types';
+import { getIsNullOrUndef } from 'utils';
+import { markRaw } from 'vue';
+import { AuthHandler } from './core/authHandler';
+import { DatabaseHandler } from './core/dbHandler';
+import { DocHandler } from './core/docHandler';
+import { DocValue, FyoConfig } from './core/types';
+import { Config } from './demux/config';
+import { Doc } from './model/doc';
+import { ModelMap } from './model/types';
+import { TelemetryManager } from './telemetry/telemetry';
 import {
   DEFAULT_CURRENCY,
   DEFAULT_DISPLAY_PRECISION,
   DEFAULT_INTERNAL_PRECISION,
-} from "./utils/consts";
-import * as errors from "./utils/errors";
-import { format } from "./utils/format";
-import { t, T } from "./utils/translation";
-import { ErrorLog } from "./utils/types";
-import type { reports } from "reports/index";
-import type { Report } from "reports/Report";
+} from './utils/consts';
+import * as errors from './utils/errors';
+import { format } from './utils/format';
+import { t, T } from './utils/translation';
+import { ErrorLog } from './utils/types';
+import type { reports } from 'reports/index';
+import type { Report } from 'reports/Report';
 
 export class Fyo {
   isDevelopment = false;
   skipTelemetryLogging = false;
-  appVersion = "";
-  platform = "";
-  language = "English";
-  instanceId = "";
-  deviceId = "";
+  appVersion = '';
+  platform = '';
+  language = 'English';
+  instanceId = '';
+  deviceId = '';
   openCount = 0;
   appFlags: Record<string, boolean> = {};
   reports: Record<keyof typeof reports, Report | undefined> = {} as any;
@@ -113,14 +113,18 @@ export class Fyo {
     }
   }
 
-  async initializeAndRegister(models: ModelMap = {}, regionalModels: ModelMap = {}, force = false) {
+  async initializeAndRegister(
+    models: ModelMap = {},
+    regionalModels: ModelMap = {},
+    force = false
+  ) {
     if (this._initialized && !force) return;
 
     await this.initializeModules();
     await this.initializeMoneyMaker();
 
     this.doc.registerModels(models, regionalModels);
-    await this.doc.getDoc("SystemSettings");
+    await this.doc.getDoc('SystemSettings');
     this._initialized = true;
   }
 
@@ -137,17 +141,17 @@ export class Fyo {
     const values =
       (await this.db?.getSingleValues(
         {
-          fieldname: "internalPrecision",
-          parent: "SystemSettings",
+          fieldname: 'internalPrecision',
+          parent: 'SystemSettings',
         },
         {
-          fieldname: "displayPrecision",
-          parent: "SystemSettings",
+          fieldname: 'displayPrecision',
+          parent: 'SystemSettings',
         },
         {
-          fieldname: "currency",
-          parent: "SystemSettings",
-        },
+          fieldname: 'currency',
+          parent: 'SystemSettings',
+        }
       )) ?? [];
 
     const acc = values.reduce(
@@ -155,11 +159,13 @@ export class Fyo {
         acc[sv.fieldname] = sv.value as string | number | undefined;
         return acc;
       },
-      {} as Record<string, string | number | undefined>,
+      {} as Record<string, string | number | undefined>
     );
 
-    const precision: number = (acc.internalPrecision as number) ?? DEFAULT_INTERNAL_PRECISION;
-    const display: number = (acc.displayPrecision as number) ?? DEFAULT_DISPLAY_PRECISION;
+    const precision: number =
+      (acc.internalPrecision as number) ?? DEFAULT_INTERNAL_PRECISION;
+    const display: number =
+      (acc.displayPrecision as number) ?? DEFAULT_DISPLAY_PRECISION;
     const currency: string = (acc.currency as string) ?? DEFAULT_CURRENCY;
 
     this.pesa = getMoneyMaker({
@@ -178,7 +184,11 @@ export class Fyo {
     return this.fieldMap[schemaName]?.[fieldname];
   }
 
-  async getValue(schemaName: string, name: string, fieldname?: string): Promise<DocValue | Doc[]> {
+  async getValue(
+    schemaName: string,
+    name: string,
+    fieldname?: string
+  ): Promise<DocValue | Doc[]> {
     if (fieldname === undefined && this.schemaMap[schemaName]?.isSingle) {
       fieldname = name;
       name = schemaName;

@@ -1,7 +1,7 @@
-import { Doc } from "fyo/model/doc";
-import { Account } from "../Account/Account";
-import { ListViewSettings } from "fyo/model/types";
-import { PaymentMethodType } from "models/types";
+import { Doc } from 'fyo/model/doc';
+import { Account } from '../Account/Account';
+import { ListViewSettings } from 'fyo/model/types';
+import { PaymentMethodType } from 'models/types';
 
 export class PaymentMethod extends Doc {
   declare name?: string;
@@ -10,7 +10,7 @@ export class PaymentMethod extends Doc {
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ["name", "type"],
+      columns: ['name', 'type'],
     };
   }
 }

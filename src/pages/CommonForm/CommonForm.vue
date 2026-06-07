@@ -18,7 +18,10 @@
           :from-currency="fromCurrency"
           :to-currency="toCurrency"
           :exchange-rate="exchangeRate"
-          @change="async (exchangeRate: number) => await doc.set('exchangeRate', exchangeRate)"
+          @change="
+            async (exchangeRate: number) =>
+              await doc.set('exchangeRate', exchangeRate)
+          "
         />
         <text
           v-if="schema.label && !(canShowBarcode || canShowExchangeRate)"
@@ -32,7 +35,9 @@
         <Button v-if="doc?.canSave" type="primary" @tap="sync">
           {{ t`Save` }}
         </Button>
-        <Button v-else-if="doc?.canSubmit" type="primary" @tap="submit">{{ t`Submit` }}</Button>
+        <Button v-else-if="doc?.canSubmit" type="primary" @tap="submit">{{
+          t`Submit`
+        }}</Button>
       </template>
       <template #body>
         <FormHeader :form-title="title" class="sticky top-0 bg-surface">
@@ -48,7 +53,9 @@
             :key="n + idx"
             ref="section"
             class="p-4"
-            :class="idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''"
+            :class="
+              idx !== 0 && activeGroup.size > 1 ? 'border-t border-border' : ''
+            "
             :show-title="activeGroup.size > 1 && n !== t`Default`"
             :title="n"
             :fields="fields"
@@ -108,7 +115,11 @@
           leave-from-class="translate-x-0 opacity-100 w-[var(--w-quick-edit)]"
           leave-to-class="translate-x-full opacity-0 w-0"
         >
-          <LinkedEntries v-if="showLinks && canShowLinks" :doc="doc" @close="showLinks = false" />
+          <LinkedEntries
+            v-if="showLinks && canShowLinks"
+            :doc="doc"
+            @close="showLinks = false"
+          />
         </Transition>
         <Transition
           enter-active-class="transition-all duration-150 ease-out"
@@ -138,13 +149,23 @@
     >
       <view class="flex flex-row items-center gap-2" @tap="router.back()">
         <text class="text-xl font-bold text-blue-600">&lt;</text>
-        <text class="text-lg font-semibold text-main truncate max-w-[150px]">{{ title }}</text>
+        <text class="text-lg font-semibold text-main truncate max-w-[150px]">{{
+          title
+        }}</text>
       </view>
       <view class="flex flex-row items-center gap-2">
-        <view v-if="doc?.canSave" class="px-4 py-2 bg-blue-600 rounded-lg" @tap="sync(true)">
+        <view
+          v-if="doc?.canSave"
+          class="px-4 py-2 bg-blue-600 rounded-lg"
+          @tap="sync(true)"
+        >
           <text class="text-white font-semibold text-sm">{{ t`Save` }}</text>
         </view>
-        <view v-else-if="doc?.canSubmit" class="px-4 py-2 bg-green-600 rounded-lg" @tap="submit">
+        <view
+          v-else-if="doc?.canSubmit"
+          class="px-4 py-2 bg-green-600 rounded-lg"
+          @tap="submit"
+        >
           <text class="text-white font-semibold text-sm">{{ t`Submit` }}</text>
         </view>
         <StatusPill v-if="hasDoc" :doc="doc" class="ms-2" />
@@ -202,27 +223,27 @@ import {
   onActivated,
   onDeactivated,
   nextTick,
-} from "vue";
-import { isLynx } from "src/utils/interactive";
-import { useRouter } from "vue-router";
-import { DocValue } from "fyo/core/types";
-import { Doc } from "fyo/model/doc";
-import { DEFAULT_CURRENCY } from "fyo/utils/consts";
-import { ValidationError } from "fyo/utils/errors";
-import { getDocStatus } from "models/helpers";
-import { ModelNameEnum } from "models/types";
-import { Field, Schema } from "schemas/types";
-import Button from "src/components/Button.vue";
-import Barcode from "src/components/Controls/Barcode.vue";
-import ExchangeRate from "src/components/Controls/ExchangeRate.vue";
-import DropdownWithActions from "src/components/DropdownWithActions.vue";
-import FormContainer from "src/components/FormContainer.vue";
-import FormHeader from "src/components/FormHeader.vue";
-import StatusPill from "src/components/StatusPill.vue";
-import { getErrorMessage } from "src/utils";
-import { shortcutsKey } from "src/utils/injectionKeys";
-import { docsPathMap } from "src/utils/misc";
-import { DocRef, UIGroupedFields } from "src/utils/types";
+} from 'vue';
+import { isLynx } from 'src/utils/interactive';
+import { useRouter } from 'vue-router';
+import { DocValue } from 'fyo/core/types';
+import { Doc } from 'fyo/model/doc';
+import { DEFAULT_CURRENCY } from 'fyo/utils/consts';
+import { ValidationError } from 'fyo/utils/errors';
+import { getDocStatus } from 'models/helpers';
+import { ModelNameEnum } from 'models/types';
+import { Field, Schema } from 'schemas/types';
+import Button from 'src/components/Button.vue';
+import Barcode from 'src/components/Controls/Barcode.vue';
+import ExchangeRate from 'src/components/Controls/ExchangeRate.vue';
+import DropdownWithActions from 'src/components/DropdownWithActions.vue';
+import FormContainer from 'src/components/FormContainer.vue';
+import FormHeader from 'src/components/FormHeader.vue';
+import StatusPill from 'src/components/StatusPill.vue';
+import { getErrorMessage } from 'src/utils';
+import { shortcutsKey } from 'src/utils/injectionKeys';
+import { docsPathMap } from 'src/utils/misc';
+import { DocRef, UIGroupedFields } from 'src/utils/types';
 import {
   commonDocSubmit,
   commonDocSync,
@@ -232,14 +253,14 @@ import {
   getActionsForDoc,
   isPrintable as isPrintableFn,
   routeTo,
-} from "src/utils/ui";
-import { useDocShortcuts } from "src/utils/vueUtils";
-import { useAppStore } from "src/stores/app";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
-import CommonFormSection from "./CommonFormSection.vue";
-import LinkedEntries from "./LinkedEntries.vue";
-import RowEditForm from "./RowEditForm.vue";
+} from 'src/utils/ui';
+import { useDocShortcuts } from 'src/utils/vueUtils';
+import { useAppStore } from 'src/stores/app';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
+import CommonFormSection from './CommonFormSection.vue';
+import LinkedEntries from './LinkedEntries.vue';
+import RowEditForm from './RowEditForm.vue';
 
 // Define Props
 const props = withDefaults(
@@ -248,9 +269,9 @@ const props = withDefaults(
     schemaName?: ModelNameEnum;
   }>(),
   {
-    name: "",
+    name: '',
     schemaName: ModelNameEnum.SalesInvoice,
-  },
+  }
 );
 
 // Router & App Store
@@ -260,15 +281,15 @@ const store = useAppStore();
 // Setup injection dependencies
 const shortcuts = inject(shortcutsKey);
 const docOrNull = ref(null) as DocRef;
-let context = "CommonForm";
+let context = 'CommonForm';
 if (shortcuts) {
-  context = useDocShortcuts(shortcuts, docOrNull, "CommonForm", true);
+  context = useDocShortcuts(shortcuts, docOrNull, 'CommonForm', true);
 }
 
 // Provide document context to child elements
 provide(
-  "doc",
-  computed(() => docOrNull.value),
+  'doc',
+  computed(() => docOrNull.value)
 );
 
 // Template Ref
@@ -296,7 +317,7 @@ const canShowBarcode = computed<boolean>(() => {
     return false;
   }
 
-  return typeof doc.value?.addItem === "function";
+  return typeof doc.value?.addItem === 'function';
 });
 
 const canShowExchangeRate = computed<boolean>(() => {
@@ -304,7 +325,7 @@ const canShowExchangeRate = computed<boolean>(() => {
 });
 
 const exchangeRate = computed<number>(() => {
-  if (!hasDoc.value || typeof doc.value.exchangeRate !== "number") {
+  if (!hasDoc.value || typeof doc.value.exchangeRate !== 'number') {
     return 1;
   }
 
@@ -313,7 +334,7 @@ const exchangeRate = computed<number>(() => {
 
 const fromCurrency = computed<string>(() => {
   const currency = doc.value?.currency;
-  if (typeof currency !== "string") {
+  if (typeof currency !== 'string') {
     return toCurrency.value;
   }
 
@@ -322,7 +343,7 @@ const fromCurrency = computed<string>(() => {
 
 const toCurrency = computed<string>(() => {
   const currency = fyo.singles.SystemSettings?.currency;
-  if (typeof currency !== "string") {
+  if (typeof currency !== 'string') {
     return DEFAULT_CURRENCY;
   }
 
@@ -355,7 +376,7 @@ const hasDoc = computed<boolean>(() => {
 
 const status = computed<string>(() => {
   if (!hasDoc.value) {
-    return "";
+    return '';
   }
 
   return getDocStatus(doc.value);
@@ -364,7 +385,9 @@ const status = computed<string>(() => {
 const doc = computed<Doc>(() => {
   const d = docOrNull.value;
   if (!d) {
-    throw new ValidationError(t`Doc ${schema.value.label} ${props.name} not set`);
+    throw new ValidationError(
+      t`Doc ${schema.value.label} ${props.name} not set`
+    );
   }
   return d;
 });
@@ -443,7 +466,7 @@ const formActions = computed(() => {
 // Methods
 const toggleWidth = async () => {
   const value = !useFullWidth.value;
-  await fyo.singles.Misc?.setAndSync("useFullWidth", value);
+  await fyo.singles.Misc?.setAndSync('useFullWidth', value);
   useFullWidth.value = value;
 };
 
@@ -452,7 +475,10 @@ const updateGroupedFields = (): void => {
     return;
   }
 
-  groupedFields.value = getFieldsGroupedByTabAndSection(schema.value, doc.value);
+  groupedFields.value = getFieldsGroupedByTabAndSection(
+    schema.value,
+    doc.value
+  );
 };
 
 const sync = async (useDialog?: boolean) => {
@@ -472,7 +498,10 @@ const setDoc = async () => {
     return;
   }
 
-  docOrNull.value = await getDocFromNameIfExistsElseNew(props.schemaName, props.name);
+  docOrNull.value = await getDocFromNameIfExistsElseNew(
+    props.schemaName,
+    props.name
+  );
 };
 
 const replacePathAfterSync = () => {
@@ -480,7 +509,7 @@ const replacePathAfterSync = () => {
     return;
   }
 
-  doc.value.once("afterSync", async () => {
+  doc.value.once('afterSync', async () => {
     const route = getFormRoute(props.schemaName, doc.value.name!);
     await router.replace(route);
   });
@@ -495,7 +524,7 @@ const showRowEditForm = async (childDoc: Doc) => {
   const index = childDoc.idx;
   const fieldname = childDoc.parentFieldname;
 
-  if (typeof index === "number" && typeof fieldname === "string") {
+  if (typeof index === 'number' && typeof fieldname === 'string') {
     row.value = { index, fieldname };
   }
 };
@@ -528,7 +557,7 @@ onBeforeMount(() => {
 });
 
 onMounted(async () => {
-  if (typeof window !== "undefined" && store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-expect-error
     window.cf = {
       errors,
@@ -574,15 +603,15 @@ onMounted(async () => {
 
 onActivated(() => {
   useFullWidth.value = !!fyo.singles.Misc?.useFullWidth;
-  store.docsPath = docsPathMap[props.schemaName] ?? "";
-  shortcuts?.pmod.set(context, ["KeyP"], () => {
+  store.docsPath = docsPathMap[props.schemaName] ?? '';
+  shortcuts?.pmod.set(context, ['KeyP'], () => {
     if (!canPrint.value || !doc.value) {
       return;
     }
 
     routeTo(`/print/${doc.value.schemaName}/${doc.value.name}`);
   });
-  shortcuts?.pmod.set(context, ["KeyL"], () => {
+  shortcuts?.pmod.set(context, ['KeyL'], () => {
     if (!canShowLinks.value && !showLinks.value) {
       return;
     }
@@ -592,7 +621,7 @@ onActivated(() => {
 });
 
 onDeactivated(() => {
-  store.docsPath = "";
+  store.docsPath = '';
   showLinks.value = false;
   row.value = null;
 });

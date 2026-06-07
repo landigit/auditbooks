@@ -1,24 +1,29 @@
-import Dashboard from "src/pages/Dashboard/Dashboard.vue";
-import GetStarted from "src/pages/GetStarted.vue";
-import type { HistoryState } from "vue-router";
-import { createRouter, createWebHistory, createMemoryHistory, RouteRecordRaw } from "vue-router";
-import { useAppStore } from "./stores/app";
+import Dashboard from 'src/pages/Dashboard/Dashboard.vue';
+import GetStarted from 'src/pages/GetStarted.vue';
+import type { HistoryState } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory,
+  createMemoryHistory,
+  RouteRecordRaw,
+} from 'vue-router';
+import { useAppStore } from './stores/app';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: "/",
+    path: '/',
     component: Dashboard,
   },
   {
-    path: "/get-started",
+    path: '/get-started',
     component: GetStarted,
   },
   {
     path: `/edit/:schemaName/:name`,
     name: `CommonForm`,
     components: {
-      default: () => import("src/pages/CommonForm/CommonForm.vue"),
-      edit: () => import("src/pages/QuickEditForm.vue"),
+      default: () => import('src/pages/CommonForm/CommonForm.vue'),
+      edit: () => import('src/pages/QuickEditForm.vue'),
     },
     props: {
       default: (route) => ({
@@ -29,20 +34,20 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/list/:schemaName/:pageTitle?",
-    name: "ListView",
+    path: '/list/:schemaName/:pageTitle?',
+    name: 'ListView',
     components: {
-      default: () => import("src/pages/ListView/ListView.vue"),
-      edit: () => import("src/pages/QuickEditForm.vue"),
+      default: () => import('src/pages/ListView/ListView.vue'),
+      edit: () => import('src/pages/QuickEditForm.vue'),
     },
     props: {
       default: (route) => {
         const { schemaName } = route.params;
-        const pageTitle = route.params.pageTitle ?? "";
+        const pageTitle = route.params.pageTitle ?? '';
 
         const filters = {};
         const filterString = route.query.filters;
-        if (typeof filterString === "string") {
+        if (typeof filterString === 'string') {
           Object.assign(filters, JSON.parse(filterString));
         }
 
@@ -56,29 +61,29 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/print/:schemaName/:name",
-    name: "PrintView",
-    component: () => import("src/pages/PrintView/PrintView.vue"),
+    path: '/print/:schemaName/:name',
+    name: 'PrintView',
+    component: () => import('src/pages/PrintView/PrintView.vue'),
     props: true,
   },
   {
-    path: "/report-print/:reportName",
-    name: "ReportPrintView",
-    component: () => import("src/pages/PrintView/ReportPrintView.vue"),
+    path: '/report-print/:reportName',
+    name: 'ReportPrintView',
+    component: () => import('src/pages/PrintView/ReportPrintView.vue'),
     props: true,
   },
   {
-    path: "/report/:reportClassName",
-    name: "Report",
-    component: () => import("src/pages/Report.vue"),
+    path: '/report/:reportClassName',
+    name: 'Report',
+    component: () => import('src/pages/Report.vue'),
     props: true,
   },
   {
-    path: "/chart-of-accounts",
-    name: "Chart Of Accounts",
+    path: '/chart-of-accounts',
+    name: 'Chart Of Accounts',
     components: {
-      default: () => import("src/pages/ChartOfAccounts.vue"),
-      edit: () => import("src/pages/QuickEditForm.vue"),
+      default: () => import('src/pages/ChartOfAccounts.vue'),
+      edit: () => import('src/pages/QuickEditForm.vue'),
     },
     props: {
       default: true,
@@ -86,27 +91,27 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/import-wizard",
-    name: "Import Wizard",
-    component: () => import("src/pages/ImportWizard.vue"),
+    path: '/import-wizard',
+    name: 'Import Wizard',
+    component: () => import('src/pages/ImportWizard.vue'),
   },
   {
-    path: "/template-builder/:name",
-    name: "Template Builder",
-    component: () => import("src/pages/TemplateBuilder/TemplateBuilder.vue"),
+    path: '/template-builder/:name',
+    name: 'Template Builder',
+    component: () => import('src/pages/TemplateBuilder/TemplateBuilder.vue'),
     props: true,
   },
   {
-    path: "/customize-form",
-    name: "Customize Form",
-    component: () => import("src/pages/CustomizeForm/CustomizeForm.vue"),
+    path: '/customize-form',
+    name: 'Customize Form',
+    component: () => import('src/pages/CustomizeForm/CustomizeForm.vue'),
   },
   {
-    path: "/settings",
-    name: "Settings",
+    path: '/settings',
+    name: 'Settings',
     components: {
-      default: () => import("src/pages/Settings/Settings.vue"),
-      edit: () => import("src/pages/QuickEditForm.vue"),
+      default: () => import('src/pages/Settings/Settings.vue'),
+      edit: () => import('src/pages/QuickEditForm.vue'),
     },
     props: {
       default: true,
@@ -114,11 +119,11 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/pos",
-    name: "Point of Sale",
+    path: '/pos',
+    name: 'Point of Sale',
     components: {
-      default: () => import("src/pages/POS/POS.vue"),
-      edit: () => import("src/pages/QuickEditForm.vue"),
+      default: () => import('src/pages/POS/POS.vue'),
+      edit: () => import('src/pages/QuickEditForm.vue'),
     },
     props: {
       default: true,
@@ -126,22 +131,22 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/calendar",
-    name: "Calendar",
-    component: () => import("src/pages/Calendar.vue"),
+    path: '/calendar',
+    name: 'Calendar',
+    component: () => import('src/pages/Calendar.vue'),
   },
   {
-    path: "/help/:path*",
-    name: "Help",
-    component: () => import("src/pages/HelpView.vue"),
+    path: '/help/:path*',
+    name: 'Help',
+    component: () => import('src/pages/HelpView.vue'),
     props: true,
   },
 ];
 
 const isLynx =
-  typeof globalThis !== "undefined" &&
+  typeof globalThis !== 'undefined' &&
   ((globalThis as any).lynx ||
-    (typeof process !== "undefined" && process.env && process.env.BACKEND_IP));
+    (typeof process !== 'undefined' && process.env && process.env.BACKEND_IP));
 
 const router = createRouter({
   routes,
@@ -154,11 +159,11 @@ router.afterEach(({ fullPath }) => {
   appStore.historyState.forward = !!state.forward;
   appStore.historyState.back = !!state.back;
 
-  if (fullPath.includes("index.html")) {
+  if (fullPath.includes('index.html')) {
     return;
   }
 
-  localStorage.setItem("lastRoute", fullPath);
+  localStorage.setItem('lastRoute', fullPath);
 });
 
 export default router;

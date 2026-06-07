@@ -1,16 +1,23 @@
 <template>
-  <view class="flex-shrink-0 flex items-center gap-2" style="width: fit-content">
-    <kbd v-for="k in keys" :key="k" class="key-common" :class="{ 'key-styling': !simple }">{{
-      keyMap[k] ?? k
-    }}</kbd>
+  <view
+    class="flex-shrink-0 flex items-center gap-2"
+    style="width: fit-content"
+  >
+    <kbd
+      v-for="k in keys"
+      :key="k"
+      class="key-common"
+      :class="{ 'key-styling': !simple }"
+      >{{ keyMap[k] ?? k }}</kbd
+    >
   </view>
 </template>
 
 <script setup lang="ts">
 // --- Imports ---
-import { computed } from "vue";
-import { getShortcutKeyMap } from "src/utils/ui";
-import { useAppStore } from "src/stores/app";
+import { computed } from 'vue';
+import { getShortcutKeyMap } from 'src/utils/ui';
+import { useAppStore } from 'src/stores/app';
 
 // --- Props & Emits ---
 withDefaults(
@@ -20,7 +27,7 @@ withDefaults(
   }>(),
   {
     simple: false,
-  },
+  }
 );
 
 // --- State ---

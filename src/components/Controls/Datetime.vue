@@ -10,7 +10,12 @@
       :size="size"
       @update:model-value="handleDateChange"
     />
-    <view v-else class="flex" :class="[containerClasses, sizeClasses]" tabindex="-1">
+    <view
+      v-else
+      class="flex"
+      :class="[containerClasses, sizeClasses]"
+      tabindex="-1"
+    >
       <text
         v-if="!isEmpty"
         :class="[baseInputClasses]"
@@ -18,7 +23,10 @@
       >
         {{ formattedValue }}
       </text>
-      <text v-else-if="inputPlaceholder" class="text-base text-description w-full opacity-50">
+      <text
+        v-else-if="inputPlaceholder"
+        class="text-base text-description w-full opacity-50"
+      >
         {{ inputPlaceholder }}
       </text>
     </view>
@@ -27,16 +35,19 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { computed, ref } from "vue";
-import { fyo } from "src/initFyo";
-import { DateTimePicker } from "src/components/ui";
-import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
+import { computed, ref } from 'vue';
+import { fyo } from 'src/initFyo';
+import { DateTimePicker } from 'src/components/ui';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 // --- Props & Emits ---
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
   border: false,
-  size: "large",
+  size: 'large',
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -45,9 +56,9 @@ const props = withDefaults(defineProps<BaseControlProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: "focus", ev: FocusEvent): void;
-  (e: "input", ev: Event): void;
-  (e: "change", val: any): void;
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
 }>();
 
 // --- State ---

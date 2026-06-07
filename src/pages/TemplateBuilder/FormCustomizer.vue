@@ -1,9 +1,18 @@
 <template>
-  <div class="flex flex-col h-full bg-surface border-l border-border select-none">
+  <div
+    class="flex flex-col h-full bg-surface border-l border-border select-none"
+  >
     <!-- Header -->
-    <div class="p-4 border-b border-border flex justify-between items-center bg-canvas-muted">
-      <span class="font-semibold text-base text-main">{{ t`Customize Template` }}</span>
-      <button @click="resetToDefault" class="text-xs text-primary hover:underline font-medium">
+    <div
+      class="p-4 border-b border-border flex justify-between items-center bg-canvas-muted"
+    >
+      <span class="font-semibold text-base text-main">{{
+        t`Customize Template`
+      }}</span>
+      <button
+        @click="resetToDefault"
+        class="text-xs text-primary hover:underline font-medium"
+      >
         {{ t`Reset Defaults` }}
       </button>
     </div>
@@ -18,7 +27,9 @@
 
         <!-- Theme Color -->
         <div class="flex justify-between items-center">
-          <label class="text-sm text-main font-medium">{{ t`Accent Color` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Accent Color`
+          }}</label>
           <div class="flex items-center gap-2">
             <input
               type="color"
@@ -37,7 +48,9 @@
 
         <!-- Fonts -->
         <div class="flex justify-between items-center">
-          <label class="text-sm text-main font-medium">{{ t`Font Family` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Font Family`
+          }}</label>
           <select
             v-model="schema.font"
             @change="updateTemplate"
@@ -58,7 +71,9 @@
         </h3>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Logo` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Logo`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displayLogo"
@@ -68,7 +83,9 @@
         </div>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Company Name` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Company Name`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displayCompanyName"
@@ -78,7 +95,9 @@
         </div>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Company Address` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Company Address`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displayAddress"
@@ -88,7 +107,9 @@
         </div>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Company Phone` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Company Phone`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displayPhone"
@@ -98,7 +119,9 @@
         </div>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Company Email` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Company Email`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displayEmail"
@@ -197,7 +220,9 @@
         </h3>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Taxes Summary` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Taxes Summary`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displayTaxes"
@@ -207,7 +232,9 @@
         </div>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Terms & Conditions` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Terms & Conditions`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displayTerms"
@@ -218,7 +245,9 @@
 
         <!-- Custom Terms Input -->
         <div v-if="schema.displayTerms" class="space-y-1">
-          <label class="text-xs text-gray-400 font-semibold uppercase">{{ t`Custom Terms` }}</label>
+          <label class="text-xs text-gray-400 font-semibold uppercase">{{
+            t`Custom Terms`
+          }}</label>
           <textarea
             v-model="schema.customTerms"
             @input="updateTemplate"
@@ -229,7 +258,9 @@
         </div>
 
         <div class="flex items-center justify-between">
-          <label class="text-sm text-main font-medium">{{ t`Show Authorized Signatory` }}</label>
+          <label class="text-sm text-main font-medium">{{
+            t`Show Authorized Signatory`
+          }}</label>
           <input
             type="checkbox"
             v-model="schema.displaySignature"
@@ -243,74 +274,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
-import { t } from "fyo";
-
-// Props & Emits
-const props = defineProps<{
-  initialValue: string;
-}>();
-
-const emit = defineEmits<{
-  (e: "change", value: string): void;
-}>();
-
-// Default Schema config
-const defaultSchema = {
-  themeColor: "#4f46e5",
-  font: "Inter",
-  displayLogo: true,
-  displayCompanyName: true,
-  displayAddress: true,
-  displayPhone: true,
-  displayEmail: true,
-  columns: ["sNo", "description", "qty", "rate", "amount"],
-  displayTaxes: true,
-  displayTerms: true,
-  customTerms: "",
-  displaySignature: true,
-  displayBankDetails: false,
-};
-
-const schema = ref({ ...defaultSchema });
-
-// Load schema from template string if it exists in comments
-const loadSchemaFromTemplate = (templateStr: string) => {
-  const match = templateStr.match(/<!-- SCHEMA:\s*({.*?})\s*-->/);
-  if (match) {
-    try {
-      const parsed = JSON.parse(match[1]);
-      schema.value = { ...defaultSchema, ...parsed };
-    } catch (e) {
-      console.error("Failed to parse template schema comment:", e);
-    }
-  } else {
-    // If no schema comment is found, default it
-    schema.value = { ...defaultSchema };
-  }
-};
-
-// Reset to Default
-const resetToDefault = () => {
-  schema.value = { ...defaultSchema };
-  updateTemplate();
-};
-
-// Generate Vue Template HTML
-const generateTemplateHTML = () => {
-  const s = schema.value;
-  const escapeJsString = (str: string) => {
-    return (str || "")
-      .replace(/\\/g, "\\\\")
-      .replace(/'/g, "\\'")
-      .replace(/\n/g, "\\n")
-      .replace(/\r/g, "\\r");
-  };
-
-  const escapedTerms = escapeJsString(s.customTerms);
-
-  return `<!-- SCHEMA: ${JSON.stringify(s)} -->
-<main class="w-full h-full bg-white text-gray-800 p-8 flex flex-col justify-between" style="font-family: ${s.font}, sans-serif; min-height: 100%;">
+import { ref, onMounted, watch } from 'vue'; import { t } from 'fyo'; // Props &
+Emits const props = defineProps<{ initialValue: string; }>(); const emit =
+defineEmits<{ (e: 'change', value: string): void; }>(); // Default Schema config
+const defaultSchema = { themeColor: '#4f46e5', font: 'Inter', displayLogo: true,
+displayCompanyName: true, displayAddress: true, displayPhone: true,
+displayEmail: true, columns: ['sNo', 'description', 'qty', 'rate', 'amount'],
+displayTaxes: true, displayTerms: true, customTerms: '', displaySignature: true,
+displayBankDetails: false, }; const schema = ref({ ...defaultSchema }); // Load
+schema from template string if it exists in comments const
+loadSchemaFromTemplate = (templateStr: string) => { const match =
+templateStr.match(/<!-- SCHEMA:\s*({.*?})\s*-->/); if (match) { try { const
+parsed = JSON.parse(match[1]); schema.value = { ...defaultSchema, ...parsed }; }
+catch (e) { console.error('Failed to parse template schema comment:', e); } }
+else { // If no schema comment is found, default it schema.value = {
+...defaultSchema }; } }; // Reset to Default const resetToDefault = () => {
+schema.value = { ...defaultSchema }; updateTemplate(); }; // Generate Vue
+Template HTML const generateTemplateHTML = () => { const s = schema.value; const
+escapeJsString = (str: string) => { return (str || '') .replace(/\\/g, '\\\\')
+.replace(/'/g, "\\'") .replace(/\n/g, '\\n') .replace(/\r/g, '\\r'); }; const
+escapedTerms = escapeJsString(s.customTerms); return `<!-- SCHEMA: ${JSON.stringify(s)} -->
+<main
+  class="w-full h-full bg-white text-gray-800 p-8 flex flex-col justify-between"
+  style="font-family: ${s.font}, sans-serif; min-height: 100%;"
+>
   <div>
     <!-- Header -->
     <div class="flex justify-between items-start mb-8 border-b pb-6" style="border-color: ${s.themeColor}33">
@@ -322,7 +309,7 @@ const generateTemplateHTML = () => {
           <p v-if="doc.dueDate">Due Date: {{ doc.dueDate }}</p>
         </div>
       </div>
-      
+
       <div class="text-right">
         <!-- Logo -->
         <div v-if="${s.displayLogo} && print.logo" class="mb-2 flex justify-end">
@@ -358,31 +345,31 @@ const generateTemplateHTML = () => {
     <table class="w-full mb-8 text-left border-collapse">
       <thead>
         <tr class="text-xs font-bold uppercase text-white" style="background-color: ${s.themeColor}">
-          ${s.columns.includes("sNo") ? `<th class="p-3 first:rounded-l last:rounded-r">S.No</th>` : ""}
-          ${s.columns.includes("description") ? `<th class="p-3 first:rounded-l last:rounded-r">Item & Description</th>` : ""}
-          ${s.columns.includes("qty") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Qty</th>` : ""}
-          ${s.columns.includes("rate") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Rate</th>` : ""}
-          ${s.columns.includes("discount") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Discount</th>` : ""}
-          ${s.columns.includes("tax") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Tax</th>` : ""}
-          ${s.columns.includes("amount") ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Amount</th>` : ""}
+          ${s.columns.includes('sNo') ? `<th class="p-3 first:rounded-l last:rounded-r">S.No</th>` : ''}
+          ${s.columns.includes('description') ? `<th class="p-3 first:rounded-l last:rounded-r">Item & Description</th>` : ''}
+          ${s.columns.includes('qty') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Qty</th>` : ''}
+          ${s.columns.includes('rate') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Rate</th>` : ''}
+          ${s.columns.includes('discount') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Discount</th>` : ''}
+          ${s.columns.includes('tax') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Tax</th>` : ''}
+          ${s.columns.includes('amount') ? `<th class="p-3 text-right first:rounded-l last:rounded-r">Amount</th>` : ''}
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100 text-sm">
         <tr v-for="(row, idx) in doc.items" :key="idx" class="hover:bg-gray-50">
-          ${s.columns.includes("sNo") ? `<td class="p-3 text-gray-500">{{ idx + 1 }}</td>` : ""}
+          ${s.columns.includes('sNo') ? `<td class="p-3 text-gray-500">{{ idx + 1 }}</td>` : ''}
           ${
-            s.columns.includes("description")
-              ? `<td class="p-3">
+              s.columns.includes('description')
+                ? `<td class="p-3">
             <p class="font-medium text-gray-900">{{ row.itemName || row.item }}</p>
             <p v-if="row.description" class="text-xs text-gray-500 mt-0.5">{{ row.description }}</p>
           </td>`
-              : ""
-          }
-          ${s.columns.includes("qty") ? `<td class="p-3 text-right text-gray-600">{{ row.qty }}</td>` : ""}
-          ${s.columns.includes("rate") ? `<td class="p-3 text-right text-gray-600">{{ row.rate }}</td>` : ""}
-          ${s.columns.includes("discount") ? `<td class="p-3 text-right text-gray-600">{{ row.discountAmount || row.discount }}</td>` : ""}
-          ${s.columns.includes("tax") ? `<td class="p-3 text-right text-gray-600">{{ row.taxAmount || row.tax }}</td>` : ""}
-          ${s.columns.includes("amount") ? `<td class="p-3 text-right font-semibold text-gray-900">{{ row.amount }}</td>` : ""}
+                : ''
+            }
+          ${s.columns.includes('qty') ? `<td class="p-3 text-right text-gray-600">{{ row.qty }}</td>` : ''}
+          ${s.columns.includes('rate') ? `<td class="p-3 text-right text-gray-600">{{ row.rate }}</td>` : ''}
+          ${s.columns.includes('discount') ? `<td class="p-3 text-right text-gray-600">{{ row.discountAmount || row.discount }}</td>` : ''}
+          ${s.columns.includes('tax') ? `<td class="p-3 text-right text-gray-600">{{ row.taxAmount || row.tax }}</td>` : ''}
+          ${s.columns.includes('amount') ? `<td class="p-3 text-right font-semibold text-gray-900">{{ row.amount }}</td>` : ''}
         </tr>
       </tbody>
     </table>
@@ -423,31 +410,16 @@ const generateTemplateHTML = () => {
         <p v-if="print.bankIfsc">IFSC: {{ print.bankIfsc }}</p>
       </div>
     </div>
-    
+
     <div v-if="${s.displaySignature}" class="text-center w-40">
       <div class="border-b border-gray-300 h-12 mb-2"></div>
       <p class="font-medium text-gray-700">Authorized Signatory</p>
     </div>
   </div>
 </main>
-`;
-};
-
-// Emit changes
-const updateTemplate = () => {
-  const html = generateTemplateHTML();
-  emit("change", html);
-};
-
-// Watch initial value change (e.g. template loads)
-watch(
-  () => props.initialValue,
-  (newVal) => {
-    loadSchemaFromTemplate(newVal);
-  },
-);
-
-onMounted(() => {
-  loadSchemaFromTemplate(props.initialValue);
-});
+`; }; // Emit changes const updateTemplate = () => { const html =
+generateTemplateHTML(); emit('change', html); }; // Watch initial value change
+(e.g. template loads) watch( () => props.initialValue, (newVal) => {
+loadSchemaFromTemplate(newVal); } ); onMounted(() => {
+loadSchemaFromTemplate(props.initialValue); });
 </script>

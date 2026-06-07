@@ -34,7 +34,8 @@ export class StockQueue {
      * Update Moving Average valuation
      */
     this.movingAverage =
-      (this.movingAverage * this.quantity + inwardValue) / (this.quantity + quantity);
+      (this.movingAverage * this.quantity + inwardValue) /
+      (this.quantity + quantity);
 
     this.quantity += quantity;
     this.value += inwardValue;

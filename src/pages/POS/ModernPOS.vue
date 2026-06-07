@@ -31,7 +31,9 @@
         :open-modal="openSavedInvoiceModal || false"
         :modal-status="openSavedInvoiceModal || false"
         @toggle-modal="emitEvent('toggleModal', 'SavedInvoice')"
-        @selected-invoice-name="(invName) => emitEvent('selectedInvoiceName', invName)"
+        @selected-invoice-name="
+          (invName) => emitEvent('selectedInvoiceName', invName)
+        "
       />
 
       <CouponCodeModal
@@ -55,16 +57,24 @@
         :open-modal="openPaymentModal"
         @toggle-modal="emitEvent('toggleModal', 'Payment')"
         @set-paid-amount="(amount) => emitEvent('setPaidAmount', amount)"
-        @set-payment-method="(paymentMethod) => emitEvent('setPaymentMethod', paymentMethod)"
+        @set-payment-method="
+          (paymentMethod) => emitEvent('setPaymentMethod', paymentMethod)
+        "
         @set-transfer-ref-no="(ref) => emitEvent('setTransferRefNo', ref)"
-        @set-transfer-clearance-date="(date) => emitEvent('setTransferClearanceDate', date)"
-        @create-transaction="(print, status) => emitEvent('createTransaction', print, status)"
+        @set-transfer-clearance-date="
+          (date) => emitEvent('setTransferClearanceDate', date)
+        "
+        @create-transaction="
+          (print, status) => emitEvent('createTransaction', print, status)
+        "
       />
 
       <ReturnSalesInvoiceModal
         :open-modal="openReturnSalesInvoiceModal || false"
         :modal-status="openReturnSalesInvoiceModal || false"
-        @selected-return-invoice="(value: any) => emitEvent('selectedReturnInvoice', value)"
+        @selected-return-invoice="
+          (value: any) => emitEvent('selectedReturnInvoice', value)
+        "
         @toggle-modal="emitEvent('toggleModal', 'ReturnSalesInvoice')"
       />
 
@@ -85,7 +95,9 @@
         @apply-pricing-rule="emitEvent('applyPricingRule')"
       />
 
-      <view class="bg-canvas-muted flex flex-col lg:grid lg:grid-cols-9 gap-3 p-4">
+      <view
+        class="bg-canvas-muted flex flex-col lg:grid lg:grid-cols-9 gap-3 p-4"
+      >
         <view class="w-full lg:col-span-3 flex h-auto">
           <view class="flex flex-col w-full gap-3">
             <view
@@ -105,14 +117,18 @@
 
               <ModernPOSSelectedItemTable
                 :expanded-batch-id="expandedBatchId"
-                @set-expanded-batch-id="(rowName) => emit('setExpandedBatchId', rowName)"
+                @set-expanded-batch-id="
+                  (rowName) => emit('setExpandedBatchId', rowName)
+                "
                 @selected-row="selectedRow"
                 @apply-pricing-rule="emitEvent('applyPricingRule')"
                 @toggle-modal="emitEvent('toggleModal', 'Keyboard')"
               />
             </view>
 
-            <view class="p-3 bg-surface border rounded-md border-border h-fit flex-shrink-0">
+            <view
+              class="p-3 bg-surface border rounded-md border-border h-fit flex-shrink-0"
+            >
               <view class="grid grid-cols-2 gap-2">
                 <FloatingLabelFloatInput
                   :df="{
@@ -172,13 +188,16 @@
                     class="mt-2 w-full py-5"
                     :style="{
                       backgroundColor:
-                        profile?.saveButtonColour || fyo.singles.Defaults?.saveButtonColour,
+                        profile?.saveButtonColour ||
+                        fyo.singles.Defaults?.saveButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
                     @tap="emit('saveInvoiceAction')"
                   >
                     <slot>
-                      <text class="uppercase text-lg text-button-primary-text font-semibold">
+                      <text
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Save` }}
                       </text>
                     </slot>
@@ -187,13 +206,16 @@
                     class="w-full mt-2 py-5"
                     :style="{
                       backgroundColor:
-                        profile?.heldButtonColour || fyo.singles.Defaults?.heldButtonColour,
+                        profile?.heldButtonColour ||
+                        fyo.singles.Defaults?.heldButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
                     @tap="emitEvent('toggleModal', 'SavedInvoice', true)"
                   >
                     <slot>
-                      <text class="uppercase text-lg text-button-primary-text font-semibold">
+                      <text
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Held` }}
                       </text>
                     </slot>
@@ -204,13 +226,16 @@
                     class="mt-2 w-full py-5"
                     :style="{
                       backgroundColor:
-                        profile?.cancelButtonColour || fyo.singles.Defaults?.cancelButtonColour,
+                        profile?.cancelButtonColour ||
+                        fyo.singles.Defaults?.cancelButtonColour,
                     }"
                     :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
                     @tap="() => emit('clearValues')"
                   >
                     <slot>
-                      <text class="uppercase text-lg text-button-primary-text font-semibold">
+                      <text
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Cancel` }}
                       </text>
                     </slot>
@@ -220,12 +245,15 @@
                     class="mt-2 w-full py-5"
                     :style="{
                       backgroundColor:
-                        profile?.returnButtonColour || fyo.singles.Defaults?.returnButtonColour,
+                        profile?.returnButtonColour ||
+                        fyo.singles.Defaults?.returnButtonColour,
                     }"
                     @tap="emitEvent('toggleModal', 'ReturnSalesInvoice', true)"
                   >
                     <slot>
-                      <text class="uppercase text-lg text-button-primary-text font-semibold">
+                      <text
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Return` }}
                       </text>
                     </slot>
@@ -235,12 +263,15 @@
                     class="mt-2 w-full py-5"
                     :style="{
                       backgroundColor:
-                        profile?.payButtonColour || fyo.singles.Defaults?.payButtonColour,
+                        profile?.payButtonColour ||
+                        fyo.singles.Defaults?.payButtonColour,
                     }"
                     @tap="emitEvent('handlePaymentAction')"
                   >
                     <slot>
-                      <text class="uppercase text-lg text-button-primary-text font-semibold">
+                      <text
+                        class="uppercase text-lg text-button-primary-text font-semibold"
+                      >
                         {{ t`Pay` }}
                       </text>
                     </slot>
@@ -252,12 +283,15 @@
                 class="mt-2 w-full py-5"
                 :style="{
                   backgroundColor:
-                    profile?.payButtonColour || fyo.singles.Defaults?.payButtonColour,
+                    profile?.payButtonColour ||
+                    fyo.singles.Defaults?.payButtonColour,
                 }"
                 @tap="emitEvent('handlePaymentAction')"
               >
                 <slot>
-                  <text class="uppercase text-lg text-button-primary-text font-semibold">
+                  <text
+                    class="uppercase text-lg text-button-primary-text font-semibold"
+                  >
                     {{ t`Pay` }}
                   </text>
                 </slot>
@@ -287,7 +321,11 @@
                 :show-clear-button="true"
                 @keyup.enter="
                   (event: KeyboardEvent) =>
-                    emitEvent('handleItemSearch', (event.target as HTMLInputElement).value, true)
+                    emitEvent(
+                      'handleItemSearch',
+                      (event.target as HTMLInputElement).value,
+                      true
+                    )
                 "
                 @change="(item: string) => emitEvent('handleItemSearch', item)"
               />
@@ -331,7 +369,9 @@
                 :applied-coupons-count="appliedCouponsCount"
                 @toggle-view="emitEvent('toggleView')"
                 @emit-route-to-sinv-list="emitEvent('routeToSinvList')"
-                @toggle-modal="(modalName) => emitEvent('toggleModal', modalName)"
+                @toggle-modal="
+                  (modalName) => emitEvent('toggleModal', modalName)
+                "
               />
             </view>
           </view>
@@ -343,45 +383,47 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Modern P O S</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { Money } from "pesa";
-import { fyo } from "src/initFyo";
-import { getItem } from "src/utils/pos";
-import AlertModal from "./AlertModal.vue";
-import PaymentModal from "./PaymentModal.vue";
-import Button from "src/components/Button.vue";
-import KeyboardModal from "./KeyboardModal.vue";
-import PriceListModal from "./PriceListModal.vue";
-import ItemEnquiryModal from "./ItemEnquiryModal.vue";
-import { Item } from "models/baseModels/Item/Item";
-import Link from "src/components/Controls/Link.vue";
-import CouponCodeModal from "./CouponCodeModal.vue";
-import POSQuickActions from "./POSQuickActions.vue";
-import OpenPOSShiftModal from "./OpenPOSShiftModal.vue";
-import SavedInvoiceModal from "./SavedInvoiceModal.vue";
-import ClosePOSShiftModal from "./ClosePOSShiftModal.vue";
-import LoyaltyProgramModal from "./LoyaltyProgramModal.vue";
-import ReturnSalesInvoiceModal from "./ReturnSalesInvoiceModal.vue";
-import { POSProfile } from "models/baseModels/POSProfile/PosProfile";
-import MultiLabelLink from "src/components/Controls/MultiLabelLink.vue";
-import { POSItem, PosEmits, ItemQtyMap } from "src/components/POS/types";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import ModernPOSItemsGrid from "src/components/POS/Modern/ModernPOSItemsGrid.vue";
-import ModernPOSItemsTable from "src/components/POS/Modern/ModernPOSItemsTable.vue";
-import FloatingLabelFloatInput from "src/components/POS/FloatingLabelFloatInput.vue";
-import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
-import FloatingLabelCurrencyInput from "src/components/POS/FloatingLabelCurrencyInput.vue";
-import { AppliedCouponCodes } from "models/baseModels/AppliedCouponCodes/AppliedCouponCodes";
-import ModernPOSSelectedItemTable from "src/components/POS/Modern/ModernPOSSelectedItemTable.vue";
-import BatchSelectionModal from "src/pages/POS/BatchSelectionModal.vue";
-import { t } from "fyo";
+import { ref, computed } from 'vue';
+import { Money } from 'pesa';
+import { fyo } from 'src/initFyo';
+import { getItem } from 'src/utils/pos';
+import AlertModal from './AlertModal.vue';
+import PaymentModal from './PaymentModal.vue';
+import Button from 'src/components/Button.vue';
+import KeyboardModal from './KeyboardModal.vue';
+import PriceListModal from './PriceListModal.vue';
+import ItemEnquiryModal from './ItemEnquiryModal.vue';
+import { Item } from 'models/baseModels/Item/Item';
+import Link from 'src/components/Controls/Link.vue';
+import CouponCodeModal from './CouponCodeModal.vue';
+import POSQuickActions from './POSQuickActions.vue';
+import OpenPOSShiftModal from './OpenPOSShiftModal.vue';
+import SavedInvoiceModal from './SavedInvoiceModal.vue';
+import ClosePOSShiftModal from './ClosePOSShiftModal.vue';
+import LoyaltyProgramModal from './LoyaltyProgramModal.vue';
+import ReturnSalesInvoiceModal from './ReturnSalesInvoiceModal.vue';
+import { POSProfile } from 'models/baseModels/POSProfile/PosProfile';
+import MultiLabelLink from 'src/components/Controls/MultiLabelLink.vue';
+import { POSItem, PosEmits, ItemQtyMap } from 'src/components/POS/types';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import ModernPOSItemsGrid from 'src/components/POS/Modern/ModernPOSItemsGrid.vue';
+import ModernPOSItemsTable from 'src/components/POS/Modern/ModernPOSItemsTable.vue';
+import FloatingLabelFloatInput from 'src/components/POS/FloatingLabelFloatInput.vue';
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import FloatingLabelCurrencyInput from 'src/components/POS/FloatingLabelCurrencyInput.vue';
+import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import ModernPOSSelectedItemTable from 'src/components/POS/Modern/ModernPOSSelectedItemTable.vue';
+import BatchSelectionModal from 'src/pages/POS/BatchSelectionModal.vue';
+import { t } from 'fyo';
 
 // Define Props
 defineProps<{
@@ -421,38 +463,38 @@ defineProps<{
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "setExpandedBatchId", rowName: string | undefined): void;
-  (e: "addItem", item: any): void;
-  (e: "toggleView"): void;
-  (e: "toggleModal", modalName: PosEmits, value?: any): void;
-  (e: "setCustomer", value: string): void;
-  (e: "clearValues"): void;
-  (e: "setItemGroup", group: string): void;
-  (e: "setPaidAmount", amount: any): void;
-  (e: "setCouponsCount", count: number): void;
-  (e: "routeToSinvList"): void;
-  (e: "handleItemSearch", term: string, keyup?: boolean): void;
-  (e: "setLoyaltyPoints", points: number): void;
-  (e: "setPaymentMethod", paymentMethod: string): void;
-  (e: "setTransferRefNo", ref: string): void;
-  (e: "applyPricingRule"): void;
-  (e: "saveInvoiceAction"): void;
-  (e: "createTransaction", print?: boolean, status?: boolean): void;
-  (e: "setTransferAmount", amount: any): void;
-  (e: "selectedInvoiceName", invName: string): void;
-  (e: "selectedReturnInvoice", value: any): void;
-  (e: "setTransferClearanceDate", date: Date): void;
-  (e: "saveAndContinue", value: any): void;
-  (e: "handlePaymentAction"): void;
-  (e: "selectedRow", row: any): void;
-  (e: "batchSelected", batch: any): void;
+  (e: 'setExpandedBatchId', rowName: string | undefined): void;
+  (e: 'addItem', item: any): void;
+  (e: 'toggleView'): void;
+  (e: 'toggleModal', modalName: PosEmits, value?: any): void;
+  (e: 'setCustomer', value: string): void;
+  (e: 'clearValues'): void;
+  (e: 'setItemGroup', group: string): void;
+  (e: 'setPaidAmount', amount: any): void;
+  (e: 'setCouponsCount', count: number): void;
+  (e: 'routeToSinvList'): void;
+  (e: 'handleItemSearch', term: string, keyup?: boolean): void;
+  (e: 'setLoyaltyPoints', points: number): void;
+  (e: 'setPaymentMethod', paymentMethod: string): void;
+  (e: 'setTransferRefNo', ref: string): void;
+  (e: 'applyPricingRule'): void;
+  (e: 'saveInvoiceAction'): void;
+  (e: 'createTransaction', print?: boolean, status?: boolean): void;
+  (e: 'setTransferAmount', amount: any): void;
+  (e: 'selectedInvoiceName', invName: string): void;
+  (e: 'selectedReturnInvoice', value: any): void;
+  (e: 'setTransferClearanceDate', date: Date): void;
+  (e: 'saveAndContinue', value: any): void;
+  (e: 'handlePaymentAction'): void;
+  (e: 'selectedRow', row: any): void;
+  (e: 'batchSelected', batch: any): void;
 }>();
 
 // Reactive State
 const additionalDiscounts = ref<Money>(fyo.pesa(0));
-const selectedItemField = ref("");
+const selectedItemField = ref('');
 const selectedItemRow = ref<SalesInvoiceItem>({} as SalesInvoiceItem);
-const itemGroupFilter = ref("");
+const itemGroupFilter = ref('');
 
 // Computed Properties
 const isReturnInvoiceEnabledReturn = computed(() => {
@@ -467,7 +509,7 @@ const emitEvent = (eventName: any, ...args: any[]) => {
 const selectedRow = (row: SalesInvoiceItem, field: string) => {
   selectedItemRow.value = row;
   selectedItemField.value = field;
-  emit("selectedRow", row);
+  emit('selectedRow', row);
 };
 
 // Preserve unused core definitions safely

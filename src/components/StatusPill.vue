@@ -6,21 +6,21 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { computed } from "vue";
-import { Doc } from "fyo/model/doc";
-import { isPesa } from "fyo/utils";
-import { Invoice } from "models/baseModels/Invoice/Invoice";
-import { Party } from "models/baseModels/Party/Party";
-import { LoyaltyProgram } from "models/baseModels/LoyaltyProgram/LoyaltyProgram";
-import { ModelNameEnum } from "models/types";
-import { Money } from "pesa";
-import { getBgTextColorClass } from "src/utils/colors";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
+import { computed } from 'vue';
+import { Doc } from 'fyo/model/doc';
+import { isPesa } from 'fyo/utils';
+import { Invoice } from 'models/baseModels/Invoice/Invoice';
+import { Party } from 'models/baseModels/Party/Party';
+import { LoyaltyProgram } from 'models/baseModels/LoyaltyProgram/LoyaltyProgram';
+import { ModelNameEnum } from 'models/types';
+import { Money } from 'pesa';
+import { getBgTextColorClass } from 'src/utils/colors';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 // --- Types ---
 type Status = ReturnType<typeof getStatus>;
-type UIColors = "gray" | "orange" | "red" | "green" | "blue" | "yellow";
+type UIColors = 'gray' | 'orange' | 'red' | 'green' | 'blue' | 'yellow';
 
 // --- Props & Emits ---
 const props = defineProps<{
@@ -29,7 +29,10 @@ const props = defineProps<{
 
 // --- Computed ---
 const showStatus = computed(() => {
-  if (props.doc.schemaName === ModelNameEnum.SalesQuote && props.doc.isSubmitted) {
+  if (
+    props.doc.schemaName === ModelNameEnum.SalesQuote &&
+    props.doc.isSubmitted
+  ) {
     return false;
   }
   return true;
@@ -46,21 +49,24 @@ const styleClass = computed<string>(() => {
 const text = computed(() => {
   const hasOutstanding = isPesa(props.doc.outstandingAmount);
 
-  if (hasOutstanding && status.value === "Unpaid") {
-    const amt = fyo.format(props.doc.outstandingAmount as Money, "Currency");
+  if (hasOutstanding && status.value === 'Unpaid') {
+    const amt = fyo.format(props.doc.outstandingAmount as Money, 'Currency');
     return t`Unpaid ${amt}`;
   }
 
-  if (hasOutstanding && status.value === "PartlyPaid") {
+  if (hasOutstanding && status.value === 'PartlyPaid') {
     const outstandingPayment = fyo.format(
       (props.doc.grandTotal as Money).sub(props.doc.outstandingAmount as Money),
-      "Currency",
+      'Currency'
     );
     return t`Partly Paid ${outstandingPayment}`;
   }
 
-  if (status.value === "Outstanding") {
-    const outstandingPayment = fyo.format(props.doc.outstandingAmount as Money, "Currency");
+  if (status.value === 'Outstanding') {
+    const outstandingPayment = fyo.format(
+      props.doc.outstandingAmount as Money,
+      'Currency'
+    );
     return t`Unpaid ${outstandingPayment}`;
   }
 
@@ -90,32 +96,32 @@ const color = computed<UIColors>(() => {
 
 // --- Constants ---
 const statusColorMap: Record<Status, UIColors> = {
-  Draft: "gray",
-  Cancelled: "red",
-  Outstanding: "orange",
-  NotTransferred: "orange",
-  NotSaved: "orange",
-  NotSubmitted: "orange",
-  Paid: "green",
-  Saved: "blue",
-  Submitted: "blue",
-  Return: "gray",
-  ReturnIssued: "gray",
-  Unpaid: "red",
-  PartlyPaid: "yellow",
-  Expired: "red",
-  Active: "green",
-  Maxed: "orange",
+  Draft: 'gray',
+  Cancelled: 'red',
+  Outstanding: 'orange',
+  NotTransferred: 'orange',
+  NotSaved: 'orange',
+  NotSubmitted: 'orange',
+  Paid: 'green',
+  Saved: 'blue',
+  Submitted: 'blue',
+  Return: 'gray',
+  ReturnIssued: 'gray',
+  Unpaid: 'red',
+  PartlyPaid: 'yellow',
+  Expired: 'red',
+  Active: 'green',
+  Maxed: 'orange',
 };
 
 // --- Methods ---
 function getStatus(doc: Doc) {
   if (doc.notInserted) {
-    return "Draft";
+    return 'Draft';
   }
 
   if (doc.dirty) {
-    return "NotSaved";
+    return 'NotSaved';
   }
 
   if (doc instanceof LoyaltyProgram) {
@@ -126,51 +132,55 @@ function getStatus(doc: Doc) {
     const used = doc.used as number;
 
     if (maximumUse > 0 && used >= maximumUse) {
-      return "Maxed";
+      return 'Maxed';
     }
 
     if (doc.toDate && doc.toDate instanceof Date) {
       const toDate = new Date(doc.toDate);
       toDate.setHours(0, 0, 0, 0);
       if (toDate <= currentDate) {
-        return "Expired";
+        return 'Expired';
       }
     }
-    return "Active";
+    return 'Active';
   }
 
   if (doc instanceof Party && doc.outstandingAmount?.isZero() !== true) {
-    return "Outstanding";
+    return 'Outstanding';
   }
 
   if (doc.schema.isSubmittable) {
     return getSubmittableStatus(doc);
   }
 
-  return "Saved";
+  return 'Saved';
 }
 
 function getSubmittableStatus(doc: Doc) {
   if (doc.isCancelled) {
-    return "Cancelled";
+    return 'Cancelled';
   }
 
   if (doc.returnAgainst && doc.isSubmitted) {
-    return "Return";
+    return 'Return';
   }
 
   if (doc.isReturned && doc.isSubmitted) {
-    return "ReturnIssued";
+    return 'ReturnIssued';
   }
 
   const isInvoice = doc instanceof Invoice;
 
   if (doc.isSubmitted && isInvoice && (doc.stockNotTransferred ?? 0) > 0) {
-    return "NotTransferred";
+    return 'NotTransferred';
   }
 
-  if (doc.isSubmitted && isInvoice && doc.outstandingAmount?.isZero() === true) {
-    return "Paid";
+  if (
+    doc.isSubmitted &&
+    isInvoice &&
+    doc.outstandingAmount?.isZero() === true
+  ) {
+    return 'Paid';
   }
 
   if (
@@ -180,7 +190,7 @@ function getSubmittableStatus(doc: Doc) {
     (doc.outstandingAmount as Money)?.isPositive() &&
     (doc.outstandingAmount as Money)?.neq(doc.grandTotal as Money)
   ) {
-    return "PartlyPaid";
+    return 'PartlyPaid';
   }
 
   if (
@@ -189,17 +199,21 @@ function getSubmittableStatus(doc: Doc) {
     !doc.isCancelled &&
     (doc.outstandingAmount as Money)?.eq(doc.grandTotal as Money)
   ) {
-    return "Unpaid";
+    return 'Unpaid';
   }
 
-  if (doc.isSubmitted && isInvoice && doc.outstandingAmount?.isZero() !== true) {
-    return "Outstanding";
+  if (
+    doc.isSubmitted &&
+    isInvoice &&
+    doc.outstandingAmount?.isZero() !== true
+  ) {
+    return 'Outstanding';
   }
 
   if (doc.isSubmitted) {
-    return "Submitted";
+    return 'Submitted';
   }
 
-  return "NotSubmitted";
+  return 'NotSubmitted';
 }
 </script>

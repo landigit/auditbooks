@@ -28,17 +28,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
-import { safeParsePesa } from "utils/index";
-import { isPesa } from "fyo/utils";
-import { fyo } from "src/initFyo";
-import { Money } from "pesa";
+import { ref, computed } from 'vue';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
+import { safeParsePesa } from 'utils/index';
+import { isPesa } from 'fyo/utils';
+import { fyo } from 'src/initFyo';
+import { Money } from 'pesa';
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
   border: false,
-  size: "large",
+  size: 'large',
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -47,9 +50,9 @@ const props = withDefaults(defineProps<BaseControlProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: "focus", ev: FocusEvent): void;
-  (e: "input", ev: Event): void;
-  (e: "change", val: any): void;
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
 }>();
 
 const inputRef = ref<HTMLInputElement | null>(null);
@@ -58,11 +61,8 @@ const parse = (value: unknown): Money => {
   return safeParsePesa(value, fyo);
 };
 
-const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } = useBaseControl(
-  props as any,
-  emit,
-  inputRef,
-);
+const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } =
+  useBaseControl(props as any, emit, inputRef);
 
 const currency = computed<string | undefined>(() => {
   if (props.value) {

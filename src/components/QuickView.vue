@@ -1,6 +1,9 @@
 <template>
   <view style="min-width: 192px; max-width: 300px">
-    <view class="p-2 flex justify-between" :class="values.length ? 'border-b border-border' : ''">
+    <view
+      class="p-2 flex justify-between"
+      :class="values.length ? 'border-b border-border' : ''"
+    >
       <text
         v-if="schema?.naming !== 'random' && !schema?.isChild"
         class="font-semibold text-base text-main"
@@ -8,7 +11,7 @@
         {{ name }}
       </text>
       <text class="font-semibold text-base text-description">
-        {{ schema?.label ?? "" }}
+        {{ schema?.label ?? '' }}
       </text>
     </view>
     <view v-if="values.length" class="flex gap-2 p-2 flex-wrap">
@@ -22,10 +25,10 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed, watch, onMounted } from "vue";
-import { isFalsy } from "fyo/utils";
-import { Field } from "schemas/types";
-import { fyo } from "src/initFyo";
+import { ref, computed, watch, onMounted } from 'vue';
+import { isFalsy } from 'fyo/utils';
+import { Field } from 'schemas/types';
+import { fyo } from 'src/initFyo';
 
 // --- Props & Emits ---
 const props = defineProps<{
@@ -50,7 +53,7 @@ watch(
     }
 
     await setValues();
-  },
+  }
 );
 
 // --- Lifecycle ---
@@ -63,14 +66,14 @@ async function setValues() {
   const fields: Field[] = (schema.value?.fields ?? []).filter(
     (f) =>
       f &&
-      f.fieldtype !== "Table" &&
-      f.fieldtype !== "AttachImage" &&
-      f.fieldtype !== "Attachment" &&
-      f.fieldname !== "name" &&
+      f.fieldtype !== 'Table' &&
+      f.fieldtype !== 'AttachImage' &&
+      f.fieldtype !== 'Attachment' &&
+      f.fieldname !== 'name' &&
       !f.hidden &&
       !f.meta &&
       !f.abstract &&
-      !f.computed,
+      !f.computed
   );
 
   const data = (
@@ -88,7 +91,7 @@ async function setValues() {
     .map((f) => {
       const value = data[f.fieldname];
       if (isFalsy(value)) {
-        return { value: "", label: "" };
+        return { value: '', label: '' };
       }
 
       return {

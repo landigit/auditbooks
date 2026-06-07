@@ -1,5 +1,5 @@
-import { Doc } from "fyo/model/doc";
-import { HiddenMap, ListViewSettings } from "fyo/model/types";
+import { Doc } from 'fyo/model/doc';
+import { HiddenMap, ListViewSettings } from 'fyo/model/types';
 
 export class FetchFromERPNextQueue extends Doc {
   declare referenceType?: string;
@@ -11,7 +11,7 @@ export class FetchFromERPNextQueue extends Doc {
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ["referenceType", "documentName"],
+      columns: ['referenceType', 'documentName'],
     };
   }
 }

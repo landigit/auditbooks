@@ -1,0 +1,22 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile",
+  "description": "enables the mobile permissions",
+  "platforms": ["android", "iOS"],
+  "permissions": [
+    "core:default",
+    "sql:default",
+    "store:default",
+    "dialog:default",
+    "opener:default",
+    "fs:default",
+    "http:default",
+    "notification:default",
+    "log:default",
+    "allow-custom-commands",
+    {
+      "identifier": "fs:scope",
+      "allow": ["$APPDATA/**", "$RESOURCE/**", "$DOCUMENT/**", "$DOWNLOAD/**"]
+    }
+  ]
+}

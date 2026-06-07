@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { PeriodKey } from "src/utils/types";
+import { ref, watch } from 'vue';
+import { PeriodKey } from 'src/utils/types';
 
 // Define Props
 const props = withDefaults(
@@ -8,18 +8,23 @@ const props = withDefaults(
     commonPeriod?: PeriodKey;
   }>(),
   {
-    commonPeriod: "This Year",
-  },
+    commonPeriod: 'This Year',
+  }
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "period-change", value: PeriodKey): void;
+  (e: 'period-change', value: PeriodKey): void;
 }>();
 
 // Reactive State
-const period = ref<PeriodKey>("This Year");
-const periodOptions = ref<PeriodKey[]>(["This Year", "YTD", "This Quarter", "This Month"]);
+const period = ref<PeriodKey>('This Year');
+const periodOptions = ref<PeriodKey[]>([
+  'This Year',
+  'YTD',
+  'This Quarter',
+  'This Month',
+]);
 
 // Methods
 const setData = async () => {
@@ -27,7 +32,7 @@ const setData = async () => {
 };
 
 const periodChange = async () => {
-  emit("period-change", period.value);
+  emit('period-change', period.value);
   await setData();
 };
 
@@ -43,6 +48,6 @@ watch(
       return;
     }
     period.value = val;
-  },
+  }
 );
 </script>

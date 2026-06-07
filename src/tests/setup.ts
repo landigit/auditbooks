@@ -1,10 +1,10 @@
-import { rs } from "@rstest/core";
-import pkg from "../../package.json";
+import { vi } from 'vite-plus/test';
+import pkg from '../../package.json';
 
 // Mock electron
-rs.mock("electron", () => ({
+vi.mock('electron', () => ({
   app: {
-    getPath: () => "/tmp",
+    getPath: () => '/tmp',
     getVersion: () => pkg.version,
   },
   ipcRenderer: {
@@ -18,7 +18,7 @@ rs.mock("electron", () => ({
 (global as any).ipc = {
   getEnv: async () => ({
     isDevelopment: true,
-    platform: "linux",
+    platform: 'linux',
     version: pkg.version,
   }),
 };

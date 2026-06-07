@@ -2,7 +2,13 @@
  * Properties of a schema which are to be translated,
  * irrespective of nesting.
  */
-export const schemaTranslateables = ["label", "description", "placeholder", "section", "tab"];
+export const schemaTranslateables = [
+  'label',
+  'description',
+  'placeholder',
+  'section',
+  'tab',
+];
 
 export function getIndexFormat(inp: string | string[] | unknown) {
   /**
@@ -15,7 +21,7 @@ export function getIndexFormat(inp: string | string[] | unknown) {
   let string: string | undefined = undefined;
   let snippets: string[] | undefined = undefined;
 
-  if (typeof inp === "string") {
+  if (typeof inp === 'string') {
     string = inp;
   } else if (inp instanceof Array) {
     snippets = inp;
@@ -31,13 +37,13 @@ export function getIndexFormat(inp: string | string[] | unknown) {
     return snippets[0];
   }
 
-  let str = "";
+  let str = '';
   snippets.forEach((s, i) => {
     if (i === snippets.length - 1) {
       str += s;
       return;
     }
-    str += s + "${" + String(i) + "}";
+    str += s + '${' + String(i) + '}';
   });
 
   return str;
@@ -48,7 +54,7 @@ export function getSnippets(str: string) {
   const snippets = [...str.matchAll(/\${[^}]+}/g)].map((m) => {
     const end = m.index;
     if (end === undefined) {
-      return "";
+      return '';
     }
     const snip = str.slice(start, end);
     start = end + m[0].length;
@@ -60,7 +66,7 @@ export function getSnippets(str: string) {
 }
 
 export function getWhitespaceSanitized(str: string) {
-  return str.replace(/\s+/g, " ").trim();
+  return str.replace(/\s+/g, ' ').trim();
 }
 
 export function getIndexList(str: string) {

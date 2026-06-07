@@ -1,6 +1,6 @@
-import { Fyo } from "fyo";
-import { DocValue } from "fyo/core/types";
-import { Doc } from "fyo/model/doc";
+import { Fyo } from 'fyo';
+import { DocValue } from 'fyo/core/types';
+import { Doc } from 'fyo/model/doc';
 import {
   Action,
   FiltersMap,
@@ -9,10 +9,10 @@ import {
   ListViewSettings,
   ReadOnlyMap,
   ValidationMap,
-} from "fyo/model/types";
-import { ValidationError } from "fyo/utils/errors";
-import { Money } from "pesa";
-import { AccountRootTypeEnum, AccountTypeEnum } from "../Account/types";
+} from 'fyo/model/types';
+import { ValidationError } from 'fyo/utils/errors';
+import { Money } from 'pesa';
+import { AccountRootTypeEnum, AccountTypeEnum } from '../Account/types';
 
 interface UOMConversionItem {
   name?: string;
@@ -23,8 +23,8 @@ interface UOMConversionItem {
 export class Item extends Doc {
   declare itemCode?: string;
   declare trackItem?: boolean;
-  declare itemType?: "Product" | "Service";
-  declare for?: "Purchases" | "Sales" | "Both";
+  declare itemType?: 'Product' | 'Service';
+  declare for?: 'Purchases' | 'Sales' | 'Both';
   declare hasBatch?: boolean;
   declare batchSeries?: string;
   declare itemGroup?: string;
@@ -37,15 +37,15 @@ export class Item extends Doc {
   formulas: FormulaMap = {
     incomeAccount: {
       formula: async () => {
-        let accountName = "Service";
-        if (this.itemType === "Product") {
-          accountName = "Sales";
+        let accountName = 'Service';
+        if (this.itemType === 'Product') {
+          accountName = 'Sales';
         }
 
-        const accountExists = await this.fyo.db.exists("Account", accountName);
-        return accountExists ? accountName : "";
+        const accountExists = await this.fyo.db.exists('Account', accountName);
+        return accountExists ? accountName : '';
       },
-      dependsOn: ["itemType"],
+      dependsOn: ['itemType'],
     },
     expenseAccount: {
       formula: async () => {
@@ -53,30 +53,33 @@ export class Item extends Doc {
           return this.fyo.singles.InventorySettings?.stockReceivedButNotBilled;
         }
 
-        const cogs = await this.fyo.db.getAllRaw("Account", {
+        const cogs = await this.fyo.db.getAllRaw('Account', {
           filters: {
-            accountType: AccountTypeEnum["Cost of Goods Sold"],
+            accountType: AccountTypeEnum['Cost of Goods Sold'],
           },
         });
 
         if (cogs.length === 0) {
-          return "";
+          return '';
         } else {
           return cogs[0].name;
         }
       },
-      dependsOn: ["itemType", "trackItem"],
+      dependsOn: ['itemType', 'trackItem'],
     },
     hsnCode: {
       formula: async () => {
         if (!this.itemGroup) {
-          return "";
+          return '';
         }
 
-        const itemGroupDoc = await this.fyo.doc.getDoc("ItemGroup", this.itemGroup);
+        const itemGroupDoc = await this.fyo.doc.getDoc(
+          'ItemGroup',
+          this.itemGroup
+        );
         return itemGroupDoc?.hsnCode as string;
       },
-      dependsOn: ["itemGroup"],
+      dependsOn: ['itemGroup'],
     },
   };
 
@@ -94,15 +97,15 @@ export class Item extends Doc {
 
     if (this.serialNumberSeries && this.hasSerialNumber) {
       const series = this.serialNumberSeries.trim();
-      if (series && !series.endsWith("-")) {
-        this.serialNumberSeries = series + "-";
+      if (series && !series.endsWith('-')) {
+        this.serialNumberSeries = series + '-';
       }
     }
 
     if (this.batchSeries && this.hasBatch) {
       const series = this.batchSeries.trim();
-      if (series && !series.endsWith("-")) {
-        this.batchSeries = series + "-";
+      if (series && !series.endsWith('-')) {
+        this.batchSeries = series + '-';
       }
     }
   }
@@ -117,11 +120,11 @@ export class Item extends Doc {
         return;
       }
 
-      const exists = await this.fyo.db.exists("SerialNumberSeries", seriesName);
+      const exists = await this.fyo.db.exists('SerialNumberSeries', seriesName);
 
       if (!exists) {
         await this.fyo.doc
-          .getNewDoc("SerialNumberSeries", {
+          .getNewDoc('SerialNumberSeries', {
             name: seriesName,
             start: 1001,
             padZeros: 4,
@@ -138,11 +141,11 @@ export class Item extends Doc {
         return;
       }
 
-      const exists = await this.fyo.db.exists("BatchSeries", seriesName);
+      const exists = await this.fyo.db.exists('BatchSeries', seriesName);
 
       if (!exists) {
         await this.fyo.doc
-          .getNewDoc("BatchSeries", {
+          .getNewDoc('BatchSeries', {
             name: seriesName,
             start: 1001,
             padZeros: 4,
@@ -160,14 +163,18 @@ export class Item extends Doc {
     }),
     expenseAccount: (doc) => ({
       isGroup: false,
-      rootType: doc.trackItem ? AccountRootTypeEnum.Liability : AccountRootTypeEnum.Expense,
+      rootType: doc.trackItem
+        ? AccountRootTypeEnum.Liability
+        : AccountRootTypeEnum.Expense,
     }),
   };
 
   validations: ValidationMap = {
     barcode: (value: DocValue) => {
       if (value && !(value as string).match(/^\d{12}$/)) {
-        throw new ValidationError(this.fyo.t`Barcode must be exactly 12 digits.`);
+        throw new ValidationError(
+          this.fyo.t`Barcode must be exactly 12 digits.`
+        );
       }
     },
     rate: (value: DocValue) => {
@@ -190,7 +197,8 @@ export class Item extends Doc {
 
       if (invalidChars.test(series)) {
         throw new ValidationError(
-          this.fyo.t`Serial Number Series cannot contain the following characters: /, ?, &, =, %`,
+          this.fyo
+            .t`Serial Number Series cannot contain the following characters: /, ?, &, =, %`
         );
       }
     },
@@ -204,7 +212,8 @@ export class Item extends Doc {
 
       if (invalidChars.test(series)) {
         throw new ValidationError(
-          this.fyo.t`Batch Series cannot contain the following characters: /, ?, &, =, %`,
+          this.fyo
+            .t`Batch Series cannot contain the following characters: /, ?, &, =, %`
         );
       }
     },
@@ -215,10 +224,10 @@ export class Item extends Doc {
       {
         group: fyo.t`Create`,
         label: fyo.t`Sales Invoice`,
-        condition: (doc) => !doc.notInserted && doc.for !== "Purchases",
+        condition: (doc) => !doc.notInserted && doc.for !== 'Purchases',
         action: async (doc, router) => {
-          const invoice = fyo.doc.getNewDoc("SalesInvoice");
-          await invoice.append("items", {
+          const invoice = fyo.doc.getNewDoc('SalesInvoice');
+          await invoice.append('items', {
             item: doc.name as string,
             rate: doc.rate as Money,
             tax: doc.tax as string,
@@ -229,10 +238,10 @@ export class Item extends Doc {
       {
         group: fyo.t`Create`,
         label: fyo.t`Purchase Invoice`,
-        condition: (doc) => !doc.notInserted && doc.for !== "Sales",
+        condition: (doc) => !doc.notInserted && doc.for !== 'Sales',
         action: async (doc, router) => {
-          const invoice = fyo.doc.getNewDoc("PurchaseInvoice");
-          await invoice.append("items", {
+          const invoice = fyo.doc.getNewDoc('PurchaseInvoice');
+          await invoice.append('items', {
             item: doc.name as string,
             rate: doc.rate as Money,
             tax: doc.tax as string,
@@ -245,22 +254,25 @@ export class Item extends Doc {
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ["name", "unit", "tax", "rate"],
+      columns: ['name', 'unit', 'tax', 'rate'],
     };
   }
 
   hidden: HiddenMap = {
     trackItem: () =>
       !this.fyo.singles.AccountingSettings?.enableInventory ||
-      this.itemType !== "Product" ||
+      this.itemType !== 'Product' ||
       (this.inserted && !this.trackItem),
     barcode: () => !this.fyo.singles.InventorySettings?.enableBarcodes,
     hasBatch: () => !this.fyo.singles.InventorySettings?.enableBatches,
     hasSerialNumber: () =>
-      !(this.fyo.singles.InventorySettings?.enableSerialNumber && this.trackItem),
+      !(
+        this.fyo.singles.InventorySettings?.enableSerialNumber && this.trackItem
+      ),
     serialNumberSeries: () => !this.hasSerialNumber,
     batchSeries: () => !this.hasBatch,
-    uomConversions: () => !this.fyo.singles.InventorySettings?.enableUomConversions,
+    uomConversions: () =>
+      !this.fyo.singles.InventorySettings?.enableUomConversions,
     itemGroup: () => !this.fyo.singles.AccountingSettings?.enableitemGroup,
   };
 

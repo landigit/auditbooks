@@ -1,7 +1,9 @@
 <template>
   <view v-if="!isLynx">
     <Modal class="h-auto w-96" :set-close-listener="false">
-      <text class="text-center font-semibold py-3">{{ t`Apply Price List` }}</text>
+      <text class="text-center font-semibold py-3">{{
+        t`Apply Price List`
+      }}</text>
       <view class="px-10">
         <view class="border-b border-border" />
         <view class="flex justify-center pt-10">
@@ -35,7 +37,9 @@
               @tap="setPriceList"
             >
               <slot>
-                <text class="uppercase text-lg text-indicator-green-text font-semibold">
+                <text
+                  class="uppercase text-lg text-indicator-green-text font-semibold"
+                >
                   {{ t`Save` }}
                 </text>
               </slot>
@@ -51,7 +55,9 @@
               @tap="cancelPriceList"
             >
               <slot>
-                <text class="uppercase text-lg text-indicator-red-text font-semibold">
+                <text
+                  class="uppercase text-lg text-indicator-red-text font-semibold"
+                >
                   {{ t`Cancel` }}
                 </text>
               </slot>
@@ -65,13 +71,19 @@
     v-else
     class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-50 p-4"
   >
-    <view class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col">
-      <text class="text-lg font-bold text-main mb-3">{{ t`Apply Price List` }}</text>
+    <view
+      class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col"
+    >
+      <text class="text-lg font-bold text-main mb-3">{{
+        t`Apply Price List`
+      }}</text>
       <view class="border-b border-border mb-4" />
 
       <view class="mb-4 flex-row items-center gap-2">
         <view class="flex-1">
-          <text class="text-sm font-semibold text-main mb-2">{{ t`Price List` }}</text>
+          <text class="text-sm font-semibold text-main mb-2">{{
+            t`Price List`
+          }}</text>
           <Link
             v-if="sinvDoc.fieldMap"
             class="w-full"
@@ -109,45 +121,36 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
-import { t } from "fyo";
-import Modal from "src/components/Modal.vue";
-import Button from "src/components/Button.vue";
-import { showToast } from "src/utils/interactive";
-import Link from "src/components/Controls/Link.vue";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { isLynx } from "src/utils/interactive";
-
-/* Define Emits */
-const emit = defineEmits<{
-  (e: "toggleModal", value: string): void;
-}>();
-
-/* App Store / Context Injections */
-const sinvDoc = inject("sinvDoc") as SalesInvoice;
-
-/* Methods */
-const removePriceList = async () => {
-  await sinvDoc.set("priceList", "");
+import { inject } from 'vue';
+import { t } from 'fyo';
+import Modal from 'src/components/Modal.vue';
+import Button from 'src/components/Button.vue';
+import { showToast } from 'src/utils/interactive';
+import Link from 'src/components/Controls/Link.vue';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { isLynx } from 'src/utils/interactive';
+/* Define Emits */ const emit = defineEmits<{
+  (e: 'toggleModal', value: string): void;
+}>(); /* App Store / Context Injections */
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+/* Methods */ const removePriceList = async () => {
+  await sinvDoc.set('priceList', '');
 };
-
 const applyPriceList = async (value?: string) => {
   try {
     if (!value || value == sinvDoc.priceList) {
       return;
     }
-    await sinvDoc.set("priceList", value);
-    emit("toggleModal", "PriceList");
+    await sinvDoc.set('priceList', value);
+    emit('toggleModal', 'PriceList');
   } catch (error) {
-    showToast({ type: "error", message: t`${error as string}` });
+    showToast({ type: 'error', message: t`${error as string}` });
   }
 };
-
 const cancelPriceList = () => {
-  emit("toggleModal", "PriceList");
+  emit('toggleModal', 'PriceList');
 };
-
 const setPriceList = () => {
-  emit("toggleModal", "PriceList");
+  emit('toggleModal', 'PriceList');
 };
 </script>

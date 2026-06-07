@@ -1,4 +1,4 @@
-import type { ConfigMap } from "fyo/core/types";
+import type { ConfigMap } from 'fyo/core/types';
 
 const config = {
   get<K extends keyof ConfigMap>(key: K): ConfigMap[K] | undefined {

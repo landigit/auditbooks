@@ -1,5 +1,5 @@
-import { Fyo } from "fyo";
-import { ipc as polyfillIpc } from "./ipc-polyfill";
+import { Fyo } from 'fyo';
+import { ipc as routerIpc } from './ipc-router';
 
 /**
  * Global fyo: this is meant to be used only by the app. For
@@ -7,4 +7,4 @@ import { ipc as polyfillIpc } from "./ipc-polyfill";
  */
 
 export const fyo = new Fyo({ isTest: false, isElectron: true });
-export const ipc = polyfillIpc;
+export const ipc = routerIpc;

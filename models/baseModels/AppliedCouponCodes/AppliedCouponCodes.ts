@@ -1,7 +1,7 @@
-import { DocValue } from "fyo/core/types";
-import { ValidationMap } from "fyo/model/types";
-import { InvoiceItem } from "../InvoiceItem/InvoiceItem";
-import { validateCouponCode } from "models/helpers";
+import { DocValue } from 'fyo/core/types';
+import { ValidationMap } from 'fyo/model/types';
+import { InvoiceItem } from '../InvoiceItem/InvoiceItem';
+import { validateCouponCode } from 'models/helpers';
 
 export class AppliedCouponCodes extends InvoiceItem {
   declare coupons?: string;

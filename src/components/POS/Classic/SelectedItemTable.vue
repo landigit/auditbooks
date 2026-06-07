@@ -21,7 +21,10 @@
         </view>
       </Row>
 
-      <view class="overflow-y-auto custom-scroll custom-scroll-thumb2" style="height: 50vh">
+      <view
+        class="overflow-y-auto custom-scroll custom-scroll-thumb2"
+        style="height: 50vh"
+      >
         <Row
           v-for="row in sinvDoc.items"
           :ratio="ratio"
@@ -30,7 +33,9 @@
           <SelectedItemRow
             :row="row as SalesInvoiceItem"
             :expanded-batch-id="expandedBatchId"
-            @set-expanded-batch-id="(rowName) => $emit('setExpandedBatchId', rowName)"
+            @set-expanded-batch-id="
+              (rowName) => $emit('setExpandedBatchId', rowName)
+            "
             @run-sinv-formulas="runSinvFormulas"
             @apply-pricing-rule="$emit('applyPricingRule')"
             @selected-row="selectedItemRow"
@@ -42,13 +47,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from "vue";
-import Row from "src/components/Row.vue";
-import SelectedItemRow from "./SelectedItemRow.vue";
-import { isNumeric } from "src/utils";
-import { SalesInvoiceItem } from "models/baseModels/SalesInvoiceItem/SalesInvoiceItem";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { Field } from "schemas/types";
+import { computed, inject } from 'vue';
+import Row from 'src/components/Row.vue';
+import SelectedItemRow from './SelectedItemRow.vue';
+import { isNumeric } from 'src/utils';
+import { SalesInvoiceItem } from 'models/baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { Field } from 'schemas/types';
 
 defineProps({
   expandedBatchId: {
@@ -57,9 +62,13 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["applyPricingRule", "selectedRow", "setExpandedBatchId"]);
+const emit = defineEmits([
+  'applyPricingRule',
+  'selectedRow',
+  'setExpandedBatchId',
+]);
 
-const sinvDoc = inject("sinvDoc") as SalesInvoice;
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
 
 const ratio = computed(() => {
   return [0.1, 0.9, 0.8, 0.8, 0.8, 0.8, 0.2];
@@ -68,54 +77,54 @@ const ratio = computed(() => {
 const tableFields = computed(() => {
   return [
     {
-      fieldname: "toggler",
-      fieldtype: "Link",
-      label: " ",
+      fieldname: 'toggler',
+      fieldtype: 'Link',
+      label: ' ',
     },
     {
-      fieldname: "item",
-      fieldtype: "Link",
-      label: "Item",
-      placeholder: "Item",
+      fieldname: 'item',
+      fieldtype: 'Link',
+      label: 'Item',
+      placeholder: 'Item',
       required: true,
-      schemaName: "Item",
+      schemaName: 'Item',
     },
     {
-      fieldname: "quantity",
-      label: "Quantity",
-      placeholder: "Quantity",
-      fieldtype: "Int",
+      fieldname: 'quantity',
+      label: 'Quantity',
+      placeholder: 'Quantity',
+      fieldtype: 'Int',
       required: true,
-      schemaName: "",
+      schemaName: '',
     },
     {
-      fieldname: "unit",
-      label: "Unit Type",
-      placeholder: "Unit",
-      fieldtype: "Link",
+      fieldname: 'unit',
+      label: 'Unit Type',
+      placeholder: 'Unit',
+      fieldtype: 'Link',
       required: true,
-      schemaName: "UOM",
+      schemaName: 'UOM',
     },
     {
-      fieldname: "rate",
-      label: "Rate",
-      placeholder: "Rate",
-      fieldtype: "Currency",
+      fieldname: 'rate',
+      label: 'Rate',
+      placeholder: 'Rate',
+      fieldtype: 'Currency',
       required: true,
-      schemaName: "",
+      schemaName: '',
     },
     {
-      fieldname: "amount",
-      label: "Amount",
-      placeholder: "Amount",
-      fieldtype: "Currency",
+      fieldname: 'amount',
+      label: 'Amount',
+      placeholder: 'Amount',
+      fieldtype: 'Currency',
       required: true,
-      schemaName: "",
+      schemaName: '',
     },
     {
-      fieldname: "removeItem",
-      fieldtype: "Link",
-      label: " ",
+      fieldname: 'removeItem',
+      fieldtype: 'Link',
+      label: ' ',
     },
   ];
 });
@@ -125,6 +134,6 @@ async function runSinvFormulas() {
 }
 
 function selectedItemRow(row: SalesInvoiceItem) {
-  emit("selectedRow", row);
+  emit('selectedRow', row);
 }
 </script>

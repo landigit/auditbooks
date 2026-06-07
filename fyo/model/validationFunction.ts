@@ -1,14 +1,16 @@
-import { DocValue } from "fyo/core/types";
-import { getOptionList } from "fyo/utils";
-import { ValidationError, ValueError } from "fyo/utils/errors";
-import { t } from "fyo/utils/translation";
-import { Field, OptionField } from "schemas/types";
-import { getIsNullOrUndef } from "utils";
-import { Doc } from "./doc";
+import { DocValue } from 'fyo/core/types';
+import { getOptionList } from 'fyo/utils';
+import { ValidationError, ValueError } from 'fyo/utils/errors';
+import { t } from 'fyo/utils/translation';
+import { Field, OptionField } from 'schemas/types';
+import { getIsNullOrUndef } from 'utils';
+import { Doc } from './doc';
 
 export function validateEmail(value: DocValue) {
-  if (typeof value !== "string") {
-    throw new TypeError(`Invalid email ${String(value)} of type ${typeof value}`);
+  if (typeof value !== 'string') {
+    throw new TypeError(
+      `Invalid email ${String(value)} of type ${typeof value}`
+    );
   }
 
   const isValid = /(.+)@(.+){2,}\.(.+){2,}/.test(value);
@@ -18,8 +20,10 @@ export function validateEmail(value: DocValue) {
 }
 
 export function validatePhoneNumber(value: DocValue) {
-  if (typeof value !== "string") {
-    throw new TypeError(`Invalid phone ${String(value)} of type ${typeof value}`);
+  if (typeof value !== 'string') {
+    throw new TypeError(
+      `Invalid phone ${String(value)} of type ${typeof value}`
+    );
   }
 
   const isValid = /[+]{0,1}[\d ]+/.test(value);

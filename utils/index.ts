@@ -1,5 +1,5 @@
-import type { Fyo } from "fyo";
-import { Money } from "pesa";
+import type { Fyo } from 'fyo';
+import { Money } from 'pesa';
 
 /**
  * And so should not contain and platforma specific imports.
@@ -8,13 +8,13 @@ export function getValueMapFromList<T, K extends keyof T, V extends keyof T>(
   list: T[],
   key: K,
   valueKey: V,
-  filterUndefined = true,
+  filterUndefined = true
 ): Record<string, T[V]> {
   if (filterUndefined) {
     list = list.filter(
       (f) =>
         (Reflect.get(f as any, valueKey) as unknown) !== undefined &&
-        (Reflect.get(f as any, key) as unknown) !== undefined,
+        (Reflect.get(f as any, key) as unknown) !== undefined
     );
   }
 
@@ -25,7 +25,7 @@ export function getValueMapFromList<T, K extends keyof T, V extends keyof T>(
       Reflect.set(acc, keyValue, value);
       return acc;
     },
-    Object.create(null) as Record<string, T[V]>,
+    Object.create(null) as Record<string, T[V]>
   );
 }
 
@@ -39,7 +39,10 @@ export async function sleep(durationMilliseconds = 1000) {
   return new Promise((r) => setTimeout(() => r(null), durationMilliseconds));
 }
 
-export function getMapFromList<T, K extends keyof T>(list: T[], name: K): Record<string, T> {
+export function getMapFromList<T, K extends keyof T>(
+  list: T[],
+  name: K
+): Record<string, T> {
   /**
    * Do not convert function to use copies of T
    * instead of references.
@@ -59,10 +62,10 @@ export function getMapFromList<T, K extends keyof T>(list: T[], name: K): Record
 export function getDefaultMapFromList<T, K extends keyof T, D>(
   list: T[] | string[],
   defaultValue: D,
-  name?: K,
+  name?: K
 ): Record<string, D> {
   const acc: Record<string, D> = Object.create(null);
-  if (typeof list[0] === "string") {
+  if (typeof list[0] === 'string') {
     for (const l of list as string[]) {
       Reflect.set(acc, l, defaultValue);
     }
@@ -92,26 +95,28 @@ export function getIsNullOrUndef(value: unknown): value is null | undefined {
 
 export function titleCase(phrase: string): string {
   return phrase
-    .split(" ")
+    .split(' ')
     .map((word) => {
       const wordLower = word.toLowerCase();
-      if (["and", "an", "a", "from", "by", "on"].includes(wordLower)) {
+      if (['and', 'an', 'a', 'from', 'by', 'on'].includes(wordLower)) {
         return wordLower;
       }
       return wordLower[0].toUpperCase() + wordLower.slice(1);
     })
-    .join(" ");
+    .join(' ');
 }
 
 export function camelCase(str: string): string {
   return str
-    .replace(/[^a-z0-9]/gi, " ")
+    .replace(/[^a-z0-9]/gi, ' ')
     .trim()
     .split(/\s+/)
     .map((word, index) =>
-      index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+      index === 0
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     )
-    .join("");
+    .join('');
 }
 
 export function invertMap(map: Record<string, string>): Record<string, string> {
@@ -127,7 +132,7 @@ export function invertMap(map: Record<string, string>): Record<string, string> {
 
 export function deepEqual(a: any, b: any): boolean {
   if (a === b) return true;
-  if (a && b && typeof a === "object" && typeof b === "object") {
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
     if (a.constructor !== b.constructor) return false;
     let length, i, keys;
     if (Array.isArray(a)) {
@@ -141,7 +146,8 @@ export function deepEqual(a: any, b: any): boolean {
     length = keys.length;
     if (length !== Object.keys(b).length) return false;
     for (i = length; i-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b, Reflect.get(keys, i))) return false;
+      if (!Object.prototype.hasOwnProperty.call(b, Reflect.get(keys, i)))
+        return false;
     for (i = length; i-- !== 0; ) {
       const key = Reflect.get(keys, i);
       if (!deepEqual(Reflect.get(a, key), Reflect.get(b, key))) return false;
@@ -174,7 +180,7 @@ export async function timeAsync<K, T>(
 
 export function changeKeys<T>(
   source: Record<string, T>,
-  keyMap: Record<string, string | undefined>,
+  keyMap: Record<string, string | undefined>
 ) {
   const dest: Record<string, T> = Object.create(null);
   for (const key of Object.keys(source)) {
@@ -185,7 +191,10 @@ export function changeKeys<T>(
   return dest;
 }
 
-export function deleteKeys<T>(source: Record<string, T>, keysToDelete: string[]) {
+export function deleteKeys<T>(
+  source: Record<string, T>,
+  keysToDelete: string[]
+) {
   const dest: Record<string, T> = Object.create(null);
   for (const key of Object.keys(source)) {
     if (keysToDelete.includes(key)) {
@@ -200,10 +209,10 @@ export function deleteKeys<T>(source: Record<string, T>, keysToDelete: string[])
 function safeParseNumber(value: unknown, parser: (v: string) => number) {
   let parsed: number;
   switch (typeof value) {
-    case "string":
+    case 'string':
       parsed = parser(value);
       break;
-    case "number":
+    case 'number':
       parsed = value;
       break;
     default:
@@ -231,15 +240,15 @@ export function safeParsePesa(value: unknown, fyo: Fyo): Money {
     return value;
   }
 
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return fyo.pesa(value);
   }
 
-  if (typeof value === "bigint") {
+  if (typeof value === 'bigint') {
     return fyo.pesa(value);
   }
 
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     return fyo.pesa(0);
   }
 
@@ -254,7 +263,7 @@ export function joinMapLists<A, B>(
   listA: A[],
   listB: B[],
   keyA: keyof A,
-  keyB: keyof B,
+  keyB: keyof B
 ): (A & B)[] {
   const mapA = getMapFromList(listA, keyA);
   const mapB = getMapFromList(listB, keyB);
@@ -294,7 +303,11 @@ export function removeAtIndex<T>(array: T[], index: number): T[] {
  */
 export const assertIsType = <T>(_value: unknown): _value is T => true;
 
-const PROTOTYPE_POLLUTION_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+const PROTOTYPE_POLLUTION_KEYS = new Set([
+  '__proto__',
+  'constructor',
+  'prototype',
+]);
 
 export function safeGet<T = any>(obj: any, key: any): T | undefined {
   if (obj === null || obj === undefined) {

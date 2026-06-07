@@ -1,16 +1,16 @@
-import { DocValue } from "fyo/core/types";
-import { Doc } from "fyo/model/doc";
-import { ListViewSettings, ValidationMap } from "fyo/model/types";
-import { ValidationError } from "fyo/utils/errors";
-import { CollectionRulesItems } from "../CollectionRulesItems/CollectionRulesItems";
-import { getLoyaltyProgramStatusColumn } from "../../helpers";
+import { DocValue } from 'fyo/core/types';
+import { Doc } from 'fyo/model/doc';
+import { ListViewSettings, ValidationMap } from 'fyo/model/types';
+import { ValidationError } from 'fyo/utils/errors';
+import { CollectionRulesItems } from '../CollectionRulesItems/CollectionRulesItems';
+import { getLoyaltyProgramStatusColumn } from '../../helpers';
 
 export class LoyaltyProgram extends Doc {
   declare collectionRules?: CollectionRulesItems[];
   declare expiryDuration?: number;
   declare maximumUse?: number;
   declare used?: number;
-  declare status?: "Active" | "Expired" | "Disabled" | "Maxed";
+  declare status?: 'Active' | 'Expired' | 'Disabled' | 'Maxed';
 
   validations: ValidationMap = {
     used: (value: DocValue) => {
@@ -18,25 +18,25 @@ export class LoyaltyProgram extends Doc {
       const maximumUse = this.maximumUse as number;
 
       if (used < 0) {
-        throw new ValidationError("Used count cannot be negative");
+        throw new ValidationError('Used count cannot be negative');
       }
 
       if (maximumUse > 0 && used > maximumUse) {
-        throw new ValidationError("Used count cannot exceed maximum use limit");
+        throw new ValidationError('Used count cannot exceed maximum use limit');
       }
     },
     maximumUse: (value: DocValue) => {
       const maximumUse = value as number;
 
       if (maximumUse < 0) {
-        throw new ValidationError("Maximum use cannot be negative");
+        throw new ValidationError('Maximum use cannot be negative');
       }
     },
   };
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ["name", getLoyaltyProgramStatusColumn(), "fromDate", "toDate"],
+      columns: ['name', getLoyaltyProgramStatusColumn(), 'fromDate', 'toDate'],
     };
   }
 }

@@ -1,11 +1,11 @@
-import { Fyo } from "fyo";
-import { DocValueMap } from "fyo/core/types";
-import { Doc } from "fyo/model/doc";
-import { CurrenciesMap } from "fyo/model/types";
-import { DEFAULT_CURRENCY } from "fyo/utils/consts";
-import { Money } from "pesa";
-import { FieldTypeEnum, Schema } from "schemas/types";
-import { Invoice } from "../Invoice/Invoice";
+import { Fyo } from 'fyo';
+import { DocValueMap } from 'fyo/core/types';
+import { Doc } from 'fyo/model/doc';
+import { CurrenciesMap } from 'fyo/model/types';
+import { DEFAULT_CURRENCY } from 'fyo/utils/consts';
+import { Money } from 'pesa';
+import { FieldTypeEnum, Schema } from 'schemas/types';
+import { Invoice } from '../Invoice/Invoice';
 
 export class TaxSummary extends Doc {
   declare account?: string;
@@ -37,7 +37,7 @@ export class TaxSummary extends Doc {
   }
   _setGetCurrencies() {
     const currencyFields = this.schema.fields.filter(
-      ({ fieldtype }) => fieldtype === FieldTypeEnum.Currency,
+      ({ fieldtype }) => fieldtype === FieldTypeEnum.Currency
     );
 
     const getCurrency = this._getCurrency.bind(this);

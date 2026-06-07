@@ -1,9 +1,17 @@
-import { Fyo } from "fyo";
-import { Doc } from "fyo/model/doc";
-import { Action, LeadStatus, ListViewSettings, ValidationMap } from "fyo/model/types";
-import { getLeadActions, getLeadStatusColumn } from "models/helpers";
-import { validateEmail, validatePhoneNumber } from "fyo/model/validationFunction";
-import { ModelNameEnum } from "models/types";
+import { Fyo } from 'fyo';
+import { Doc } from 'fyo/model/doc';
+import {
+  Action,
+  LeadStatus,
+  ListViewSettings,
+  ValidationMap,
+} from 'fyo/model/types';
+import { getLeadActions, getLeadStatusColumn } from 'models/helpers';
+import {
+  validateEmail,
+  validatePhoneNumber,
+} from 'fyo/model/validationFunction';
+import { ModelNameEnum } from 'models/types';
 
 export class Lead extends Doc {
   declare status?: LeadStatus;
@@ -18,7 +26,7 @@ export class Lead extends Doc {
       ...this.getValidDict(),
       fromLead: this.name,
       phone: this.mobile as string,
-      role: "Customer",
+      role: 'Customer',
     });
   }
 
@@ -37,7 +45,7 @@ export class Lead extends Doc {
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ["name", getLeadStatusColumn(), "email", "mobile"],
+      columns: ['name', getLeadStatusColumn(), 'email', 'mobile'],
     };
   }
 }

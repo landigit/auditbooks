@@ -6,8 +6,8 @@
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:6969",
-    "beforeDevCommand": "bun dev",
-    "beforeBuildCommand": "bun run build"
+    "beforeDevCommand": "pnpm run dev:tauri",
+    "beforeBuildCommand": "pnpm run build:tauri"
   },
   "app": {
     "windows": [
@@ -33,6 +33,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "resources": ["../translations/*", "../templates/*", "../books/**/*"],
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }

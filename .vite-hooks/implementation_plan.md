@@ -89,15 +89,15 @@ This plan outlines the design and steps required to migrate the database backend
 - Implement `FileSystemBridge` using Lynx Native Module calls:
 
   ```typescript
-  const fsModule = (globalThis as any).lynx.requireModule("AuditbooksFsModule");
+  const fsModule = (globalThis as any).lynx.requireModule('AuditbooksFsModule');
 
   export const lynxFsBridge: FileSystemBridge = {
     async readDatabaseFile(filename) {
       const base64 = await fsModule.readBytes(filename);
-      return base64 ? Buffer.from(base64, "base64") : null;
+      return base64 ? Buffer.from(base64, 'base64') : null;
     },
     async writeDatabaseFile(filename, bytes) {
-      const base64 = Buffer.from(bytes).toString("base64");
+      const base64 = Buffer.from(bytes).toString('base64');
       await fsModule.writeBytes(filename, base64);
     },
   };

@@ -3,7 +3,9 @@
     <view class="flex flex-col h-full">
       <PageHeader :title="t`Chart of Accounts`">
         <Button v-if="!isAllExpanded" @tap="expand">{{ t`Expand` }}</Button>
-        <Button v-if="!isAllCollapsed" @tap="collapse">{{ t`Collapse` }}</Button>
+        <Button v-if="!isAllCollapsed" @tap="collapse">{{
+          t`Collapse`
+        }}</Button>
       </PageHeader>
 
       <!-- Chart of Accounts -->
@@ -29,7 +31,10 @@
               class="text-description group-hover:text-main transition-colors"
             />
             <view class="flex items-baseline">
-              <view class="ms-4" :class="[!account.parentAccount && 'font-semibold']">
+              <view
+                class="ms-4"
+                :class="[!account.parentAccount && 'font-semibold']"
+              >
                 {{ account.name }}
               </view>
 
@@ -59,7 +64,10 @@
             </view>
 
             <!-- Account Balance String -->
-            <text v-if="!account.isGroup" class="ms-auto text-base text-description">
+            <text
+              v-if="!account.isGroup"
+              class="ms-auto text-base text-description"
+            >
               {{ getBalanceString(account) }}
             </text>
           </view>
@@ -86,7 +94,9 @@
                 type="text"
                 :disabled="insertingAccount"
                 @keydown.esc="cancelAddingAccount(account)"
-                @keydown.enter="createNewAccount(account, account.addingGroupAccount)"
+                @keydown.enter="
+                  createNewAccount(account, account.addingGroupAccount)
+                "
               />
               <view
                 v-if="!insertingAccount"
@@ -136,7 +146,7 @@
         >
           <!-- Folder / File Emoji Indicator -->
           <text class="text-lg mr-2 cursor-pointer" @tap="onClick(account)">
-            {{ account.isGroup ? (account.expanded ? "📂" : "📁") : "⚪" }}
+            {{ account.isGroup ? (account.expanded ? '📂' : '📁') : '⚪' }}
           </text>
 
           <view
@@ -144,10 +154,16 @@
             @tap="onClick(account)"
           >
             <view class="flex flex-col">
-              <text class="text-sm text-main" :class="{ 'font-semibold': !account.parentAccount }">
+              <text
+                class="text-sm text-main"
+                :class="{ 'font-semibold': !account.parentAccount }"
+              >
                 {{ account.name }}
               </text>
-              <text v-if="!account.isGroup" class="text-[10px] text-description mt-0.5">
+              <text
+                v-if="!account.isGroup"
+                class="text-[10px] text-description mt-0.5"
+              >
                 {{ getBalanceString(account) }}
               </text>
             </view>
@@ -160,14 +176,18 @@
               class="px-2 py-1 rounded bg-blue-500/10 border border-blue-500/20 active:opacity-70 cursor-pointer"
               @tap="addAccount(account, 'addingAccount')"
             >
-              <text class="text-[10px] font-semibold text-blue-600">+ Account</text>
+              <text class="text-[10px] font-semibold text-blue-600"
+                >+ Account</text
+              >
             </view>
             <view
               v-if="account.isGroup"
               class="px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 active:opacity-70 cursor-pointer"
               @tap="addAccount(account, 'addingGroupAccount')"
             >
-              <text class="text-[10px] font-semibold text-emerald-600">+ Group</text>
+              <text class="text-[10px] font-semibold text-emerald-600"
+                >+ Group</text
+              >
             </view>
             <view
               class="px-2 py-1 rounded bg-red-500/10 border border-red-500/20 active:opacity-70 cursor-pointer"
@@ -185,7 +205,9 @@
           class="py-3 border-b border-border flex flex-row items-center"
           :style="getGroupStyle(account.level + 1)"
         >
-          <text class="text-lg mr-2">{{ account.addingGroupAccount ? "📁" : "⚪" }}</text>
+          <text class="text-lg mr-2">{{
+            account.addingGroupAccount ? '📁' : '⚪'
+          }}</text>
           <input
             :ref="(el) => setInputRef(el, account.name)"
             v-model="newAccountName"
@@ -214,27 +236,35 @@
   </view>
 </template>
 <script setup lang="ts">
-import { ref, computed, inject, nextTick, onMounted, onActivated, onDeactivated } from "vue";
-import { useRoute } from "vue-router";
-import router from "src/router";
-import { isLynx } from "src/utils/interactive";
-import { t } from "fyo";
-import { isCredit } from "models/helpers";
-import { ModelNameEnum } from "models/types";
-import PageHeader from "src/components/PageHeader.vue";
-import { fyo } from "src/initFyo";
-import { languageDirectionKey } from "src/utils/injectionKeys";
-import { docsPathMap } from "src/utils/misc";
-import { openQuickEdit, commongDocDelete } from "src/utils/ui";
-import { getMapFromList, removeAtIndex } from "utils/index";
-import { useAppStore } from "src/stores/app";
-import Button from "../components/Button.vue";
-import { handleErrorWithDialog } from "../errorHandling";
-import LucideIcon from "src/components/LucideIcon.vue";
-import { AccountRootType, AccountType } from "models/baseModels/Account/types";
-import { TreeViewSettings } from "fyo/model/types";
-import { Doc } from "fyo/model/doc";
-import { showDialog } from "src/utils/interactive";
+import {
+  ref,
+  computed,
+  inject,
+  nextTick,
+  onMounted,
+  onActivated,
+  onDeactivated,
+} from 'vue';
+import { useRoute } from 'vue-router';
+import router from 'src/router';
+import { isLynx } from 'src/utils/interactive';
+import { t } from 'fyo';
+import { isCredit } from 'models/helpers';
+import { ModelNameEnum } from 'models/types';
+import PageHeader from 'src/components/PageHeader.vue';
+import { fyo } from 'src/initFyo';
+import { languageDirectionKey } from 'src/utils/injectionKeys';
+import { docsPathMap } from 'src/utils/misc';
+import { openQuickEdit, commongDocDelete } from 'src/utils/ui';
+import { getMapFromList, removeAtIndex } from 'utils/index';
+import { useAppStore } from 'src/stores/app';
+import Button from '../components/Button.vue';
+import { handleErrorWithDialog } from '../errorHandling';
+import LucideIcon from 'src/components/LucideIcon.vue';
+import { AccountRootType, AccountType } from 'models/baseModels/Account/types';
+import { TreeViewSettings } from 'fyo/model/types';
+import { Doc } from 'fyo/model/doc';
+import { showDialog } from 'src/utils/interactive';
 
 type AccountItem = {
   name: string;
@@ -250,7 +280,7 @@ type AccountItem = {
   addingGroupAccount: boolean;
 };
 
-type AccKey = "addingAccount" | "addingGroupAccount";
+type AccKey = 'addingAccount' | 'addingGroupAccount';
 
 // Router & App Store
 const route = useRoute();
@@ -268,12 +298,16 @@ const setInputRef = (el: any, name: string) => {
 // Reactive State definitions
 const isAllCollapsed = ref(true);
 const isAllExpanded = ref(false);
-const root = ref<null | { label: string; balance: number; currency: string }>(null);
+const root = ref<null | { label: string; balance: number; currency: string }>(
+  null
+);
 const accounts = ref<AccountItem[]>([]);
-const schemaName = ref("Account");
-const newAccountName = ref("");
+const schemaName = ref('Account');
+const newAccountName = ref('');
 const insertingAccount = ref(false);
-const totals = ref<Record<string, { totalCredit: number; totalDebit: number } | undefined>>({});
+const totals = ref<
+  Record<string, { totalCredit: number; totalDebit: number } | undefined>
+>({});
 const refetchTotals = ref(false);
 const settings = ref<null | TreeViewSettings>(null);
 
@@ -281,7 +315,11 @@ const settings = ref<null | TreeViewSettings>(null);
 const allAccounts = computed(() => {
   const list: AccountItem[] = [];
 
-  (function getAccounts(accs: AccountItem[], level: number, location: number[]) {
+  (function getAccounts(
+    accs: AccountItem[],
+    level: number,
+    location: number[]
+  ) {
     for (let i = 0; i < accs.length; i++) {
       const account = accs[i];
 
@@ -317,22 +355,24 @@ const getBalance = (account: AccountItem) => {
 const getBalanceString = (account: AccountItem) => {
   const suffix = isCredit(account.rootType) ? t`Cr.` : t`Dr.`;
   const balance = getBalance(account);
-  return `${fyo.format(balance, "Currency")} ${suffix}`;
+  return `${fyo.format(balance, 'Currency')} ${suffix}`;
 };
 
 const setTotalDebitAndCredit = async () => {
   const totalsList = await fyo.db.getTotalCreditAndDebit();
-  totals.value = getMapFromList(totalsList, "account");
+  totals.value = getMapFromList(totalsList, 'account');
 };
 
-const getChildren = async (parent: null | string = null): Promise<AccountItem[]> => {
+const getChildren = async (
+  parent: null | string = null
+): Promise<AccountItem[]> => {
   const children = await fyo.db.getAll(ModelNameEnum.Account, {
     filters: {
       parentAccount: parent,
     },
-    fields: ["name", "parentAccount", "isGroup", "rootType", "accountType"],
-    orderBy: "name",
-    order: "asc",
+    fields: ['name', 'parentAccount', 'isGroup', 'rootType', 'accountType'],
+    orderBy: 'name',
+    order: 'asc',
   });
 
   return children.map((d) => {
@@ -345,9 +385,10 @@ const getChildren = async (parent: null | string = null): Promise<AccountItem[]>
 };
 
 const fetchAccounts = async () => {
-  settings.value = fyo.models[ModelNameEnum.Account]?.getTreeSettings(fyo) ?? null;
-  const currency = fyo.singles.SystemSettings?.currency ?? "";
-  const label = (await settings.value?.getRootLabel()) ?? "";
+  settings.value =
+    fyo.models[ModelNameEnum.Account]?.getTreeSettings(fyo) ?? null;
+  const currency = fyo.singles.SystemSettings?.currency ?? '';
+  const label = (await settings.value?.getRootLabel()) ?? '';
 
   root.value = {
     label,
@@ -388,7 +429,10 @@ const toggle = async (account: AccountItem, expand: boolean) => {
   await toggleChildren(account);
 };
 
-const toggleAll = async (accs: AccountItem | AccountItem[], expand: boolean) => {
+const toggleAll = async (
+  accs: AccountItem | AccountItem[],
+  expand: boolean
+) => {
   if (!Array.isArray(accs)) {
     await toggle(accs, expand);
     accs = accs.children ?? [];
@@ -411,7 +455,11 @@ const collapse = async () => {
   isAllCollapsed.value = true;
 };
 
-const removeAccount = (name: string, account?: AccountItem, parentAccount?: AccountItem) => {
+const removeAccount = (
+  name: string,
+  account?: AccountItem,
+  parentAccount?: AccountItem
+) => {
   if (account == null && parentAccount == null) {
     return;
   }
@@ -449,13 +497,13 @@ const removeAccount = (name: string, account?: AccountItem, parentAccount?: Acco
 const setOpenAccountDocListener = (
   doc: Doc,
   account?: AccountItem,
-  parentAccount?: AccountItem,
+  parentAccount?: AccountItem
 ) => {
-  if (doc.hasListener("afterDelete")) {
+  if (doc.hasListener('afterDelete')) {
     return;
   }
 
-  doc.once("afterDelete", () => {
+  doc.once('afterDelete', () => {
     removeAccount(doc.name!, account, parentAccount);
   });
 };
@@ -493,7 +541,7 @@ const canDeleteAccount = async (account: AccountItem) => {
   }
 
   await showDialog({
-    type: "error",
+    type: 'error',
     title: t`Cannot Delete Account`,
     detail: t`${account.name} has linked child accounts.`,
   });
@@ -519,7 +567,8 @@ const addAccount = async (parentAccount: AccountItem, key: AccKey) => {
     parentAccount.expanded = true;
   }
   // activate editing of type 'key' and deactivate other type
-  let otherKey: AccKey = key === "addingAccount" ? "addingGroupAccount" : "addingAccount";
+  let otherKey: AccKey =
+    key === 'addingAccount' ? 'addingGroupAccount' : 'addingAccount';
   parentAccount[key] = true;
   parentAccount[otherKey] = false;
 
@@ -531,14 +580,17 @@ const addAccount = async (parentAccount: AccountItem, key: AccKey) => {
 const cancelAddingAccount = (parentAccount: AccountItem) => {
   parentAccount.addingAccount = false;
   parentAccount.addingGroupAccount = false;
-  newAccountName.value = "";
+  newAccountName.value = '';
 };
 
-const createNewAccount = async (parentAccount: AccountItem, isGroup: boolean) => {
+const createNewAccount = async (
+  parentAccount: AccountItem,
+  isGroup: boolean
+) => {
   insertingAccount.value = true;
 
   const accountName = newAccountName.value.trim();
-  const doc = fyo.doc.getNewDoc("Account");
+  const doc = fyo.doc.getNewDoc('Account');
   try {
     let { name, rootType, accountType } = parentAccount;
     await doc.set({
@@ -563,7 +615,7 @@ const createNewAccount = async (parentAccount: AccountItem, isGroup: boolean) =>
 
     // unfreeze input
     insertingAccount.value = false;
-    newAccountName.value = "";
+    newAccountName.value = '';
   } catch (e) {
     // unfreeze input
     insertingAccount.value = false;
@@ -572,43 +624,45 @@ const createNewAccount = async (parentAccount: AccountItem, isGroup: boolean) =>
 };
 
 const isQuickEditOpen = (account: AccountItem) => {
-  const query = isLynx ? router.currentRoute.value.params || {} : route?.query || {};
+  const query = isLynx
+    ? router.currentRoute.value.params || {}
+    : route?.query || {};
   const { edit, schemaName, name } = query;
-  return !!(edit && schemaName === "Account" && name === account.name);
+  return !!(edit && schemaName === 'Account' && name === account.name);
 };
 
 const getIconName = (isGroup: boolean, name?: string): string => {
   const icons: Record<string, string> = {
-    "Application of Funds (Assets)": "dock",
-    Expenses: "indian-rupee",
-    Income: "hand-coins",
-    "Source of Funds (Liabilities)": "wallet-cards",
+    'Application of Funds (Assets)': 'dock',
+    Expenses: 'indian-rupee',
+    Income: 'hand-coins',
+    'Source of Funds (Liabilities)': 'wallet-cards',
   };
 
   if (name && icons[name]) return icons[name];
-  return isGroup ? "folder" : "circle";
+  return isGroup ? 'folder' : 'circle';
 };
 
 const getItemStyle = (level: number) => {
   const styles: Record<string, string> = {
-    height: "calc(var(--h-row-mid) + 1px)",
+    height: 'calc(var(--h-row-mid) + 1px)',
   };
-  if (languageDirection?.value === "rtl") {
-    styles["padding-right"] = `calc(1rem + 2rem * ${level})`;
+  if (languageDirection?.value === 'rtl') {
+    styles['padding-right'] = `calc(1rem + 2rem * ${level})`;
   } else {
-    styles["padding-left"] = `calc(1rem + 2rem * ${level})`;
+    styles['padding-left'] = `calc(1rem + 2rem * ${level})`;
   }
   return styles;
 };
 
 const getGroupStyle = (level: number) => {
   const styles: Record<string, string> = {
-    height: "calc(var(--h-row-mid) + 1px)",
+    height: 'calc(var(--h-row-mid) + 1px)',
   };
-  if (languageDirection?.value === "rtl") {
-    styles["padding-right"] = `calc(1rem + 2rem * ${level})`;
+  if (languageDirection?.value === 'rtl') {
+    styles['padding-right'] = `calc(1rem + 2rem * ${level})`;
   } else {
-    styles["padding-left"] = `calc(1rem + 2rem * ${level})`;
+    styles['padding-left'] = `calc(1rem + 2rem * ${level})`;
   }
   return styles;
 };
@@ -616,14 +670,14 @@ const getGroupStyle = (level: number) => {
 // Lifecycles
 onMounted(async () => {
   await setTotalDebitAndCredit();
-  fyo.doc.observer.on("sync:AccountingLedgerEntry", () => {
+  fyo.doc.observer.on('sync:AccountingLedgerEntry', () => {
     refetchTotals.value = true;
   });
 });
 
 onActivated(async () => {
   await fetchAccounts();
-  if (typeof window !== "undefined" && store.isDevelopment) {
+  if (typeof window !== 'undefined' && store.isDevelopment) {
     // @ts-expect-error
     window.coa = {
       isAllCollapsed,
@@ -649,6 +703,6 @@ onActivated(async () => {
 });
 
 onDeactivated(() => {
-  store.docsPath = "";
+  store.docsPath = '';
 });
 </script>

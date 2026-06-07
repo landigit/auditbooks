@@ -1,5 +1,9 @@
 <template>
-  <view v-if="!isLynx" class="h-full flex items-center truncate" :class="cellClass">
+  <view
+    v-if="!isLynx"
+    class="h-full flex items-center truncate"
+    :class="cellClass"
+  >
     <text v-if="!customRenderer" class="truncate">{{ columnValue }}</text>
     <component :is="customRenderer as {}" v-else />
   </view>
@@ -7,18 +11,20 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">List Cell</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
-import { ColumnConfig, RenderData } from "fyo/model/types";
-import { Field } from "schemas/types";
-import { fyo } from "src/initFyo";
-import { isNumeric } from "src/utils";
+import { computed, onMounted } from 'vue';
+import { ColumnConfig, RenderData } from 'fyo/model/types';
+import { Field } from 'schemas/types';
+import { fyo } from 'src/initFyo';
+import { isNumeric } from 'src/utils';
 
 type Column = ColumnConfig | Field;
 
@@ -39,13 +45,13 @@ const props = defineProps<{
 // Define Emits
 const emit = defineEmits<{
   (
-    e: "status-found",
+    e: 'status-found',
     payload: {
       rowId: string;
       fieldname: string;
       status: string;
       label: string;
-    },
+    }
   ): void;
 }>();
 
@@ -58,7 +64,7 @@ const columnValue = computed<string>(() => {
     return fyo.format(value, column);
   }
 
-  return column.display?.(value, fyo) ?? "";
+  return column.display?.(value, fyo) ?? '';
 });
 
 const customRenderer = computed(() => {
@@ -72,7 +78,7 @@ const customRenderer = computed(() => {
 });
 
 const cellClass = computed(() => {
-  return isNumeric(props.column.fieldtype) ? "justify-end" : "";
+  return isNumeric(props.column.fieldtype) ? 'justify-end' : '';
 });
 
 // Mounted lifecycle
@@ -85,7 +91,7 @@ onMounted(() => {
     };
 
     if (result?.metadata) {
-      emit("status-found", {
+      emit('status-found', {
         rowId: String(props.row.name || props.row.id),
         fieldname: props.column.fieldname,
         status: result.metadata.status,

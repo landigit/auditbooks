@@ -1,9 +1,14 @@
-import { Cashflow, TopExpenses, TotalCreditAndDebit, TotalOutstanding } from "utils/db/types";
-import { ModelNameEnum } from "../../models/types";
-import DatabaseCore from "./core";
-import { BespokeFunction } from "./types";
-import { DocItem, ReturnDocItem } from "models/inventory/types";
-import { safeParseFloat } from "utils/index";
+import {
+  Cashflow,
+  TopExpenses,
+  TotalCreditAndDebit,
+  TotalOutstanding,
+} from 'utils/db/types';
+import { ModelNameEnum } from '../../models/types';
+import DatabaseCore from './core';
+import { BespokeFunction } from './types';
+import { DocItem, ReturnDocItem } from 'models/inventory/types';
+import { safeParseFloat } from 'utils/index';
 
 import {
   account,
@@ -12,14 +17,17 @@ import {
   payment,
   paymentFor,
   stockLedgerEntry,
-} from "../../drizzle/db/schema";
-import { eq, and, inArray, between, sql, desc, SQL } from "drizzle-orm";
-import { getTable } from "../../drizzle/db/operations";
+} from '../../drizzle/db/schema';
+import { eq, and, inArray, between, sql, desc, SQL } from 'drizzle-orm';
+import { getTable } from '../../drizzle/db/getTable';
 
 export class BespokeQueries {
   [key: string]: BespokeFunction;
 
-  static async getLastInserted(db: DatabaseCore, schemaName: string): Promise<number> {
+  static async getLastInserted(
+    db: DatabaseCore,
+    schemaName: string
+  ): Promise<number> {
     if (!db.client) {
       return 0;
     }
@@ -35,30 +43,34 @@ export class BespokeQueries {
     return Number(num);
   }
 
-  static async getTopExpenses(db: DatabaseCore, fromDate: string, toDate: string) {
+  static async getTopExpenses(
+    db: DatabaseCore,
+    fromDate: string,
+    toDate: string
+  ) {
     if (!db.drizzleDb) {
       return [] as any;
     }
     const expenseAccountsQuery = db.drizzleDb
       .select({ name: account.name })
       .from(account)
-      .where(eq(account.rootType, "Expense"));
+      .where(eq(account.rootType, 'Expense'));
 
     const topExpenses = await db.drizzleDb
       .select({
         account: accountingLedgerEntry.account,
         total:
           sql<number>`sum(cast(${accountingLedgerEntry.debit} as real) - cast(${accountingLedgerEntry.credit} as real))`.as(
-            "total",
+            'total'
           ),
       })
       .from(accountingLedgerEntry)
       .where(
         and(
-          eq(accountingLedgerEntry.reverted, "0"),
+          eq(accountingLedgerEntry.reverted, '0'),
           inArray(accountingLedgerEntry.account, expenseAccountsQuery),
-          between(accountingLedgerEntry.date, fromDate, toDate),
-        ),
+          between(accountingLedgerEntry.date, fromDate, toDate)
+        )
       )
       .groupBy(accountingLedgerEntry.account)
       .orderBy(desc(sql`total`))
@@ -71,7 +83,7 @@ export class BespokeQueries {
     db: DatabaseCore,
     schemaName: string,
     fromDate: string,
-    toDate: string,
+    toDate: string
   ) {
     if (!db.drizzleDb) {
       return {} as any;
@@ -87,8 +99,8 @@ export class BespokeQueries {
         and(
           eq(table.submitted, true),
           eq(table.cancelled, false),
-          between(table.date, fromDate, toDate),
-        ),
+          between(table.date, fromDate, toDate)
+        )
       )
       .limit(1);
 
@@ -102,28 +114,37 @@ export class BespokeQueries {
     const cashAndBankAccounts = db.drizzleDb
       .select({ name: account.name })
       .from(account)
-      .where(and(inArray(account.accountType, ["Cash", "Bank"]), eq(account.isGroup, "0")));
+      .where(
+        and(
+          inArray(account.accountType, ['Cash', 'Bank']),
+          eq(account.isGroup, '0')
+        )
+      );
 
     const dateAsMonthYear = sql`strftime('%Y-%m', ${accountingLedgerEntry.date})`;
 
     return (await db.drizzleDb
       .select({
-        yearmonth: dateAsMonthYear.as("yearmonth"),
+        yearmonth: dateAsMonthYear.as('yearmonth'),
         inflow: sql<number>`sum(cast(${accountingLedgerEntry.debit} as real))`,
         outflow: sql<number>`sum(cast(${accountingLedgerEntry.credit} as real))`,
       })
       .from(accountingLedgerEntry)
       .where(
         and(
-          eq(accountingLedgerEntry.reverted, "0"),
+          eq(accountingLedgerEntry.reverted, '0'),
           inArray(accountingLedgerEntry.account, cashAndBankAccounts),
-          between(accountingLedgerEntry.date, fromDate, toDate),
-        ),
+          between(accountingLedgerEntry.date, fromDate, toDate)
+        )
       )
       .groupBy(dateAsMonthYear)) as Cashflow;
   }
 
-  static async getIncomeAndExpenses(db: DatabaseCore, fromDate: string, toDate: string) {
+  static async getIncomeAndExpenses(
+    db: DatabaseCore,
+    fromDate: string,
+    toDate: string
+  ) {
     if (!db.client) {
       return { income: [], expense: [] };
     }
@@ -184,7 +205,7 @@ export class BespokeQueries {
     fromDate?: string,
     toDate?: string,
     batch?: string,
-    serialNumbers?: string[],
+    serialNumbers?: string[]
   ): Promise<number | null> {
     if (!db.drizzleDb) {
       return null;
@@ -204,11 +225,15 @@ export class BespokeQueries {
     }
 
     if (fromDate) {
-      conditions.push(sql`datetime(${stockLedgerEntry.date}) > datetime(${fromDate})`);
+      conditions.push(
+        sql`datetime(${stockLedgerEntry.date}) > datetime(${fromDate})`
+      );
     }
 
     if (toDate) {
-      conditions.push(sql`datetime(${stockLedgerEntry.date}) < datetime(${toDate})`);
+      conditions.push(
+        sql`datetime(${stockLedgerEntry.date}) < datetime(${toDate})`
+      );
     }
 
     const res = await db.drizzleDb
@@ -228,7 +253,7 @@ export class BespokeQueries {
   static async getReturnBalanceItemsQty(
     db: DatabaseCore,
     schemaName: ModelNameEnum,
-    docName: string,
+    docName: string
   ): Promise<Record<string, ReturnDocItem> | undefined> {
     if (!db.drizzleDb) {
       return;
@@ -243,8 +268,8 @@ export class BespokeQueries {
         and(
           eq(docTable.returnAgainst, docName),
           eq(docTable.submitted, true),
-          eq(docTable.cancelled, false),
-        ),
+          eq(docTable.cancelled, false)
+        )
       );
     const returnDocNames = returnDocNamesRes.map((i) => i.name as string);
 
@@ -252,9 +277,10 @@ export class BespokeQueries {
       return;
     }
 
-    const isInvoice = [ModelNameEnum.SalesInvoice, ModelNameEnum.PurchaseInvoice].includes(
-      schemaName,
-    );
+    const isInvoice = [
+      ModelNameEnum.SalesInvoice,
+      ModelNameEnum.PurchaseInvoice,
+    ].includes(schemaName);
     const selectFields: any = {
       quantity: sql<number>`sum(cast(${itemTable.quantity} as real))`,
       item: itemTable.item,
@@ -262,7 +288,7 @@ export class BespokeQueries {
     };
     const groupByFields: any[] = [itemTable.item, itemTable.batch];
 
-    if (!isInvoice && "serialNumber" in itemTable) {
+    if (!isInvoice && 'serialNumber' in itemTable) {
       selectFields.serialNumber = itemTable.serialNumber;
       groupByFields.push(itemTable.serialNumber);
     }
@@ -284,7 +310,7 @@ export class BespokeQueries {
       batch: itemTable.batch,
     };
 
-    if (!isInvoice && "serialNumber" in itemTable) {
+    if (!isInvoice && 'serialNumber' in itemTable) {
       docItemsSelectFields.serialNumber = itemTable.serialNumber;
     }
 
@@ -299,7 +325,7 @@ export class BespokeQueries {
 
     const returnBalanceItems = BespokeQueries.#getReturnBalanceItemQtyMap(
       docItemsMap,
-      returnedItemsMap,
+      returnedItemsMap
     );
     return returnBalanceItems;
   }
@@ -307,7 +333,10 @@ export class BespokeQueries {
   static #getDocItemMap(docItems: DocItem[]): Record<string, ReturnDocItem> {
     const docItemsMap: Record<string, ReturnDocItem> = {};
     const batchesMap:
-      | Record<string, { quantity: number; serialNumbers?: string[] | undefined }>
+      | Record<
+          string,
+          { quantity: number; serialNumbers?: string[] | undefined }
+        >
       | undefined = {};
 
     for (const item of docItems) {
@@ -341,7 +370,7 @@ export class BespokeQueries {
             serialNumbers.push(...(existingDocItem.serialNumbers ?? []));
           }
 
-          serialNumbers.push(...item.serialNumber.split("\n"));
+          serialNumbers.push(...item.serialNumber.split('\n'));
           existingDocItem.serialNumbers = serialNumbers;
         }
         continue;
@@ -350,7 +379,7 @@ export class BespokeQueries {
       if (item.batch) {
         let serialNumbers: string[] | undefined = undefined;
         if (item.serialNumber) {
-          serialNumbers = item.serialNumber.split("\n");
+          serialNumbers = item.serialNumber.split('\n');
         }
 
         Reflect.set(batchesMap, item.batch, {
@@ -362,7 +391,7 @@ export class BespokeQueries {
       let serialNumbers: string[] | undefined = undefined;
 
       if (!item.batch && item.serialNumber) {
-        serialNumbers = item.serialNumber.split("\n");
+        serialNumbers = item.serialNumber.split('\n');
       }
 
       Reflect.set(docItemsMap, item.item, {
@@ -376,11 +405,14 @@ export class BespokeQueries {
 
   static #getReturnBalanceItemQtyMap(
     docItemsMap: Record<string, ReturnDocItem>,
-    returnedItemsMap: Record<string, ReturnDocItem>,
+    returnedItemsMap: Record<string, ReturnDocItem>
   ): Record<string, ReturnDocItem> {
     const returnBalanceItems: Record<string, ReturnDocItem> | undefined = {};
     const balanceBatchQtyMap:
-      | Record<string, { quantity: number; serialNumbers: string[] | undefined }>
+      | Record<
+          string,
+          { quantity: number; serialNumbers: string[] | undefined }
+        >
       | undefined = {};
 
     for (const row in docItemsMap) {
@@ -396,7 +428,9 @@ export class BespokeQueries {
             continue;
           }
 
-          balanceQty = -(Math.abs(balanceQty) + Reflect.get(returnedItemsMap, item).quantity);
+          balanceQty = -(
+            Math.abs(balanceQty) + Reflect.get(returnedItemsMap, item).quantity
+          );
 
           const returnedItem = Reflect.get(returnedItemsMap, item);
 
@@ -412,17 +446,26 @@ export class BespokeQueries {
 
       if (docItemHasBatch && docItem.batches) {
         for (const batch in docItem.batches) {
-          const docItemSerialNumbers = Reflect.get(docItem.batches, batch).serialNumbers;
-          const itemSerialNumbers = Reflect.get(docItem.batches, batch).serialNumbers;
+          const docItemSerialNumbers = Reflect.get(
+            docItem.batches,
+            batch
+          ).serialNumbers;
+          const itemSerialNumbers = Reflect.get(
+            docItem.batches,
+            batch
+          ).serialNumbers;
           let balanceSerialNumbers: string[] | undefined;
 
           if (docItemSerialNumbers && itemSerialNumbers) {
             balanceSerialNumbers = docItemSerialNumbers.filter(
-              (serialNumber: string) => itemSerialNumbers.indexOf(serialNumber) == -1,
+              (serialNumber: string) =>
+                itemSerialNumbers.indexOf(serialNumber) == -1
             );
           }
 
-          const ItemQty = Math.abs(Reflect.get(docItem.batches, batch).quantity);
+          const ItemQty = Math.abs(
+            Reflect.get(docItem.batches, batch).quantity
+          );
           let balanceQty = safeParseFloat(-ItemQty);
 
           if (!returnedDocItem || !returnedDocItem?.batches) {
@@ -465,18 +508,20 @@ export class BespokeQueries {
     db: DatabaseCore,
     fromDate: Date,
     toDate: Date,
-    lastShiftClosingDate?: Date,
+    lastShiftClosingDate?: Date
   ): Promise<Record<string, number> | undefined> {
     if (!db.drizzleDb) {
       return;
     }
     const conditions: SQL[] = [
-      eq(salesInvoice.isPos, "1"),
+      eq(salesInvoice.isPos, '1'),
       between(salesInvoice.date, fromDate.toISOString(), toDate.toISOString()),
     ];
 
     if (lastShiftClosingDate) {
-      conditions.push(sql`${salesInvoice.created} > ${lastShiftClosingDate.toISOString()}`);
+      conditions.push(
+        sql`${salesInvoice.created} > ${lastShiftClosingDate.toISOString()}`
+      );
     }
 
     const invoices = (await db.drizzleDb
@@ -495,10 +540,13 @@ export class BespokeQueries {
     }
 
     const sinvNames = invoices.map((row) => row.name);
-    const invoiceSignMap = invoices.reduce<Record<string, number>>((map, inv) => {
-      Reflect.set(map, inv.name, inv.returnAgainst ? -1 : 1);
-      return map;
-    }, {});
+    const invoiceSignMap = invoices.reduce<Record<string, number>>(
+      (map, inv) => {
+        Reflect.set(map, inv.name, inv.returnAgainst ? -1 : 1);
+        return map;
+      },
+      {}
+    );
 
     const paymentEntryNamesRes = await db.drizzleDb
       .select({
@@ -507,7 +555,7 @@ export class BespokeQueries {
       })
       .from(paymentFor)
       .where(inArray(paymentFor.referenceName, sinvNames));
-    const paymentEntryNames = paymentEntryNamesRes.map((doc) => doc.parent as string);
+    const paymentEntryNames = paymentEntryNamesRes.map((doc) => doc.parent);
 
     if (!paymentEntryNames.length) {
       return;
@@ -517,7 +565,7 @@ export class BespokeQueries {
       .select({
         paymentMethod: payment.paymentMethod,
         name: payment.name,
-        amount: sql<number>`sum(cast(${payment.amount} as real))`.as("amount"),
+        amount: sql<number>`sum(cast(${payment.amount} as real))`.as('amount'),
       })
       .from(payment)
       .where(inArray(payment.name, paymentEntryNames))
@@ -540,7 +588,8 @@ export class BespokeQueries {
         Reflect.set(
           transactedAmounts,
           row.paymentMethod,
-          (Reflect.get(transactedAmounts, row.paymentMethod) ?? 0) + signedAmount,
+          (Reflect.get(transactedAmounts, row.paymentMethod) ?? 0) +
+            signedAmount
         );
       }
     }

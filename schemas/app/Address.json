@@ -79,6 +79,13 @@
       "section": "Miscellaneous"
     }
   ],
-  "quickEditFields": ["addressLine1", "addressLine2", "city", "country", "state", "postalCode"],
+  "quickEditFields": [
+    "addressLine1",
+    "addressLine2",
+    "city",
+    "country",
+    "state",
+    "postalCode"
+  ],
   "linkDisplayField": "addressDisplay"
 }

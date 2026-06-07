@@ -3,11 +3,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, computed, watch } from "vue";
-import { fyo } from "src/initFyo";
-import { fuzzyMatch } from "src/utils";
-import Link from "./Link.vue";
-import { BaseControlProps } from "src/composables/useBaseControl";
+import { ref, inject, computed, watch } from 'vue';
+import { fyo } from 'src/initFyo';
+import { fuzzyMatch } from 'src/utils';
+import Link from './Link.vue';
+import { BaseControlProps } from 'src/composables/useBaseControl';
 
 interface DynamicLinkProps extends BaseControlProps {
   target?: string;
@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<DynamicLinkProps>(), {
   showClearButton: false,
   step: 1,
   border: false,
-  size: "large",
+  size: 'large',
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<DynamicLinkProps>(), {
 });
 
 const linkRef = ref<any>(null);
-const report = inject<any>("report", null);
+const report = inject<any>('report', null);
 const results = ref<any[]>([]);
 
 const doc = computed(() => linkRef.value?.doc);
@@ -40,7 +40,7 @@ watch(
     if (oldTarget && newTarget !== oldTarget) {
       linkRef.value?.clearValue();
     }
-  },
+  }
 );
 
 const getTargetSchemaName = () => {
@@ -80,9 +80,9 @@ const getOptions = async (filters: any) => {
     return [];
   }
 
-  const fields = [...new Set(["name", schema.titleField, (props.df as any).groupBy])].filter(
-    Boolean,
-  ) as string[];
+  const fields = [
+    ...new Set(['name', schema.titleField, (props.df as any).groupBy]),
+  ].filter(Boolean) as string[];
 
   const dbResults = await fyo.db.getAll(schemaName, {
     filters,
@@ -132,7 +132,7 @@ const getFilters = async () => {
   }
 };
 
-const getLinkSuggestions = async (keyword = "") => {
+const getLinkSuggestions = async (keyword = '') => {
   const filters = await getFilters();
   let optionsList = await getOptions(filters || {});
 

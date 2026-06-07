@@ -1,8 +1,8 @@
-import { Fyo } from "fyo";
-import { AuthDemux } from "fyo/demux/auth";
-import { AuthDemuxBase } from "utils/auth/types";
-import { Creds } from "utils/types";
-import { AuthDemuxConstructor } from "./types";
+import { Fyo } from 'fyo';
+import { AuthDemux } from 'fyo/demux/auth';
+import { AuthDemuxBase } from 'utils/auth/types';
+import { Creds } from 'utils/types';
+import { AuthDemuxConstructor } from './types';
 
 interface AuthConfig {
   serverURL: string;
@@ -25,14 +25,14 @@ export class AuthHandler {
   constructor(fyo: Fyo, Demux?: AuthDemuxConstructor) {
     this.fyo = fyo;
     this.#config = {
-      serverURL: "",
-      backend: "sqlite",
+      serverURL: '',
+      backend: 'sqlite',
       port: 8000,
     };
 
     this.#session = {
-      user: "",
-      token: "",
+      user: '',
+      token: '',
     };
 
     if (Demux !== undefined) {

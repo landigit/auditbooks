@@ -1,34 +1,37 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const pagesDir = path.resolve(__dirname, "../src/pages");
+const pagesDir = path.resolve(__dirname, '../src/pages');
 
 function getPageName(file) {
-  const base = path.basename(file, ".vue");
+  const base = path.basename(file, '.vue');
   // Add spaces before capital letters
-  return base.replace(/([A-Z])/g, " $1").trim();
+  return base.replace(/([A-Z])/g, ' $1').trim();
 }
 
 function processFile(file) {
   // Skip App.vue and DatabaseSelector.vue since they are manually crafted
-  if (file.endsWith("DatabaseSelector.vue") || file.endsWith("App.vue")) {
+  if (file.endsWith('DatabaseSelector.vue') || file.endsWith('App.vue')) {
     return;
   }
 
-  let content = fs.readFileSync(file, "utf8");
+  let content = fs.readFileSync(file, 'utf8');
 
   // Skip if already contains isLynx in template
-  if (content.includes('v-if="!isLynx"') || content.includes('v-else-if="!isLynx"')) {
+  if (
+    content.includes('v-if="!isLynx"') ||
+    content.includes('v-else-if="!isLynx"')
+  ) {
     console.log(`[Skip] Already compatible: ${file}`);
     return;
   }
 
   // Find outermost <template> and </template>
-  const templateStartTag = "<template>";
+  const templateStartTag = '<template>';
   const templateStartIdx = content.indexOf(templateStartTag);
   if (templateStartIdx === -1) {
     console.log(`[Skip] No <template> tag: ${file}`);
@@ -43,8 +46,8 @@ function processFile(file) {
   let templateEndIdx = -1;
 
   while (cursor < content.length) {
-    const nextStart = content.indexOf("<template", cursor);
-    const nextEnd = content.indexOf("</template>", cursor);
+    const nextStart = content.indexOf('<template', cursor);
+    const nextEnd = content.indexOf('</template>', cursor);
 
     if (nextEnd === -1) {
       break;
@@ -53,7 +56,12 @@ function processFile(file) {
     if (nextStart !== -1 && nextStart < nextEnd) {
       // Check if it's <template> or <template ...>
       const nextChar = content[nextStart + 9];
-      if (nextChar === ">" || nextChar === " " || nextChar === "\r" || nextChar === "\n") {
+      if (
+        nextChar === '>' ||
+        nextChar === ' ' ||
+        nextChar === '\r' ||
+        nextChar === '\n'
+      ) {
         depth++;
       }
       cursor = nextStart + 9;
@@ -91,7 +99,9 @@ function processFile(file) {
 
   // Modify script setup to import isLynx
   let newContent =
-    content.slice(0, startContentIdx) + newInnerTemplate + content.slice(templateEndIdx);
+    content.slice(0, startContentIdx) +
+    newInnerTemplate +
+    content.slice(templateEndIdx);
 
   // Match <script setup ...>
   const scriptSetupRegex = /<script\s+setup([^>]*)>/;
@@ -99,7 +109,7 @@ function processFile(file) {
   if (match) {
     const insertIdx = match.index + match[0].length;
     // Check if isLynx is already imported
-    if (!newContent.includes("isLynx")) {
+    if (!newContent.includes('isLynx')) {
       newContent =
         newContent.slice(0, insertIdx) +
         "\nimport { isLynx } from 'src/utils/interactive';" +
@@ -113,7 +123,7 @@ import { isLynx } from 'src/utils/interactive';
 </script>\n` + newContent;
   }
 
-  fs.writeFileSync(file, newContent, "utf8");
+  fs.writeFileSync(file, newContent, 'utf8');
   console.log(`[Success] Made native-compatible: ${file}`);
 }
 
@@ -124,7 +134,7 @@ function traverse(dir) {
     const stat = fs.statSync(fullPath);
     if (stat.isDirectory()) {
       traverse(fullPath);
-    } else if (stat.isFile() && item.endsWith(".vue")) {
+    } else if (stat.isFile() && item.endsWith('.vue')) {
       processFile(fullPath);
     }
   }
@@ -132,4 +142,4 @@ function traverse(dir) {
 
 console.log(`Scanning pages directory: ${pagesDir}`);
 traverse(pagesDir);
-console.log("Automated compatibility task finished!");
+console.log('Automated compatibility task finished!');

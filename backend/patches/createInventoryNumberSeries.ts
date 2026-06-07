@@ -1,20 +1,20 @@
-import { getDefaultMetaFieldValueMap } from "../../backend/helpers";
-import { DatabaseManager } from "../database/manager";
+import { getDefaultMetaFieldValueMap } from '../../backend/helpers';
+import { DatabaseManager } from '../database/manager';
 
 async function execute(dm: DatabaseManager) {
-  const s = (await dm.db?.getAll("SingleValue", {
-    fields: ["value"],
-    filters: { fieldname: "setupComplete" },
+  const s = (await dm.db?.getAll('SingleValue', {
+    fields: ['value'],
+    filters: { fieldname: 'setupComplete' },
   })) as { value: string }[];
 
-  if (!Number(s?.[0]?.value ?? "0")) {
+  if (!Number(s?.[0]?.value ?? '0')) {
     return;
   }
 
   const names: Record<string, string> = {
-    StockMovement: "SMOV-",
-    PurchaseReceipt: "PREC-",
-    Shipment: "SHPM-",
+    StockMovement: 'SMOV-',
+    PurchaseReceipt: 'PREC-',
+    Shipment: 'SHPM-',
   };
 
   for (const referenceType in names) {
@@ -23,13 +23,17 @@ async function execute(dm: DatabaseManager) {
   }
 }
 
-async function createNumberSeries(name: string, referenceType: string, dm: DatabaseManager) {
-  const exists = await dm.db?.exists("NumberSeries", name);
+async function createNumberSeries(
+  name: string,
+  referenceType: string,
+  dm: DatabaseManager
+) {
+  const exists = await dm.db?.exists('NumberSeries', name);
   if (exists) {
     return;
   }
 
-  await dm.db?.insert("NumberSeries", {
+  await dm.db?.insert('NumberSeries', {
     name,
     start: 1001,
     padZeros: 4,

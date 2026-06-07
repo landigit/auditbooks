@@ -1,8 +1,8 @@
-import { DefaultCashDenominations } from "models/inventory/Point of Sale/DefaultCashDenominations";
-import { Doc } from "fyo/model/doc";
-import { FiltersMap, HiddenMap } from "fyo/model/types";
-import { ModelNameEnum } from "models/types";
-import { PartyRoleEnum } from "../Party/types";
+import { DefaultCashDenominations } from 'models/inventory/Point of Sale/DefaultCashDenominations';
+import { Doc } from 'fyo/model/doc';
+import { FiltersMap, HiddenMap } from 'fyo/model/types';
+import { ModelNameEnum } from 'models/types';
+import { PartyRoleEnum } from '../Party/types';
 
 export class Defaults extends Doc {
   // Auto Payments
@@ -55,8 +55,8 @@ export class Defaults extends Doc {
 
   static commonFilters = {
     // Auto Payments
-    salesPaymentAccount: () => ({ isGroup: false, accountType: "Cash" }),
-    purchasePaymentAccount: () => ({ isGroup: false, accountType: "Cash" }),
+    salesPaymentAccount: () => ({ isGroup: false, accountType: 'Cash' }),
+    purchasePaymentAccount: () => ({ isGroup: false, accountType: 'Cash' }),
     // Number Series
     salesQuoteNumberSeries: () => ({
       referenceType: ModelNameEnum.SalesQuote,
@@ -131,13 +131,16 @@ export class Defaults extends Doc {
   };
 }
 
-export const numberSeriesDefaultsMap: Record<string, keyof Defaults | undefined> = {
-  [ModelNameEnum.SalesInvoice]: "salesInvoiceNumberSeries",
-  [ModelNameEnum.PurchaseInvoice]: "purchaseInvoiceNumberSeries",
-  [ModelNameEnum.JournalEntry]: "journalEntryNumberSeries",
-  [ModelNameEnum.Payment]: "paymentNumberSeries",
-  [ModelNameEnum.StockMovement]: "stockMovementNumberSeries",
-  [ModelNameEnum.Shipment]: "shipmentNumberSeries",
-  [ModelNameEnum.PurchaseReceipt]: "purchaseReceiptNumberSeries",
-  [ModelNameEnum.SalesQuote]: "salesQuoteNumberSeries",
+export const numberSeriesDefaultsMap: Record<
+  string,
+  keyof Defaults | undefined
+> = {
+  [ModelNameEnum.SalesInvoice]: 'salesInvoiceNumberSeries',
+  [ModelNameEnum.PurchaseInvoice]: 'purchaseInvoiceNumberSeries',
+  [ModelNameEnum.JournalEntry]: 'journalEntryNumberSeries',
+  [ModelNameEnum.Payment]: 'paymentNumberSeries',
+  [ModelNameEnum.StockMovement]: 'stockMovementNumberSeries',
+  [ModelNameEnum.Shipment]: 'shipmentNumberSeries',
+  [ModelNameEnum.PurchaseReceipt]: 'purchaseReceiptNumberSeries',
+  [ModelNameEnum.SalesQuote]: 'salesQuoteNumberSeries',
 };

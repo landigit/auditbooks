@@ -47,7 +47,9 @@
         <text class="text-lg font-medium text-main">{{ item.name }}</text>
 
         <text class="text-lg font-medium text-main">
-          {{ item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined }}
+          {{
+            item.rate ? fyo.currencySymbols[item.rate.getCurrency()] : undefined
+          }}
           {{ item.rate }}
         </text>
       </view>
@@ -56,8 +58,8 @@
 </template>
 
 <script setup lang="ts">
-import { fyo } from "src/initFyo";
-import { POSItem, ItemQtyMap } from "../types";
+import { fyo } from 'src/initFyo';
+import { POSItem, ItemQtyMap } from '../types';
 
 // Define Props
 withDefaults(
@@ -69,26 +71,26 @@ withDefaults(
   {
     items: () => [],
     itemQtyMap: () => ({}),
-    itemVisibility: "Inventory Items",
-  },
+    itemVisibility: 'Inventory Items',
+  }
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "addItem", value: POSItem): void;
-  (e: "updateValues"): void;
+  (e: 'addItem', value: POSItem): void;
+  (e: 'updateValues'): void;
 }>();
 
 // Helper Methods
 const getExtractedWords = (item: string) => {
-  const initials = item.split(" ").map((word) => {
-    return word[0]?.toUpperCase() || "";
+  const initials = item.split(' ').map((word) => {
+    return word[0]?.toUpperCase() || '';
   });
-  return initials.join("");
+  return initials.join('');
 };
 
 const handleChange = (value: POSItem) => {
-  emit("addItem", value);
-  emit("updateValues");
+  emit('addItem', value);
+  emit('updateValues');
 };
 </script>

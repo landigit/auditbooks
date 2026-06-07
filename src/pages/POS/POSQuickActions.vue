@@ -1,8 +1,14 @@
 <template>
   <view v-if="!isLynx">
     <view class="relative group">
-      <view class="bg-surface p-1.5 rounded-md cursor-pointer" @tap="toggleItemsView">
-        <LucideIcon :name="tableView ? 'grid' : 'list'" class="w-5 h-5 text-main" />
+      <view
+        class="bg-surface p-1.5 rounded-md cursor-pointer"
+        @tap="toggleItemsView"
+      >
+        <LucideIcon
+          :name="tableView ? 'grid' : 'list'"
+          class="w-5 h-5 text-main"
+        />
       </view>
       <text
         class="p-2 mb-2 w-20 absolute bottom-full left-1/2 transform -translate-x-1/2 text-center opacity-0 bg-surface text-main text-xs rounded-md transition-opacity duration-300 group-hover:opacity-100"
@@ -29,7 +35,9 @@
     <view
       class="relative group"
       :class="{
-        hidden: !fyo.singles.AccountingSettings?.enableLoyaltyProgram || !loyaltyProgram,
+        hidden:
+          !fyo.singles.AccountingSettings?.enableLoyaltyProgram ||
+          !loyaltyProgram,
       }"
     >
       <view
@@ -60,7 +68,8 @@
       <view
         class="p-0.5 rounded-md bg-canvas-muted cursor-pointer"
         :class="{
-          'opacity-50 cursor-not-allowed': !sinvDoc?.party || !sinvDoc?.items?.length,
+          'opacity-50 cursor-not-allowed':
+            !sinvDoc?.party || !sinvDoc?.items?.length,
         }"
         @tap="openCouponModal"
       >
@@ -122,19 +131,21 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">P O S Quick Actions</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { fyo } from "src/initFyo";
-import { Payment } from "models/baseModels/Payment/Payment";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { showToast } from "src/utils/interactive";
-import { t } from "fyo";
+import { ref, computed } from 'vue';
+import { fyo } from 'src/initFyo';
+import { Payment } from 'models/baseModels/Payment/Payment';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { showToast } from 'src/utils/interactive';
+import { t } from 'fyo';
 
 // Define Props
 const props = withDefaults(
@@ -148,17 +159,17 @@ const props = withDefaults(
   {
     openAlertModal: false,
     loyaltyPoints: 0,
-    loyaltyProgram: "",
+    loyaltyProgram: '',
     appliedCouponsCount: 0,
     sinvDoc: undefined,
-  },
+  }
 );
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "toggleView"): void;
-  (e: "toggleModal", value: string): void;
-  (e: "emitRouteToSinvList"): void;
+  (e: 'toggleView'): void;
+  (e: 'toggleModal', value: string): void;
+  (e: 'emitRouteToSinvList'): void;
 }>();
 
 // Reactive State
@@ -186,11 +197,11 @@ const setTransferRefNo = (refValue: string) => {
 
 const toggleItemsView = () => {
   tableView.value = !tableView.value;
-  emit("toggleView");
+  emit('toggleView');
 };
 
 const showValidationToast = (action: string, isLoyalty = false) => {
-  let message = "";
+  let message = '';
 
   if (!props.sinvDoc?.items?.length) {
     message = t`Please add items`;
@@ -201,25 +212,29 @@ const showValidationToast = (action: string, isLoyalty = false) => {
   }
 
   showToast({
-    type: "error",
+    type: 'error',
     message: t`${message} before ${action}`,
   });
 };
 
 const openCouponModal = () => {
   if (!props.sinvDoc?.items?.length || !props.sinvDoc?.party) {
-    showValidationToast("applying coupon");
+    showValidationToast('applying coupon');
     return;
   }
-  emit("toggleModal", "CouponCode");
+  emit('toggleModal', 'CouponCode');
 };
 
 const openLoyaltyModal = () => {
-  if (!props.sinvDoc?.items?.length || !props.sinvDoc?.party || !props.loyaltyPoints) {
-    showValidationToast("applying loyalty points", true);
+  if (
+    !props.sinvDoc?.items?.length ||
+    !props.sinvDoc?.party ||
+    !props.loyaltyPoints
+  ) {
+    showValidationToast('applying loyalty points', true);
     return;
   }
-  emit("toggleModal", "LoyaltyProgram");
+  emit('toggleModal', 'LoyaltyProgram');
 };
 
 if (false) {

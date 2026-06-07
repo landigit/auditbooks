@@ -3,24 +3,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useAttrs } from "vue";
-import AttachImage from "./AttachImage.vue";
-import Attachment from "./Attachment.vue";
-import AutoComplete from "./AutoComplete.vue";
-import Check from "./Check.vue";
-import Button from "./Button.vue";
-import Color from "./Color.vue";
-import Currency from "./Currency.vue";
-import Data from "./Data.vue";
-import Date from "./Date.vue";
-import Datetime from "./Datetime.vue";
-import DynamicLink from "./DynamicLink.vue";
-import Float from "./Float.vue";
-import Int from "./Int.vue";
-import Link from "./Link.vue";
-import Select from "./Select.vue";
-import Text from "./Text.vue";
-import Secret from "./Secret.vue";
+import { computed, ref, useAttrs } from 'vue';
+import AttachImage from './AttachImage.vue';
+import Attachment from './Attachment.vue';
+import AutoComplete from './AutoComplete.vue';
+import Check from './Check.vue';
+import Button from './Button.vue';
+import Color from './Color.vue';
+import Currency from './Currency.vue';
+import Data from './Data.vue';
+import Date from './Date.vue';
+import Datetime from './Datetime.vue';
+import DynamicLink from './DynamicLink.vue';
+import Float from './Float.vue';
+import Int from './Int.vue';
+import Link from './Link.vue';
+import Select from './Select.vue';
+import Text from './Text.vue';
+import Secret from './Secret.vue';
 
 const components: Record<string, any> = {
   AttachImage,
@@ -56,18 +56,18 @@ const component = computed(() => {
 });
 
 const clear = () => {
-  if (typeof controlRef.value?.clear === "function") {
+  if (typeof controlRef.value?.clear === 'function') {
     controlRef.value.clear();
   } else {
     const input = controlRef.value?.$refs?.input;
     if (input instanceof HTMLInputElement) {
-      input.value = "";
+      input.value = '';
     }
   }
 };
 
 const select = () => {
-  if (typeof controlRef.value?.select === "function") {
+  if (typeof controlRef.value?.select === 'function') {
     controlRef.value.select();
   } else {
     controlRef.value?.$refs?.input?.select?.();

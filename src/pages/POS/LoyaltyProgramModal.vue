@@ -6,9 +6,15 @@
       <view class="border-b border-border" />
 
       <view class="flex gap-2 p-3 justify-end pt-10">
-        <LucideIcon name="refresh-ccw" :size="20" class="text-indicator-orange-text" />
+        <LucideIcon
+          name="refresh-ccw"
+          :size="20"
+          class="text-indicator-orange-text"
+        />
 
-        <text class="text-main pr-6">{{ loyaltyPoints }} - ({{ loyaltyProgram }})</text>
+        <text class="text-main pr-6"
+          >{{ loyaltyPoints }} - ({{ loyaltyProgram }})</text
+        >
       </view>
 
       <Int
@@ -32,7 +38,9 @@
             @tap="setLoyaltyPoints()"
           >
             <slot>
-              <text class="uppercase text-lg text-indicator-green-text font-semibold">
+              <text
+                class="uppercase text-lg text-indicator-green-text font-semibold"
+              >
                 {{ t`Save` }}
               </text>
             </slot>
@@ -48,7 +56,9 @@
             @tap="cancelLoyaltyProgram"
           >
             <slot>
-              <text class="uppercase text-lg text-indicator-red-text font-semibold">
+              <text
+                class="uppercase text-lg text-indicator-red-text font-semibold"
+              >
                 {{ t`Cancel` }}
               </text>
             </slot>
@@ -61,19 +71,29 @@
     v-else
     class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm z-50 p-4"
   >
-    <view class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col">
-      <text class="text-lg font-bold text-main mb-3">{{ t`Redeem Loyalty Points` }}</text>
+    <view
+      class="bg-canvas border border-border rounded-2xl w-full max-w-sm p-4 flex-col"
+    >
+      <text class="text-lg font-bold text-main mb-3">{{
+        t`Redeem Loyalty Points`
+      }}</text>
       <view class="border-b border-border mb-3" />
 
       <view
         class="flex-row items-center gap-2 mb-3 bg-canvas-muted p-3 rounded-lg border border-border"
       >
-        <text class="text-sm text-main font-semibold flex-1">{{ loyaltyProgram }}</text>
-        <text class="text-sm text-accent font-bold">{{ loyaltyPoints }} pts</text>
+        <text class="text-sm text-main font-semibold flex-1">{{
+          loyaltyProgram
+        }}</text>
+        <text class="text-sm text-accent font-bold"
+          >{{ loyaltyPoints }} pts</text
+        >
       </view>
 
       <view class="mb-4">
-        <text class="text-sm font-semibold text-main mb-2">{{ t`Redeem Points` }}</text>
+        <text class="text-sm font-semibold text-main mb-2">{{
+          t`Redeem Points`
+        }}</text>
         <Int
           v-if="sinvDoc.fieldMap"
           :show-label="false"
@@ -104,85 +124,79 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from "vue";
-import Button from "src/components/Button.vue";
-import Modal from "src/components/Modal.vue";
-import { SalesInvoice } from "models/baseModels/SalesInvoice/SalesInvoice";
-import { t } from "fyo";
-import { showToast } from "src/utils/interactive";
-import { ModelNameEnum } from "models/types";
-import Int from "src/components/Controls/Int.vue";
-import LucideIcon from "src/components/LucideIcon.vue";
-import { fyo } from "src/initFyo";
-import { isLynx } from "src/utils/interactive";
-
-/* Define Props */
-const props = withDefaults(
-  defineProps<{
-    loyaltyPoints?: number;
-    loyaltyProgram?: string;
-  }>(),
-  {
-    loyaltyPoints: 0,
-    loyaltyProgram: "",
-  },
+import { ref, inject } from 'vue';
+import Button from 'src/components/Button.vue';
+import Modal from 'src/components/Modal.vue';
+import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
+import { t } from 'fyo';
+import { showToast } from 'src/utils/interactive';
+import { ModelNameEnum } from 'models/types';
+import Int from 'src/components/Controls/Int.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
+import { fyo } from 'src/initFyo';
+import { isLynx } from 'src/utils/interactive';
+/* Define Props */ const props = withDefaults(
+  defineProps<{ loyaltyPoints?: number; loyaltyProgram?: string }>(),
+  { loyaltyPoints: 0, loyaltyProgram: '' }
 );
-
-/* Define Emits */
-const emit = defineEmits<{
-  (e: "setLoyaltyPoints", value: number): void;
-  (e: "toggleModal", value: string): void;
+/* Define Emits */ const emit = defineEmits<{
+  (e: 'setLoyaltyPoints', value: number): void;
+  (e: 'toggleModal', value: string): void;
 }>();
-
-/* App Store / Context Injections */
-const sinvDoc = inject("sinvDoc") as SalesInvoice;
-
-/* Reactive State */
-const validationError = ref(false);
-
-/* Methods */
-const setLoyaltyPoints = () => {
-  emit("toggleModal", "LoyaltyProgram");
+/* App Store / Context Injections */ const sinvDoc = inject(
+  'sinvDoc'
+) as SalesInvoice;
+/* Reactive State */ const validationError = ref(false);
+/* Methods */ const setLoyaltyPoints = () => {
+  emit('toggleModal', 'LoyaltyProgram');
 };
-
 const cancelLoyaltyProgram = () => {
-  emit("setLoyaltyPoints", 0);
-  emit("toggleModal", "LoyaltyProgram");
+  emit('setLoyaltyPoints', 0);
+  emit('toggleModal', 'LoyaltyProgram');
 };
-
 const updateLoyaltyPoints = async (newValue: number) => {
   try {
-    const partyData = await fyo.db.get(ModelNameEnum.Party, sinvDoc.party as string);
+    const partyData = await fyo.db.get(
+      ModelNameEnum.Party,
+      sinvDoc.party as string
+    );
     if (!partyData.loyaltyProgram) {
       return;
     }
-    const loyaltyProgramDoc = await fyo.db.getAll(ModelNameEnum.LoyaltyProgram, {
-      fields: ["conversionFactor", "toDate"],
-      filters: { name: partyData.loyaltyProgram as string },
-    });
+    const loyaltyProgramDoc = await fyo.db.getAll(
+      ModelNameEnum.LoyaltyProgram,
+      {
+        fields: ['conversionFactor', 'toDate'],
+        filters: { name: partyData.loyaltyProgram as string },
+      }
+    );
     const toDate = loyaltyProgramDoc[0]?.toDate as Date;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (toDate && new Date(toDate).getTime() < today.getTime()) {
-      throw new Error(t`Loyalty program has expired and cannot be applied`);
+      throw new Error(t`Loyalty program has expired and cannot be
+applied`);
     }
     if (props.loyaltyPoints >= newValue) {
       sinvDoc.loyaltyPoints = newValue;
     } else {
-      throw new Error(`${sinvDoc.party as string} only has ${props.loyaltyPoints} points`);
+      throw new Error(`${sinvDoc.party as string} only has
+${props.loyaltyPoints} points`);
     }
-    const loyaltyPoint = newValue * ((loyaltyProgramDoc[0]?.conversionFactor as number) || 0);
+    const loyaltyPoint =
+      newValue * ((loyaltyProgramDoc[0]?.conversionFactor as number) || 0);
     if (sinvDoc.baseGrandTotal?.lt(loyaltyPoint)) {
-      throw new Error(t`no need ${newValue} points to purchase this item`);
+      throw new Error(t`no need
+${newValue} points to purchase this item`);
     }
     if (newValue < 0) {
       throw new Error(t`Points must be greater than 0`);
     }
-    emit("setLoyaltyPoints", sinvDoc.loyaltyPoints as number);
+    emit('setLoyaltyPoints', sinvDoc.loyaltyPoints as number);
     validationError.value = false;
   } catch (error) {
     validationError.value = true;
-    showToast({ type: "error", message: t`${error as string}` });
+    showToast({ type: 'error', message: t`${error as string}` });
     return;
   }
 };

@@ -8,30 +8,30 @@
  * so that it can be safely bundled by rspeedy for the Lynx / browser target.
  */
 
-export const SYSTEM = "__SYSTEM__";
+export const SYSTEM = '__SYSTEM__';
 
 /** Maps Frappe/Fyo field types to their SQLite storage types. */
 export const sqliteTypeMap: Record<string, string> = {
-  AutoComplete: "text",
-  Currency: "text",
-  Int: "integer",
-  Float: "float",
-  Percent: "float",
-  Check: "boolean",
-  Code: "text",
-  Date: "date",
-  Datetime: "datetime",
-  Time: "time",
-  Text: "text",
-  Data: "text",
-  Secret: "text",
-  Link: "text",
-  DynamicLink: "text",
-  Password: "text",
-  Select: "text",
-  Attachment: "text",
-  AttachImage: "text",
-  Color: "text",
+  AutoComplete: 'text',
+  Currency: 'text',
+  Int: 'integer',
+  Float: 'float',
+  Percent: 'float',
+  Check: 'boolean',
+  Code: 'text',
+  Date: 'date',
+  Datetime: 'datetime',
+  Time: 'time',
+  Text: 'text',
+  Data: 'text',
+  Secret: 'text',
+  Link: 'text',
+  DynamicLink: 'text',
+  Password: 'text',
+  Select: 'text',
+  Attachment: 'text',
+  AttachImage: 'text',
+  Color: 'text',
 };
 
 /** Returns a minimal meta-field map for new records. */

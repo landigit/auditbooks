@@ -1,7 +1,7 @@
-import { ModelNameEnum } from "../../models/types";
-import { DatabaseManager } from "../database/manager";
+import { ModelNameEnum } from '../../models/types';
+import { DatabaseManager } from '../database/manager';
 
-const FIELDNAME = "roundOffAccount";
+const FIELDNAME = 'roundOffAccount';
 
 async function execute(dm: DatabaseManager) {
   const accounts = await dm.db!.getSingleValues(FIELDNAME);
@@ -29,15 +29,18 @@ async function execute(dm: DatabaseManager) {
 }
 
 async function testAndSetRoundOffAccount(dm: DatabaseManager) {
-  const isSet = await setRoundOffAccountIfExists("Round Off", dm);
+  const isSet = await setRoundOffAccountIfExists('Round Off', dm);
   if (!isSet) {
-    await setRoundOffAccountIfExists("Rounded Off", dm);
+    await setRoundOffAccountIfExists('Rounded Off', dm);
   }
 
   return;
 }
 
-async function setRoundOffAccountIfExists(roundOffAccount: string, dm: DatabaseManager) {
+async function setRoundOffAccountIfExists(
+  roundOffAccount: string,
+  dm: DatabaseManager
+) {
   const exists = await dm.db!.exists(ModelNameEnum.Account, roundOffAccount);
   if (!exists) {
     return false;

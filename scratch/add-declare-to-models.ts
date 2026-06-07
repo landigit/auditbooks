@@ -1,20 +1,20 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from 'fs';
 
-const ROOT = "e:/code/auditbooks";
+const ROOT = 'e:/code/auditbooks';
 
 async function collectFiles(): Promise<string[]> {
   const all: string[] = [];
-  const glob = new Bun.Glob("models/**/*.ts");
+  const glob = new Bun.Glob('models/**/*.ts');
   for await (const f of glob.scan({ cwd: ROOT, onlyFiles: true })) {
-    const n = f.replace(/\\/g, "/");
-    if (n.includes("/tests/")) continue;
+    const n = f.replace(/\\/g, '/');
+    if (n.includes('/tests/')) continue;
     all.push(`${ROOT}/${n}`);
   }
   return all;
 }
 
 function processSource(src: string): { out: string; fixes: number } {
-  const lines = src.split("\n");
+  const lines = src.split('\n');
   const out: string[] = [];
   let fixes = 0;
 
@@ -45,7 +45,8 @@ function processSource(src: string): { out: string; fixes: number } {
       // Avoid matching methods "method() {" or properties with initializers "prop = value;" or comments or getters/setters.
       // Specifically: starts with word character, optional ? or !, followed by :, then Type, ending with ; (or no initializer).
       // Also it shouldn't already have 'declare' or 'get' or 'set' or 'private' or 'public' or 'readonly' or 'async' or 'static'.
-      const propertyRegex = /^\s+([a-zA-Z_$][a-zA-Z0-9_$]*[?!]?)\s*:\s*([^=;]+);/;
+      const propertyRegex =
+        /^\s+([a-zA-Z_$][a-zA-Z0-9_$]*[?!]?)\s*:\s*([^=;]+);/;
       if (propertyRegex.test(line)) {
         const match = line.match(propertyRegex);
         if (match) {
@@ -53,17 +54,17 @@ function processSource(src: string): { out: string; fixes: number } {
           // Ensure it doesn't start with keywords
           const leadTrimmed = line.trimStart();
           if (
-            !leadTrimmed.startsWith("declare ") &&
-            !leadTrimmed.startsWith("private ") &&
-            !leadTrimmed.startsWith("public ") &&
-            !leadTrimmed.startsWith("protected ") &&
-            !leadTrimmed.startsWith("readonly ") &&
-            !leadTrimmed.startsWith("static ") &&
-            !leadTrimmed.startsWith("get ") &&
-            !leadTrimmed.startsWith("set ")
+            !leadTrimmed.startsWith('declare ') &&
+            !leadTrimmed.startsWith('private ') &&
+            !leadTrimmed.startsWith('public ') &&
+            !leadTrimmed.startsWith('protected ') &&
+            !leadTrimmed.startsWith('readonly ') &&
+            !leadTrimmed.startsWith('static ') &&
+            !leadTrimmed.startsWith('get ') &&
+            !leadTrimmed.startsWith('set ')
           ) {
             // Prepend declare
-            const whitespace = line.match(/^\s*/)?.[0] ?? "";
+            const whitespace = line.match(/^\s*/)?.[0] ?? '';
             outLine = `${whitespace}declare ${leadTrimmed}`;
             fixes++;
           }
@@ -79,7 +80,7 @@ function processSource(src: string): { out: string; fixes: number } {
     out.push(outLine);
   }
 
-  return { out: out.join("\n"), fixes };
+  return { out: out.join('\n'), fixes };
 }
 
 const files = await collectFiles();
@@ -89,15 +90,17 @@ let totalFiles = 0;
 let totalFixes = 0;
 
 for (const filePath of files) {
-  const src = readFileSync(filePath, "utf8");
+  const src = readFileSync(filePath, 'utf8');
   const { out, fixes } = processSource(src);
   if (fixes > 0) {
-    writeFileSync(filePath, out, "utf8");
-    const rel = filePath.replace(ROOT + "/", "");
+    writeFileSync(filePath, out, 'utf8');
+    const rel = filePath.replace(ROOT + '/', '');
     console.log(`  [${fixes} declare added]  ${rel}`);
     totalFiles++;
     totalFixes += fixes;
   }
 }
 
-console.log(`\n✅ Done — ${totalFixes} declare(s) added across ${totalFiles} file(s).`);
+console.log(
+  `\n✅ Done — ${totalFixes} declare(s) added across ${totalFiles} file(s).`
+);

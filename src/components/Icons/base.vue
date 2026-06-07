@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useIconColors } from "./useIconColors";
+import { useIconColors } from './useIconColors';
 
 const props = withDefaults(
   defineProps<{
@@ -7,7 +7,7 @@ const props = withDefaults(
   }>(),
   {
     active: false,
-  },
+  }
 );
 
 const { lightColor, darkColor } = useIconColors(() => !!props.active);

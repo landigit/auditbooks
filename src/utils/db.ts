@@ -1,4 +1,4 @@
-import { Fyo, t } from "fyo";
+import { Fyo, t } from 'fyo';
 
 type Conn = {
   countryCode: string;
@@ -7,23 +7,23 @@ type Conn = {
 };
 
 export const dbErrorActionSymbols = {
-  SelectFile: Symbol("select-file"),
-  CancelSelection: Symbol("cancel-selection"),
+  SelectFile: Symbol('select-file'),
+  CancelSelection: Symbol('cancel-selection'),
 } as const;
 
 const dbErrors = {
-  DirectoryDoesNotExist: "directory does not exist",
-  UnableToAcquireConnection: "Unable to acquire a connection",
+  DirectoryDoesNotExist: 'directory does not exist',
+  UnableToAcquireConnection: 'Unable to acquire a connection',
 } as const;
 
 export async function connectToDatabase(
   fyo: Fyo,
   dbPath: string,
-  countryCode?: string,
+  countryCode?: string
 ): Promise<Conn> {
   try {
     return {
-      countryCode: (await fyo.db.connectToDatabase(dbPath, countryCode)) ?? "",
+      countryCode: (await fyo.db.connectToDatabase(dbPath, countryCode)) ?? '',
     };
   } catch (error) {
     if (!(error instanceof Error)) {
@@ -31,16 +31,22 @@ export async function connectToDatabase(
     }
 
     return {
-      countryCode: "",
+      countryCode: '',
       error,
-      actionSymbol: (await handleDatabaseConnectionError(error, dbPath)) as Conn["actionSymbol"],
+      actionSymbol: (await handleDatabaseConnectionError(
+        error,
+        dbPath
+      )) as Conn['actionSymbol'],
     };
   }
 }
 
-export async function handleDatabaseConnectionError(error: Error, dbPath: string) {
+export async function handleDatabaseConnectionError(
+  error: Error,
+  dbPath: string
+) {
   const message = error.message;
-  if (typeof message !== "string") {
+  if (typeof message !== 'string') {
     throw error;
   }
 
@@ -57,20 +63,20 @@ export async function handleDatabaseConnectionError(error: Error, dbPath: string
 
 async function handleUnableToAcquireConnection(dbPath: string) {
   return await showDbErrorDialog(
-    t`Could not connect to database file ${dbPath}, please select the file manually`,
+    t`Could not connect to database file ${dbPath}, please select the file manually`
   );
 }
 
 async function handleDirectoryDoesNotExist(dbPath: string) {
   return await showDbErrorDialog(
-    t`Directory for database file ${dbPath} does not exist, please select the file manually`,
+    t`Directory for database file ${dbPath} does not exist, please select the file manually`
   );
 }
 
 async function showDbErrorDialog(detail: string) {
-  const { showDialog } = await import("src/utils/interactive");
+  const { showDialog } = await import('src/utils/interactive');
   return showDialog({
-    type: "error",
+    type: 'error',
     title: t`Cannot Open File`,
     detail,
     buttons: [

@@ -1,9 +1,9 @@
-import { Fyo } from "fyo";
-import { Converter } from "fyo/core/converter";
-import { DocValue, DocValueMap } from "fyo/core/types";
-import { Doc } from "fyo/model/doc";
-import { getEmptyValuesByFieldTypes } from "fyo/utils";
-import { ValidationError } from "fyo/utils/errors";
+import { Fyo } from 'fyo';
+import { Converter } from 'fyo/core/converter';
+import { DocValue, DocValueMap } from 'fyo/core/types';
+import { Doc } from 'fyo/model/doc';
+import { getEmptyValuesByFieldTypes } from 'fyo/utils';
+import { ValidationError } from 'fyo/utils/errors';
 import {
   Field,
   FieldType,
@@ -12,9 +12,9 @@ import {
   RawValue,
   Schema,
   TargetField,
-} from "schemas/types";
-import { generateCSV, parseCSV } from "utils/csvParser";
-import { getValueMapFromList } from "utils/index";
+} from 'schemas/types';
+import { generateCSV, parseCSV } from 'utils/csvParser';
+import { getValueMapFromList } from 'utils/index';
 
 export type TemplateField = Field & TemplateFieldProps;
 
@@ -97,7 +97,9 @@ export class Importer {
 
   constructor(schemaName: string, fyo: Fyo) {
     if (!fyo.schemaMap[schemaName]) {
-      throw new ValidationError(`Invalid schemaName ${schemaName} found in importer`);
+      throw new ValidationError(
+        `Invalid schemaName ${schemaName} found in importer`
+      );
     }
 
     this.hasChildTables = false;
@@ -137,7 +139,7 @@ export class Importer {
       .map((key, index) => ({
         key,
         index,
-        tf: this.templateFieldsMap.get(key ?? ""),
+        tf: this.templateFieldsMap.get(key ?? ''),
       }))
       .filter(({ key, tf }) => {
         if (!key || !tf) {
@@ -152,7 +154,7 @@ export class Importer {
       for (const { tf, index } of tfKeys) {
         const target = (tf as TargetField).target;
         const value = row[index]?.value;
-        if (typeof value !== "string" || !value) {
+        if (typeof value !== 'string' || !value) {
           continue;
         }
 
@@ -188,7 +190,7 @@ export class Importer {
       .map((key, index) => ({
         key,
         index,
-        tf: this.templateFieldsMap.get(key ?? ""),
+        tf: this.templateFieldsMap.get(key ?? ''),
       }))
       .filter(({ key, tf }) => !!key && !!tf) as {
       key: string;
@@ -214,7 +216,8 @@ export class Importer {
   }
 
   populateDocs() {
-    const { dataMap, childTableMap } = this.getDataAndChildTableMapFromValueMatrix();
+    const { dataMap, childTableMap } =
+      this.getDataAndChildTableMapFromValueMatrix();
 
     const schema = this.fyo.schemaMap[this.schemaName];
     const targetFieldnameMap = schema?.fields
@@ -225,7 +228,7 @@ export class Importer {
           acc[target] = fieldname;
           return acc;
         },
-        {} as Record<string, string>,
+        {} as Record<string, string>
       );
 
     for (const [name, data] of dataMap.entries()) {
@@ -255,22 +258,25 @@ export class Importer {
     /**
      * Record key is doc.name, childSchemaName, childDoc.name
      */
-    const childTableMap: Record<string, Record<string, Map<string, DocValueMap>>> = {};
+    const childTableMap: Record<
+      string,
+      Record<string, Map<string, DocValueMap>>
+    > = {};
 
     const nameIndices = this.assignedTemplateFields
       .map((key, index) => ({ key, index }))
-      .filter((f) => f.key?.endsWith(".name"))
+      .filter((f) => f.key?.endsWith('.name'))
       .reduce(
         (acc, f) => {
           if (f.key == null) {
             return acc;
           }
 
-          const schemaName = f.key.split(".")[0];
+          const schemaName = f.key.split('.')[0];
           acc[schemaName] = f.index;
           return acc;
         },
-        {} as Record<string, number>,
+        {} as Record<string, number>
       );
 
     const nameIndex = nameIndices?.[this.schemaName];
@@ -281,13 +287,13 @@ export class Importer {
     for (let i = 0; i < this.valueMatrix.length; i++) {
       const row = this.valueMatrix[i];
       const name = row[nameIndex]?.value;
-      if (typeof name !== "string") {
+      if (typeof name !== 'string') {
         continue;
       }
 
       for (let j = 0; j < row.length; j++) {
         const key = this.assignedTemplateFields[j];
-        const tf = this.templateFieldsMap.get(key ?? "");
+        const tf = this.templateFieldsMap.get(key ?? '');
         if (!tf || !key) {
           continue;
         }
@@ -309,7 +315,7 @@ export class Importer {
 
         const childNameIndex = nameIndices[tf.schemaName];
         let childName = row[childNameIndex]?.value;
-        if (typeof childName !== "string") {
+        if (typeof childName !== 'string') {
           childName = `${tf.schemaName}-${i}`;
         }
 
@@ -435,12 +441,12 @@ export class Importer {
       return vmi;
     }
 
-    if (vmi.rawValue === "") {
+    if (vmi.rawValue === '') {
       vmi.value = null;
       return vmi;
     }
 
-    if ("options" in tf && typeof vmi.rawValue === "string") {
+    if ('options' in tf && typeof vmi.rawValue === 'string') {
       return this.getOptionFieldVmi(vmi, tf);
     }
 
@@ -455,9 +461,9 @@ export class Importer {
 
   getOptionFieldVmi(
     { rawValue }: ValueMatrixItem,
-    tf: OptionField & TemplateFieldProps,
+    tf: OptionField & TemplateFieldProps
   ): ValueMatrixItem {
-    if (typeof rawValue !== "string") {
+    if (typeof rawValue !== 'string') {
       return { error: true, value: null, rawValue };
     }
 
@@ -467,7 +473,7 @@ export class Importer {
 
     if (!this.optionsMap.labelValueMap[tf.fieldKey]) {
       const values = new Set(tf.options.map(({ value }) => value));
-      const labelValueMap = getValueMapFromList(tf.options, "label", "value");
+      const labelValueMap = getValueMapFromList(tf.options, 'label', 'value');
 
       this.optionsMap.labelValueMap[tf.fieldKey] = labelValueMap;
       this.optionsMap.values[tf.fieldKey] = values;
@@ -516,16 +522,18 @@ export class Importer {
   }
 
   addRow() {
-    const valueRow: ValueMatrix[number] = this.assignedTemplateFields.map((key) => {
-      key ??= "";
-      const { fieldtype } = this.templateFieldsMap.get(key) ?? {};
-      let value = null;
-      if (fieldtype) {
-        value = getEmptyValuesByFieldTypes(fieldtype, this.fyo);
-      }
+    const valueRow: ValueMatrix[number] = this.assignedTemplateFields.map(
+      (key) => {
+        key ??= '';
+        const { fieldtype } = this.templateFieldsMap.get(key) ?? {};
+        let value = null;
+        if (fieldtype) {
+          value = getEmptyValuesByFieldTypes(fieldtype, this.fyo);
+        }
 
-      return { value };
-    });
+        return { value };
+      }
+    );
 
     this.valueMatrix.push(valueRow);
   }
@@ -558,7 +566,11 @@ export class Importer {
   }
 }
 
-function getTemplateFields(schemaName: string, fyo: Fyo, importer: Importer): TemplateField[] {
+function getTemplateFields(
+  schemaName: string,
+  fyo: Fyo,
+  importer: Importer
+): TemplateField[] {
   const schemas: { schema: Schema; parentSchemaChildField?: TargetField }[] = [
     { schema: fyo.schemaMap[schemaName]! },
   ];
@@ -574,7 +586,7 @@ function getTemplateFields(schemaName: string, fyo: Fyo, importer: Importer): Te
         acc[f.fieldname] = f;
         return acc;
       },
-      {} as Record<string, Field>,
+      {} as Record<string, Field>
     ) ?? {};
 
   while (schemas.length) {
@@ -606,11 +618,15 @@ function getTemplateFields(schemaName: string, fyo: Fyo, importer: Importer): Te
         tf.readOnly = false;
       }
 
-      if (schema.isChild && tf.fieldname === "name") {
+      if (schema.isChild && tf.fieldname === 'name') {
         tf.required = false;
       }
 
-      if (schema.isChild && tf.required && !targetSchemaFieldMap[tf.schemaName ?? ""]?.required) {
+      if (
+        schema.isChild &&
+        tf.required &&
+        !targetSchemaFieldMap[tf.schemaName ?? '']?.required
+      ) {
         tf.required = false;
       }
 
@@ -644,7 +660,7 @@ function shouldSkipField(field: Field, schema: Schema): boolean {
     return true;
   }
 
-  if (schema.naming === "numberSeries" && field.fieldname === "name") {
+  if (schema.naming === 'numberSeries' && field.fieldname === 'name') {
     return false;
   }
 

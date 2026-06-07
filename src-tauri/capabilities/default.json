@@ -3,5 +3,19 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": [
+    "core:default",
+    "store:default",
+    "dialog:default",
+    "opener:default",
+    "fs:default",
+    "http:default",
+    "notification:default",
+    "log:default",
+    "allow-custom-commands",
+    {
+      "identifier": "fs:scope",
+      "allow": ["$APPDATA/**", "$RESOURCE/**", "$DOCUMENT/**", "$DOWNLOAD/**"]
+    }
+  ]
 }

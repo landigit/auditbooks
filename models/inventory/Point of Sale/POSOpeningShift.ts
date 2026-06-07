@@ -1,7 +1,7 @@
-import { Doc } from "fyo/model/doc";
-import { OpeningAmounts } from "./OpeningAmounts";
-import { OpeningCash } from "./OpeningCash";
-import { ListViewSettings } from "fyo/model/types";
+import { Doc } from 'fyo/model/doc';
+import { OpeningAmounts } from './OpeningAmounts';
+import { OpeningCash } from './OpeningCash';
+import { ListViewSettings } from 'fyo/model/types';
 
 export class POSOpeningShift extends Doc {
   declare openingAmounts?: OpeningAmounts[];
@@ -31,7 +31,7 @@ export class POSOpeningShift extends Doc {
     }
 
     const transferAmountRow = this.openingAmounts.filter(
-      (row) => row.paymentMethod === "Transfer",
+      (row) => row.paymentMethod === 'Transfer'
     )[0];
 
     return transferAmountRow.amount ?? this.fyo.pesa(0);
@@ -39,7 +39,7 @@ export class POSOpeningShift extends Doc {
 
   static getListViewSettings(): ListViewSettings {
     return {
-      columns: ["name", "openingDate"],
+      columns: ['name', 'openingDate'],
     };
   }
 }

@@ -19,7 +19,11 @@
         </text>
       </Button>
     </PopoverTrigger>
-    <PopoverContent side="bottom" align="end" class="w-auto p-0 overflow-hidden">
+    <PopoverContent
+      side="bottom"
+      align="end"
+      class="w-auto p-0 overflow-hidden"
+    >
       <view>
         <view class="p-2">
           <template v-if="explicitFilters.length">
@@ -33,7 +37,11 @@
                   class="cursor-pointer w-4 h-4 flex items-center justify-center text-description hover:text-main rounded-md group"
                 >
                   <text class="hidden group-hover:inline-block">
-                    <LucideIcon name="x" class="w-4 h-4 cursor-pointer" @tap="removeFilter(i)" />
+                    <LucideIcon
+                      name="x"
+                      class="w-4 h-4 cursor-pointer"
+                      @tap="removeFilter(i)"
+                    />
                   </text>
                   <text class="group-hover:hidden">
                     {{ i + 1 }}
@@ -97,7 +105,9 @@
             </view>
           </template>
           <template v-else>
-            <text class="text-base text-description">{{ t`No filters selected` }}</text>
+            <text class="text-base text-description">{{
+              t`No filters selected`
+            }}</text>
           </template>
         </view>
         <view class="flex justify-between border-t border-border">
@@ -136,27 +146,27 @@
 
 <script setup lang="ts">
 // --- Imports ---
-import { ref, computed } from "vue";
-import { Field, FieldTypeEnum } from "schemas/types";
-import { fyo } from "src/initFyo";
-import { getRandomString } from "utils";
-import Button from "./Button.vue";
-import Data from "./Controls/Data.vue";
-import Select from "./Controls/Select.vue";
-import { Popover, PopoverTrigger, PopoverContent } from "src/components/ui";
-import { QueryFilter } from "utils/db/types";
-import { t } from "fyo";
+import { ref, computed } from 'vue';
+import { Field, FieldTypeEnum } from 'schemas/types';
+import { fyo } from 'src/initFyo';
+import { getRandomString } from 'utils';
+import Button from './Button.vue';
+import Data from './Controls/Data.vue';
+import Select from './Controls/Select.vue';
+import { Popover, PopoverTrigger, PopoverContent } from 'src/components/ui';
+import { QueryFilter } from 'utils/db/types';
+import { t } from 'fyo';
 
 // --- Types ---
 const conditions = [
-  { label: t`Is`, value: "=" },
-  { label: t`Is Not`, value: "!=" },
-  { label: t`Contains`, value: "like" },
-  { label: t`Does Not Contain`, value: "not like" },
-  { label: t`Greater Than`, value: ">" },
-  { label: t`Less Than`, value: "<" },
-  { label: t`Is Empty`, value: "is null" },
-  { label: t`Is Not Empty`, value: "is not null" },
+  { label: t`Is`, value: '=' },
+  { label: t`Is Not`, value: '!=' },
+  { label: t`Contains`, value: 'like' },
+  { label: t`Does Not Contain`, value: 'not like' },
+  { label: t`Greater Than`, value: '>' },
+  { label: t`Less Than`, value: '<' },
+  { label: t`Is Empty`, value: 'is null' },
+  { label: t`Is Not Empty`, value: 'is not null' },
 ] as const;
 
 type Filter = {
@@ -172,7 +182,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "change", filters: Record<string, any>): void;
+  (e: 'change', filters: Record<string, any>): void;
 }>();
 
 // --- State ---
@@ -188,7 +198,8 @@ const fields = computed<Field[]>(() => {
     FieldTypeEnum.AttachImage,
   ];
 
-  const listViewSettings = fyo.models[props.schemaName]?.getListViewSettings?.(fyo);
+  const listViewSettings =
+    fyo.models[props.schemaName]?.getListViewSettings?.(fyo);
   const statusField = listViewSettings?.columns?.[1] as any;
 
   const schemaFields = fyo.schemaMap[props.schemaName]?.fields ?? [];
@@ -210,12 +221,12 @@ const fields = computed<Field[]>(() => {
 
   if (statusField && statusField.fieldname) {
     const statusFieldExists = filteredFields.some(
-      (field) => field.fieldname === statusField.fieldname,
+      (field) => field.fieldname === statusField.fieldname
     );
 
     if (!statusFieldExists) {
       const originalStatusField = schemaFields.find(
-        (field) => field.fieldname === statusField.fieldname,
+        (field) => field.fieldname === statusField.fieldname
       );
       if (originalStatusField) {
         filteredFields.unshift(originalStatusField);
@@ -235,12 +246,14 @@ const fieldOptions = computed<{ label: string; value: string }[]>(() => {
   }));
 });
 
-const conditionsForDropdown = computed<{ label: string; value: string }[]>(() => {
-  return conditions.map((c) => ({
-    label: c.label,
-    value: c.label,
-  }));
-});
+const conditionsForDropdown = computed<{ label: string; value: string }[]>(
+  () => {
+    return conditions.map((c) => ({
+      label: c.label,
+      value: c.label,
+    }));
+  }
+);
 
 const explicitFilters = computed<Filter[]>(() => {
   return filters.value.filter((f) => !f.implicit);
@@ -278,14 +291,14 @@ function addNewFilter(): void {
     return;
   }
 
-  addFilter(df.fieldname, "like", "", false);
+  addFilter(df.fieldname, 'like', '', false);
 }
 
 function addFilter(
   fieldname: string,
   condition: string,
-  value: Filter["value"],
-  implicit?: boolean,
+  value: Filter['value'],
+  implicit?: boolean
 ): void {
   const displayCondition = getConditionLabel(condition);
   const newFilter = {
@@ -311,11 +324,15 @@ function clearAllFilters(): void {
   filters.value = [];
   newFilters.value = [];
 
-  emit("change", {});
+  emit('change', {});
 }
 
-function updateNewFilters<K extends keyof Filter>(index: number, key: K, value: Filter[K]) {
-  if (key === "condition") {
+function updateNewFilters<K extends keyof Filter>(
+  index: number,
+  key: K,
+  value: Filter[K]
+) {
+  if (key === 'condition') {
     const displayCondition = getConditionLabel(value as string);
     newFilters.value[index][key] = displayCondition as Filter[K];
     filters.value[index][key] = displayCondition as Filter[K];
@@ -332,13 +349,13 @@ function setFilter(filtersObj: QueryFilter, implicit?: boolean): void {
   Object.keys(filtersObj).map((fieldname) => {
     let parts = filtersObj[fieldname];
     let condition: string;
-    let value: Filter["value"];
+    let value: Filter['value'];
 
     if (Array.isArray(parts)) {
       condition = parts[0] as string;
-      value = parts[1] as Filter["value"];
+      value = parts[1] as Filter['value'];
     } else {
-      condition = "=";
+      condition = '=';
       value = parts;
     }
 
@@ -349,28 +366,28 @@ function setFilter(filtersObj: QueryFilter, implicit?: boolean): void {
 }
 
 function emitFilterChange(): void {
-  const activeFiltersObj: Record<string, [string, Filter["value"]]> = {};
+  const activeFiltersObj: Record<string, [string, Filter['value']]> = {};
 
   for (const { condition, value, fieldname } of newFilters.value) {
-    if (value === "" || value === null || value === undefined) {
+    if (value === '' || value === null || value === undefined) {
       continue;
     }
 
     const sqlCondition = getConditionValue(condition);
 
-    if (fieldname === "numberSeries") {
-      activeFiltersObj["name"] = [sqlCondition, value];
+    if (fieldname === 'numberSeries') {
+      activeFiltersObj['name'] = [sqlCondition, value];
     } else {
       activeFiltersObj[fieldname] = [sqlCondition, value];
     }
   }
 
-  emit("change", activeFiltersObj);
+  emit('change', activeFiltersObj);
   filters.value = [...newFilters.value];
 
   if (newFilters.value.length) {
     filters.value = filters.value.filter(
-      (filter) => filter.condition && filter.value && filter.fieldname,
+      (filter) => filter.condition && filter.value && filter.fieldname
     );
     filters.value.push(newFilters.value[newFilters.value.length - 1]);
   }
@@ -380,8 +397,8 @@ function emitFilterChange(): void {
       filters.value.map((filter) => [
         `${filter.condition}-${filter.value}-${filter.fieldname}`,
         filter,
-      ]),
-    ).values(),
+      ])
+    ).values()
   );
 }
 </script>

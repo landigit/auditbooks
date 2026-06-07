@@ -1,14 +1,14 @@
-import { db } from "./client";
-import * as schema from "./schema";
-import { getTableConfig } from "drizzle-orm/sqlite-core";
-import { eq, and, desc, asc, SQL } from "drizzle-orm";
-import { safeGet, safeSet } from "../../utils/index";
+import { db } from './client';
+import * as schema from './schema';
+import { getTableConfig } from 'drizzle-orm/sqlite-core';
+import { eq, and, desc, asc, SQL } from 'drizzle-orm';
+import { safeGet, safeSet } from '../../utils/index';
 
 // Pre-build a case-insensitive map of table names (both camelCase and PascalCase) to Drizzle table objects.
 const tables: Record<string, any> = Object.create(null);
 
 for (const [key, val] of Object.entries(schema)) {
-  if (val && typeof val === "object") {
+  if (val && typeof val === 'object') {
     try {
       const config = getTableConfig(val as any);
       if (config && config.name) {
@@ -39,7 +39,11 @@ export function getTable(name: string) {
 export async function getRow(tableName: string, name: string) {
   const table = getTable(tableName);
   // In this system, all schemas have 'name' as their primary key
-  const results = await db.select().from(table).where(eq(table.name, name)).limit(1);
+  const results = await db
+    .select()
+    .from(table)
+    .where(eq(table.name, name))
+    .limit(1);
   return results[0] || null;
 }
 
@@ -57,7 +61,11 @@ export async function insertRow(tableName: string, data: any) {
  */
 export async function updateRow(tableName: string, name: string, data: any) {
   const table = getTable(tableName);
-  const result = await db.update(table).set(data).where(eq(table.name, name)).returning();
+  const result = await db
+    .update(table)
+    .set(data)
+    .where(eq(table.name, name))
+    .returning();
   return (result as any)[0];
 }
 
@@ -77,10 +85,10 @@ export async function listRows(
   tableName: string,
   options: {
     filters?: Record<string, any>;
-    orderBy?: { column: string; direction: "asc" | "desc" };
+    orderBy?: { column: string; direction: 'asc' | 'desc' };
     limit?: number;
     offset?: number;
-  } = {},
+  } = {}
 ) {
   const table = getTable(tableName);
   let query = db.select().from(table);
@@ -90,9 +98,9 @@ export async function listRows(
   if (options.filters) {
     for (const [colName, val] of Object.entries(options.filters)) {
       if (
-        colName !== "__proto__" &&
-        colName !== "constructor" &&
-        colName !== "prototype" &&
+        colName !== '__proto__' &&
+        colName !== 'constructor' &&
+        colName !== 'prototype' &&
         colName in table
       ) {
         const col = safeGet(table, colName);
@@ -111,12 +119,12 @@ export async function listRows(
   if (options.orderBy) {
     const { column, direction } = options.orderBy;
     if (
-      column !== "__proto__" &&
-      column !== "constructor" &&
-      column !== "prototype" &&
+      column !== '__proto__' &&
+      column !== 'constructor' &&
+      column !== 'prototype' &&
       column in table
     ) {
-      const orderFn = direction === "desc" ? desc : asc;
+      const orderFn = direction === 'desc' ? desc : asc;
       const col = safeGet(table, column);
       if (col) {
         query = query.orderBy(orderFn(col)) as any;
@@ -142,12 +150,12 @@ export async function listRows(
 export async function getChildRows(
   childTableName: string,
   parentName: string,
-  parentSchemaName?: string,
+  parentSchemaName?: string
 ) {
   const table = getTable(childTableName);
   const conditions: SQL[] = [eq(table.parent, parentName)];
 
-  if (parentSchemaName && "parentSchemaName" in table) {
+  if (parentSchemaName && 'parentSchemaName' in table) {
     conditions.push(eq(table.parentSchemaName, parentSchemaName));
   }
 

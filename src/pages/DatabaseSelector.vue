@@ -16,7 +16,9 @@
           {{ t`Welcome to Auditbooks` }}
         </text>
         <text class="text-description text-base select-none">
-          {{ t`Create a new company or select an existing one from your computer` }}
+          {{
+            t`Create a new company or select an existing one from your computer`
+          }}
         </text>
       </view>
 
@@ -29,7 +31,9 @@
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
         @tap="newDatabase"
       >
-        <view class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center">
+        <view
+          class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
+        >
           <lucide-icon name="plus" class="text-indicator-blue-text w-5 h-5" />
         </view>
 
@@ -49,8 +53,13 @@
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
         @tap="existingDatabase"
       >
-        <view class="w-8 h-8 rounded-full bg-indicator-green-bg relative flex-center">
-          <lucide-icon name="upload" class="w-4 h-4 text-indicator-green-text" />
+        <view
+          class="w-8 h-8 rounded-full bg-indicator-green-bg relative flex-center"
+        >
+          <lucide-icon
+            name="upload"
+            class="w-4 h-4 text-indicator-green-text"
+          />
         </view>
         <view class="flex flex-col">
           <text class="font-medium text-main">
@@ -69,8 +78,13 @@
         :class="creatingDemo ? '' : 'hover:bg-surface-hover cursor-pointer'"
         @tap="createDemo"
       >
-        <view class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center">
-          <lucide-icon name="monitor" class="w-4 h-4 text-indicator-blue-text" />
+        <view
+          class="w-8 h-8 rounded-full bg-indicator-blue-bg relative flex-center"
+        >
+          <lucide-icon
+            name="monitor"
+            class="w-4 h-4 text-indicator-blue-text"
+          />
         </view>
         <view class="flex flex-col">
           <text class="font-medium text-main">
@@ -107,7 +121,9 @@
                 {{ formatDate(file.modified) }}
               </text>
             </view>
-            <text class="text-sm text-description overflow-x-auto no-scrollbar whitespace-nowrap">
+            <text
+              class="text-sm text-description overflow-x-auto no-scrollbar whitespace-nowrap"
+            >
               {{ truncate(file.dbPath) }}
             </text>
           </view>
@@ -151,8 +167,8 @@
       <view class="p-4 text-main w-form">
         <text class="text-xl font-semibold select-none">Set Base Count</text>
         <text class="text-base mt-2">
-          Base Count is a lower bound on the number of entries made when creating the dummy
-          instance.
+          Base Count is a lower bound on the number of entries made when
+          creating the dummy instance.
         </text>
         <view class="flex my-12 justify-center items-baseline gap-4 text-base">
           <text for="basecount" class="text-description">Base Count</text>
@@ -232,7 +248,9 @@
 
       <!-- Recent Databases List -->
       <view class="FileListContainer">
-        <text class="ListHeader" v-if="files.length">{{ t`Recent Companies` }}</text>
+        <text class="ListHeader" v-if="files.length">{{
+          t`Recent Companies`
+        }}</text>
         <view class="FileListView">
           <view
             v-for="(file, i) in files"
@@ -257,36 +275,40 @@
   </view>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useAppStore } from "src/stores/app";
-import { setupDummyInstance } from "dummy";
-import { t } from "fyo";
-import { Verb } from "fyo/telemetry/types";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { ref, onMounted } from 'vue';
+import { useAppStore } from 'src/stores/app';
+import { setupDummyInstance } from 'dummy';
+import { t } from 'fyo';
+import { Verb } from 'fyo/telemetry/types';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
-import { fyo } from "src/initFyo";
-import { showDialog, isLynx } from "src/utils/interactive";
-import { updateConfigFiles } from "src/utils/misc";
-import { deleteDb as deleteDbFile, getSavePath, getSelectedFilePath } from "src/utils/ui";
-import type { ConfigFilesWithModified } from "utils/types";
-import LanguageSelector from "src/components/Controls/LanguageSelector.vue";
-import Loading from "src/components/Loading.vue";
-import LucideIcon from "src/components/LucideIcon.vue";
-import Modal from "src/components/Modal.vue";
-import Button from "src/components/Button.vue";
+import { fyo } from 'src/initFyo';
+import { showDialog, isLynx } from 'src/utils/interactive';
+import { updateConfigFiles } from 'src/utils/misc';
+import {
+  deleteDb as deleteDbFile,
+  getSavePath,
+  getSelectedFilePath,
+} from 'src/utils/ui';
+import type { ConfigFilesWithModified } from 'utils/types';
+import LanguageSelector from 'src/components/Controls/LanguageSelector.vue';
+import Loading from 'src/components/Loading.vue';
+import LucideIcon from 'src/components/LucideIcon.vue';
+import Modal from 'src/components/Modal.vue';
+import Button from 'src/components/Button.vue';
 
 // Define Emits
 const emit = defineEmits<{
-  (e: "file-selected", filePath: string): void;
-  (e: "new-database"): void;
+  (e: 'file-selected', filePath: string): void;
+  (e: 'new-database'): void;
 }>();
 
 // State definition
 const store = useAppStore();
 const openModal = ref(false);
 const baseCount = ref(100);
-const creationMessage = ref("");
+const creationMessage = ref('');
 const creationPercent = ref(0);
 const creatingDemo = ref(false);
 const loadingDatabase = ref(false);
@@ -297,7 +319,7 @@ const truncate = (value: string) => {
   if (value.length < 72) {
     return value;
   }
-  return "..." + value.slice(value.length - 72);
+  return '...' + value.slice(value.length - 72);
 };
 
 const formatDate = (isoDate: string) => {
@@ -306,7 +328,9 @@ const formatDate = (isoDate: string) => {
 
 const setFiles = async () => {
   const dbList = (await ipc.getDbList()) || [];
-  files.value = dbList.sort((a, b) => Date.parse(b.modified) - Date.parse(a.modified));
+  files.value = dbList.sort(
+    (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
+  );
 };
 
 const deleteDb = async (i: number) => {
@@ -316,7 +340,7 @@ const deleteDb = async (i: number) => {
   await showDialog({
     title: t`Delete ${file.companyName}?`,
     detail: t`Database file: ${file.dbPath}`,
-    type: "warning",
+    type: 'warning',
     buttons: [
       {
         label: t`Yes`,
@@ -341,25 +365,31 @@ const emitFileSelected = (filePath: string) => {
   if (!filePath) {
     return;
   }
-  emit("file-selected", filePath);
+  emit('file-selected', filePath);
 };
 
 const startDummyInstanceSetup = async () => {
-  const { filePath, canceled } = await getSavePath("demo", "db");
+  const { filePath, canceled } = await getSavePath('demo', 'db');
   if (canceled || !filePath) {
     return;
   }
 
   creatingDemo.value = true;
-  await setupDummyInstance(filePath, fyo, 1, baseCount.value, (message, percent) => {
-    creationMessage.value = message;
-    creationPercent.value = percent;
-  });
+  await setupDummyInstance(
+    filePath,
+    fyo,
+    1,
+    baseCount.value,
+    (message, percent) => {
+      creationMessage.value = message;
+      creationPercent.value = percent;
+    }
+  );
 
   updateConfigFiles(fyo);
   await fyo.purgeCache();
   await setFiles();
-  fyo.telemetry.log(Verb.Created, "dummy-instance");
+  fyo.telemetry.log(Verb.Created, 'dummy-instance');
   creatingDemo.value = false;
   emitFileSelected(filePath);
 };
@@ -367,7 +397,7 @@ const startDummyInstanceSetup = async () => {
 const createDemo = async () => {
   if (isLynx) {
     try {
-      const response = await (globalThis as any).ipc.getSaveFilePath({
+      const response = await ipc.getSaveFilePath({
         title: t`Select folder`,
         defaultPath: `demo.db`,
       });
@@ -375,7 +405,7 @@ const createDemo = async () => {
         emitFileSelected(response.filePath);
       }
     } catch (err) {
-      console.error("Failed to open save file selector:", err);
+      console.error('Failed to open save file selector:', err);
     }
   } else {
     if (!store.isDevelopment) {
@@ -390,7 +420,7 @@ const newDatabase = () => {
   if (creatingDemo.value) {
     return;
   }
-  emit("new-database");
+  emit('new-database');
 };
 
 const existingDatabase = async () => {
@@ -414,7 +444,7 @@ const selectFile = (file: ConfigFilesWithModified) => {
 onMounted(async () => {
   await setFiles();
 
-  if (store.isDevelopment && typeof window !== "undefined") {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-expect-error
     window.ds = {
       truncate,

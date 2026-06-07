@@ -1,10 +1,10 @@
-import { defineComponent, h } from "vue";
+import { defineComponent, h } from 'vue';
 
 // Safe mock components for reka-ui elements under Lynx
 const DummyComponent = defineComponent({
-  name: "DummyRekaComponent",
+  name: 'DummyRekaComponent',
   setup(_, { slots }) {
-    return () => (slots.default ? slots.default() : h("view"));
+    return () => (slots.default ? slots.default() : h('view'));
   },
 });
 

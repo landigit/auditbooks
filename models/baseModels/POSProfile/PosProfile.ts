@@ -1,6 +1,6 @@
-import { Doc } from "fyo/model/doc";
-import { FiltersMap } from "fyo/model/types";
-import { ModelNameEnum } from "models/types";
+import { Doc } from 'fyo/model/doc';
+import { FiltersMap } from 'fyo/model/types';
+import { ModelNameEnum } from 'models/types';
 
 export class POSProfile extends Doc {
   declare posProfile?: string;
@@ -8,7 +8,7 @@ export class POSProfile extends Doc {
   declare defaultLocation?: string;
   declare posPrintTemplate?: string;
   declare inventory?: string;
-  declare posUI?: "Classic" | "Modern";
+  declare posUI?: 'Classic' | 'Modern';
   declare isShiftOpen?: boolean;
   declare itemVisibility?: string;
   declare canChangeRate?: boolean;

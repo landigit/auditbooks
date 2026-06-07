@@ -1,16 +1,20 @@
-import { Fyo } from "fyo";
-import { ConfigFile } from "fyo/core/types";
-import { getRegionalModels, models } from "models/index";
-import { ModelNameEnum } from "models/types";
-import { TargetField } from "schemas/types";
-import { getMapFromList, getRandomString, getValueMapFromList } from "utils/index";
-import { useAppStore } from "src/stores/app";
+import { Fyo } from 'fyo';
+import { ConfigFile } from 'fyo/core/types';
+import { getRegionalModels, models } from 'models/index';
+import { ModelNameEnum } from 'models/types';
+import { TargetField } from 'schemas/types';
+import {
+  getMapFromList,
+  getRandomString,
+  getValueMapFromList,
+} from 'utils/index';
+import { useAppStore } from 'src/stores/app';
 
 export async function initializeInstance(
   dbPath: string,
   isNew: boolean,
   countryCode: string,
-  fyo: Fyo,
+  fyo: Fyo
 ) {
   let appStore: any;
   try {
@@ -22,7 +26,7 @@ export async function initializeInstance(
     await closeDbIfConnected(fyo);
     countryCode = await fyo.db.createNewDatabase(dbPath, countryCode);
   } else if (!fyo.db.isConnected) {
-    countryCode = (await fyo.db.connectToDatabase(dbPath)) ?? "";
+    countryCode = (await fyo.db.connectToDatabase(dbPath)) ?? '';
   }
 
   const regionalModels = await getRegionalModels(countryCode);
@@ -69,15 +73,15 @@ async function checkSingleLinks(fyo: Fyo) {
     .filter((schema) => schema?.isSingle)
     .map((schema) => schema!.fields)
     .flat()
-    .filter((field) => field.fieldtype === "Link" && field.target)
+    .filter((field) => field.fieldtype === 'Link' && field.target)
     .map((field) => ({
       fieldKey: `${field.schemaName!}.${field.fieldname}`,
       target: (field as TargetField).target,
     }));
-  const linkFieldsMap = getMapFromList(linkFields, "fieldKey");
+  const linkFieldsMap = getMapFromList(linkFields, 'fieldKey');
 
-  const singleValues = (await fyo.db.getAllRaw("SingleValue", {
-    fields: ["name", "parent", "fieldname", "value"],
+  const singleValues = (await fyo.db.getAllRaw('SingleValue', {
+    fields: ['name', 'parent', 'fieldname', 'value'],
   })) as { name: string; parent: string; fieldname: string; value: string }[];
 
   const exists: Record<string, Record<string, boolean>> = {};
@@ -89,7 +93,7 @@ async function checkSingleLinks(fyo: Fyo) {
     }
 
     const { target } = linkFieldsMap[fieldKey];
-    if (typeof value !== "string" || !value || !target) {
+    if (typeof value !== 'string' || !value || !target) {
       continue;
     }
 
@@ -103,22 +107,24 @@ async function checkSingleLinks(fyo: Fyo) {
       continue;
     }
 
-    await fyo.db.delete("SingleValue", name);
+    await fyo.db.delete('SingleValue', name);
   }
 }
 
 async function setCreds(fyo: Fyo) {
-  const email = (await fyo.getValue(ModelNameEnum.AccountingSettings, "email")) as
-    | string
-    | undefined;
+  const email = (await fyo.getValue(
+    ModelNameEnum.AccountingSettings,
+    'email'
+  )) as string | undefined;
   const user = fyo.auth.user;
   fyo.auth.user = email ?? user;
 }
 
 async function setVersion(fyo: Fyo) {
-  const version = (await fyo.getValue(ModelNameEnum.SystemSettings, "version")) as
-    | string
-    | undefined;
+  const version = (await fyo.getValue(
+    ModelNameEnum.SystemSettings,
+    'version'
+  )) as string | undefined;
 
   let appStore: any;
   try {
@@ -126,59 +132,68 @@ async function setVersion(fyo: Fyo) {
   } catch {
     appStore = {};
   }
-  const appVersion = appStore.appVersion || "0.37.8";
+  const appVersion = appStore.appVersion || '0.37.8';
   if (version !== appVersion) {
     const systemSettings = await fyo.doc.getDoc(ModelNameEnum.SystemSettings);
-    await systemSettings?.setAndSync("version", appVersion);
+    await systemSettings?.setAndSync('version', appVersion);
   }
 }
 
 function setDeviceId(fyo: Fyo, appStore: ReturnType<typeof useAppStore>) {
-  let deviceId = fyo.config.get("deviceId");
+  let deviceId = fyo.config.get('deviceId');
   if (deviceId === undefined) {
     deviceId = getRandomString();
-    fyo.config.set("deviceId", deviceId);
+    fyo.config.set('deviceId', deviceId);
   }
 
   appStore.deviceId = deviceId;
 }
 
-async function setInstanceId(fyo: Fyo, appStore: ReturnType<typeof useAppStore>) {
+async function setInstanceId(
+  fyo: Fyo,
+  appStore: ReturnType<typeof useAppStore>
+) {
   const systemSettings = await fyo.doc.getDoc(ModelNameEnum.SystemSettings);
   if (!systemSettings.instanceId) {
-    await systemSettings.setAndSync("instanceId", getRandomString());
+    await systemSettings.setAndSync('instanceId', getRandomString());
   }
 
-  appStore.instanceId = (await fyo.getValue(ModelNameEnum.SystemSettings, "instanceId")) as string;
+  appStore.instanceId = (await fyo.getValue(
+    ModelNameEnum.SystemSettings,
+    'instanceId'
+  )) as string;
 }
 
 export async function setCurrencySymbols(fyo: Fyo) {
   const currencies = (await fyo.db.getAll(ModelNameEnum.Currency, {
-    fields: ["name", "symbol"],
+    fields: ['name', 'symbol'],
   })) as { name: string; symbol: string }[];
 
-  fyo.currencySymbols = getValueMapFromList(currencies, "name", "symbol");
+  fyo.currencySymbols = getValueMapFromList(currencies, 'name', 'symbol');
 }
 
-async function setOpenCount(fyo: Fyo, appStore: ReturnType<typeof useAppStore>) {
+async function setOpenCount(
+  fyo: Fyo,
+  appStore: ReturnType<typeof useAppStore>
+) {
   const misc = await fyo.doc.getDoc(ModelNameEnum.Misc);
   let openCount = misc.openCount as number | null;
 
-  if (typeof openCount !== "number") {
+  if (typeof openCount !== 'number') {
     openCount = getOpenCountFromFiles(fyo);
   }
 
-  if (typeof openCount !== "number") {
+  if (typeof openCount !== 'number') {
     openCount = 0;
   }
 
   openCount += 1;
   appStore.openCount = openCount;
-  await misc.setAndSync("openCount", openCount);
+  await misc.setAndSync('openCount', openCount);
 }
 
 function getOpenCountFromFiles(fyo: Fyo) {
-  const configFile = fyo.config.get("files", []) as ConfigFile[];
+  const configFile = fyo.config.get('files', []) as ConfigFile[];
   for (const file of configFile) {
     if (file.id === fyo.singles.SystemSettings?.instanceId) {
       return file.openCount ?? 0;

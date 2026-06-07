@@ -1,16 +1,16 @@
-import { t } from "fyo";
-import { Action } from "fyo/model/types";
-import dayjs from "dayjs";
-import { Invoice } from "models/baseModels/Invoice/Invoice";
-import { Party } from "models/regionalModels/in/Party";
-import { ModelNameEnum } from "models/types";
-import { codeStateMap } from "regional/in";
-import { Report } from "reports/Report";
-import { ColumnField, ReportData, ReportRow } from "reports/types";
-import { Field } from "schemas/types";
-import { isNumeric } from "src/utils";
-import getGSTRExportActions from "./gstExporter";
-import { GSTRRow, GSTRType, TransferType, TransferTypeEnum } from "./types";
+import { t } from 'fyo';
+import { Action } from 'fyo/model/types';
+import dayjs from 'dayjs';
+import { Invoice } from 'models/baseModels/Invoice/Invoice';
+import { Party } from 'models/regionalModels/in/Party';
+import { ModelNameEnum } from 'models/types';
+import { codeStateMap } from 'regional/in';
+import { Report } from 'reports/Report';
+import { ColumnField, ReportData, ReportRow } from 'reports/types';
+import { Field } from 'schemas/types';
+import { isNumeric } from 'src/utils';
+import getGSTRExportActions from './gstExporter';
+import { GSTRRow, GSTRType, TransferType, TransferTypeEnum } from './types';
 
 export abstract class BaseGSTR extends Report {
   place?: string;
@@ -24,22 +24,22 @@ export abstract class BaseGSTR extends Report {
   abstract gstrType: GSTRType;
 
   get transferTypeMap(): Record<string, string> {
-    if (this.gstrType === "GSTR-2") {
+    if (this.gstrType === 'GSTR-2') {
       return {
-        B2B: "B2B",
+        B2B: 'B2B',
       };
     }
 
     return {
-      B2B: "B2B",
-      B2CL: "B2C-Large",
-      B2CS: "B2C-Small",
-      NR: "Nil Rated, Exempted and Non GST supplies",
+      B2B: 'B2B',
+      B2CL: 'B2C-Large',
+      B2CS: 'B2C-Small',
+      NR: 'Nil Rated, Exempted and Non GST supplies',
     };
   }
 
   get schemaName() {
-    if (this.gstrType === "GSTR-1") {
+    if (this.gstrType === 'GSTR-1') {
       return ModelNameEnum.SalesInvoice;
     }
 
@@ -61,13 +61,17 @@ export abstract class BaseGSTR extends Report {
       const reportRow: ReportRow = { cells: [] };
 
       for (const { fieldname, fieldtype, width } of this.columns) {
-        if (fieldname === "__proto__" || fieldname === "constructor" || fieldname === "prototype") {
+        if (
+          fieldname === '__proto__' ||
+          fieldname === 'constructor' ||
+          fieldname === 'prototype'
+        ) {
           continue;
         }
-        const align = isNumeric(fieldtype) ? "right" : "left";
+        const align = isNumeric(fieldtype) ? 'right' : 'left';
 
         const rawValue = Reflect.get(row, fieldname as keyof GSTRRow);
-        let value = "";
+        let value = '';
         if (rawValue !== undefined) {
           value = this.fyo.format(rawValue, fieldtype);
         }
@@ -91,9 +95,9 @@ export abstract class BaseGSTR extends Report {
       let allow = true;
       if (this.place) {
         if (
-          this.place === "__proto__" ||
-          this.place === "constructor" ||
-          this.place === "prototype"
+          this.place === '__proto__' ||
+          this.place === 'constructor' ||
+          this.place === 'prototype'
         ) {
           allow = false;
         } else {
@@ -105,19 +109,19 @@ export abstract class BaseGSTR extends Report {
   }
 
   get transferFilterFunction(): (row: GSTRRow) => boolean {
-    if (this.transferType === "B2B") {
+    if (this.transferType === 'B2B') {
       return (row) => !!row.gstin;
     }
 
-    if (this.transferType === "B2CL") {
+    if (this.transferType === 'B2CL') {
       return (row) => !row.gstin && !row.inState && row.invAmt >= 250000;
     }
 
-    if (this.transferType === "B2CS") {
+    if (this.transferType === 'B2CS') {
       return (row) => !row.gstin && (row.inState || row.invAmt < 250000);
     }
 
-    if (this.transferType === "NR") {
+    if (this.transferType === 'NR') {
       return (row) => row.rate === 0; // this takes care of both nil rated, exempted goods
     }
 
@@ -127,11 +131,11 @@ export abstract class BaseGSTR extends Report {
   async getEntries() {
     const date: string[] = [];
     if (this.toDate) {
-      date.push("<=", this.toDate);
+      date.push('<=', this.toDate);
     }
 
     if (this.fromDate) {
-      date.push(">=", this.fromDate);
+      date.push('>=', this.fromDate);
     }
 
     return (await this.fyo.db.getAllRaw(this.schemaName, {
@@ -150,42 +154,50 @@ export abstract class BaseGSTR extends Report {
   }
 
   async getGstrRow(entryName: string): Promise<GSTRRow> {
-    const entry = (await this.fyo.doc.getDoc(this.schemaName, entryName)) as Invoice;
-    const gstin = (await this.fyo.getValue(ModelNameEnum.AccountingSettings, "gstin")) as
-      | string
-      | null;
+    const entry = (await this.fyo.doc.getDoc(
+      this.schemaName,
+      entryName
+    )) as Invoice;
+    const gstin = (await this.fyo.getValue(
+      ModelNameEnum.AccountingSettings,
+      'gstin'
+    )) as string | null;
 
-    const party = (await this.fyo.doc.getDoc("Party", entry.party)) as Party;
+    const party = (await this.fyo.doc.getDoc('Party', entry.party)) as Party;
 
-    let place = "";
+    let place = '';
     if (party.address) {
       const pos = (await this.fyo.getValue(
         ModelNameEnum.Address,
         party.address as string,
-        "pos",
+        'pos'
       )) as string | undefined;
 
-      place = pos ?? "";
+      place = pos ?? '';
     } else if (party.gstin) {
       const code = party.gstin.slice(0, 2);
-      place = codeStateMap[code] ?? "";
+      place = codeStateMap[code] ?? '';
     }
 
     let inState = false;
     if (gstin) {
       const code = gstin.slice(0, 2);
-      if (code !== "__proto__" && code !== "constructor" && code !== "prototype") {
+      if (
+        code !== '__proto__' &&
+        code !== 'constructor' &&
+        code !== 'prototype'
+      ) {
         inState = codeStateMap[code] === place;
       }
     }
 
     const gstrRow: GSTRRow = {
-      gstin: party.gstin ?? "",
+      gstin: party.gstin ?? '',
       partyName: entry.party!,
       invNo: entry.name!,
       invDate: entry.date!,
       rate: 0,
-      reverseCharge: !party.gstin ? "Y" : "N",
+      reverseCharge: !party.gstin ? 'Y' : 'N',
       inState,
       place,
       invAmt: entry.grandTotal?.float ?? 0,
@@ -207,19 +219,19 @@ export abstract class BaseGSTR extends Report {
       const taxAmt = entry.netTotal!.percent(rate).float;
 
       switch (tax.account) {
-        case "IGST": {
+        case 'IGST': {
           gstrRow.igstAmt = taxAmt;
           gstrRow.inState = false;
         }
-        case "CGST":
+        case 'CGST':
           gstrRow.cgstAmt = taxAmt;
-        case "SGST":
+        case 'SGST':
           gstrRow.sgstAmt = taxAmt;
-        case "Nil Rated":
+        case 'Nil Rated':
           gstrRow.nilRated = true;
-        case "Exempt":
+        case 'Exempt':
           gstrRow.exempt = true;
-        case "Non GST":
+        case 'Non GST':
           gstrRow.nonGST = true;
       }
     }
@@ -227,15 +239,15 @@ export abstract class BaseGSTR extends Report {
 
   setDefaultFilters() {
     if (!this.toDate) {
-      this.toDate = dayjs().format("YYYY-MM-DD");
+      this.toDate = dayjs().format('YYYY-MM-DD');
     }
 
     if (!this.fromDate) {
-      this.fromDate = dayjs().subtract(3, "month").format("YYYY-MM-DD");
+      this.fromDate = dayjs().subtract(3, 'month').format('YYYY-MM-DD');
     }
 
     if (!this.transferType) {
-      this.transferType = "B2B";
+      this.transferType = 'B2B';
     }
   }
 
@@ -243,52 +255,56 @@ export abstract class BaseGSTR extends Report {
     const transferTypeMap = this.transferTypeMap;
     const options = Object.keys(transferTypeMap)
       .map((k) => {
-        if (k === "__proto__" || k === "constructor" || k === "prototype") {
-          return { value: k, label: "" };
+        if (k === '__proto__' || k === 'constructor' || k === 'prototype') {
+          return { value: k, label: '' };
         }
         return {
           value: k,
           label: Reflect.get(transferTypeMap, k),
         };
       })
-      .filter((opt) => opt.label !== "");
+      .filter((opt) => opt.label !== '');
 
     return [
       {
-        fieldtype: "Select",
+        fieldtype: 'Select',
         label: t`Transfer Type`,
         placeholder: t`Transfer Type`,
-        fieldname: "transferType",
+        fieldname: 'transferType',
         options,
       },
       {
-        fieldtype: "AutoComplete",
+        fieldtype: 'AutoComplete',
         label: t`Place`,
         placeholder: t`Place`,
-        fieldname: "place",
+        fieldname: 'place',
         options: Object.keys(codeStateMap)
           .map((code) => {
-            if (code === "__proto__" || code === "constructor" || code === "prototype") {
-              return { value: code, label: "" };
+            if (
+              code === '__proto__' ||
+              code === 'constructor' ||
+              code === 'prototype'
+            ) {
+              return { value: code, label: '' };
             }
             return {
               value: code,
               label: Reflect.get(codeStateMap, code),
             };
           })
-          .filter((opt) => opt.label !== ""),
+          .filter((opt) => opt.label !== ''),
       },
       {
-        fieldtype: "Date",
+        fieldtype: 'Date',
         label: t`From Date`,
         placeholder: t`From Date`,
-        fieldname: "fromDate",
+        fieldname: 'fromDate',
       },
       {
-        fieldtype: "Date",
+        fieldtype: 'Date',
         label: t`To Date`,
         placeholder: t`To Date`,
-        fieldname: "toDate",
+        fieldname: 'toDate',
       },
     ];
   }
@@ -297,59 +313,59 @@ export abstract class BaseGSTR extends Report {
     const columns = [
       {
         label: t`Party`,
-        fieldtype: "Data",
-        fieldname: "partyName",
+        fieldtype: 'Data',
+        fieldname: 'partyName',
         width: 1.5,
       },
       {
         label: t`Invoice No.`,
-        fieldname: "invNo",
-        fieldtype: "Data",
+        fieldname: 'invNo',
+        fieldtype: 'Data',
       },
       {
         label: t`Invoice Value`,
-        fieldname: "invAmt",
-        fieldtype: "Currency",
+        fieldname: 'invAmt',
+        fieldtype: 'Currency',
       },
       {
         label: t`Invoice Date`,
-        fieldname: "invDate",
-        fieldtype: "Date",
+        fieldname: 'invDate',
+        fieldtype: 'Date',
       },
       {
         label: t`Place of supply`,
-        fieldname: "place",
-        fieldtype: "Data",
+        fieldname: 'place',
+        fieldtype: 'Data',
       },
       {
         label: t`Rate`,
-        fieldname: "rate",
+        fieldname: 'rate',
         width: 0.5,
       },
       {
         label: t`Taxable Value`,
-        fieldname: "taxVal",
-        fieldtype: "Currency",
+        fieldname: 'taxVal',
+        fieldtype: 'Currency',
       },
       {
         label: t`Reverse Chrg.`,
-        fieldname: "reverseCharge",
-        fieldtype: "Data",
+        fieldname: 'reverseCharge',
+        fieldtype: 'Data',
       },
       {
         label: t`Intergrated Tax`,
-        fieldname: "igstAmt",
-        fieldtype: "Currency",
+        fieldname: 'igstAmt',
+        fieldtype: 'Currency',
       },
       {
         label: t`Central Tax`,
-        fieldname: "cgstAmt",
-        fieldtype: "Currency",
+        fieldname: 'cgstAmt',
+        fieldtype: 'Currency',
       },
       {
         label: t`State Tax`,
-        fieldname: "sgstAmt",
-        fieldtype: "Currency",
+        fieldname: 'sgstAmt',
+        fieldtype: 'Currency',
       },
     ] as ColumnField[];
 
@@ -357,8 +373,8 @@ export abstract class BaseGSTR extends Report {
     if (transferType === TransferTypeEnum.B2B) {
       columns.unshift({
         label: t`GSTIN No.`,
-        fieldname: "gstin",
-        fieldtype: "Data",
+        fieldname: 'gstin',
+        fieldtype: 'Data',
         width: 1.5,
       });
     }

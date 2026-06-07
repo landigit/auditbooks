@@ -42,16 +42,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { t } from "fyo";
-import { convertFileToDataURL } from "src/utils/misc";
-import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
-import LucideIcon from "../LucideIcon.vue";
+import { ref, computed } from 'vue';
+import { t } from 'fyo';
+import { convertFileToDataURL } from 'src/utils/misc';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
+import LucideIcon from '../LucideIcon.vue';
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
   border: false,
-  size: "large",
+  size: 'large',
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -60,15 +63,21 @@ const props = withDefaults(defineProps<BaseControlProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: "focus", ev: FocusEvent): void;
-  (e: "input", ev: Event): void;
-  (e: "change", val: any): void;
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
-const { labelClasses, inputClasses, containerClasses, isReadOnly, triggerChange, focus } =
-  useBaseControl(props as any, emit, fileInput);
+const {
+  labelClasses,
+  inputClasses,
+  containerClasses,
+  isReadOnly,
+  triggerChange,
+  focus,
+} = useBaseControl(props as any, emit, fileInput);
 
 const label = computed(() => {
   if (props.value) {
@@ -83,7 +92,7 @@ const upload = () => {
 
 const clear = () => {
   if (fileInput.value) {
-    fileInput.value.value = "";
+    fileInput.value.value = '';
   }
   triggerChange(null);
 };
@@ -98,10 +107,10 @@ const download = () => {
     return;
   }
 
-  const a = document.createElement("a");
-  a.style.display = "none";
+  const a = document.createElement('a');
+  a.style.display = 'none';
   a.href = data;
-  a.target = "_self";
+  a.target = '_self';
   a.download = name;
 
   document.body.appendChild(a);

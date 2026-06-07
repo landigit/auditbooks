@@ -1,7 +1,7 @@
-import { handleError } from "src/errorHandling";
-import { fyo, ipc } from "src/initFyo";
-import { syncDocumentsToERPNext } from "src/utils/erpnextSync";
-import { useAppStore } from "src/stores/app";
+import { handleError } from 'src/errorHandling';
+import { fyo, ipc } from 'src/initFyo';
+import { syncDocumentsToERPNext } from 'src/utils/erpnextSync';
+import { useAppStore } from 'src/stores/app';
 
 export default function registerIpcRendererListeners() {
   ipc.registerMainProcessErrorListener((...args: unknown[]) => {
@@ -15,7 +15,7 @@ export default function registerIpcRendererListeners() {
       more = {};
     }
 
-    if (typeof more !== "object") {
+    if (typeof more !== 'object') {
       more = { more };
     }
 
@@ -43,14 +43,14 @@ export default function registerIpcRendererListeners() {
     }
   });
 
-  document.addEventListener("visibilitychange", () => {
+  document.addEventListener('visibilitychange', () => {
     const { visibilityState } = document;
-    if (visibilityState === "visible" && !fyo.telemetry.started) {
+    if (visibilityState === 'visible' && !fyo.telemetry.started) {
       // oxlint-disable-next-line @typescript-eslint/no-floating-promises
       fyo.telemetry.start();
     }
 
-    if (visibilityState !== "hidden") {
+    if (visibilityState !== 'hidden') {
       return;
     }
 

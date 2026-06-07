@@ -1,12 +1,12 @@
-import { Fyo } from "fyo";
-import { Doc } from "fyo/model/doc";
-import { isPesa } from "fyo/utils";
-import { ValueError } from "fyo/utils/errors";
-import dayjs from "dayjs";
-import { Field, FieldTypeEnum, RawValue, TargetField } from "schemas/types";
-import { getIsNullOrUndef, safeParseFloat, safeParseInt } from "utils";
-import { DatabaseHandler } from "./dbHandler";
-import { Attachment, DocValue, DocValueMap, RawValueMap } from "./types";
+import { Fyo } from 'fyo';
+import { Doc } from 'fyo/model/doc';
+import { isPesa } from 'fyo/utils';
+import { ValueError } from 'fyo/utils/errors';
+import dayjs from 'dayjs';
+import { Field, FieldTypeEnum, RawValue, TargetField } from 'schemas/types';
+import { getIsNullOrUndef, safeParseFloat, safeParseInt } from 'utils';
+import { DatabaseHandler } from './dbHandler';
+import { Attachment, DocValue, DocValueMap, RawValueMap } from './types';
 
 /**
  * # Converter
@@ -34,7 +34,7 @@ export class Converter {
 
   toDocValueMap(
     schemaName: string,
-    rawValueMap: RawValueMap | RawValueMap[],
+    rawValueMap: RawValueMap | RawValueMap[]
   ): DocValueMap | DocValueMap[] {
     rawValueMap ??= {};
     if (Array.isArray(rawValueMap)) {
@@ -46,7 +46,7 @@ export class Converter {
 
   toRawValueMap(
     schemaName: string,
-    docValueMap: DocValueMap | DocValueMap[],
+    docValueMap: DocValueMap | DocValueMap[]
   ): RawValueMap | RawValueMap[] {
     docValueMap ??= {};
     if (Array.isArray(docValueMap)) {
@@ -118,10 +118,14 @@ export class Converter {
         Reflect.set(
           docValueMap,
           fieldname,
-          rawValue.map((rv) => this.#toDocValueMap(parentSchemaName, rv)),
+          rawValue.map((rv) => this.#toDocValueMap(parentSchemaName, rv))
         );
       } else {
-        Reflect.set(docValueMap, fieldname, Converter.toDocValue(rawValue, field, this.fyo));
+        Reflect.set(
+          docValueMap,
+          fieldname,
+          Converter.toDocValue(rawValue, field, this.fyo)
+        );
       }
     }
 
@@ -144,14 +148,21 @@ export class Converter {
           fieldname,
           docValue.map((value) => {
             if (value instanceof Doc) {
-              return this.#toRawValueMap(parentSchemaName, value.getValidDict());
+              return this.#toRawValueMap(
+                parentSchemaName,
+                value.getValidDict()
+              );
             }
 
             return this.#toRawValueMap(parentSchemaName, value);
-          }),
+          })
         );
       } else {
-        Reflect.set(rawValueMap, fieldname, Converter.toRawValue(docValue, field, this.fyo));
+        Reflect.set(
+          rawValueMap,
+          fieldname,
+          Converter.toRawValue(docValue, field, this.fyo)
+        );
       }
     }
 
@@ -168,11 +179,11 @@ function toDocString(value: RawValue, field: Field) {
     return null;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return value;
   }
 
-  throwError(value, field, "doc");
+  throwError(value, field, 'doc');
 }
 
 function toDocDate(value: RawValue, field: Field) {
@@ -180,17 +191,17 @@ function toDocDate(value: RawValue, field: Field) {
     return value;
   }
 
-  if (value === null || value === "") {
+  if (value === null || value === '') {
     return null;
   }
 
-  if (typeof value !== "string") {
-    throwError(value, field, "doc");
+  if (typeof value !== 'string') {
+    throwError(value, field, 'doc');
   }
 
   const date = dayjs(value).toDate();
-  if (date.toString() === "Invalid Date") {
-    throwError(value, field, "doc");
+  if (date.toString() === 'Invalid Date') {
+    throwError(value, field, 'doc');
   }
 
   return date;
@@ -201,19 +212,19 @@ function toDocCurrency(value: RawValue, field: Field, fyo: Fyo) {
     return value;
   }
 
-  if (value === "") {
+  if (value === '') {
     return fyo.pesa(0);
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return fyo.pesa(value);
   }
 
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return fyo.pesa(value);
   }
 
-  if (typeof value === "boolean") {
+  if (typeof value === 'boolean') {
     return fyo.pesa(Number(value));
   }
 
@@ -221,15 +232,15 @@ function toDocCurrency(value: RawValue, field: Field, fyo: Fyo) {
     return fyo.pesa(0);
   }
 
-  throwError(value, field, "doc");
+  throwError(value, field, 'doc');
 }
 
 function toDocInt(value: RawValue, field: Field): number {
-  if (value === "") {
+  if (value === '') {
     return 0;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     value = safeParseInt(value);
   }
 
@@ -237,15 +248,15 @@ function toDocInt(value: RawValue, field: Field): number {
 }
 
 function toDocFloat(value: RawValue, field: Field): number {
-  if (value === "") {
+  if (value === '') {
     return 0;
   }
 
-  if (typeof value === "boolean") {
+  if (typeof value === 'boolean') {
     return Number(value);
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     value = safeParseFloat(value);
   }
 
@@ -253,27 +264,27 @@ function toDocFloat(value: RawValue, field: Field): number {
     value = 0;
   }
 
-  if (typeof value === "number" && !Number.isNaN(value)) {
+  if (typeof value === 'number' && !Number.isNaN(value)) {
     return value;
   }
 
-  throwError(value, field, "doc");
+  throwError(value, field, 'doc');
 }
 
 function toDocCheck(value: RawValue, field: Field): boolean {
-  if (typeof value === "boolean") {
+  if (typeof value === 'boolean') {
     return value;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return !!safeParseFloat(value);
   }
 
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return Boolean(value);
   }
 
-  throwError(value, field, "doc");
+  throwError(value, field, 'doc');
 }
 
 function toDocAttachment(value: RawValue, field: Field): null | Attachment {
@@ -281,14 +292,14 @@ function toDocAttachment(value: RawValue, field: Field): null | Attachment {
     return null;
   }
 
-  if (typeof value !== "string") {
-    throwError(value, field, "doc");
+  if (typeof value !== 'string') {
+    throwError(value, field, 'doc');
   }
 
   try {
     return (JSON.parse(value) as Attachment) || null;
   } catch {
-    throwError(value, field, "doc");
+    throwError(value, field, 'doc');
   }
 }
 
@@ -301,19 +312,19 @@ function toRawCurrency(value: DocValue, fyo: Fyo, field: Field): string {
     return fyo.pesa(0).store;
   }
 
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return fyo.pesa(value).store;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return fyo.pesa(value).store;
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawInt(value: DocValue, field: Field): number {
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return safeParseInt(value);
   }
 
@@ -321,15 +332,15 @@ function toRawInt(value: DocValue, field: Field): number {
     return 0;
   }
 
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return Math.floor(value);
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawFloat(value: DocValue, field: Field): number {
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return safeParseFloat(value);
   }
 
@@ -337,11 +348,11 @@ function toRawFloat(value: DocValue, field: Field): number {
     return 0;
   }
 
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return value;
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawDate(value: DocValue, field: Field): string | null {
@@ -349,19 +360,19 @@ function toRawDate(value: DocValue, field: Field): string | null {
     return null;
   }
 
-  if (typeof value === "string" || typeof value === "number") {
+  if (typeof value === 'string' || typeof value === 'number') {
     value = new Date(value);
   }
 
   if (value instanceof Date) {
-    return dayjs(value).format("YYYY-MM-DD");
+    return dayjs(value).format('YYYY-MM-DD');
   }
 
   if (dayjs.isDayjs(value)) {
-    return value.format("YYYY-MM-DD");
+    return value.format('YYYY-MM-DD');
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawDateTime(value: DocValue, field: Field): string | null {
@@ -369,7 +380,7 @@ function toRawDateTime(value: DocValue, field: Field): string | null {
     return null;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return value;
   }
 
@@ -388,19 +399,19 @@ function toRawDateTime(value: DocValue, field: Field): string | null {
     return d.toISOString();
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawCheck(value: DocValue, field: Field): number {
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     value = Boolean(value);
   }
 
-  if (typeof value === "boolean") {
+  if (typeof value === 'boolean') {
     return Number(value);
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawString(value: DocValue, field: Field): string | null {
@@ -412,11 +423,11 @@ function toRawString(value: DocValue, field: Field): string | null {
     return null;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return value;
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawLink(value: DocValue, field: Field): string | null {
@@ -424,11 +435,11 @@ function toRawLink(value: DocValue, field: Field): string | null {
     return null;
   }
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return value;
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
 function toRawAttachment(value: DocValue, field: Field): null | string {
@@ -436,17 +447,21 @@ function toRawAttachment(value: DocValue, field: Field): null | string {
     return null;
   }
 
-  if ((value as Attachment)?.name && (value as Attachment)?.data && (value as Attachment)?.type) {
+  if (
+    (value as Attachment)?.name &&
+    (value as Attachment)?.data &&
+    (value as Attachment)?.type
+  ) {
     return JSON.stringify(value);
   }
 
-  throwError(value, field, "raw");
+  throwError(value, field, 'raw');
 }
 
-function throwError<T>(value: T, field: Field, type: "raw" | "doc"): never {
+function throwError<T>(value: T, field: Field, type: 'raw' | 'doc'): never {
   throw new ValueError(
     `invalid ${type} conversion '${String(
-      value,
-    )}' of type ${typeof value} found, field: ${JSON.stringify(field)}`,
+      value
+    )}' of type ${typeof value} found, field: ${JSON.stringify(field)}`
   );
 }

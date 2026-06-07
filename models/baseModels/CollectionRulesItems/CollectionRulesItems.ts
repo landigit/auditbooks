@@ -1,5 +1,5 @@
-import { Doc } from "fyo/model/doc";
-import { Money } from "pesa";
+import { Doc } from 'fyo/model/doc';
+import { Money } from 'pesa';
 
 export class CollectionRulesItems extends Doc {
   declare tierName?: string;

@@ -1,6 +1,6 @@
 enum EventType {
-  Listeners = "_listeners",
-  OnceListeners = "_onceListeners",
+  Listeners = '_listeners',
+  OnceListeners = '_onceListeners',
 }
 
 // oxlint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,7 +41,7 @@ export default class Observable<T> {
   set(key: string, value: T) {
     this[key] = value;
     // oxlint-disable-next-line @typescript-eslint/no-floating-promises
-    this.trigger("change", {
+    this.trigger('change', {
       doc: this,
       changed: key,
     });
@@ -130,7 +130,9 @@ export default class Observable<T> {
   }
 
   _removeListener(type: EventType, event: string, listener: Listener) {
-    const listeners = (this[type].get(event) ?? []).filter((l) => l !== listener);
+    const listeners = (this[type].get(event) ?? []).filter(
+      (l) => l !== listener
+    );
     this[type].set(event, listeners);
   }
 

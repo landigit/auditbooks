@@ -1,7 +1,7 @@
-import fs from "fs/promises";
-import path from "path";
-import { parseCSV } from "utils/csvParser";
-import { LanguageMap } from "utils/types";
+import fs from 'fs/promises';
+import path from 'path';
+import { parseCSV } from 'utils/csvParser';
+import { LanguageMap } from 'utils/types';
 
 const VALENTINES_DAY = 1644796800000;
 
@@ -50,10 +50,10 @@ async function getContents(code: string) {
 async function getContentsIfExists(code: string): Promise<string> {
   const filePath = await getTranslationFilePath(code);
   if (!filePath) {
-    return "";
+    return '';
   }
 
-  return await Bun.file(filePath).text();
+  return await fs.readFile(filePath, 'utf8');
 }
 
 async function fetchAndStoreFile(code: string, date?: Date) {
@@ -67,11 +67,11 @@ async function fetchAndStoreFile(code: string, date?: Date) {
   }
 
   if (contents) {
-    contents = [date!.toISOString(), contents].join("\n");
+    contents = [date!.toISOString(), contents].join('\n');
     await storeFile(code, contents);
   }
 
-  return contents ?? "";
+  return contents ?? '';
 }
 
 async function fetchContentsFromApi(code: string) {
@@ -82,7 +82,7 @@ async function fetchContentsFromApi(code: string) {
   }
 
   const resJson = (await res.json()) as { content: string };
-  return Buffer.from(resJson.content, "base64").toString();
+  return Buffer.from(resJson.content, 'base64').toString();
 }
 
 async function fetchContentsFromRaw(code: string) {
@@ -106,7 +106,7 @@ async function getUpdatedContent(code: string, contents: string) {
 
 async function shouldUpdateFile(code: string, contents: string) {
   const date = await getLastUpdated(code);
-  const oldDate = new Date(contents.split("\n")[0]);
+  const oldDate = new Date(contents.split('\n')[0]);
   const shouldUpdate = date > oldDate || +oldDate === VALENTINES_DAY;
 
   return { shouldUpdate, date };
@@ -130,14 +130,20 @@ async function getLastUpdated(code: string): Promise<Date> {
 }
 
 async function getTranslationFilePath(code: string) {
-  let filePath = path.join((process as any).resourcesPath || "", `../translations/${code}.csv`);
+  let filePath = path.join(
+    (process as any).resourcesPath || '',
+    `../translations/${code}.csv`
+  );
 
-  const exists = await Bun.file(filePath).exists();
+  const exists = await fs
+    .access(filePath)
+    .then(() => true)
+    .catch(() => false);
   if (!exists) {
     const currentDir =
-      typeof __dirname !== "undefined"
+      typeof __dirname !== 'undefined'
         ? __dirname
-        : typeof (import.meta as any).dir !== "undefined"
+        : typeof (import.meta as any).dir !== 'undefined'
           ? (import.meta as any).dir
           : null;
     if (currentDir) {
@@ -147,9 +153,12 @@ async function getTranslationFilePath(code: string) {
     }
   }
 
-  const secondExists = await Bun.file(filePath).exists();
+  const secondExists = await fs
+    .access(filePath)
+    .then(() => true)
+    .catch(() => false);
   if (!secondExists) {
-    return "";
+    return '';
   }
 
   return filePath;
@@ -167,7 +176,7 @@ async function storeFile(code: string, contents: string) {
 
   const dirname = path.dirname(filePath);
   await fs.mkdir(dirname, { recursive: true });
-  await Bun.write(filePath, contents);
+  await fs.writeFile(filePath, contents);
 }
 
 async function errorHandledFetch(url: string) {

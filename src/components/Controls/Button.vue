@@ -1,5 +1,8 @@
 <template>
-  <view :class="[containerClasses]" class="mt-6 w-full text-main text-base focus:outline-none">
+  <view
+    :class="[containerClasses]"
+    class="mt-6 w-full text-main text-base focus:outline-none"
+  >
     <text class="flex w-full">
       <view
         ref="inputRef"
@@ -15,8 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
+import { ref, computed } from 'vue';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 interface ButtonProps extends BaseControlProps {
   spaceBetween?: boolean;
@@ -28,11 +34,11 @@ interface ButtonProps extends BaseControlProps {
 const props = withDefaults(defineProps<ButtonProps>(), {
   spaceBetween: true,
   labelRight: false,
-  labelClass: "",
+  labelClass: '',
   showLabel: true,
   step: 1,
   border: false,
-  size: "large",
+  size: 'large',
   containerStyles: () => ({}),
   textRight: null,
   readOnly: null,
@@ -40,17 +46,21 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: "focus", ev: FocusEvent): void;
-  (e: "input", ev: Event): void;
-  (e: "change", val: any): void;
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
 }>();
 
 const inputRef = ref<HTMLButtonElement | null>(null);
 
-const { containerClasses, isReadOnly, triggerChange } = useBaseControl(props, emit, inputRef);
+const { containerClasses, isReadOnly, triggerChange } = useBaseControl(
+  props,
+  emit,
+  inputRef
+);
 
 const labelClasses = computed(() => {
-  return props.labelClass || "text-description text-base";
+  return props.labelClass || 'text-description text-base';
 });
 
 const onClick = () => {

@@ -1,11 +1,11 @@
-import { Fyo, t } from "fyo";
-import { ValidationError } from "fyo/utils/errors";
-import { ModelNameEnum } from "models/types";
-import { Money } from "pesa";
-import { StockLedgerEntry } from "./StockLedgerEntry";
-import { SMDetails, SMIDetails, SMTransferDetails } from "./types";
-import { getSerialNumbers } from "./helpers";
-import { getItemVisibility } from "models/helpers";
+import { Fyo, t } from 'fyo';
+import { ValidationError } from 'fyo/utils/errors';
+import { ModelNameEnum } from 'models/types';
+import { Money } from 'pesa';
+import { StockLedgerEntry } from './StockLedgerEntry';
+import { SMDetails, SMIDetails, SMTransferDetails } from './types';
+import { getSerialNumbers } from './helpers';
+import { getItemVisibility } from 'models/helpers';
 
 export class StockManager {
   /**
@@ -64,7 +64,7 @@ export class StockManager {
         fromLocation: toLocation,
         toLocation: fromLocation,
         isReturn,
-      }),
+      })
     );
     await this.validateTransfers(reverseTransferDetails);
   }
@@ -94,7 +94,7 @@ export class StockManager {
 
   async #validateQuantity(details: SMIDetails) {
     const itemVisibility = await getItemVisibility(this.fyo);
-    if (itemVisibility !== "Inventory Items") {
+    if (itemVisibility !== 'Inventory Items') {
       return;
     }
 
@@ -102,7 +102,9 @@ export class StockManager {
       throw new ValidationError(t`Quantity needs to be set`);
     }
     if (!details.isReturn && details.quantity <= 0) {
-      throw new ValidationError(t`Quantity (${details.quantity}) has to be greater than zero`);
+      throw new ValidationError(
+        t`Quantity (${details.quantity}) has to be greater than zero`
+      );
     }
   }
 
@@ -112,7 +114,9 @@ export class StockManager {
     }
 
     if (details.rate.lt(0)) {
-      throw new ValidationError(t`Rate (${details.rate.float}) has to be greater than zero`);
+      throw new ValidationError(
+        t`Rate (${details.rate.float}) has to be greater than zero`
+      );
     }
   }
 
@@ -129,16 +133,20 @@ export class StockManager {
   }
 
   async #validateStockAvailability(details: SMIDetails) {
-    const trackItem = await this.fyo.getValue(ModelNameEnum.Item, details.item, "trackItem");
+    const trackItem = await this.fyo.getValue(
+      ModelNameEnum.Item,
+      details.item,
+      'trackItem'
+    );
 
     if (!details.fromLocation || !trackItem) {
       return;
     }
 
     const date = details.date.toISOString();
-    const formattedDate = this.fyo.format(details.date, "Datetime");
+    const formattedDate = this.fyo.format(details.date, 'Datetime');
     const batch = details.batch || undefined;
-    const serialNumbers = getSerialNumbers(details.serialNumber ?? "");
+    const serialNumbers = getSerialNumbers(details.serialNumber ?? '');
 
     let quantityBefore =
       (await this.fyo.db.getStockQuantity(
@@ -147,14 +155,14 @@ export class StockManager {
         undefined,
         date,
         batch,
-        serialNumbers,
+        serialNumbers
       )) ?? 0;
 
     if (this.isCancelled) {
       quantityBefore += details.quantity;
     }
 
-    const batchMessage = batch ? t` in Batch ${batch}` : "";
+    const batchMessage = batch ? t` in Batch ${batch}` : '';
 
     if (!details.isReturn && quantityBefore < details.quantity) {
       throw new ValidationError(
@@ -165,7 +173,7 @@ export class StockManager {
           }) required${batchMessage} to make outward transfer of item ${
             details.item
           } from ${details.fromLocation} on ${formattedDate}`,
-        ].join("\n"),
+        ].join('\n')
       );
     }
 
@@ -175,7 +183,7 @@ export class StockManager {
       details.date.toISOString(),
       undefined,
       batch,
-      serialNumbers,
+      serialNumbers
     );
 
     if (quantityAfter === null) {
@@ -193,7 +201,7 @@ export class StockManager {
           t`Additional quantity (${-futureQuantity}) required${batchMessage} to make outward transfer of item ${
             details.item
           } from ${details.fromLocation} on ${formattedDate}`,
-        ].join("\n"),
+        ].join('\n')
       );
     }
   }
@@ -273,13 +281,13 @@ class StockManagerItem {
       return;
     }
 
-    const serialNumbers = getSerialNumbers(this.serialNumber ?? "");
+    const serialNumbers = getSerialNumbers(this.serialNumber ?? '');
     if (serialNumbers.length) {
       const snStockLedgerEntries = this.#getSerialNumberedStockLedgerEntries(
         location,
         isOutward,
         serialNumbers,
-        quantity,
+        quantity
       );
 
       this.stockLedgerEntries?.push(...snStockLedgerEntries);
@@ -298,7 +306,7 @@ class StockManagerItem {
     location: string,
     isOutward: boolean,
     serialNumbers: string[],
-    quantity: number,
+    quantity: number
   ): StockLedgerEntry[] {
     if (quantity > 0) {
       quantity = 1;
@@ -309,13 +317,15 @@ class StockManagerItem {
       quantity = -1;
     }
 
-    return serialNumbers.map((sn) => this.#getStockLedgerEntry(location, quantity, sn));
+    return serialNumbers.map((sn) =>
+      this.#getStockLedgerEntry(location, quantity, sn)
+    );
   }
 
   #getStockLedgerEntry(
     location: string,
     quantity: number,
-    serialNumber?: string,
+    serialNumber?: string
   ): StockLedgerEntry {
     return this.fyo.doc.getNewDoc(ModelNameEnum.StockLedgerEntry, {
       date: this.date,

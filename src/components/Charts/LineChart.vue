@@ -34,11 +34,17 @@
           :key="j + '-xlabels'"
           :style="fontStyle"
           class="text-description"
-          :y="viewBoxHeight - axisPadding + yLabelOffset + fontStyle.fontSize / 2 - bottom"
+          :y="
+            viewBoxHeight -
+            axisPadding +
+            yLabelOffset +
+            fontStyle.fontSize / 2 -
+            bottom
+          "
           :x="xs[i - 1]"
           text-anchor="middle"
         >
-          {{ formatX(xLabels[i - 1] || "") }}
+          {{ formatX(xLabels[i - 1] || '') }}
         </text>
       </template>
 
@@ -104,7 +110,10 @@
         :cx="cx"
         :cy="cy"
         :fill="colors[yi]"
-        style="filter: brightness(115%) drop-shadow(0px 2px 3px var(--color-chart-shadow))"
+        style="
+          filter: brightness(115%)
+            drop-shadow(0px 2px 3px var(--color-chart-shadow));
+        "
       />
     </svg>
     <Tooltip
@@ -117,10 +126,10 @@
     >
       <view class="flex flex-col justify-center items-center">
         <text>
-          {{ xi > -1 ? formatX(xLabels[xi]) : "" }}
+          {{ xi > -1 ? formatX(xLabels[xi]) : '' }}
         </text>
         <text class="font-semibold">
-          {{ yi > -1 ? format(points[yi][xi]) : "" }}
+          {{ yi > -1 ? format(points[yi][xi]) : '' }}
         </text>
       </view>
     </Tooltip>
@@ -128,9 +137,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onDeactivated } from "vue";
-import { euclideanDistance, prefixFormat } from "src/utils/chart";
-import { Tooltip } from "src/components/ui";
+import { ref, computed, onDeactivated } from 'vue';
+import { euclideanDistance, prefixFormat } from 'src/utils/chart';
+import { Tooltip } from 'src/components/ui';
 
 interface LineChartProps {
   colors?: string[];
@@ -179,8 +188,8 @@ const props = withDefaults(defineProps<LineChartProps>(), {
   pointsPadding: 24,
   xLabelOffset: 20,
   yLabelOffset: 5,
-  gridColor: "currentColor",
-  axisColor: "currentColor",
+  gridColor: 'currentColor',
+  axisColor: 'currentColor',
   thickness: 5,
   axisThickness: 1,
   gridThickness: 0.5,
@@ -190,7 +199,7 @@ const props = withDefaults(defineProps<LineChartProps>(), {
   formatY: prefixFormat,
   formatX: (v: any) => v,
   fontSize: 20,
-  fontColor: "currentColor",
+  fontColor: 'currentColor',
   bottom: 0,
   left: 55,
   extendGridX: -20,
@@ -236,7 +245,8 @@ const xs = computed(() => {
       (_, i) =>
         padding.value +
         props.left +
-        (i * (viewBoxWidth.value - props.left - 2 * padding.value)) / (count.value - 1 || 1),
+        (i * (viewBoxWidth.value - props.left - 2 * padding.value)) /
+          (count.value - 1 || 1)
     );
 });
 
@@ -248,8 +258,8 @@ const ys = computed(() => {
       (p) =>
         padding.value +
         (1 - (p - minVal) / (maxVal - minVal)) *
-          (props.viewBoxHeight - 2 * padding.value - props.bottom),
-    ),
+          (props.viewBoxHeight - 2 * padding.value - props.bottom)
+    )
   );
 });
 
@@ -282,7 +292,7 @@ const xGrid = computed(() => {
   const yLocations = Array(props.yLabelDivisions + 1)
     .fill(undefined)
     .map((_, i) => yScalerLocation(i));
-  return yLocations.map((y) => `M ${lo} ${y} H ${ro}`).join(" ");
+  return yLocations.map((y) => `M ${lo} ${y} H ${ro}`).join(' ');
 });
 
 const xLims = computed(() => {
@@ -309,7 +319,8 @@ const gradY = (i: number) => {
 
 const yScalerLocation = (i: number) => {
   return (
-    ((props.yLabelDivisions - i) * (props.viewBoxHeight - padding.value * 2 - props.bottom)) /
+    ((props.yLabelDivisions - i) *
+      (props.viewBoxHeight - padding.value * 2 - props.bottom)) /
       props.yLabelDivisions +
     padding.value
   );
@@ -318,12 +329,14 @@ const yScalerLocation = (i: number) => {
 const yScalerValue = (i: number) => {
   const minVal = hMin.value;
   const maxVal = hMax.value;
-  return props.formatY((i * (maxVal - minVal)) / props.yLabelDivisions + minVal);
+  return props.formatY(
+    (i * (maxVal - minVal)) / props.yLabelDivisions + minVal
+  );
 };
 
 const getLine = (i: number) => {
   const first = xy.value[0];
-  if (!first) return "";
+  if (!first) return '';
   const [x, y] = first;
   let d = `M ${x} ${y[i]} `;
   xy.value.slice(1).forEach(([x, y]) => {
@@ -345,7 +358,7 @@ const getRandomColor = () => {
   const rgb = Array(3)
     .fill(undefined)
     .map(() => Math.floor(Math.random() * 255))
-    .join(",");
+    .join(',');
   return `rgb(${rgb})`;
 };
 
@@ -355,7 +368,13 @@ const update = (event: MouseEvent) => {
   }
 
   const { x, y } = getSvgXY(event);
-  const { xi: pXi, yi: pYi, cx: pCx, cy: pCy, d } = getPointIndexAndCoords(x, y);
+  const {
+    xi: pXi,
+    yi: pYi,
+    cx: pCx,
+    cy: pCy,
+    d,
+  } = getPointIndexAndCoords(x, y);
 
   if (d === undefined || d > props.tooltipDispDistThreshold) {
     xi.value = -1;
@@ -393,7 +412,9 @@ const getPointIndexAndCoords = (x: number, y: number) => {
   const pys = ys.value.map((yarr) => yarr[xiVal]);
   const dists = pys.map((py) => euclideanDistance(x, y, px, py));
   const minDist = Math.min(...dists);
-  const matchingIndices = dists.map((j, idx) => [j - minDist, idx]).filter(([j, _]) => j === 0);
+  const matchingIndices = dists
+    .map((j, idx) => [j - minDist, idx])
+    .filter(([j, _]) => j === 0);
   const lastMatch = matchingIndices.at(-1);
   const yiVal = lastMatch ? lastMatch[1] : -1;
   return { xi: xiVal, yi: yiVal, cx: px, cy: pys[yiVal], d: minDist };

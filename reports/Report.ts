@@ -1,11 +1,11 @@
-import { Fyo } from "fyo";
-import { Converter } from "fyo/core/converter";
-import { DocValue } from "fyo/core/types";
-import { Action } from "fyo/model/types";
-import Observable from "fyo/utils/observable";
-import { Field, RawValue } from "schemas/types";
-import { getIsNullOrUndef } from "utils";
-import { ColumnField, ReportData } from "./types";
+import { Fyo } from 'fyo';
+import { Converter } from 'fyo/core/converter';
+import { DocValue } from 'fyo/core/types';
+import { Action } from 'fyo/model/types';
+import Observable from 'fyo/utils/observable';
+import { Field, RawValue } from 'schemas/types';
+import { getIsNullOrUndef } from 'utils';
+import { ColumnField, ReportData } from './types';
 
 export abstract class Report extends Observable<RawValue> {
   static title: string;
@@ -48,7 +48,11 @@ export abstract class Report extends Observable<RawValue> {
   get filterMap() {
     const filterMap: Record<string, RawValue> = Object.create(null);
     for (const { fieldname } of this.filters) {
-      if (fieldname === "__proto__" || fieldname === "constructor" || fieldname === "prototype") {
+      if (
+        fieldname === '__proto__' ||
+        fieldname === 'constructor' ||
+        fieldname === 'prototype'
+      ) {
         continue;
       }
       const value = this.get(fieldname);
@@ -63,7 +67,7 @@ export abstract class Report extends Observable<RawValue> {
   }
 
   async set(key: string, value: DocValue, callPostSet = true) {
-    if (key === "__proto__" || key === "constructor" || key === "prototype") {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
       return;
     }
     const field = this.filters.find((f) => f.fieldname === key);

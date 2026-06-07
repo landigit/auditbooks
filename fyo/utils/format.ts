@@ -1,21 +1,21 @@
-import { Fyo } from "fyo";
-import { Doc } from "fyo/model/doc";
-import dayjs, { Dayjs } from "dayjs";
-import { Field, FieldType, FieldTypeEnum } from "schemas/types";
-import { getIsNullOrUndef, safeParseFloat, titleCase } from "utils";
-import { isPesa } from ".";
+import { Fyo } from 'fyo';
+import { Doc } from 'fyo/model/doc';
+import dayjs, { Dayjs } from 'dayjs';
+import { Field, FieldType, FieldTypeEnum } from 'schemas/types';
+import { getIsNullOrUndef, safeParseFloat, titleCase } from 'utils';
+import { isPesa } from '.';
 import {
   DEFAULT_CURRENCY,
   DEFAULT_DATE_FORMAT,
   DEFAULT_DISPLAY_PRECISION,
   DEFAULT_LOCALE,
-} from "./consts";
+} from './consts';
 
 export function format(
   value: unknown,
   df: string | Field | null,
   doc: Doc | null,
-  fyo: Fyo,
+  fyo: Fyo
 ): string {
   if (!df) {
     return String(value);
@@ -48,18 +48,18 @@ export function format(
   }
 
   if (getIsNullOrUndef(value)) {
-    return "";
+    return '';
   }
 
   return String(value);
 }
 
 function toDatetime(value: unknown): Dayjs | null {
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     return dayjs(value);
   } else if (value instanceof Date) {
     return dayjs(value);
-  } else if (typeof value === "number") {
+  } else if (typeof value === 'number') {
     return dayjs.unix(value);
   }
 
@@ -68,29 +68,32 @@ function toDatetime(value: unknown): Dayjs | null {
 
 function translateDateFormat(formatStr: string): string {
   return formatStr
-    .replace(/yyyy/g, "YYYY")
-    .replace(/yy/g, "YY")
-    .replace(/\by\b/g, "YYYY")
-    .replace(/\byy\b/g, "YY")
-    .replace(/dd/g, "DD")
-    .replace(/\bd\b/g, "D");
+    .replace(/yyyy/g, 'YYYY')
+    .replace(/yy/g, 'YY')
+    .replace(/\by\b/g, 'YYYY')
+    .replace(/\byy\b/g, 'YY')
+    .replace(/dd/g, 'DD')
+    .replace(/\bd\b/g, 'D');
 }
 
 function formatDatetime(value: unknown, fyo: Fyo): string {
   if (value == null) {
-    return "";
+    return '';
   }
 
-  const dateFormat = (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
+  const dateFormat =
+    (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
   const dateTime = toDatetime(value);
   if (!dateTime) {
-    return "";
+    return '';
   }
 
-  const formattedDatetime = dateTime.format(`${translateDateFormat(dateFormat)} HH:mm:ss`);
+  const formattedDatetime = dateTime.format(
+    `${translateDateFormat(dateFormat)} HH:mm:ss`
+  );
 
-  if (value === "Invalid DateTime") {
-    return "";
+  if (value === 'Invalid DateTime') {
+    return '';
   }
 
   return formattedDatetime;
@@ -98,38 +101,45 @@ function formatDatetime(value: unknown, fyo: Fyo): string {
 
 function formatDate(value: unknown, fyo: Fyo): string {
   if (value == null) {
-    return "";
+    return '';
   }
 
-  const dateFormat = (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
+  const dateFormat =
+    (fyo.singles.SystemSettings?.dateFormat as string) ?? DEFAULT_DATE_FORMAT;
 
   const dateTime = toDatetime(value);
   if (!dateTime) {
-    return "";
+    return '';
   }
 
   const formattedDate = dateTime.format(translateDateFormat(dateFormat));
-  if (value === "Invalid DateTime") {
-    return "";
+  if (value === 'Invalid DateTime') {
+    return '';
   }
 
   return formattedDate;
 }
 
-function formatCurrency(value: unknown, field: Field, doc: Doc | null, fyo: Fyo): string {
+function formatCurrency(
+  value: unknown,
+  field: Field,
+  doc: Doc | null,
+  fyo: Fyo
+): string {
   const currency = getCurrency(field, doc, fyo);
 
   let valueString;
   try {
     valueString = formatNumber(value, fyo);
   } catch (err) {
-    (err as Error).message += ` value: '${String(value)}', type: ${typeof value}`;
+    (err as Error).message +=
+      ` value: '${String(value)}', type: ${typeof value}`;
     throw err;
   }
 
   const currencySymbol = fyo.currencySymbols[currency];
   if (currencySymbol !== undefined) {
-    return currencySymbol + " " + valueString;
+    return currencySymbol + ' ' + valueString;
   }
 
   return valueString;
@@ -137,7 +147,7 @@ function formatCurrency(value: unknown, field: Field, doc: Doc | null, fyo: Fyo)
 
 function formatNumber(value: unknown, fyo: Fyo): string {
   const numberFormatter = getNumberFormatter(fyo);
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     value = fyo.pesa(value.toFixed(20));
   }
 
@@ -149,8 +159,10 @@ function formatNumber(value: unknown, fyo: Fyo): string {
   const floatValue = safeParseFloat(value);
   const formattedNumber = numberFormatter.format(floatValue);
 
-  if (formattedNumber === "NaN") {
-    throw Error(`invalid value passed to formatNumber: '${String(value)}' of type ${typeof value}`);
+  if (formattedNumber === 'NaN') {
+    throw Error(
+      `invalid value passed to formatNumber: '${String(value)}' of type ${typeof value}`
+    );
   }
 
   return formattedNumber;
@@ -161,18 +173,21 @@ function getNumberFormatter(fyo: Fyo) {
     return fyo.currencyFormatter;
   }
 
-  const locale = (fyo.singles.SystemSettings?.locale as string) ?? DEFAULT_LOCALE;
+  const locale =
+    (fyo.singles.SystemSettings?.locale as string) ?? DEFAULT_LOCALE;
   const display =
-    (fyo.singles.SystemSettings?.displayPrecision as number) ?? DEFAULT_DISPLAY_PRECISION;
+    (fyo.singles.SystemSettings?.displayPrecision as number) ??
+    DEFAULT_DISPLAY_PRECISION;
 
   return (fyo.currencyFormatter = Intl.NumberFormat(locale, {
-    style: "decimal",
+    style: 'decimal',
     minimumFractionDigits: display,
   }));
 }
 
 function getCurrency(field: Field, doc: Doc | null, fyo: Fyo): string {
-  const defaultCurrency = fyo.singles.SystemSettings?.currency ?? DEFAULT_CURRENCY;
+  const defaultCurrency =
+    fyo.singles.SystemSettings?.currency ?? DEFAULT_CURRENCY;
 
   let getCurrency = doc?.getCurrencies
     ? Reflect.get(doc.getCurrencies, field.fieldname)
@@ -192,10 +207,10 @@ function getCurrency(field: Field, doc: Doc | null, fyo: Fyo): string {
 }
 
 function getField(df: string | Field): Field {
-  if (typeof df === "string") {
+  if (typeof df === 'string') {
     return {
-      label: "",
-      fieldname: "",
+      label: '',
+      fieldname: '',
       fieldtype: df as FieldType,
     } as Field;
   }

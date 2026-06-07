@@ -22,13 +22,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
+import { ref } from 'vue';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
 
 const props = withDefaults(defineProps<BaseControlProps>(), {
   step: 1,
   border: false,
-  size: "large",
+  size: 'large',
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -37,18 +40,15 @@ const props = withDefaults(defineProps<BaseControlProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: "focus", ev: FocusEvent): void;
-  (e: "input", ev: Event): void;
-  (e: "change", val: any): void;
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
 }>();
 
 const inputRef = ref<HTMLInputElement | null>(null);
 
-const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } = useBaseControl(
-  props as any,
-  emit,
-  inputRef,
-);
+const { inputType, inputClasses, isReadOnly, onBlur, isNumeric, focus } =
+  useBaseControl(props as any, emit, inputRef);
 
 defineExpose({
   focus,

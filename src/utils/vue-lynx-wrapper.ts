@@ -1,4 +1,4 @@
-export * from "vue-lynx";
+export * from 'vue-lynx';
 
 // Polyfill mergeDefaults which is imported by reka-ui but missing in vue-lynx runtime
 export function mergeDefaults(rawProps: any, defaults: any) {

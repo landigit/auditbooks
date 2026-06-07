@@ -67,10 +67,16 @@
         />
       </view>
 
-      <view v-if="errorMessage" class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+      <view
+        v-if="errorMessage"
+        class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg"
+      >
         <text class="text-xs text-error">{{ errorMessage }}</text>
       </view>
-      <view v-else-if="helpMessage" class="p-3 bg-surface border border-border rounded-lg">
+      <view
+        v-else-if="helpMessage"
+        class="p-3 bg-surface border border-border rounded-lg"
+      >
         <text class="text-xs text-description">{{ helpMessage }}</text>
       </view>
     </view>
@@ -78,20 +84,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import router from "src/router";
-import { isLynx } from "src/utils/interactive";
-import DropdownWithActions from "src/components/DropdownWithActions.vue";
-import Button from "src/components/Button.vue";
-import PageHeader from "src/components/PageHeader.vue";
-import AutoComplete from "src/components/Controls/AutoComplete.vue";
-import { ModelNameEnum } from "models/types";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
+import { ref, computed } from 'vue';
+import router from 'src/router';
+import { isLynx } from 'src/utils/interactive';
+import DropdownWithActions from 'src/components/DropdownWithActions.vue';
+import Button from 'src/components/Button.vue';
+import PageHeader from 'src/components/PageHeader.vue';
+import AutoComplete from 'src/components/Controls/AutoComplete.vue';
+import { ModelNameEnum } from 'models/types';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
 /* Reactive State */
-const errorMessage = ref("");
-const formType = ref("");
+const errorMessage = ref('');
+const formType = ref('');
 
 /* Computed Properties */
 const customizableSchemas = computed(() => {
@@ -108,7 +114,7 @@ const customizableSchemas = computed(() => {
       ModelNameEnum.SingleValue,
       ModelNameEnum.SetupWizard,
       ModelNameEnum.PatchRun,
-    ].includes(schemaName as ModelNameEnum);
+    ].includes(schemaName as any);
   });
   return schemaNames.map((sn) => ({
     value: sn,
@@ -120,11 +126,11 @@ const helpMessage = computed(() => {
   if (!formType.value) {
     return t`Select a form type to customize`;
   }
-  return "";
+  return '';
 });
 
 /* Methods */
-const setEntryType = (type: string) => {
+const setEntryType = (type: any) => {
   formType.value = type;
 };
 </script>

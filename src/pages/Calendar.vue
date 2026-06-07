@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { Calendar as CalendarUI } from "src/components/ui";
-import PageHeader from "src/components/PageHeader.vue";
-import { fyo } from "src/initFyo";
-import { CalendarDate } from "@internationalized/date";
-import { routeTo } from "src/utils/ui";
-import { getFormRoute } from "src/utils/ui";
-import Badge from "src/components/Badge.vue";
-import { t } from "fyo";
+import { ref, computed, onMounted } from 'vue';
+import { Calendar as CalendarUI } from 'src/components/ui';
+import PageHeader from 'src/components/PageHeader.vue';
+import { fyo } from 'src/initFyo';
+import { CalendarDate } from '@internationalized/date';
+import { routeTo } from 'src/utils/ui';
+import { getFormRoute } from 'src/utils/ui';
+import Badge from 'src/components/Badge.vue';
+import { t } from 'fyo';
 
 const today = new Date();
 const dateValue = ref<any>(
-  new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate()),
+  new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate())
 );
 const transactions = ref<any[]>([]);
 
@@ -20,20 +20,24 @@ async function fetchTransactions() {
   const end = new Date(dateValue.value.year, dateValue.value.month, 0);
 
   // Fetch from multiple schemas for a comprehensive view
-  const schemas = ["SalesInvoice", "PurchaseInvoice", "JournalEntry"];
+  const schemas = ['SalesInvoice', 'PurchaseInvoice', 'JournalEntry'];
   const allResults = await Promise.all(
     schemas.map((schema) =>
       fyo.db.getAll(schema, {
         filters: {
-          date: ["between", [start.toISOString(), end.toISOString()]],
+          date: ['between', [start.toISOString(), end.toISOString()]],
         },
-      }),
-    ),
+      })
+    )
   );
 
   transactions.value = allResults
     .flat()
-    .sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime());
+    .sort(
+      (a, b) =>
+        new Date(b.date as string).getTime() -
+        new Date(a.date as string).getTime()
+    );
 }
 
 const selectedDayTransactions = computed(() => {
@@ -41,28 +45,38 @@ const selectedDayTransactions = computed(() => {
   const selectedDateStr = new Date(
     dateValue.value.year,
     dateValue.value.month - 1,
-    dateValue.value.day,
+    dateValue.value.day
   )
     .toISOString()
-    .split("T")[0];
+    .split('T')[0];
 
-  return transactions.value.filter((t) => (t.date as string).startsWith(selectedDateStr));
+  return transactions.value.filter((t) =>
+    (t.date as string).startsWith(selectedDateStr)
+  );
 });
 
 const currentMonthLabel = computed(() => {
-  if (!dateValue.value) return "";
+  if (!dateValue.value) return '';
   const date = new Date(dateValue.value.year, dateValue.value.month - 1, 1);
-  return date.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 });
 
 const selectedDayLabel = computed(() => {
-  if (!dateValue.value) return "";
-  const date = new Date(dateValue.value.year, dateValue.value.month - 1, dateValue.value.day);
-  return date.toLocaleDateString(undefined, { dateStyle: "medium" });
+  if (!dateValue.value) return '';
+  const date = new Date(
+    dateValue.value.year,
+    dateValue.value.month - 1,
+    dateValue.value.day
+  );
+  return date.toLocaleDateString(undefined, { dateStyle: 'medium' });
 });
 
 const daysInMonth = computed(() => {
-  const numDays = new Date(dateValue.value.year, dateValue.value.month, 0).getDate();
+  const numDays = new Date(
+    dateValue.value.year,
+    dateValue.value.month,
+    0
+  ).getDate();
   const arr = [];
   for (let i = 1; i <= numDays; i++) {
     arr.push(i);
@@ -77,7 +91,11 @@ const startOfWeekday = computed(() => {
 });
 
 function selectDay(day: number) {
-  dateValue.value = new CalendarDate(dateValue.value.year, dateValue.value.month, day);
+  dateValue.value = new CalendarDate(
+    dateValue.value.year,
+    dateValue.value.month,
+    day
+  );
 }
 
 async function changeMonth(offset: number) {
@@ -141,11 +159,12 @@ async function openTransaction(t: any) {
             <text class="font-semibold text-main text-lg">
               {{
                 dateValue
-                  ? new Date(dateValue.year, dateValue.month - 1, dateValue.day).toLocaleDateString(
-                      undefined,
-                      { dateStyle: "full" },
-                    )
-                  : ""
+                  ? new Date(
+                      dateValue.year,
+                      dateValue.month - 1,
+                      dateValue.day
+                    ).toLocaleDateString(undefined, { dateStyle: 'full' })
+                  : ''
               }}
             </text>
             <Badge
@@ -163,21 +182,22 @@ async function openTransaction(t: any) {
               @tap="openTransaction(t)"
             >
               <view class="flex flex-col">
-                <text class="text-xs uppercase tracking-wider text-description font-semibold">{{
-                  t.schemaName
-                }}</text>
+                <text
+                  class="text-xs uppercase tracking-wider text-description font-semibold"
+                  >{{ t.schemaName }}</text
+                >
                 <text class="font-medium text-main">{{ t.name }}</text>
                 <text class="text-sm text-description">{{
-                  t.party || t.reference_name || ""
+                  t.party || t.reference_name || ''
                 }}</text>
               </view>
               <view class="text-right flex flex-col items-end">
                 <text class="font-bold text-main">{{
-                  fyo.format(t.grandTotal || t.total_amount || 0, "Currency")
+                  fyo.format(t.grandTotal || t.total_amount || 0, 'Currency')
                 }}</text>
                 <view class="mt-1">
                   <Badge color="blue">
-                    {{ t.status || "Submitted" }}
+                    {{ t.status || 'Submitted' }}
                   </Badge>
                 </view>
               </view>
@@ -213,7 +233,10 @@ async function openTransaction(t: any) {
           <text class="BtnText text-xs font-semibold">◀ Prev</text>
         </view>
         <text class="font-bold text-main text-sm">{{ currentMonthLabel }}</text>
-        <view class="Btn py-1 px-3 bg-canvas border border-border rounded-lg" @tap="changeMonth(1)">
+        <view
+          class="Btn py-1 px-3 bg-canvas border border-border rounded-lg"
+          @tap="changeMonth(1)"
+        >
           <text class="BtnText text-xs font-semibold">Next ▶</text>
         </view>
       </view>
@@ -250,7 +273,9 @@ async function openTransaction(t: any) {
           <view
             class="w-8 h-8 rounded-full flex items-center justify-center border"
             :class="
-              d === dateValue.day ? 'bg-blue-600 border-blue-600' : 'bg-surface border-border'
+              d === dateValue.day
+                ? 'bg-blue-600 border-blue-600'
+                : 'bg-surface border-border'
             "
           >
             <text
@@ -290,19 +315,25 @@ async function openTransaction(t: any) {
           @tap="openTransaction(t)"
         >
           <view class="flex-1">
-            <text class="text-[10px] font-bold text-blue-500 uppercase">{{ t.schemaName }}</text>
-            <text class="font-semibold text-main text-sm mt-0.5">{{ t.name }}</text>
+            <text class="text-[10px] font-bold text-blue-500 uppercase">{{
+              t.schemaName
+            }}</text>
+            <text class="font-semibold text-main text-sm mt-0.5">{{
+              t.name
+            }}</text>
             <text class="text-xs text-description mt-0.5">{{
-              t.party || t.reference_name || ""
+              t.party || t.reference_name || ''
             }}</text>
           </view>
           <view class="items-end text-right">
             <text class="font-bold text-main text-sm">{{
-              fyo.format(t.grandTotal || t.total_amount || 0, "Currency")
+              fyo.format(t.grandTotal || t.total_amount || 0, 'Currency')
             }}</text>
-            <view class="mt-1 px-2 py-0.5 bg-blue-900/40 rounded border border-blue-800">
+            <view
+              class="mt-1 px-2 py-0.5 bg-blue-900/40 rounded border border-blue-800"
+            >
               <text class="text-[10px] text-blue-300 font-semibold">{{
-                t.status || "Submitted"
+                t.status || 'Submitted'
               }}</text>
             </view>
           </view>

@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "ignoreDeprecations": "5.0",
-    "baseUrl": ".",
     "target": "es2022",
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -32,7 +31,8 @@
       "reports/*": ["./reports/*"],
       "models/*": ["./models/*"],
       "utils/*": ["./utils/*"],
-      "dummy/*": ["./dummy/*"]
+      "dummy/*": ["./dummy/*"],
+      "*": ["./*"]
     },
     "lib": ["ESNext", "DOM", "DOM.Iterable"]
   },

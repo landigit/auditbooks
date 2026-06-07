@@ -36,18 +36,24 @@
       style="background: var(--color-backdrop); backdrop-filter: blur(2px)"
     >
       <view class="bg-surface-hover p-0.5 rounded mb-1" @tap="handleClick">
-        <LucideIcon :name="shouldClear ? 'x' : 'upload'" class="w-4 h-4 text-description" />
+        <LucideIcon
+          :name="shouldClear ? 'x' : 'upload'"
+          class="w-4 h-4 text-description"
+        />
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { fyo } from "src/initFyo";
-import { getDataURL } from "src/utils/misc";
-import { BaseControlProps, useBaseControl } from "src/composables/useBaseControl";
-import LucideIcon from "../LucideIcon.vue";
+import { computed, ref } from 'vue';
+import { fyo } from 'src/initFyo';
+import { getDataURL } from 'src/utils/misc';
+import {
+  BaseControlProps,
+  useBaseControl,
+} from 'src/composables/useBaseControl';
+import LucideIcon from '../LucideIcon.vue';
 
 interface AttachImageProps extends BaseControlProps {
   letterPlaceholder?: string;
@@ -55,11 +61,11 @@ interface AttachImageProps extends BaseControlProps {
 }
 
 const props = withDefaults(defineProps<AttachImageProps>(), {
-  letterPlaceholder: "",
-  value: "",
+  letterPlaceholder: '',
+  value: '',
   step: 1,
   border: false,
-  size: "large",
+  size: 'large',
   showLabel: false,
   containerStyles: () => ({}),
   textRight: null,
@@ -68,25 +74,29 @@ const props = withDefaults(defineProps<AttachImageProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: "focus", ev: FocusEvent): void;
-  (e: "input", ev: Event): void;
-  (e: "change", val: any): void;
+  (e: 'focus', ev: FocusEvent): void;
+  (e: 'input', ev: Event): void;
+  (e: 'change', val: any): void;
 }>();
 
 const mime_types: Record<string, string> = {
-  png: "image/png",
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  webp: "image/webp",
-  svg: "image/svg+xml",
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  webp: 'image/webp',
+  svg: 'image/svg+xml',
 };
 
 const inputRef = ref<HTMLElement | null>(null);
-const { isReadOnly, triggerChange, focus } = useBaseControl(props as any, emit, inputRef);
+const { isReadOnly, triggerChange, focus } = useBaseControl(
+  props as any,
+  emit,
+  inputRef
+);
 
 const imageSizeStyle = computed(() => {
-  if (props.size === "form") {
-    return { width: "135px", height: "135px" };
+  if (props.size === 'form') {
+    return { width: '135px', height: '135px' };
   }
   return {};
 });
@@ -112,7 +122,7 @@ const selectImage = async () => {
   }
   const options = {
     title: fyo.t`Select Image`,
-    filters: [{ name: "Image", extensions: Object.keys(mime_types) }],
+    filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
   };
 
   // @ts-ignore
@@ -121,8 +131,8 @@ const selectImage = async () => {
   if (!success) {
     return;
   }
-  const extension = name.split(".").at(-1);
-  const type = (extension && mime_types[extension]) || "image/png";
+  const extension = name.split('.').at(-1);
+  const type = (extension && mime_types[extension]) || 'image/png';
   const dataURL = await getDataURL(type, data);
 
   triggerChange(dataURL);

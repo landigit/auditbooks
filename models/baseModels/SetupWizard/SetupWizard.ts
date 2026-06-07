@@ -1,16 +1,16 @@
-import { t } from "fyo";
-import { Doc } from "fyo/model/doc";
-import { FormulaMap, ListsMap, ValidationMap } from "fyo/model/types";
-import { validateEmail } from "fyo/model/validationFunction";
-import dayjs from "dayjs";
-import { getCountryInfo, getFiscalYear } from "utils/misc";
+import { t } from 'fyo';
+import { Doc } from 'fyo/model/doc';
+import { FormulaMap, ListsMap, ValidationMap } from 'fyo/model/types';
+import { validateEmail } from 'fyo/model/validationFunction';
+import dayjs from 'dayjs';
+import { getCountryInfo, getFiscalYear } from 'utils/misc';
 
 function getCurrencyList(): { countryCode: string; name: string }[] {
   const result: { countryCode: string; name: string }[] = [];
   const countryInfo = getCountryInfo();
   for (const info of Object.values(countryInfo)) {
     const { currency, code } = info ?? {};
-    if (typeof currency !== "string" || typeof code !== "string") {
+    if (typeof currency !== 'string' || typeof code !== 'string') {
       continue;
     }
 
@@ -21,22 +21,22 @@ function getCurrencyList(): { countryCode: string; name: string }[] {
 
 export function getCOAList() {
   return [
-    { name: t`Standard Chart of Accounts`, countryCode: "" },
+    { name: t`Standard Chart of Accounts`, countryCode: '' },
 
-    { countryCode: "ae", name: "U.A.E - Chart of Accounts" },
+    { countryCode: 'ae', name: 'U.A.E - Chart of Accounts' },
     {
-      countryCode: "ca",
-      name: "Canada - Plan comptable pour les provinces francophones",
+      countryCode: 'ca',
+      name: 'Canada - Plan comptable pour les provinces francophones',
     },
-    { countryCode: "gt", name: "Guatemala - Cuentas" },
-    { countryCode: "hu", name: "Hungary - Chart of Accounts" },
-    { countryCode: "id", name: "Indonesia - Chart of Accounts" },
-    { countryCode: "in", name: "India - Chart of Accounts" },
-    { countryCode: "mx", name: "Mexico - Plan de Cuentas" },
-    { countryCode: "ni", name: "Nicaragua - Catalogo de Cuentas" },
-    { countryCode: "nl", name: "Netherlands - Grootboekschema" },
-    { countryCode: "sg", name: "Singapore - Chart of Accounts" },
-    { countryCode: "fr", name: "France - Plan Comptable General" },
+    { countryCode: 'gt', name: 'Guatemala - Cuentas' },
+    { countryCode: 'hu', name: 'Hungary - Chart of Accounts' },
+    { countryCode: 'id', name: 'Indonesia - Chart of Accounts' },
+    { countryCode: 'in', name: 'India - Chart of Accounts' },
+    { countryCode: 'mx', name: 'Mexico - Plan de Cuentas' },
+    { countryCode: 'ni', name: 'Nicaragua - Catalogo de Cuentas' },
+    { countryCode: 'nl', name: 'Netherlands - Grootboekschema' },
+    { countryCode: 'sg', name: 'Singapore - Chart of Accounts' },
+    { countryCode: 'fr', name: 'France - Plan Comptable General' },
     /*
     { countryCode: 'th', name: 'Thailand - Chart of Accounts' },
     { countryCode: 'us', name: 'United States - Chart of Accounts' },
@@ -62,8 +62,15 @@ export class SetupWizard extends Doc {
   formulas: FormulaMap = {
     fiscalYearStart: {
       formula: (fieldname?: string) => {
-        if (fieldname === "fiscalYearEnd" && this.fiscalYearEnd && !this.fiscalYearStart) {
-          return dayjs(this.fiscalYearEnd).subtract(1, "year").add(1, "day").toDate();
+        if (
+          fieldname === 'fiscalYearEnd' &&
+          this.fiscalYearEnd &&
+          !this.fiscalYearStart
+        ) {
+          return dayjs(this.fiscalYearEnd)
+            .subtract(1, 'year')
+            .add(1, 'day')
+            .toDate();
         }
 
         if (!this.country) {
@@ -71,15 +78,24 @@ export class SetupWizard extends Doc {
         }
 
         const countryInfo = getCountryInfo();
-        const fyStart = Reflect.get(countryInfo, this.country as string)?.fiscal_year_start ?? "";
+        const fyStart =
+          Reflect.get(countryInfo, this.country as string)?.fiscal_year_start ??
+          '';
         return getFiscalYear(fyStart, true);
       },
-      dependsOn: ["country", "fiscalYearEnd"],
+      dependsOn: ['country', 'fiscalYearEnd'],
     },
     fiscalYearEnd: {
       formula: (fieldname?: string) => {
-        if (fieldname === "fiscalYearStart" && this.fiscalYearStart && !this.fiscalYearEnd) {
-          return dayjs(this.fiscalYearStart).add(1, "year").subtract(1, "day").toDate();
+        if (
+          fieldname === 'fiscalYearStart' &&
+          this.fiscalYearStart &&
+          !this.fiscalYearEnd
+        ) {
+          return dayjs(this.fiscalYearStart)
+            .add(1, 'year')
+            .subtract(1, 'day')
+            .toDate();
         }
 
         if (!this.country) {
@@ -87,15 +103,17 @@ export class SetupWizard extends Doc {
         }
 
         const countryInfo = getCountryInfo();
-        const fyEnd = Reflect.get(countryInfo, this.country as string)?.fiscal_year_end ?? "";
+        const fyEnd =
+          Reflect.get(countryInfo, this.country as string)?.fiscal_year_end ??
+          '';
         return getFiscalYear(fyEnd, false);
       },
-      dependsOn: ["country", "fiscalYearStart"],
+      dependsOn: ['country', 'fiscalYearStart'],
     },
     currency: {
       formula: () => {
-        const country = this.get("country");
-        if (typeof country !== "string") {
+        const country = this.get('country');
+        if (typeof country !== 'string') {
           return;
         }
 
@@ -106,7 +124,9 @@ export class SetupWizard extends Doc {
         }
 
         const currencyList = getCurrencyList();
-        const currency = currencyList.find(({ countryCode }) => countryCode === code);
+        const currency = currencyList.find(
+          ({ countryCode }) => countryCode === code
+        );
 
         if (currency === undefined) {
           return currencyList[0].name;
@@ -114,11 +134,11 @@ export class SetupWizard extends Doc {
 
         return currency.name;
       },
-      dependsOn: ["country"],
+      dependsOn: ['country'],
     },
     chartOfAccounts: {
       formula: () => {
-        const country = this.get("country") as string | undefined;
+        const country = this.get('country') as string | undefined;
         if (country === undefined) {
           return;
         }
@@ -132,7 +152,7 @@ export class SetupWizard extends Doc {
         const coa = coaList.find(({ countryCode }) => countryCode === code);
         return coa?.name ?? coaList[0].name;
       },
-      dependsOn: ["country"],
+      dependsOn: ['country'],
     },
   };
 

@@ -1,6 +1,6 @@
-import { Doc } from "fyo/model/doc";
-import { FormulaMap } from "fyo/model/types";
-import { Money } from "pesa";
+import { Doc } from 'fyo/model/doc';
+import { FormulaMap } from 'fyo/model/types';
+import { Money } from 'pesa';
 
 export class ClosingAmounts extends Doc {
   declare closingAmount?: Money;

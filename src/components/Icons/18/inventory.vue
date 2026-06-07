@@ -1,5 +1,11 @@
 <template>
-  <svg width="20" height="20" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M7.4943 0.151836C7.88385 -0.0506121 8.33973 -0.0506121 8.72928 0.151836L17.0957 4.49986L14.7724 5.70728L5.78847 1.03835L7.4943 0.151836Z"
       :fill="lightColor"
@@ -19,7 +25,7 @@
   </svg>
 </template>
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -27,14 +33,16 @@ const props = withDefaults(
   }>(),
   {
     active: false,
-  },
+  }
 );
 
 const lightColor = computed(() => {
-  return props.active ? "var(--icon-light-active)" : "var(--icon-light-passive)";
+  return props.active
+    ? 'var(--icon-light-active)'
+    : 'var(--icon-light-passive)';
 });
 
 const darkColor = computed(() => {
-  return props.active ? "var(--icon-dark-active)" : "var(--icon-dark-passive)";
+  return props.active ? 'var(--icon-dark-active)' : 'var(--icon-dark-passive)';
 });
 </script>

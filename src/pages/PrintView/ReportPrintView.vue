@@ -5,7 +5,9 @@
         <DropdownWithActions :actions="printActions" />
       </PageHeader>
 
-      <view class="outer-container overflow-y-auto custom-scroll custom-scroll-thumb1">
+      <view
+        class="outer-container overflow-y-auto custom-scroll custom-scroll-thumb1"
+      >
         <!-- Report Print Display Area -->
         <view
           class="p-4 bg-canvas-muted overflow-auto flex justify-center custom-scroll custom-scroll-thumb1"
@@ -48,7 +50,7 @@
 
               <view class="border-t p-2">
                 <text class="text-xs text-right w-full">
-                  {{ fyo.format(new Date(), "Datetime") }}
+                  {{ fyo.format(new Date(), 'Datetime') }}
                 </text>
               </view>
             </view>
@@ -62,7 +64,7 @@
               [
                 t`Hidden values will be visible on Print on.`,
                 t`Report will use more than one page if required.`,
-              ].join(" ")
+              ].join(' ')
             }}
           </text>
           <!-- Row Selection -->
@@ -147,30 +149,32 @@
     <view class="Card">
       <view class="Header">
         <text class="Title">Report Print View</text>
-        <text class="Subtitle">This page is not supported on Mobile Native yet.</text>
+        <text class="Subtitle"
+          >This page is not supported on Mobile Native yet.</text
+        >
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue";
-import { fyo } from "src/initFyo";
-import { t } from "fyo";
-import { Verb } from "fyo/telemetry/types";
-import { Report } from "reports/Report";
-import { reports } from "reports/index";
-import { OptionField } from "schemas/types";
-import Check from "src/components/Controls/Check.vue";
-import Int from "src/components/Controls/Int.vue";
-import Select from "src/components/Controls/Select.vue";
-import DropdownWithActions from "src/components/DropdownWithActions.vue";
-import PageHeader from "src/components/PageHeader.vue";
-import { getReport } from "src/utils/misc";
-import { getPathAndMakePDF } from "src/utils/printTemplates";
-import { useAppStore } from "src/stores/app";
-import { paperSizeMap, printSizes } from "src/utils/ui";
-import ScaledContainer from "../TemplateBuilder/ScaledContainer.vue";
+import { ref, computed, watch, onMounted } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
+import { Verb } from 'fyo/telemetry/types';
+import { Report } from 'reports/Report';
+import { reports } from 'reports/index';
+import { OptionField } from 'schemas/types';
+import Check from 'src/components/Controls/Check.vue';
+import Int from 'src/components/Controls/Int.vue';
+import Select from 'src/components/Controls/Select.vue';
+import DropdownWithActions from 'src/components/DropdownWithActions.vue';
+import PageHeader from 'src/components/PageHeader.vue';
+import { getReport } from 'src/utils/misc';
+import { getPathAndMakePDF } from 'src/utils/printTemplates';
+import { useAppStore } from 'src/stores/app';
+import { paperSizeMap, printSizes } from 'src/utils/ui';
+import ScaledContainer from '../TemplateBuilder/ScaledContainer.vue';
 
 // Define Props
 const props = defineProps<{
@@ -186,7 +190,7 @@ const scaledContainer = ref<InstanceType<typeof ScaledContainer> | null>(null);
 // Reactive State
 const start = ref(1);
 const limit = ref(0);
-const printSize = ref("A4");
+const printSize = ref('A4');
 const isLandscape = ref(false);
 const scale = ref(0.65);
 const report = ref<null | Report>(null);
@@ -199,10 +203,12 @@ const title = computed(() => {
 
 const printSizeDf = computed<OptionField>(() => {
   return {
-    label: "Print Size",
-    fieldname: "printSize",
-    fieldtype: "Select",
-    options: printSizes.filter((p) => p !== "Custom").map((name) => ({ value: name, label: name })),
+    label: 'Print Size',
+    fieldname: 'printSize',
+    fieldtype: 'Select',
+    options: printSizes
+      .filter((p) => p !== 'Custom')
+      .map((name) => ({ value: name, label: name })),
   };
 });
 
@@ -217,7 +223,10 @@ const matrix = computed(() => {
 
   const mat: { value: string; idx: number }[][] = [columns];
   const startVal = Math.max(start.value - 1, 0);
-  const endVal = Math.min(startVal + limit.value, report.value.reportData.length);
+  const endVal = Math.min(
+    startVal + limit.value,
+    report.value.reportData.length
+  );
   const slice = report.value.reportData.slice(startVal, endVal);
 
   for (let i = 0; i < slice.length; i++) {
@@ -240,7 +249,7 @@ const matrix = computed(() => {
 const rowStyles = computed<Record<string, string>>(() => {
   const style: Record<string, string> = {};
   const numColumns = columnSelection.value.filter(Boolean).length;
-  style["grid-template-columns"] = `repeat(${numColumns}, minmax(0, auto))`;
+  style['grid-template-columns'] = `repeat(${numColumns}, minmax(0, auto))`;
   return style;
 });
 
@@ -260,9 +269,9 @@ const size = computed<{ width: number; height: number }>(() => {
 const setScale = () => {
   const widthVal = size.value.width * 37.2;
   let containerWidth = 1024;
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     containerWidth = window.innerWidth - 26 * 16;
-  } else if (typeof SystemInfo !== "undefined") {
+  } else if (typeof SystemInfo !== 'undefined') {
     containerWidth = SystemInfo.pixelWidth / SystemInfo.pixelRatio - 26 * 16;
   }
   if (store.showSidebar) {
@@ -274,18 +283,18 @@ const setScale = () => {
 
 const savePDF = async (shouldPrint?: boolean) => {
   const innerHTML = scaledContainer.value?.$el.children[0].innerHTML;
-  if (typeof innerHTML !== "string") {
+  if (typeof innerHTML !== 'string') {
     return;
   }
 
-  const name = title.value + " - " + fyo.format(new Date(), "Date");
+  const name = title.value + ' - ' + fyo.format(new Date(), 'Date');
   await getPathAndMakePDF(
     name,
     innerHTML,
     size.value.width,
     size.value.height,
     undefined,
-    shouldPrint,
+    shouldPrint
   );
 
   fyo.telemetry.log(Verb.Printed, report.value!.reportName);
@@ -317,12 +326,12 @@ const cellClasses = (cIdx: number, rIdx: number): string[] => {
   }
 
   if (rIdx === 0) {
-    classes.push("font-semibold");
+    classes.push('font-semibold');
   }
 
-  classes.push("border-t border-border");
+  classes.push('border-t border-border');
   if (!isFirst) {
-    classes.push("border-l border-border");
+    classes.push('border-l border-border');
   }
 
   return classes;
@@ -340,7 +349,7 @@ onMounted(async () => {
   columnSelection.value = report.value.columns.map(() => true);
   setScale();
 
-  if (store.isDevelopment && typeof window !== "undefined") {
+  if (store.isDevelopment && typeof window !== 'undefined') {
     // @ts-expect-error
     window.rpv = {
       start,

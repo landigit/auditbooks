@@ -1,7 +1,7 @@
-﻿import { expect, test } from "@rstest/core";
-import { StockQueue } from "../stockQueue";
+﻿import { expect, test } from 'vitest';
+import { StockQueue } from '../stockQueue';
 
-test("stockQueue:initialization", () => {
+test('stockQueue:initialization', () => {
   const q = new StockQueue();
 
   expect(q.quantity).toBe(0);
@@ -9,7 +9,7 @@ test("stockQueue:initialization", () => {
   expect(q.queue.length).toBe(0);
 });
 
-test("stockQueue:operations", () => {
+test('stockQueue:operations', () => {
   const q = new StockQueue();
 
   expect(q.inward(100, 4)).toBe(100);
@@ -97,7 +97,7 @@ test("stockQueue:operations", () => {
   expect(q.value).toBe(0);
 });
 
-test("stockQueue:invalidOperations", () => {
+test('stockQueue:invalidOperations', () => {
   const q = new StockQueue();
 
   expect(q.outward(1)).toBe(null);

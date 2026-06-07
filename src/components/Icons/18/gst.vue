@@ -1,5 +1,11 @@
 <template>
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       fill-rule="evenodd"
       clip-rule="evenodd"
@@ -9,7 +15,7 @@
   </svg>
 </template>
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -17,10 +23,10 @@ const props = withDefaults(
   }>(),
   {
     active: false,
-  },
+  }
 );
 
 const darkColor = computed(() => {
-  return props.active ? "var(--icon-dark-active)" : "var(--icon-dark-passive)";
+  return props.active ? 'var(--icon-dark-active)' : 'var(--icon-dark-passive)';
 });
 </script>

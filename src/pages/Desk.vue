@@ -1,24 +1,15 @@
 <script setup lang="ts">
-import { useAppStore } from "src/stores/app";
-import Sidebar from "../components/Sidebar.vue";
-import { isLynx } from "src/utils/interactive";
-
-/* Define Props */
-withDefaults(
-  defineProps<{
-    theme?: string;
-  }>(),
-  {
-    theme: "auto",
-  },
-);
-
-/* Define Emits */
-defineEmits<{
-  (e: "change-db-file"): void;
-  (e: "toggle-darkmode"): void;
+import { useAppStore } from 'src/stores/app';
+import Sidebar from '../components/Sidebar.vue';
+import { isLynx } from 'src/utils/interactive';
+/*
+Define Props */ withDefaults(defineProps<{ theme?: string }>(), {
+  theme: 'auto',
+});
+/* Define Emits */ defineEmits<{
+  (e: 'change-db-file'): void;
+  (e: 'toggle-darkmode'): void;
 }>();
-
 const appStore = useAppStore();
 </script>
 <template>
@@ -58,7 +49,9 @@ const appStore = useAppStore();
         />
       </Transition>
 
-      <view class="flex flex-1 overflow-y-hidden custom-scroll custom-scroll-thumb1 bg-canvas">
+      <view
+        class="flex flex-1 overflow-y-hidden custom-scroll custom-scroll-thumb1 bg-canvas"
+      >
         <router-view v-slot="{ Component }">
           <keep-alive>
             <component :is="Component" :key="$route.path" class="flex-1" />
@@ -77,7 +70,10 @@ const appStore = useAppStore();
             <view v-if="route?.query?.edit">
               <component
                 :is="Component"
-                :key="String(route.query.schemaName || '') + String(route.query.name || '')"
+                :key="
+                  String(route.query.schemaName || '') +
+                  String(route.query.name || '')
+                "
               />
             </view>
           </Transition>

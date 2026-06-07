@@ -1,31 +1,31 @@
-import { Doc } from "fyo/model/doc";
-import { ReadOnlyMap, ValidationMap } from "fyo/model/types";
-import { ValidationError } from "fyo/utils/errors";
+import { Doc } from 'fyo/model/doc';
+import { ReadOnlyMap, ValidationMap } from 'fyo/model/types';
+import { ValidationError } from 'fyo/utils/errors';
 
 const invalidNumberSeries = /[/=?&%]/;
 
 function getPaddedName(prefix: string, next: number, padZeros: number): string {
-  return prefix + next.toString().padStart(padZeros ?? 4, "0");
+  return prefix + next.toString().padStart(padZeros ?? 4, '0');
 }
 
 export default class NumberSeries extends Doc {
   validations: ValidationMap = {
     name: (value) => {
-      if (typeof value !== "string") {
+      if (typeof value !== 'string') {
         return;
       }
 
       if (invalidNumberSeries.test(value)) {
         throw new ValidationError(
           this.fyo
-            .t`The following characters cannot be used ${"/, ?, &, =, %"} in a Number Series name.`,
+            .t`The following characters cannot be used ${'/, ?, &, =, %'} in a Number Series name.`
         );
       }
     },
   };
 
   setCurrent() {
-    let current = this.get("current") as number | null;
+    let current = this.get('current') as number | null;
 
     /**
      * Increment current if it isn't the first entry. This
@@ -33,7 +33,7 @@ export default class NumberSeries extends Doc {
      */
 
     if (!current) {
-      current = this.get("start") as number;
+      current = this.get('start') as number;
     } else {
       current = current + 1;
     }

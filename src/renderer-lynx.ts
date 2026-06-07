@@ -1,31 +1,31 @@
-import "./ipc-lynx.js";
-import { createApp } from "vue-lynx";
-import { createPinia } from "pinia";
-import App from "./App.vue";
-import { fyo } from "./initFyo-lynx";
-import { useAppStore } from "./stores/app";
+import './ipc-lynx.js';
+import { createApp } from 'vue-lynx';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import { fyo } from './initFyo-lynx';
+import { useAppStore } from './stores/app';
 
 (async () => {
   try {
     // Load persisted configs
     await ipc.store.load?.();
 
-    const app = createApp(App);
+    const app = createApp(App as any);
     const pinia = createPinia();
     app.use(pinia);
 
     const appStore = useAppStore();
     const fyoProps = [
-      "isDevelopment",
-      "skipTelemetryLogging",
-      "appVersion",
-      "platform",
-      "language",
-      "instanceId",
-      "deviceId",
-      "openCount",
-      "appFlags",
-      "reports",
+      'isDevelopment',
+      'skipTelemetryLogging',
+      'appVersion',
+      'platform',
+      'language',
+      'instanceId',
+      'deviceId',
+      'openCount',
+      'appFlags',
+      'reports',
     ];
 
     for (const prop of fyoProps) {
@@ -48,6 +48,9 @@ import { useAppStore } from "./stores/app";
 
     app.mount();
   } catch (err) {
-    console.error("[Lynx Renderer Error]: Failed to bootstrap Vue Lynx app:", err);
+    console.error(
+      '[Lynx Renderer Error]: Failed to bootstrap Vue Lynx app:',
+      err
+    );
   }
 })();
