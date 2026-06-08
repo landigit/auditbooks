@@ -4,6 +4,10 @@ description = "Allows invoking custom app commands"
 
 [permission.commands]
 allow = [
+  "db_open",
+  "db_close",
+  "db_query",
+  "db_execute",
   "get_env",
   "get_app_data_dir",
   "check_db_access",

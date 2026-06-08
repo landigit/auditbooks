@@ -1,35 +1,64 @@
-import { drizzle } from 'drizzle-orm/bun-sqlite';
-import { Database } from 'bun:sqlite';
+import { drizzle } from 'drizzle-orm/sqlite-proxy';
 import { type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 import * as schema from './schema';
 import * as relations from './relations';
+import { getTableConfig } from 'drizzle-orm/sqlite-core';
+import { safeGet, safeSet } from '../../utils/index';
 
-// Initialize the Bun SQLite client pointing to our local SQLite database.
-let client: Database;
-try {
-  client = new Database('drizzle/db/demo.db');
-} catch {
-  client = new Database(':memory:');
-}
+export type RemoteCallback = (
+  sql: string,
+  params: any[],
+  method: 'run' | 'all' | 'values' | 'get'
+) => Promise<{ rows: any[] }>;
 
-// Configure pragmas for performance optimization (skip during testing to prevent SQLITE_BUSY concurrent lock errors)
-if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
-  try {
-    client.run('PRAGMA foreign_keys=ON');
-    client.run('PRAGMA journal_mode=WAL');
-    client.run('PRAGMA synchronous=NORMAL');
-  } catch (err) {
-    console.error(
-      'Failed to configure SQLite client optimization pragmas:',
-      err
-    );
-  }
+let remoteCallback: RemoteCallback | null = null;
+
+export function setRemoteCallback(cb: RemoteCallback) {
+  remoteCallback = cb;
 }
 
 // Create the Drizzle database instance with pre-registered schemas and relationships.
-export const db = drizzle(client, {
-  schema: { ...schema, ...relations },
-});
+export const db = drizzle(
+  async (sql, params, method) => {
+    if (!remoteCallback) {
+      throw new Error(
+        'Drizzle remote callback has not been set. Call setRemoteCallback(cb) first.'
+      );
+    }
+    return remoteCallback(sql, params, method);
+  },
+  {
+    schema: { ...schema, ...relations },
+  }
+);
+
+// Pre-build a case-insensitive map of table names (both camelCase and PascalCase) to Drizzle table objects.
+const tables: Record<string, any> = Object.create(null);
+
+for (const [key, val] of Object.entries(schema)) {
+  if (val && typeof val === 'object') {
+    try {
+      const config = getTableConfig(val as any);
+      if (config && config.name) {
+        safeSet(tables, config.name.toLowerCase(), val);
+        safeSet(tables, key.toLowerCase(), val);
+      }
+    } catch (e) {
+      // Not a Drizzle table object, skip
+    }
+  }
+}
+
+/**
+ * Gets a Drizzle table object dynamically by its name (case-insensitive).
+ */
+export function getTable(name: string) {
+  const table = safeGet(tables, name.toLowerCase());
+  if (!table) {
+    throw new Error(`Table "${name}" not found in Drizzle schema.`);
+  }
+  return table;
+}
 
 export type DbType = typeof db;
 export * as schema from './schema';

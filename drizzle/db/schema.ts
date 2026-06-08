@@ -1880,3 +1880,14 @@ export const stockTransferItem = sqliteTable(
     ),
   ]
 );
+
+export const singleValue = sqliteTable('SingleValue', {
+  name: text().primaryKey().notNull(),
+  parent: text(),
+  fieldname: text(),
+  value: text(),
+  created: text(),
+  modified: text(),
+  modifiedBy: text(),
+  createdBy: text(),
+});

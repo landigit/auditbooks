@@ -23,7 +23,10 @@ import { getSchemas } from 'schemas';
 // 1. Tauri invoke helper
 // ============================================================================
 
-async function invoke<T = unknown>(cmd: string, args?: Record<string, unknown>): Promise<T> {
+async function invoke<T = unknown>(
+  cmd: string,
+  args?: Record<string, unknown>
+): Promise<T> {
   const { invoke: tauriInvoke } = await import('@tauri-apps/api/core');
   return tauriInvoke<T>(cmd, args);
 }
@@ -57,15 +60,41 @@ class RustSqliteClient {
       trimmed.startsWith('pragma') ||
       trimmed.startsWith('explain');
 
-    if (isQuery) {
-      const rows = await invoke<Record<string, unknown>[]>('db_query', {
+    try {
+      if (isQuery) {
+        console.log(
+          '[Tauri DB Query] SQL:',
+          sql,
+          'args:',
+          JSON.stringify(args)
+        );
+        const rows = await invoke<Record<string, unknown>[]>('db_query', {
+          sql,
+          args,
+        });
+        console.log('[Tauri DB Query] Result length:', rows?.length ?? 0);
+        return { rows: rows ?? [], rowsAffected: 0 };
+      } else {
+        console.log(
+          '[Tauri DB Execute] SQL:',
+          sql,
+          'args:',
+          JSON.stringify(args)
+        );
+        const affected = await invoke<number>('db_execute', { sql, args });
+        console.log('[Tauri DB Execute] Rows affected:', affected ?? 0);
+        return { rows: [], rowsAffected: affected ?? 0 };
+      }
+    } catch (err) {
+      console.error(
+        '[Tauri DB Error] SQL:',
         sql,
-        args,
-      });
-      return { rows: rows ?? [], rowsAffected: 0 };
-    } else {
-      const affected = await invoke<number>('db_execute', { sql, args });
-      return { rows: [], rowsAffected: affected ?? 0 };
+        'args:',
+        JSON.stringify(args),
+        'error:',
+        err
+      );
+      throw err;
     }
   }
 
@@ -90,11 +119,39 @@ export class TauriDemux implements DatabaseDemuxBase {
     return getSchemas('in', []) as SchemaMap;
   }
 
-  async createNewDatabase(dbPath: string, countryCode?: string): Promise<string> {
+  async createNewDatabase(
+    dbPath: string,
+    countryCode?: string
+  ): Promise<string> {
+    // Explicitly call Rust side db_close first to release any open file locks on Windows
+    try {
+      await invoke('db_close');
+    } catch {}
+
+    if (this.client) {
+      this.client = null;
+      this.core = null;
+    }
+
+    const isAbsolute = dbPath.startsWith('/') || /^[A-Za-z]:/.test(dbPath);
+    const path = isAbsolute ? dbPath : (dbPath.split(/[/\\]/).pop() ?? dbPath);
+
+    try {
+      await invoke('delete_file', { filePath: path });
+    } catch (err) {
+      console.warn(
+        '[TauriDemux] Failed to delete existing database file:',
+        err
+      );
+    }
+
     return this.openOrCreate(dbPath, countryCode ?? 'in');
   }
 
-  async connectToDatabase(dbPath: string, countryCode?: string): Promise<string> {
+  async connectToDatabase(
+    dbPath: string,
+    countryCode?: string
+  ): Promise<string> {
     return this.openOrCreate(dbPath, countryCode);
   }
 
@@ -102,16 +159,22 @@ export class TauriDemux implements DatabaseDemuxBase {
     if (!this.core) {
       if (method === 'close') {
         if (this.client) {
-          try { await this.client.close(); } catch {}
+          try {
+            await this.client.close();
+          } catch {}
           this.client = null;
         }
         return;
       }
-      throw new Error('[TauriDemux] DB not connected. Call createNewDatabase or connectToDatabase first.');
+      throw new Error(
+        '[TauriDemux] DB not connected. Call createNewDatabase or connectToDatabase first.'
+      );
     }
 
     if (method === 'close') {
-      try { await this.core.close?.(); } catch {}
+      try {
+        await this.core.close?.();
+      } catch {}
       await this.client?.close();
       this.core = null;
       this.client = null;
@@ -130,10 +193,16 @@ export class TauriDemux implements DatabaseDemuxBase {
   // Private: open or create a DB, run migration, set this.core
   // --------------------------------------------------------------------------
 
-  private async openOrCreate(dbPath: string, countryCode = 'in'): Promise<string> {
-    // Close existing connection first
+  private async openOrCreate(
+    dbPath: string,
+    countryCode = 'in'
+  ): Promise<string> {
+    // Explicitly close any existing connection in Rust first to avoid file locking on Windows
+    try {
+      await invoke('db_close');
+    } catch {}
+
     if (this.client) {
-      try { await this.client.close(); } catch {}
       this.client = null;
       this.core = null;
     }

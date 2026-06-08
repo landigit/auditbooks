@@ -17,8 +17,8 @@ export function getTestSetupWizardOptions(): SetupWizardOptions {
     email: 'test@testmyfantasy.com',
     bankName: 'Test Bank of Scriptia',
     currency: 'INR',
-    fiscalYearStart: dayjs(getFiscalYear('04-01', true)!).format('YYYY-MM-D')!,
-    fiscalYearEnd: dayjs(getFiscalYear('04-01', false)!).format('YYYY-MM-D')!,
+    fiscalYearStart: dayjs(getFiscalYear('04-01', true)!).format('YYYY-MM-DD')!,
+    fiscalYearEnd: dayjs(getFiscalYear('04-01', false)!).format('YYYY-MM-DD')!,
     chartOfAccounts: 'India - Chart of Accounts',
   };
 }

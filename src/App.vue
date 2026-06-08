@@ -1539,4 +1539,58 @@ async function switchTab(
   border-top: 1px solid #334155;
   background-color: #1e293b;
 }
+
+@media (min-width: 768px) {
+  .NavBar {
+    justify-content: center;
+    gap: 400px;
+  }
+
+  .TabContent {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    align-self: center;
+  }
+
+  .WelcomeBanner {
+    max-width: 800px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .MetricsGrid {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .MetricCard {
+    flex: 1;
+  }
+
+  .QuickActionsGrid {
+    max-width: 800px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .DataList {
+    max-width: 800px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .TabBar {
+    justify-content: center;
+    gap: 60px;
+  }
+
+  .TabItem {
+    flex: none;
+    width: 80px;
+  }
+}
 </style>

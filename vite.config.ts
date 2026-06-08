@@ -43,7 +43,9 @@ export default defineConfig({
       },
     }),
     inject({
-      ipc: [path.resolve(__dirname, './src/ipc-router'), 'ipc'],
+      ipc: isTauri
+        ? [path.resolve(__dirname, './src/ipc-tauri'), 'ipc']
+        : [path.resolve(__dirname, './src/ipc-router'), 'ipc'],
     }),
     emptyModulePlugin,
   ],
@@ -53,6 +55,17 @@ export default defineConfig({
         ? {
             './ipc-polyfill': path.resolve(__dirname, './src/ipc-tauri'),
             './initFyo': path.resolve(__dirname, './src/initFyo-tauri'),
+            'src/ipc-polyfill': path.resolve(__dirname, './src/ipc-tauri'),
+            'src/ipc-polyfill.ts': path.resolve(
+              __dirname,
+              './src/ipc-tauri.ts'
+            ),
+            'src/initFyo': path.resolve(__dirname, './src/initFyo-tauri'),
+            'src/initFyo.ts': path.resolve(__dirname, './src/initFyo-tauri.ts'),
+            'src/renderer.ts': path.resolve(
+              __dirname,
+              './src/renderer-tauri.ts'
+            ),
             '/src/renderer.ts': path.resolve(
               __dirname,
               './src/renderer-tauri.ts'
