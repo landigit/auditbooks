@@ -143,14 +143,9 @@ const routes: RouteRecordRaw[] = [
   },
 ];
 
-const isLynx =
-  typeof globalThis !== 'undefined' &&
-  ((globalThis as any).lynx ||
-    (typeof process !== 'undefined' && process.env && process.env.BACKEND_IP));
-
 const router = createRouter({
   routes,
-  history: isLynx ? createMemoryHistory() : createWebHistory(),
+  history: createWebHistory(),
 });
 
 router.afterEach(({ fullPath }) => {

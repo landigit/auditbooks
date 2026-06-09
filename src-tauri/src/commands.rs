@@ -42,13 +42,19 @@ pub fn db_close(state: State<'_, DbState>) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(serde::Serialize)]
+pub struct QueryResult {
+    pub columns: Vec<String>,
+    pub rows: Vec<Vec<Value>>,
+}
+
 /// Execute a SELECT (or PRAGMA / EXPLAIN) and return all rows as JSON.
 #[tauri::command]
 pub fn db_query(
     state: State<'_, DbState>,
     sql: String,
     args: Vec<Value>,
-) -> Result<Vec<Map<String, Value>>, String> {
+) -> Result<QueryResult, String> {
     let guard = state.conn.lock().map_err(|e| e.to_string())?;
     let conn = guard.as_ref().ok_or("Database not open")?;
 
@@ -68,12 +74,12 @@ pub fn db_query(
 
     let rows = stmt
         .query_map(params_refs.as_slice(), |row| {
-            let mut map = Map::new();
-            for (i, name) in col_names.iter().enumerate() {
+            let mut values = Vec::new();
+            for i in 0..col_names.len() {
                 let val = sqlite_val_to_json(row.get_ref(i)?);
-                map.insert(name.clone(), val);
+                values.push(val);
             }
-            Ok(map)
+            Ok(values)
         })
         .map_err(|e| format!("query error: {e}"))?;
 
@@ -81,7 +87,10 @@ pub fn db_query(
     for row in rows {
         result.push(row.map_err(|e| format!("row error: {e}"))?);
     }
-    Ok(result)
+    Ok(QueryResult {
+        columns: col_names,
+        rows: result,
+    })
 }
 
 /// Execute an INSERT / UPDATE / DELETE / CREATE / PRAGMA (non-SELECT).

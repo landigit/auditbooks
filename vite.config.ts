@@ -43,59 +43,17 @@ export default defineConfig({
       },
     }),
     inject({
-      ipc: isTauri
-        ? [path.resolve(__dirname, './src/ipc-tauri'), 'ipc']
-        : [path.resolve(__dirname, './src/ipc-router'), 'ipc'],
+      ipc: [path.resolve(__dirname, './src/ipc'), 'ipc'],
     }),
     emptyModulePlugin,
   ],
   resolve: {
     alias: {
-      ...(isTauri
-        ? {
-            './ipc-polyfill': path.resolve(__dirname, './src/ipc-tauri'),
-            './initFyo': path.resolve(__dirname, './src/initFyo-tauri'),
-            'src/ipc-polyfill': path.resolve(__dirname, './src/ipc-tauri'),
-            'src/ipc-polyfill.ts': path.resolve(
-              __dirname,
-              './src/ipc-tauri.ts'
-            ),
-            'src/initFyo': path.resolve(__dirname, './src/initFyo-tauri'),
-            'src/initFyo.ts': path.resolve(__dirname, './src/initFyo-tauri.ts'),
-            'src/renderer.ts': path.resolve(
-              __dirname,
-              './src/renderer-tauri.ts'
-            ),
-            '/src/renderer.ts': path.resolve(
-              __dirname,
-              './src/renderer-tauri.ts'
-            ),
-            [path.resolve(__dirname, './src/ipc-polyfill')]: path.resolve(
-              __dirname,
-              './src/ipc-tauri'
-            ),
-            [path.resolve(__dirname, './src/ipc-polyfill.ts')]: path.resolve(
-              __dirname,
-              './src/ipc-tauri.ts'
-            ),
-            [path.resolve(__dirname, './src/initFyo')]: path.resolve(
-              __dirname,
-              './src/initFyo-tauri'
-            ),
-            [path.resolve(__dirname, './src/initFyo.ts')]: path.resolve(
-              __dirname,
-              './src/initFyo-tauri.ts'
-            ),
-            [path.resolve(__dirname, './src/renderer.ts')]: path.resolve(
-              __dirname,
-              './src/renderer-tauri.ts'
-            ),
-          }
-        : {}),
       vue: 'vue/dist/vue.esm-bundler.js',
       '@rstest/core': 'vitest',
       'better-sqlite3': 'libsql',
       fyo: path.resolve(__dirname, './fyo'),
+      drizzle: path.resolve(__dirname, './drizzle'),
       src: path.resolve(__dirname, './src'),
       schemas: path.resolve(__dirname, './schemas'),
       backend: path.resolve(__dirname, './backend'),

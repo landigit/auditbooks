@@ -1,4 +1,4 @@
-import './ipc-polyfill';
+import './ipc';
 import { CUSTOM_EVENTS } from 'utils/messages';
 import { UnexpectedLogObject } from 'utils/types';
 import { App as VueApp, createApp } from 'vue';
@@ -15,21 +15,78 @@ import { stringifyCircular } from './utils';
 import { setLanguageMap } from './utils/language';
 import { useAppStore } from './stores/app';
 
-// Click to Tap Polyfill for Web Browser
+// Click-to-Tap Polyfill for WebView (supports both mouse clicks and touch events)
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  let lastTouchTapTime = 0;
+
+  const triggerTap = (
+    target: HTMLElement,
+    originalEvent: Event,
+    isTouch: boolean
+  ) => {
+    const now = Date.now();
+    if (!isTouch && now - lastTouchTapTime < 400) {
+      // Prevent double tap: ignore mouse clicks that follow touch taps
+      return;
+    }
+    if (isTouch) {
+      lastTouchTapTime = now;
+    }
+
+    const tapEvent = new CustomEvent('tap', {
+      bubbles: true,
+      cancelable: true,
+      detail: originalEvent,
+    });
+    target.dispatchEvent(tapEvent);
+    if (tapEvent.defaultPrevented) {
+      originalEvent.preventDefault();
+    }
+  };
+
+  // 1. Mouse Click Listener (Desktop & fallback)
   document.addEventListener(
     'click',
     (e) => {
       const target = e.target as HTMLElement | null;
       if (target) {
-        const tapEvent = new CustomEvent('tap', {
-          bubbles: true,
-          cancelable: true,
-          detail: e,
-        });
-        target.dispatchEvent(tapEvent);
-        if (tapEvent.defaultPrevented) {
-          e.preventDefault();
+        triggerTap(target, e, false);
+      }
+    },
+    { capture: true }
+  );
+
+  // 2. Touch Event Listener (Mobile / Touchscreen)
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+
+  document.addEventListener(
+    'touchstart',
+    (e) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+      }
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    'touchend',
+    (e) => {
+      if (e.changedTouches.length === 1) {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        const dt = Date.now() - touchStartTime;
+
+        // If finger moved less than 15px and tap was under 300ms, it's a tap
+        if (Math.abs(dx) < 15 && Math.abs(dy) < 15 && dt < 300) {
+          const target = e.target as HTMLElement | null;
+          if (target) {
+            triggerTap(target, e, true);
+          }
         }
       }
     },
@@ -39,6 +96,9 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
 // oxlint-disable-next-line @typescript-eslint/no-floating-promises
 (async () => {
+  // Load persisted configs from Tauri store
+  await ipc.store.load?.();
+
   const app = createApp(App);
   const pinia = createPinia();
   app.use(pinia);
@@ -77,9 +137,6 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   appStore.isDevelopment = isDevelopment;
   appStore.appVersion = version;
   appStore.setPlatform(platform);
-  getPlatformName(platform);
-
-  setOnWindow(isDevelopment);
 
   appStore.reports = {} as any;
   appStore.skipTelemetryLogging = false;
@@ -98,8 +155,11 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       platform() {
         return appStore.platform;
       },
-      isLynx() {
+      isTauri() {
         return true;
+      },
+      isLynx() {
+        return false;
       },
     },
     methods: {
@@ -132,7 +192,6 @@ function setErrorHandlers(app: VueApp) {
     } else {
       error = new Error(String(event.reason));
     }
-
     // oxlint-disable-next-line no-console
     handleError(true, error).catch((err) => console.error(err));
   };
@@ -144,44 +203,16 @@ function setErrorHandlers(app: VueApp) {
   });
 
   app.config.errorHandler = (err, vm, info) => {
-    const more: Record<string, unknown> = {
-      info,
-    };
-
+    const more: Record<string, unknown> = { info };
     if (vm) {
       const { fullPath, params } = vm.$route;
       more.fullPath = fullPath;
       more.params = stringifyCircular(params ?? {});
       more.props = stringifyCircular(vm.$props ?? {}, true, true);
     }
-
     // oxlint-disable-next-line @typescript-eslint/no-floating-promises
     handleError(false, err as Error, more);
     // oxlint-disable-next-line no-console
     console.error(err, vm, info);
   };
-}
-
-function setOnWindow(isDevelopment: boolean) {
-  if (!isDevelopment) {
-    return;
-  }
-
-  // @ts-expect-error
-  window.router = router;
-  // @ts-expect-error
-  window.fyo = fyo;
-}
-
-function getPlatformName(platform: string) {
-  switch (platform) {
-    case 'win32':
-      return 'Windows';
-    case 'darwin':
-      return 'Mac';
-    case 'linux':
-      return 'Linux';
-    default:
-      return 'Linux';
-  }
 }

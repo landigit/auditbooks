@@ -293,7 +293,8 @@ export const tauriIpc: IPC = {
         name,
         success: true,
       } as any;
-    } catch {
+    } catch (err) {
+      console.error('[Tauri IPC] selectFile error:', err);
       return {
         canceled: true,
         filePaths: [],
@@ -316,7 +317,8 @@ export const tauriIpc: IPC = {
       });
       if (!filePath) return { canceled: true };
       return { canceled: false, filePath };
-    } catch {
+    } catch (err) {
+      console.error('[Tauri IPC] getSaveFilePath error:', err);
       return { canceled: true };
     }
   },
@@ -334,7 +336,8 @@ export const tauriIpc: IPC = {
       const pathStr =
         typeof filePath === 'string' ? filePath : (filePath as string[])[0];
       return { canceled: false, filePaths: [pathStr] };
-    } catch {
+    } catch (err) {
+      console.error('[Tauri IPC] getOpenFilePath error:', err);
       return { canceled: true, filePaths: [] };
     }
   },
@@ -370,7 +373,7 @@ export const tauriIpc: IPC = {
       if (Array.isArray(storedFiles)) {
         const updated = storedFiles.filter((f: any) => f?.dbPath !== filePath);
         _storeCache['config:files'] = updated;
-        const s = await getStore();
+        const s = await getPluginStore();
         await s.set('config:files', updated);
         await s.save();
       }
@@ -506,11 +509,16 @@ export const tauriIpc: IPC = {
     platform: string;
     version: string;
   }> {
-    return {
-      isDevelopment: false,
-      platform: 'tauri-android',
-      version: '0.37.8',
-    };
+    try {
+      const invoke = await getInvoke();
+      return await invoke('get_env');
+    } catch {
+      return {
+        isDevelopment: false,
+        platform: 'tauri-android',
+        version: '0.37.8',
+      };
+    }
   },
 
   openExternalUrl(url: string) {

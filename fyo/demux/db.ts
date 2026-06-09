@@ -9,46 +9,36 @@ import { eq, ne, like, inArray, notInArray, gt, gte, lt, lte, isNull, isNotNull,
 import { accountingLedgerEntry, account, salesInvoice, payment, paymentFor, stockLedgerEntry } from 'drizzle/db/schema';
 import { sqliteTypeMap, getDefaultMetaFieldValueMap } from 'utils/db/lynxHelpers';
 
-const isTauri = typeof window !== 'undefined' && (window as any).__TAURI_INTERNALS__;
-const isLynx = typeof globalThis !== 'undefined' && (globalThis as any).lynx && typeof (globalThis as any).lynx.requireModule === 'function';
-
 async function openDbFile(dbPath: string): Promise<void> {
   const isAbsolute = dbPath.startsWith('/') || /^[A-Za-z]:/.test(dbPath);
   const filename = isAbsolute ? dbPath : (dbPath.split(/[/\\]/).pop() ?? dbPath);
 
-  if (isTauri) {
-    const { invoke } = await import('@tauri-apps/api/core');
-    await invoke('db_close').catch(() => {});
-    await invoke('db_open', { path: filename });
+  const { invoke } = await import('@tauri-apps/api/core');
+  await invoke('db_close').catch(() => {});
+  await invoke('db_open', { path: filename });
 
-    setRemoteCallback(async (querySql, params, method) => {
-      const isQuery = method === 'all' || method === 'get' || method === 'values';
-      const cleanedParams = params.map(p => typeof p === 'boolean' ? (p ? 1 : 0) : p);
-      if (isQuery) {
-        const rows = await invoke<any[]>('db_query', { sql: querySql, args: cleanedParams });
-        return { rows: rows ?? [] };
-      } else {
-        const affected = await invoke<number>('db_execute', { sql: querySql, args: cleanedParams });
-        return { rows: [], rowsAffected: affected ?? 0 };
+  setRemoteCallback(async (querySql, params, method) => {
+    const trimmed = querySql.trim().toLowerCase();
+    const isQuery =
+      trimmed.startsWith('select') ||
+      trimmed.startsWith('pragma') ||
+      trimmed.startsWith('explain') ||
+      method === 'all' ||
+      method === 'get' ||
+      method === 'values';
+    const cleanedParams = params.map(p => typeof p === 'boolean' ? (p ? 1 : 0) : p);
+    if (isQuery) {
+      const result = await invoke<{ columns: string[]; rows: any[][] }>('db_query', { sql: querySql, args: cleanedParams });
+      const rows = result?.rows ?? [];
+      if (method === 'get') {
+        return { rows: rows[0] ?? [] };
       }
-    });
-  } else if (isLynx) {
-    const mod = (globalThis as any).lynx.requireModule('AuditbooksSqliteModule');
-    await new Promise<void>((resolve, reject) => {
-      mod.openDatabase(filename, () => resolve(), (e: any) => reject(new Error(e)));
-    });
-
-    setRemoteCallback(async (querySql, params, method) => {
-      const cleanedParams = params.map(p => typeof p === 'boolean' ? (p ? 1 : 0) : p);
-      return new Promise((resolve, reject) => {
-        mod.execute(querySql, cleanedParams, (result: any) => {
-          resolve({ rows: result.rows ?? [], rowsAffected: result.rowsAffected ?? 0 });
-        }, (err: any) => {
-          reject(new Error(err));
-        });
-      });
-    });
-  }
+      return { rows };
+    } else {
+      const affected = await invoke<number>('db_execute', { sql: querySql, args: cleanedParams });
+      return { rows: [], rowsAffected: affected ?? 0 };
+    }
+  });
 }
 
 async function migrate(schemaMap: SchemaMap) {
@@ -64,6 +54,56 @@ async function migrate(schemaMap: SchemaMap) {
       "modifiedBy" TEXT,
       "createdBy" TEXT
     )`);
+
+  // 1b. Deduplicate and clean up legacy corrupted SingleValue rows
+  try {
+    const allSVs = await db.select().from(singleValue);
+    const seen = new Map<string, { id: string; value: string | null; created: string | null }>();
+    const toDelete: string[] = [];
+
+    const isCorrupt = (val: string | null) => {
+      if (!val) return false;
+      if (val.endsWith('.0') && /^\d+\.0$/.test(val)) return true;
+      if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(val)) return true;
+      return false;
+    };
+
+    for (const row of allSVs) {
+      const key = `${row.parent}::${row.fieldname}`;
+      const existing = seen.get(key);
+      if (existing) {
+        let keepCurrent = false;
+        const currentCorrupt = isCorrupt(row.value);
+        const existingCorrupt = isCorrupt(existing.value);
+
+        if (existingCorrupt && !currentCorrupt) {
+          keepCurrent = true;
+        } else if (!existingCorrupt && currentCorrupt) {
+          keepCurrent = false;
+        } else {
+          // Keep the newer one or fallback to current
+          const curTime = row.created ? new Date(row.created).getTime() : 0;
+          const exTime = existing.created ? new Date(existing.created).getTime() : 0;
+          keepCurrent = curTime >= exTime;
+        }
+
+        if (keepCurrent) {
+          toDelete.push(existing.id);
+          seen.set(key, { id: row.name, value: row.value, created: row.created });
+        } else {
+          toDelete.push(row.name);
+        }
+      } else {
+        seen.set(key, { id: row.name, value: row.value, created: row.created });
+      }
+    }
+
+    for (const id of toDelete) {
+      await db.delete(singleValue).where(eq(singleValue.name, id));
+    }
+  } catch (err) {
+    console.error('[Migration] Failed to deduplicate SingleValue:', err);
+  }
 
   // 2. Migrate normal tables
   for (const [schemaName, schema] of Object.entries(schemaMap)) {
@@ -232,11 +272,6 @@ export class DatabaseDemux extends DatabaseDemuxBase {
   }
 
   async getSchemaMap(): Promise<SchemaMap> {
-    if (this.#isElectron && !isTauri && !isLynx) {
-      const response = await ipc.db.getSchema();
-      if (response.error?.name) throw new DatabaseError(response.error.message);
-      return response.data as SchemaMap;
-    }
     return getSchemas('in', []) as SchemaMap;
   }
 
@@ -244,12 +279,6 @@ export class DatabaseDemux extends DatabaseDemuxBase {
     dbPath: string,
     countryCode?: string
   ): Promise<string> {
-    if (this.#isElectron && !isTauri && !isLynx) {
-      const response = await ipc.db.create(dbPath, countryCode);
-      if (response.error?.name) throw new DatabaseError(response.error.message);
-      return response.data as string;
-    }
-
     await openDbFile(dbPath);
     this.schemaMap = await this.getSchemaMap();
     await migrate(this.schemaMap);
@@ -260,12 +289,6 @@ export class DatabaseDemux extends DatabaseDemuxBase {
     dbPath: string,
     countryCode?: string
   ): Promise<string> {
-    if (this.#isElectron && !isTauri && !isLynx) {
-      const response = await ipc.db.connect(dbPath, countryCode);
-      if (response.error?.name) throw new DatabaseError(response.error.message);
-      return response.data as string;
-    }
-
     await openDbFile(dbPath);
     this.schemaMap = await this.getSchemaMap();
     await migrate(this.schemaMap);
@@ -286,16 +309,6 @@ export class DatabaseDemux extends DatabaseDemuxBase {
   }
 
   async call(method: DatabaseMethod, ...args: unknown[]): Promise<unknown> {
-    if (this.#isElectron && !isTauri && !isLynx) {
-      const response = await ipc.db.call(method, ...args);
-      if (response.error?.name) {
-        const dberror = new DatabaseError(`${response.error.name}\n${response.error.message}`);
-        dberror.stack = response.error.stack;
-        throw dberror;
-      }
-      return response.data;
-    }
-
     // Client-side pure Drizzle implementation
     switch (method) {
       case 'exists': {
@@ -593,15 +606,8 @@ export class DatabaseDemux extends DatabaseDemuxBase {
       }
 
       case 'close': {
-        if (isTauri) {
-          const { invoke } = await import('@tauri-apps/api/core');
-          await invoke('db_close').catch(() => {});
-        } else if (isLynx) {
-          const mod = (globalThis as any).lynx.requireModule('AuditbooksSqliteModule');
-          await new Promise<void>((resolve, reject) => {
-            mod.closeDatabase(() => resolve(), (e: any) => reject(new Error(e)));
-          });
-        }
+        const { invoke } = await import('@tauri-apps/api/core');
+        await invoke('db_close').catch(() => {});
         return;
       }
 
@@ -611,13 +617,6 @@ export class DatabaseDemux extends DatabaseDemuxBase {
   }
 
   async callBespoke(method: string, ...args: unknown[]): Promise<unknown> {
-    if (this.#isElectron && !isTauri && !isLynx) {
-      const response = await ipc.db.bespoke(method, ...args);
-      if (response.error?.name) {
-        throw new DatabaseError(response.error.message);
-      }
-      return response.data;
-    }
 
     switch (method) {
       case 'getLastInserted': {

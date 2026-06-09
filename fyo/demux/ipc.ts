@@ -1,5 +1,5 @@
 import type { IPC } from 'utils/ipc/types';
-import { ipc as localIpc } from 'src/ipc-router';
+import { ipc as localIpc } from 'src/ipc';
 
 export const ipc = new Proxy({} as IPC, {
   get(_target, prop, receiver) {
