@@ -49,7 +49,7 @@ export class Fyo {
 
   constructor(conf: FyoConfig = {}) {
     this.isTest = conf.isTest ?? false;
-    this.isElectron = conf.isElectron ?? true;
+    this.isElectron = false;
 
     this.auth = new AuthHandler(this, conf.AuthDemux);
     this.db = new DatabaseHandler(this, conf.DatabaseDemux);
@@ -63,7 +63,7 @@ export class Fyo {
     });
 
     this.telemetry = new TelemetryManager(this);
-    this.config = new Config(this.isElectron && !this.isTest);
+    this.config = new Config();
   }
 
   get initialized() {
@@ -95,11 +95,7 @@ export class Fyo {
   }
 
   setIsElectron() {
-    try {
-      this.isElectron = !!window?.ipc;
-    } catch {
-      this.isElectron = false;
-    }
+    this.isElectron = false;
   }
 
   async initializeAndRegister(

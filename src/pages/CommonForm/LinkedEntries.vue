@@ -4,7 +4,7 @@
   >
     <!-- Page Header -->
     <div
-      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-white dark:bg-gray-850"
+      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-white dark:bg-gray-850 border-b dark:border-gray-800"
       style="z-index: 1"
     >
       <div class="flex items-center justify-between w-full">
@@ -20,7 +20,7 @@
     <!-- Linked Entry List -->
     <div
       v-if="sequence.length"
-      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2 border-t dark:border-gray-800"
+      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2"
     >
       <div
         v-for="sn of sequence"

@@ -7,7 +7,7 @@
       <PageHeader
         v-if="showHeader"
         :title="title"
-        :border="false"
+        :border="true"
         :searchborder="searchborder"
       >
         <template #left>
@@ -21,8 +21,8 @@
         class="flex flex-col self-center h-full overflow-auto bg-white dark:bg-gray-890"
         :class="
           useFullWidth
-            ? 'w-full border-t dark:border-gray-800'
-            : 'w-form border dark:border-gray-800 rounded-lg shadow-lg mb-4 mx-4'
+            ? 'w-full'
+            : 'w-form border-x border-b dark:border-gray-800 rounded-b-lg mb-4 mx-4'
         "
       >
         <slot name="body" />

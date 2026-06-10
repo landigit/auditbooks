@@ -10,37 +10,25 @@ import tauriConfig from 'utils/config';
  * store is hydrated from disk.
  */
 export class Config {
-  #isElectron: boolean;
-
-  constructor(isElectron: boolean) {
-    this.#isElectron = isElectron;
-  }
+  constructor() {}
 
   /** Must be awaited once at app startup (in renderer.ts) before any config access. */
   async initAsync(): Promise<void> {
-    if (!this.#isElectron) {
-      await tauriConfig.init();
-    }
+    await tauriConfig.init();
   }
 
   get<K extends keyof ConfigMap>(
     key: K,
     defaultValue?: ConfigMap[K]
   ): ConfigMap[K] | undefined {
-    if (this.#isElectron) {
-      // Electron path — handled by preload ipc.store (legacy)
-      return undefined;
-    }
     return tauriConfig.get(key, defaultValue);
   }
 
   set<K extends keyof ConfigMap>(key: K, value: ConfigMap[K]) {
-    if (this.#isElectron) return;
     tauriConfig.set(key, value);
   }
 
   delete(key: keyof ConfigMap) {
-    if (this.#isElectron) return;
     tauriConfig.delete(key);
   }
 }

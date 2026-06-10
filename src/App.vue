@@ -5,11 +5,7 @@
     :dir="languageDirection"
     :language="language"
   >
-    <WindowsTitleBar
-      v-if="platform === 'Windows'"
-      :db-path="dbPath"
-      :company-name="companyName"
-    />
+
     <!-- Main Contents -->
     <Desk
       v-if="activeScreen === 'Desk'"
@@ -44,7 +40,7 @@ import { RTL_LANGUAGES } from 'fyo/utils/consts';
 import { ModelNameEnum } from 'models/types';
 import { systemLanguageRef } from 'src/utils/refs';
 import { defineComponent, provide, ref, Ref } from 'vue';
-import WindowsTitleBar from './components/WindowsTitleBar.vue';
+
 import { handleErrorWithDialog } from './errorHandling';
 import { fyo } from './initFyo';
 import DatabaseSelector from './pages/DatabaseSelector.vue';
@@ -84,7 +80,6 @@ export default defineComponent({
     Desk,
     SetupWizard,
     DatabaseSelector,
-    WindowsTitleBar,
   },
   setup() {
     const keys = useKeys();

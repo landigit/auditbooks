@@ -91,16 +91,19 @@ fn row_to_json(row: &Row) -> rusqlite::Result<Value> {
   Ok(Value::Object(map))
 }
 
+#[allow(dead_code)]
 pub fn row_to_type<T: serde::de::DeserializeOwned>(row: &Row) -> Result<T, String> {
   let val = row_to_json(row).map_err(|e| e.to_string())?;
   serde_json::from_value(val).map_err(|e| e.to_string())
 }
 
+#[allow(dead_code)]
 pub trait ConnectionExt {
   fn query_all_typed<T: serde::de::DeserializeOwned>(&self, sql: &str, params: &[&dyn rusqlite::types::ToSql]) -> Result<Vec<T>, String>;
   fn query_one_typed<T: serde::de::DeserializeOwned>(&self, sql: &str, params: &[&dyn rusqlite::types::ToSql]) -> Result<Option<T>, String>;
 }
 
+#[allow(dead_code)]
 impl ConnectionExt for Connection {
   fn query_all_typed<T: serde::de::DeserializeOwned>(&self, sql: &str, params: &[&dyn rusqlite::types::ToSql]) -> Result<Vec<T>, String> {
     let mut stmt = self.prepare(sql).map_err(|e| e.to_string())?;
@@ -274,7 +277,7 @@ fn get_all(
     vec!["name".to_string()]
   };
 
-  let fields_joined = fields_list
+  let mut fields_joined = fields_list
     .iter()
     .map(|f| {
       if f == "*" {
@@ -285,6 +288,10 @@ fn get_all(
     })
     .collect::<Vec<_>>()
     .join(", ");
+
+  if fields_joined.is_empty() {
+    fields_joined = "*".to_string();
+  }
 
   let mut query_str = format!("SELECT {} FROM \"{}\"", fields_joined, schema_name);
   let mut params = Vec::new();

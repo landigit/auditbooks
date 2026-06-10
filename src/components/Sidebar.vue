@@ -1,6 +1,6 @@
 <template>
   <div
-    class="py-2 h-full flex justify-between flex-col bg-gray-25 dark:bg-gray-900 relative"
+    class="h-full flex justify-between flex-col bg-gray-25 dark:bg-gray-900 relative"
     :class="{
       'window-drag': platform !== 'Windows',
     }"
@@ -8,9 +8,9 @@
     <div>
       <!-- Company name -->
       <div
-        class="px-4 flex flex-row items-center justify-between mb-4"
+        class="px-4 flex flex-row items-center justify-between border-b dark:border-gray-800 h-row-largest flex-shrink-0"
         :class="
-          platform === 'Mac' && languageDirection === 'ltr' ? 'mt-10' : 'mt-2'
+          platform === 'Mac' && languageDirection === 'ltr' ? 'pt-8' : ''
         "
       >
         <h6
