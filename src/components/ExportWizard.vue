@@ -258,7 +258,9 @@ export default defineComponent({
         return;
       }
 
-      await ipc.saveData(data, filePath);
+      const { writeTextFile } = await import('@tauri-apps/plugin-fs');
+      await writeTextFile(filePath, data);
+
       this.fyo.telemetry.log(Verb.Exported, this.schemaName, {
         extension: this.exportFormat,
       });

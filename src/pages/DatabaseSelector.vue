@@ -339,11 +339,35 @@ export default defineComponent({
       this.$emit('file-selected', filePath);
     },
     async setFiles() {
-      const dbList = await ipc.getDbList();
-      this.files = dbList?.sort(
+      const configFiles = (fyo.config.get('files') ?? []) as Array<{
+        id: string;
+        companyName: string;
+        dbPath: string;
+        openCount: number;
+      }>;
+
+      // Enrich with a modified date by reading file stats via Tauri fs
+      const { stat } = await import('@tauri-apps/plugin-fs');
+      const enriched = await Promise.all(
+        configFiles.map(async (f) => {
+          let modified = new Date().toISOString();
+          try {
+            const info = await stat(f.dbPath);
+            if (info.mtime) {
+              modified = new Date(info.mtime).toISOString();
+            }
+          } catch {
+            // file may not exist yet
+          }
+          return { ...f, modified };
+        })
+      );
+
+      this.files = enriched.sort(
         (a, b) => Date.parse(b.modified) - Date.parse(a.modified)
       );
     },
+
     newDatabase() {
       if (this.creatingDemo) {
         return;

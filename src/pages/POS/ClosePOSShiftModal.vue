@@ -233,7 +233,8 @@ export default defineComponent({
 
         await this.fyo.singles.POSSettings?.setAndSync('isShiftOpen', false);
         this.$emit('toggleModal', 'ShiftClose');
-        ipc.reloadWindow();
+        window.location.reload();
+
       } catch (error) {
         return showToast({
           type: 'error',

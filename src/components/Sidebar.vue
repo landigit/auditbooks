@@ -214,8 +214,9 @@ export default defineComponent({
     routeTo,
     reportIssue,
     toggleSidebar,
-    openDocumentation() {
-      ipc.openLink('https://docs.frappe.io/' + docsPathRef.value);
+    async openDocumentation() {
+      const { open } = await import('@tauri-apps/plugin-opener');
+      await open('https://docs.frappe.io/' + docsPathRef.value).catch(console.error);
     },
     setActiveGroup() {
       const { fullPath } = this.$router.currentRoute.value;

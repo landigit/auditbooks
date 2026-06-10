@@ -452,23 +452,37 @@ export async function getPathAndMakePDF(
   height: number,
   shouldPrint?: boolean
 ) {
+  const html = constructPrintDocument(innerHTML);
+
   if (!shouldPrint) {
+    // In Tauri, save as PDF by opening a new print window
     const { filePath: savePath } = await getSavePath(name, 'pdf');
     if (!savePath) {
       return;
     }
 
-    const html = constructPrintDocument(innerHTML);
-    const success = await ipc.makePDF(html, savePath, width, height);
-    if (success) {
-      showExportInFolder(t`Save as PDF Successful`, savePath);
-    } else {
+    // Write the HTML to a temp file and let the user print-to-PDF via system dialog
+    try {
+      const { writeTextFile } = await import('@tauri-apps/plugin-fs');
+      const tempPath = savePath.replace(/\.pdf$/, '_temp.html');
+      await writeTextFile(tempPath, html);
+
+      const { open } = await import('@tauri-apps/plugin-opener');
+      await open(tempPath);
+
+      showExportInFolder(t`PDF Ready — Print to save`, savePath);
+    } catch {
       showToast({ message: t`Export Failed`, type: 'error' });
     }
   } else {
-    const html = constructPrintDocument(innerHTML);
-    const success = await ipc.printDocument(html, width, height);
-    if (success) {
+    // Trigger browser print dialog
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
       showToast({ message: t`Print Successful`, type: 'success' });
     } else {
       showToast({ message: t`Print Failed`, type: 'error' });
@@ -533,9 +547,17 @@ function getAllCSSAsStyleElem() {
 }
 
 export async function updatePrintTemplates(fyo: Fyo) {
-  const templateFiles = await ipc.getTemplates(
-    fyo.singles.PrintSettings?.posPrintWidth as number
-  );
+  // In Tauri, load templates from bundled assets (served at /templates/)
+  let templateFiles: TemplateFile[] = [];
+  try {
+    const response = await fetch('/templates/index.json');
+    if (response.ok) {
+      templateFiles = await response.json() as TemplateFile[];
+    }
+  } catch {
+    // No template index — skip update
+    return;
+  }
   const existingTemplates = (await fyo.db.getAll(ModelNameEnum.PrintTemplate, {
     fields: ['name', 'modified'],
     filters: { isCustom: false },

@@ -318,9 +318,11 @@ export default defineComponent({
     this.shortcuts?.delete(COMPONENT_NAME);
   },
   methods: {
-    openDocs() {
-      ipc.openLink('https://docs.frappe.io/' + docsPathMap.Search);
+    async openDocs() {
+      const { open } = await import('@tauri-apps/plugin-opener');
+      await open('https://docs.frappe.io/' + docsPathMap.Search).catch(console.error);
     },
+
     getShortcuts() {
       const ifOpen = (cb: Function) => () => this.openModal && cb();
       const ifClose = (cb: Function) => () => !this.openModal && cb();

@@ -98,18 +98,25 @@ export default defineComponent({
       if (this.isReadOnly) {
         return;
       }
-      const options = {
+
+      const { open } = await import('@tauri-apps/plugin-dialog');
+      const { readFile } = await import('@tauri-apps/plugin-fs');
+
+      const selected = await open({
         title: fyo.t`Select Image`,
+        multiple: false,
         filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
-      };
+      });
 
-      const { name, success, data } = await ipc.selectFile(options);
-
-      if (!success) {
+      if (!selected) {
         return;
       }
-      const extension = name.split('.').at(-1);
-      const type = mime_types[extension];
+
+      const filePath = typeof selected === 'string' ? selected : selected.path;
+      const name = filePath.split(/[/\\]/).pop() ?? '';
+      const data = await readFile(filePath);
+      const extension = name.split('.').at(-1) ?? '';
+      const type = mime_types[extension] ?? 'image/png';
       const dataURL = await getDataURL(type, data);
 
       // @ts-ignore

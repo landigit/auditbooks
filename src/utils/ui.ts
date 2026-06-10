@@ -2,6 +2,9 @@
  * Utils to do UI stuff such as opening dialogs, toasts, etc.
  * Basically anything that may directly or indirectly import a Vue file.
  */
+import { open as tauriOpenDialog, save as tauriSaveDialog } from '@tauri-apps/plugin-dialog';
+import { remove as tauriRemove } from '@tauri-apps/plugin-fs';
+import { invoke } from '@tauri-apps/api/core';
 import { t } from 'fyo';
 import type { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
@@ -480,15 +483,18 @@ export function focusOrSelectFormControl(
 }
 
 export async function selectTextFile(filters?: SelectFileOptions['filters']) {
-  const options = {
-    title: t`Select File`,
-    filters,
-  };
-  const { success, canceled, filePath, data, name } = await ipc.selectFile(
-    options
-  );
+  const tauriFilters = (filters ?? []).map((f) => ({
+    name: f.name,
+    extensions: f.extensions,
+  }));
 
-  if (canceled || !success) {
+  const selected = await tauriOpenDialog({
+    title: t`Select File`,
+    multiple: false,
+    filters: tauriFilters.length ? tauriFilters : undefined,
+  });
+
+  if (!selected) {
     showToast({
       type: 'error',
       message: t`File selection failed`,
@@ -496,17 +502,27 @@ export async function selectTextFile(filters?: SelectFileOptions['filters']) {
     return {};
   }
 
-  const text = new TextDecoder().decode(data);
-  if (!text) {
+  const filePath = typeof selected === 'string' ? selected : selected.path;
+  const name = filePath.split(/[\/\\]/).pop() ?? '';
+
+  try {
+    const { readTextFile } = await import('@tauri-apps/plugin-fs');
+    const text = await readTextFile(filePath);
+    if (!text) {
+      showToast({
+        type: 'error',
+        message: t`Empty file selected`,
+      });
+      return {};
+    }
+    return { text, filePath, name };
+  } catch {
     showToast({
       type: 'error',
-      message: t`Empty file selected`,
+      message: t`Could not read file`,
     });
-
     return {};
   }
-
-  return { text, filePath, name };
 }
 
 export enum ShortcutKey {
@@ -1022,60 +1038,72 @@ export function showExportInFolder(message: string, filePath: string) {
     actionText: t`Open Folder`,
     type: 'success',
     action: () => {
-      ipc.showItemInFolder(filePath);
+      // Open the containing folder via a Tauri command
+      invoke('show_item_in_folder', { filePath }).catch(console.error);
     },
   });
 }
 
 export async function deleteDb(filePath: string) {
-  const { error } = await ipc.deleteFile(filePath);
-
-  if (error?.code === 'EBUSY') {
-    await showDialog({
-      title: t`Delete Failed`,
-      detail: t`Please restart and try again.`,
-      type: 'error',
-    });
-  } else if (error?.code === 'ENOENT') {
-    await showDialog({
-      title: t`Delete Failed`,
-      detail: t`File ${filePath} does not exist.`,
-      type: 'error',
-    });
-  } else if (error?.code === 'EPERM') {
-    await showDialog({
-      title: t`Cannot Delete`,
-      detail: t`Close Frappe Books and try manually.`,
-      type: 'error',
-    });
-  } else if (error) {
-    const err = new BaseError(500, error.message);
-    err.name = error.name;
-    err.stack = error.stack;
-    throw err;
+  try {
+    await tauriRemove(filePath);
+  } catch (err: any) {
+    const msg: string = String(err);
+    if (msg.includes('busy') || msg.includes('EBUSY')) {
+      await showDialog({
+        title: t`Delete Failed`,
+        detail: t`Please restart and try again.`,
+        type: 'error',
+      });
+    } else if (msg.includes('No such file') || msg.includes('ENOENT') || msg.includes('os error 2')) {
+      await showDialog({
+        title: t`Delete Failed`,
+        detail: t`File ${filePath} does not exist.`,
+        type: 'error',
+      });
+    } else if (msg.includes('Permission') || msg.includes('EPERM') || msg.includes('os error 5')) {
+      await showDialog({
+        title: t`Cannot Delete`,
+        detail: t`Close Frappe Books and try manually.`,
+        type: 'error',
+      });
+    } else {
+      const e = new BaseError(500, msg);
+      throw e;
+    }
   }
 }
 
-export async function getSelectedFilePath() {
-  return ipc.getOpenFilePath({
+export async function getSelectedFilePath(): Promise<{ filePaths: string[] }> {
+  const selected = await tauriOpenDialog({
     title: t`Select file`,
-    properties: ['openFile'],
+    multiple: false,
     filters: [{ name: 'SQLite DB File', extensions: ['db'] }],
   });
+
+  if (!selected) {
+    return { filePaths: [] };
+  }
+
+  const filePath = typeof selected === 'string' ? selected : selected.path;
+  return { filePaths: [filePath] };
 }
 
 export async function getSavePath(name: string, extention: string) {
-  const response = await ipc.getSaveFilePath({
+  const filePath = await tauriSaveDialog({
     title: t`Select folder`,
     defaultPath: `${name}.${extention}`,
+    filters: [{ name: extention.toUpperCase(), extensions: [extention] }],
   });
 
-  const canceled = response.canceled;
-  let filePath = response.filePath;
-
-  if (filePath && !filePath.endsWith(extention) && filePath !== ':memory:') {
-    filePath = `${filePath}.${extention}`;
+  if (!filePath) {
+    return { canceled: true, filePath: undefined };
   }
 
-  return { canceled, filePath };
+  let resolvedPath: string = typeof filePath === 'string' ? filePath : (filePath as any).path ?? '';
+  if (resolvedPath && !resolvedPath.endsWith(extention) && resolvedPath !== ':memory:') {
+    resolvedPath = `${resolvedPath}.${extention}`;
+  }
+
+  return { canceled: false, filePath: resolvedPath };
 }

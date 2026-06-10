@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import Fb from './Icons/18/fb.vue';
 
 export default {
@@ -50,8 +51,8 @@ export default {
   },
   data() {
     return {
-      isMax: Boolean,
-      isFullscreen: Boolean,
+      isMax: false,
+      isFullscreen: false,
     };
   },
   mounted() {
@@ -63,46 +64,37 @@ export default {
     document.addEventListener('fullscreenchange', this.getIsFullscreen);
     document.addEventListener('MSFullscreenChange', this.getIsFullscreen);
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener('resize', this.getIsFullscreen);
-    document.removeEventListener(
-      'webkitfullscreenchange',
-      this.getIsFullscreen
-    );
+    document.removeEventListener('webkitfullscreenchange', this.getIsFullscreen);
     document.removeEventListener('mozfullscreenchange', this.getIsFullscreen);
     document.removeEventListener('fullscreenchange', this.getIsFullscreen);
     document.removeEventListener('MSFullscreenChange', this.getIsFullscreen);
   },
   methods: {
-    minimizeWindow() {
-      ipc.minimizeWindow();
+    async minimizeWindow() {
+      await getCurrentWindow().minimize();
     },
-    toggleMaximize() {
-      ipc.toggleMaximize();
-      this.getIsMaximized();
+    async toggleMaximize() {
+      await getCurrentWindow().toggleMaximize();
+      await this.getIsMaximized();
     },
-    closeWindow() {
-      ipc.closeWindow();
+    async closeWindow() {
+      await getCurrentWindow().close();
     },
-    getIsMaximized() {
-      ipc
-        .isMaximized()
-        .then((result) => {
-          this.isMax = result;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    async getIsMaximized() {
+      try {
+        this.isMax = await getCurrentWindow().isMaximized();
+      } catch (error) {
+        console.error(error);
+      }
     },
-    getIsFullscreen() {
-      ipc
-        .isFullscreen()
-        .then((result) => {
-          this.isFullscreen = result;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    async getIsFullscreen() {
+      try {
+        this.isFullscreen = await getCurrentWindow().isFullscreen();
+      } catch (error) {
+        this.isFullscreen = !!(document.fullscreenElement);
+      }
     },
   },
 };

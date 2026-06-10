@@ -1,12 +1,25 @@
-import { ConfigMap } from 'fyo/core/types';
-import type { IPC } from 'main/preload';
+import type { ConfigMap } from 'fyo/core/types';
+import tauriConfig from 'utils/config';
 
+/**
+ * Config class — in Tauri mode this wraps the persistent TauriConfigStore
+ * (backed by @tauri-apps/plugin-store). In test/non-Tauri environments
+ * it falls back to a plain in-memory Map.
+ *
+ * Call `Config.initAsync()` once at boot (before any get/set) so the
+ * store is hydrated from disk.
+ */
 export class Config {
-  config: Map<string, unknown> | IPC['store'];
+  #isElectron: boolean;
+
   constructor(isElectron: boolean) {
-    this.config = new Map();
-    if (isElectron) {
-      this.config = ipc.store;
+    this.#isElectron = isElectron;
+  }
+
+  /** Must be awaited once at app startup (in renderer.ts) before any config access. */
+  async initAsync(): Promise<void> {
+    if (!this.#isElectron) {
+      await tauriConfig.init();
     }
   }
 
@@ -14,15 +27,20 @@ export class Config {
     key: K,
     defaultValue?: ConfigMap[K]
   ): ConfigMap[K] | undefined {
-    const value = this.config.get(key) as ConfigMap[K] | undefined;
-    return value ?? defaultValue;
+    if (this.#isElectron) {
+      // Electron path — handled by preload ipc.store (legacy)
+      return undefined;
+    }
+    return tauriConfig.get(key, defaultValue);
   }
 
   set<K extends keyof ConfigMap>(key: K, value: ConfigMap[K]) {
-    this.config.set(key, value);
+    if (this.#isElectron) return;
+    tauriConfig.set(key, value);
   }
 
   delete(key: keyof ConfigMap) {
-    this.config.delete(key);
+    if (this.#isElectron) return;
+    tauriConfig.delete(key);
   }
 }

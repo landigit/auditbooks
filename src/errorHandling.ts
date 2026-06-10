@@ -37,12 +37,11 @@ export async function sendError(errorLogObj: ErrorLog) {
     more: stringifyCircular(errorLogObj.more),
   };
 
-  if (fyo.store.isDevelopment) {
-    // eslint-disable-next-line no-console
-    console.log('sendError', body);
+  if (typeof ipc !== 'undefined' && (ipc as any).desktop) {
+    await ipc.sendError(JSON.stringify(body));
+  } else {
+    console.error('Captured Error:', body);
   }
-
-  await ipc.sendError(JSON.stringify(body));
 }
 
 function getToastProps(errorLogObj: ErrorLog) {
@@ -153,7 +152,11 @@ export async function showErrorDialog(title?: string, content?: string) {
   // To be used for  show stopper errors
   title ??= t`Error`;
   content ??= t`Something has gone terribly wrong. Please check the console and raise an issue.`;
-  await ipc.showError(title, content);
+  if (typeof ipc !== 'undefined' && (ipc as any).desktop) {
+    await ipc.showError(title, content);
+  } else {
+    alert(`${title}: ${content}`);
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -283,8 +286,12 @@ function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
 
 export function reportIssue(errorLogObj?: ErrorLog) {
   const urlQuery = getIssueUrlQuery(errorLogObj);
-  ipc.openExternalUrl(urlQuery);
+  // Use Tauri opener plugin to open external URLs
+  import('@tauri-apps/plugin-opener')
+    .then(({ open }) => open(urlQuery))
+    .catch(() => window.open(urlQuery, '_blank'));
 }
+
 
 function getErrorLabel(error: Error) {
   const name = error.name;

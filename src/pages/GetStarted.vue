@@ -102,7 +102,8 @@ export default defineComponent({
   methods: {
     async handleDocumentation({ key, documentation }: ListItem) {
       if (documentation) {
-        ipc.openLink(documentation);
+        const { open } = await import('@tauri-apps/plugin-opener');
+        await open(documentation).catch(console.error);
       }
 
       switch (key) {

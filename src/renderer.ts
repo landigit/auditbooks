@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core';
 import { CUSTOM_EVENTS } from 'utils/messages';
 import { UnexpectedLogObject } from 'utils/types';
 import { App as VueApp, createApp } from 'vue';
@@ -7,21 +8,26 @@ import FeatherIcon from './components/FeatherIcon.vue';
 import { handleError, sendError } from './errorHandling';
 import { fyo } from './initFyo';
 import { outsideClickDirective } from './renderer/helpers';
-import registerIpcRendererListeners from './renderer/registerIpcRendererListeners';
 import router from './router';
 import { stringifyCircular } from './utils';
 import { setLanguageMap } from './utils/language';
+import { createPinia } from 'pinia';
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 (async () => {
+  // Initialize the persistent config store before any config access
+  await fyo.config.initAsync();
+
   const language = fyo.config.get('language') as string;
   if (language) {
     await setLanguageMap(language);
   }
   fyo.store.language = language || 'English';
 
-  registerIpcRendererListeners();
-  const { isDevelopment, platform, version } = await ipc.getEnv();
+  // In Tauri we always run as a desktop app — no Electron IPC
+  const isDevelopment = import.meta.env.DEV ?? false;
+  const platform = await getTauriPlatform();
+  const version = await getTauriVersion();
 
   fyo.store.isDevelopment = isDevelopment;
   fyo.store.appVersion = version;
@@ -36,6 +42,7 @@ import { setLanguageMap } from './utils/language';
   app.config.unwrapInjectedRef = true;
   setErrorHandlers(app);
 
+  app.use(createPinia());
   app.use(router);
   app.component('App', App);
   app.component('FeatherIcon', FeatherIcon);
@@ -59,6 +66,26 @@ import { setLanguageMap } from './utils/language';
   await fyo.telemetry.logOpened();
   app.mount('body');
 })();
+
+async function getTauriPlatform(): Promise<string> {
+  try {
+    return await invoke<string>('get_platform');
+  } catch {
+    // Fallback: detect from user agent
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.includes('win')) return 'win32';
+    if (ua.includes('mac')) return 'darwin';
+    return 'linux';
+  }
+}
+
+async function getTauriVersion(): Promise<string> {
+  try {
+    return await invoke<string>('get_version');
+  } catch {
+    return '0.1.0';
+  }
+}
 
 function setErrorHandlers(app: VueApp) {
   window.onerror = (message, source, lineno, colno, error) => {

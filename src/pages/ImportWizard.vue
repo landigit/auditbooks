@@ -796,7 +796,9 @@ export default defineComponent({
         return;
       }
 
-      await ipc.saveData(template, filePath);
+      const { writeTextFile } = await import('@tauri-apps/plugin-fs');
+      await writeTextFile(filePath, template);
+
     },
     async preImportValidations(): Promise<boolean> {
       const title = this.t`Cannot Import`;

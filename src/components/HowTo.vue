@@ -21,9 +21,12 @@ export default {
     },
   },
   methods: {
-    openHelpLink() {
-      ipc.openLink(this.link);
+    async openHelpLink() {
+      if (!this.link) return;
+      const { open } = await import('@tauri-apps/plugin-opener');
+      await open(this.link).catch(console.error);
     },
+
   },
 };
 </script>

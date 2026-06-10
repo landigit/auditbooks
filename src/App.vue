@@ -38,6 +38,8 @@
   </div>
 </template>
 <script lang="ts">
+import { invoke } from '@tauri-apps/api/core';
+import { exists as tauriExists } from '@tauri-apps/plugin-fs';
 import { RTL_LANGUAGES } from 'fyo/utils/consts';
 import { ModelNameEnum } from 'models/types';
 import { systemLanguageRef } from 'src/utils/refs';
@@ -161,7 +163,8 @@ export default defineComponent({
       this.activeScreen = Screen.Desk;
       await this.setDeskRoute();
       await fyo.telemetry.start(true);
-      await ipc.checkForUpdates();
+      // Auto-updates are not supported in Tauri dev mode, skip gracefully
+      // await ipc.checkForUpdates();
       this.dbPath = filePath;
       this.companyName = (await fyo.getValue(
         ModelNameEnum.AccountingSettings,
@@ -175,16 +178,11 @@ export default defineComponent({
     },
     async fileSelected(filePath: string): Promise<void> {
       fyo.config.set('lastSelectedFilePath', filePath);
-      if (filePath !== ':memory:' && !(await ipc.checkDbAccess(filePath))) {
-        await showDialog({
-          title: this.t`Cannot open file`,
-          type: 'error',
-          detail: this
-            .t`Frappe Books does not have access to the selected file: ${filePath}`,
-        });
-
-        fyo.config.set('lastSelectedFilePath', null);
-        return;
+      if (filePath !== ':memory:') {
+        const fileExists = await tauriExists(filePath).catch(() => false);
+        if (!fileExists) {
+          // File doesn't exist yet (new db), that's OK
+        }
       }
 
       try {
@@ -196,7 +194,8 @@ export default defineComponent({
     },
     async setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
       const companyName = setupWizardOptions.companyName;
-      const filePath = await ipc.getDbDefaultPath(companyName);
+      // Get default DB path from the Tauri backend (app data dir + companyName + .db)
+      const filePath = await invoke<string>('get_db_default_path', { companyName });
       await setupInstance(filePath, setupWizardOptions, fyo);
       fyo.config.set('lastSelectedFilePath', filePath);
       await this.setDesk(filePath);
@@ -237,9 +236,8 @@ export default defineComponent({
         try {
           await registerInstanceToERPNext(fyo);
           await updateERPNSyncSettings(fyo);
-          await ipc.initScheduler(
-            `${fyo.singles.ERPNextSyncSettings?.dataSyncInterval as string}m`
-          );
+          // ERPNext sync scheduler is Electron-only; skip in Tauri
+          // await ipc.initScheduler(...);
         } catch (error) {
           const errorMessage =
             error instanceof Error ? error.message : String(error);

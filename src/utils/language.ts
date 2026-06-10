@@ -51,7 +51,8 @@ export async function setLanguageMap(
   }
 
   if (!dontReload && success && initLanguage !== oldLanguage) {
-    ipc.reloadWindow();
+    // In Tauri, reload via standard browser API
+    window.location.reload();
   }
   return success;
 }
@@ -69,15 +70,22 @@ function getLanguageCode(initLanguage: string, oldLanguage: string) {
 }
 
 async function fetchAndSetLanguageMap(code: string) {
-  const { success, message, languageMap } = await ipc.getLanguageMap(code);
-
-  if (!success) {
-    const { showToast } = await import('src/utils/interactive');
-    showToast({ type: 'error', message });
-  } else {
+  try {
+    // In Tauri, fetch the translation file directly from the bundled assets
+    const url = `/translations/${code}.json`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      const { showToast } = await import('src/utils/interactive');
+      showToast({ type: 'error', message: `Language map not found for: ${code}` });
+      return false;
+    }
+    const languageMap = await response.json();
     setLanguageMapOnTranslationString(languageMap);
     await fyo.db.translateSchemaMap(languageMap);
+    return true;
+  } catch (err) {
+    const { showToast } = await import('src/utils/interactive');
+    showToast({ type: 'error', message: `Failed to load language: ${String(err)}` });
+    return false;
   }
-
-  return success;
 }

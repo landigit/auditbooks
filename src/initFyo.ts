@@ -5,4 +5,8 @@ import { Fyo } from 'fyo';
  * testing purposes a separate instance of fyo should be initialized.
  */
 
-export const fyo = new Fyo({ isTest: false, isElectron: true });
+// We are running in Tauri — never in Electron
+const isElectron = false;
+
+export const fyo = new Fyo({ isTest: false, isElectron });
+
