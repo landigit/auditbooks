@@ -76,14 +76,7 @@
     <template #body>
       <FormHeader
         :form-title="title"
-        class="
-          sticky
-          top-0
-          bg-white
-          dark:bg-gray-890
-          border-b
-          dark:border-gray-800
-        "
+        class="sticky top-0 bg-white dark:bg-gray-890 border-b dark:border-gray-800"
       >
         <StatusPill v-if="hasDoc" :doc="doc" />
       </FormHeader>
@@ -117,20 +110,7 @@
       <!-- Tab Bar -->
       <div
         v-if="groupedFields && groupedFields.size > 1"
-        class="
-          mt-auto
-          px-4
-          pb-4
-          flex
-          gap-8
-          border-t
-          dark:border-gray-800
-          flex-shrink-0
-          sticky
-          bottom-0
-          bg-white
-          dark:bg-gray-875
-        "
+        class="mt-auto px-4 pb-4 flex gap-8 border-t dark:border-gray-800 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-875"
       >
         <div
           v-for="key of groupedFields.keys()"

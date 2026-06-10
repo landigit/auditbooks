@@ -887,7 +887,7 @@ export const printSizes = [
 ] as const;
 
 export const paperSizeMap: Record<
-  typeof printSizes[number],
+  (typeof printSizes)[number],
   { width: number; height: number }
 > = {
   A0: {

@@ -95,16 +95,7 @@
       <div class="col-span-3 flex h-auto w-full">
         <div class="grid grid-rows-5 w-full gap-3">
           <div
-            class="
-              p-4
-              grow
-              h-full
-              row-span-5
-              bg-white
-              border
-              rounded-md
-              dark:bg-gray-850 dark:border-gray-800
-            "
+            class="p-4 grow h-full row-span-5 bg-white border rounded-md dark:bg-gray-850 dark:border-gray-800"
           >
             <!-- Customer Search -->
             <MultiLabelLink
@@ -130,14 +121,7 @@
           </div>
 
           <div
-            class="
-              h-full
-              p-2
-              bg-white
-              border
-              rounded-md
-              dark:bg-gray-850 dark:border-gray-800
-            "
+            class="h-full p-2 bg-white border rounded-md dark:bg-gray-850 dark:border-gray-800"
           >
             <div class="grid grid-cols-2 gap-2">
               <FloatingLabelFloatInput
@@ -299,14 +283,7 @@
       </div>
 
       <div
-        class="
-          bg-white
-          border
-          rounded-md
-          col-span-6
-          flex flex-col
-          dark:bg-gray-850 dark:border-gray-800
-        "
+        class="bg-white border rounded-md col-span-6 flex flex-col dark:bg-gray-850 dark:border-gray-800"
         style="height: calc(100vh - 6rem)"
       >
         <div class="rounded-md p-4 col-span-5">

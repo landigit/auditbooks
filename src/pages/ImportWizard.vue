@@ -48,17 +48,7 @@
     <div class="flex text-base w-full flex-col">
       <!-- Select Import Type -->
       <div
-        class="
-          h-row-largest
-          flex flex-row
-          justify-start
-          items-center
-          w-full
-          gap-2
-          border-b
-          dark:border-gray-800
-          p-4
-        "
+        class="h-row-largest flex flex-row justify-start items-center w-full gap-2 border-b dark:border-gray-800 p-4"
       >
         <AutoComplete
           :df="{
@@ -115,18 +105,7 @@
       >
         <!-- Column Assignment Row -->
         <div
-          class="
-            grid
-            sticky
-            top-0
-            py-4
-            pe-4
-            bg-white
-            dark:bg-gray-875
-            border-b border-e
-            dark:border-gray-800
-            gap-4
-          "
+          class="grid sticky top-0 py-4 pe-4 bg-white dark:bg-gray-875 border-b border-e dark:border-gray-800 gap-4"
           style="z-index: 1; width: fit-content"
           :style="gridTemplateColumn"
         >
@@ -146,17 +125,7 @@
         <!-- Values Grid -->
         <div
           v-if="importer.valueMatrix.length"
-          class="
-            grid
-            py-4
-            pe-4
-            bg-white
-            dark:bg-gray-875
-            gap-4
-            border-e
-            last:border-b
-            dark:border-gray-800
-          "
+          class="grid py-4 pe-4 bg-white dark:bg-gray-875 gap-4 border-e last:border-b dark:border-gray-800"
           style="width: fit-content"
           :style="gridTemplateColumn"
         >
@@ -232,15 +201,7 @@
 
         <div
           v-else
-          class="
-            ps-4
-            text-gray-700
-            dark:text-gray-300
-            sticky
-            left-0
-            flex
-            items-center
-          "
+          class="ps-4 text-gray-700 dark:text-gray-300 sticky left-0 flex items-center"
           style="height: 62.5px"
         >
           {{ t`No rows added. Select a file or add rows.` }}

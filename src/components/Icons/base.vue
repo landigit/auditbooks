@@ -27,9 +27,9 @@ export default {
       if (colorKey && (uicolors as any)[colorKey]) {
         const colorPalette = (uicolors as any)[colorKey];
         if (this.active) {
-          return this.darkMode ? colorPalette['400'] : colorPalette['300'];
+          return this.darkMode ? colorPalette['400'] : colorPalette['400'];
         } else {
-          return this.darkMode ? colorPalette['800'] : colorPalette['200'];
+          return this.darkMode ? colorPalette['800'] : colorPalette['300'];
         }
       }
       const activeGray = this.darkMode

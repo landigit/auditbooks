@@ -138,7 +138,9 @@ export class Main {
         (event, level, message, line, sourceId) => {
           const levels = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
           console.log(
-            `[Renderer ${levels[level] || 'LOG'}] ${message} (${sourceId}:${line})`
+            `[Renderer ${
+              levels[level] || 'LOG'
+            }] ${message} (${sourceId}:${line})`
           );
         }
       );

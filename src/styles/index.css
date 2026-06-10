@@ -22,10 +22,12 @@
 
 html {
   color: theme('colors.black');
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html.dark {
-  color: theme('colors.black');
+  color: theme('colors.white');
   background-color: theme('colors.gray.900');
   color-scheme: dark;
 }

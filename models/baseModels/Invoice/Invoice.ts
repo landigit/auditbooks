@@ -482,7 +482,7 @@ export abstract class Invoice extends Transactional {
       taxes[account].amount = taxes[account].amount.add(taxAmount);
     }
 
-    type Summary = typeof taxes[string] & { idx: number };
+    type Summary = (typeof taxes)[string] & { idx: number };
     const taxArr: Summary[] = [];
     let idx = 0;
     for (const account in taxes) {

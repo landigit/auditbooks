@@ -86,13 +86,7 @@
       style="height: calc(100vh - var(--h-row-largest))"
     >
       <div
-        class="
-          col-span-5
-          bg-white
-          border
-          rounded-md
-          dark:border-gray-800 dark:bg-gray-850
-        "
+        class="col-span-5 bg-white border rounded-md dark:border-gray-800 dark:bg-gray-850"
       >
         <div class="rounded-md p-4 col-span-5">
           <div class="flex gap-x-2">
@@ -163,15 +157,7 @@
       <div class="col-span-7">
         <div class="flex flex-col gap-3" style="height: calc(100vh - 6rem)">
           <div
-            class="
-              p-4
-              bg-white
-              border
-              rounded-md
-              grow
-              h-full
-              dark:border-gray-800 dark:bg-gray-850
-            "
+            class="p-4 bg-white border rounded-md grow h-full dark:border-gray-800 dark:bg-gray-850"
           >
             <!-- Customer Search -->
             <MultiLabelLink
@@ -196,13 +182,7 @@
           </div>
 
           <div
-            class="
-              p-3
-              bg-white
-              border
-              rounded-md
-              dark:border-gray-800 dark:bg-gray-850
-            "
+            class="p-3 bg-white border rounded-md dark:border-gray-800 dark:bg-gray-850"
           >
             <div class="w-full grid grid-cols-2 gap-y-2 gap-x-3">
               <div class="flex flex-col justify-end">
