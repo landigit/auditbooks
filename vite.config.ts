@@ -12,7 +12,7 @@ import { defineConfig } from 'vite';
  */
 export default () => {
   let port = 6969;
-  let host = '127.0.0.1'; // Changed from 0.0.0.0 — don't expose to LAN
+  let host = 'localhost';
   if (process.env.VITE_PORT && process.env.VITE_HOST) {
     port = Number(process.env.VITE_PORT);
     host = process.env.VITE_HOST;

@@ -1224,8 +1224,8 @@ fn run_patches(conn: &Connection, _current_version: &str) -> Result<(), String> 
       }
     }
 
-    let cash_acc = cash_accounts.first().map(|s| s.as_str()).unwrap_or("");
-    let bank_acc = bank_accounts.first().map(|s| s.as_str()).unwrap_or("");
+    let cash_acc = cash_accounts.first().map(|s| s.as_str()).unwrap_or("Cash");
+    let bank_acc = bank_accounts.first().map(|s| s.as_str()).unwrap_or("Bank");
     
     let now = chrono::Utc::now().to_rfc3339();
     let payment_methods = vec![
@@ -1234,19 +1234,57 @@ fn run_patches(conn: &Connection, _current_version: &str) -> Result<(), String> 
       ("Transfer", "Bank", bank_acc),
     ];
 
+    let mut placeholder_accounts: Vec<String> = Vec::new();
+
     for (name, p_type, acc) in payment_methods {
       let exists: i64 = conn.query_row(
         "SELECT COUNT(*) FROM PaymentMethod WHERE name = ?1",
         [name],
         |row| row.get(0),
       ).unwrap_or(0);
-      if exists == 0 {
+      if exists == 0 && !acc.is_empty() {
+        // Ensure parent account exists in Account table to prevent FK constraint failure
+        let acc_exists: i64 = conn.query_row(
+          "SELECT COUNT(*) FROM Account WHERE name = ?1",
+          [acc],
+          |row| row.get(0),
+        ).unwrap_or(0);
+        if acc_exists == 0 {
+          let root_type = "Asset";
+          conn.execute(
+            "INSERT INTO Account (name, rootType, isGroup, parentAccount, accountType, created, modified, createdBy, modifiedBy, lft, rgt) VALUES (?1, ?2, 0, NULL, ?3, ?4, ?5, ?6, ?7, 0, 0)",
+            [acc, root_type, p_type, &now, &now, "__SYSTEM__", "__SYSTEM__"],
+          ).map_err(|e| e.to_string())?;
+          // Track this as a placeholder — it was created only to satisfy the FK
+          // constraint for PaymentMethod.account. The real account will be
+          // created later by the setup wizard (CreateCOA). We'll delete it
+          // after all PaymentMethod inserts so the UNIQUE constraint won't fire.
+          placeholder_accounts.push(acc.to_string());
+        }
+
         conn.execute(
           "INSERT INTO PaymentMethod (name, type, account, created, modified, createdBy, modifiedBy) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
           [name, p_type, acc, &now, &now, "__SYSTEM__", "__SYSTEM__"],
         ).map_err(|e| e.to_string())?;
       }
     }
+
+    // Remove the placeholder accounts we inserted above.
+    // The FK constraint on PaymentMethod.account must be temporarily disabled
+    // while we delete these so the PaymentMethod rows are not orphaned.
+    // We re-enable FKs immediately after; the setup wizard will insert the
+    // real Account rows that satisfy the constraint.
+    if !placeholder_accounts.is_empty() {
+      conn.execute_batch("PRAGMA foreign_keys = OFF;").map_err(|e| e.to_string())?;
+      for acc_name in &placeholder_accounts {
+        conn.execute(
+          "DELETE FROM Account WHERE name = ?1 AND createdBy = '__SYSTEM__'",
+          [acc_name.as_str()],
+        ).map_err(|e| e.to_string())?;
+      }
+      conn.execute_batch("PRAGMA foreign_keys = ON;").map_err(|e| e.to_string())?;
+    }
+
     Ok(())
   })?;
 
@@ -1430,13 +1468,15 @@ pub fn db_migrate(
 
         if is_child {
           let child_cols = vec![
-            "\"parent\" TEXT",
-            "\"parentSchemaName\" TEXT",
-            "\"parentFieldname\" TEXT",
-            "\"idx\" INTEGER",
+            ("parent", "\"parent\" TEXT"),
+            ("parentSchemaName", "\"parentSchemaName\" TEXT"),
+            ("parentFieldname", "\"parentFieldname\" TEXT"),
+            ("idx", "\"idx\" INTEGER"),
           ];
-          for cc in child_cols {
-            col_defs.push(cc.to_string());
+          for (col_name, cc) in child_cols {
+            if !schema.fields.iter().any(|f| f.fieldname == col_name) {
+              col_defs.push(cc.to_string());
+            }
           }
         }
 

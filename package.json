@@ -1,10 +1,10 @@
 {
-  "name": "frappe-books",
+  "name": "auditbooks",
   "version": "0.37.1",
   "description": "Simple book-keeping app for everyone",
   "author": {
-    "name": "Frappe Technologies Pvt. Ltd.",
-    "email": "hello@frappe.io"
+    "name": "Landigit Agency",
+    "email": "landigitagency@gmail.com"
   },
   "scripts": {
     "dev": "tauri dev",
@@ -18,6 +18,7 @@
     "test:ui": "vitest --ui",
     "uitest": "node uitest/index.mjs",
     "lint": "eslint . --ext ts,vue",
+    "type": "vue-tsc --noEmit",
     "format": "prettier --write .",
     "prepare": "husky"
   },
@@ -82,7 +83,7 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^3.15.0",
     "tslib": "^2.8.1",
-    "typescript": "~5.0.4",
+    "typescript": "^5.9.3",
     "vite": "^5.4.21",
     "vitest": "^2.1.9",
     "vue-tsc": "^2.2.12",
@@ -96,9 +97,9 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "homepage": "https://frappe.io/books",
+  "homepage": "https://landigit.com/auditbooks",
   "repository": {
-    "url": "https://github.com/frappe/books"
+    "url": "https://github.com/landigit/auditbooks"
   },
   "license": "AGPL-3.0-only"
 }

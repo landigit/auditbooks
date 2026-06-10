@@ -189,8 +189,19 @@ export default defineComponent({
     },
     async setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
       const companyName = setupWizardOptions.companyName;
-      // Get default DB path from the Tauri backend (app data dir + companyName + .db)
-      const filePath = await invoke<string>('get_db_default_path', { companyName });
+
+      // Ask the user where to save the new database file
+      const { getSavePath } = await import('./utils/ui');
+      const { filePath: chosenPath, canceled } = await getSavePath(companyName, 'db');
+
+      let filePath: string;
+      if (canceled || !chosenPath) {
+        // Fall back to the auto-generated default path in app data dir
+        filePath = await invoke<string>('get_db_default_path', { companyName });
+      } else {
+        filePath = chosenPath;
+      }
+
       await setupInstance(filePath, setupWizardOptions, fyo);
       fyo.config.set('lastSelectedFilePath', filePath);
       await this.setDesk(filePath);

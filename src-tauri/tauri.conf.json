@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "frappe-books",
+  "productName": "Auditbooks",
   "version": "0.1.0",
-  "identifier": "com.frappebooks.app",
+  "identifier": "com.landigit.books",
   "build": {
     "frontendDist": "../src/dist",
     "devUrl": "http://localhost:6969",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Frappe Books",
+        "title": "Auditbooks",
         "width": 800,
         "height": 600,
         "resizable": true,
@@ -33,6 +33,12 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/installerIcon.ico",
+        "uninstallerIcon": "icons/uninstallerIcon.ico"
+      }
+    },
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }
