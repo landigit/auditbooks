@@ -48,6 +48,8 @@ export function getTestDbPath(dbPath?: string) {
  * If `closeTestFyo` is not called the test process won't exit.
  */
 
+import { beforeAll, afterAll } from 'vitest';
+
 export function getTestFyo(): Fyo {
   return new Fyo({
     DatabaseDemux: DatabaseManager,
@@ -60,6 +62,20 @@ export function getTestFyo(): Fyo {
 const ext = '.spec.ts';
 
 /* eslint-disable @typescript-eslint/no-misused-promises */
+
+export function setupTestFyoBeforeAll(fyo: Fyo) {
+  beforeAll(async () => {
+    const options = getTestSetupWizardOptions();
+    const dbPath = getTestDbPath();
+    await setupInstance(dbPath, options, fyo);
+  });
+}
+
+export function closeTestFyoAfterAll(fyo: Fyo) {
+  afterAll(async () => {
+    await fyo.close();
+  });
+}
 
 export function setupTestFyo(fyo: Fyo, filename: string) {
   const testName = path.basename(filename, ext);

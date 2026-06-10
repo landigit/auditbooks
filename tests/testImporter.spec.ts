@@ -4,12 +4,12 @@ import { ModelNameEnum } from 'models/types';
 import { join } from 'path';
 import { Importer } from 'src/importer';
 import { describe, expect, test } from 'vitest';
-import { closeTestFyo, getTestFyo, setupTestFyo } from './helpers';
+import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from './helpers';
 
 describe('Importer Tests', () => {
   const fyo = getTestFyo();
 
-  setupTestFyo(fyo, __filename);
+  setupTestFyoBeforeAll(fyo);
 
   test('importer init', () => {
     const importer = new Importer(ModelNameEnum.SalesInvoice, fyo);
@@ -58,5 +58,5 @@ describe('Importer Tests', () => {
     expect(names.every((n) => n?.startsWith('SINV-'))).toBe(true);
   });
 
-  closeTestFyo(fyo, __filename);
+  closeTestFyoAfterAll(fyo);
 });

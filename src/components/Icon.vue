@@ -5,6 +5,7 @@
     :class="iconClasses"
     :active="active"
     :darkMode="darkMode"
+    :name="name"
   />
 </template>
 

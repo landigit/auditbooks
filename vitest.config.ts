@@ -11,6 +11,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      vue: 'vue/dist/vue.esm-bundler.js',
       fyo: path.resolve(__dirname, './fyo'),
       src: path.resolve(__dirname, './src'),
       schemas: path.resolve(__dirname, './schemas'),
