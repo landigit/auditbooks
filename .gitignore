@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 /dbs
-/dist
+/dist/
+src/dist/
 /notebook
 
 # local env files
@@ -9,6 +10,8 @@ node_modules
 .env.publish
 .env.local
 .env.*.local
+src-tauri
+
 
 # Log files
 npm-debug.log*
