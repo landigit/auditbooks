@@ -66,7 +66,9 @@ describe('Loyalty Program', () => {
     expect(await fyo.db.exists(ModelNameEnum.Party, partyData.name)).toBe(true);
 
     await fyo.doc.getNewDoc(ModelNameEnum.Account, accountData).sync();
-    expect(await fyo.db.exists(ModelNameEnum.Account, accountData.name)).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.Account, accountData.name)).toBe(
+      true
+    );
   });
 
   test('create a Loyalty Program document', async () => {
@@ -80,7 +82,9 @@ describe('Loyalty Program', () => {
 
     await loyaltyProgramDoc.sync();
 
-    expect(await fyo.db.exists(ModelNameEnum.LoyaltyProgram, loyaltyProgramData.name)).toBe(true);
+    expect(
+      await fyo.db.exists(ModelNameEnum.LoyaltyProgram, loyaltyProgramData.name)
+    ).toBe(true);
 
     const partyDoc = (await fyo.doc.getDoc(
       ModelNameEnum.Party,
@@ -133,7 +137,9 @@ describe('Loyalty Program', () => {
     await sinvDoc.sync();
     await sinvDoc.submit();
 
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(
+      true
+    );
     expect(sinvDoc.loyaltyProgram).toBe(loyaltyProgramData.name);
 
     const loyaltyPointEntryData = await loyaltyPointEntryDoc(
@@ -145,18 +151,20 @@ describe('Loyalty Program', () => {
       sinvDoc.loyaltyProgram as string
     )) as Party;
 
-    const selectedTier: CollectionRulesItems | undefined = getLoyaltyProgramTier(
-      loyaltyProgramDoc,
-      fyo.pesa(itemData.rate)
-    );
+    const selectedTier: CollectionRulesItems | undefined =
+      getLoyaltyProgramTier(loyaltyProgramDoc, fyo.pesa(itemData.rate));
 
-    expect(loyaltyPointEntryData?.loyaltyProgramTier).toBe(selectedTier?.tierName);
+    expect(loyaltyPointEntryData?.loyaltyProgramTier).toBe(
+      selectedTier?.tierName
+    );
 
     const tierData = collectionRulesData.find((rule) => {
       return rule.tierName === loyaltyPointEntryData?.loyaltyProgramTier;
     });
 
-    expect(loyaltyPointEntryData?.loyaltyPoints).toBe(itemData.rate * (tierData?.collectionFactor as number));
+    expect(loyaltyPointEntryData?.loyaltyPoints).toBe(
+      itemData.rate * (tierData?.collectionFactor as number)
+    );
   });
 
   test('create SINV with future date and verify loyalty points are not created', async () => {
@@ -168,7 +176,9 @@ describe('Loyalty Program', () => {
     await sinvDoc.sync();
     await sinvDoc.submit();
 
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(
+      true
+    );
 
     const loyaltyPointEntryData = await loyaltyPointEntryDoc(
       sinvDoc.name as string
@@ -185,16 +195,20 @@ describe('Loyalty Program', () => {
     await sinvDoc.sync();
     await sinvDoc.submit();
 
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(
+      true
+    );
 
     const loyaltyPointEntryData = await loyaltyPointEntryDoc(
       sinvDoc.name as string
     );
 
-    expect(await fyo.db.exists(
-      ModelNameEnum.LoyaltyPointEntry,
-      loyaltyPointEntryData?.name as string
-    )).toBe(true);
+    expect(
+      await fyo.db.exists(
+        ModelNameEnum.LoyaltyPointEntry,
+        loyaltyPointEntryData?.name as string
+      )
+    ).toBe(true);
 
     expect(loyaltyPointEntryData?.loyaltyPoints).toBe(-1000);
 
@@ -204,7 +218,9 @@ describe('Loyalty Program', () => {
     )) as Party;
 
     const totalPoints = await partyDoc._getTotalLoyaltyPoints();
-    expect(totalPoints).toBe(itemData.rate * collectionRulesData[1].collectionFactor + -1000);
+    expect(totalPoints).toBe(
+      itemData.rate * collectionRulesData[1].collectionFactor + -1000
+    );
   });
 
   closeTestFyoAfterAll(fyo);

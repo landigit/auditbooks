@@ -8,7 +8,10 @@ import {
 import { SalesInvoice } from '../SalesInvoice/SalesInvoice';
 import { Payment } from '../Payment/Payment';
 import { PaymentTypeEnum } from '../Payment/types';
-import { assertDoesNotThrow, assertThrows } from 'backend/database/tests/helpers';
+import {
+  assertDoesNotThrow,
+  assertThrows,
+} from 'backend/database/tests/helpers';
 import { PurchaseInvoice } from '../PurchaseInvoice/PurchaseInvoice';
 
 const fyo = getTestFyo();
@@ -73,7 +76,9 @@ describe('Invoice', () => {
     await sinvDoc.runFormulas();
     await sinvDoc.submit();
 
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(true);
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, sinvDoc.name)).toBe(
+      true
+    );
 
     const paymentDoc = sinvDoc.getPayment();
     await paymentDoc?.sync();
@@ -102,7 +107,9 @@ describe('Invoice', () => {
     await returnDoc.sync();
     await returnDoc.submit();
 
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name)).toBe(true);
+    expect(
+      await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name)
+    ).toBe(true);
     expect(returnDoc.outstandingAmount?.float).toBe(itemData.rate);
 
     const returnSinvAles = (await fyo.db.getAllRaw(
@@ -115,17 +122,19 @@ describe('Invoice', () => {
 
     for (const ale of returnSinvAles) {
       if (ale.account === 'Sales') {
-        expect(fyo.pesa(ale.debit as string).float).toBe(fyo.pesa(itemData.rate).float);
+        expect(fyo.pesa(ale.debit as string).float).toBe(
+          fyo.pesa(itemData.rate).float
+        );
       }
 
       if (ale.account === 'Debtors') {
-        expect(fyo.pesa(ale.credit as string).float).toBe(fyo.pesa(itemData.rate).float);
+        expect(fyo.pesa(ale.credit as string).float).toBe(
+          fyo.pesa(itemData.rate).float
+        );
       }
     }
 
-    await assertThrows(
-      async () => await sinvDoc.cancel()
-    );
+    await assertThrows(async () => await sinvDoc.cancel());
   });
 
   test('create SINV return for balance qty', async () => {
@@ -141,7 +150,9 @@ describe('Invoice', () => {
     await returnDoc.runFormulas();
     await returnDoc.submit();
 
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name)).toBe(true);
+    expect(
+      await fyo.db.exists(ModelNameEnum.SalesInvoice, returnDoc.name)
+    ).toBe(true);
     expect(returnDoc.outstandingAmount?.float).toBe(itemData.rate);
   });
 
@@ -158,11 +169,11 @@ describe('Invoice', () => {
     expect(paymentDoc.amount?.float).toBe(itemData.rate);
 
     await paymentDoc.sync();
-    expect(await fyo.db.exists(ModelNameEnum.Payment, paymentDoc.name)).toBe(true);
-
-    await assertDoesNotThrow(
-      async () => await returnDoc.cancel()
+    expect(await fyo.db.exists(ModelNameEnum.Payment, paymentDoc.name)).toBe(
+      true
     );
+
+    await assertDoesNotThrow(async () => await returnDoc.cancel());
   });
 
   test('creating PINV return when invoice is not paid', async () => {
@@ -208,7 +219,9 @@ describe('Invoice', () => {
       }
 
       if (ale.account === 'Cost of Goods Sold') {
-        expect(fyo.pesa(ale.credit as string).float).toBe(returnDoc.outstandingAmount!.float);
+        expect(fyo.pesa(ale.credit as string).float).toBe(
+          returnDoc.outstandingAmount!.float
+        );
       }
     }
   });

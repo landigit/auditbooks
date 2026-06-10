@@ -4,7 +4,11 @@ import { ModelNameEnum } from 'models/types';
 import { join } from 'path';
 import { Importer } from 'src/importer';
 import { describe, expect, test } from 'vitest';
-import { closeTestFyoAfterAll, getTestFyo, setupTestFyoBeforeAll } from './helpers';
+import {
+  closeTestFyoAfterAll,
+  getTestFyo,
+  setupTestFyoBeforeAll,
+} from './helpers';
 
 describe('Importer Tests', () => {
   const fyo = getTestFyo();

@@ -55,9 +55,18 @@ describe('Schema Builder Tests', () => {
 
   test('Schema Equality with App Schemas', () => {
     expect(isEqual(regionalCombined.Account, appSchemaMap.Account)).toBe(true);
-    expect(isEqual(regionalCombined.JournalEntry, appSchemaMap.JournalEntry)).toBe(true);
-    expect(isEqual(regionalCombined.JournalEntryAccount, appSchemaMap.JournalEntryAccount)).toBe(true);
-    expect(isEqual(regionalCombined.Customer, appSchemaMap.Customer)).toBe(true);
+    expect(
+      isEqual(regionalCombined.JournalEntry, appSchemaMap.JournalEntry)
+    ).toBe(true);
+    expect(
+      isEqual(
+        regionalCombined.JournalEntryAccount,
+        appSchemaMap.JournalEntryAccount
+      )
+    ).toBe(true);
+    expect(isEqual(regionalCombined.Customer, appSchemaMap.Customer)).toBe(
+      true
+    );
     expect(isEqual(regionalCombined.Party, appSchemaMap.Party)).toBe(false);
   });
 
@@ -83,9 +92,18 @@ describe('Schema Builder Tests', () => {
 
   test('Schema Equality with App Schemas Abstract', () => {
     expect(isEqual(abstractCombined.Account, appSchemaMap.Account)).toBe(true);
-    expect(isEqual(abstractCombined.JournalEntry, appSchemaMap.JournalEntry)).toBe(true);
-    expect(isEqual(abstractCombined.JournalEntryAccount, appSchemaMap.JournalEntryAccount)).toBe(true);
-    expect(isEqual(abstractCombined.Customer, appSchemaMap.Customer)).toBe(false);
+    expect(
+      isEqual(abstractCombined.JournalEntry, appSchemaMap.JournalEntry)
+    ).toBe(true);
+    expect(
+      isEqual(
+        abstractCombined.JournalEntryAccount,
+        appSchemaMap.JournalEntryAccount
+      )
+    ).toBe(true);
+    expect(isEqual(abstractCombined.Customer, appSchemaMap.Customer)).toBe(
+      false
+    );
   });
 
   test('Schema Field Existence', () => {

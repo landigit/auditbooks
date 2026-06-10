@@ -42,26 +42,12 @@
     <div class="flex flex-col ml-1">
       <feather-icon
         name="chevron-up"
-        class="
-          w-3
-          h-3
-          cursor-pointer
-          hover:text-blue-500
-          text-gray-700
-          dark:text-gray-200
-        "
+        class="w-3 h-3 cursor-pointer hover:text-blue-500 text-gray-700 dark:text-gray-200"
         @click="adjustQuantity(1)"
       />
       <feather-icon
         name="chevron-down"
-        class="
-          w-3
-          h-3
-          cursor-pointer
-          hover:text-blue-500
-          text-gray-700
-          dark:text-gray-200
-        "
+        class="w-3 h-3 cursor-pointer hover:text-blue-500 text-gray-700 dark:text-gray-200"
         @click="adjustQuantity(-1)"
       />
     </div>

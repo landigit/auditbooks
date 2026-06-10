@@ -2,16 +2,16 @@
 import { uicolors } from 'src/utils/colors';
 
 const iconColorMap: Record<string, string> = {
-  'general': 'cyan',
-  'dashboard': 'blue',
-  'sales': 'green',
-  'purchase': 'purple',
+  general: 'cyan',
+  dashboard: 'blue',
+  sales: 'green',
+  purchase: 'purple',
   'common-entries': 'indigo',
-  'reports': 'pink',
-  'inventory': 'teal',
-  'pos': 'orange',
-  'gst': 'amber',
-  'settings': 'violet',
+  reports: 'pink',
+  inventory: 'teal',
+  pos: 'orange',
+  gst: 'amber',
+  settings: 'violet',
 };
 
 export default {

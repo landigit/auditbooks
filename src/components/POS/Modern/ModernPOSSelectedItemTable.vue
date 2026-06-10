@@ -1,15 +1,7 @@
 <template>
   <Row
     :ratio="ratio"
-    class="
-      w-full
-      px-2
-      mt-2
-      border
-      rounded-t
-      text-gray-600
-      dark:border-gray-800 dark:text-gray-400
-    "
+    class="w-full px-2 mt-2 border rounded-t text-gray-600 dark:border-gray-800 dark:text-gray-400"
   >
     <div
       v-if="tableFields"
@@ -31,13 +23,7 @@
     <Row
       v-for="row in sinvDoc.items"
       :ratio="ratio"
-      class="
-        p-2
-        border
-        w-full
-        hover:bg-gray-25
-        dark:border-gray-800 dark:bg-gray-890
-      "
+      class="p-2 border w-full hover:bg-gray-25 dark:border-gray-800 dark:bg-gray-890"
     >
       <ModernPOSSelectedItemRow
         :row="(row as SalesInvoiceItem)"

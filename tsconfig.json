@@ -16,51 +16,22 @@
     "sourceMap": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": [
-      "vite/client",
-      "vitest/globals"
-    ],
+    "types": ["vite/client", "vitest/globals"],
     "baseUrl": ".",
     "paths": {
-      "src/*": [
-        "src/*"
-      ],
-      "fyo/*": [
-        "fyo/*"
-      ],
-      "schemas/*": [
-        "schemas/*"
-      ],
-      "main/*": [
-        "main/*"
-      ],
-      "backend/*": [
-        "backend/*"
-      ],
-      "regional/*": [
-        "regional/*"
-      ],
-      "fixtures/*": [
-        "fixtures/*"
-      ],
-      "reports/*": [
-        "reports/*"
-      ],
-      "models/*": [
-        "models/*"
-      ],
-      "utils/*": [
-        "utils/*"
-      ],
-      "dummy/*": [
-        "dummy/*"
-      ]
+      "src/*": ["src/*"],
+      "fyo/*": ["fyo/*"],
+      "schemas/*": ["schemas/*"],
+      "main/*": ["main/*"],
+      "backend/*": ["backend/*"],
+      "regional/*": ["regional/*"],
+      "fixtures/*": ["fixtures/*"],
+      "reports/*": ["reports/*"],
+      "models/*": ["models/*"],
+      "utils/*": ["utils/*"],
+      "dummy/*": ["dummy/*"]
     },
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
   "ts-node": {
     "files": true
@@ -84,7 +55,5 @@
     "dummy/**/*.ts",
     "jobs/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

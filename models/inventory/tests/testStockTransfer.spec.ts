@@ -10,7 +10,10 @@ import {
 } from 'tests/helpers';
 import { getALEs, getItem, getSLEs, getStockTransfer } from './helpers';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import { assertThrows, assertDoesNotThrow } from 'backend/database/tests/helpers';
+import {
+  assertThrows,
+  assertDoesNotThrow,
+} from 'backend/database/tests/helpers';
 import { PurchaseReceipt } from '../PurchaseReceipt';
 import { Shipment } from '../Shipment';
 import { MovementTypeEnum } from '../types';
@@ -60,13 +63,19 @@ describe('Stock Transfer', () => {
 
     expect(doc.stockInHand).toBeDefined();
     expect(doc.stockReceivedButNotBilled).toBeDefined();
-    
+
     // Debugging MandatoryError
     if (!doc.stockReceivedButNotBilled) {
       const accounts = await fyo.db.getAllRaw('Account', {
-        filters: { accountType: 'Stock Received But Not Billed', isGroup: false }
+        filters: {
+          accountType: 'Stock Received But Not Billed',
+          isGroup: false,
+        },
       });
-      console.log('Accounts with type "Stock Received But Not Billed":', accounts);
+      console.log(
+        'Accounts with type "Stock Received But Not Billed":',
+        accounts
+      );
     }
   });
 
@@ -95,7 +104,9 @@ describe('Stock Transfer', () => {
 
     await doc.submit();
 
-    expect((await fyo.db.getAllRaw(ModelNameEnum.PurchaseReceipt)).length).toBe(1);
+    expect((await fyo.db.getAllRaw(ModelNameEnum.PurchaseReceipt)).length).toBe(
+      1
+    );
     expect((await getSLEs(doc.name!, doc.schemaName, fyo)).length).toBe(1);
     expect(await fyo.db.getStockQuantity(item, location)).toBe(quantity);
     expect(doc.name?.startsWith('PREC-')).toBe(true);
@@ -187,11 +198,16 @@ describe('Stock Transfer', () => {
   });
 
   test('Stock Transfer, invalid cancellation', async () => {
-    const receipts = (await fyo.db.getAllRaw(ModelNameEnum.PurchaseReceipt)) as { name: string }[];
+    const receipts = (await fyo.db.getAllRaw(
+      ModelNameEnum.PurchaseReceipt
+    )) as { name: string }[];
     const { name } = receipts[0] ?? {};
 
     expect(name?.startsWith('PREC-')).toBe(true);
-    const doc = (await fyo.doc.getDoc(ModelNameEnum.PurchaseReceipt, name)) as StockTransfer;
+    const doc = (await fyo.doc.getDoc(
+      ModelNameEnum.PurchaseReceipt,
+      name
+    )) as StockTransfer;
     await assertThrows(async () => await doc.cancel());
     expect(await fyo.db.getStockQuantity(item, location)).toBe(5);
     expect((await getSLEs(name, doc.schemaName, fyo)).length).toBe(1);
@@ -200,11 +216,16 @@ describe('Stock Transfer', () => {
   });
 
   test('Shipment, cancel and delete', async () => {
-    const shipments = (await fyo.db.getAllRaw(ModelNameEnum.Shipment, { order: 'asc' })) as { name: string }[];
+    const shipments = (await fyo.db.getAllRaw(ModelNameEnum.Shipment, {
+      order: 'asc',
+    })) as { name: string }[];
     const { name } = shipments[0] ?? {};
 
     expect(name?.startsWith('SHPM-')).toBe(true);
-    const doc = (await fyo.doc.getDoc(ModelNameEnum.Shipment, name)) as StockTransfer;
+    const doc = (await fyo.doc.getDoc(
+      ModelNameEnum.Shipment,
+      name
+    )) as StockTransfer;
     expect(doc.isSubmitted).toBe(true);
     await assertDoesNotThrow(async () => await doc.cancel());
     expect(doc.isCancelled).toBe(true);
@@ -221,11 +242,16 @@ describe('Stock Transfer', () => {
   });
 
   test('Purchase Receipt, cancel and delete', async () => {
-    const receipts = (await fyo.db.getAllRaw(ModelNameEnum.PurchaseReceipt, { order: 'asc' })) as { name: string }[];
+    const receipts = (await fyo.db.getAllRaw(ModelNameEnum.PurchaseReceipt, {
+      order: 'asc',
+    })) as { name: string }[];
     const { name } = receipts[0] ?? {};
 
     expect(name?.startsWith('PREC-')).toBe(true);
-    const doc = (await fyo.doc.getDoc(ModelNameEnum.PurchaseReceipt, name)) as StockTransfer;
+    const doc = (await fyo.doc.getDoc(
+      ModelNameEnum.PurchaseReceipt,
+      name
+    )) as StockTransfer;
     expect(doc.isSubmitted).toBe(true);
     await assertDoesNotThrow(async () => await doc.cancel());
     expect(doc.isCancelled).toBe(true);
@@ -388,9 +414,7 @@ describe('Stock Transfer', () => {
       ModelNameEnum.SalesInvoice,
       'SINV-1001'
     )) as Invoice;
-    await assertThrows(
-      async () => await sinv.cancel()
-    );
+    await assertThrows(async () => await sinv.cancel());
 
     const ales = await fyo.db.getAllRaw(ModelNameEnum.AccountingLedgerEntry, {
       fields: ['name', 'reverted'],
@@ -459,7 +483,9 @@ describe('Stock Transfer', () => {
     })) as { name: string }[];
 
     await assertDoesNotThrow(async () => await sinv.delete());
-    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, 'SINV-1001')).toBe(false);
+    expect(await fyo.db.exists(ModelNameEnum.SalesInvoice, 'SINV-1001')).toBe(
+      false
+    );
 
     for (const { name } of transfers) {
       expect(await fyo.db.exists(ModelNameEnum.Shipment, name)).toBe(false);
@@ -505,7 +531,9 @@ describe('Stock Transfer', () => {
     expect(shpm.party).toBe(sinv.party);
 
     await (await shpm.sync()).submit();
-    expect(await fyo.db.getStockQuantity(item, location)).toBe(totalQuantity - quantity);
+    expect(await fyo.db.getStockQuantity(item, location)).toBe(
+      totalQuantity - quantity
+    );
     expect(sinv.stockNotTransferred).toBe(0);
   });
 
@@ -540,11 +568,15 @@ describe('Stock Transfer', () => {
 
     for (const ale of returnShpmAles) {
       if (ale.account === 'Stock In Hand') {
-        expect(fyo.pesa(ale.debit as string).float).toBe(shpmReturn.grandTotal?.float);
+        expect(fyo.pesa(ale.debit as string).float).toBe(
+          shpmReturn.grandTotal?.float
+        );
       }
 
       if (ale.account === 'Cost of Goods Sold') {
-        expect(fyo.pesa(ale.credit as string).float).toBe(shpmReturn.grandTotal?.float);
+        expect(fyo.pesa(ale.credit as string).float).toBe(
+          shpmReturn.grandTotal?.float
+        );
       }
     }
   });
@@ -695,11 +727,15 @@ describe('Stock Transfer', () => {
 
     for (const ale of returnPrecAles) {
       if (ale.account === 'Stock In Hand') {
-        expect(fyo.pesa(ale.credit as string).float).toBe(precReturn.grandTotal?.float);
+        expect(fyo.pesa(ale.credit as string).float).toBe(
+          precReturn.grandTotal?.float
+        );
       }
 
       if (ale.account === 'Stock Received But Not Billed') {
-        expect(fyo.pesa(ale.debit as string).float).toBe(precReturn.grandTotal?.float);
+        expect(fyo.pesa(ale.debit as string).float).toBe(
+          precReturn.grandTotal?.float
+        );
       }
     }
   });
@@ -777,7 +813,8 @@ describe('Stock Transfer', () => {
 
     expect(returnPrecDoc.name).toBe('PREC-1008');
 
-    const secondPrecReturnDoc = (await precDoc.getReturnDoc()) as PurchaseReceipt;
+    const secondPrecReturnDoc =
+      (await precDoc.getReturnDoc()) as PurchaseReceipt;
     const returnBalSerialNumbers = secondPrecReturnDoc.items
       ?.map((item) => item.serialNumber?.split('\n'))
       .flat();

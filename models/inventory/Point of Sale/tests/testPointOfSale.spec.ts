@@ -92,7 +92,9 @@ describe('Point of Sale', () => {
 
     expect(transactedAmountAfterTxn?.Cash).toBe(sinvDocOne.grandTotal?.float);
 
-    expect(transactedAmountAfterTxn?.Transfer).toBe(sinvDocTwo.grandTotal?.float);
+    expect(transactedAmountAfterTxn?.Transfer).toBe(
+      sinvDocTwo.grandTotal?.float
+    );
   });
 
   closeTestFyoAfterAll(fyo);
