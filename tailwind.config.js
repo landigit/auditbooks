@@ -10,6 +10,12 @@ module.exports = {
     './main/**/*.{vue,ts}',
     './templates/**/*.html',
   ],
+  safelist: [
+    {
+      pattern: /^(bg|text|border)-(gray|orange|red|green|blue|yellow|purple|teal)-(100|200|400|600|700|800)$/,
+      variants: ['dark'],
+    },
+  ],
   theme: {
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
