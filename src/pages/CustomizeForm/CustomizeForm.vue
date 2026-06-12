@@ -3,6 +3,7 @@
     <PageHeader :title="t`Customize Form`">
       <DropdownWithActions :actions="[]" :disabled="false" :title="t`More`" />
       <Button :title="t`Save Customizations`" type="primary">
+        <feather-icon name="save" class="w-4 h-4 me-1.5" />
         {{ t`Save` }}
       </Button>
     </PageHeader>

@@ -14,15 +14,16 @@
       </Button>
 
       <!-- Save & Submit Buttons -->
-      <Button v-if="doc?.canSave" :icon="true" type="primary" @click="sync">
+      <Button v-if="doc?.canSave" type="primary" @click="sync">
+        <feather-icon name="save" class="w-4 h-4 me-1.5" />
         {{ t`Save` }}
       </Button>
       <Button
         v-else-if="doc?.canSubmit"
-        :icon="true"
         type="primary"
         @click="submit"
       >
+        <feather-icon name="check-square" class="w-4 h-4 me-1.5" />
         {{ t`Submit` }}
       </Button>
     </div>

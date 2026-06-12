@@ -280,7 +280,7 @@ export function reportIssue(errorLogObj?: ErrorLog) {
   const urlQuery = getIssueUrlQuery(errorLogObj);
   // Use Tauri opener plugin to open external URLs
   import('@tauri-apps/plugin-opener')
-    .then(({ open }) => open(urlQuery))
+    .then(({ openUrl }) => openUrl(urlQuery))
     .catch(() => window.open(urlQuery, '_blank'));
 }
 

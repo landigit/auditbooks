@@ -515,7 +515,7 @@ fn get_all(
   let schema = schema_map.get(schema_name).ok_or_else(|| format!("Schema {} not found", schema_name))?;
   let fields_val = options.get("fields");
   
-  let mut fields_list = if let Some(fields_arr) = fields_val.and_then(|f| f.as_array()) {
+  let fields_list = if let Some(fields_arr) = fields_val.and_then(|f| f.as_array()) {
     fields_arr
       .iter()
       .map(|v| v.as_str().unwrap_or("").to_string())

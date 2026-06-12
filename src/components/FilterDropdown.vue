@@ -10,10 +10,9 @@
     <template #target="{ togglePopover }">
       <Button :icon="true" @click="togglePopover()">
         <span class="flex items-center">
-          <Icon
+          <feather-icon
             name="filter"
-            size="12"
-            class="stroke-current text-gray-700 dark:text-gray-400"
+            class="w-4 h-4 text-gray-700 dark:text-gray-400"
           />
           <span class="ms-1">
             <template v-if="activeFilterCount > 0">

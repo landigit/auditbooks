@@ -83,8 +83,8 @@ export function useSearch(inputRef: any) {
   });
 
   async function openDocs() {
-    const { open } = await import('@tauri-apps/plugin-opener');
-    await open('https://docs.frappe.io/' + docsPathMap.Search).catch(console.error);
+    const { openUrl } = await import('@tauri-apps/plugin-opener');
+    await openUrl('https://docs.frappe.io/' + docsPathMap.Search).catch(console.error);
   }
 
   function getShortcuts() {

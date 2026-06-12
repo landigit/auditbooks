@@ -467,8 +467,8 @@ export async function getPathAndMakePDF(
       const tempPath = savePath.replace(/\.pdf$/, '_temp.html');
       await writeTextFile(tempPath, html);
 
-      const { open } = await import('@tauri-apps/plugin-opener');
-      await open(tempPath);
+      const { openPath } = await import('@tauri-apps/plugin-opener');
+      await openPath(tempPath);
 
       showExportInFolder(t`PDF Ready — Print to save`, savePath);
     } catch {

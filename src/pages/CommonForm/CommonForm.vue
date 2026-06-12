@@ -67,11 +67,13 @@
         <feather-icon v-else name="more-horizontal" class="w-4 h-4" />
       </DropdownWithActions>
       <Button v-if="doc?.canSave" type="primary" @click="sync">
+        <feather-icon name="save" class="w-4 h-4 me-1.5" />
         {{ t`Save` }}
       </Button>
-      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit">{{
-        t`Submit`
-      }}</Button>
+      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit">
+        <feather-icon name="check-square" class="w-4 h-4 me-1.5" />
+        {{ t`Submit` }}
+      </Button>
     </template>
     <template #body>
       <FormHeader

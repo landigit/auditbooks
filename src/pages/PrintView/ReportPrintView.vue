@@ -2,9 +2,11 @@
   <div class="flex flex-col w-full h-full">
     <PageHeader :title="t`Print ${title}`">
       <Button class="text-xs" type="primary" @click="savePDF()">
+        <feather-icon name="file-text" class="w-4 h-4 me-1.5" />
         {{ t`Save as PDF` }}
       </Button>
       <Button class="text-xs" type="primary" @click="savePDF(true)">
+        <feather-icon name="printer" class="w-4 h-4 me-1.5" />
         {{ t`Print` }}
       </Button>
     </PageHeader>

@@ -1,10 +1,14 @@
 <template>
   <div class="flex flex-col h-full">
     <PageHeader :title="t`Chart of Accounts`">
-      <Button v-if="!isAllExpanded" @click="expand">{{ t`Expand` }}</Button>
-      <Button v-if="!isAllCollapsed" @click="collapse">{{
-        t`Collapse`
-      }}</Button>
+      <Button v-if="!isAllExpanded" @click="expand">
+        <feather-icon name="chevrons-down" class="w-4 h-4 me-1.5" />
+        {{ t`Expand` }}
+      </Button>
+      <Button v-if="!isAllCollapsed" @click="collapse">
+        <feather-icon name="chevrons-up" class="w-4 h-4 me-1.5" />
+        {{ t`Collapse` }}
+      </Button>
     </PageHeader>
 
     <!-- Chart of Accounts -->

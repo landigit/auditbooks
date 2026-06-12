@@ -15,9 +15,11 @@
         />
       </template>
       <Button v-if="displayDoc && doc?.template" @click="savePDF()">
+        <feather-icon name="file-text" class="w-4 h-4 me-1.5" />
         {{ t`Save as PDF` }}
       </Button>
       <Button v-if="displayDoc && doc?.template" @click="savePDF(true)">
+        <feather-icon name="printer" class="w-4 h-4 me-1.5" />
         {{ t`Print` }}
       </Button>
       <Button
@@ -30,6 +32,7 @@
       </Button>
       <DropdownWithActions v-if="actions.length" :actions="actions" />
       <Button v-if="doc?.canSave" type="primary" @click="sync()">
+        <feather-icon name="save" class="w-4 h-4 me-1.5" />
         {{ t`Save` }}
       </Button>
     </PageHeader>

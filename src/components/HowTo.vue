@@ -23,8 +23,8 @@ export default {
   methods: {
     async openHelpLink() {
       if (!this.link) return;
-      const { open } = await import('@tauri-apps/plugin-opener');
-      await open(this.link).catch(console.error);
+      const { openUrl } = await import('@tauri-apps/plugin-opener');
+      await openUrl(this.link).catch(console.error);
     },
 
   },

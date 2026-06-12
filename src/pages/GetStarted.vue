@@ -97,8 +97,8 @@ const sections = ref(getGetStartedConfig());
 
 async function handleDocumentation({ key, documentation }: ListItem) {
   if (documentation) {
-    const { open } = await import('@tauri-apps/plugin-opener');
-    await open(documentation).catch(console.error);
+    const { openUrl } = await import('@tauri-apps/plugin-opener');
+    await openUrl(documentation).catch(console.error);
   }
 
   switch (key) {

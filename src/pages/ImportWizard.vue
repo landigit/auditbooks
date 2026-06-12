@@ -32,6 +32,7 @@
         :disabled="errorMessage.length > 0 || isMakingEntries"
         @click="importData"
       >
+        <feather-icon name="upload" class="w-4 h-4 me-1.5" />
         {{ t`Import Data` }}
       </Button>
       <Button
@@ -40,6 +41,7 @@
         type="primary"
         @click="selectFile"
       >
+        <feather-icon name="file" class="w-4 h-4 me-1.5" />
         {{ t`Select File` }}
       </Button>
     </PageHeader>

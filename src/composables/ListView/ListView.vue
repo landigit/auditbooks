@@ -8,6 +8,7 @@
         "
         @click="toggleSelectionMode"
       >
+        <feather-icon name="check-circle" class="w-4 h-4 me-1.5" />
         {{ t`Select` }}
       </Button>
       <div
@@ -16,7 +17,10 @@
         "
         class="relative"
       >
-        <Button class="w-40" @click="toggleDropdown"> Create </Button>
+        <Button class="w-40" @click="toggleDropdown">
+          <feather-icon name="plus" class="w-4 h-4 me-1.5" />
+          Create
+        </Button>
         <div
           v-if="showDropdown"
           class="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-40"
@@ -32,6 +36,7 @@
         </div>
       </div>
       <Button ref="exportButtonRef" :icon="false" @click="openExportModal = true">
+        <feather-icon name="download" class="w-4 h-4 me-1.5" />
         {{ t`Export` }}
       </Button>
       <FilterDropdown

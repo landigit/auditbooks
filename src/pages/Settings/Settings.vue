@@ -2,6 +2,7 @@
   <FormContainer>
     <template #header>
       <Button v-if="canSave" type="primary" @click="sync">
+        <feather-icon name="save" class="w-4 h-4 me-1.5" />
         {{ t`Save` }}
       </Button>
     </template>
