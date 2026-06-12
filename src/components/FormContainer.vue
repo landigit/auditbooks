@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import PageHeader from './PageHeader.vue';
-import { useBreakpoint } from 'src/composables/useBreakpoint';
+import { useBreakpoint } from 'src/composables/useBreakpoint.js';
 
 const props = withDefaults(
   defineProps<{

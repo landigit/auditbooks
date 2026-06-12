@@ -29,8 +29,8 @@ import { getValueMapFromList } from 'utils';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
 import { PeriodKey } from 'src/utils/types';
-import { useDashboardChart } from '../../composables/useDashboardChart';
-import { useMobile } from '../../composables/useMobile';
+import { useDashboardChart } from '../../composables/useDashboardChart.js';
+import { useMobile } from '../../composables/useMobile.js';
 import { t } from 'fyo';
 
 const props = withDefaults(

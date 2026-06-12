@@ -65,7 +65,7 @@ import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
 import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 import { useSettings } from './useSettings';
-import { useApp } from 'src/composables/useApp';
+import { useApp } from 'src/composables/useApp.js';
 
 const props = withDefaults(
   defineProps<{

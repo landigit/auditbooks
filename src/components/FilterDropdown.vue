@@ -149,13 +149,13 @@
 </template>
 
 <script setup lang="ts">
-import { useApp } from 'src/composables/useApp';
+import { useApp } from 'src/composables/useApp.js';
 import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
 import Icon from './Icon.vue';
 import Popover from './Popover.vue';
-import { useFilterDropdown } from './useFilterDropdown';
+import { useFilterDropdown } from '../composables/useFilterDropdown.js';
 
 const { t } = useApp();
 

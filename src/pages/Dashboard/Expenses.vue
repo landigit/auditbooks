@@ -46,7 +46,7 @@ import DonutChart from '../../components/Charts/DonutChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
 import { PeriodKey } from 'src/utils/types';
-import { useDashboardChart } from '../../composables/useDashboardChart';
+import { useDashboardChart } from '../../composables/useDashboardChart.js';
 import { t } from 'fyo';
 
 const props = withDefaults(

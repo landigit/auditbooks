@@ -386,7 +386,7 @@ import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import Loading from 'src/components/Loading.vue';
 import { useApp } from 'src/composables/useApp';
-import { useImportWizard } from 'src/pages/useImportWizard';
+import { useImportWizard } from 'src/composables/useImportWizard';
 
 const { t, fyo } = useApp();
 const {

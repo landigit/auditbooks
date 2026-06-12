@@ -192,7 +192,7 @@ export function useSearch(inputRef: any) {
   }
 
   return {
-    searcher,
+    searcher: computed(() => searcher?.value),
     shortcuts,
     idx,
     searchGroups,

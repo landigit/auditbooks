@@ -114,10 +114,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useApp } from 'src/composables/useApp';
+import { useApp } from 'src/composables/useApp.js';
 import Button from '../components/Button.vue';
 import PageHeader from 'src/components/PageHeader.vue';
-import { useChartOfAccounts } from './useChartOfAccounts';
+import { useChartOfAccounts } from '../composables/useChartOfAccounts.js';
 
 const { t } = useApp();
 

@@ -147,10 +147,10 @@ import { routeTo, toggleSidebar } from 'src/utils/ui';
 import Icon from './Icon.vue';
 import Modal from './Modal.vue';
 import ShortcutsHelper from './ShortcutsHelper.vue';
-import { useApp } from 'src/composables/useApp';
-import { usePlatform } from 'src/composables/usePlatform';
-import { useLanguage } from 'src/composables/useLanguage';
-import { useShortcuts } from 'src/composables/useShortcuts';
+import { useApp } from 'src/composables/useApp.js';
+import { usePlatform } from 'src/composables/usePlatform.js';
+import { useLanguage } from 'src/composables/useLanguage.js';
+import { useShortcuts } from 'src/composables/useShortcuts.js';
 
 const COMPONENT_NAME = 'Sidebar';
 

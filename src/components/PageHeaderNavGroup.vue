@@ -41,8 +41,8 @@ import { ref, onActivated, onDeactivated } from 'vue';
 import SearchBar from './SearchBar.vue';
 import { historyState, showSidebar } from 'src/utils/refs';
 import { toggleSidebar } from 'src/utils/ui';
-import { useShortcuts } from 'src/composables/useShortcuts';
-import { useBreakpoint } from 'src/composables/useBreakpoint';
+import { useShortcuts } from 'src/composables/useShortcuts.js';
+import { useBreakpoint } from 'src/composables/useBreakpoint.js';
 
 const COMPONENT_NAME = 'PageHeaderNavGroup';
 

@@ -105,7 +105,7 @@
               :key="g"
               class="border dark:border-gray-800 px-1 py-0.5 rounded-lg"
               :class="getGroupFilterButtonClass(g)"
-              @click="searcher!.set(g, !searcher!.filters.groupFilters[g])"
+              @click="searcher?.set(g, !searcher?.filters.groupFilters[g])"
             >
               {{ groupLabelMap[g] }}
             </button>
@@ -208,10 +208,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onActivated, onDeactivated } from 'vue';
 import { fyo } from 'src/initFyo';
-import { useApp } from 'src/composables/useApp';
+import { useApp } from 'src/composables/useApp.js';
 import Button from './Button.vue';
 import Modal from './Modal.vue';
-import { useSearch } from './useSearch';
+import { useSearch } from '../composables/useSearch.js';
 
 const COMPONENT_NAME = 'SearchBar';
 

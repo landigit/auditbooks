@@ -7,9 +7,6 @@
 import { computed } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
-import { Invoice } from 'models/baseModels/Invoice/Invoice';
-import { Party } from 'models/baseModels/Party/Party';
-import { LoyaltyProgram } from 'models/baseModels/LoyaltyProgram/LoyaltyProgram';
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import { getBgTextColorClass } from 'src/utils/colors';
@@ -115,7 +112,7 @@ function getStatus(doc: Doc) {
     return 'NotSaved';
   }
 
-  if (doc instanceof LoyaltyProgram) {
+  if (doc.schemaName === ModelNameEnum.LoyaltyProgram) {
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
 
@@ -136,7 +133,7 @@ function getStatus(doc: Doc) {
     return 'Active';
   }
 
-  if (doc instanceof Party && doc.outstandingAmount?.isZero() !== true) {
+  if (doc.schemaName === ModelNameEnum.Party && doc.outstandingAmount?.isZero() !== true) {
     return 'Outstanding';
   }
 
@@ -160,7 +157,7 @@ function getSubmittableStatus(doc: Doc) {
     return 'ReturnIssued';
   }
 
-  const isInvoice = doc instanceof Invoice;
+  const isInvoice = [ModelNameEnum.SalesInvoice, ModelNameEnum.PurchaseInvoice].includes(doc.schemaName as ModelNameEnum);
 
   if (doc.isSubmitted && isInvoice && (doc.stockNotTransferred ?? 0) > 0) {
     return 'NotTransferred';

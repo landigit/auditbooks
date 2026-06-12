@@ -145,8 +145,8 @@ import { fyo } from 'src/initFyo';
 import { isNumeric } from 'src/utils';
 import { QueryFilter } from 'utils/db/types';
 import ListCell from './ListCell.vue';
-import { useBreakpoint } from 'src/composables/useBreakpoint';
-import { useApp } from 'src/composables/useApp';
+import { useBreakpoint } from 'src/composables/useBreakpoint.js';
+import { useApp } from 'src/composables/useApp.js';
 
 const props = withDefaults(
   defineProps<{

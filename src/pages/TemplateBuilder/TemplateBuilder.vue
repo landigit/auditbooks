@@ -219,7 +219,7 @@ import SetType from 'src/pages/TemplateBuilder/SetType.vue';
 import TemplateBuilderHint from 'src/pages/TemplateBuilder/TemplateBuilderHint.vue';
 import TemplateEditor from 'src/pages/TemplateBuilder/TemplateEditor.vue';
 import { useApp } from 'src/composables/useApp';
-import { useTemplateBuilder } from 'src/pages/TemplateBuilder/useTemplateBuilder';
+import { useTemplateBuilder } from 'src/composables/useTemplateBuilder';
 
 const props = defineProps<{
   name: string;

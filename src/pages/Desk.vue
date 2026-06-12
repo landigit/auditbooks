@@ -2,7 +2,7 @@
 import { showSidebar } from 'src/utils/refs';
 import { toggleSidebar } from 'src/utils/ui';
 import Sidebar from '../components/Sidebar.vue';
-import { useBreakpoint } from 'src/composables/useBreakpoint';
+import { useBreakpoint } from 'src/composables/useBreakpoint.js';
 
 const props = withDefaults(
   defineProps<{

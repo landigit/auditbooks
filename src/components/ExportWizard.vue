@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { useApp } from 'src/composables/useApp';
+import { useApp } from 'src/composables/useApp.js';
 import { ExportFormat } from 'src/utils/types';
 import { QueryFilter } from 'utils/db/types';
 import Button from './Button.vue';
@@ -96,7 +96,7 @@ import Check from './Controls/Check.vue';
 import Int from './Controls/Int.vue';
 import Select from './Controls/Select.vue';
 import FormHeader from './FormHeader.vue';
-import { useExportWizard } from './useExportWizard';
+import { useExportWizard } from '../composables/useExportWizard.js';
 
 const { t, fyo } = useApp();
 

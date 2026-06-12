@@ -82,7 +82,7 @@ import Modal from 'src/components/Modal.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import List from './List.vue';
 import { useListView } from './useListView';
-import { useApp } from 'src/composables/useApp';
+import { useApp } from 'src/composables/useApp.js';
 
 const props = withDefaults(
   defineProps<{

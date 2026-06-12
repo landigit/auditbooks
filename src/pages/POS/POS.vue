@@ -147,7 +147,7 @@ import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
 import { POSItem } from 'src/components/POS/types';
 import { useApp } from 'src/composables/useApp';
-import { usePOS } from 'src/pages/POS/usePOS';
+import { usePOS } from 'src/composables/usePOS';
 
 const { t, fyo } = useApp();
 

@@ -64,7 +64,7 @@ import { evaluateHidden } from 'src/utils/doc';
 import Table from './Controls/Table.vue';
 import { Field } from 'schemas/types';
 import { DocValue } from 'fyo/core/types';
-import { useBreakpoint } from 'src/composables/useBreakpoint';
+import { useBreakpoint } from 'src/composables/useBreakpoint.js';
 
 const props = withDefaults(
   defineProps<{

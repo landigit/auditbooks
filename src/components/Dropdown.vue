@@ -75,7 +75,7 @@ import { Doc } from 'fyo/model/doc';
 import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { DropdownItem } from 'src/utils/types';
-import { useApp } from 'src/composables/useApp';
+import { useApp } from 'src/composables/useApp.js';
 import Popover from './Popover.vue';
 
 const { t } = useApp();

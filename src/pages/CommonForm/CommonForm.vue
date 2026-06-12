@@ -165,8 +165,8 @@ import { routeTo } from 'src/utils/ui';
 import CommonFormSection from './CommonFormSection.vue';
 import LinkedEntries from './LinkedEntries.vue';
 import RowEditForm from './RowEditForm.vue';
-import { useCommonForm } from './useCommonForm';
-import { useApp } from 'src/composables/useApp';
+import { useCommonForm } from 'src/composables/useCommonForm';
+import { useApp } from 'src/composables/useApp.js';
 
 const props = withDefaults(
   defineProps<{

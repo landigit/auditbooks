@@ -57,7 +57,7 @@ import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import PrintContainer from 'src/pages/TemplateBuilder/PrintContainer.vue';
 import { useApp } from 'src/composables/useApp';
-import { usePrintView } from 'src/pages/PrintView/usePrintView';
+import { usePrintView } from 'src/composables/usePrintView';
 
 const props = defineProps<{
   schemaName: string;

@@ -3,7 +3,7 @@ import CommonForm from 'src/pages/CommonForm/CommonForm.vue';
 import Dashboard from 'src/pages/Dashboard/Dashboard.vue';
 import GetStarted from 'src/pages/GetStarted.vue';
 import ImportWizard from 'src/pages/ImportWizard.vue';
-import ListView from 'src/pages/ListView/ListView.vue';
+import ListView from 'src/composables/ListView/ListView.vue';
 import PrintView from 'src/pages/PrintView/PrintView.vue';
 import ReportPrintView from 'src/pages/PrintView/ReportPrintView.vue';
 import QuickEditForm from 'src/pages/QuickEditForm.vue';
