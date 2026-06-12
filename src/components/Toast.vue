@@ -54,54 +54,55 @@
     </Transition>
   </Teleport>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { getIconConfig } from 'src/utils/interactive';
 import { ToastDuration, ToastType } from 'src/utils/types';
 import { toastDurationMap } from 'src/utils/ui';
-import { PropType, defineComponent, nextTick } from 'vue';
 import FeatherIcon from './FeatherIcon.vue';
 
-export default defineComponent({
-  components: {
-    FeatherIcon,
-  },
-  props: {
-    message: { type: String, required: true },
-    action: { type: Function, default: () => {} },
-    actionText: { type: String, default: '' },
-    type: { type: String as PropType<ToastType>, default: 'info' },
-    duration: { type: String as PropType<ToastDuration>, default: 'long' },
-  },
-  data() {
-    return {
-      open: false,
-    };
-  },
-  computed: {
-    config() {
-      return getIconConfig(this.type);
-    },
-    isPersistent() {
-      return this.duration === 'very_long';
-    },
-  },
-  async mounted() {
-    const duration = toastDurationMap[this.duration];
-    await nextTick(() => (this.open = true));
-    if (duration !== Infinity) {
-      setTimeout(this.closeToast, duration);
-    }
-  },
-  methods: {
-    actionClicked() {
-      this.action();
-      this.closeToast();
-    },
-    closeToast() {
-      this.open = false;
-    },
-  },
+const props = withDefaults(
+  defineProps<{
+    message: string;
+    action?: Function;
+    actionText?: string;
+    type?: ToastType;
+    duration?: ToastDuration;
+  }>(),
+  {
+    action: () => {},
+    actionText: '',
+    type: 'info',
+    duration: 'long',
+  }
+);
+
+const open = ref(false);
+
+const config = computed(() => {
+  return getIconConfig(props.type);
 });
+
+const isPersistent = computed(() => {
+  return props.duration === 'very_long';
+});
+
+onMounted(async () => {
+  const duration = toastDurationMap[props.duration];
+  await nextTick(() => (open.value = true));
+  if (duration !== Infinity) {
+    setTimeout(closeToast, duration);
+  }
+});
+
+function actionClicked() {
+  props.action();
+  closeToast();
+}
+
+function closeToast() {
+  open.value = false;
+}
 </script>
 <style scoped>
 .v-enter-active,

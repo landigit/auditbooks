@@ -3,27 +3,13 @@
     <SectionHeader>
       <template #title>{{ t`Profit and Loss` }}</template>
       <template #action>
-        <PeriodSelector
-          :value="period"
-          :options="periodOptions"
-          @change="(value) => (period = value)"
-        />
+        <PeriodSelector :value="period" :options="periodOptions" @change="(value) => (period = value)" />
       </template>
     </SectionHeader>
-    <BarChart
-      v-if="hasData"
-      class="mt-4"
-      :aspect-ratio="2.05"
-      :colors="chartData.colors"
-      :grid-color="chartData.gridColor"
-      :font-color="chartData.fontColor"
-      :points="chartData.points"
-      :x-labels="chartData.xLabels"
-      :format="chartData.format"
-      :format-x="chartData.formatX"
-      :y-max="chartData.yMax"
-      :y-min="chartData.yMin"
-    />
+    <BarChart v-if="hasData" class="mt-4" :aspect-ratio="aspectRatio" :colors="chartData.colors"
+      :grid-color="chartData.gridColor" :font-color="chartData.fontColor" :points="chartData.points"
+      :x-labels="chartData.xLabels" :format="chartData.format" :format-x="chartData.formatX" :y-max="chartData.yMax"
+      :y-min="chartData.yMin" />
     <div v-else class="flex-1 w-full h-full flex-center my-20">
       <span class="text-base text-gray-600 dark:text-gray-500">
         {{ t`No transactions yet` }}
@@ -31,93 +17,100 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, onActivated } from 'vue';
 import BarChart from 'src/components/Charts/BarChart.vue';
 import { fyo } from 'src/initFyo';
 import { formatXLabels, getYMax, getYMin } from 'src/utils/chart';
 import { uicolors } from 'src/utils/colors';
 import { getDatesAndPeriodList } from 'src/utils/misc';
 import { getValueMapFromList } from 'utils';
-import DashboardChartBase from './BaseDashboardChart.vue';
 import PeriodSelector from './PeriodSelector.vue';
 import SectionHeader from './SectionHeader.vue';
-import { defineComponent } from 'vue';
+import { PeriodKey } from 'src/utils/types';
+import { useDashboardChart } from '../../composables/useDashboardChart';
+import { useMobile } from '../../composables/useMobile';
+import { t } from 'fyo';
 
-// Linting broken in this file cause of `extends: ...`
-/*
-  eslint-disable @typescript-eslint/no-unsafe-argument,
-  @typescript-eslint/no-unsafe-return
-*/
-export default defineComponent({
-  name: 'ProfitAndLoss',
-  components: {
-    PeriodSelector,
-    SectionHeader,
-    BarChart,
-  },
-  extends: DashboardChartBase,
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
-  data: () => ({
-    data: [] as { yearmonth: string; balance: number }[],
-    hasData: false,
-    periodOptions: ['This Year', 'This Quarter', 'YTD'],
-  }),
-  computed: {
-    chartData() {
-      const points = [this.data.map((d) => d.balance)];
-      const colors = [
-        {
-          positive: uicolors.blue[this.darkMode ? '600' : '500'],
-          negative: uicolors.pink[this.darkMode ? '600' : '500'],
-        },
-      ];
-      const format = (value: number) => fyo.format(value ?? 0, 'Currency');
-      const yMax = getYMax(points);
-      const yMin = getYMin(points);
-      return {
-        xLabels: this.data.map((d) => d.yearmonth),
-        points,
-        format,
-        colors,
-        yMax,
-        yMin,
-        formatX: formatXLabels,
-        gridColor: this.darkMode ? 'rgba(200, 200, 200, 0.2)' : undefined,
-        fontColor: this.darkMode ? uicolors.gray['400'] : undefined,
-        zeroLineColor: this.darkMode ? uicolors.gray['400'] : undefined,
-      };
+const props = withDefaults(
+  defineProps<{
+    commonPeriod?: PeriodKey;
+    darkMode?: boolean;
+  }>(),
+  {
+    commonPeriod: 'This Year',
+    darkMode: false,
+  }
+);
+
+const emit = defineEmits<{
+  (e: 'period-change', period: PeriodKey): void;
+}>();
+
+const isMobile = useMobile();
+const aspectRatio = computed(() => (isMobile.value ? 1.5 : 2.05));
+
+const data = ref<{ yearmonth: string; balance: number }[]>([]);
+const hasData = ref(false);
+const periodOptions: PeriodKey[] = ['This Year', 'This Quarter', 'YTD'];
+
+const setData = async () => {
+  const { fromDate, toDate, periodList } = getDatesAndPeriodList(period.value);
+
+  const dbData = await fyo.db.getIncomeAndExpenses(
+    fromDate.toISO(),
+    toDate.toISO()
+  );
+  const incomes = getValueMapFromList(dbData.income, 'yearmonth', 'balance');
+  const expenses = getValueMapFromList(
+    dbData.expense,
+    'yearmonth',
+    'balance'
+  );
+
+  data.value = periodList.map((d) => {
+    const key = d.toFormat('yyyy-MM');
+    const inc = incomes[key] ?? 0;
+    const exp = expenses[key] ?? 0;
+    return { yearmonth: key, balance: inc - exp };
+  });
+  hasData.value = dbData.income.length > 0 || dbData.expense.length > 0;
+};
+
+const { period } = useDashboardChart(
+  props,
+  (val) => emit('period-change', val),
+  setData,
+  periodOptions
+);
+
+const chartData = computed(() => {
+  const points = [data.value.map((d) => d.balance)];
+  const colors = [
+    {
+      positive: uicolors.blue[props.darkMode ? '600' : '500'],
+      negative: uicolors.pink[props.darkMode ? '600' : '500'],
     },
-  },
-  activated() {
-    this.setData();
-  },
-  methods: {
-    async setData() {
-      const { fromDate, toDate, periodList } = getDatesAndPeriodList(
-        this.period
-      );
+  ];
+  const format = (value: number) => fyo.format(value ?? 0, 'Currency');
+  const yMax = getYMax(points);
+  const yMin = getYMin(points);
+  return {
+    xLabels: data.value.map((d) => d.yearmonth),
+    points,
+    format,
+    colors,
+    yMax,
+    yMin,
+    formatX: formatXLabels,
+    gridColor: props.darkMode ? 'rgba(200, 200, 200, 0.2)' : undefined,
+    fontColor: props.darkMode ? uicolors.gray['400'] : undefined,
+    zeroLineColor: props.darkMode ? uicolors.gray['400'] : undefined,
+  };
+});
 
-      const data = await fyo.db.getIncomeAndExpenses(
-        fromDate.toISO(),
-        toDate.toISO()
-      );
-      const incomes = getValueMapFromList(data.income, 'yearmonth', 'balance');
-      const expenses = getValueMapFromList(
-        data.expense,
-        'yearmonth',
-        'balance'
-      );
-
-      this.data = periodList.map((d) => {
-        const key = d.toFormat('yyyy-MM');
-        const inc = incomes[key] ?? 0;
-        const exp = expenses[key] ?? 0;
-        return { yearmonth: key, balance: inc - exp };
-      });
-      this.hasData = data.income.length > 0 || data.expense.length > 0;
-    },
-  },
+onActivated(async () => {
+  await setData();
 });
 </script>

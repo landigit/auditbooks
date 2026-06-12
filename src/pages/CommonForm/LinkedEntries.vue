@@ -1,10 +1,11 @@
 <template>
   <div
-    class="w-quick-edit bg-white dark:bg-gray-850 border-l dark:border-gray-800 overflow-y-auto custom-scroll custom-scroll-thumb2"
+    class="bg-white dark:bg-gray-850 overflow-y-auto custom-scroll custom-scroll-thumb2"
+    :class="isMobile ? 'w-full h-full fixed inset-0 z-50' : 'w-quick-edit border-l dark:border-gray-800'"
   >
     <!-- Page Header -->
     <div
-      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-white dark:bg-gray-850"
+      class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-white dark:bg-gray-850 border-b dark:border-gray-800"
       style="z-index: 1"
     >
       <div class="flex items-center justify-between w-full">
@@ -20,7 +21,7 @@
     <!-- Linked Entry List -->
     <div
       v-if="sequence.length"
-      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2 border-t dark:border-gray-800"
+      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2"
     >
       <div
         v-for="sn of sequence"
@@ -57,10 +58,10 @@
             v-for="e of entries[sn].details"
             :key="String(e.name) + sn"
             class="p-2 text-sm cursor-pointer border-b last:border-0 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-875"
-            @click="routeTo(sn, String(e.name))"
+            @click="routeToDoc(sn, String(e.name))"
           >
             <div class="flex justify-between">
-              <!-- Name -->
+               <!-- Name -->
               <p class="font-semibold dark:text-gray-25">
                 {{ e.name }}
               </p>
@@ -156,86 +157,86 @@
     </p>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { isPesa } from 'fyo/utils';
 import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
 import { getBgTextColorClass } from 'src/utils/colors';
 import { getLinkedEntries } from 'src/utils/doc';
-import { shortcutsKey } from 'src/utils/injectionKeys';
 import { getFormRoute, routeTo } from 'src/utils/ui';
-import { PropType, defineComponent, inject } from 'vue';
+import { useShortcuts } from 'src/composables/useShortcuts';
+import { useApp } from 'src/composables/useApp';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
 const COMPONENT_NAME = 'LinkedEntries';
 
-export default defineComponent({
-  components: { Button },
-  props: { doc: { type: Object as PropType<Doc>, required: true } },
-  emits: ['close'],
-  setup() {
-    return { shortcuts: inject(shortcutsKey) };
-  },
-  data() {
-    return { entries: {} } as {
-      entries: Record<
-        string,
-        { collapsed: boolean; details: Record<string, unknown>[] }
-      >;
+const props = defineProps<{
+  doc: Doc;
+}>();
+
+const emit = defineEmits<{
+  (e: 'close'): void;
+}>();
+
+const { fyo, t } = useApp();
+const shortcuts = useShortcuts();
+const { isMobile } = useBreakpoint();
+
+const entries = ref<Record<string, { collapsed: boolean; details: Record<string, unknown>[] }>>({});
+
+const sequence = computed(() => {
+  const seq: string[] = linkSequence.filter(
+    (s) => !!entries.value[s]?.details?.length
+  );
+
+  for (const s in entries.value) {
+    if (seq.includes(s)) {
+      continue;
+    }
+    seq.push(s);
+  }
+
+  return seq;
+});
+
+const colorClass = getBgTextColorClass;
+
+async function routeToDoc(schemaName: string, name: string) {
+  const route = getFormRoute(schemaName, name);
+  await routeTo(route);
+}
+
+async function setLinkedEntries() {
+  const linkedEntries = await getLinkedEntries(props.doc);
+  for (const key in linkedEntries) {
+    const collapsed = false;
+    const entryNames = linkedEntries[key];
+    if (!entryNames.length) {
+      continue;
+    }
+
+    const fields = linkEntryDisplayFields[key] ?? ['name'];
+    const details = await fyo.db.getAll(key, {
+      fields,
+      filters: { name: ['in', entryNames] },
+    });
+
+    entries.value[key] = {
+      collapsed,
+      details,
     };
-  },
-  computed: {
-    sequence(): string[] {
-      const seq: string[] = linkSequence.filter(
-        (s) => !!this.entries[s]?.details?.length
-      );
+  }
+}
 
-      for (const s in this.entries) {
-        if (seq.includes(s)) {
-          continue;
-        }
-        seq.push(s);
-      }
+onMounted(async () => {
+  await setLinkedEntries();
+  shortcuts?.set(COMPONENT_NAME, ['Escape'], () => emit('close'));
+});
 
-      return seq;
-    },
-  },
-  async mounted() {
-    await this.setLinkedEntries();
-    this.shortcuts?.set(COMPONENT_NAME, ['Escape'], () => this.$emit('close'));
-  },
-  unmounted() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    isPesa,
-    colorClass: getBgTextColorClass,
-    async routeTo(schemaName: string, name: string) {
-      const route = getFormRoute(schemaName, name);
-      await routeTo(route);
-    },
-    async setLinkedEntries() {
-      const linkedEntries = await getLinkedEntries(this.doc);
-      for (const key in linkedEntries) {
-        const collapsed = false;
-        const entryNames = linkedEntries[key];
-        if (!entryNames.length) {
-          continue;
-        }
-
-        const fields = linkEntryDisplayFields[key] ?? ['name'];
-        const details = await this.fyo.db.getAll(key, {
-          fields,
-          filters: { name: ['in', entryNames] },
-        });
-
-        this.entries[key] = {
-          collapsed,
-          details,
-        };
-      }
-    },
-  },
+onUnmounted(() => {
+  shortcuts?.delete(COMPONENT_NAME);
 });
 
 const linkSequence = [
@@ -301,6 +302,7 @@ const linkEntryDisplayFields: Record<string, string[]> = {
   ],
 };
 </script>
+
 <style scoped>
 .pill-container:empty {
   display: none;

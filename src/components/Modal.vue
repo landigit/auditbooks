@@ -16,33 +16,41 @@
   </Transition>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { shortcutsKey } from 'src/utils/injectionKeys';
-import { defineComponent, inject } from 'vue';
+import { inject, watch, onUnmounted } from 'vue';
 
-export default defineComponent({
-  props: {
-    openModal: {
-      default: false,
-      type: Boolean,
-    },
-  },
-  emits: ['closemodal'],
-  setup() {
-    const context = `Modal-` + Math.random().toString(36).slice(2, 6);
-    return { shortcuts: inject(shortcutsKey), context };
-  },
-  watch: {
-    openModal(value: boolean) {
-      if (value) {
-        this.shortcuts?.set(this.context, ['Escape'], () => {
-          this.$emit('closemodal');
-        });
-      } else {
-        this.shortcuts?.delete(this.context);
-      }
-    },
-  },
+const props = withDefaults(
+  defineProps<{
+    openModal?: boolean;
+  }>(),
+  {
+    openModal: false,
+  }
+);
+
+const emit = defineEmits<{
+  (e: 'closemodal'): void;
+}>();
+
+const shortcuts = inject(shortcutsKey);
+const context = `Modal-` + Math.random().toString(36).slice(2, 6);
+
+watch(
+  () => props.openModal,
+  (value: boolean) => {
+    if (value) {
+      shortcuts?.set(context, ['Escape'], () => {
+        emit('closemodal');
+      });
+    } else {
+      shortcuts?.delete(context);
+    }
+  }
+);
+
+onUnmounted(() => {
+  shortcuts?.delete(context);
 });
 </script>
 <style scoped>

@@ -86,191 +86,43 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { t } from 'fyo';
-import { Verb } from 'fyo/telemetry/types';
-import { Field, FieldTypeEnum } from 'schemas/types';
-import { fyo } from 'src/initFyo';
-import {
-  getCsvExportData,
-  getExportFields,
-  getExportTableFields,
-  getJsonExportData,
-} from 'src/utils/export';
-import { ExportField, ExportFormat, ExportTableField } from 'src/utils/types';
-import { getSavePath, showExportInFolder } from 'src/utils/ui';
+
+<script setup lang="ts">
+import { useApp } from 'src/composables/useApp';
+import { ExportFormat } from 'src/utils/types';
 import { QueryFilter } from 'utils/db/types';
-import { PropType, defineComponent } from 'vue';
 import Button from './Button.vue';
 import Check from './Controls/Check.vue';
 import Int from './Controls/Int.vue';
 import Select from './Controls/Select.vue';
 import FormHeader from './FormHeader.vue';
+import { useExportWizard } from './useExportWizard';
 
-interface ExportWizardData {
-  useListFilters: boolean;
-  exportFormat: ExportFormat;
-  fields: ExportField[];
-  limit: number | null;
-  tableFields: ExportTableField[];
-  numUnfilteredEntries: number;
-}
+const { t, fyo } = useApp();
 
-export default defineComponent({
-  components: { FormHeader, Check, Select, Button, Int },
-  props: {
-    schemaName: { type: String, required: true },
-    listFilters: { type: Object as PropType<QueryFilter>, default: () => {} },
-    pageTitle: String,
-  },
-  data() {
-    const fields = fyo.schemaMap[this.schemaName]?.fields ?? [];
-    const exportFields = getExportFields(fields);
-    const exportTableFields = getExportTableFields(fields, fyo);
+const props = withDefaults(
+  defineProps<{
+    schemaName: string;
+    listFilters?: QueryFilter;
+    pageTitle?: string;
+  }>(),
+  {
+    listFilters: () => ({}),
+  }
+);
 
-    return {
-      limit: null,
-      useListFilters: true,
-      exportFormat: 'csv',
-      fields: exportFields,
-      tableFields: exportTableFields,
-    } as ExportWizardData;
-  },
-  computed: {
-    label() {
-      if (this.pageTitle) {
-        return this.pageTitle;
-      }
-
-      return fyo.schemaMap?.[this.schemaName]?.label ?? '';
-    },
-    filteredTableFields() {
-      return this.tableFields.filter((f) => {
-        const ef = this.getExportField(f.fieldname);
-        return !!ef?.export;
-      });
-    },
-    numSelected() {
-      return (
-        this.filteredTableFields.reduce(
-          (acc, f) => f.fields.filter((f) => f.export).length + acc,
-          0
-        ) +
-        this.fields.filter(
-          (f) => f.fieldtype !== FieldTypeEnum.Table && f.export
-        ).length
-      );
-    },
-    configFields() {
-      return {
-        useListFilters: {
-          fieldtype: 'Check',
-          label: t`Use List Filters`,
-          fieldname: 'useListFilters',
-        } as Field,
-        limit: {
-          placeholder: 'Limit number of rows',
-          fieldtype: 'Int',
-          label: t`Limit`,
-          fieldname: 'limit',
-        } as Field,
-        exportFormat: {
-          fieldtype: 'Select',
-          label: t`Export Format`,
-          fieldname: 'exportFormat',
-          options: [
-            { value: 'json', label: 'JSON' },
-            { value: 'csv', label: 'CSV' },
-          ],
-        } as Field,
-      };
-    },
-  },
-  methods: {
-    getField(ef: ExportField): Field {
-      return {
-        fieldtype: 'Check',
-        label: ef.label,
-        fieldname: ef.fieldname,
-      };
-    },
-    getExportField(
-      fieldname: string,
-      target?: string
-    ): ExportField | undefined {
-      let fields: ExportField[] | undefined;
-
-      if (!target) {
-        fields = this.fields;
-      } else {
-        fields = this.tableFields.find((f) => f.target === target)?.fields;
-      }
-
-      if (!fields) {
-        return undefined;
-      }
-
-      return fields.find((f) => f.fieldname === fieldname);
-    },
-    setExportFieldValue(ef: ExportField, value: boolean, target?: string) {
-      const field = this.getExportField(ef.fieldname, target);
-      if (!field) {
-        return;
-      }
-
-      field.export = value;
-    },
-    async exportData() {
-      const filters = JSON.parse(
-        JSON.stringify(this.useListFilters ? this.listFilters : {})
-      );
-
-      let data: string;
-      if (this.exportFormat === 'json') {
-        data = await getJsonExportData(
-          this.schemaName,
-          this.fields,
-          this.tableFields,
-          this.limit,
-          filters,
-          fyo
-        );
-      } else {
-        data = await getCsvExportData(
-          this.schemaName,
-          this.fields,
-          this.tableFields,
-          this.limit,
-          filters,
-          fyo
-        );
-      }
-
-      await this.saveExportData(data);
-    },
-    async saveExportData(data: string) {
-      const fileName = this.getFileName();
-      const { canceled, filePath } = await getSavePath(
-        fileName,
-        this.exportFormat
-      );
-      if (canceled || !filePath) {
-        return;
-      }
-
-      const { writeTextFile } = await import('@tauri-apps/plugin-fs');
-      await writeTextFile(filePath, data);
-
-      this.fyo.telemetry.log(Verb.Exported, this.schemaName, {
-        extension: this.exportFormat,
-      });
-      showExportInFolder(fyo.t`Export Successful`, filePath);
-    },
-    getFileName() {
-      const fileName = this.label.toLowerCase().replace(/\s/g, '-');
-      const dateString = new Date().toISOString().split('T')[0];
-      return `${fileName}_${dateString}`;
-    },
-  },
-});
+const {
+  limit,
+  useListFilters,
+  exportFormat,
+  fields,
+  tableFields,
+  label,
+  filteredTableFields,
+  numSelected,
+  configFields,
+  getField,
+  setExportFieldValue,
+  exportData,
+} = useExportWizard(props);
 </script>

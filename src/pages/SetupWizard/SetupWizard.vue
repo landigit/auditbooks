@@ -2,7 +2,7 @@
   <FormContainer
     :show-header="false"
     class="justify-content items-center h-full"
-    :class="{ 'window-drag': platform !== 'Windows' }"
+    :class="{ 'window-drag': platformName !== 'Windows' }"
   >
     <template #body>
       <FormHeader
@@ -68,7 +68,9 @@
     </template>
   </FormContainer>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, onMounted, provide } from 'vue';
 import { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import { Verb } from 'fyo/telemetry/types';
@@ -78,137 +80,131 @@ import { Field } from 'schemas/types';
 import Button from 'src/components/Button.vue';
 import FormContainer from 'src/components/FormContainer.vue';
 import FormHeader from 'src/components/FormHeader.vue';
+import CommonFormSection from 'src/pages/CommonForm/CommonFormSection.vue';
 import { getErrorMessage } from 'src/utils';
 import { showDialog } from 'src/utils/interactive';
 import { getSetupWizardDoc } from 'src/utils/misc';
 import { getFieldsGroupedByTabAndSection } from 'src/utils/ui';
-import { computed, defineComponent } from 'vue';
-import CommonFormSection from '../CommonForm/CommonFormSection.vue';
+import { useApp } from 'src/composables/useApp';
+import { usePlatform } from 'src/composables/usePlatform';
 
-export default defineComponent({
-  name: 'SetupWizard',
-  components: {
-    Button,
-    FormContainer,
-    FormHeader,
-    CommonFormSection,
-  },
-  provide() {
-    return {
-      doc: computed(() => this.docOrNull),
-    };
-  },
-  emits: ['setup-complete', 'setup-canceled'],
-  data() {
-    return {
-      docOrNull: null,
-      errors: {},
-      loading: false,
-    } as {
-      errors: Record<string, string>;
-      docOrNull: null | Doc;
-      loading: boolean;
-    };
-  },
-  computed: {
-    hasDoc(): boolean {
-      return this.docOrNull instanceof Doc;
-    },
-    doc(): Doc {
-      if (this.docOrNull instanceof Doc) {
-        return this.docOrNull;
-      }
+const emit = defineEmits(['setup-complete', 'setup-canceled']);
 
-      throw new Error(`Doc is null`);
-    },
-    areAllValuesFilled(): boolean {
-      if (!this.hasDoc) {
-        return false;
-      }
+const { t, fyo } = useApp();
+const { platformName } = usePlatform();
 
-      const values = this.doc.schema.fields
-        .filter((f) => f.required)
-        .map((f) => this.doc[f.fieldname]);
+const docOrNull = ref<null | Doc>(null);
+const errors = ref<Record<string, string>>({});
+const loading = ref(false);
 
-      return values.every(Boolean);
-    },
-    activeGroup(): Map<string, Field[]> {
-      if (!this.hasDoc) {
-        return new Map();
-      }
+provide('doc', computed(() => docOrNull.value));
 
-      const groupedFields = getFieldsGroupedByTabAndSection(
-        this.doc.schema,
-        this.doc
-      );
+const hasDoc = computed(() => docOrNull.value instanceof Doc);
 
-      return [...groupedFields.values()][0];
-    },
-  },
-  async mounted() {
-    const languageMap = TranslationString.prototype.languageMap;
-    this.docOrNull = getSetupWizardDoc(languageMap);
-    if (!this.fyo.db.isConnected) {
-      await this.fyo.db.init();
-    }
-
-    if (this.fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.sw = this;
-    }
-    this.fyo.telemetry.log(Verb.Started, ModelNameEnum.SetupWizard);
-  },
-  methods: {
-    async fill() {
-      if (!this.hasDoc) {
-        return;
-      }
-
-      await this.doc.set('companyName', "Lin's Things");
-      await this.doc.set('email', 'lin@lthings.com');
-      await this.doc.set('fullname', 'Lin Slovenly');
-      await this.doc.set('bankName', 'Max Finance');
-      await this.doc.set('country', 'India');
-    },
-    async onValueChange(field: Field, value: DocValue) {
-      if (!this.hasDoc) {
-        return;
-      }
-
-      const { fieldname } = field;
-      delete this.errors[fieldname];
-
-      try {
-        await this.doc.set(fieldname, value);
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          return;
-        }
-
-        this.errors[fieldname] = getErrorMessage(err, this.doc);
-      }
-    },
-    async submit() {
-      if (!this.hasDoc) {
-        return;
-      }
-
-      if (!this.areAllValuesFilled) {
-        return await showDialog({
-          title: this.t`Mandatory Error`,
-          detail: this.t`Please fill all values.`,
-          type: 'error',
-        });
-      }
-
-      this.loading = true;
-      this.fyo.telemetry.log(Verb.Completed, ModelNameEnum.SetupWizard);
-      this.$emit('setup-complete', this.doc.getValidDict());
-    },
-    cancel() {
-      this.fyo.telemetry.log(Verb.Cancelled, ModelNameEnum.SetupWizard);
-      this.$emit('setup-canceled');
-    },
-  },
+const doc = computed(() => {
+  if (docOrNull.value instanceof Doc) {
+    return docOrNull.value;
+  }
+  throw new Error(`Doc is null`);
 });
+
+const areAllValuesFilled = computed(() => {
+  if (!hasDoc.value) {
+    return false;
+  }
+  const values = doc.value.schema.fields
+    .filter((f) => f.required)
+    .map((f) => doc.value[f.fieldname]);
+  return values.every(Boolean);
+});
+
+const activeGroup = computed(() => {
+  if (!hasDoc.value) {
+    return new Map<string, Field[]>();
+  }
+  const groupedFields = getFieldsGroupedByTabAndSection(
+    doc.value.schema,
+    doc.value
+  );
+  return [...groupedFields.values()][0];
+});
+
+onMounted(async () => {
+  const languageMap = TranslationString.prototype.languageMap;
+  docOrNull.value = getSetupWizardDoc(languageMap);
+  if (!fyo.db.isConnected) {
+    await fyo.db.init();
+  }
+
+  if (fyo.store.isDevelopment) {
+    // @ts-ignore
+    window.sw = {
+      docOrNull,
+      errors,
+      loading,
+      hasDoc,
+      doc,
+      areAllValuesFilled,
+      activeGroup,
+      fill,
+      submit,
+      cancel,
+    };
+  }
+  fyo.telemetry.log(Verb.Started, ModelNameEnum.SetupWizard);
+});
+
+async function fill() {
+  if (!hasDoc.value) {
+    return;
+  }
+
+  await doc.value.set('companyName', "Lin's Things");
+  await doc.value.set('email', 'lin@lthings.com');
+  await doc.value.set('fullname', 'Lin Slovenly');
+  await doc.value.set('bankName', 'Max Finance');
+  await doc.value.set('country', 'India');
+}
+
+async function onValueChange(field: Field, value: DocValue) {
+  if (!hasDoc.value) {
+    return;
+  }
+
+  const { fieldname } = field;
+  delete errors.value[fieldname];
+
+  try {
+    await doc.value.set(fieldname, value);
+  } catch (err) {
+    if (!(err instanceof Error)) {
+      return;
+    }
+
+    errors.value[fieldname] = getErrorMessage(err, doc.value);
+  }
+}
+
+async function submit() {
+  if (!hasDoc.value) {
+    return;
+  }
+
+  if (!areAllValuesFilled.value) {
+    return await showDialog({
+      title: t`Mandatory Error`,
+      detail: t`Please fill all values.`,
+      type: 'error',
+    });
+  }
+
+  loading.value = true;
+  fyo.telemetry.log(Verb.Completed, ModelNameEnum.SetupWizard);
+  emit('setup-complete', doc.value.getValidDict());
+}
+
+function cancel() {
+  fyo.telemetry.log(Verb.Cancelled, ModelNameEnum.SetupWizard);
+  emit('setup-canceled');
+}
 </script>

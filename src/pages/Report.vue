@@ -24,7 +24,7 @@
     <!-- Filters -->
     <div
       v-if="report && report.filters.length"
-      class="grid grid-cols-5 gap-4 p-4 border-b dark:border-gray-800"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 border-b dark:border-gray-800"
     >
       <FormControl
         v-for="field in report.filters"
@@ -44,8 +44,9 @@
     <ListReport v-if="report" :report="report" class="" />
   </div>
 </template>
-<script lang="ts">
-import { t } from 'fyo';
+<script setup lang="ts">
+import { ref, computed, onActivated, onDeactivated, provide } from 'vue';
+import { useRoute } from 'vue-router';
 import { DocValue } from 'fyo/core/types';
 import { reports } from 'reports';
 import { Report } from 'reports/Report';
@@ -55,124 +56,113 @@ import DropdownWithActions from 'src/components/DropdownWithActions.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import ListReport from 'src/components/Report/ListReport.vue';
 import { fyo } from 'src/initFyo';
-import { shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathMap, getReport } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
 import { ActionGroup } from 'src/utils/types';
 import { routeTo } from 'src/utils/ui';
-import { PropType, computed, defineComponent, inject } from 'vue';
+import { useShortcuts } from 'src/composables/useShortcuts';
+import { useApp } from 'src/composables/useApp';
 
-export default defineComponent({
-  components: {
-    PageHeader,
-    FormControl,
-    ListReport,
-    DropdownWithActions,
-    Button,
-  },
-  provide() {
-    return {
-      report: computed(() => this.report),
+const props = withDefaults(
+  defineProps<{
+    reportClassName: keyof typeof reports;
+    defaultFilters?: string;
+  }>(),
+  {
+    defaultFilters: '{}',
+  }
+);
+
+const { t } = useApp();
+const shortcuts = useShortcuts();
+const route = useRoute();
+
+const loading = ref(false);
+const report = ref<Report | null>(null);
+
+provide('report', computed(() => report.value));
+
+const title = computed(() => {
+  return reports[props.reportClassName]?.title ?? t`Report`;
+});
+
+const groupedActions = computed(() => {
+  const actions = report.value?.getActions() ?? [];
+  const actionsMap = actions.reduce((acc, ac) => {
+    if (!ac.group) {
+      ac.group = 'none';
+    }
+
+    acc[ac.group] ??= {
+      group: ac.group,
+      label: ac.label ?? '',
+      type: ac.type ?? 'secondary',
+      actions: [],
     };
-  },
-  props: {
-    reportClassName: {
-      type: String as PropType<keyof typeof reports>,
-      required: true,
-    },
-    defaultFilters: {
-      type: String,
-      default: '{}',
-    },
-  },
-  setup() {
-    return { shortcuts: inject(shortcutsKey) };
-  },
-  data() {
-    return {
-      loading: false,
-      report: null as null | Report,
+
+    acc[ac.group].actions.push(ac);
+    return acc;
+  }, {} as Record<string, ActionGroup>);
+
+  return Object.values(actionsMap);
+});
+
+async function setReportData() {
+  if (report.value === null) {
+    report.value = await getReport(props.reportClassName);
+  }
+
+  if (!report.value.reportData.length) {
+    await report.value.setReportData();
+  } else if (report.value.shouldRefresh) {
+    await report.value.setReportData(undefined, true);
+  }
+}
+
+onActivated(async () => {
+  docsPathRef.value =
+    docsPathMap[props.reportClassName] ?? docsPathMap.Reports!;
+  await setReportData();
+
+  const filters = route.query as Record<string, DocValue>;
+  const validFilters: Record<string, DocValue> = {};
+
+  if (filters.defaultFilters && typeof filters.defaultFilters === 'string') {
+    const parsed = JSON.parse(filters.defaultFilters);
+    Object.assign(validFilters, parsed);
+  }
+
+  for (const [key, value] of Object.entries(filters)) {
+    if (key !== 'defaultFilters' && typeof value === 'string') {
+      validFilters[key] = value;
+    }
+  }
+
+  const filterKeys = Object.keys(validFilters);
+  for (const key of filterKeys) {
+    await report.value?.set(key, validFilters[key]);
+  }
+
+  if (filterKeys.length) {
+    await report.value?.updateData();
+  }
+
+  if (fyo.store.isDevelopment) {
+    // @ts-ignore
+    window.rep = {
+      loading: loading.value,
+      report: report.value,
     };
-  },
-  computed: {
-    title() {
-      return reports[this.reportClassName]?.title ?? t`Report`;
-    },
-    groupedActions() {
-      const actions = this.report?.getActions() ?? [];
-      const actionsMap = actions.reduce((acc, ac) => {
-        if (!ac.group) {
-          ac.group = 'none';
-        }
+  }
 
-        acc[ac.group] ??= {
-          group: ac.group,
-          label: ac.label ?? '',
-          type: ac.type ?? 'secondary',
-          actions: [],
-        };
+  shortcuts?.pmod.set(props.reportClassName, ['KeyP'], async () => {
+    await routeTo(`/report-print/${props.reportClassName}`);
+  });
+});
 
-        acc[ac.group].actions.push(ac);
-        return acc;
-      }, {} as Record<string, ActionGroup>);
-
-      return Object.values(actionsMap);
-    },
-  },
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  async activated() {
-    docsPathRef.value =
-      docsPathMap[this.reportClassName] ?? docsPathMap.Reports!;
-    await this.setReportData();
-
-    const filters = this.$route.query as Record<string, DocValue>;
-    const validFilters: Record<string, DocValue> = {};
-
-    if (filters.defaultFilters && typeof filters.defaultFilters === 'string') {
-      const parsed = JSON.parse(filters.defaultFilters);
-      Object.assign(validFilters, parsed);
-    }
-
-    for (const [key, value] of Object.entries(filters)) {
-      if (key !== 'defaultFilters' && typeof value === 'string') {
-        validFilters[key] = value;
-      }
-    }
-    const filterKeys = Object.keys(validFilters);
-    for (const key of filterKeys) {
-      await this.report?.set(key, validFilters[key]);
-    }
-
-    if (filterKeys.length) {
-      await this.report?.updateData();
-    }
-
-    if (fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.rep = this;
-    }
-
-    this.shortcuts?.pmod.set(this.reportClassName, ['KeyP'], async () => {
-      await routeTo(`/report-print/${this.reportClassName}`);
-    });
-  },
-  deactivated() {
-    docsPathRef.value = '';
-    this.shortcuts?.delete(this.reportClassName);
-  },
-  methods: {
-    routeTo,
-    async setReportData() {
-      if (this.report === null) {
-        this.report = await getReport(this.reportClassName);
-      }
-
-      if (!this.report.reportData.length) {
-        await this.report.setReportData();
-      } else if (this.report.shouldRefresh) {
-        await this.report.setReportData(undefined, true);
-      }
-    },
-  },
+onDeactivated(() => {
+  docsPathRef.value = '';
+  shortcuts?.delete(props.reportClassName);
 });
 </script>
+

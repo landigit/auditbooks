@@ -1,6 +1,6 @@
 <template>
   <div
-    class="py-2 h-full flex justify-between flex-col bg-gray-25 dark:bg-gray-900 relative"
+    class="pb-2 h-full flex justify-between flex-col bg-gray-25 dark:bg-gray-900 relative"
     :class="{
       'window-drag': platform !== 'Windows',
     }"
@@ -8,14 +8,16 @@
     <div>
       <!-- Company name -->
       <div
-        class="px-4 flex flex-row items-center justify-between mb-4"
+        class="px-4 flex flex-row justify-between border-b dark:border-gray-800 h-row-largest flex-shrink-0"
         :class="
-          platform === 'Mac' && languageDirection === 'ltr' ? 'mt-10' : 'mt-2'
+          platform === 'Mac' && languageDirection === 'ltr'
+            ? 'items-end pb-3'
+            : 'items-center'
         "
       >
         <h6
           data-testid="company-name"
-          class="font-semibold dark:text-gray-200 whitespace-nowrap overflow-auto no-scrollbar select-none"
+          class="font-semibold dark:text-gray-25 whitespace-nowrap overflow-auto no-scrollbar select-none"
         >
           {{ companyName }}
         </h6>
@@ -136,142 +138,141 @@
     </Modal>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { reportIssue } from 'src/errorHandling';
-import { fyo } from 'src/initFyo';
-import { languageDirectionKey, shortcutsKey } from 'src/utils/injectionKeys';
 import { docsPathRef } from 'src/utils/refs';
 import { getSidebarConfig } from 'src/utils/sidebarConfig';
-import { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
+import type { SidebarConfig, SidebarItem, SidebarRoot } from 'src/utils/types';
 import { routeTo, toggleSidebar } from 'src/utils/ui';
-import { defineComponent, inject } from 'vue';
-import router from '../router';
 import Icon from './Icon.vue';
 import Modal from './Modal.vue';
 import ShortcutsHelper from './ShortcutsHelper.vue';
+import { useApp } from 'src/composables/useApp';
+import { usePlatform } from 'src/composables/usePlatform';
+import { useLanguage } from 'src/composables/useLanguage';
+import { useShortcuts } from 'src/composables/useShortcuts';
 
 const COMPONENT_NAME = 'Sidebar';
 
-export default defineComponent({
-  components: {
-    Icon,
-    Modal,
-    ShortcutsHelper,
-  },
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
-  emits: ['change-db-file', 'toggle-darkmode'],
-  setup() {
-    return {
-      languageDirection: inject(languageDirectionKey),
-      shortcuts: inject(shortcutsKey),
-    };
-  },
-  data() {
-    return {
-      companyName: '',
-      groups: [],
-      viewShortcuts: false,
-      activeGroup: null,
-      showDevMode: false,
-    } as {
-      companyName: string;
-      groups: SidebarConfig;
-      viewShortcuts: boolean;
-      activeGroup: null | SidebarRoot;
-      showDevMode: boolean;
-    };
-  },
-  computed: {
-    appVersion() {
-      return fyo.store.appVersion;
-    },
-  },
-  async mounted() {
-    const { companyName } = await fyo.doc.getDoc('AccountingSettings');
-    this.companyName = companyName as string;
-    this.groups = await getSidebarConfig();
+const props = withDefaults(
+  defineProps<{
+    darkMode?: boolean;
+  }>(),
+  {
+    darkMode: false,
+  }
+);
 
-    this.setActiveGroup();
-    router.afterEach(() => {
-      this.setActiveGroup();
-    });
+const emit = defineEmits<{
+  (e: 'change-db-file'): void;
+  (e: 'toggle-darkmode'): void;
+}>();
 
-    this.shortcuts?.shift.set(COMPONENT_NAME, ['KeyH'], () => {
-      if (document.body === document.activeElement) {
-        this.toggleSidebar();
-      }
-    });
-    this.shortcuts?.set(COMPONENT_NAME, ['F1'], () => this.openDocumentation());
+const router = useRouter();
+const route = useRoute();
 
-    this.showDevMode = this.fyo.store.isDevelopment;
-  },
-  unmounted() {
-    this.shortcuts?.delete(COMPONENT_NAME);
-  },
-  methods: {
-    routeTo,
-    reportIssue,
-    toggleSidebar,
-    async openDocumentation() {
-      const { open } = await import('@tauri-apps/plugin-opener');
-      await open('https://docs.frappe.io/' + docsPathRef.value).catch(console.error);
-    },
-    setActiveGroup() {
-      const { fullPath } = this.$router.currentRoute.value;
-      const fallBackGroup = this.activeGroup;
-      this.activeGroup =
-        this.groups.find((g) => {
-          if (fullPath.startsWith(g.route) && g.route !== '/') {
-            return true;
-          }
+const { fyo, t } = useApp();
+const { platformName: platform } = usePlatform();
+const { languageDirection } = useLanguage();
+const shortcuts = useShortcuts();
 
-          if (g.route === fullPath) {
-            return true;
-          }
+const companyName = ref('');
+const groups = ref<SidebarConfig>([]);
+const viewShortcuts = ref(false);
+const activeGroup = ref<null | SidebarRoot>(null);
+const showDevMode = ref(false);
 
-          if (g.items) {
-            let activeItem = g.items.filter(
-              ({ route }) => route === fullPath || fullPath.startsWith(route)
-            );
+const appVersion = computed(() => fyo.store.appVersion);
 
-            if (activeItem.length) {
-              return true;
-            }
-          }
-        }) ??
-        fallBackGroup ??
-        this.groups[0];
-    },
-    isItemActive(item: SidebarItem) {
-      const { path: currentRoute, params } = this.$route;
-      const routeMatch = currentRoute === item.route;
+async function openDocumentation() {
+  const { open } = await import('@tauri-apps/plugin-opener');
+  await open('https://docs.frappe.io/' + docsPathRef.value).catch(console.error);
+}
 
-      const schemaNameMatch =
-        item.schemaName && params.schemaName === item.schemaName;
-
-      const isMatch = routeMatch || schemaNameMatch;
-      if (params.name && item.schemaName && !isMatch) {
-        return currentRoute.includes(`${item.schemaName}/${params.name}`);
+function setActiveGroup() {
+  const { fullPath } = router.currentRoute.value;
+  const fallBackGroup = activeGroup.value;
+  activeGroup.value =
+    groups.value.find((g) => {
+      if (fullPath.startsWith(g.route) && g.route !== '/') {
+        return true;
       }
 
-      return isMatch;
-    },
-    isGroupActive(group: SidebarRoot) {
-      return this.activeGroup && group.label === this.activeGroup.label;
-    },
-    routeToSidebarItem(item: SidebarItem | SidebarRoot) {
-      routeTo(this.getPath(item));
-    },
-    getPath(item: SidebarItem | SidebarRoot) {
-      const { route: path, filters } = item;
-      if (!filters) {
-        return path;
+      if (g.route === fullPath) {
+        return true;
       }
 
-      return { path, query: { filters: JSON.stringify(filters) } };
-    },
-  },
+      if (g.items) {
+        let activeItem = g.items.filter(
+          ({ route }) => route === fullPath || fullPath.startsWith(route)
+        );
+
+        if (activeItem.length) {
+          return true;
+        }
+      }
+    }) ??
+    fallBackGroup ??
+    groups.value[0];
+}
+
+function isItemActive(item: SidebarItem) {
+  const currentRoute = route.path;
+  const params = route.params;
+  const routeMatch = currentRoute === item.route;
+
+  const schemaNameMatch =
+    item.schemaName && params.schemaName === item.schemaName;
+
+  const isMatch = routeMatch || schemaNameMatch;
+  if (params.name && item.schemaName && !isMatch) {
+    return currentRoute.includes(`${item.schemaName}/${params.name}`);
+  }
+
+  return isMatch;
+}
+
+function isGroupActive(group: SidebarRoot) {
+  return activeGroup.value && group.label === activeGroup.value.label;
+}
+
+function routeToSidebarItem(item: SidebarItem | SidebarRoot) {
+  routeTo(getPath(item));
+}
+
+function getPath(item: SidebarItem | SidebarRoot) {
+  const { route: path, filters } = item;
+  if (!filters) {
+    return path;
+  }
+
+  return { path, query: { filters: JSON.stringify(filters) } };
+}
+
+onMounted(async () => {
+  const { companyName: name } = await fyo.doc.getDoc('AccountingSettings');
+  companyName.value = name as string;
+  groups.value = await getSidebarConfig();
+
+  setActiveGroup();
+  router.afterEach(() => {
+    setActiveGroup();
+  });
+
+  shortcuts?.shift.set(COMPONENT_NAME, ['KeyH'], () => {
+    if (document.body === document.activeElement) {
+      toggleSidebar();
+    }
+  });
+  shortcuts?.set(COMPONENT_NAME, ['F1'], () => openDocumentation());
+
+  showDevMode.value = fyo.store.isDevelopment;
+});
+
+onUnmounted(() => {
+  shortcuts?.delete(COMPONENT_NAME);
 });
 </script>
+

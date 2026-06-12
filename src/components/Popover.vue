@@ -1,5 +1,5 @@
 <template>
-  <div ref="reference">
+  <div ref="referenceRef">
     <div class="h-full">
       <slot
         name="target"
@@ -10,7 +10,7 @@
     <Transition>
       <div
         v-show="isOpen"
-        ref="popover"
+        ref="popoverRef"
         :class="popoverClass"
         class="bg-white dark:bg-gray-850 rounded-md border dark:border-gray-875 shadow-lg popover-container relative z-10"
         :style="{ 'transition-delay': `${isOpen ? entryDelay : exitDelay}ms` }"
@@ -21,109 +21,135 @@
   </div>
 </template>
 
-<script>
-import { createPopper } from '@popperjs/core';
-import { nextTick } from 'vue';
+<script setup lang="ts">
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { createPopper, Instance as PopperInstance } from '@popperjs/core';
 
-export default {
-  name: 'Popover',
-  props: {
-    showPopup: {
-      type: [Boolean, null],
-      default: null,
-    },
-    right: Boolean,
-    entryDelay: { type: Number, default: 0 },
-    exitDelay: { type: Number, default: 0 },
-    placement: {
-      type: String,
-      default: 'bottom-start',
-    },
-    popoverClass: [String, Object, Array],
-  },
-  emits: ['open', 'close'],
-  data() {
-    return {
-      isOpen: false,
-    };
-  },
-  watch: {
-    showPopup(value) {
-      if (value === true) {
-        this.open();
-      }
-      if (value === false) {
-        this.close();
-      }
-    },
-  },
-  mounted() {
-    this.listener = (e) => {
-      let $els = [this.$refs.reference, this.$refs.popover];
-      let insideClick = $els.some(
-        ($el) => $el && (e.target === $el || $el.contains(e.target))
-      );
-      if (insideClick) {
-        return;
-      }
-      this.close();
-    };
+const props = withDefaults(
+  defineProps<{
+    showPopup?: boolean | null;
+    right?: boolean;
+    entryDelay?: number;
+    exitDelay?: number;
+    placement?: string;
+    popoverClass?: string | Record<string, boolean> | any[];
+  }>(),
+  {
+    showPopup: null,
+    right: false,
+    entryDelay: 0,
+    exitDelay: 0,
+    placement: 'bottom-start',
+  }
+);
 
-    if (this.show == null) {
-      document.addEventListener('click', this.listener);
+const emit = defineEmits<{
+  (e: 'open'): void;
+  (e: 'close'): void;
+}>();
+
+const isOpen = ref(false);
+const referenceRef = ref<HTMLElement | null>(null);
+const popoverRef = ref<HTMLElement | null>(null);
+
+let popper: PopperInstance | null = null;
+let listener: ((e: MouseEvent) => void) | null = null;
+
+watch(
+  () => props.showPopup,
+  (value) => {
+    if (value === true) {
+      open();
+    } else if (value === false) {
+      close();
     }
-  },
-  beforeUnmount() {
-    this.popper && this.popper.destroy();
-    if (this.listener) {
-      document.removeEventListener('click', this.listener);
-      delete this.listener;
+  }
+);
+
+onMounted(() => {
+  listener = (e: MouseEvent) => {
+    const $els = [referenceRef.value, popoverRef.value];
+    const insideClick = $els.some(
+      ($el) => $el && (e.target === $el || $el.contains(e.target as Node))
+    );
+    if (insideClick) {
+      return;
     }
-  },
-  methods: {
-    setupPopper() {
-      if (!this.popper) {
-        this.popper = createPopper(this.$refs.reference, this.$refs.popover, {
-          placement: this.placement,
-          modifiers: [{ name: 'offset', options: { offset: [0, 8] } }],
-        });
-      } else {
-        this.popper.update();
-      }
-    },
-    togglePopover(flag) {
-      if (flag == null) {
-        flag = !this.isOpen;
-      }
-      flag = Boolean(flag);
-      if (flag) {
-        this.open();
-      } else {
-        this.close();
-      }
-    },
-    open() {
-      if (this.isOpen) {
-        return;
-      }
-      this.isOpen = true;
-      nextTick(() => {
-        this.setupPopper();
-      });
-      this.$emit('open');
-    },
-    close() {
-      if (!this.isOpen) {
-        return;
-      }
-      this.isOpen = false;
-      this.$emit('close');
-    },
-    handleBlur({ relatedTarget }) {
-      relatedTarget && this.close();
-    },
-  },
-};
+    close();
+  };
+
+  if (props.showPopup === null) {
+    document.addEventListener('click', listener);
+  }
+});
+
+onBeforeUnmount(() => {
+  if (popper) {
+    popper.destroy();
+    popper = null;
+  }
+  if (listener) {
+    document.removeEventListener('click', listener);
+    listener = null;
+  }
+});
+
+function setupPopper() {
+  if (!referenceRef.value || !popoverRef.value) {
+    return;
+  }
+  if (!popper) {
+    popper = createPopper(referenceRef.value, popoverRef.value, {
+      placement: props.placement as any,
+      modifiers: [{ name: 'offset', options: { offset: [0, 8] } }],
+    });
+  } else {
+    popper.update();
+  }
+}
+
+function togglePopover(flag?: boolean | null) {
+  if (flag === null || flag === undefined) {
+    flag = !isOpen.value;
+  }
+  flag = Boolean(flag);
+  if (flag) {
+    open();
+  } else {
+    close();
+  }
+}
+
+function open() {
+  if (isOpen.value) {
+    return;
+  }
+  isOpen.value = true;
+  nextTick(() => {
+    setupPopper();
+  });
+  emit('open');
+}
+
+function close() {
+  if (!isOpen.value) {
+    return;
+  }
+  isOpen.value = false;
+  emit('close');
+}
+
+function handleBlur({ relatedTarget }: FocusEvent) {
+  if (relatedTarget) {
+    close();
+  }
+}
+
+defineExpose({
+  open,
+  close,
+  togglePopover,
+});
 </script>
 <style scoped>
 .v-enter-active,

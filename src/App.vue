@@ -33,13 +33,13 @@
     ></div>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, provide, onMounted } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { exists as tauriExists } from '@tauri-apps/plugin-fs';
 import { RTL_LANGUAGES } from 'fyo/utils/consts';
 import { ModelNameEnum } from 'models/types';
 import { systemLanguageRef } from 'src/utils/refs';
-import { defineComponent, provide, ref, Ref } from 'vue';
 
 import { handleErrorWithDialog } from './errorHandling';
 import { fyo } from './initFyo';
@@ -52,7 +52,7 @@ import './styles/index.css';
 import { connectToDatabase, dbErrorActionSymbols } from './utils/db';
 import { initializeInstance } from './utils/initialization';
 import * as injectionKeys from './utils/injectionKeys';
-import { showDialog, showToast } from './utils/interactive';
+import { showToast } from './utils/interactive';
 import { setLanguageMap } from './utils/language';
 import { updateConfigFiles } from './utils/misc';
 import { updatePrintTemplates } from './utils/printTemplates';
@@ -74,241 +74,212 @@ enum Screen {
   SetupWizard = 'SetupWizard',
 }
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    Desk,
-    SetupWizard,
-    DatabaseSelector,
-  },
-  setup() {
-    const keys = useKeys();
-    const searcher: Ref<null | Search> = ref(null);
-    const shortcuts = new Shortcuts(keys);
-    const languageDirection = ref(
-      getLanguageDirection(systemLanguageRef.value)
-    );
+const keys = useKeys();
+const searcher = ref<null | Search>(null);
+const shortcuts = new Shortcuts(keys);
+const languageDirection = ref(getLanguageDirection(systemLanguageRef.value));
 
-    provide(injectionKeys.keysKey, keys);
-    provide(injectionKeys.searcherKey, searcher);
-    provide(injectionKeys.shortcutsKey, shortcuts);
-    provide(injectionKeys.languageDirectionKey, languageDirection);
+provide(injectionKeys.keysKey, keys);
+provide(injectionKeys.searcherKey, searcher);
+provide(injectionKeys.shortcutsKey, shortcuts);
+provide(injectionKeys.languageDirectionKey, languageDirection);
 
-    const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
-      null
-    );
+const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(null);
 
-    return {
-      keys,
-      searcher,
-      shortcuts,
-      languageDirection,
-      databaseSelector,
-    };
-  },
-  data() {
-    return {
-      activeScreen: null,
-      dbPath: '',
-      companyName: '',
-      darkMode: false,
-    } as {
-      activeScreen: null | Screen;
-      dbPath: string;
-      companyName: string;
-      darkMode: boolean | undefined;
-    };
-  },
-  computed: {
-    language(): string {
-      return systemLanguageRef.value;
-    },
-  },
-  watch: {
-    language(value: string) {
-      this.languageDirection = getLanguageDirection(value);
-    },
-  },
-  async mounted() {
-    await this.setInitialScreen();
-    const darkMode = !!fyo.singles.SystemSettings?.darkMode;
-    setDarkMode(darkMode);
-    this.darkMode = darkMode;
-  },
-  methods: {
-    async setInitialScreen(): Promise<void> {
-      const lastSelectedFilePath = fyo.config.get('lastSelectedFilePath', null);
+const activeScreen = ref<null | Screen>(null);
+const dbPath = ref('');
+const companyName = ref('');
+const darkMode = ref<boolean | undefined>(false);
 
-      if (
-        typeof lastSelectedFilePath !== 'string' ||
-        !lastSelectedFilePath.length
-      ) {
-        this.activeScreen = Screen.DatabaseSelector;
-        return;
-      }
+const language = computed(() => systemLanguageRef.value);
 
-      await this.fileSelected(lastSelectedFilePath);
-    },
-    async setSearcher(): Promise<void> {
-      this.searcher = new Search(fyo);
-      await this.searcher.initializeKeywords();
-    },
-    async setDesk(filePath: string): Promise<void> {
-      await setLanguageMap();
-      this.activeScreen = Screen.Desk;
-      await this.setDeskRoute();
-      await fyo.telemetry.start(true);
-      // Auto-updates are not supported in Tauri dev mode, skip gracefully
-      // await ipc.checkForUpdates();
-      this.dbPath = filePath;
-      this.companyName = (await fyo.getValue(
-        ModelNameEnum.AccountingSettings,
-        'companyName'
-      )) as string;
-      await this.setSearcher();
-      updateConfigFiles(fyo);
-    },
-    newDatabase() {
-      this.activeScreen = Screen.SetupWizard;
-    },
-    async fileSelected(filePath: string): Promise<void> {
-      fyo.config.set('lastSelectedFilePath', filePath);
-      if (filePath !== ':memory:') {
-        const fileExists = await tauriExists(filePath).catch(() => false);
-        if (!fileExists) {
-          // File doesn't exist yet (new db), that's OK
-        }
-      }
-
-      try {
-        await this.showSetupWizardOrDesk(filePath);
-      } catch (error) {
-        await handleErrorWithDialog(error, undefined, true, true);
-        await this.showDbSelector();
-      }
-    },
-    async setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
-      const companyName = setupWizardOptions.companyName;
-      // Get default DB path from the Tauri backend (app data dir + companyName + .db)
-      const filePath = await invoke<string>('get_db_default_path', { companyName });
-      await setupInstance(filePath, setupWizardOptions, fyo);
-      fyo.config.set('lastSelectedFilePath', filePath);
-      await this.setDesk(filePath);
-    },
-    async showSetupWizardOrDesk(filePath: string): Promise<void> {
-      const { countryCode, error, actionSymbol } = await connectToDatabase(
-        this.fyo,
-        filePath
-      );
-
-      if (!countryCode && error && actionSymbol) {
-        return await this.handleConnectionFailed(error, actionSymbol);
-      }
-
-      const setupComplete = await fyo.getValue(
-        ModelNameEnum.AccountingSettings,
-        'setupComplete'
-      );
-
-      if (!setupComplete) {
-        this.activeScreen = Screen.SetupWizard;
-        return;
-      }
-
-      await initializeInstance(filePath, false, countryCode, fyo);
-      await updatePrintTemplates(fyo);
-
-      const syncSettingsDoc = (await fyo.doc.getDoc(
-        ModelNameEnum.ERPNextSyncSettings
-      )) as ERPNextSyncSettings;
-
-      const baseURL = syncSettingsDoc.baseURL;
-      const token = syncSettingsDoc.authToken;
-      const enableERPNextSync =
-        fyo.singles.AccountingSettings?.enableERPNextSync;
-
-      if (enableERPNextSync && baseURL && token) {
-        try {
-          await registerInstanceToERPNext(fyo);
-          await updateERPNSyncSettings(fyo);
-          // ERPNext sync scheduler is Electron-only; skip in Tauri
-          // await ipc.initScheduler(...);
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-
-          try {
-            const existing = await fyo.db.getAll(
-              ErrorLogEnum.IntegrationErrorLog,
-              {
-                filters: {
-                  error: errorMessage,
-                },
-                limit: 1,
-              }
-            );
-
-            if (!existing.length) {
-              await fyo.doc
-                .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
-                  error: errorMessage,
-                  data: JSON.stringify({
-                    instance: fyo.singles.ERPNextSyncSettings?.deviceID,
-                    operation: 'register_instance',
-                    trigger: 'showSetupWizardOrDesk',
-                    baseURL: baseURL,
-                  }),
-                })
-                .sync();
-            }
-          } catch (logError) {
-            throw logError;
-          }
-          showToast({ message: 'Connection Failed', type: 'error' });
-        }
-      }
-
-      await this.setDesk(filePath);
-    },
-    async handleConnectionFailed(error: Error, actionSymbol: symbol) {
-      await this.showDbSelector();
-
-      if (actionSymbol === dbErrorActionSymbols.CancelSelection) {
-        return;
-      }
-
-      if (actionSymbol === dbErrorActionSymbols.SelectFile) {
-        await this.databaseSelector?.existingDatabase();
-        return;
-      }
-
-      throw error;
-    },
-    async setDeskRoute(): Promise<void> {
-      const { onboardingComplete } = await fyo.doc.getDoc('GetStarted');
-      const { hideGetStarted } = await fyo.doc.getDoc('SystemSettings');
-
-      let route = '/get-started';
-      if (hideGetStarted || onboardingComplete) {
-        route = localStorage.getItem('lastRoute') || '/';
-      }
-
-      await routeTo(route);
-    },
-    async showDbSelector(): Promise<void> {
-      localStorage.clear();
-      fyo.config.set('lastSelectedFilePath', null);
-      fyo.telemetry.stop();
-      await fyo.purgeCache();
-      this.activeScreen = Screen.DatabaseSelector;
-      this.dbPath = '';
-      this.searcher = null;
-      this.companyName = '';
-    },
-  },
+watch(language, (value) => {
+  languageDirection.value = getLanguageDirection(value);
 });
 
-function getLanguageDirection(language: string): 'rtl' | 'ltr' {
-  return RTL_LANGUAGES.includes(language) ? 'rtl' : 'ltr';
+onMounted(async () => {
+  await setInitialScreen();
+  const isDark = !!fyo.singles.SystemSettings?.darkMode;
+  setDarkMode(isDark);
+  darkMode.value = isDark;
+});
+
+async function setInitialScreen(): Promise<void> {
+  const lastSelectedFilePath = fyo.config.get('lastSelectedFilePath', null);
+
+  if (
+    typeof lastSelectedFilePath !== 'string' ||
+    !lastSelectedFilePath.length
+  ) {
+    activeScreen.value = Screen.DatabaseSelector;
+    return;
+  }
+
+  await fileSelected(lastSelectedFilePath);
+}
+
+async function setSearcher(): Promise<void> {
+  searcher.value = new Search(fyo);
+  await searcher.value.initializeKeywords();
+}
+
+async function setDesk(filePath: string): Promise<void> {
+  await setLanguageMap();
+  activeScreen.value = Screen.Desk;
+  await setDeskRoute();
+  await fyo.telemetry.start(true);
+  dbPath.value = filePath;
+  companyName.value = (await fyo.getValue(
+    ModelNameEnum.AccountingSettings,
+    'companyName'
+  )) as string;
+  await setSearcher();
+  updateConfigFiles(fyo);
+}
+
+function newDatabase() {
+  activeScreen.value = Screen.SetupWizard;
+}
+
+async function fileSelected(filePath: string): Promise<void> {
+  fyo.config.set('lastSelectedFilePath', filePath);
+  if (filePath !== ':memory:') {
+    const fileExists = await tauriExists(filePath).catch(() => false);
+    if (!fileExists) {
+      // File doesn't exist yet (new db), that's OK
+    }
+  }
+
+  try {
+    await showSetupWizardOrDesk(filePath);
+  } catch (error) {
+    await handleErrorWithDialog(error, undefined, true, true);
+    await showDbSelector();
+  }
+}
+
+async function setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
+  const company = setupWizardOptions.companyName;
+  const filePath = await invoke<string>('get_db_default_path', { companyName: company });
+  await setupInstance(filePath, setupWizardOptions, fyo);
+  fyo.config.set('lastSelectedFilePath', filePath);
+  await setDesk(filePath);
+}
+
+async function showSetupWizardOrDesk(filePath: string): Promise<void> {
+  const { countryCode, error, actionSymbol } = await connectToDatabase(
+    fyo,
+    filePath
+  );
+
+  if (!countryCode && error && actionSymbol) {
+    return await handleConnectionFailed(error, actionSymbol);
+  }
+
+  const setupCompleteVal = await fyo.getValue(
+    ModelNameEnum.AccountingSettings,
+    'setupComplete'
+  );
+
+  if (!setupCompleteVal) {
+    activeScreen.value = Screen.SetupWizard;
+    return;
+  }
+
+  await initializeInstance(filePath, false, countryCode, fyo);
+  await updatePrintTemplates(fyo);
+
+  const syncSettingsDoc = (await fyo.doc.getDoc(
+    ModelNameEnum.ERPNextSyncSettings
+  )) as ERPNextSyncSettings;
+
+  const baseURL = syncSettingsDoc.baseURL;
+  const token = syncSettingsDoc.authToken;
+  const enableERPNextSync =
+    fyo.singles.AccountingSettings?.enableERPNextSync;
+
+  if (enableERPNextSync && baseURL && token) {
+    try {
+      await registerInstanceToERPNext(fyo);
+      await updateERPNSyncSettings(fyo);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : String(err);
+
+      try {
+        const existing = await fyo.db.getAll(
+          ErrorLogEnum.IntegrationErrorLog,
+          {
+            filters: {
+              error: errorMessage,
+            },
+            limit: 1,
+          }
+        );
+
+        if (!existing.length) {
+          await fyo.doc
+            .getNewDoc(ErrorLogEnum.IntegrationErrorLog, {
+              error: errorMessage,
+              data: JSON.stringify({
+                instance: fyo.singles.ERPNextSyncSettings?.deviceID,
+                operation: 'register_instance',
+                trigger: 'showSetupWizardOrDesk',
+                baseURL: baseURL,
+              }),
+            })
+            .sync();
+        }
+      } catch (logError) {
+        throw logError;
+      }
+      showToast({ message: 'Connection Failed', type: 'error' });
+    }
+  }
+
+  await setDesk(filePath);
+}
+
+async function handleConnectionFailed(error: Error, actionSymbol: symbol) {
+  await showDbSelector();
+
+  if (actionSymbol === dbErrorActionSymbols.CancelSelection) {
+    return;
+  }
+
+  if (actionSymbol === dbErrorActionSymbols.SelectFile) {
+    await databaseSelector.value?.existingDatabase();
+    return;
+  }
+
+  throw error;
+}
+
+async function setDeskRoute(): Promise<void> {
+  const { onboardingComplete } = await fyo.doc.getDoc('GetStarted');
+  const { hideGetStarted } = await fyo.doc.getDoc('SystemSettings');
+
+  let routePath = '/get-started';
+  if (hideGetStarted || onboardingComplete) {
+    routePath = localStorage.getItem('lastRoute') || '/';
+  }
+
+  await routeTo(routePath);
+}
+
+async function showDbSelector(): Promise<void> {
+  localStorage.clear();
+  fyo.config.set('lastSelectedFilePath', null);
+  fyo.telemetry.stop();
+  await fyo.purgeCache();
+  activeScreen.value = Screen.DatabaseSelector;
+  dbPath.value = '';
+  searcher.value = null;
+  companyName.value = '';
+}
+
+function getLanguageDirection(languageCode: string): 'rtl' | 'ltr' {
+  return RTL_LANGUAGES.includes(languageCode) ? 'rtl' : 'ltr';
 }
 </script>
+

@@ -7,7 +7,7 @@
       <PageHeader
         v-if="showHeader"
         :title="title"
-        :border="false"
+        :border="true"
         :searchborder="searchborder"
       >
         <template #left>
@@ -18,11 +18,11 @@
 
       <!-- Common Form -->
       <div
-        class="flex flex-col self-center h-full overflow-auto bg-white dark:bg-gray-890"
+        class="flex flex-col self-center h-full overflow-auto bg-white dark:bg-gray-890 form-card-shadow"
         :class="
-          useFullWidth
-            ? 'w-full border-t dark:border-gray-800'
-            : 'w-form border dark:border-gray-800 rounded-lg shadow-lg mb-4 mx-4'
+          isFullWidth
+            ? 'w-full'
+            : 'w-form border-x border-b dark:border-gray-800 rounded-b-lg shadow-lg mb-4 mx-4'
         "
       >
         <slot name="body" />
@@ -33,17 +33,33 @@
     <slot name="quickedit" />
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import PageHeader from './PageHeader.vue';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
-export default defineComponent({
-  components: { PageHeader },
-  props: {
-    title: { type: String, default: '' },
-    useFullWidth: { type: Boolean, default: false },
-    showHeader: { type: Boolean, default: true },
-    searchborder: { type: Boolean, default: true },
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    title?: string;
+    useFullWidth?: boolean;
+    showHeader?: boolean;
+    searchborder?: boolean;
+  }>(),
+  {
+    title: '',
+    useFullWidth: false,
+    showHeader: true,
+    searchborder: true,
+  }
+);
+
+const { isMobile } = useBreakpoint();
+
+const isFullWidth = computed(() => props.useFullWidth || isMobile.value);
 </script>
+
+<style scoped>
+.form-card-shadow {
+  clip-path: inset(0px -100px -100px -100px);
+}
+</style>

@@ -9,13 +9,16 @@
     </p>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  props: {
-    formTitle: { type: String, default: '' },
-    formSubTitle: { type: String, default: '' },
-  },
-});
+<script setup lang="ts">
+const props = withDefaults(
+  defineProps<{
+    formTitle?: string;
+    formSubTitle?: string;
+  }>(),
+  {
+    formTitle: '',
+    formSubTitle: '',
+  }
+);
 </script>
+

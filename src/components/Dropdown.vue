@@ -37,7 +37,7 @@
             <div
               v-for="(d, index) in dropdownItems"
               :key="`key-${index}`"
-              ref="items"
+              ref="itemsRef"
             >
               <div
                 v-if="d.isGroup"
@@ -67,156 +67,150 @@
     </template>
   </Popover>
 </template>
-<script lang="ts">
+
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { Doc } from 'fyo/model/doc';
 import { Field } from 'schemas/types';
 import { fyo } from 'src/initFyo';
 import { DropdownItem } from 'src/utils/types';
-import { defineComponent, PropType } from 'vue';
+import { useApp } from 'src/composables/useApp';
 import Popover from './Popover.vue';
 
-export default defineComponent({
-  name: 'Dropdown',
-  components: {
-    Popover,
-  },
-  props: {
-    items: {
-      type: Array as PropType<DropdownItem[]>,
-      default: () => [],
-    },
-    right: {
-      type: Boolean,
-      default: false,
-    },
-    isLoading: {
-      type: Boolean,
-      default: false,
-    },
-    df: {
-      type: Object as PropType<Field | null>,
-      default: null,
-    },
-    doc: {
-      type: Object as PropType<Doc | null>,
-      default: null,
-    },
-  },
-  data() {
-    return {
-      isShown: false,
-      highlightedIndex: -1,
-    };
-  },
-  computed: {
-    dropdownItems(): DropdownItem[] {
-      const groupedItems = getGroupedItems(this.items ?? []);
-      const groupNames = Object.keys(groupedItems).filter(Boolean).sort();
+const { t } = useApp();
+const router = useRouter();
 
-      const items: DropdownItem[] = groupedItems[''] ?? [];
-      for (let group of groupNames) {
-        items.push({
-          label: group,
-          isGroup: true,
-        });
+const props = withDefaults(
+  defineProps<{
+    items?: DropdownItem[];
+    right?: boolean;
+    isLoading?: boolean;
+    df?: Field | null;
+    doc?: Doc | null;
+  }>(),
+  {
+    items: () => [],
+    right: false,
+    isLoading: false,
+    df: null,
+    doc: null,
+  }
+);
 
-        const grouped = groupedItems[group] ?? [];
-        items.push(...grouped);
-      }
+const isShown = ref(false);
+const highlightedIndex = ref(-1);
+const itemsRef = ref<Element[]>([]);
 
-      return items;
-    },
-  },
-  watch: {
-    highlightedIndex() {
-      this.scrollToHighlighted();
-    },
-    dropdownItems() {
-      const maxed = Math.max(this.highlightedIndex, -1);
-      this.highlightedIndex = Math.min(maxed, this.dropdownItems.length - 1);
-    },
-  },
-  methods: {
-    getEmptyMessage(): string {
-      const { schemaName, fieldname } = this.df ?? {};
-      if (!schemaName || !fieldname || !this.doc) {
-        return this.t`Empty`;
-      }
+const dropdownItems = computed<DropdownItem[]>(() => {
+  const groupedItems = getGroupedItems(props.items ?? []);
+  const groupNames = Object.keys(groupedItems).filter(Boolean).sort();
 
-      const emptyMessage = fyo.models[schemaName]?.emptyMessages[fieldname]?.(
-        this.doc
-      );
+  const items: DropdownItem[] = groupedItems[''] ?? [];
+  for (let group of groupNames) {
+    items.push({
+      label: group,
+      isGroup: true,
+    });
 
-      if (!emptyMessage) {
-        return this.t`Empty`;
-      }
+    const grouped = groupedItems[group] ?? [];
+    items.push(...grouped);
+  }
 
-      return emptyMessage;
-    },
-    async selectItem(d?: DropdownItem): Promise<void> {
-      if (!d || !d?.action) {
-        return;
-      }
-
-      if (this.doc) {
-        await d.action(this.doc, this.$router);
-      } else {
-        await d.action();
-      }
-
-      this.toggleDropdown(false);
-    },
-    toggleDropdown(flag?: boolean): void {
-      if (typeof flag !== 'boolean') {
-        flag = !this.isShown;
-      }
-
-      this.isShown = flag;
-    },
-    async selectHighlightedItem(): Promise<void> {
-      let item = this.dropdownItems[this.highlightedIndex];
-      if (!item) {
-        if (this.dropdownItems.length === 1) {
-          item = this.dropdownItems[0];
-        } else {
-          return;
-        }
-      }
-
-      if (item.isGroup) {
-        return;
-      }
-
-      return await this.selectItem(item);
-    },
-    highlightItemUp(e?: Event): void {
-      e?.preventDefault();
-
-      this.highlightedIndex = Math.max(0, this.highlightedIndex - 1);
-    },
-    highlightItemDown(e?: Event): void {
-      e?.preventDefault();
-
-      this.highlightedIndex = Math.min(
-        this.dropdownItems.length - 1,
-        this.highlightedIndex + 1
-      );
-    },
-    scrollToHighlighted(): void {
-      const elems = this.$refs.items;
-      if (!Array.isArray(elems)) {
-        return;
-      }
-
-      const highlightedElement = elems[this.highlightedIndex];
-      if (!(highlightedElement instanceof Element)) {
-        return;
-      }
-
-      highlightedElement.scrollIntoView({ block: 'nearest' });
-    },
-  },
+  return items;
 });
+
+watch(highlightedIndex, () => {
+  scrollToHighlighted();
+});
+
+watch(dropdownItems, () => {
+  const maxed = Math.max(highlightedIndex.value, -1);
+  highlightedIndex.value = Math.min(maxed, dropdownItems.value.length - 1);
+});
+
+function getEmptyMessage(): string {
+  const { schemaName, fieldname } = props.df ?? {};
+  if (!schemaName || !fieldname || !props.doc) {
+    return t`Empty`;
+  }
+
+  const emptyMessage = fyo.models[schemaName]?.emptyMessages[fieldname]?.(
+    props.doc
+  );
+
+  if (!emptyMessage) {
+    return t`Empty`;
+  }
+
+  return emptyMessage;
+}
+
+async function selectItem(d?: DropdownItem): Promise<void> {
+  if (!d || !d?.action) {
+    return;
+  }
+
+  if (props.doc) {
+    await d.action(props.doc, router);
+  } else {
+    await d.action();
+  }
+
+  toggleDropdown(false);
+}
+
+function toggleDropdown(flag?: boolean): void {
+  if (typeof flag !== 'boolean') {
+    flag = !isShown.value;
+  }
+
+  isShown.value = flag;
+}
+
+async function selectHighlightedItem(): Promise<void> {
+  let item = dropdownItems.value[highlightedIndex.value];
+  if (!item) {
+    if (dropdownItems.value.length === 1) {
+      item = dropdownItems.value[0];
+    } else {
+      return;
+    }
+  }
+
+  if (item.isGroup) {
+    return;
+  }
+
+  return await selectItem(item);
+}
+
+function highlightItemUp(e?: Event): void {
+  e?.preventDefault();
+  highlightedIndex.value = Math.max(0, highlightedIndex.value - 1);
+}
+
+function highlightItemDown(e?: Event): void {
+  e?.preventDefault();
+  highlightedIndex.value = Math.min(
+    dropdownItems.value.length - 1,
+    highlightedIndex.value + 1
+  );
+}
+
+function scrollToHighlighted(): void {
+  const elems = itemsRef.value;
+  if (!Array.isArray(elems)) {
+    return;
+  }
+
+  const highlightedElement = elems[highlightedIndex.value];
+  if (!(highlightedElement instanceof Element)) {
+    return;
+  }
+
+  highlightedElement.scrollIntoView({ block: 'nearest' });
+}
 
 function getGroupedItems(
   items: DropdownItem[]

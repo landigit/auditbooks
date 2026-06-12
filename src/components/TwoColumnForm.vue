@@ -16,21 +16,23 @@
       <div
         v-else
         :key="`${df.fieldname}-regular`"
-        class="grid items-center border-b dark:border-gray-800"
-        :style="{
+        :class="isMobile ? 'flex flex-col border-b dark:border-gray-800 py-1' : 'grid items-center border-b dark:border-gray-800'"
+        :style="isMobile ? {} : {
           ...style,
           height: getFieldHeight(df),
         }"
       >
-        <div class="ps-4 flex text-gray-600 dark:text-gray-400">
+        <div :class="isMobile ? 'ps-4 pt-1.5 pb-0.5 text-xs text-gray-500 dark:text-gray-400' : 'ps-4 flex text-gray-600 dark:text-gray-400'">
           {{ df.label }}
         </div>
 
         <div
-          class="py-2 pe-4"
-          :class="{
-            'ps-2': df.fieldtype === 'AttachImage',
-          }"
+          :class="[
+            isMobile ? 'px-4 pb-1.5' : 'py-2 pe-4',
+            {
+              'ps-2': df.fieldtype === 'AttachImage' && !isMobile,
+            }
+          ]"
         >
           <FormControl
             ref="controls"
@@ -52,106 +54,117 @@
     </template>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import FormControl from 'src/components/Controls/FormControl.vue';
 import { fyo } from 'src/initFyo';
 import { getErrorMessage } from 'src/utils';
 import { evaluateHidden } from 'src/utils/doc';
 import Table from './Controls/Table.vue';
-import { defineComponent } from 'vue';
 import { Field } from 'schemas/types';
-import { PropType } from 'vue';
 import { DocValue } from 'fyo/core/types';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
-export default defineComponent({
-  name: 'TwoColumnForm',
-  components: {
-    FormControl,
-    Table,
-  },
-  props: {
-    doc: { type: Doc, required: true },
-    fields: { type: Array as PropType<Field[]>, default: () => [] },
-    columnRatio: {
-      type: Array as PropType<number[]>,
-      default: () => [1, 1],
-    },
-  },
-  data() {
-    return {
-      formFields: [],
-      errors: {},
-    } as { formFields: Field[]; errors: Record<string, string> };
-  },
-  computed: {
-    style() {
-      let templateColumns = (this.columnRatio || [1, 1])
-        .map((r) => `minmax(0, ${r}fr)`)
-        .join(' ');
-      return {
-        'grid-template-columns': templateColumns,
-      };
-    },
-  },
-  watch: {
-    doc() {
-      this.setFormFields();
-    },
-  },
-  mounted() {
-    this.setFormFields();
-    if (fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.tcf = this;
+const props = withDefaults(
+  defineProps<{
+    doc: Doc;
+    fields?: Field[];
+    columnRatio?: number[];
+  }>(),
+  {
+    fields: () => [],
+    columnRatio: () => [1, 1],
+  }
+);
+
+const { isMobile } = useBreakpoint();
+
+const formFields = ref<Field[]>([]);
+const errors = ref<Record<string, string>>({});
+const controls = ref<any>(null);
+
+const style = computed(() => {
+  const templateColumns = (props.columnRatio || [1, 1])
+    .map((r) => `minmax(0, ${r}fr)`)
+    .join(' ');
+  return {
+    'grid-template-columns': templateColumns,
+  };
+});
+
+watch(() => props.doc, () => {
+  setFormFields();
+});
+
+onMounted(() => {
+  setFormFields();
+  if (fyo.store.isDevelopment) {
+    // @ts-ignore
+    window.tcf = {
+      formFields,
+      errors,
+      setFormFields,
+      onChange,
+    };
+  }
+});
+
+function getFieldHeight(field: Field) {
+  if (isMobile.value) {
+    return 'auto';
+  }
+
+  if (['AttachImage', 'Text'].includes(field.fieldtype)) {
+    return 'calc((var(--h-row-mid) + 1px) * 2)';
+  }
+
+  if (errors.value[field.fieldname]) {
+    return 'calc((var(--h-row-mid) + 1px) * 2)';
+  }
+
+  return 'calc(var(--h-row-mid) + 1px)';
+}
+
+async function onChange(field: Field, value: DocValue) {
+  const { fieldname } = field;
+  delete errors.value[fieldname];
+
+  let isSet = false;
+  try {
+    isSet = await props.doc.set(fieldname, value);
+  } catch (err) {
+    if (!(err instanceof Error)) {
+      return;
     }
-  },
-  methods: {
-    getFieldHeight(field: Field) {
-      if (['AttachImage', 'Text'].includes(field.fieldtype)) {
-        return 'calc((var(--h-row-mid) + 1px) * 2)';
-      }
 
-      if (this.errors[field.fieldname]) {
-        return 'calc((var(--h-row-mid) + 1px) * 2)';
-      }
+    errors.value[fieldname] = getErrorMessage(err, props.doc);
+  }
 
-      return 'calc(var(--h-row-mid) + 1px)';
-    },
-    async onChange(field: Field, value: DocValue) {
-      const { fieldname } = field;
-      delete this.errors[fieldname];
+  if (isSet) {
+    setFormFields();
+  }
+}
 
-      let isSet = false;
-      try {
-        isSet = await this.doc.set(fieldname, value);
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          return;
-        }
+function setFormFields() {
+  let fieldList = props.fields;
 
-        this.errors[fieldname] = getErrorMessage(err, this.doc);
-      }
+  if (fieldList.length === 0) {
+    fieldList = props.doc.quickEditFields;
+  }
 
-      if (isSet) {
-        this.setFormFields();
-      }
-    },
-    setFormFields() {
-      let fieldList = this.fields;
+  if (fieldList.length === 0) {
+    fieldList = props.doc.schema.fields.filter((f) => f.required);
+  }
 
-      if (fieldList.length === 0) {
-        fieldList = this.doc.quickEditFields;
-      }
+  formFields.value = fieldList.filter(
+    (field) => field && !evaluateHidden(field, props.doc)
+  );
+}
 
-      if (fieldList.length === 0) {
-        fieldList = this.doc.schema.fields.filter((f) => f.required);
-      }
-
-      this.formFields = fieldList.filter(
-        (field) => field && !evaluateHidden(field, this.doc)
-      );
-    },
-  },
+defineExpose({
+  setFormFields,
+  errors,
+  formFields,
 });
 </script>

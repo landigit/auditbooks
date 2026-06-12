@@ -1,14 +1,41 @@
 <script setup lang="ts">
 import { showSidebar } from 'src/utils/refs';
 import { toggleSidebar } from 'src/utils/ui';
+import Sidebar from '../components/Sidebar.vue';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
+
+const props = withDefaults(
+  defineProps<{
+    darkMode?: boolean;
+  }>(),
+  {
+    darkMode: false,
+  }
+);
+
+defineEmits<{
+  (e: 'change-db-file'): void;
+}>();
+
+const { isMobile } = useBreakpoint();
 </script>
 <template>
-  <div class="flex overflow-hidden">
+  <div class="flex overflow-hidden relative">
+    <!-- Dark backdrop on mobile when sidebar is open -->
+    <div
+      v-if="isMobile && showSidebar"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-200"
+      @click="() => toggleSidebar()"
+    />
+
     <Transition name="sidebar">
       <!-- eslint-disable vue/require-explicit-emits -->
       <Sidebar
         v-show="showSidebar"
         class="flex-shrink-0 border-e dark:border-gray-800 whitespace-nowrap w-sidebar"
+        :class="{
+          'absolute inset-y-0 start-0 z-50 shadow-2xl h-full': isMobile
+        }"
         :dark-mode="darkMode"
         @change-db-file="$emit('change-db-file')"
       />
@@ -51,20 +78,7 @@ import { toggleSidebar } from 'src/utils/ui';
     </button>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Sidebar from '../components/Sidebar.vue';
-export default defineComponent({
-  name: 'Desk',
-  components: {
-    Sidebar,
-  },
-  props: {
-    darkMode: { type: Boolean, default: false },
-  },
-  emits: ['change-db-file'],
-});
-</script>
+
 
 <style scoped>
 .sidebar-enter-from,
