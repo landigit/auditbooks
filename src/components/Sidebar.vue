@@ -8,11 +8,9 @@
     <div>
       <!-- Company name -->
       <div
-        class="px-4 flex flex-row justify-between border-b dark:border-gray-800 h-row-largest flex-shrink-0"
+        class="px-4 flex flex-row items-center justify-between border-b dark:border-gray-800 h-row-largest flex-shrink-0"
         :class="
-          platform === 'Mac' && languageDirection === 'ltr'
-            ? 'items-end pb-3'
-            : 'items-center'
+          platform === 'Mac' && languageDirection === 'ltr' ? 'pt-8' : ''
         "
       >
         <h6

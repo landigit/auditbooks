@@ -1,12 +1,8 @@
 <template>
   <div
-    id="app"
-    class="dark:bg-gray-900 h-screen flex flex-col font-sans overflow-hidden antialiased"
+    class="flex flex-col h-screen select-none overflow-hidden"
     :dir="languageDirection"
-    :language="language"
   >
-
-    <!-- Main Contents -->
     <Desk
       v-if="activeScreen === 'Desk'"
       class="flex-1"
@@ -160,7 +156,19 @@ async function fileSelected(filePath: string): Promise<void> {
 
 async function setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
   const company = setupWizardOptions.companyName;
-  const filePath = await invoke<string>('get_db_default_path', { companyName: company });
+
+  // Ask the user where to save the new database file
+  const { getSavePath } = await import('./utils/ui');
+  const { filePath: chosenPath, canceled } = await getSavePath(company, 'db');
+
+  let filePath: string;
+  if (canceled || !chosenPath) {
+    // Fall back to the auto-generated default path in app data dir
+    filePath = await invoke<string>('get_db_default_path', { companyName: company });
+  } else {
+    filePath = chosenPath;
+  }
+
   await setupInstance(filePath, setupWizardOptions, fyo);
   fyo.config.set('lastSelectedFilePath', filePath);
   await setDesk(filePath);
@@ -282,4 +290,3 @@ function getLanguageDirection(languageCode: string): 'rtl' | 'ltr' {
   return RTL_LANGUAGES.includes(languageCode) ? 'rtl' : 'ltr';
 }
 </script>
-

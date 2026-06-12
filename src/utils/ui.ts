@@ -1045,8 +1045,10 @@ export function showExportInFolder(message: string, filePath: string) {
 }
 
 export async function deleteDb(filePath: string) {
+  let deleted = false;
   try {
     await tauriRemove(filePath);
+    deleted = true;
   } catch (err: any) {
     const msg: string = String(err);
     if (msg.includes('busy') || msg.includes('EBUSY')) {
@@ -1056,11 +1058,8 @@ export async function deleteDb(filePath: string) {
         type: 'error',
       });
     } else if (msg.includes('No such file') || msg.includes('ENOENT') || msg.includes('os error 2')) {
-      await showDialog({
-        title: t`Delete Failed`,
-        detail: t`File ${filePath} does not exist.`,
-        type: 'error',
-      });
+      // File is already gone — still remove from config
+      deleted = true;
     } else if (msg.includes('Permission') || msg.includes('EPERM') || msg.includes('os error 5')) {
       await showDialog({
         title: t`Cannot Delete`,
@@ -1072,7 +1071,15 @@ export async function deleteDb(filePath: string) {
       throw e;
     }
   }
+
+  if (deleted) {
+    // Remove the entry from the stored config so the selector refreshes correctly
+    const files = (fyo.config.get('files') ?? []) as Array<{ dbPath: string }>;
+    const updated = files.filter((f) => f.dbPath !== filePath);
+    fyo.config.set('files', updated);
+  }
 }
+
 
 export async function getSelectedFilePath(): Promise<{ filePaths: string[] }> {
   const selected = await tauriOpenDialog({
