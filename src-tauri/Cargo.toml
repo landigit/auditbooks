@@ -29,3 +29,7 @@ tauri-plugin-dialog = "2.7.1"
 tauri-plugin-fs = "2.5.1"
 tauri-plugin-store = "2.4.3"
 tauri-plugin-opener = "2"
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.21"
+ndk-context = "0.1"

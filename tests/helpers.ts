@@ -55,7 +55,6 @@ export function getTestFyo(): Fyo {
     DatabaseDemux: DatabaseManager,
     AuthDemux: DummyAuthDemux,
     isTest: true,
-    isElectron: false,
   });
 }
 

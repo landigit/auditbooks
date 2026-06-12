@@ -30,6 +30,252 @@ pub type SchemaMap = std::collections::HashMap<String, Schema>;
 pub struct DbState {
   pub conn: Mutex<Option<Connection>>,
   pub schema_map: Mutex<Option<SchemaMap>>,
+  pub current_uri: Mutex<Option<String>>,
+  pub local_path: Mutex<Option<String>>,
+}
+
+#[cfg(target_os = "android")]
+fn clear_jni_exception() {
+  let ctx = ndk_context::android_context();
+  if let Ok(vm) = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) } {
+    if let Ok(env) = vm.attach_current_thread() {
+      let _ = env.exception_clear();
+    }
+  }
+}
+
+#[cfg(target_os = "android")]
+fn copy_content_uri_to_local_inner(uri_str: &str) -> Result<String, String> {
+  use jni::objects::JValue;
+  use std::fs::File;
+  use std::io::Write;
+
+  let ctx = ndk_context::android_context();
+  let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) }.map_err(|e| e.to_string())?;
+  let mut env = vm.attach_current_thread().map_err(|e| e.to_string())?;
+  let context = unsafe { jni::objects::JObject::from_raw(ctx.context().cast()) };
+
+  // Parse Uri: Uri.parse(uri_str)
+  let uri_class = env.find_class("android/net/Uri").map_err(|e| e.to_string())?;
+  let j_uri_str = env.new_string(uri_str).map_err(|e| e.to_string())?;
+  let uri = env.call_static_method(
+    &uri_class,
+    "parse",
+    "(Ljava/lang/String;)Landroid/net/Uri;",
+    &[JValue::Object(&j_uri_str)],
+  ).map_err(|e| e.to_string())?.l().map_err(|e| e.to_string())?;
+
+  // Get contentResolver: context.getContentResolver()
+  let resolver = env.call_method(
+    &context,
+    "getContentResolver",
+    "()Landroid/content/ContentResolver;",
+    &[],
+  ).map_err(|e| e.to_string())?.l().map_err(|e| e.to_string())?;
+
+  // Persist permission for this URI (catch and clear SecurityException if it's not persistable)
+  let persist_res = env.call_method(
+    &resolver,
+    "takePersistableUriPermission",
+    "(Landroid/net/Uri;I)V",
+    &[JValue::Object(&uri), JValue::Int(3)], // 3 = FLAG_GRANT_READ_URI_PERMISSION | FLAG_GRANT_WRITE_URI_PERMISSION
+  );
+  if persist_res.is_err() {
+    let _ = env.exception_clear();
+  }
+
+  // Open input stream: resolver.openInputStream(uri)
+  let mut bytes = Vec::new();
+  let input_stream_res = env.call_method(
+    &resolver,
+    "openInputStream",
+    "(Landroid/net/Uri;)Ljava/io/InputStream;",
+    &[JValue::Object(&uri)],
+  );
+
+  if let Ok(val) = input_stream_res {
+    if let Ok(input_stream) = val.l() {
+      if let Ok(j_buffer) = env.new_byte_array(8192) {
+        loop {
+          let read_res = env.call_method(
+            &input_stream,
+            "read",
+            "([B)I",
+            &[JValue::Object(&j_buffer)],
+          );
+          if let Ok(read_val) = read_res {
+            if let Ok(read_bytes) = read_val.i() {
+              if read_bytes <= 0 {
+                break;
+              }
+              let mut temp = vec![0i8; read_bytes as usize];
+              if env.get_byte_array_region(&j_buffer, 0, &mut temp).is_ok() {
+                let u8_temp = unsafe { std::mem::transmute::<Vec<i8>, Vec<u8>>(temp) };
+                bytes.extend_from_slice(&u8_temp);
+              } else {
+                break;
+              }
+            } else {
+              break;
+            }
+          } else {
+            break;
+          }
+        }
+      }
+      let _ = env.call_method(&input_stream, "close", "()V", &[]);
+    }
+  } else {
+    let _ = env.exception_clear();
+  }
+
+  // Get cache dir: context.getCacheDir()
+  let cache_dir = env.call_method(
+    &context,
+    "getCacheDir",
+    "()Ljava/io/File;",
+    &[],
+  ).map_err(|e| e.to_string())?.l().map_err(|e| e.to_string())?;
+
+  // Get cache dir absolute path
+  let cache_path_jstr = env.call_method(
+    &cache_dir,
+    "getAbsolutePath",
+    "()Ljava/lang/String;",
+    &[],
+  ).map_err(|e| e.to_string())?.l().map_err(|e| e.to_string())?;
+  let cache_path: String = env.get_string(&cache_path_jstr.into()).map_err(|e| e.to_string())?.into();
+
+  // Write to resolved_db.db in cache directory
+  let local_path = std::path::Path::new(&cache_path).join("resolved_db.db");
+  let mut file = File::create(&local_path).map_err(|e| e.to_string())?;
+  file.write_all(&bytes).map_err(|e| e.to_string())?;
+
+  Ok(local_path.to_string_lossy().to_string())
+}
+
+#[cfg(target_os = "android")]
+fn copy_content_uri_to_local(uri_str: &str) -> Result<String, String> {
+  let res = copy_content_uri_to_local_inner(uri_str);
+  if res.is_err() {
+    clear_jni_exception();
+  }
+  res
+}
+
+#[cfg(target_os = "android")]
+fn copy_local_to_content_uri_inner(local_path: &str, uri_str: &str) -> Result<(), String> {
+  use jni::objects::JValue;
+  use std::fs::File;
+  use std::io::Read;
+
+  let ctx = ndk_context::android_context();
+  let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) }.map_err(|e| e.to_string())?;
+  let mut env = vm.attach_current_thread().map_err(|e| e.to_string())?;
+  let context = unsafe { jni::objects::JObject::from_raw(ctx.context().cast()) };
+
+  // Read local file bytes
+  let mut file = File::open(local_path).map_err(|e| e.to_string())?;
+  let mut bytes = Vec::new();
+  file.read_to_end(&mut bytes).map_err(|e| e.to_string())?;
+
+  // Parse Uri: Uri.parse(uri_str)
+  let uri_class = env.find_class("android/net/Uri").map_err(|e| e.to_string())?;
+  let j_uri_str = env.new_string(uri_str).map_err(|e| e.to_string())?;
+  let uri = env.call_static_method(
+    &uri_class,
+    "parse",
+    "(Ljava/lang/String;)Landroid/net/Uri;",
+    &[JValue::Object(&j_uri_str)],
+  ).map_err(|e| e.to_string())?.l().map_err(|e| e.to_string())?;
+
+  // Get contentResolver: context.getContentResolver()
+  let resolver = env.call_method(
+    &context,
+    "getContentResolver",
+    "()Landroid/content/ContentResolver;",
+    &[],
+  ).map_err(|e| e.to_string())?.l().map_err(|e| e.to_string())?;
+
+  // Persist permission for this URI (catch and clear SecurityException if it's not persistable)
+  let persist_res = env.call_method(
+    &resolver,
+    "takePersistableUriPermission",
+    "(Landroid/net/Uri;I)V",
+    &[JValue::Object(&uri), JValue::Int(3)], // 3 = FLAG_GRANT_READ_URI_PERMISSION | FLAG_GRANT_WRITE_URI_PERMISSION
+  );
+  if persist_res.is_err() {
+    let _ = env.exception_clear();
+  }
+
+  // Open output stream: resolver.openOutputStream(uri, "rwt")
+  let mode_jstr = env.new_string("rwt").map_err(|e| e.to_string())?;
+  let output_stream = env.call_method(
+    &resolver,
+    "openOutputStream",
+    "(Landroid/net/Uri;Ljava/lang/String;)Ljava/io/OutputStream;",
+    &[JValue::Object(&uri), JValue::Object(&mode_jstr)],
+  ).map_err(|e| e.to_string())?.l().map_err(|e| e.to_string())?;
+
+  // Write bytes in chunks to OutputStream
+  let output_stream_class = env.find_class("java/io/OutputStream").map_err(|e| e.to_string())?;
+  let write_method = env.get_method_id(&output_stream_class, "write", "([BII)V").map_err(|e| e.to_string())?;
+
+  let chunk_size = 8192;
+  for chunk in bytes.chunks(chunk_size) {
+    let j_chunk = env.new_byte_array(chunk.len() as jni::sys::jsize).map_err(|e| e.to_string())?;
+    let i8_chunk = unsafe { std::mem::transmute::<&[u8], &[i8]>(chunk) };
+    env.set_byte_array_region(&j_chunk, 0, i8_chunk).map_err(|e| e.to_string())?;
+    
+    unsafe {
+      env.call_method_unchecked(
+        &output_stream,
+        write_method,
+        jni::signature::ReturnType::Primitive(jni::signature::Primitive::Void),
+        &[JValue::Object(&j_chunk).as_jni(), JValue::Int(0).as_jni(), JValue::Int(chunk.len() as i32).as_jni()],
+      )
+    }.map_err(|e| e.to_string())?;
+  }
+
+  // Flush and close output stream
+  let _ = env.call_method(&output_stream, "flush", "()V", &[]);
+  let _ = env.call_method(&output_stream, "close", "()V", &[]);
+
+  Ok(())
+}
+
+#[cfg(target_os = "android")]
+fn copy_local_to_content_uri(local_path: &str, uri_str: &str) -> Result<(), String> {
+  let res = copy_local_to_content_uri_inner(local_path, uri_str);
+  if res.is_err() {
+    clear_jni_exception();
+  }
+  res
+}
+
+#[cfg(not(target_os = "android"))]
+#[allow(dead_code)]
+fn copy_content_uri_to_local(_uri_str: &str) -> Result<String, String> {
+  Err("Content URIs are only supported on Android".to_string())
+}
+
+#[cfg(not(target_os = "android"))]
+#[allow(dead_code)]
+fn copy_local_to_content_uri(_local_path: &str, _uri_str: &str) -> Result<(), String> {
+  Err("Content URIs are only supported on Android".to_string())
+}
+
+
+fn sync_db_if_needed(_state: &tauri::State<'_, DbState>) -> Result<(), String> {
+  #[cfg(target_os = "android")]
+  {
+    let current_uri_guard = _state.current_uri.lock().map_err(|e| e.to_string())?;
+    let local_path_guard = _state.local_path.lock().map_err(|e| e.to_string())?;
+    if let (Some(uri), Some(path)) = (current_uri_guard.as_ref(), local_path_guard.as_ref()) {
+      copy_local_to_content_uri(path, uri)?;
+    }
+  }
+  Ok(())
 }
 
 fn table_exists(conn: &Connection, table_name: &str) -> bool {
@@ -91,16 +337,19 @@ fn row_to_json(row: &Row) -> rusqlite::Result<Value> {
   Ok(Value::Object(map))
 }
 
+#[allow(dead_code)]
 pub fn row_to_type<T: serde::de::DeserializeOwned>(row: &Row) -> Result<T, String> {
   let val = row_to_json(row).map_err(|e| e.to_string())?;
   serde_json::from_value(val).map_err(|e| e.to_string())
 }
 
+#[allow(dead_code)]
 pub trait ConnectionExt {
   fn query_all_typed<T: serde::de::DeserializeOwned>(&self, sql: &str, params: &[&dyn rusqlite::types::ToSql]) -> Result<Vec<T>, String>;
   fn query_one_typed<T: serde::de::DeserializeOwned>(&self, sql: &str, params: &[&dyn rusqlite::types::ToSql]) -> Result<Option<T>, String>;
 }
 
+#[allow(dead_code)]
 impl ConnectionExt for Connection {
   fn query_all_typed<T: serde::de::DeserializeOwned>(&self, sql: &str, params: &[&dyn rusqlite::types::ToSql]) -> Result<Vec<T>, String> {
     let mut stmt = self.prepare(sql).map_err(|e| e.to_string())?;
@@ -266,13 +515,25 @@ fn get_all(
   let schema = schema_map.get(schema_name).ok_or_else(|| format!("Schema {} not found", schema_name))?;
   let fields_val = options.get("fields");
   
-  let fields_list = if let Some(fields_arr) = fields_val.and_then(|f| f.as_array()) {
-    fields_arr.iter().map(|v| v.as_str().unwrap_or("").to_string()).collect::<Vec<_>>()
+  let mut fields_list = if let Some(fields_arr) = fields_val.and_then(|f| f.as_array()) {
+    fields_arr
+      .iter()
+      .map(|v| v.as_str().unwrap_or("").to_string())
+      .filter(|f| !f.is_empty())
+      .collect::<Vec<_>>()
   } else if let Some(fields_str) = fields_val.and_then(|f| f.as_str()) {
-    vec![fields_str.to_string()]
+    if fields_str.is_empty() {
+      vec![]
+    } else {
+      vec![fields_str.to_string()]
+    }
   } else {
     vec!["name".to_string()]
   };
+
+  if fields_list.is_empty() {
+    fields_list = vec!["*".to_string()];
+  }
 
   let fields_joined = fields_list
     .iter()
@@ -1217,8 +1478,8 @@ fn run_patches(conn: &Connection, _current_version: &str) -> Result<(), String> 
       }
     }
 
-    let cash_acc = cash_accounts.first().map(|s| s.as_str()).unwrap_or("");
-    let bank_acc = bank_accounts.first().map(|s| s.as_str()).unwrap_or("");
+    let cash_acc = cash_accounts.first().map(|s| s.as_str());
+    let bank_acc = bank_accounts.first().map(|s| s.as_str());
     
     let now = chrono::Utc::now().to_rfc3339();
     let payment_methods = vec![
@@ -1236,7 +1497,7 @@ fn run_patches(conn: &Connection, _current_version: &str) -> Result<(), String> 
       if exists == 0 {
         conn.execute(
           "INSERT INTO PaymentMethod (name, type, account, created, modified, createdBy, modifiedBy) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
-          [name, p_type, acc, &now, &now, "__SYSTEM__", "__SYSTEM__"],
+          rusqlite::params![name, p_type, acc, &now, &now, "__SYSTEM__", "__SYSTEM__"],
         ).map_err(|e| e.to_string())?;
       }
     }
@@ -1252,10 +1513,27 @@ pub fn db_connect(
   country_code: Option<String>,
   state: tauri::State<'_, DbState>,
 ) -> Result<Value, String> {
-  let conn = if db_path == ":memory:" {
+  #[allow(unused_mut)]
+  let mut final_db_path = db_path.clone();
+  #[allow(unused_mut)]
+  let mut is_content_uri = false;
+  
+  if db_path.starts_with("content://") {
+    #[cfg(target_os = "android")]
+    {
+      final_db_path = copy_content_uri_to_local(&db_path)?;
+      is_content_uri = true;
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+      return Err("Content URIs are only supported on Android".to_string());
+    }
+  }
+
+  let conn = if final_db_path == ":memory:" {
     Connection::open_in_memory().map_err(|e| e.to_string())?
   } else {
-    Connection::open(&db_path).map_err(|e| e.to_string())?
+    Connection::open(&final_db_path).map_err(|e| e.to_string())?
   };
 
   conn.execute("PRAGMA foreign_keys=ON", []).map_err(|e| e.to_string())?;
@@ -1281,6 +1559,16 @@ pub fn db_connect(
 
   let mut conn_guard = state.conn.lock().map_err(|e| e.to_string())?;
   *conn_guard = Some(conn);
+
+  let mut uri_guard = state.current_uri.lock().map_err(|e| e.to_string())?;
+  let mut path_guard = state.local_path.lock().map_err(|e| e.to_string())?;
+  if is_content_uri {
+    *uri_guard = Some(db_path);
+    *path_guard = Some(final_db_path);
+  } else {
+    *uri_guard = None;
+    *path_guard = None;
+  }
 
   let mut result = Map::new();
   result.insert("countryCode".to_string(), Value::String(country));
@@ -1382,11 +1670,18 @@ pub fn db_migrate(
       if !table_exists {
         let mut col_defs = Vec::new();
         let mut foreign_keys = Vec::new();
+        let mut added_cols = std::collections::HashSet::new();
 
         for field in &schema.fields {
           if field.fieldname.is_empty() || field.computed.unwrap_or(false) || field.fieldtype == "Table" {
             continue;
           }
+
+          let lower_name = field.fieldname.to_lowercase();
+          if added_cols.contains(&lower_name) {
+            continue;
+          }
+          added_cols.insert(lower_name);
 
           let sql_type = get_sqlite_type(&field.fieldtype).unwrap_or("TEXT");
           let mut def = format!("\"{}\" {}", field.fieldname, sql_type);
@@ -1423,13 +1718,16 @@ pub fn db_migrate(
 
         if is_child {
           let child_cols = vec![
-            "\"parent\" TEXT",
-            "\"parentSchemaName\" TEXT",
-            "\"parentFieldname\" TEXT",
-            "\"idx\" INTEGER",
+            ("parent", "\"parent\" TEXT"),
+            ("parentSchemaName", "\"parentSchemaName\" TEXT"),
+            ("parentFieldname", "\"parentFieldname\" TEXT"),
+            ("idx", "\"idx\" INTEGER"),
           ];
-          for cc in child_cols {
-            col_defs.push(cc.to_string());
+          for (col, cc) in child_cols {
+            if !added_cols.contains(&col.to_lowercase()) {
+              col_defs.push(cc.to_string());
+              added_cols.insert(col.to_lowercase());
+            }
           }
         }
 
@@ -1448,7 +1746,7 @@ pub fn db_migrate(
         let mut db_columns = std::collections::HashSet::new();
         while let Some(row) = rows.next().map_err(|e| e.to_string())? {
           let col_name: String = row.get::<_, String>(1).map_err(|e| e.to_string())?;
-          db_columns.insert(col_name);
+          db_columns.insert(col_name.to_lowercase());
         }
 
         for field in &schema.fields {
@@ -1456,7 +1754,8 @@ pub fn db_migrate(
             continue;
           }
 
-          if !db_columns.contains(&field.fieldname) {
+          let lower_name = field.fieldname.to_lowercase();
+          if !db_columns.contains(&lower_name) {
             let sql_type = get_sqlite_type(&field.fieldtype).unwrap_or("TEXT");
             let mut alter_query = format!("ALTER TABLE \"{}\" ADD COLUMN \"{}\" {}", schema_name, field.fieldname, sql_type);
             
@@ -1488,6 +1787,7 @@ pub fn db_migrate(
               alter_query.push_str(&format!(" DEFAULT {}", default_str));
             }
             conn.execute(&alter_query, []).map_err(|e| format!("Alter table {} add column {} failed: {}", schema_name, field.fieldname, e))?;
+            db_columns.insert(lower_name);
           }
         }
 
@@ -1499,9 +1799,11 @@ pub fn db_migrate(
             ("idx", "INTEGER"),
           ];
           for (col, sql_type) in child_cols {
-            if !db_columns.contains(col) {
+            let lower_col = col.to_lowercase();
+            if !db_columns.contains(&lower_col) {
               let alter_query = format!("ALTER TABLE \"{}\" ADD COLUMN \"{}\" {}", schema_name, col, sql_type);
               conn.execute(&alter_query, []).map_err(|e| format!("Alter table {} add child column {} failed: {}", schema_name, col, e))?;
+              db_columns.insert(lower_col);
             }
           }
         }
@@ -1515,7 +1817,12 @@ pub fn db_migrate(
     |row| row.get::<_, String>(0),
   ).unwrap_or_else(|_| "0.0.0".to_string());
 
-  run_patches(conn, &app_version)?;
+  let res = run_patches(conn, &app_version);
+  drop(schema_map_guard);
+  drop(conn_guard);
+  res?;
+
+  let _ = sync_db_if_needed(&state);
 
   Ok(())
 }
@@ -1549,7 +1856,12 @@ pub fn db_insert(
     insert_one(conn, schema, &schema_name, &mut field_value_map)?;
   }
 
-  insert_or_update_children(conn, schema_map, schema, &schema_name, &mut field_value_map, false)?;
+  let res = insert_or_update_children(conn, schema_map, schema, &schema_name, &mut field_value_map, false);
+  drop(schema_map_guard);
+  drop(conn_guard);
+  res?;
+
+  let _ = sync_db_if_needed(&state);
 
   Ok(field_value_map)
 }
@@ -1604,11 +1916,19 @@ pub fn db_get(
     let mut select_fields = Vec::new();
     let mut table_fields = Vec::new();
 
-    let fields_to_query = if let Some(f_val) = fields {
+    let fields_to_query: Vec<String> = if let Some(f_val) = fields {
       if let Some(arr) = f_val.as_array() {
-        arr.iter().map(|v| v.as_str().unwrap_or("").to_string()).collect()
+        arr
+          .iter()
+          .map(|v| v.as_str().unwrap_or("").to_string())
+          .filter(|f| !f.is_empty())
+          .collect()
       } else if let Some(s) = f_val.as_str() {
-        vec![s.to_string()]
+        if s.is_empty() {
+          vec![]
+        } else {
+          vec![s.to_string()]
+        }
       } else {
         vec![]
       }
@@ -1702,7 +2022,12 @@ pub fn db_update(
     update_one(conn, schema, &schema_name, &field_value_map)?;
   }
 
-  insert_or_update_children(conn, schema_map, schema, &schema_name, &mut field_value_map, true)?;
+  let res = insert_or_update_children(conn, schema_map, schema, &schema_name, &mut field_value_map, true);
+  drop(schema_map_guard);
+  drop(conn_guard);
+  res?;
+
+  let _ = sync_db_if_needed(&state);
 
   Ok(())
 }
@@ -1719,7 +2044,14 @@ pub fn db_delete(
   let schema_map_guard = state.schema_map.lock().map_err(|e| e.to_string())?;
   let schema_map = schema_map_guard.as_ref().ok_or("Schema map not set")?;
 
-  delete_doc(conn, schema_map, &schema_name, &name)
+  let res = delete_doc(conn, schema_map, &schema_name, &name);
+  drop(schema_map_guard);
+  drop(conn_guard);
+  res?;
+
+  let _ = sync_db_if_needed(&state);
+
+  Ok(())
 }
 
 #[tauri::command]
@@ -1731,7 +2063,13 @@ pub fn db_delete_all(
   let conn_guard = state.conn.lock().map_err(|e| e.to_string())?;
   let conn = conn_guard.as_ref().ok_or("Database connection not active")?;
 
-  delete_all(conn, &schema_name, &filters)
+  let res = delete_all(conn, &schema_name, &filters);
+  drop(conn_guard);
+  let count = res?;
+
+  let _ = sync_db_if_needed(&state);
+
+  Ok(count)
 }
 
 #[tauri::command]
@@ -1791,17 +2129,28 @@ pub fn db_rename(
   let conn_guard = state.conn.lock().map_err(|e| e.to_string())?;
   let conn = conn_guard.as_ref().ok_or("Database connection not active")?;
 
-  rename_doc(conn, &schema_name, &old_name, &new_name)
+  let res = rename_doc(conn, &schema_name, &old_name, &new_name);
+  drop(conn_guard);
+  res?;
+
+  let _ = sync_db_if_needed(&state);
+
+  Ok(())
 }
 
 #[tauri::command]
 pub fn db_close(
   state: tauri::State<'_, DbState>,
 ) -> Result<(), String> {
+  let _ = sync_db_if_needed(&state);
   let mut conn_guard = state.conn.lock().map_err(|e| e.to_string())?;
   *conn_guard = None;
   let mut schema_map_guard = state.schema_map.lock().map_err(|e| e.to_string())?;
   *schema_map_guard = None;
+  let mut uri_guard = state.current_uri.lock().map_err(|e| e.to_string())?;
+  *uri_guard = None;
+  let mut path_guard = state.local_path.lock().map_err(|e| e.to_string())?;
+  *path_guard = None;
   Ok(())
 }
 

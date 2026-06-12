@@ -5,14 +5,14 @@ import { defineConfig } from 'vite';
 /**
  * This vite config file is used only for dev mode, i.e.
  * to create a serve build modules of the source code
- * which will be rendered by electron.
+ * which will be rendered by Tauri.
  *
  * For building the project, vite is used programmatically
- * see build/scripts/build.mjs for this.
+ * see tauri build commands for details.
  */
 export default () => {
   let port = 6969;
-  let host = '127.0.0.1'; // Changed from 0.0.0.0 — don't expose to LAN
+  let host = process.env.TAURI_DEV_HOST || '127.0.0.1';
   if (process.env.VITE_PORT && process.env.VITE_HOST) {
     port = Number(process.env.VITE_PORT);
     host = process.env.VITE_HOST;
@@ -24,15 +24,12 @@ export default () => {
       port,
       strictPort: true,
       watch: {
-        ignored: ['**/node_modules/**', '**/dist_electron/**'],
+        ignored: ['**/node_modules/**'],
       },
     },
     build: {
       target: 'esnext',
       sourcemap: true,
-    },
-    optimizeDeps: {
-      exclude: ['electron'],
     },
     root: path.resolve(__dirname, './src'),
     plugins: [

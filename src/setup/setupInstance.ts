@@ -49,10 +49,8 @@ export default async function setupInstance(
   await createDefaultNumberSeries(fyo);
   await updateInventorySettings(fyo);
 
-  if (fyo.isElectron) {
-    const { updatePrintTemplates } = await import('src/utils/printTemplates');
-    await updatePrintTemplates(fyo);
-  }
+  const { updatePrintTemplates } = await import('src/utils/printTemplates');
+  await updatePrintTemplates(fyo);
 
   await completeSetup(companyName, fyo);
   if (!Object.keys(fyo.currencySymbols).length) {

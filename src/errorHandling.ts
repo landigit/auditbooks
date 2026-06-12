@@ -37,11 +37,7 @@ export async function sendError(errorLogObj: ErrorLog) {
     more: stringifyCircular(errorLogObj.more),
   };
 
-  if (typeof ipc !== 'undefined' && (ipc as any).desktop) {
-    await ipc.sendError(JSON.stringify(body));
-  } else {
-    console.error('Captured Error:', body);
-  }
+  console.error('Captured Error:', body);
 }
 
 function getToastProps(errorLogObj: ErrorLog) {
@@ -152,11 +148,7 @@ export async function showErrorDialog(title?: string, content?: string) {
   // To be used for  show stopper errors
   title ??= t`Error`;
   content ??= t`Something has gone terribly wrong. Please check the console and raise an issue.`;
-  if (typeof ipc !== 'undefined' && (ipc as any).desktop) {
-    await ipc.showError(title, content);
-  } else {
-    alert(`${title}: ${content}`);
-  }
+  alert(`${title}: ${content}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

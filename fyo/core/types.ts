@@ -25,11 +25,9 @@ export type RawValueMap = Record<string, RawValue | RawValueMap[]>;
  * AuthDemuxConstructor: same as the above but for AuthDemuxBase
  */
 
-export type DatabaseDemuxConstructor = new (
-  isElectron?: boolean
-) => DatabaseDemuxBase;
+export type DatabaseDemuxConstructor = new () => DatabaseDemuxBase;
 
-export type AuthDemuxConstructor = new (isElectron?: boolean) => AuthDemuxBase;
+export type AuthDemuxConstructor = new () => AuthDemuxBase;
 
 export type ConfigMap = {
   files: ConfigFile[];
@@ -48,6 +46,5 @@ export interface ConfigFile {
 export interface FyoConfig {
   DatabaseDemux?: DatabaseDemuxConstructor;
   AuthDemux?: AuthDemuxConstructor;
-  isElectron?: boolean;
   isTest?: boolean;
 }

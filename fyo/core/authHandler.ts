@@ -36,9 +36,9 @@ export class AuthHandler {
     };
 
     if (Demux !== undefined) {
-      this.#demux = new Demux(fyo.isElectron);
+      this.#demux = new Demux();
     } else {
-      this.#demux = new AuthDemux(fyo.isElectron);
+      this.#demux = new AuthDemux();
     }
   }
 

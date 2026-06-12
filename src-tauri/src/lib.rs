@@ -45,6 +45,7 @@ fn get_db_default_path(
 }
 
 #[tauri::command]
+#[allow(unused_variables)]
 fn show_item_in_folder(file_path: String) -> Result<(), String> {
   #[cfg(target_os = "windows")]
   {
@@ -83,8 +84,28 @@ pub fn run() {
     .manage(DbState {
       conn: Mutex::new(None),
       schema_map: Mutex::new(None),
+      current_uri: Mutex::new(None),
+      local_path: Mutex::new(None),
     })
     .setup(|app| {
+      #[cfg(target_os = "android")]
+      {
+        if let Some(window) = app.get_webview_window("main") {
+          let _ = window.with_webview(|webview| {
+            webview.jni_handle().exec(|env, context, _webview| {
+              let vm = env.get_java_vm().expect("Failed to get JavaVM");
+              let vm_ptr = vm.get_java_vm_pointer() as *mut std::ffi::c_void;
+              let ctx_ptr = context.as_raw() as *mut std::ffi::c_void;
+              unsafe {
+                ndk_context::initialize_android_context(vm_ptr, ctx_ptr);
+              }
+            });
+          });
+        }
+      }
+
+
+
       if cfg!(debug_assertions) {
         app.handle().plugin(
           tauri_plugin_log::Builder::default()

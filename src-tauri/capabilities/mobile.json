@@ -1,11 +1,10 @@
 {
-  "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "enables the default permissions",
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile",
+  "description": "enables the mobile permissions",
   "platforms": [
-    "linux",
-    "macOS",
-    "windows"
+    "android",
+    "iOS"
   ],
   "windows": [
     "main"
@@ -28,9 +27,6 @@
     "fs:allow-copy-file",
     "fs:allow-stat",
     "fs:scope-appdata-recursive",
-    "fs:scope-document-recursive",
-    "fs:scope-download-recursive",
-    "fs:scope-temp-recursive",
     "store:allow-get",
     "store:allow-set",
     "store:allow-delete",
@@ -43,8 +39,6 @@
     "store:allow-has",
     "store:allow-reset",
     "store:allow-length",
-    "opener:allow-open-url",
-    "opener:allow-open-path",
-    "opener:allow-reveal-item-in-dir"
+    "opener:allow-open-url"
   ]
 }

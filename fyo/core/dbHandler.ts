@@ -47,9 +47,9 @@ export class DatabaseHandler extends DatabaseBase {
     this.converter = new Converter(this, this.#fyo);
 
     if (Demux !== undefined) {
-      this.#demux = new Demux(fyo.isElectron);
+      this.#demux = new Demux();
     } else {
-      this.#demux = new DatabaseDemux(fyo.isElectron);
+      this.#demux = new DatabaseDemux();
     }
   }
 

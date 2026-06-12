@@ -30,3 +30,9 @@ yarn-error.log*
 #Electron-builder output
 /dist_electron
 log_creds.txt
+
+# Tauri output and targets
+src-tauri/target/
+src-tauri/gen/
+/gen/
+.tauri/

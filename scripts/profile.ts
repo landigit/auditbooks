@@ -10,7 +10,6 @@ async function run() {
     DatabaseDemux: DatabaseManager,
     AuthDemux: DummyAuthDemux,
     isTest: true,
-    isElectron: false,
   });
   const dbPath = getTestDbPath();
 
