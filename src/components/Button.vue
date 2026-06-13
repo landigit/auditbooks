@@ -1,6 +1,6 @@
 <template>
   <button
-    class="rounded-md flex justify-center items-center text-sm"
+    class="flex justify-center items-center text-sm font-medium transition-all duration-100 active:scale-[0.98] focus:outline-none disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
     :disabled="disabled"
     :class="_class"
     v-bind="$attrs"
@@ -38,23 +38,53 @@ export default defineComponent({
   computed: {
     _class() {
       return {
-        'opacity-50 cursor-not-allowed pointer-events-none': this.disabled,
-        'text-white dark:text-black': this.type === 'primary',
-        'bg-black dark:bg-gray-300 dark:font-semibold':
-          this.type === 'primary' && this.background,
-        'text-gray-700 dark:text-gray-200': this.type !== 'primary',
-        'bg-gray-200 dark:bg-gray-900':
-          this.type !== 'primary' && this.background,
+        'btn-primary': this.type === 'primary',
+        'btn-secondary': this.type !== 'primary',
         'h-8': this.background,
         'px-3': this.padding && this.icon,
         'px-6': this.padding && !this.icon,
+        'border-none': !this.background,
       };
     },
   },
 });
 </script>
 <style scoped>
-button:focus {
-  filter: brightness(0.95);
+button {
+  border-radius: 4px;
+}
+
+.btn-primary {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border: 1px solid var(--primary) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.dark .btn-primary:hover {
+  filter: brightness(0.92);
+}
+
+.btn-secondary {
+  background-color: var(--secondary) !important;
+  color: var(--secondary-foreground) !important;
+  border: 1.5px solid var(--border) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:hover {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+  border-color: var(--border) !important;
+}
+
+button.border-none {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 </style>

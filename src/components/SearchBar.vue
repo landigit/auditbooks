@@ -8,7 +8,7 @@
   >
     <feather-icon
       name="search"
-      class="w-4 h-4 text-gray-700 dark:text-gray-300"
+      class="w-4 h-4 text-current"
     />
   </Button>
 
@@ -28,7 +28,7 @@
           autocomplete="off"
           spellcheck="false"
           :placeholder="t`Type to search...`"
-          class="bg-gray-100 dark:bg-gray-800 text-2xl focus:outline-none w-full placeholder-gray-500 text-gray-900 dark:text-gray-100 rounded-md p-3"
+          class="bg-gray-100 dark:bg-gray-800 text-2xl focus:outline-none w-full rounded-md p-3 search-modal-input"
           @keydown.up="up"
           @keydown.down="down"
           @keydown.enter="() => select()"
@@ -61,25 +61,21 @@
           >
             <div class="flex items-center">
               <p
-                :class="
-                  idx === i
-                    ? 'text-gray-900 dark:text-gray-100'
-                    : 'text-gray-700 dark:text-gray-400'
-                "
+                class="search-suggestion-label"
+                :class="idx === i ? 'search-suggestion-label-active' : ''"
                 :style="idx === i ? 'margin-left: -4px' : ''"
               >
                 {{ si.label }}
               </p>
               <p
                 v-if="si.group === 'Docs'"
-                class="text-gray-600 dark:text-gray-400 text-sm ms-3"
+                class="text-sm ms-3 search-suggestion-more"
               >
                 {{ si.more.filter(Boolean).join(', ') }}
               </p>
             </div>
             <p
-              class="text-sm text-end justify-self-end"
-              :class="`text-${groupColorMap[si.group]}-500`"
+              class="text-sm text-end justify-self-end search-suggestion-tag"
             >
               {{
                 si.group === 'Docs' ? si.schemaLabel : groupLabelMap[si.group]
@@ -111,7 +107,7 @@
             </button>
           </div>
           <button
-            class="hover:text-gray-900 dark:hover:text-gray-25 py-0.5 rounded text-gray-700 dark:text-gray-300"
+            class="py-0.5 rounded search-more-filters-btn"
             @click="showMore = !showMore"
           >
             {{ showMore ? t`Less Filters` : t`More Filters` }}
@@ -160,13 +156,13 @@
         </div>
 
         <!-- Keybindings Help -->
-        <div class="flex text-sm text-gray-500 justify-between items-baseline">
+        <div class="flex text-sm justify-between items-baseline search-modal-footer">
           <div class="flex gap-4">
             <p>↑↓ {{ t`Navigate` }}</p>
             <p>↩ {{ t`Select` }}</p>
             <p><span class="tracking-tighter">esc</span> {{ t`Close` }}</p>
             <button
-              class="flex items-center hover:text-gray-800 dark:hover:text-gray-300"
+              class="flex items-center search-footer-help-btn"
               @click="openDocs"
             >
               <feather-icon name="help-circle" class="w-4 h-4 me-1" />
@@ -174,7 +170,7 @@
             </button>
           </div>
 
-          <p v-if="searcher?.numSearches" class="ms-auto">
+          <p v-if="searcher?.numSearches" class="ms-auto search-footer-count">
             {{ t`${suggestions.length} out of ${searcher.numSearches}` }}
           </p>
 
@@ -279,5 +275,45 @@ input[type='search']::-webkit-search-cancel-button,
 input[type='search']::-webkit-search-results-button,
 input[type='search']::-webkit-search-results-decoration {
   display: none;
+}
+.search-modal-input {
+  color: var(--foreground) !important;
+}
+.search-modal-input::placeholder {
+  color: color-mix(in srgb, var(--foreground) 40%, transparent) !important;
+}
+.search-suggestion-label {
+  color: color-mix(in srgb, var(--foreground) 80%, transparent) !important;
+  transition: color 0.1s;
+}
+.search-suggestion-label-active {
+  color: var(--foreground) !important;
+  font-weight: 500 !important;
+}
+.search-suggestion-more {
+  color: color-mix(in srgb, var(--foreground) 50%, transparent) !important;
+}
+.search-suggestion-tag {
+  color: color-mix(in srgb, var(--foreground) 60%, transparent) !important;
+}
+.search-more-filters-btn {
+  color: color-mix(in srgb, var(--foreground) 70%, transparent) !important;
+  transition: color 0.1s;
+}
+.search-more-filters-btn:hover {
+  color: var(--foreground) !important;
+}
+.search-modal-footer {
+  color: color-mix(in srgb, var(--foreground) 75%, transparent) !important;
+}
+.search-footer-help-btn {
+  color: color-mix(in srgb, var(--foreground) 80%, transparent) !important;
+  transition: color 0.1s;
+}
+.search-footer-help-btn:hover {
+  color: var(--foreground) !important;
+}
+.search-footer-count {
+  color: color-mix(in srgb, var(--foreground) 70%, transparent) !important;
 }
 </style>

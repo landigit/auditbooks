@@ -2,7 +2,7 @@
   <div class="text-base flex flex-col overflow-hidden">
     <!-- Title Row -->
     <div
-      class="flex items-center"
+      class="flex items-center list-header-row"
       :style="{
         paddingRight: dataSlice.length > 13 ? 'var(--w-scrollbar)' : '',
       }"

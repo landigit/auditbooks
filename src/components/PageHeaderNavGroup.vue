@@ -3,7 +3,7 @@
     <!-- Hamburger button when sidebar is hidden or on mobile -->
     <a
       v-if="!showSidebar || isMobile"
-      class="nav-link rounded-md rounded-r-none border-r border-white dark:border-gray-850 dark:bg-gray-900 text-gray-700 dark:text-gray-300 cursor-pointer"
+      class="nav-link rounded-md rounded-r-none border-r border-white dark:border-gray-850 dark:bg-gray-900 cursor-pointer header-nav-btn"
       @click="() => toggleSidebar()"
     >
       <feather-icon name="menu" class="w-4 h-4" />
@@ -15,8 +15,8 @@
       class="nav-link border-l border-r border-white dark:border-white dark:border-opacity-10 dark:bg-gray-900"
       :class="
         historyState.back
-          ? 'text-gray-700 dark:text-gray-300 cursor-pointer'
-          : 'text-gray-400 dark:text-gray-700'
+          ? 'cursor-pointer header-nav-btn'
+          : 'header-nav-btn-disabled'
       "
       @click="$router.back()"
     >
@@ -27,8 +27,8 @@
       class="nav-link rounded-md rounded-l-none dark:bg-gray-900"
       :class="
         historyState.forward
-          ? 'text-gray-700 dark:text-gray-400 cursor-pointer'
-          : 'text-gray-400 dark:text-gray-700'
+          ? 'cursor-pointer header-nav-btn'
+          : 'header-nav-btn-disabled'
       "
       @click="$router.forward()"
     >
@@ -66,6 +66,18 @@ onDeactivated(() => {
 <style scoped>
 .nav-link {
   @apply flex items-center bg-gray-200 px-3 h-8;
+}
+.header-nav-btn {
+  color: color-mix(in srgb, var(--foreground) 70%, transparent) !important;
+  transition: color 0.15s;
+}
+.header-nav-btn:hover {
+  color: var(--foreground) !important;
+}
+.header-nav-btn-disabled {
+  color: color-mix(in srgb, var(--foreground) 30%, transparent) !important;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 </style>
 

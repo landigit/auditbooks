@@ -15,7 +15,7 @@
         class="w-4 h-4 text-gray-600 dark:text-gray-400"
       />
     </div>
-    <div v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-2">
+    <div v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-1 md:grid-cols-2">
       <div
         v-for="field of fields"
         :key="field.fieldname"

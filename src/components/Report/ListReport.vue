@@ -5,7 +5,7 @@
       <!--Title Row -->
       <div
         ref="titlerow"
-        class="w-full overflow-x-hidden flex items-center dark:text-gray-25 border-b dark:border-gray-800 px-4"
+        class="w-full overflow-x-hidden flex items-center dark:text-gray-25 border-b dark:border-gray-800 px-4 report-header-row"
         :style="{
           height: `${hconst}px`,
           paddingRight: 'calc(var(--w-scrollbar) + 1rem)',

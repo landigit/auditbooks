@@ -216,3 +216,150 @@ const {
 } = useCommonForm(props);
 </script>
 
+<style scoped>
+/* Custom scoped styling overrides to style legacy form inputs/buttons to match shadcn specs */
+
+/* Set font for all inner text/inputs */
+:deep(.form-control),
+:deep(input),
+:deep(select),
+:deep(textarea),
+:deep(span),
+:deep(div) {
+  font-family: 'Figtree Variable', 'Inter', sans-serif !important;
+}
+
+/* Base custom input wrappers, selects, textareas, AutoComplete, and Link containers styling */
+:deep(input[type="text"]:not(.bg-transparent)),
+:deep(input[type="number"]:not(.bg-transparent)),
+:deep(input[type="date"]:not(.bg-transparent)),
+:deep(input[type="password"]:not(.bg-transparent)),
+:deep(input[type="email"]:not(.bg-transparent)),
+:deep(select),
+:deep(textarea),
+:deep(.border.rounded) {
+  border-radius: 4px !important;
+  border: 1.5px solid var(--border) !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  color: var(--foreground) !important;
+  background-color: var(--background) !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Style the AutoComplete inner input so it sits cleanly and remains transparent without its own border/padding */
+:deep(.border.rounded input.bg-transparent) {
+  border: none !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  font-size: 14px !important;
+  color: var(--foreground) !important;
+  height: auto !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure placeholder text matches shadcn style */
+:deep(input::placeholder),
+:deep(textarea::placeholder) {
+  color: var(--muted-foreground) !important;
+  opacity: 0.8 !important;
+}
+
+/* Focus outline for custom controls wrapper and standard inputs */
+:deep(input:focus:not(.bg-transparent)),
+:deep(select:focus),
+:deep(textarea:focus),
+:deep(.border.rounded:focus-within) {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 15%, transparent) !important;
+  background-color: var(--background) !important;
+}
+
+/* Modern Label design */
+:deep(.control-label),
+:deep(.labelClasses) {
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  color: var(--foreground) !important;
+  margin-bottom: 6px !important;
+  display: inline-block !important;
+}
+
+/* Reset checkbox label layout */
+:deep(label .control-label) {
+  margin-bottom: 0 !important;
+  display: inline-block !important;
+}
+
+/* Table overrides to look clean and modern */
+:deep(table) {
+  border-collapse: collapse !important;
+  width: 100% !important;
+  background-color: var(--background) !important;
+}
+
+:deep(th) {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--muted-foreground) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  padding: 10px 12px !important;
+  border-bottom: 1px solid var(--border) !important;
+  background-color: var(--muted) !important;
+}
+
+:deep(td) {
+  font-size: 14px !important;
+  padding: 10px 12px !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+:deep(.table-header-row) {
+  color: var(--foreground) !important;
+  font-weight: 600 !important;
+}
+
+/* Dropdown suggestion menus styling */
+:deep(.absolute.z-10) {
+  border-radius: 4px !important;
+  border: 1.5px solid var(--border) !important;
+  background-color: var(--popover) !important;
+  color: var(--popover-foreground) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  margin-top: 4px !important;
+  padding: 4px !important;
+}
+
+:deep(.absolute.z-10 li) {
+  border-radius: 3px !important;
+  font-size: 14px !important;
+  padding: 6px 12px !important;
+  color: var(--popover-foreground) !important;
+}
+
+:deep(.absolute.z-10 li:hover) {
+  background-color: var(--accent) !important;
+  color: var(--accent-foreground) !important;
+}
+
+/* Modals & Container styling */
+:deep(.form-card-shadow),
+:deep(.form-card) {
+  border-radius: 0 0 6px 6px !important;
+  border: 1px solid var(--border) !important;
+  border-top: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Rounded buttons */
+:deep(.btn),
+:deep(button) {
+  border-radius: 4px !important;
+}
+
+</style>
+

@@ -83,7 +83,7 @@ export default defineComponent({
       return 'text';
     },
     labelClasses(): string {
-      return 'text-gray-600 dark:text-gray-500 text-sm mb-1';
+      return 'text-gray-600 dark:text-gray-500 text-sm mb-1 control-label';
     },
     inputClasses(): string[] {
       /**

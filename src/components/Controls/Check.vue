@@ -102,10 +102,10 @@ export default defineComponent({
   computed: {
     labelClasses() {
       if (this.labelClass) {
-        return this.labelClass;
+        return this.labelClass + ' control-label';
       }
 
-      return 'text-gray-600 text-base';
+      return 'text-gray-600 text-base control-label';
     },
   },
   methods: {

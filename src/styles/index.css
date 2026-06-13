@@ -1,3 +1,15 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap');
+@import "../../node_modules/tw-animate-css/dist/tw-animate.css";
+@import "shadcn-vue/tailwind.css";
+
+@font-face {
+  font-family: 'Figtree Variable';
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('../assets/fonts/figtree-var.woff2') format('woff2');
+}
+
 @font-face {
   font-family: 'Inter';
   font-weight: 100 900;
@@ -260,3 +272,108 @@ input[type='number']::-webkit-inner-spin-button {
   height: fit-content;
 }
 
+@layer base {
+  .theme {
+    --font-sans: 'Figtree Variable', sans-serif;
+    --font-heading: var(--font-sans);
+  }
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.5 0.134 242.749);
+    --primary-foreground: oklch(0.977 0.013 236.62);
+    --secondary: oklch(0.967 0.001 286.375);
+    --secondary-foreground: oklch(0.21 0.006 285.885);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.828 0.111 230.318);
+    --chart-2: oklch(0.685 0.169 237.323);
+    --chart-3: oklch(0.588 0.158 241.966);
+    --chart-4: oklch(0.5 0.134 242.749);
+    --chart-5: oklch(0.443 0.11 240.79);
+    --radius: 0.45rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.588 0.158 241.966);
+    --sidebar-primary-foreground: oklch(0.977 0.013 236.62);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+  }
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.443 0.11 240.79);
+    --primary-foreground: oklch(0.977 0.013 236.62);
+    --secondary: oklch(0.274 0.006 286.033);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.828 0.111 230.318);
+    --chart-2: oklch(0.685 0.169 237.323);
+    --chart-3: oklch(0.588 0.158 241.966);
+    --chart-4: oklch(0.5 0.134 242.749);
+    --chart-5: oklch(0.443 0.11 240.79);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.685 0.169 237.323);
+    --sidebar-primary-foreground: oklch(0.293 0.066 243.157);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+  }
+  * {
+    border-color: var(--border);
+    outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply font-sans;
+  }
+  .safe-area-top-padding button {
+    transition: color 0.15s, background-color 0.15s;
+  }
+  .safe-area-top-padding button:not([class*="bg-black"]):not([class*="bg-primary"]) {
+    color: var(--foreground) !important;
+  }
+  .safe-area-top-padding .nav-link.text-gray-700,
+  .safe-area-top-padding .nav-link:not(.text-gray-400) {
+    color: var(--foreground) !important;
+  }
+  .safe-area-top-padding .nav-link.text-gray-400 {
+    color: var(--muted-foreground) !important;
+    opacity: 0.5 !important;
+  }
+  .list-header-row,
+  .list-header-row div,
+  .list-header-row span,
+  .report-header-row,
+  .report-header-row div,
+  .report-header-row span {
+    color: var(--foreground) !important;
+    font-weight: 600 !important;
+  }
+}

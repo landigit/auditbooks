@@ -1,6 +1,6 @@
 <template>
   <div v-if="tableFields?.length">
-    <div v-if="showLabel" class="text-gray-600 dark:text-gray-400 text-sm mb-1">
+    <div v-if="showLabel" class="text-gray-600 dark:text-gray-400 text-sm mb-1 control-label">
       {{ df.label }}
     </div>
 
@@ -8,7 +8,7 @@
       <!-- Title Row -->
       <Row
         :ratio="ratio"
-        class="border-b dark:border-gray-800 px-2 text-gray-600 dark:text-gray-400 w-full flex items-center"
+        class="border-b dark:border-gray-800 px-2 text-gray-600 dark:text-gray-400 w-full flex items-center table-header-row"
       >
         <div class="flex items-center ps-2">#</div>
         <div

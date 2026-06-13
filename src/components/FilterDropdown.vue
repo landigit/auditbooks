@@ -12,7 +12,7 @@
         <span class="flex items-center">
           <feather-icon
             name="filter"
-            class="w-4 h-4 text-gray-700 dark:text-gray-400"
+            class="w-4 h-4 text-current"
           />
           <span class="ms-1">
             <template v-if="activeFilterCount > 0">

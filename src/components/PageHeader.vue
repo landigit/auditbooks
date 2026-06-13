@@ -23,7 +23,7 @@
       <PageHeaderNavGroup />
       <h1
         v-if="title"
-        class="text-base md:text-xl font-semibold select-none truncate max-w-[120px] sm:max-w-[200px] md:max-w-none dark:text-white"
+        class="text-base md:text-xl font-semibold select-none truncate max-w-[120px] sm:max-w-[200px] md:max-w-none text-foreground"
         :title="title"
       >
         {{ title }}
