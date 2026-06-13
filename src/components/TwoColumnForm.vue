@@ -166,5 +166,6 @@ defineExpose({
   setFormFields,
   errors,
   formFields,
+  onChange,
 });
 </script>

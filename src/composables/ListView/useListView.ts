@@ -75,16 +75,16 @@ export function useListView(props: { schemaName: string; filters?: Record<string
     docsPathRef.value =
       docsPathMap[props.schemaName] ?? docsPathMap.Entries ?? '';
 
-    if (fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.lv = {
-        listConfig: listConfig.value,
-        openExportModal: openExportModal.value,
-        listFilters: listFilters.value,
-        isSelectionMode: isSelectionMode.value,
-        selectedItems: selectedItems.value,
-      };
-    }
+    // @ts-ignore
+    window.lv = {
+      listConfig: listConfig.value,
+      openExportModal: openExportModal.value,
+      listFilters: listFilters.value,
+      isSelectionMode: isSelectionMode.value,
+      selectedItems: selectedItems.value,
+      filterDropdownRef,
+      listRef,
+    };
 
     setShortcuts();
   });

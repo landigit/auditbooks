@@ -175,6 +175,8 @@ export function useImportWizard() {
       ModelNameEnum.Payment,
       ModelNameEnum.Party,
       ModelNameEnum.Item,
+      ModelNameEnum.ItemGroup,
+      ModelNameEnum.UOM,
       ModelNameEnum.JournalEntry,
       ModelNameEnum.Tax,
       ModelNameEnum.Account,
@@ -469,9 +471,20 @@ export function useImportWizard() {
       setLoadingStatus(doneCount, importer.value.docs.length);
       const oldName = doc.name ?? '';
       try {
-        await doc.sync();
-        if (shouldSubmit) {
-          await doc.submit();
+        const exists = doc.name ? await fyo.db.exists(doc.schemaName, doc.name) : false;
+        if (exists && doc.name) {
+          const existingDoc = await fyo.doc.getDoc(doc.schemaName, doc.name);
+          const data = doc.getValidDict(true, true);
+          await existingDoc.set(data);
+          await existingDoc.sync();
+          if (shouldSubmit) {
+            await existingDoc.submit();
+          }
+        } else {
+          await doc.sync();
+          if (shouldSubmit) {
+            await doc.submit();
+          }
         }
         doneCount += 1;
 

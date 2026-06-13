@@ -139,3 +139,38 @@ pub fn run() {
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
+
+#[cfg(test)]
+mod tests {
+  use std::process::Command;
+
+  #[test]
+  fn test_frontend_vitest() {
+    let output = if cfg!(target_os = "windows") {
+      Command::new("powershell")
+        .args(["-ExecutionPolicy", "Bypass", "-Command", "pnpm test"])
+        .current_dir("../")
+        .output()
+        .expect("Failed to execute vitest process on Windows")
+    } else {
+      Command::new("pnpm")
+        .arg("test")
+        .current_dir("../")
+        .output()
+        .expect("Failed to execute vitest process on Unix")
+    };
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+
+    println!("Vitest stdout:\n{}", stdout);
+    println!("Vitest stderr:\n{}", stderr);
+
+    assert!(
+      output.status.success(),
+      "Vitest frontend tests failed!\nSTDOUT:\n{}\nSTDERR:\n{}",
+      stdout,
+      stderr
+    );
+  }
+}

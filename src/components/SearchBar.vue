@@ -244,7 +244,7 @@ const {
 } = useSearch(input);
 
 onMounted(() => {
-  if (fyo.store.isDevelopment) {
+  if (fyo.store.isDevelopment || (window as any).isTestEnv) {
     // @ts-ignore
     window.search = {
       idx,

@@ -191,6 +191,9 @@ export function getErrorHandledSync<T extends (...args: any[]) => any>(
 function getFeatureFlags(): string[] {
   const getBooleanFields = (docName: string) => {
     const doc = fyo.singles[docName];
+    if (!doc) {
+      return {};
+    }
 
     return Object.entries(doc as Doc).reduce((acc, [key, value]) => {
       const fieldsArray = fyo.schemaMap[docName]?.fields ?? [];

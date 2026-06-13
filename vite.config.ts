@@ -30,6 +30,25 @@ export default () => {
     build: {
       target: 'esnext',
       sourcemap: true,
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
+                return 'vendor-vue';
+              }
+              if (id.includes('lodash') || id.includes('luxon')) {
+                return 'vendor-utils';
+              }
+              if (id.includes('codemirror') || id.includes('@codemirror')) {
+                return 'vendor-codemirror';
+              }
+              return 'vendor';
+            }
+          }
+        }
+      }
     },
     root: path.resolve(__dirname, './src'),
     plugins: [

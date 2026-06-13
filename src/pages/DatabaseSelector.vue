@@ -11,7 +11,7 @@
       :class="isMobile ? 'h-screen w-screen' : 'w-form shadow-lg rounded-lg border dark:border-gray-800 h-[700px]'"
     >
       <!-- Welcome to Frappe Books -->
-      <div class="px-4 py-4">
+      <div class="px-4 py-4 safe-area-top-padding">
         <h1 class="text-2xl font-semibold select-none dark:text-gray-25">
           {{ t`Welcome to Frappe Books` }}
         </h1>
@@ -155,7 +155,7 @@
 
       <!-- Language Selector -->
       <div
-        class="w-full flex justify-between items-center p-4 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-875 flex-shrink-0"
+        class="w-full flex justify-between items-center p-4 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-875 flex-shrink-0 safe-area-bottom-padding"
       >
         <LanguageSelector v-show="!creatingDemo" class="text-sm w-28" />
         <button

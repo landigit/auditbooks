@@ -439,33 +439,46 @@ fn apply_filters(
         } else {
           query_str.push_str(&format!("\"{}\" IS NOT NULL", field));
         }
-      } else if op == "in" {
-        if cmp_val.is_array() {
-          let list = cmp_val.as_array().unwrap();
-          if list.is_empty() {
+      } else if op == "in" || op == "not in" {
+        let list = if cmp_val.is_array() {
+          cmp_val.as_array().unwrap().clone()
+        } else {
+          vec![cmp_val.clone()]
+        };
+        if list.is_empty() {
+          if op == "in" {
             query_str.push_str("0");
           } else {
-            let includes_null = list.iter().any(|item| item.is_null());
-            let non_null_items: Vec<_> = list.iter().filter(|item| !item.is_null()).collect();
-
-            if includes_null && non_null_items.is_empty() {
-              query_str.push_str(&format!("\"{}\" IS NULL", field));
-            } else {
-              let mut in_parts = Vec::new();
-              for item in non_null_items {
-                in_parts.push("?");
-                params.push(val_to_tosql(item)?);
-              }
-              let in_clause = in_parts.join(", ");
-              if includes_null {
-                query_str.push_str(&format!("(\"{}\" IN ({}) OR \"{}\" IS NULL)", field, in_clause, field));
-              } else {
-                query_str.push_str(&format!("\"{}\" IN ({})", field, in_clause));
-              }
-            }
+            query_str.push_str("1");
           }
         } else {
-          return Err("in operator requires an array value".to_string());
+          let includes_null = list.iter().any(|item| item.is_null());
+          let non_null_items: Vec<_> = list.iter().filter(|item| !item.is_null()).collect();
+
+          if includes_null && non_null_items.is_empty() {
+            if op == "in" {
+              query_str.push_str(&format!("\"{}\" IS NULL", field));
+            } else {
+              query_str.push_str(&format!("\"{}\" IS NOT NULL", field));
+            }
+          } else {
+            let mut in_parts = Vec::new();
+            for item in non_null_items {
+              in_parts.push("?");
+              params.push(val_to_tosql(item)?);
+            }
+            let in_clause = in_parts.join(", ");
+            let sql_op = if op == "in" { "IN" } else { "NOT IN" };
+            if includes_null {
+              if op == "in" {
+                query_str.push_str(&format!("(\"{}\" IN ({}) OR \"{}\" IS NULL)", field, in_clause, field));
+              } else {
+                query_str.push_str(&format!("(\"{}\" NOT IN ({}) AND \"{}\" IS NOT NULL)", field, in_clause, field));
+              }
+            } else {
+              query_str.push_str(&format!("\"{}\" {} ({})", field, sql_op, in_clause));
+            }
+          }
         }
       } else {
         let mut final_val = cmp_val.clone();

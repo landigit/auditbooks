@@ -4,6 +4,7 @@ node_modules
 /dist/
 src/dist/
 /notebook
+*landigit/
 
 # local env files
 .env
@@ -33,6 +34,13 @@ log_creds.txt
 
 # Tauri output and targets
 src-tauri/target/
-src-tauri/gen/
-/gen/
 .tauri/
+
+# Mobile build cache and artifacts
+src-tauri/gen/android/.gradle/
+src-tauri/gen/android/build/
+src-tauri/gen/android/app/build/
+src-tauri/gen/android/local.properties
+src-tauri/gen/android/.idea/
+src-tauri/gen/apple/
+*.pyc

@@ -50,7 +50,7 @@
           >{{ t`Cancel` }}</Button
         >
         <Button
-          v-if="fyo.store.isDevelopment && !loading"
+          v-if="!loading"
           class="w-24 ml-auto mr-4 border dark:border-gray-800"
           :disabled="loading"
           @click="fill"
@@ -136,21 +136,19 @@ onMounted(async () => {
     await fyo.db.init();
   }
 
-  if (fyo.store.isDevelopment) {
-    // @ts-ignore
-    window.sw = {
-      docOrNull,
-      errors,
-      loading,
-      hasDoc,
-      doc,
-      areAllValuesFilled,
-      activeGroup,
-      fill,
-      submit,
-      cancel,
-    };
-  }
+  // @ts-ignore
+  window.sw = {
+    docOrNull,
+    errors,
+    loading,
+    hasDoc,
+    doc,
+    areAllValuesFilled,
+    activeGroup,
+    fill,
+    submit,
+    cancel,
+  };
   fyo.telemetry.log(Verb.Started, ModelNameEnum.SetupWizard);
 });
 

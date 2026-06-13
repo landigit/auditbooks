@@ -22,7 +22,7 @@ export async function getPOSOpeningShiftDoc(
     fields: ['name'],
   });
 
-  if (!fyo.singles.POSSettings?.isShiftOpen || !existingShiftDoc) {
+  if (!fyo.singles.POSSettings?.isShiftOpen || !existingShiftDoc || !existingShiftDoc.length) {
     return fyo.doc.getNewDoc(ModelNameEnum.POSOpeningShift) as POSOpeningShift;
   }
 

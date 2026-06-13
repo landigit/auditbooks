@@ -548,16 +548,19 @@ function getAllCSSAsStyleElem() {
 
 export async function updatePrintTemplates(fyo: Fyo) {
   // In Tauri, load templates from bundled assets (served at /templates/)
-  let templateFiles: TemplateFile[] = [];
+  // index.json contains metadata (file, modified, width, height) but NOT the HTML body.
+  // Each template's HTML is fetched individually from /templates/<file>.
+  type TemplateIndexEntry = Omit<TemplateFile, 'template'>;
+  let templateIndex: TemplateIndexEntry[] = [];
   try {
     const response = await fetch('/templates/index.json');
-    if (response.ok) {
-      templateFiles = await response.json() as TemplateFile[];
-    }
+    if (!response.ok) return;
+    templateIndex = (await response.json()) as TemplateIndexEntry[];
   } catch {
     // No template index — skip update
     return;
   }
+
   const existingTemplates = (await fyo.db.getAll(ModelNameEnum.PrintTemplate, {
     fields: ['name', 'modified'],
     filters: { isCustom: false },
@@ -568,38 +571,54 @@ export async function updatePrintTemplates(fyo: Fyo) {
     'name',
     'modified'
   );
-
-  const updateList: TemplateUpdateItem[] = [];
-  for (const templateFile of templateFiles) {
-    const updates = getPrintTemplateUpdateList(
-      templateFile,
-      nameModifiedMap,
-      fyo
-    );
-
-    updateList.push(...updates);
-  }
-
   const isLogging = fyo.store.skipTelemetryLogging;
   fyo.store.skipTelemetryLogging = true;
-  for (const { name, type, template, width, height } of updateList) {
-    const doc = await getDocFromNameIfExistsElseNew(
-      ModelNameEnum.PrintTemplate,
-      name
-    );
 
-    const updateData = {
-      name,
-      type,
-      template,
-      isCustom: false,
-      ...(width ? { width } : {}),
-      ...(height ? { height } : {}),
-    };
+  for (const { file, modified: modifiedString, width, height } of templateIndex) {
+    const dbModified = new Date(modifiedString);
+    const candidates = getNameAndTypeFromTemplateFile(file, fyo);
 
-    await doc.set(updateData);
-    await doc.sync();
+    // Check if any candidate needs updating
+    const needsUpdate = candidates.some(({ name }) => {
+      const fileModified = nameModifiedMap[name];
+      return !fileModified || dbModified.valueOf() > fileModified.valueOf();
+    });
+
+    if (!needsUpdate) continue;
+
+    // Fetch the HTML content of this template file
+    let template: string;
+    try {
+      const res = await fetch(`/templates/${file}`);
+      if (!res.ok) continue;
+      template = await res.text();
+    } catch {
+      continue;
+    }
+
+    for (const { name, type } of candidates) {
+      const fileModified = nameModifiedMap[name];
+      if (fileModified && dbModified.valueOf() <= fileModified.valueOf()) {
+        continue;
+      }
+
+      const doc = await getDocFromNameIfExistsElseNew(
+        ModelNameEnum.PrintTemplate,
+        name
+      );
+
+      await doc.set({
+        name,
+        type,
+        template,
+        isCustom: false,
+        ...(width ? { width } : {}),
+        ...(height ? { height } : {}),
+      });
+      await doc.sync();
+    }
   }
+
   fyo.store.skipTelemetryLogging = isLogging;
 }
 

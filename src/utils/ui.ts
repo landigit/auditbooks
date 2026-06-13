@@ -1062,13 +1062,18 @@ export async function deleteDb(filePath: string) {
       deleted = true;
     } else if (msg.includes('Permission') || msg.includes('EPERM') || msg.includes('os error 5')) {
       await showDialog({
-        title: t`Cannot Delete`,
-        detail: t`Close Frappe Books and try manually.`,
-        type: 'error',
+        title: t`Cannot Delete File`,
+        detail: t`The file on disk could not be deleted. It will be removed from your recent list.`,
+        type: 'warning',
       });
+      deleted = true;
     } else {
-      const e = new BaseError(500, msg);
-      throw e;
+      await showDialog({
+        title: t`Delete Failed`,
+        detail: t`Could not delete the file. It will be removed from your recent list.`,
+        type: 'warning',
+      });
+      deleted = true;
     }
   }
 
@@ -1097,6 +1102,10 @@ export async function getSelectedFilePath(): Promise<{ filePaths: string[] }> {
 }
 
 export async function getSavePath(name: string, extention: string) {
+  if ((window as any).isTestEnv) {
+    return { canceled: true, filePath: undefined };
+  }
+
   const filePath = await tauriSaveDialog({
     title: t`Select folder`,
     defaultPath: `${name}.${extention}`,

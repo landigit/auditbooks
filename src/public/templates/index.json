@@ -1,0 +1,38 @@
+[
+  {
+    "file": "Basic.template.html",
+    "modified": "2026-06-13T10:00:00Z",
+    "width": 21.0,
+    "height": 29.7
+  },
+  {
+    "file": "Business.template.html",
+    "modified": "2026-06-13T10:00:00Z",
+    "width": 21.0,
+    "height": 29.7
+  },
+  {
+    "file": "Business-POS.template.html",
+    "modified": "2026-06-13T10:00:00Z",
+    "width": 8.0,
+    "height": 20.0
+  },
+  {
+    "file": "Business.Payment.template.html",
+    "modified": "2026-06-13T10:00:00Z",
+    "width": 21.0,
+    "height": 29.7
+  },
+  {
+    "file": "Business.Shipment.template.html",
+    "modified": "2026-06-13T10:00:00Z",
+    "width": 21.0,
+    "height": 29.7
+  },
+  {
+    "file": "Minimal.template.html",
+    "modified": "2026-06-13T10:00:00Z",
+    "width": 21.0,
+    "height": 29.7
+  }
+]

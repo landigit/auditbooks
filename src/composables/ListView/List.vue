@@ -360,6 +360,7 @@ onUnmounted(() => {
 
 defineExpose({
   updateData,
+  data,
 });
 </script>
 

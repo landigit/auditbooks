@@ -237,7 +237,7 @@ provide('transferClearanceDate', computed(() => transferClearanceDate.value));
 provide('posSettings', computed(() => fyo.singles.POSSettings));
 
 onMounted(() => {
-  if (fyo.store.isDevelopment) {
+  if (fyo.store.isDevelopment || (window as any).isTestEnv) {
     // @ts-ignore
     window.pos = {
       tableView,

@@ -132,10 +132,6 @@ function setErrorHandlers(app: VueApp) {
 }
 
 function setOnWindow(isDevelopment: boolean) {
-  if (!isDevelopment) {
-    return;
-  }
-
   // @ts-ignore
   window.router = router;
   // @ts-ignore

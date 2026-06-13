@@ -243,19 +243,17 @@ export function useCommonForm(props: { name: string; schemaName: string }) {
 
   onMounted(async () => {
     useFullWidth.value = !!fyo.singles.Misc?.useFullWidth;
-    if (fyo.store.isDevelopment) {
-      // @ts-ignore
-      window.cf = {
-        errors,
-        activeTab,
-        groupedFields,
-        isPrintable: isPrintableVal,
-        showLinks,
-        useFullWidth,
-        row,
-        docOrNull,
-      };
-    }
+    // @ts-ignore
+    window.cf = {
+      errors,
+      activeTab,
+      groupedFields,
+      isPrintable: isPrintableVal,
+      showLinks,
+      useFullWidth,
+      row,
+      docOrNull,
+    };
     await setDoc();
     replacePathAfterSync();
     updateGroupedFields();

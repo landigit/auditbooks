@@ -510,14 +510,38 @@ export default class DatabaseCore extends DatabaseBase {
 
       if (operator === '=') {
         builder[type](field, comparisonValue);
-      } else if (
-        operator === 'in' &&
-        (comparisonValue as (string | null)[]).includes(null)
-      ) {
-        const nonNulls = (comparisonValue as (string | null)[]).filter(
-          Boolean
-        ) as string[];
-        builder[type](field, operator, nonNulls).orWhere(field, null);
+      } else if (operator === 'in') {
+        const list = Array.isArray(comparisonValue)
+          ? comparisonValue
+          : [comparisonValue];
+        if (list.includes(null)) {
+          const nonNulls = list.filter(Boolean) as string[];
+          if (type === 'where') {
+            builder.where(function () {
+              this.whereIn(field, nonNulls).orWhereNull(field);
+            });
+          } else {
+            builder.andWhere(function () {
+              this.whereIn(field, nonNulls).orWhereNull(field);
+            });
+          }
+        } else {
+          const method = type === 'where' ? 'whereIn' : 'whereIn';
+          if (type === 'where') {
+            builder.whereIn(field, list as string[]);
+          } else {
+            builder.whereIn(field, list as string[]);
+          }
+        }
+      } else if (operator === 'not in') {
+        const list = Array.isArray(comparisonValue)
+          ? comparisonValue
+          : [comparisonValue];
+        if (type === 'where') {
+          builder.whereNotIn(field, list as string[]);
+        } else {
+          builder.whereNotIn(field, list as string[]);
+        }
       } else {
         builder[type](field, operator as string, comparisonValue as string);
       }

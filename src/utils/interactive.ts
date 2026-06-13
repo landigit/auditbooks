@@ -10,6 +10,14 @@ export async function showDialog<DO extends DialogOptions>(options: DO) {
     { label: t`Okay`, action: () => null, isEscape: true },
   ];
 
+  if ((window as any).isTestEnv) {
+    const primaryButton = preWrappedButtons.find((b) => b.isPrimary) || preWrappedButtons[0];
+    if (primaryButton) {
+      return await primaryButton.action();
+    }
+    return null;
+  }
+
   const resultPromise = new Promise((resolve, reject) => {
     const buttons = preWrappedButtons.map((config) => {
       return {
