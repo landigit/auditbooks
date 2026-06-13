@@ -23,7 +23,7 @@
         @input="(e) => !isReadOnly && $emit('input', e)"
       />
     </div>
-    <div v-if="showLabel" :class="labelClasses">
+    <div v-if="showLabel && df?.sub_label" :class="labelClasses">
       {{ df?.sub_label }}
     </div>
   </div>
@@ -71,7 +71,10 @@ export default defineComponent({
   computed: {
     doc(): Doc | undefined {
       // @ts-ignore
-      const doc = this.injectedDoc;
+      let doc = this.injectedDoc;
+      if (doc && typeof doc === 'object' && 'value' in doc) {
+        doc = doc.value;
+      }
 
       if (doc instanceof Doc) {
         return doc;
@@ -83,7 +86,7 @@ export default defineComponent({
       return 'text';
     },
     labelClasses(): string {
-      return 'text-gray-600 dark:text-gray-500 text-sm mb-1 control-label';
+      return 'text-foreground text-sm font-normal mb-1 control-label';
     },
     inputClasses(): string[] {
       /**

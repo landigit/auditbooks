@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full overflow-hidden">
     <PageHeader :title="title">
       <Button
         v-if="

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white dark:bg-gray-850 overflow-y-auto custom-scroll custom-scroll-thumb2"
+    class="bg-white dark:bg-gray-850 overflow-y-auto"
     :class="isMobile ? 'w-full h-full fixed inset-0 z-50' : 'w-quick-edit border-l dark:border-gray-800'"
   >
     <!-- Page Header -->
@@ -12,7 +12,7 @@
         <Button :icon="true" @click="$emit('close')">
           <feather-icon name="x" class="w-4 h-4" />
         </Button>
-        <p class="text-xl font-semibold text-gray-600 dark:text-gray-400">
+        <p class="text-xl font-semibold linked-title">
           {{ t`Linked Entries` }}
         </p>
       </div>
@@ -21,7 +21,7 @@
     <!-- Linked Entry List -->
     <div
       v-if="sequence.length"
-      class="w-full overflow-y-auto custom-scroll custom-scroll-thumb2"
+      class="w-full overflow-y-auto"
     >
       <div
         v-for="sn of sequence"
@@ -35,7 +35,7 @@
           @click="entries[sn].collapsed = !entries[sn].collapsed"
         >
           <h2
-            class="text-base text-gray-600 dark:text-gray-400 font-semibold select-none"
+            class="text-base font-semibold select-none linked-group-title"
           >
             {{ fyo.schemaMap[sn]?.label ?? sn
             }}<span class="font-normal">{{
@@ -44,7 +44,7 @@
           </h2>
           <feather-icon
             :name="entries[sn].collapsed ? 'chevron-up' : 'chevron-down'"
-            class="w-4 h-4 text-gray-600 dark:text-gray-400"
+            class="w-4 h-4 linked-group-chevron"
           />
         </div>
 
@@ -62,12 +62,12 @@
           >
             <div class="flex justify-between">
                <!-- Name -->
-              <p class="font-semibold dark:text-gray-25">
+              <p class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
                 {{ e.name }}
               </p>
 
               <!-- Date -->
-              <p v-if="e.date" class="text-xs text-gray-600 dark:text-gray-400">
+              <p v-if="e.date" class="text-xs linked-entry-date">
                 {{ fyo.format(e.date, 'Date') }}
               </p>
             </div>
@@ -76,31 +76,50 @@
               <p
                 v-if="isPesa(e.credit) && e.credit.isPositive()"
                 class="pill"
-                :class="colorClass('gray')"
+                :class="colorClass('green')"
               >
                 {{ t`Cr. ${fyo.format(e.credit, 'Currency')}` }}
               </p>
               <p
                 v-else-if="isPesa(e.debit) && e.debit.isPositive()"
                 class="pill"
-                :class="colorClass('gray')"
+                :class="colorClass('red')"
               >
                 {{ t`Dr. ${fyo.format(e.debit, 'Currency')}` }}
               </p>
 
-              <!-- Party or EntryType or Account -->
+              <!-- Party (Customer / Supplier / Party) -->
               <p
-                v-if="e.party || e.entryType || e.account"
+                v-if="e.party"
                 class="pill"
-                :class="colorClass('gray')"
+                :class="colorClass('yellow')"
               >
-                {{ e.party || e.entryType || e.account }}
+                {{ e.party }}
               </p>
 
-              <p v-if="e.item" class="pill" :class="colorClass('gray')">
+              <!-- EntryType or Account -->
+              <p
+                v-else-if="e.entryType || e.account"
+                class="pill"
+                :class="colorClass(
+                  String(e.entryType || e.account).toLowerCase().includes('debtor') || 
+                  String(e.entryType || e.account).toLowerCase().includes('cash') 
+                    ? 'yellow' 
+                    : (String(e.entryType || e.account).toLowerCase().includes('sgst') || 
+                       String(e.entryType || e.account).toLowerCase().includes('cgst') ||
+                       String(e.entryType || e.account).toLowerCase().includes('igst') ||
+                       String(e.entryType || e.account).toLowerCase().includes('gst'))
+                    ? 'purple'
+                    : 'teal'
+                )"
+              >
+                {{ e.entryType || e.account }}
+              </p>
+
+              <p v-if="e.item" class="pill" :class="colorClass('yellow')">
                 {{ e.item }}
               </p>
-              <p v-if="e.location" class="pill" :class="colorClass('gray')">
+              <p v-if="e.location" class="pill" :class="colorClass('indigo')">
                 {{ e.location }}
               </p>
 
@@ -152,7 +171,7 @@
         </div>
       </div>
     </div>
-    <p v-else class="p-4 text-sm text-gray-600 dark:text-gray-400">
+    <p v-else class="p-4 text-sm linked-empty-text">
       {{ t`No linked entries found` }}
     </p>
   </div>
@@ -306,5 +325,24 @@ const linkEntryDisplayFields: Record<string, string[]> = {
 <style scoped>
 .pill-container:empty {
   display: none;
+}
+.linked-title {
+  color: var(--foreground) !important;
+}
+.linked-group-title {
+  color: var(--foreground) !important;
+}
+.linked-group-chevron {
+  color: color-mix(in srgb, var(--foreground) 70%, transparent) !important;
+  transition: color 0.15s;
+}
+.linked-group-chevron:hover {
+  color: var(--foreground) !important;
+}
+.linked-entry-date {
+  color: color-mix(in srgb, var(--foreground) 60%, transparent) !important;
+}
+.linked-empty-text {
+  color: color-mix(in srgb, var(--foreground) 60%, transparent) !important;
 }
 </style>

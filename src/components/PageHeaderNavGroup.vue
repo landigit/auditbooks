@@ -1,9 +1,9 @@
 <template>
-  <div class="flex items-center">
+  <div class="flex items-center -space-x-px">
     <!-- Hamburger button when sidebar is hidden or on mobile -->
     <a
       v-if="!showSidebar || isMobile"
-      class="nav-link rounded-md rounded-r-none border-r border-white dark:border-gray-850 dark:bg-gray-900 cursor-pointer header-nav-btn"
+      class="nav-link rounded-l-md cursor-pointer header-nav-btn"
       @click="() => toggleSidebar()"
     >
       <feather-icon name="menu" class="w-4 h-4" />
@@ -12,7 +12,7 @@
     <!-- Back Button -->
     <a
       ref="backlink"
-      class="nav-link border-l border-r border-white dark:border-white dark:border-opacity-10 dark:bg-gray-900"
+      class="nav-link"
       :class="
         historyState.back
           ? 'cursor-pointer header-nav-btn'
@@ -24,7 +24,7 @@
     </a>
     <!-- Forward Button -->
     <a
-      class="nav-link rounded-md rounded-l-none dark:bg-gray-900"
+      class="nav-link rounded-r-md"
       :class="
         historyState.forward
           ? 'cursor-pointer header-nav-btn'
@@ -65,7 +65,20 @@ onDeactivated(() => {
 
 <style scoped>
 .nav-link {
-  @apply flex items-center bg-gray-200 px-3 h-8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  background-color: var(--secondary) !important;
+  border: 1.5px solid var(--border) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 100ms ease-in-out;
+}
+.nav-link:hover:not(.header-nav-btn-disabled) {
+  background-color: var(--accent) !important;
+  border-color: var(--border) !important;
 }
 .header-nav-btn {
   color: color-mix(in srgb, var(--foreground) 70%, transparent) !important;
@@ -75,7 +88,8 @@ onDeactivated(() => {
   color: var(--foreground) !important;
 }
 .header-nav-btn-disabled {
-  color: color-mix(in srgb, var(--foreground) 30%, transparent) !important;
+  color: color-mix(in srgb, var(--foreground) 25%, transparent) !important;
+  opacity: 0.5;
   cursor: not-allowed !important;
   pointer-events: none;
 }

@@ -1,73 +1,81 @@
 <template>
   <div
-    class="grid grid-cols-3 text-gray-800 dark:text-gray-100 text-sm select-none items-center"
-    style="height: 50px"
+    class="flex flex-row flex-nowrap items-center gap-4 text-foreground text-sm select-none min-h-[50px] py-2 w-full"
+    :class="hideCountSelector ? 'justify-center gap-6' : 'justify-between'"
   >
-    <!-- Length Display -->
-    <div class="justify-self-start">
-      {{
-        `${(pageNo - 1) * count + 1} - ${Math.min(pageNo * count, itemCount)}`
-      }}
+    <!-- Left Section: Length Display & Count Selector Unified -->
+    <div :class="hideCountSelector ? 'flex-shrink-0 flex items-center' : 'flex-1 flex justify-start min-w-[280px]'">
+      <div
+        class="border border-gray-200 dark:border-gray-800 bg-background rounded-md flex items-center px-3 h-8 shadow-sm text-sm gap-3"
+      >
+        <span class="text-muted-foreground font-medium whitespace-nowrap">
+          {{ `${(pageNo - 1) * count + 1} - ${Math.min(pageNo * count, itemCount)}` }}
+          <span class="text-xs text-muted-foreground/60 ms-1">
+            {{ t`of` }} {{ itemCount }}
+          </span>
+        </span>
+        <template v-if="filteredCounts.length && !hideCountSelector">
+          <div class="h-4 w-[1px] bg-gray-200 dark:bg-gray-800"></div>
+          <div class="flex items-center gap-0.5">
+            <button
+              v-for="c in filteredCounts"
+              :key="c + '-count'"
+              class="h-6 px-2.5 text-xs font-semibold rounded transition-all duration-150"
+              :class="
+                count === c || (count === itemCount && c === -1)
+                  ? 'bg-gray-100 dark:bg-gray-890 text-foreground'
+                  : 'text-muted-foreground/80 hover:text-foreground hover:bg-gray-55 dark:hover:bg-gray-800'
+              "
+              @click="setCount(c)"
+            >
+              {{ c === -1 ? t`All` : c }}
+            </button>
+          </div>
+        </template>
+      </div>
     </div>
 
     <!-- Pagination Selector -->
-    <div class="flex gap-1 items-center justify-self-center">
-      <feather-icon
-        name="chevron-left"
-        class="w-4 h-4 rtl-rotate-180"
-        :class="
-          pageNo > 1
-            ? 'text-gray-600 dark:text-gray-500 cursor-pointer'
-            : 'text-transparent'
-        "
+    <div class="flex-shrink-0 flex gap-2 items-center justify-center">
+      <button
+        class="w-8 h-8 rounded-md flex items-center justify-center border border-gray-200 dark:border-gray-800 bg-background text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 shadow-sm disabled:opacity-40 disabled:hover:bg-background disabled:hover:text-foreground disabled:cursor-not-allowed"
+        :disabled="pageNo <= 1"
+        :title="t`Previous Page`"
         @click="() => setPageNo(Math.max(1, pageNo - 1))"
-      />
-      <div class="flex gap-1 bg-gray-100 dark:bg-gray-890 rounded">
+      >
+        <feather-icon
+          name="chevron-left"
+          class="w-4 h-4 rtl-rotate-180"
+        />
+      </button>
+      <div class="flex items-center gap-1.5 px-2.5 h-8 border border-gray-200 dark:border-gray-800 bg-background rounded-md text-sm shadow-sm">
         <input
           type="number"
-          class="w-7 text-end outline-none bg-transparent focus:text-gray-900 dark:focus:text-gray-25"
+          class="w-6 text-center outline-none bg-transparent focus:text-foreground font-semibold border-b border-transparent focus:border-primary transition-colors duration-150 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           :value="pageNo"
           min="1"
           :max="maxPages"
           @change="handlePageInput"
           @input="handlePageInput"
         />
-        <p class="text-gray-600">/</p>
-        <p class="w-7">
-          {{ maxPages }}
-        </p>
+        <span class="text-muted-foreground">/</span>
+        <span class="text-foreground font-semibold min-w-[1.25rem] text-center">{{ maxPages }}</span>
       </div>
-      <feather-icon
-        name="chevron-right"
-        class="w-4 h-4 rtl-rotate-180"
-        :class="
-          pageNo < maxPages
-            ? 'text-gray-600 dark:text-gray-500 cursor-pointer'
-            : 'text-transparent'
-        "
+      <button
+        class="w-8 h-8 rounded-md flex items-center justify-center border border-gray-200 dark:border-gray-800 bg-background text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-150 shadow-sm disabled:opacity-40 disabled:hover:bg-background disabled:hover:text-foreground disabled:cursor-not-allowed"
+        :disabled="pageNo >= maxPages"
+        :title="t`Next Page`"
         @click="() => setPageNo(Math.min(maxPages, pageNo + 1))"
-      />
+      >
+        <feather-icon
+          name="chevron-right"
+          class="w-4 h-4 rtl-rotate-180"
+        />
+      </button>
     </div>
 
-    <!-- Count Selector -->
-    <div
-      v-if="filteredCounts.length"
-      class="border border-gray-100 dark:border-gray-800 rounded flex justify-self-end"
-    >
-      <template v-for="c in filteredCounts" :key="c + '-count'">
-        <button
-          class="w-9"
-          :class="
-            count === c || (count === itemCount && c === -1)
-              ? 'rounded bg-gray-100 dark:bg-gray-890'
-              : ''
-          "
-          @click="setCount(c)"
-        >
-          {{ c === -1 ? t`All` : c }}
-        </button>
-      </template>
-    </div>
+    <!-- Empty third column to maintain center alignment of page controls -->
+    <div v-if="!hideCountSelector" class="flex-1 justify-end hidden md:flex min-w-[280px]"></div>
   </div>
 </template>
 
@@ -81,10 +89,12 @@ const props = withDefaults(
   defineProps<{
     itemCount?: number;
     allowedCounts?: number[];
+    hideDetails?: boolean;
   }>(),
   {
     itemCount: 0,
     allowedCounts: () => [50, 100, 500, -1],
+    hideDetails: false,
   }
 );
 

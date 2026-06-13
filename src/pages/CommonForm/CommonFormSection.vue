@@ -6,23 +6,22 @@
       :class="[collapsed ? '' : 'mb-4', collapsible ? 'cursor-pointer' : '']"
       @click="toggleCollapsed"
     >
-      <h2 class="text-base text-gray-900 dark:text-gray-25 font-semibold">
+      <h2 class="text-base text-foreground font-semibold">
         {{ title }}
       </h2>
       <feather-icon
         v-if="collapsible"
         :name="collapsed ? 'chevron-up' : 'chevron-down'"
-        class="w-4 h-4 text-gray-600 dark:text-gray-400"
+        class="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors duration-150"
       />
     </div>
     <div v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-1 md:grid-cols-2">
       <div
-        v-for="field of fields"
+        v-for="(field, idx) of fields"
         :key="field.fieldname"
         :class="[
           field.fieldtype === 'Table' ? 'col-span-2 text-base' : '',
           field.fieldtype === 'AttachImage' ? 'row-span-2' : '',
-          field.fieldtype === 'Check' ? 'mt-auto' : 'mb-auto',
           field.fieldname === 'termsAndConditions' ? 'col-span-2' : '',
           field.invisible ? 'invisible' : '',
         ]"
@@ -31,7 +30,7 @@
         <Table
           v-if="field.fieldtype === 'Table'"
           ref="fields"
-          :show-label="true"
+          :show-label="!isDuplicateLabel(field)"
           :border="true"
           :df="field"
           :value="tableValue(doc[field.fieldname])"
@@ -43,10 +42,11 @@
           v-else
           :ref="field.fieldname === 'name' ? 'nameField' : 'fields'"
           :size="field.fieldtype === 'AttachImage' ? 'form' : undefined"
-          :show-label="true"
+          :show-label="!isDuplicateLabel(field)"
           :border="true"
           :df="field"
           :value="doc[field.fieldname]"
+          :align-with-inputs="shouldAlignWithInputs(idx)"
           @editrow="(doc: Doc) => $emit('editrow', doc)"
           @change="(value: DocValue) => $emit('value-change', field, value)"
           @row-change="(field:Field, value:DocValue, parentfield:Field) => $emit('row-change',field, value, parentfield)"
@@ -87,6 +87,13 @@ export default defineComponent({
       collapsed: boolean;
     };
   },
+  computed: {
+    hasMixedFields(): boolean {
+      return (this.fields ?? []).some(
+        (f) => f.fieldtype !== 'Check' && f.fieldtype !== 'Table' && !f.hidden
+      );
+    },
+  },
   mounted() {
     focusOrSelectFormControl(this.doc, this.$refs.nameField);
   },
@@ -104,6 +111,57 @@ export default defineComponent({
       }
 
       this.collapsed = !this.collapsed;
+    },
+    shouldAlignWithInputs(idx: number): boolean {
+      const siblingIdx = idx % 2 === 0 ? idx + 1 : idx - 1;
+      const sibling = (this.fields ?? [])[siblingIdx];
+      return !!(
+        sibling &&
+        sibling.fieldtype !== 'Check' &&
+        sibling.fieldtype !== 'Table' &&
+        !sibling.hidden
+      );
+    },
+    isDuplicateLabel(field: Field): boolean {
+      if (!this.showTitle || !this.title || !field || !field.label) {
+        return false;
+      }
+      const cleanTitle = this.title.toLowerCase().trim();
+      const cleanLabel = field.label.toLowerCase().trim();
+
+      const getRootWord = (word: string) => {
+        let w = word.toLowerCase().trim();
+        if (w.endsWith('ies')) {
+          return w.slice(0, -3) + 'y';
+        }
+        if (w.endsWith('es')) {
+          return w.slice(0, -2);
+        }
+        if (w.endsWith('s') && w.length > 3) {
+          return w.slice(0, -1);
+        }
+        return w;
+      };
+
+      const cleanTitleRoot = getRootWord(cleanTitle);
+      const cleanLabelRoot = getRootWord(cleanLabel);
+
+      if (cleanTitleRoot === cleanLabelRoot) {
+        return true;
+      }
+
+      if (field.fieldtype === 'Table') {
+        const stopwords = new Set(['and', 'or', 'of', 'the', 'for', 'in', 'to', 'with', 'by']);
+        const titleWords = cleanTitle.split(/[^a-zA-Z0-9]+/).map(getRootWord).filter(w => w && !stopwords.has(w));
+        const labelWords = cleanLabel.split(/[^a-zA-Z0-9]+/).map(getRootWord).filter(w => w && !stopwords.has(w));
+
+        const hasOverlap = titleWords.some(tw => labelWords.includes(tw));
+        if (hasOverlap) {
+          return true;
+        }
+      }
+
+      return false;
     },
   },
 });

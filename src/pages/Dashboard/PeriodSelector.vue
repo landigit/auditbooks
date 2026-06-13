@@ -8,22 +8,17 @@
         selectHighlightedItem,
       }"
     >
-      <div
-        class="text-sm flex focus:outline-none hover:text-gray-800 dark:hover:text-gray-100 focus:text-gray-800 dark:focus:text-gray-100 items-center py-1 rounded-md leading-relaxed cursor-pointer"
-        :class="
-          !value
-            ? 'text-gray-600 dark:text-gray-500'
-            : 'text-gray-900 dark:text-gray-300'
-        "
-        tabindex="0"
+      <Button
+        type="secondary"
+        :icon="true"
         @click="toggleDropdown()"
         @keydown.down="highlightItemDown"
         @keydown.up="highlightItemUp"
         @keydown.enter="selectHighlightedItem"
       >
         {{ periodSelectorMap[value] ?? value }}
-        <feather-icon name="chevron-down" class="ms-1 w-3 h-3" />
-      </div>
+        <feather-icon name="chevron-down" class="ms-1.5 w-3.5 h-3.5" />
+      </Button>
     </template>
   </Dropdown>
 </template>
@@ -31,6 +26,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { t } from 'fyo';
+import Button from 'src/components/Button.vue';
 import Dropdown from 'src/components/Dropdown.vue';
 import { PeriodKey } from 'src/utils/types';
 

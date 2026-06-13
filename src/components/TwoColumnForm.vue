@@ -22,7 +22,7 @@
           height: getFieldHeight(df),
         }"
       >
-        <div :class="isMobile ? 'ps-4 pt-1.5 pb-0.5 text-xs text-gray-500 dark:text-gray-400' : 'ps-4 flex text-gray-600 dark:text-gray-400'">
+        <div :class="isMobile ? 'ps-4 pt-1.5 pb-0.5 text-xs text-gray-800 dark:text-gray-200 font-medium' : 'ps-4 flex text-gray-800 dark:text-gray-200 font-medium'">
           {{ df.label }}
         </div>
 

@@ -1,100 +1,103 @@
 <template>
-  <div class="text-base flex flex-col overflow-hidden">
-    <!-- Title Row -->
-    <div
-      class="flex items-center list-header-row"
-      :style="{
-        paddingRight: dataSlice.length > 13 ? 'var(--w-scrollbar)' : '',
-      }"
-    >
-      <div
-        v-if="!isSelectionMode"
-        class="w-8 text-end me-2 text-gray-700 dark:text-gray-400"
-      >
-        #
-      </div>
-      <div v-else class="w-8 flex justify-end me-2">
-        <Check
-          :df="{
-            fieldtype: 'Check',
-            fieldname: 'selectAll',
-            label: '',
-          }"
-          :show-label="false"
-          :value="isAllSelected"
-          @change="toggleSelectAll"
-        />
-      </div>
-      <Row
-        class="flex-1 text-gray-700 dark:text-gray-400 h-row-mid"
-        :column-count="columns.length"
-        gap="1rem"
-      >
+  <div class="text-base flex flex-col overflow-hidden h-full">
+    <!-- Outer Vertical Scroll Container (Sticking to right wall) -->
+    <div v-if="data?.length" class="flex-1 overflow-y-auto overflow-x-hidden flex flex-col">
+      <!-- Inner Horizontal Scroll Container -->
+      <div class="overflow-x-auto min-w-0 flex-1 flex flex-col">
+        <!-- Title Row -->
         <div
-          v-for="(column, i) in columns"
-          :key="column.label"
-          class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
-          :class="{
-            'ms-auto': isNumeric(column.fieldtype),
-            'pe-4': i === columns.length - 1,
+          class="flex items-center list-header-row px-4"
+          :style="{
+            paddingRight: dataSlice.length > 13 ? 'calc(var(--w-scrollbar) + 1rem)' : '',
           }"
         >
-          {{ column.label }}
-        </div>
-      </Row>
-    </div>
-    <hr class="dark:border-gray-800" />
-
-    <!-- Data Rows -->
-    <div
-      v-if="dataSlice.length !== 0"
-      class="overflow-y-auto dark:dark-scroll custom-scroll custom-scroll-thumb1"
-    >
-      <div v-for="(row, i) in dataSlice" :key="(row.name as string)">
-        <!-- Row Content -->
-        <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center">
           <div
             v-if="!isSelectionMode"
-            class="w-8 text-end me-2 text-gray-700 dark:text-gray-400"
+            class="w-8 text-start me-2 text-gray-700 dark:text-gray-400"
           >
-            {{ i + pageStart + 1 }}
+            #
           </div>
           <div v-else class="w-8 flex justify-end me-2">
             <Check
               :df="{
                 fieldtype: 'Check',
-                fieldname: 'selectItem',
+                fieldname: 'selectAll',
                 label: '',
               }"
               :show-label="false"
-              :value="selectedItems.includes(row.name as string)"
-              @change="toggleItemSelection(row.name as string)"
+              :value="isAllSelected"
+              @change="toggleSelectAll"
             />
           </div>
-
           <Row
-            gap="1rem"
-            class="cursor-pointer text-gray-900 dark:text-gray-300 flex-1 h-row-mid"
-            :column-count="columns.length"
-            @click="isSelectionMode ? null : $emit('openDoc', row.name)"
+            class="text-gray-700 dark:text-gray-400 h-row-mid"
+            :grid-template-columns="gridTemplateColumns"
+            gap="0.5rem"
           >
-            <ListCell
-              v-for="(column, c) in columns"
+            <div
+              v-for="(column, i) in columns"
               :key="column.label"
+              class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
               :class="{
-                'text-end': isNumeric(column.fieldtype),
-                'pe-4': c === columns.length - 1,
+                'ms-auto': isColumnNumeric(column),
+                'pe-4': i === columns.length - 1,
               }"
-              :row="(row as RenderData)"
-              :column="column"
-              @status-found="handleStatusFound"
-            />
+            >
+              {{ column.label }}
+            </div>
           </Row>
         </div>
-        <hr
-          v-if="!(i === dataSlice.length - 1 && i > 13)"
-          class="dark:border-gray-800"
-        />
+        <hr class="dark:border-gray-800" />
+
+        <!-- Data Rows (No individual vertical scrollbar here) -->
+        <div v-if="dataSlice.length !== 0">
+          <div v-for="(row, i) in dataSlice" :key="(row.name as string)">
+            <!-- Row Content -->
+            <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center px-4">
+              <div
+                v-if="!isSelectionMode"
+                class="w-8 text-start me-2 text-gray-700 dark:text-gray-400"
+              >
+                {{ i + pageStart + 1 }}
+              </div>
+              <div v-else class="w-8 flex justify-end me-2">
+                <Check
+                  :df="{
+                    fieldtype: 'Check',
+                    fieldname: 'selectItem',
+                    label: '',
+                  }"
+                  :show-label="false"
+                  :value="selectedItems.includes(row.name as string)"
+                  @change="toggleItemSelection(row.name as string)"
+                />
+              </div>
+
+              <Row
+                gap="0.5rem"
+                class="cursor-pointer text-gray-900 dark:text-gray-300 h-row-mid"
+                :grid-template-columns="gridTemplateColumns"
+                @click="isSelectionMode ? null : $emit('openDoc', row.name)"
+              >
+                <ListCell
+                  v-for="(column, c) in columns"
+                  :key="column.label"
+                  :class="{
+                    'text-end': isColumnNumeric(column),
+                    'pe-4': c === columns.length - 1,
+                  }"
+                  :row="(row as RenderData)"
+                  :column="column"
+                  @status-found="handleStatusFound"
+                />
+              </Row>
+            </div>
+            <hr
+              v-if="!(i === dataSlice.length - 1 && i > 13)"
+              class="dark:border-gray-800"
+            />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -114,14 +117,16 @@
         v-else
         :item-count="data.length"
         class="px-4"
+        :hide-count-selector="schemaName === 'Tax'"
+        :style="schemaName === 'Tax' ? { width: '100%' } : { width: tableWidth, maxWidth: '100%' }"
         @index-change="setPageIndices"
       />
     </div>
 
     <!-- Empty State -->
     <div
-      v-if="!data?.length"
-      class="flex flex-col items-center justify-center my-auto"
+      v-else
+      class="flex-1 flex flex-col items-center justify-center"
     >
       <img src="../../assets/img/list-empty-state.svg" alt="" class="w-24" />
       <p class="my-3 text-gray-800 dark:text-gray-200">
@@ -210,6 +215,73 @@ const columns = computed(() => {
   }
   return rawCols;
 });
+
+const gridTemplateColumns = computed(() => {
+  return columns.value
+    .map((col) => {
+      const fieldname = col.fieldname?.toLowerCase() ?? '';
+      const fieldtype = col.fieldtype;
+
+      if (fieldname === 'name') {
+        return '10rem';
+      }
+      if (fieldname === 'status') {
+        return '6rem';
+      }
+      if (fieldname.includes('customer') || fieldname.includes('supplier') || fieldname.includes('party')) {
+        return '11rem';
+      }
+      if (fieldtype === 'Check') {
+        return '3rem';
+      }
+      if (isNumeric(fieldtype)) {
+        return '8rem';
+      }
+      if (fieldtype === 'Date' || fieldtype === 'Datetime') {
+        return '10rem';
+      }
+      return '10rem';
+    })
+    .join(' ');
+});
+
+const tableWidth = computed(() => {
+  let totalRem = 2.5; // w-8 (2rem) + me-2 (0.5rem)
+  columns.value.forEach((col) => {
+    const fieldname = col.fieldname?.toLowerCase() ?? '';
+    const fieldtype = col.fieldtype;
+
+    if (fieldname === 'name') {
+      totalRem += 10;
+    } else if (fieldname === 'status') {
+      totalRem += 6;
+    } else if (fieldname.includes('customer') || fieldname.includes('supplier') || fieldname.includes('party')) {
+      totalRem += 11;
+    } else if (fieldtype === 'Check') {
+      totalRem += 3;
+    } else if (isNumeric(fieldtype)) {
+      totalRem += 8;
+    } else if (fieldtype === 'Date' || fieldtype === 'Datetime') {
+      totalRem += 10;
+    } else {
+      totalRem += 10;
+    }
+  });
+  totalRem += (columns.value.length - 1) * 0.5; // gap="0.5rem"
+  return `${totalRem}rem`;
+});
+
+function isColumnNumeric(col: any) {
+  if (!col) return false;
+  const fieldname = col.fieldname?.toLowerCase() ?? '';
+  const fieldtype = col.fieldtype;
+  return isNumeric(fieldtype) ||
+    fieldname.includes('amount') ||
+    fieldname.includes('total') ||
+    fieldname.includes('credit') ||
+    fieldname.includes('debit') ||
+    fieldname.includes('rate');
+}
 
 function handleStatusFound({ rowId, status }: { rowId: string; status: string }) {
   statusMap.value[rowId] = status;

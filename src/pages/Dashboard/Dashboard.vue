@@ -1,16 +1,11 @@
 <template>
   <div class="h-screen w-full md:w-[var(--w-desk)]">
     <PageHeader :title="t`Dashboard`">
-      <div
-        class="border dark:border-gray-900 rounded bg-gray-50 dark:bg-gray-890 focus-within:bg-gray-100 dark:focus-within:bg-gray-900 flex items-center"
-      >
-        <PeriodSelector
-          class="px-3"
-          :value="period"
-          :options="['This Year', 'This Quarter', 'This Month', 'YTD']"
-          @change="(value) => (period = value)"
-        />
-      </div>
+      <PeriodSelector
+        :value="period"
+        :options="['This Year', 'This Quarter', 'This Month', 'YTD']"
+        @change="(value) => (period = value)"
+      />
     </PageHeader>
 
     <div

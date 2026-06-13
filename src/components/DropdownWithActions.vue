@@ -47,11 +47,38 @@ const doc = computed(() => {
 });
 
 const items = computed<DropdownItem[]>(() => {
-  return props.actions.map(({ label, group, component, action }) => ({
-    label,
-    group,
-    action,
-    component,
-  }));
+  return props.actions.map(({ label, group, component, action }) => {
+    let icon: string | undefined;
+    const cleanLabel = label?.toLowerCase() ?? '';
+    if (cleanLabel.includes('duplicate')) {
+      icon = 'copy';
+    } else if (cleanLabel.includes('new entry') || cleanLabel.includes('create')) {
+      icon = 'plus-circle';
+    } else if (cleanLabel.includes('return')) {
+      icon = 'rotate-ccw';
+    } else if (cleanLabel.includes('delete')) {
+      icon = 'trash-2';
+    } else if (cleanLabel.includes('cancel')) {
+      icon = 'x-circle';
+    } else if (cleanLabel.includes('payment')) {
+      icon = 'dollar-sign';
+    } else if (cleanLabel.includes('shipment') || cleanLabel.includes('delivery')) {
+      icon = 'truck';
+    } else if (cleanLabel.includes('receipt')) {
+      icon = 'file-text';
+    } else if (cleanLabel.includes('ledger') || cleanLabel.includes('entries')) {
+      icon = 'book-open';
+    } else if (cleanLabel.includes('edit')) {
+      icon = 'edit-3';
+    }
+
+    return {
+      label,
+      group,
+      action,
+      component,
+      icon,
+    };
+  });
 });
 </script>

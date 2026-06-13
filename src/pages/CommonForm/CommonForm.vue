@@ -22,7 +22,7 @@
       />
       <p
         v-if="schema.label && !(canShowBarcode || canShowExchangeRate)"
-        class="text-xl font-semibold items-center text-gray-600"
+        class="text-xl font-semibold items-center text-foreground"
       >
         {{ schema.label }}
       </p>
@@ -112,20 +112,13 @@
       <!-- Tab Bar -->
       <div
         v-if="groupedFields && groupedFields.size > 1"
-        class="mt-auto px-4 pb-4 flex gap-8 border-t dark:border-gray-800 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-875"
+        class="settings-tabs-container"
       >
         <div
           v-for="key of groupedFields.keys()"
           :key="key"
-          class="text-sm cursor-pointer"
-          :class="
-            key === activeTab
-              ? 'text-gray-900 dark:text-gray-25 font-semibold border-t-2 border-gray-800 dark:border-gray-100'
-              : 'text-gray-700 dark:text-gray-200 '
-          "
-          :style="{
-            paddingTop: key === activeTab ? 'calc(1rem - 2px)' : '1rem',
-          }"
+          class="settings-tab-button"
+          :class="{ active: key === activeTab }"
           @click="activeTab = key"
         >
           {{ key }}
@@ -282,7 +275,7 @@ const {
 :deep(.control-label),
 :deep(.labelClasses) {
   font-size: 13.5px !important;
-  font-weight: 500 !important;
+  font-weight: 400 !important;
   color: var(--foreground) !important;
   margin-bottom: 6px !important;
   display: inline-block !important;
@@ -340,19 +333,25 @@ const {
   padding: 6px 12px !important;
   color: var(--popover-foreground) !important;
 }
-
 :deep(.absolute.z-10 li:hover) {
   background-color: var(--accent) !important;
   color: var(--accent-foreground) !important;
 }
 
 /* Modals & Container styling */
-:deep(.form-card-shadow),
-:deep(.form-card) {
+:deep(.form-card-shadow:not(.w-full)),
+:deep(.form-card:not(.w-full)) {
   border-radius: 0 0 6px 6px !important;
   border: 1px solid var(--border) !important;
   border-top: none !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+}
+
+:deep(.form-card-shadow.w-full),
+:deep(.form-card.w-full) {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Rounded buttons */
@@ -362,4 +361,3 @@ const {
 }
 
 </style>
-

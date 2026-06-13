@@ -47,7 +47,7 @@
               </div>
               <a
                 v-else
-                class="block p-2 rounded-md mt-1 first:mt-0 cursor-pointer truncate"
+                class="flex items-center p-2 rounded-md mt-1 first:mt-0 cursor-pointer truncate"
                 :class="
                   index === highlightedIndex
                     ? 'bg-gray-100 dark:bg-gray-875'
@@ -57,6 +57,11 @@
                 @mousedown.prevent
                 @click="selectItem(d)"
               >
+                <feather-icon
+                  v-if="d.icon"
+                  :name="d.icon"
+                  class="w-4 h-4 me-2 flex-shrink-0 text-muted-foreground"
+                />
                 <component :is="d.component" v-if="d.component" />
                 <template v-else>{{ d.label }}</template>
               </a>
@@ -225,4 +230,8 @@ function getGroupedItems(
 
   return groupedItems;
 }
+
+defineExpose({
+  toggleDropdown,
+});
 </script>

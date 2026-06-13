@@ -42,7 +42,7 @@ const { isMobile } = useBreakpoint();
     </Transition>
 
     <div
-      class="flex flex-1 overflow-y-hidden custom-scroll custom-scroll-thumb1 bg-gray-50 dark:bg-gray-900"
+      class="flex flex-1 overflow-y-hidden bg-gray-50 dark:bg-gray-900"
     >
       <router-view v-slot="{ Component }">
         <keep-alive>

@@ -4,7 +4,7 @@
   >
     <h1 v-if="formTitle" class="text-foreground">{{ formTitle }}</h1>
     <slot />
-    <p v-if="formSubTitle" class="text-gray-600 dark:text-gray-400">
+    <p v-if="formSubTitle" class="text-muted-foreground">
       {{ formSubTitle }}
     </p>
   </div>

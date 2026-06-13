@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative bg-white dark:bg-gray-900 border dark:border-gray-800 flex-center overflow-hidden group"
+    class="image-attach-box relative bg-white dark:bg-gray-900 border dark:border-gray-800 flex-center overflow-hidden group"
     :class="{
       rounded: size === 'form',
       'w-20 h-20 rounded-full': size !== 'small' && size !== 'form',
@@ -9,7 +9,7 @@
     :title="df?.label"
     :style="imageSizeStyle"
   >
-    <img v-if="value" :src="value" />
+    <img v-if="value" :src="value" class="max-w-full max-h-full object-contain" />
     <div v-else :class="[!isReadOnly ? 'group-hover:opacity-90' : '']">
       <div
         v-if="letterPlaceholder"

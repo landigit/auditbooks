@@ -24,18 +24,19 @@
     <!-- Filters -->
     <div
       v-if="report && report.filters.length"
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 border-b dark:border-gray-800"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-2 p-3 border-b dark:border-gray-800"
     >
       <FormControl
         v-for="field in report.filters"
         :key="field.fieldname + '-filter'"
         :border="true"
         size="small"
-        :class="[field.fieldtype === 'Check' ? 'self-end' : '']"
         :show-label="true"
         :df="field"
         :value="report.get(field.fieldname)"
         :read-only="loading"
+        :align-with-inputs="field.fieldtype !== 'Check' && hasMixedFilters"
+        :class="{ 'self-end pb-0.5': field.fieldtype === 'Check' && hasMixedFilters }"
         @change="async (value) => await report?.set(field.fieldname, value)"
       />
     </div>
@@ -84,6 +85,12 @@ provide('report', computed(() => report.value));
 
 const title = computed(() => {
   return reports[props.reportClassName]?.title ?? t`Report`;
+});
+
+const hasMixedFilters = computed(() => {
+  return (report.value?.filters ?? []).some(
+    (f) => f.fieldtype !== 'Check' && !f.hidden
+  );
 });
 
 const groupedActions = computed(() => {

@@ -32,6 +32,11 @@
 
 @tailwind utilities;
 
+[style*="display: none"],
+[style*="display:none"] {
+  display: none !important;
+}
+
 html {
   color: theme('colors.black');
   -webkit-font-smoothing: subpixel-antialiased;
@@ -80,7 +85,14 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
 :root {
@@ -171,59 +183,44 @@ input[type='number']::-webkit-inner-spin-button {
   @apply text-red-500;
 }
 
-.custom-scroll::-webkit-scrollbar {
-  width: var(--w-scrollbar);
-  height: var(--w-scrollbar);
+
+
+/* Firefox standard scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.1) transparent;
 }
 
-.custom-scroll::-webkit-scrollbar-track:vertical {
-  border-left: solid 1px theme('colors.gray.100');
+/* Chrome/Safari/Tauri Webkit scrollbar styling globally */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-.custom-scroll::-webkit-scrollbar-track:horizontal {
-  border-top: solid 1px theme('colors.gray.100');
-}
-
-.custom-scroll::-webkit-scrollbar-thumb {
-  background: theme('colors.gray.100');
-}
-
-.custom-scroll::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.gray.200');
-}
-
-.custom-scroll::-webkit-scrollbar-corner {
+::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.dark.custom-scroll::-webkit-scrollbar-track:vertical,
-.dark .custom-scroll::-webkit-scrollbar-track:vertical {
-  border-left-color: theme('colors.gray.800');
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.1);
+  border-radius: 9999px;
+  transition: background 0.15s ease;
 }
 
-.dark.custom-scroll::-webkit-scrollbar-track:horizontal,
-.dark .custom-scroll::-webkit-scrollbar-track:horizontal {
-  border-top-color: theme('colors.gray.800');
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.25);
 }
 
-.dark.custom-scroll-thumb1::-webkit-scrollbar-thumb,
-.dark .custom-scroll-thumb1::-webkit-scrollbar-thumb {
-  background: theme('colors.gray.850');
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
-.dark.custom-scroll-thumb1::-webkit-scrollbar-thumb:hover,
-.dark .custom-scroll-thumb1::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.gray.800');
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.08);
 }
 
-.dark.custom-scroll-thumb2::-webkit-scrollbar-thumb,
-.dark .custom-scroll-thumb2::-webkit-scrollbar-thumb {
-  background: theme('colors.gray.800');
-}
-
-.dark.custom-scroll-thumb2::-webkit-scrollbar-thumb:hover,
-.dark .custom-scroll-thumb2::-webkit-scrollbar-thumb:hover {
-  background: theme('colors.gray.875');
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.2);
 }
 
 /*
@@ -257,14 +254,7 @@ input[type='number']::-webkit-inner-spin-button {
   transform: rotate(180deg);
 }
 
-[dir='rtl'] .custom-scroll::-webkit-scrollbar-track:vertical {
-  border-right: solid 1px theme('colors.gray.200');
-}
 
-[dir='rtl'].dark.custom-scroll::-webkit-scrollbar-track:vertical,
-[dir='rtl'].dark .custom-scroll::-webkit-scrollbar-track:vertical {
-  border-right: solid 1px theme('colors.gray.850');
-}
 
 .pill {
   @apply py-0.5 px-1.5 rounded-md  text-xs;
@@ -356,7 +346,7 @@ input[type='number']::-webkit-inner-spin-button {
   .safe-area-top-padding button {
     transition: color 0.15s, background-color 0.15s;
   }
-  .safe-area-top-padding button:not([class*="bg-black"]):not([class*="bg-primary"]) {
+  .safe-area-top-padding button:not([class*="bg-black"]):not([class*="bg-primary"]):not(.btn-primary):not([class*="btn-primary"]) {
     color: var(--foreground) !important;
   }
   .safe-area-top-padding .nav-link.text-gray-700,
@@ -376,4 +366,145 @@ input[type='number']::-webkit-inner-spin-button {
     color: var(--foreground) !important;
     font-weight: 600 !important;
   }
-}
+
+  /* Global form control styling overrides to style legacy form inputs/buttons to match shadcn specs */
+  input[type="text"]:not(.bg-transparent),
+  input[type="number"]:not(.bg-transparent),
+  input[type="date"]:not(.bg-transparent),
+  input[type="password"]:not(.bg-transparent),
+  input[type="email"]:not(.bg-transparent),
+  select,
+  textarea,
+  .border.rounded {
+    border-radius: 4px !important;
+    border: 1.5px solid var(--border) !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    color: var(--foreground) !important;
+    background-color: var(--background) !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Style the AutoComplete inner input so it sits cleanly and remains transparent without its own border/padding */
+  .border.rounded input.bg-transparent {
+    border: none !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+    font-size: 14px !important;
+    color: var(--foreground) !important;
+    height: auto !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Ensure placeholder text matches shadcn style */
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground) !important;
+    opacity: 0.8 !important;
+  }
+
+  /* Focus outline for custom controls wrapper and standard inputs */
+  input:focus:not(.bg-transparent),
+  select:focus,
+  textarea:focus,
+  .border.rounded:focus-within {
+    border-color: var(--ring) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 15%, transparent) !important;
+    background-color: var(--background) !important;
+  }
+
+  /* Global form control label styling overrides to match shadcn specs (not bold, dynamic foreground) */
+  .control-label,
+  .labelClasses {
+    color: var(--foreground) !important;
+    font-size: 13.5px !important;
+    font-weight: 400 !important;
+    display: inline-block !important;
+  }
+
+  /* Global Dropdown suggestion / select menus styling to match shadcn popover specs */
+  .absolute.z-10 {
+    border-radius: 6px !important;
+    border: 1.5px solid var(--border) !important;
+    background-color: var(--popover) !important;
+    color: var(--popover-foreground) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    margin-top: 4px !important;
+    padding: 4px !important;
+  }
+
+  .absolute.z-10 li,
+  .absolute.z-10 ul li {
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    padding: 6px 12px !important;
+    color: var(--popover-foreground) !important;
+    transition: background-color 0.1s, color 0.1s !important;
+  }
+
+  .absolute.z-10 li:hover,
+  .absolute.z-10 ul li:hover {
+    background-color: var(--accent) !important;
+    color: var(--accent-foreground) !important;
+  }
+
+  /* Settings and Form Bottom Tab Bar styling overrides */
+  .settings-tabs-container {
+    margin-top: auto !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    display: flex !important;
+    gap: 1.5rem !important;
+    border-top: 1px solid var(--border) !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background-color: var(--background) !important;
+    height: 3.5rem !important;
+    align-items: stretch !important;
+    z-index: 10 !important;
+  }
+
+  .settings-tab-button {
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 0.25rem !important;
+    border-top: 2px solid transparent !important;
+    margin-top: -1px !important;
+    color: color-mix(in srgb, var(--foreground) 65%, transparent) !important;
+    transition: all 0.15s ease !important;
+    height: 100% !important;
+  }
+
+  .settings-tab-button:hover {
+    color: var(--foreground) !important;
+  }
+
+  .settings-tab-button.active {
+    color: var(--foreground) !important;
+    font-weight: 600 !important;
+    border-top-color: var(--primary) !important;
+  }
+
+  /* Force uniform height on all standard single-line form inputs and checkbox containers */
+  input[type="text"]:not(.bg-transparent),
+  input[type="number"]:not(.bg-transparent),
+  input[type="date"]:not(.bg-transparent),
+  input[type="password"]:not(.bg-transparent),
+  input[type="email"]:not(.bg-transparent),
+  select {
+    height: 2.25rem !important;
+  }
+
+  .border.rounded:not(textarea):not(.image-attach-box):not([style*="display: none"]):not([style*="display:none"]) {
+    height: 2.25rem !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+}

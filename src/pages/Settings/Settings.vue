@@ -38,20 +38,13 @@
       <!-- Tab Bar -->
       <div
         v-if="groupedFields && groupedFields.size > 1"
-        class="mt-auto px-4 pb-4 flex gap-8 border-t dark:border-gray-800 flex-shrink-0 sticky bottom-0 bg-white dark:bg-gray-890"
+        class="settings-tabs-container"
       >
         <div
           v-for="key of groupedFields.keys()"
           :key="key"
-          class="text-sm cursor-pointer"
-          :class="
-            key === activeTab
-              ? 'text-gray-900 dark:text-gray-25 font-semibold border-t-2 border-gray-800 dark:border-gray-100'
-              : 'text-gray-700 dark:text-gray-200 '
-          "
-          :style="{
-            paddingTop: key === activeTab ? 'calc(1rem - 2px)' : '1rem',
-          }"
+          class="settings-tab-button"
+          :class="{ active: key === activeTab }"
           @click="activeTab = key"
         >
           {{ tabLabels[key] }}

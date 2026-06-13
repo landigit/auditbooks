@@ -49,7 +49,14 @@ export default defineComponent({
       return render(this.row);
     },
     cellClass() {
-      return isNumeric(this.column.fieldtype) ? 'justify-end' : '';
+      const fieldname = this.column.fieldname?.toLowerCase() ?? '';
+      const isNum = isNumeric(this.column.fieldtype) ||
+        fieldname.includes('amount') ||
+        fieldname.includes('total') ||
+        fieldname.includes('credit') ||
+        fieldname.includes('debit') ||
+        fieldname.includes('rate');
+      return isNum ? 'justify-end w-full' : '';
     },
   },
   mounted() {

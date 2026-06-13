@@ -3,139 +3,97 @@
     <div v-if="showLabel" :class="labelClasses">
       {{ df.label }}
     </div>
-    <input
-      v-show="showInput"
-      ref="input"
-      :class="[inputClasses, containerClasses]"
-      :type="inputType"
-      :value="inputValue"
-      :placeholder="inputPlaceholder"
-      :readonly="isReadOnly"
-      :tabindex="isReadOnly ? '-1' : '0'"
-      @blur="onBlur"
-      @focus="onFocus"
-      @input="(e) => $emit('input', e)"
-    />
-    <div
-      v-show="!showInput"
-      class="flex"
-      :class="[containerClasses, sizeClasses]"
-      tabindex="0"
-      @click="activateInput"
-      @focus="activateInput"
-    >
-      <p
-        v-if="!isEmpty"
-        :class="[baseInputClasses]"
-        class="overflow-auto no-scrollbar whitespace-nowrap dark:text-gray-100"
-      >
-        {{ formattedValue }}
-      </p>
-      <p v-else-if="inputPlaceholder" class="text-base text-gray-500 w-full">
-        {{ inputPlaceholder }}
-      </p>
+    <Popover ref="popover" placement="bottom-start" class="w-full">
+      <!-- Target: The field input/display box -->
+      <template #target>
+        <div
+          :class="[containerClasses, sizeClasses]"
+          class="flex items-center justify-between cursor-pointer border rounded-md"
+          @click="() => !isReadOnly && $refs.popover.togglePopover()"
+        >
+          <p
+            v-if="!isEmpty"
+            :class="[baseInputClasses]"
+            class="overflow-auto no-scrollbar whitespace-nowrap text-foreground"
+          >
+            {{ formattedValue }}
+          </p>
+          <p v-else-if="inputPlaceholder" class="text-sm text-muted-foreground w-full select-none">
+            {{ inputPlaceholder }}
+          </p>
 
-      <button v-if="!isReadOnly" class="-me-0.5 ms-1">
-        <FeatherIcon
-          name="calendar"
-          class="w-4 h-4"
-          :class="
-            showMandatory ? 'text-red-600' : 'text-gray-600 dark:text-gray-400'
-          "
-        />
-      </button>
-    </div>
+          <span v-if="!isReadOnly" class="p-0.5 rounded -me-1 ms-1 text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center">
+            <FeatherIcon
+              name="calendar"
+              class="w-4 h-4"
+              :class="showMandatory ? 'text-red-500' : ''"
+            />
+          </span>
+        </div>
+      </template>
+
+      <!-- Popover Content: The modernized DatetimePicker -->
+      <template #content>
+        <div class="bg-popover text-popover-foreground border border-border rounded-md shadow-md">
+          <DatetimePicker
+            :show-clear="!isRequired"
+            :select-time="selectTime"
+            :model-value="internalValue"
+            :format-value="formatValue"
+            @update:model-value="(value) => { triggerChange(value); if (!selectTime) $refs.popover.togglePopover(false); }"
+          />
+        </div>
+      </template>
+    </Popover>
   </div>
 </template>
+
 <script lang="ts">
-import { DateTime } from 'luxon';
-import { fyo } from 'src/initFyo';
-import { defineComponent, nextTick } from 'vue';
+import { defineComponent, PropType } from 'vue';
+import { Field } from 'schemas/types';
+import DatetimePicker from './DatetimePicker.vue';
+import FeatherIcon from '../FeatherIcon.vue';
+import Popover from '../Popover.vue';
 import Base from './Base.vue';
 
 export default defineComponent({
+  name: 'DateControl',
+  components: { Popover, FeatherIcon, DatetimePicker },
   extends: Base,
-  emits: ['input', 'focus'],
-  data() {
-    return {
-      showInput: false,
-    };
+  props: {
+    value: [Date, String],
+    df: Object as PropType<Field>,
   },
   computed: {
-    inputValue(): string {
-      let value = this.value;
-      if (typeof value === 'string') {
-        value = new Date(value);
-      }
-
-      if (value instanceof Date && !Number.isNaN(value.valueOf())) {
-        return DateTime.fromJSDate(value).toISODate();
-      }
-
-      return '';
+    selectTime(): boolean {
+      return this.df?.fieldtype === 'Datetime';
     },
-    inputType() {
-      return 'date';
+    internalValue() {
+      if (this.value == null) {
+        return undefined;
+      }
+
+      if (typeof this.value === 'string') {
+        const parsed = new Date(this.value);
+        return Number.isNaN(parsed.valueOf()) ? undefined : parsed;
+      }
+
+      return this.value instanceof Date ? this.value : undefined;
     },
     formattedValue() {
-      const value = this.parse(this.value);
-      return fyo.format(value, this.df, this.doc);
-    },
-    borderClasses(): string {
-      if (!this.border) {
-        return '';
-      }
-
-      const border = 'border border-gray-200 dark:border-gray-800';
-      let background = 'bg-gray-25 dark:bg-gray-875';
-      if (this.isReadOnly) {
-        background = 'bg-gray-50 dark:bg-gray-850';
-      }
-
-      if (this.showInput) {
-        return background;
-      }
-
-      return border + ' ' + background;
+      return this.formatValue(this.internalValue);
     },
   },
   methods: {
-    onFocus(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
+    formatValue(value?: Date | null) {
+      if (value == null) {
+        return '';
       }
 
-      target.select();
-      this.showInput = true;
-      this.$emit('focus', e);
-    },
-    onBlur(e: FocusEvent) {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) {
-        return;
-      }
-      this.showInput = false;
-
-      let value: Date | null = DateTime.fromISO(target.value).toJSDate();
-      if (Number.isNaN(value.valueOf())) {
-        value = null;
-      }
-
-      this.triggerChange(value);
-    },
-    activateInput() {
-      if (this.isReadOnly) {
-        return;
-      }
-
-      this.showInput = true;
-      nextTick(() => {
-        this.focus();
-
-        // @ts-ignore
-        this.$refs.input.showPicker();
-      });
+      return this.fyo.format(
+        value,
+        this.df ?? (this.selectTime ? 'Datetime' : 'Date')
+      );
     },
   },
 });

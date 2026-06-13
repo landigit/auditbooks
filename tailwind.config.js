@@ -2,6 +2,17 @@ const fs = require('fs');
 const colors = JSON.parse(
   fs.readFileSync('colors.json', { encoding: 'utf-8' })
 );
+const withOpacity = (variableName) => {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      if (typeof opacityValue === 'string' && opacityValue.includes('var(')) {
+        return `color-mix(in srgb, var(${variableName}) calc(${opacityValue} * 100%), transparent)`;
+      }
+      return `color-mix(in srgb, var(${variableName}) ${Number(opacityValue) * 100}%, transparent)`;
+    }
+    return `var(${variableName})`;
+  };
+};
 
 module.exports = {
   darkMode: 'class',
@@ -74,38 +85,38 @@ module.exports = {
       },
       colors: {
         ...colors,
-        border: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--border) ${opacityValue * 100}%, transparent)` : 'var(--border)',
-        input: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--input) ${opacityValue * 100}%, transparent)` : 'var(--input)',
-        ring: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--ring) ${opacityValue * 100}%, transparent)` : 'var(--ring)',
-        background: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--background) ${opacityValue * 100}%, transparent)` : 'var(--background)',
-        foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--foreground) ${opacityValue * 100}%, transparent)` : 'var(--foreground)',
+        border: withOpacity('--border'),
+        input: withOpacity('--input'),
+        ring: withOpacity('--ring'),
+        background: withOpacity('--background'),
+        foreground: withOpacity('--foreground'),
         primary: {
-          DEFAULT: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--primary) ${opacityValue * 100}%, transparent)` : 'var(--primary)',
-          foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--primary-foreground) ${opacityValue * 100}%, transparent)` : 'var(--primary-foreground)',
+          DEFAULT: withOpacity('--primary'),
+          foreground: withOpacity('--primary-foreground'),
         },
         secondary: {
-          DEFAULT: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--secondary) ${opacityValue * 100}%, transparent)` : 'var(--secondary)',
-          foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--secondary-foreground) ${opacityValue * 100}%, transparent)` : 'var(--secondary-foreground)',
+          DEFAULT: withOpacity('--secondary'),
+          foreground: withOpacity('--secondary-foreground'),
         },
         destructive: {
-          DEFAULT: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--destructive) ${opacityValue * 100}%, transparent)` : 'var(--destructive)',
-          foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--destructive-foreground) ${opacityValue * 100}%, transparent)` : 'var(--destructive-foreground)',
+          DEFAULT: withOpacity('--destructive'),
+          foreground: withOpacity('--destructive-foreground'),
         },
         muted: {
-          DEFAULT: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--muted) ${opacityValue * 100}%, transparent)` : 'var(--muted)',
-          foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--muted-foreground) ${opacityValue * 100}%, transparent)` : 'var(--muted-foreground)',
+          DEFAULT: withOpacity('--muted'),
+          foreground: withOpacity('--muted-foreground'),
         },
         accent: {
-          DEFAULT: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--accent) ${opacityValue * 100}%, transparent)` : 'var(--accent)',
-          foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--accent-foreground) ${opacityValue * 100}%, transparent)` : 'var(--accent-foreground)',
+          DEFAULT: withOpacity('--accent'),
+          foreground: withOpacity('--accent-foreground'),
         },
         popover: {
-          DEFAULT: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--popover) ${opacityValue * 100}%, transparent)` : 'var(--popover)',
-          foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--popover-foreground) ${opacityValue * 100}%, transparent)` : 'var(--popover-foreground)',
+          DEFAULT: withOpacity('--popover'),
+          foreground: withOpacity('--popover-foreground'),
         },
         card: {
-          DEFAULT: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--card) ${opacityValue * 100}%, transparent)` : 'var(--card)',
-          foreground: ({ opacityValue }) => opacityValue !== undefined ? `color-mix(in srgb, var(--card-foreground) ${opacityValue * 100}%, transparent)` : 'var(--card-foreground)',
+          DEFAULT: withOpacity('--card'),
+          foreground: withOpacity('--card-foreground'),
         },
       },
     },

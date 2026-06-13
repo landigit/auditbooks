@@ -20,7 +20,7 @@
       <template v-for="account in allAccounts" :key="account.name">
         <!-- Account List Item -->
         <div
-          class="py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-890 dark:text-gray-25 group flex items-center border-b dark:border-gray-800 flex-shrink-0 pe-4"
+          class="py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-890 dark:text-gray-25 group flex items-center border-b dark:border-gray-800 flex-shrink-0 pe-4 transition-colors"
           :class="[
             account.level !== 0 ? 'text-base' : 'text-lg',
             isQuickEditOpen(account, $route.query) ? 'bg-gray-200 dark:bg-gray-900' : '',
@@ -28,35 +28,47 @@
           :style="getItemStyle(account.level)"
           @click="onClick(account)"
         >
-          <component :is="getIconComponent(!!account.isGroup, account.name)" />
-          <div class="flex items-baseline">
+          <!-- Chevron to show expand/collapse state -->
+          <span class="w-4 h-4 flex items-center justify-center me-1 flex-shrink-0">
+            <feather-icon
+              v-if="account.isGroup"
+              :name="account.expanded ? 'chevron-down' : 'chevron-right'"
+              class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400"
+            />
+          </span>
+
+          <component :is="getIconComponent(!!account.isGroup, account.name)" class="flex-shrink-0" />
+          <div class="flex items-center flex-1 min-w-0">
             <div
-              class="ms-4"
-              :class="[!account.parentAccount && 'font-semibold']"
+              class="ms-4 truncate"
+              :class="[!account.parentAccount && 'font-semibold text-gray-900 dark:text-gray-100']"
             >
               {{ account.name }}
             </div>
 
             <!-- Add Account Buttons on Group Hover -->
-            <div class="ms-6 hidden group-hover:block">
+            <div class="ms-6 hidden group-hover:flex items-center gap-2">
               <button
                 v-if="account.isGroup"
-                class="text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+                class="px-2 py-0.5 text-[11px] font-medium border border-gray-200 dark:border-gray-800 rounded-md bg-white dark:bg-gray-950 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 shadow-sm transition flex items-center focus:outline-none"
                 @click.stop="addAccount(account, 'addingAccount', inputs)"
               >
+                <feather-icon name="plus" class="w-3 h-3 me-1" />
                 {{ t`Add Account` }}
               </button>
               <button
                 v-if="account.isGroup"
-                class="ms-3 text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+                class="px-2 py-0.5 text-[11px] font-medium border border-gray-200 dark:border-gray-800 rounded-md bg-white dark:bg-gray-950 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 shadow-sm transition flex items-center focus:outline-none"
                 @click.stop="addAccount(account, 'addingGroupAccount', inputs)"
               >
+                <feather-icon name="folder-plus" class="w-3 h-3 me-1" />
                 {{ t`Add Group` }}
               </button>
               <button
-                class="ms-3 text-xs text-gray-800 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none"
+                class="px-2 py-0.5 text-[11px] font-medium border border-red-200 dark:border-red-950 text-red-600 dark:text-red-400 rounded-md bg-red-50/50 dark:bg-red-950/10 hover:bg-red-50 dark:hover:bg-red-950/20 shadow-sm transition flex items-center focus:outline-none"
                 @click.stop="deleteAccount(account)"
               >
+                <feather-icon name="trash-2" class="w-3 h-3 me-1" />
                 {{ account.isGroup ? t`Delete Group` : t`Delete Account` }}
               </button>
             </div>
@@ -65,7 +77,7 @@
           <!-- Account Balance String -->
           <p
             v-if="!account.isGroup"
-            class="ms-auto text-base text-gray-800 dark:text-gray-400"
+            class="ms-auto text-base text-gray-800 dark:text-gray-400 font-medium"
           >
             {{ getBalanceString(account) }}
           </p>

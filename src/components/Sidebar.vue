@@ -270,14 +270,14 @@ onUnmounted(() => {
   font-weight: 600 !important;
 }
 .sidebar-footer-btn {
-  color: color-mix(in srgb, var(--foreground) 65%, transparent) !important;
+  color: color-mix(in srgb, var(--foreground) 85%, transparent) !important;
   transition: color 0.15s, background-color 0.15s;
 }
 .sidebar-footer-btn:hover {
   color: var(--foreground) !important;
 }
 .sidebar-footer-dev {
-  color: color-mix(in srgb, var(--foreground) 45%, transparent) !important;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent) !important;
   transition: color 0.15s;
 }
 .sidebar-footer-dev:hover {

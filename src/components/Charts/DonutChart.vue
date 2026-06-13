@@ -60,7 +60,7 @@
         :style="{
           fontSize: '6px',
           fontWeight: 'bold',
-          fill: darkMode ? '#FFFFFF' : '#415668',
+          fill: darkMode ? '#FFFFFF' : '#0f172a',
         }"
       >
         {{
@@ -76,7 +76,10 @@
         :x="cx"
         :y="cy + 8"
         text-anchor="middle"
-        style="font-size: 5px; fill: #a1abb4"
+        :style="{
+          fontSize: '5px',
+          fill: darkMode ? '#94a3b8' : '#475569',
+        }"
       >
         {{
           active !== null && sectors.length !== 0

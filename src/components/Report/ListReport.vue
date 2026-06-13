@@ -48,10 +48,18 @@
               v-for="(cell, c) in row.cells"
               :key="`${c}-${r}-cell`"
               :style="getCellStyle(cell, c)"
-              class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar"
-              :class="[getCellColorClass(cell)]"
+              class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar flex items-center"
+              :class="[
+                getCellColorClass(cell),
+                cell.align === 'right' || (!cell.align && isNumeric(cell.fieldtype)) ? 'justify-end' : 'justify-start'
+              ]"
             >
-              {{ cell.value }}
+              <feather-icon
+                v-if="isGroupCell(row, c)"
+                :name="row.foldedBelow ? 'chevron-right' : 'chevron-down'"
+                class="w-4 h-4 me-1 flex-shrink-0"
+              />
+              <span>{{ cell.value }}</span>
             </div>
           </div>
         </template>
@@ -97,7 +105,7 @@ export default defineComponent({
   },
   data() {
     return {
-      wconst: 8,
+      wconst: 6,
       hconst: 48,
       pageStart: 0,
       pageEnd: 0,
@@ -113,6 +121,17 @@ export default defineComponent({
     },
   },
   methods: {
+    isGroupCell(row, c) {
+      if (!row.isGroup) return false;
+      const firstColLabel = this.report?.columns?.[0]?.label;
+      if (firstColLabel === '#') {
+        return c === 1;
+      }
+      return c === 0;
+    },
+    isNumeric(fieldtype) {
+      return isNumeric(fieldtype);
+    },
     scroll({ scrollLeft }) {
       this.$refs.titlerow.scrollLeft = scrollLeft;
     },
@@ -145,7 +164,16 @@ export default defineComponent({
         align = this.languageDirection === 'rtl' ? 'right' : 'left';
       }
 
-      styles['width'] = `${width * this.wconst}rem`;
+      const labelLength = this.report?.columns?.[i]?.label?.length ?? 0;
+      let colWidth = width * this.wconst;
+      if (labelLength > 0) {
+        const minWidthForLabel = labelLength * 0.65;
+        if (colWidth < minWidthForLabel) {
+          colWidth = minWidthForLabel;
+        }
+      }
+
+      styles['width'] = `${colWidth}rem`;
       styles['text-align'] = align;
 
       if (cell.bold) {
@@ -156,16 +184,35 @@ export default defineComponent({
         styles['font-style'] = 'oblique 15deg';
       }
 
-      if (i === 0) {
+      if (!cell.align && isNumeric(cell.fieldtype)) {
+        styles['text-align'] = 'right';
+      }
+
+      const columnLabel = this.report?.columns?.[i]?.label;
+      if (columnLabel === '#') {
+        if (this.languageDirection === 'rtl') {
+          styles['padding-right'] = '0px';
+          styles['text-align'] = 'right';
+        } else {
+          styles['padding-left'] = '0px';
+          styles['text-align'] = 'left';
+        }
+        styles['width'] = '3rem';
+      } else if (columnLabel === 'Account') {
+        styles['width'] = '20rem';
+        if (i === 0) {
+          if (this.languageDirection === 'rtl') {
+            styles['padding-right'] = '0px';
+          } else {
+            styles['padding-left'] = '0px';
+          }
+        }
+      } else if (i === 0) {
         if (this.languageDirection === 'rtl') {
           styles['padding-right'] = '0px';
         } else {
           styles['padding-left'] = '0px';
         }
-      }
-
-      if (!cell.align && isNumeric(cell.fieldtype)) {
-        styles['text-align'] = 'right';
       }
 
       if (i === this.report.columns.length - 1) {
