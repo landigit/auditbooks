@@ -38,19 +38,25 @@
           @change="(value: DocValue) => $emit('value-change', field, value)"
           @row-change="(field:Field, value:DocValue, parentfield:Field) => $emit('row-change',field, value, parentfield)"
         />
-        <FormControl
-          v-else
-          :ref="field.fieldname === 'name' ? 'nameField' : 'fields'"
-          :size="field.fieldtype === 'AttachImage' ? 'form' : undefined"
-          :show-label="!isDuplicateLabel(field)"
-          :border="true"
-          :df="field"
-          :value="doc[field.fieldname]"
-          :align-with-inputs="shouldAlignWithInputs(idx)"
-          @editrow="(doc: Doc) => $emit('editrow', doc)"
-          @change="(value: DocValue) => $emit('value-change', field, value)"
-          @row-change="(field:Field, value:DocValue, parentfield:Field) => $emit('row-change',field, value, parentfield)"
-        />
+        <template v-else>
+          <div
+            v-if="shouldRenderLabelSpacer(field)"
+            class="h-5 mb-1"
+            aria-hidden="true"
+          ></div>
+          <FormControl
+            :ref="field.fieldname === 'name' ? 'nameField' : 'fields'"
+            :size="field.fieldtype === 'AttachImage' ? 'form' : undefined"
+            :show-label="!isDuplicateLabel(field)"
+            :border="true"
+            :df="field"
+            :value="doc[field.fieldname]"
+            :align-with-inputs="shouldAlignWithInputs(idx)"
+            @editrow="(doc: Doc) => $emit('editrow', doc)"
+            @change="(value: DocValue) => $emit('value-change', field, value)"
+            @row-change="(field:Field, value:DocValue, parentfield:Field) => $emit('row-change',field, value, parentfield)"
+          />
+        </template>
         <div v-if="errors?.[field.fieldname]" class="text-sm text-red-600 mt-1">
           {{ errors[field.fieldname] }}
         </div>
@@ -121,6 +127,43 @@ export default defineComponent({
         sibling.fieldtype !== 'Table' &&
         !sibling.hidden
       );
+    },
+    getSibling(field: Field): Field | null {
+      const fields = this.fields ?? [];
+      let currentRow: Field[] = [];
+      for (const f of fields) {
+        if (f.hidden) continue;
+        if (f.fieldtype === 'Table' || f.fieldname === 'termsAndConditions') {
+          if (currentRow.length > 0) {
+            if (currentRow.includes(field)) {
+              return currentRow.find(x => x !== field) || null;
+            }
+            currentRow = [];
+          }
+        } else {
+          currentRow.push(f);
+          if (currentRow.length === 2) {
+            if (currentRow.includes(field)) {
+              return currentRow.find(x => x !== field) || null;
+            }
+            currentRow = [];
+          }
+        }
+      }
+      if (currentRow.length > 0 && currentRow.includes(field)) {
+        return currentRow.find(x => x !== field) || null;
+      }
+      return null;
+    },
+    shouldRenderLabelSpacer(field: Field): boolean {
+      if (!this.isDuplicateLabel(field)) {
+        return false;
+      }
+      const sibling = this.getSibling(field);
+      if (sibling && !sibling.hidden && sibling.fieldtype !== 'Table' && sibling.fieldtype !== 'Check') {
+        return !this.isDuplicateLabel(sibling);
+      }
+      return false;
     },
     isDuplicateLabel(field: Field): boolean {
       if (!this.showTitle || !this.title || !field || !field.label) {

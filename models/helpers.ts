@@ -307,13 +307,21 @@ export function getLedgerLink(
   doc: Doc,
   reportClassName: 'GeneralLedger' | 'StockLedger'
 ) {
+  if (!doc) {
+    return {
+      name: 'Report',
+      params: {
+        reportClassName,
+      },
+    };
+  }
   return {
     name: 'Report',
     params: {
       reportClassName,
       defaultFilters: JSON.stringify({
-        referenceType: doc.schemaName,
-        referenceName: doc.name,
+        referenceType: doc.schemaName || '',
+        referenceName: doc.name || '',
       }),
     },
   };

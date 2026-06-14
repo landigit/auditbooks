@@ -98,6 +98,12 @@ onMounted(async () => {
   const isDark = !!fyo.singles.SystemSettings?.darkMode;
   setDarkMode(isDark);
   darkMode.value = isDark;
+
+  fyo.doc.observer.on('sync:SystemSettings', () => {
+    const isDark = !!fyo.singles.SystemSettings?.darkMode;
+    setDarkMode(isDark);
+    darkMode.value = isDark;
+  });
 });
 
 async function setInitialScreen(): Promise<void> {

@@ -40,7 +40,7 @@ const props = withDefaults(
 const injectedDoc = inject<Doc | undefined>('doc', undefined);
 
 const doc = computed(() => {
-  if (injectedDoc instanceof Doc) {
+  if (injectedDoc) {
     return injectedDoc;
   }
   return undefined;

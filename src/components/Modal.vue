@@ -2,7 +2,8 @@
   <Transition>
     <div
       v-if="openModal"
-      class="backdrop z-20 flex justify-center items-center"
+      class="backdrop z-20 flex justify-center"
+      :class="align === 'top' ? 'items-start pt-20' : 'items-center'"
       @click="$emit('closemodal')"
     >
       <div
@@ -23,9 +24,11 @@ import { inject, watch, onUnmounted } from 'vue';
 const props = withDefaults(
   defineProps<{
     openModal?: boolean;
+    align?: 'center' | 'top';
   }>(),
   {
     openModal: false,
+    align: 'center',
   }
 );
 

@@ -502,7 +502,7 @@ input[type='number']::-webkit-inner-spin-button {
     height: 2.25rem !important;
   }
 
-  .border.rounded:not(textarea):not(.image-attach-box):not([style*="display: none"]):not([style*="display:none"]) {
+  .border.rounded:not(textarea):not(.image-attach-box):not(.absolute):not([style*="display: none"]):not([style*="display:none"]) {
     height: 2.25rem !important;
     display: flex !important;
     align-items: center !important;

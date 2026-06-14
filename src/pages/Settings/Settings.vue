@@ -10,7 +10,7 @@
       <FormHeader
         :form-title="tabLabels[activeTab] ?? ''"
         :form-sub-title="t`Settings`"
-        class="sticky top-0 bg-white dark:bg-gray-899 border-b dark:border-gray-800"
+        class="sticky top-0 bg-white dark:bg-gray-890 border-b dark:border-gray-800"
       >
       </FormHeader>
 

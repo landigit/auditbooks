@@ -1,10 +1,10 @@
 <template>
   <div
     class="flex flex-row flex-nowrap items-center gap-4 text-foreground text-sm select-none min-h-[50px] py-2 w-full"
-    :class="hideCountSelector ? 'justify-center gap-6' : 'justify-between'"
+    :class="props.hideCountSelector ? 'justify-center gap-6' : 'justify-between'"
   >
     <!-- Left Section: Length Display & Count Selector Unified -->
-    <div :class="hideCountSelector ? 'flex-shrink-0 flex items-center' : 'flex-1 flex justify-start min-w-[280px]'">
+    <div :class="props.hideCountSelector ? 'flex-shrink-0 flex items-center' : 'flex-1 flex justify-start min-w-[280px]'">
       <div
         class="border border-gray-200 dark:border-gray-800 bg-background rounded-md flex items-center px-3 h-8 shadow-sm text-sm gap-3"
       >
@@ -14,7 +14,7 @@
             {{ t`of` }} {{ itemCount }}
           </span>
         </span>
-        <template v-if="filteredCounts.length && !hideCountSelector">
+        <template v-if="filteredCounts.length && !props.hideCountSelector">
           <div class="h-4 w-[1px] bg-gray-200 dark:bg-gray-800"></div>
           <div class="flex items-center gap-0.5">
             <button
@@ -75,7 +75,7 @@
     </div>
 
     <!-- Empty third column to maintain center alignment of page controls -->
-    <div v-if="!hideCountSelector" class="flex-1 justify-end hidden md:flex min-w-[280px]"></div>
+    <div v-if="!props.hideCountSelector" class="flex-1 justify-end hidden md:flex min-w-[280px]"></div>
   </div>
 </template>
 

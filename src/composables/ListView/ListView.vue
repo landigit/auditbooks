@@ -23,14 +23,15 @@
         </Button>
         <div
           v-if="showDropdown"
-          class="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-40"
+          class="absolute top-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-48"
         >
           <div
             v-for="option in actionOptions"
             :key="option.value"
-            class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+            class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center"
             @click="createInvoice(option.value)"
           >
+            <feather-icon :name="option.icon" class="w-4 h-4 me-2 text-gray-500 dark:text-gray-400" />
             {{ option.label }}
           </div>
         </div>

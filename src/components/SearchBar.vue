@@ -16,6 +16,7 @@
   <Modal
     :open-modal="openModal"
     :set-close-listener="false"
+    align="top"
     @closemodal="closeSearch"
   >
     <div class="w-form">

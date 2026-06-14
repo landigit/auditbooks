@@ -43,9 +43,9 @@ export function useListView(props: { schemaName: string; filters?: Record<string
   });
 
   const actionOptions = [
-    { value: 'SalesQuote', label: 'Sales Quote' },
-    { value: 'SalesInvoice', label: 'Sales Invoice' },
-    { value: 'PurchaseInvoice', label: 'Purchase Invoice' },
+    { value: 'SalesQuote', label: 'Sales Quote', icon: 'invoice-04' },
+    { value: 'SalesInvoice', label: 'Sales Invoice', icon: 'add-invoice' },
+    { value: 'PurchaseInvoice', label: 'Purchase Invoice', icon: 'add-invoice' },
   ];
 
   function getListConfig(schemaName: string) {

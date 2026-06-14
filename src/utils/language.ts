@@ -51,8 +51,8 @@ export async function setLanguageMap(
   }
 
   if (!dontReload && success && initLanguage !== oldLanguage) {
-    // In Tauri, reload via standard browser API
-    window.location.reload();
+    // In Tauri, reload via standard browser API by navigating to the origin index.html
+    window.location.href = window.location.origin + '/index.html';
   }
   return success;
 }

@@ -137,7 +137,9 @@ export function useSettings() {
         {
           label: t`Yes`,
           isPrimary: true,
-          action: () => window.location.reload(),
+          action: () => {
+            window.location.href = window.location.origin + '/index.html';
+          },
         },
         {
           label: t`No`,

@@ -40,7 +40,10 @@
         <h2 class="text-sm font-semibold text-foreground">
           {{ fyo.schemaMap[schemaName]?.label ?? schemaName }}
         </h2>
-        <div class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1">
+        <div
+          class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1"
+          style="display: grid !important; height: auto !important;"
+        >
           <Check
             v-for="ef of fields"
             :key="ef.fieldname"
@@ -62,7 +65,10 @@
         <h2 class="text-sm font-semibold text-foreground">
           {{ fyo.schemaMap[efs.target]?.label ?? schemaName }}
         </h2>
-        <div class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1">
+        <div
+          class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1"
+          style="display: grid !important; height: auto !important;"
+        >
           <Check
             v-for="ef of efs.fields"
             :key="ef.fieldname"

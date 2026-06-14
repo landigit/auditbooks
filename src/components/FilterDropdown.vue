@@ -50,10 +50,10 @@
                     {{ i + 1 }}
                   </span>
                 </div>
-                <Select
+                 <Select
                   :border="true"
                   size="small"
-                  class="w-24"
+                  class="w-40"
                   :df="{
                     label: t`Field`,
                     placeholder: t`field`,
@@ -71,7 +71,7 @@
                 <Select
                   :border="true"
                   size="small"
-                  class="w-24"
+                  class="w-28"
                   :df="{
                     label: t`Condition`,
                     placeholder: t`Condition`,
@@ -90,7 +90,7 @@
                 <Data
                   :border="true"
                   size="small"
-                  class="w-24"
+                  class="w-36"
                   :df="{
                     label: t`Value`,
                     placeholder: t`Value`,

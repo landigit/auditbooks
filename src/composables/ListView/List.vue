@@ -39,7 +39,7 @@
               :key="column.label"
               class="overflow-x-auto no-scrollbar whitespace-nowrap h-row items-center flex"
               :class="{
-                'ms-auto': isColumnNumeric(column),
+                'justify-end w-full': isColumnNumeric(column),
                 'pe-4': i === columns.length - 1,
               }"
             >
@@ -128,7 +128,7 @@
       v-else
       class="flex-1 flex flex-col items-center justify-center"
     >
-      <img src="../../assets/img/list-empty-state.svg" alt="" class="w-24" />
+      <FeatherIcon name="file-attachment" class="w-24 h-24 text-gray-500 dark:text-gray-400 mb-2" />
       <p class="my-3 text-gray-800 dark:text-gray-200">
         {{ t`No entries found` }}
       </p>
@@ -235,7 +235,7 @@ const gridTemplateColumns = computed(() => {
         return '3rem';
       }
       if (isNumeric(fieldtype)) {
-        return '8rem';
+        return '10rem';
       }
       if (fieldtype === 'Date' || fieldtype === 'Datetime') {
         return '10rem';
@@ -260,7 +260,7 @@ const tableWidth = computed(() => {
     } else if (fieldtype === 'Check') {
       totalRem += 3;
     } else if (isNumeric(fieldtype)) {
-      totalRem += 8;
+      totalRem += 10;
     } else if (fieldtype === 'Date' || fieldtype === 'Datetime') {
       totalRem += 10;
     } else {
