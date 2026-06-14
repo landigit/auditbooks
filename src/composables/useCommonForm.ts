@@ -164,7 +164,20 @@ export function useCommonForm(props: { name: string; schemaName: string }) {
     if (!hasDoc.value) {
       return [];
     }
-    return getGroupedActionsForDoc(doc.value);
+    const rawGroups = getGroupedActionsForDoc(doc.value);
+    if (isMobile.value) {
+      // Flatten all action groups into a single action group (represented by the three-dot button)
+      const allActions = rawGroups.flatMap(group => group.actions);
+      return [
+        {
+          group: '',
+          label: '',
+          type: 'secondary',
+          actions: allActions,
+        }
+      ];
+    }
+    return rawGroups;
   });
 
   async function toggleWidth() {

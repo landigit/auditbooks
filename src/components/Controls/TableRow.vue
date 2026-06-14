@@ -10,9 +10,9 @@
       @mouseenter="isRowIndexVisible = false"
       @mouseleave="isRowIndexVisible = true"
     >
-      <span class="relative w-4 h-4 flex items-center justify-center">
+      <span v-if="!readOnly" class="relative w-4 h-4 flex items-center justify-start">
         <feather-icon
-          v-if="!readOnly && !isRowIndexVisible"
+          v-if="!isRowIndexVisible"
           name="x"
           class="w-4 h-4 -ms-1 cursor-pointer rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-blue-50 dark:focus:bg-gray-800 transition"
           :button="true"
@@ -23,8 +23,8 @@
           @keydown.enter="$emit('remove')"
         />
         <span
-          v-if="!readOnly && isRowIndexVisible"
-          class="absolute left-0 top-0 w-full h-full flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+          v-if="isRowIndexVisible"
+          class="absolute left-0 top-0 w-full h-full flex items-center justify-start focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
           tabindex="0"
           role="button"
           aria-label="Delete row"
@@ -34,7 +34,7 @@
           {{ row.idx + 1 }}
         </span>
       </span>
-      <span v-if="readOnly">
+      <span v-else>
         {{ row.idx + 1 }}
       </span>
     </div>

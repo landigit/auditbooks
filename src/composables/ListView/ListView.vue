@@ -36,9 +36,9 @@
           </div>
         </div>
       </div>
-      <Button ref="exportButtonRef" :icon="false" @click="openExportModal = true">
-        <feather-icon name="download" class="w-4 h-4 me-1.5" />
-        {{ t`Export` }}
+      <Button ref="exportButtonRef" :icon="isMobile" @click="openExportModal = true">
+        <feather-icon name="download" class="w-4 h-4 md:me-1.5" />
+        <span class="hidden md:inline">{{ t`Export` }}</span>
       </Button>
       <FilterDropdown
         ref="filterDropdownRef"
@@ -89,6 +89,7 @@ import PageHeader from 'src/components/PageHeader.vue';
 import List from './List.vue';
 import { useListView } from './useListView';
 import { useApp } from 'src/composables/useApp.js';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
 const props = withDefaults(
   defineProps<{
@@ -103,6 +104,7 @@ const props = withDefaults(
 );
 
 const { t } = useApp();
+const { isMobile } = useBreakpoint();
 
 const {
   listConfig,

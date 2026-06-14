@@ -1,4 +1,4 @@
-mod db;
+pub mod db;
 pub mod models;
 
 use db::{
@@ -10,8 +10,7 @@ use std::sync::Mutex;
 use tauri::Manager;
 
 
-#[tauri::command]
-fn get_platform() -> String {
+pub fn get_platform_inner() -> String {
   #[cfg(target_os = "windows")]
   return "win32".to_string();
   #[cfg(target_os = "macos")]
@@ -21,8 +20,17 @@ fn get_platform() -> String {
 }
 
 #[tauri::command]
-fn get_version() -> String {
+fn get_platform() -> String {
+  get_platform_inner()
+}
+
+pub fn get_version_inner() -> String {
   env!("CARGO_PKG_VERSION").to_string()
+}
+
+#[tauri::command]
+fn get_version() -> String {
+  get_version_inner()
 }
 
 #[tauri::command]

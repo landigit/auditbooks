@@ -11,6 +11,7 @@
     <SearchBar :class="(!showSidebar || isMobile) ? 'rounded-l-none' : ''" />
     <!-- Back Button -->
     <a
+      v-if="!isMobile"
       ref="backlink"
       class="nav-link"
       :class="
@@ -24,6 +25,7 @@
     </a>
     <!-- Forward Button -->
     <a
+      v-if="!isMobile"
       class="nav-link rounded-r-md"
       :class="
         historyState.forward
@@ -42,7 +44,7 @@ import SearchBar from './SearchBar.vue';
 import { historyState, showSidebar } from 'src/utils/refs';
 import { toggleSidebar } from 'src/utils/ui';
 import { useShortcuts } from 'src/composables/useShortcuts.js';
-import { useBreakpoint } from 'src/composables/useBreakpoint.js';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
 const COMPONENT_NAME = 'PageHeaderNavGroup';
 

@@ -1,7 +1,7 @@
 <template>
   <div
-    class="px-2 md:px-4 flex justify-between items-center flex-shrink-0 dark:bg-gray-875 safe-area-top-padding"
-    :style="`height: calc(var(--h-row-largest) + env(safe-area-inset-top, 0px))`"
+    class="px-2 md:px-4 flex justify-between items-center flex-shrink-0 dark:bg-gray-875"
+    :style="`padding-top: env(safe-area-inset-top, 0px); height: calc(${isMobile ? 'var(--h-row-mid)' : 'var(--h-row-largest)'} + env(safe-area-inset-top, 0px))`"
     :class="[
       border ? 'border-b dark:border-gray-800' : '',
       platformName !== 'Windows' ? 'window-drag' : '',
@@ -51,6 +51,9 @@ import { languageDirectionKey } from 'src/utils/injectionKeys';
 import { showSidebar } from 'src/utils/refs';
 import { fyo } from 'src/initFyo';
 import PageHeaderNavGroup from './PageHeaderNavGroup.vue';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
+
+const { isMobile } = useBreakpoint();
 
 const props = defineProps({
   title: { type: String, default: '' },

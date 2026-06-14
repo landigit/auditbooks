@@ -27,12 +27,12 @@
           </template>
           <div class="flex justify-end gap-4 mt-4">
             <Button
-              v-for="(b, index) of buttons"
+              v-for="b of orderedButtons"
               :ref="el => setButtonRef(el, b.isPrimary)"
               :key="b.label"
               style="min-width: 5rem"
               :type="b.isPrimary ? 'primary' : 'secondary'"
-              @click="() => handleClick(index)"
+              @click="() => handleClick(b)"
             >
               {{ b.label }}
             </Button>
@@ -46,6 +46,7 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { getIconConfig } from 'src/utils/interactive';
 import { DialogButton, ToastType } from 'src/utils/types';
+import { usePlatform } from 'src/composables/usePlatform';
 import Button from './Button.vue';
 import FeatherIcon from './FeatherIcon.vue';
 
@@ -61,10 +62,23 @@ const props = withDefaults(
   }
 );
 
+const { isMac } = usePlatform();
 const open = ref(false);
 
 const primaryButtons = ref<any[]>([]);
 const secondaryButtons = ref<any[]>([]);
+
+const orderedButtons = computed(() => {
+  const btns = [...props.buttons];
+  if (isMac.value) {
+    // macOS: Secondary/Cancel first, Primary last.
+    btns.sort((a, b) => (a.isPrimary ? 1 : 0) - (b.isPrimary ? 1 : 0));
+  } else {
+    // Windows/Linux: Primary first, Secondary last.
+    btns.sort((a, b) => (a.isPrimary ? 0 : 1) - (b.isPrimary ? 0 : 1));
+  }
+  return btns;
+});
 
 function setButtonRef(el: any, isPrimary: boolean) {
   if (el) {
@@ -129,20 +143,19 @@ function handleEscape(event: KeyboardEvent) {
   event.stopPropagation();
 
   if (props.buttons.length === 1) {
-    return handleClick(0);
+    return handleClick(props.buttons[0]);
   }
 
-  const index = props.buttons.findIndex(({ isEscape }) => isEscape);
+  const escapeButton = props.buttons.find(({ isEscape }) => isEscape);
 
-  if (index === -1) {
+  if (!escapeButton) {
     return;
   }
 
-  return handleClick(index);
+  return handleClick(escapeButton);
 }
 
-function handleClick(index: number) {
-  const button = props.buttons[index];
+function handleClick(button: DialogButton) {
   button.action();
   open.value = false;
 }

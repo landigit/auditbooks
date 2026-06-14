@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "ponytail": {
+      "source": "dietrichgebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail/SKILL.md",
+      "computedHash": "1e1789f8626581a2e6a6f07e31c324f58841ed3a46e5bac8147b8981ac962668"
+    },
     "tauri-v2": {
       "source": "nodnarbnitram/claude-code-extensions",
       "sourceType": "github",

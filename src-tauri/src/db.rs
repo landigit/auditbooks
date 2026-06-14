@@ -278,7 +278,7 @@ fn sync_db_if_needed(_state: &tauri::State<'_, DbState>) -> Result<(), String> {
   Ok(())
 }
 
-fn table_exists(conn: &Connection, table_name: &str) -> bool {
+pub fn table_exists(conn: &Connection, table_name: &str) -> bool {
   let mut stmt = match conn.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?1") {
     Ok(s) => s,
     Err(_) => return false,
@@ -286,7 +286,7 @@ fn table_exists(conn: &Connection, table_name: &str) -> bool {
   stmt.exists([table_name]).unwrap_or(false)
 }
 
-fn get_sqlite_type(fieldtype: &str) -> Option<&'static str> {
+pub fn get_sqlite_type(fieldtype: &str) -> Option<&'static str> {
   match fieldtype {
     "Int" => Some("INTEGER"),
     "Float" | "Percent" => Some("REAL"),
@@ -298,7 +298,7 @@ fn get_sqlite_type(fieldtype: &str) -> Option<&'static str> {
   }
 }
 
-fn random_string() -> String {
+pub fn random_string() -> String {
   use std::time::{SystemTime, UNIX_EPOCH};
   let nanos = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos();
   static mut COUNTER: u32 = 0;
@@ -309,7 +309,7 @@ fn random_string() -> String {
   format!("{:x}{:x}", nanos & 0xFFFFFFFF, count)
 }
 
-fn row_to_json(row: &Row) -> rusqlite::Result<Value> {
+pub fn row_to_json(row: &Row) -> rusqlite::Result<Value> {
   let column_names = row.as_ref().column_names();
   let mut map = Map::new();
   for (i, col_name) in column_names.iter().enumerate() {
@@ -374,7 +374,7 @@ impl ConnectionExt for Connection {
   }
 }
 
-fn val_to_tosql(val: &Value) -> Result<rusqlite::types::ToSqlOutput<'static>, String> {
+pub fn val_to_tosql(val: &Value) -> Result<rusqlite::types::ToSqlOutput<'static>, String> {
   match val {
     Value::Null => Ok(rusqlite::types::ToSqlOutput::Owned(rusqlite::types::Value::Null)),
     Value::Bool(b) => Ok(rusqlite::types::ToSqlOutput::Owned(rusqlite::types::Value::Integer(if *b { 1 } else { 0 }))),
@@ -392,7 +392,7 @@ fn val_to_tosql(val: &Value) -> Result<rusqlite::types::ToSqlOutput<'static>, St
   }
 }
 
-fn apply_filters(
+pub fn apply_filters(
   query_str: &mut String,
   params: &mut Vec<rusqlite::types::ToSqlOutput<'static>>,
   filters: &Value,
@@ -497,7 +497,7 @@ fn apply_filters(
   Ok(())
 }
 
-fn query_one(
+pub fn query_one(
   conn: &Connection,
   table_name: &str,
   name: &str,
@@ -519,7 +519,7 @@ fn query_one(
   }
 }
 
-fn get_all(
+pub fn get_all(
   conn: &Connection,
   schema_map: &SchemaMap,
   schema_name: &str,
@@ -621,7 +621,7 @@ fn get_all(
   Ok(Value::Array(results))
 }
 
-fn update_single_value(
+pub fn update_single_value(
   conn: &Connection,
   single_schema_name: &str,
   fieldname: &str,
@@ -660,7 +660,7 @@ fn update_single_value(
   Ok(())
 }
 
-fn update_one(
+pub fn update_one(
   conn: &Connection,
   schema: &Schema,
   schema_name: &str,
@@ -701,7 +701,7 @@ fn update_one(
   Ok(())
 }
 
-fn insert_one(
+pub fn insert_one(
   conn: &Connection,
   schema: &Schema,
   schema_name: &str,
@@ -751,7 +751,7 @@ fn insert_one(
   Ok(())
 }
 
-fn insert_or_update_children(
+pub fn insert_or_update_children(
   conn: &Connection,
   schema_map: &SchemaMap,
   schema: &Schema,

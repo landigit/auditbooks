@@ -10,7 +10,7 @@
         :class="platform === 'Mac' && languageDirection === 'ltr' ? 'pt-8' : ''
           ">
         <h6 data-testid="company-name"
-          class="font-semibold whitespace-nowrap overflow-auto no-scrollbar select-none sidebar-company-name">
+          class="text-base md:text-xl font-semibold whitespace-nowrap overflow-auto no-scrollbar select-none sidebar-company-name">
           {{ companyName }}
         </h6>
       </div>

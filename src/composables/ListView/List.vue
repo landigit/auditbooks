@@ -30,7 +30,7 @@
             />
           </div>
           <Row
-            class="text-gray-700 dark:text-gray-400 h-row-mid"
+            class="text-gray-700 dark:text-gray-400 h-row-mid w-full"
             :grid-template-columns="gridTemplateColumns"
             gap="0.5rem"
           >
@@ -75,7 +75,7 @@
 
               <Row
                 gap="0.5rem"
-                class="cursor-pointer text-gray-900 dark:text-gray-300 h-row-mid"
+                class="cursor-pointer text-gray-900 dark:text-gray-300 h-row-mid w-full"
                 :grid-template-columns="gridTemplateColumns"
                 @click="isSelectionMode ? null : $emit('openDoc', row.name)"
               >
@@ -217,6 +217,20 @@ const columns = computed(() => {
 });
 
 const gridTemplateColumns = computed(() => {
+  if (isMobile.value) {
+    return columns.value
+      .map((col) => {
+        const fieldname = col.fieldname?.toLowerCase() ?? '';
+        if (fieldname === 'name') {
+          return '2fr';
+        }
+        if (fieldname === 'status') {
+          return '1.2fr';
+        }
+        return '2fr';
+      })
+      .join(' ');
+  }
   return columns.value
     .map((col) => {
       const fieldname = col.fieldname?.toLowerCase() ?? '';

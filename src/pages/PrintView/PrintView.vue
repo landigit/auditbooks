@@ -16,13 +16,13 @@
         @change="onTemplateNameChange"
       />
       <DropdownWithActions :actions="actions" :title="t`More`" />
-      <Button class="text-xs" type="primary" @click="savePDF()">
-        <feather-icon name="file-text" class="w-4 h-4 me-1.5" />
-        {{ t`Save as PDF` }}
+      <Button class="text-xs" type="primary" :icon="isMobile" @click="savePDF()">
+        <feather-icon name="file-text" class="w-4 h-4 md:me-1.5" />
+        <span class="hidden md:inline">{{ t`Save as PDF` }}</span>
       </Button>
-      <Button class="text-xs" type="primary" @click="savePDF(true)">
-        <feather-icon name="printer" class="w-4 h-4 me-1.5" />
-        {{ t`Print` }}
+      <Button class="text-xs" type="primary" :icon="isMobile" @click="savePDF(true)">
+        <feather-icon name="printer" class="w-4 h-4 md:me-1.5" />
+        <span class="hidden md:inline">{{ t`Print` }}</span>
       </Button>
     </PageHeader>
 
@@ -60,6 +60,7 @@ import PageHeader from 'src/components/PageHeader.vue';
 import PrintContainer from 'src/pages/TemplateBuilder/PrintContainer.vue';
 import { useApp } from 'src/composables/useApp';
 import { usePrintView } from 'src/composables/usePrintView';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
 const props = defineProps<{
   schemaName: string;
@@ -67,6 +68,7 @@ const props = defineProps<{
 }>();
 
 const { t, fyo } = useApp();
+const { isMobile } = useBreakpoint();
 
 const {
   doc,

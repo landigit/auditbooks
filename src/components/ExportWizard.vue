@@ -5,7 +5,7 @@
     <hr class="dark:border-gray-800" />
 
     <!-- Export Config -->
-    <div class="grid grid-cols-3 p-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4 gap-4">
       <Check
         v-if="configFields.useListFilters && Object.keys(listFilters).length"
         :df="configFields.useListFilters"
@@ -41,7 +41,7 @@
           {{ fyo.schemaMap[schemaName]?.label ?? schemaName }}
         </h2>
         <div
-          class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 border dark:border-gray-800 rounded mt-1"
           style="display: grid !important; height: auto !important;"
         >
           <Check
@@ -66,7 +66,7 @@
           {{ fyo.schemaMap[efs.target]?.label ?? schemaName }}
         </h2>
         <div
-          class="grid grid-cols-3 border dark:border-gray-800 rounded mt-1"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 border dark:border-gray-800 rounded mt-1"
           style="display: grid !important; height: auto !important;"
         >
           <Check

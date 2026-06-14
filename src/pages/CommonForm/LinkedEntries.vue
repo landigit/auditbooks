@@ -8,11 +8,11 @@
       class="flex items-center justify-between px-4 h-row-largest sticky top-0 bg-white dark:bg-gray-850 border-b dark:border-gray-800"
       style="z-index: 1"
     >
-      <div class="flex items-center justify-between w-full">
-        <Button :icon="true" @click="$emit('close')">
+      <div class="flex items-center justify-center w-full relative z-10">
+        <Button :icon="true" class="absolute left-0 z-20" @click="$emit('close')">
           <feather-icon name="x" class="w-4 h-4" />
         </Button>
-        <p class="text-xl font-semibold linked-title">
+        <p class="text-xl font-semibold linked-title text-center">
           {{ t`Linked Entries` }}
         </p>
       </div>

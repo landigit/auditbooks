@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue';
+import { computed, inject, unref } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
 import Button from 'src/components/Button.vue';
@@ -41,7 +41,7 @@ const injectedDoc = inject<Doc | undefined>('doc', undefined);
 
 const doc = computed(() => {
   if (injectedDoc) {
-    return injectedDoc;
+    return unref(injectedDoc);
   }
   return undefined;
 });
@@ -53,7 +53,13 @@ const items = computed<DropdownItem[]>(() => {
     if (cleanLabel.includes('duplicate')) {
       icon = 'copy';
     } else if (cleanLabel.includes('new entry') || cleanLabel.includes('create')) {
-      icon = 'plus-circle';
+      icon = 'add-invoice';
+    } else if (cleanLabel.includes('new')) {
+      icon = 'plus';
+    } else if (cleanLabel.includes('settings')) {
+      icon = 'settings';
+    } else if (cleanLabel.includes('template')) {
+      icon = 'file';
     } else if (cleanLabel.includes('return')) {
       icon = 'rotate-ccw';
     } else if (cleanLabel.includes('delete')) {
@@ -64,8 +70,8 @@ const items = computed<DropdownItem[]>(() => {
       icon = 'dollar-sign';
     } else if (cleanLabel.includes('shipment') || cleanLabel.includes('delivery')) {
       icon = 'truck';
-    } else if (cleanLabel.includes('receipt')) {
-      icon = 'file-text';
+    } else if (cleanLabel.includes('receipt') || cleanLabel.includes('invoice') || cleanLabel.includes('quote')) {
+      icon = 'invoice-04';
     } else if (cleanLabel.includes('ledger') || cleanLabel.includes('entries')) {
       icon = 'book-open';
     } else if (cleanLabel.includes('edit')) {

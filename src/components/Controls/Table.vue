@@ -4,83 +4,85 @@
       {{ df.label }}
     </div>
 
-    <div :class="border ? 'border dark:border-gray-800 rounded-md' : ''">
-      <!-- Title Row -->
-      <Row
-        :ratio="ratio"
-        class="border-b dark:border-gray-800 px-2 text-gray-600 dark:text-gray-400 w-full flex items-center table-header-row"
-      >
-        <div class="flex items-center ps-2">#</div>
-        <div
-          v-for="df in tableFields"
-          :key="df.fieldname"
-          class="flex px-2 h-row-mid"
-          :class="[
-            df.sub_label
-              ? 'flex-col items-center text-center'
-              : isNumeric(df)
-              ? 'ms-auto items-center'
-              : 'items-center',
-          ]"
+    <div :class="border ? 'border dark:border-gray-800 rounded-md' : ''" class="overflow-x-auto custom-scroll max-w-full">
+      <div class="min-w-[700px] md:min-w-0">
+        <!-- Title Row -->
+        <Row
+          :ratio="ratio"
+          class="border-b dark:border-gray-800 px-2 text-gray-600 dark:text-gray-400 w-full flex items-center table-header-row"
         >
-          <span>{{ df.label }}</span>
-          <p v-if="df.sub_label" class="text-xs">
-            {{ df.sub_label }}
-          </p>
-        </div>
-      </Row>
-
-      <!-- Data Rows -->
-      <div
-        v-if="value"
-        class="overflow-auto custom-scroll custom-scroll-thumb1"
-        :style="{ 'max-height': maxHeight }"
-      >
-        <TableRow
-          v-for="(row, idx) of value"
-          ref="table-row"
-          :key="row.name"
-          :class="idx < value.length - 1 ? 'border-b dark:border-gray-800' : ''"
-          v-bind="{ row, tableFields, size, ratio, isNumeric }"
-          :read-only="isReadOnly"
-          :can-edit-row="canEditRow"
-          @remove="removeRow(row)"
-          @change="(field, value) => $emit('row-change', field, value, df)"
-        />
-      </div>
-
-      <!-- Add Row and Row Count -->
-      <Row
-        v-if="!isReadOnly"
-        :ratio="ratio"
-        class="text-gray-500 cursor-pointer px-2 w-full h-row-mid flex items-center focus:outline-none focus:ring-1 focus:ring-blue-500"
-        :class="value.length > 0 ? 'border-t dark:border-gray-800' : ''"
-        tabindex="0"
-        @click="addRow"
-        @keydown.enter="addRow"
-      >
-        <div class="flex items-center ps-1">
-          <feather-icon name="plus" class="w-4 h-4 text-gray-500" />
-        </div>
-        <div
-          class="flex justify-between px-2"
-          :style="`grid-column: 2 / ${ratio.length + 1}`"
-        >
-          <p>
-            {{ t`Add Row` }}
-          </p>
-          <p
-            v-if="
-              value &&
-              maxRowsBeforeOverflow &&
-              value.length > maxRowsBeforeOverflow
-            "
-            class="text-end px-2"
+          <div class="flex items-center ps-2">#</div>
+          <div
+            v-for="df in tableFields"
+            :key="df.fieldname"
+            class="flex px-2 h-row-mid"
+            :class="[
+              df.sub_label
+                ? 'flex-col items-center text-center'
+                : isNumeric(df)
+                ? 'ms-auto items-center'
+                : 'items-center',
+            ]"
           >
-            {{ t`${value.length} rows` }}
-          </p>
+            <span>{{ df.label }}</span>
+            <p v-if="df.sub_label" class="text-xs">
+              {{ df.sub_label }}
+            </p>
+          </div>
+        </Row>
+
+        <!-- Data Rows -->
+        <div
+          v-if="value"
+          class="overflow-auto custom-scroll custom-scroll-thumb1"
+          :style="{ 'max-height': maxHeight }"
+        >
+          <TableRow
+            v-for="(row, idx) of value"
+            ref="table-row"
+            :key="row.name"
+            :class="idx < value.length - 1 ? 'border-b dark:border-gray-800' : ''"
+            v-bind="{ row, tableFields, size, ratio, isNumeric }"
+            :read-only="isReadOnly"
+            :can-edit-row="canEditRow"
+            @remove="removeRow(row)"
+            @change="(field, value) => $emit('row-change', field, value, df)"
+          />
         </div>
-      </Row>
+
+        <!-- Add Row and Row Count -->
+        <Row
+          v-if="!isReadOnly"
+          :ratio="ratio"
+          class="text-gray-500 cursor-pointer px-2 w-full h-row-mid flex items-center focus:outline-none focus:ring-1 focus:ring-blue-500"
+          :class="value.length > 0 ? 'border-t dark:border-gray-800' : ''"
+          tabindex="0"
+          @click="addRow"
+          @keydown.enter="addRow"
+        >
+          <div class="flex items-center ps-1">
+            <feather-icon name="plus" class="w-4 h-4 text-gray-500" />
+          </div>
+          <div
+            class="flex justify-between px-2"
+            :style="`grid-column: 2 / ${ratio.length + 1}`"
+          >
+            <p>
+              {{ t`Add Row` }}
+            </p>
+            <p
+              v-if="
+                value &&
+                maxRowsBeforeOverflow &&
+                value.length > maxRowsBeforeOverflow
+              "
+              class="text-end px-2"
+            >
+              {{ t`${value.length} rows` }}
+            </p>
+          </div>
+        </Row>
+      </div>
     </div>
   </div>
 </template>
@@ -128,7 +130,18 @@ export default {
       return this.df.edit;
     },
     ratio() {
-      const ratio = [0.3].concat(this.tableFields.map(() => 1));
+      const ratio = [0.3].concat(
+        this.tableFields.map((f) => {
+          const fn = f.fieldname?.toLowerCase() ?? '';
+          if (fn === 'item') {
+            return 1.8; // Give item description columns a moderately larger relative fraction
+          }
+          if (fn === 'qty' || fn === 'rate' || fn === 'tax' || fn === 'unit') {
+            return 0.8; // Tighten space for narrow fields like quantity, rate, tax list, or unit
+          }
+          return 1;
+        })
+      );
 
       if (this.canEditRow) {
         return ratio.concat(0.3);

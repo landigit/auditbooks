@@ -47,6 +47,7 @@
       </Button>
       <Button
         :icon="true"
+        class="hidden md:inline-flex"
         :title="t`Toggle between form and full width`"
         @click="toggleWidth"
       >
@@ -66,13 +67,13 @@
         </p>
         <feather-icon v-else name="more-horizontal" class="w-4 h-4" />
       </DropdownWithActions>
-      <Button v-if="doc?.canSave" type="primary" @click="sync">
-        <feather-icon name="save" class="w-4 h-4 me-1.5" />
-        {{ t`Save` }}
+      <Button v-if="doc?.canSave" type="primary" @click="sync" :icon="isMobile">
+        <feather-icon name="save" class="w-4 h-4 md:me-1.5" />
+        <span class="hidden md:inline">{{ t`Save` }}</span>
       </Button>
-      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit">
-        <feather-icon name="check-square" class="w-4 h-4 me-1.5" />
-        {{ t`Submit` }}
+      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit" :icon="isMobile">
+        <feather-icon name="check-square" class="w-4 h-4 md:me-1.5" />
+        <span class="hidden md:inline">{{ t`Submit` }}</span>
       </Button>
     </template>
     <template #body>
@@ -162,6 +163,7 @@ import LinkedEntries from './LinkedEntries.vue';
 import RowEditForm from './RowEditForm.vue';
 import { useCommonForm } from 'src/composables/useCommonForm';
 import { useApp } from 'src/composables/useApp.js';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
 const props = withDefaults(
   defineProps<{
@@ -175,6 +177,7 @@ const props = withDefaults(
 );
 
 const { t } = useApp();
+const { isMobile } = useBreakpoint();
 
 const {
   errors,

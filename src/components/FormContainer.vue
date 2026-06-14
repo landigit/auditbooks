@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex bg-gray-25 dark:bg-gray-875 overflow-x-auto custom-scroll custom-scroll-thumb1"
+    class="flex bg-gray-25 dark:bg-gray-875 overflow-x-hidden"
   >
     <div class="flex flex-1 flex-col">
       <!-- Page Header (Title, Buttons, etc) -->
@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import PageHeader from './PageHeader.vue';
-import { useBreakpoint } from 'src/composables/useBreakpoint.js';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 
 const props = withDefaults(
   defineProps<{

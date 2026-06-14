@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Amazon.in Tax Invoice</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style data-purpose="print-settings">
+    @media print {
+      body {
+        background-color: white;
+      }
+      .no-print {
+        display: none;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #000;
+      line-height: 1.2;
+    }
+  </style>
+<style data-purpose="table-styling">
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 4px;
+      font-size: 0.75rem;
+      vertical-align: top;
+    }
+    th {
+      background-color: #e5e7eb;
+      font-weight: bold;
+      text-align: center;
+    }
+    .text-right-aligned {
+      text-align: right;
+    }
+    .text-center-aligned {
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-10">
+<!-- BEGIN: InvoiceContainer -->
+<main class="max-w-[800px] mx-auto bg-white p-6 border border-gray-200 shadow-sm" data-purpose="invoice-document">
+<!-- BEGIN: TopHeader -->
+<header class="flex justify-between items-start mb-8">
+<div data-purpose="logo-container">
+<!-- Logo placeholder based on user provided data if available, otherwise fallback to known structure -->
+<img alt="Amazon.in Logo" class="w-32 h-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx1Mix4OoFYFthgqDz4EzLDt1UHEgD7Xn2fNzl-djU_JI6uSSxgGDWEWbWMlqPlu4MBJqnK14g7hyfCwuPUA4BWscqBkzuOQUKJa_X9cabd-21Yw8QDKWdeJ4pw2m8yAYhWMqd8CUUIYU-lcY9X4WPQSQ5xLpuJ0XW5ccxgNtPdbRKxcwSTYdDoOvU0EzeLvMzzf46b7jHC0wkBsV1wAMmSAIVjKoxCtPCqclnmb2SoYk_n50uqNDwWsXPcFsjlNT_PwNyi84InMKZ"/>
+</div>
+<div class="text-right" data-purpose="document-title">
+<h1 class="text-xl font-bold">Tax Invoice/Bill of Supply/Cash Memo</h1>
+<p class="text-sm">(Original for Recipient)</p>
+</div>
+</header>
+<!-- END: TopHeader -->
+<!-- BEGIN: AddressSection -->
+<section class="grid grid-cols-2 gap-8 mb-6" data-purpose="address-details">
+<!-- Left Column: Sold By -->
+<div class="text-sm">
+<h2 class="font-bold">Sold By :</h2>
+<address class="not-italic">
+          Varasiddhi Silk Exports<br/>
+          * 75, 3rd Cross, Lalbagh Road<br/>
+          BENGALURU, KARNATAKA, 560027<br/>
+          IN
+        </address>
+<div class="mt-4">
+<p><span class="font-bold">PAN No:</span> AACFV3325K</p>
+<p><span class="font-bold">GST Registration No:</span> 29AACFV3325K1ZY</p>
+</div>
+</div>
+<!-- Right Column: Billing Address -->
+<div class="text-right text-sm">
+<h2 class="font-bold">Billing Address :</h2>
+<address class="not-italic">
+          Madhu B<br/>
+          Eurofins IT Solutions India Pvt Ltd,, 1st Floor,<br/>
+          Maruti Platinum, Lakshminarayana Pura, AECS<br/>
+          Layou<br/>
+          BENGALURU, KARNATAKA, 560037<br/>
+          IN<br/>
+<span class="font-bold">State/UT Code:</span> 29
+        </address>
+</div>
+</section>
+<!-- END: AddressSection -->
+<!-- BEGIN: ShippingSection -->
+<section class="flex flex-col items-end mb-6 text-sm" data-purpose="shipping-and-meta">
+<div class="text-right">
+<h2 class="font-bold">Shipping Address :</h2>
+<address class="not-italic">
+          Madhu B<br/>
+          Madhu B<br/>
+          Eurofins IT Solutions India Pvt Ltd,, 1st Floor,<br/>
+          Maruti Platinum, Lakshminarayana Pura, AECS<br/>
+          Layou<br/>
+          BENGALURU, KARNATAKA, 560037<br/>
+          IN<br/>
+<span class="font-bold">State/UT Code:</span> 29<br/>
+<span class="font-bold">Place of supply:</span> KARNATAKA<br/>
+<span class="font-bold">Place of delivery:</span> KARNATAKA
+        </address>
+</div>
+</section>
+<!-- END: ShippingSection -->
+<!-- BEGIN: MetaInformation -->
+<section class="flex justify-between items-end mb-2 text-sm" data-purpose="order-invoice-meta">
+<div>
+<p><span class="font-bold">Order Number:</span> 403-3225714-7676307</p>
+<p><span class="font-bold">Order Date:</span> 28.10.2019</p>
+</div>
+<div class="text-right">
+<p><span class="font-bold">Invoice Number :</span> IN-761</p>
+<p><span class="font-bold">Invoice Details :</span> KA-310565025-1920</p>
+<p><span class="font-bold">Invoice Date :</span> 28.10.2019</p>
+</div>
+</section>
+<!-- END: MetaInformation -->
+<!-- BEGIN: ItemsTable -->
+<section class="mb-4" data-purpose="line-items">
+<table>
+<thead>
+<tr>
+<th class="w-10">Sl. No</th>
+<th class="w-1/3">Description</th>
+<th>Unit Price</th>
+<th>Qty</th>
+<th>Net Amount</th>
+<th>Tax Rate</th>
+<th>Tax Type</th>
+<th>Tax Amount</th>
+<th>Total Amount</th>
+</tr>
+</thead>
+<tbody>
+<!-- Item 1 -->
+<tr>
+<td class="text-center-aligned">1</td>
+<td>
+              Varasiddhi Silks Men's Formal Shirt (SH-05-42, Navy Blue, 42) | B07KGF3KW8 ( SH-05--42 )
+              <div class="mt-4">Shipping Charges</div>
+</td>
+<td class="text-right-aligned">₹538.10<br/><br/><br/>₹30.96</td>
+<td class="text-center-aligned">1<br/><br/><br/>1</td>
+<td class="text-right-aligned">₹538.10<br/><br/><br/>₹30.96</td>
+<td class="text-center-aligned">2.5%<br/>2.5%<br/>2.5%<br/>2.5%</td>
+<td class="text-center-aligned">CGST<br/>SGST<br/>CGST<br/>SGST</td>
+<td class="text-right-aligned">₹13.45<br/>₹13.45<br/>₹0.77<br/>₹0.77</td>
+<td class="text-right-aligned">₹565.00<br/><br/><br/>₹32.50</td>
+</tr>
+<!-- Item 2 -->
+<tr>
+<td class="text-center-aligned">2</td>
+<td>
+              Varasiddhi Silks Men's Formal Shirt (SH-05-40, Navy Blue, 40) | B07KGCS2X7 ( SH-05--40 )
+              <div class="mt-4">Shipping Charges</div>
+</td>
+<td class="text-right-aligned">₹538.10<br/><br/><br/>₹30.96</td>
+<td class="text-center-aligned">1<br/><br/><br/>1</td>
+<td class="text-right-aligned">₹538.10<br/><br/><br/>₹30.96</td>
+<td class="text-center-aligned">2.5%<br/>2.5%<br/>2.5%<br/>2.5%</td>
+<td class="text-center-aligned">CGST<br/>SGST<br/>CGST<br/>SGST</td>
+<td class="text-right-aligned">₹13.45<br/>₹13.45<br/>₹0.77<br/>₹0.77</td>
+<td class="text-right-aligned">₹565.00<br/><br/><br/>₹32.50</td>
+</tr>
+<!-- Totals Row -->
+<tr class="font-bold">
+<td class="text-left font-bold" colspan="7">TOTAL:</td>
+<td class="text-right-aligned">₹56.88</td>
+<td class="text-right-aligned">₹1,195.00</td>
+</tr>
+</tbody>
+</table>
+</section>
+<!-- END: ItemsTable -->
+<!-- BEGIN: AmountInWords -->
+<section class="border border-black border-t-0 p-2 mb-4" data-purpose="words-total">
+<p class="font-bold text-sm">Amount in Words:</p>
+<p class="text-sm">One Thousand One Hundred And Ninety-five only</p>
+</section>
+<!-- END: AmountInWords -->
+<!-- BEGIN: SignatureSection -->
+<section class="flex justify-between items-start" data-purpose="authorization">
+<div class="text-xs">
+<p>Whether tax is payable under reverse charge - No</p>
+</div>
+<div class="text-right border border-black p-4 min-w-[250px]" data-purpose="signatory-box">
+<p class="font-bold text-sm mb-2">For Varasiddhi Silk Exports:</p>
+<div class="flex justify-end mb-2">
+<!-- Signature placeholder -->
+<div class="bg-gray-100 border border-gray-300 w-48 h-12 flex items-center justify-center italic text-gray-400">
+            Digitally Signed
+          </div>
+</div>
+<p class="font-bold text-sm">Authorized Signatory</p>
+</div>
+</section>
+<!-- END: SignatureSection -->
+<!-- BEGIN: Footer -->
+<footer class="mt-12 text-[10px] text-gray-500 text-center border-t border-gray-100 pt-4" data-purpose="legal-footer">
+<p>*ASSPL-Amazon Seller Services Pvt. Ltd., ARIPL-Amazon Retail India Pvt. Ltd. (only where Amazon Retail India Pvt. Ltd. fulfillment center is co-located)</p>
+<p>Customers desirous of availing input GST credit are requested to create a Business account and purchase on Amazon.in/business from Business eligible sellers</p>
+<p class="mt-2">Please note that this invoice is not a demand for payment</p>
+<p class="mt-4 text-right">Page 1 of 2</p>
+</footer>
+<!-- END: Footer -->
+</main>
+<!-- END: InvoiceContainer -->
+<!-- BEGIN: PrintButton -->
+<div class="max-w-[800px] mx-auto mt-6 no-print">
+<button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow-md transition-all" onclick="window.print()">
+      Print Invoice
+    </button>
+</div>
+<!-- END: PrintButton -->
+</body></html>

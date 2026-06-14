@@ -8,18 +8,18 @@
     :close-on-click-content="false"
   >
     <template #target="{ togglePopover }">
-      <Button :icon="true" @click="togglePopover()">
+      <Button :icon="isMobile" @click="togglePopover()">
         <span class="flex items-center">
           <feather-icon
             name="filter"
             class="w-4 h-4 text-current"
           />
-          <span class="ms-1">
+          <span class="md:ms-1">
             <template v-if="activeFilterCount > 0">
               {{ filterAppliedMessage }}
             </template>
             <template v-else>
-              {{ t`Filter` }}
+              <span class="hidden md:inline">{{ t`Filter` }}</span>
             </template>
           </span>
         </span>
@@ -149,6 +149,7 @@
 
 <script setup lang="ts">
 import { useApp } from 'src/composables/useApp.js';
+import { useBreakpoint } from 'src/composables/useBreakpoint';
 import Button from './Button.vue';
 import Data from './Controls/Data.vue';
 import Select from './Controls/Select.vue';
@@ -157,6 +158,7 @@ import Popover from './Popover.vue';
 import { useFilterDropdown } from '../composables/useFilterDropdown.js';
 
 const { t } = useApp();
+const { isMobile } = useBreakpoint();
 
 const props = defineProps<{ schemaName: string }>();
 const emit = defineEmits<{ (e: 'change', filters: any): void }>();

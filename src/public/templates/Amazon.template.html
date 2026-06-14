@@ -1,0 +1,176 @@
+<main class="bg-white h-full px-6 py-6" :style="{ 'font-family': print.font || 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif' }">
+  <component is="style">
+    .amazon-table {
+      border-collapse: collapse !important;
+      width: 100% !important;
+      border: 1px solid #000000 !important;
+      margin-bottom: 1rem;
+    }
+    .amazon-table th, .amazon-table td {
+      border: 1px solid #000000 !important;
+      padding: 6px 8px !important;
+      font-size: 0.75rem !important;
+      vertical-align: top !important;
+      line-height: 1.3 !important;
+    }
+    .amazon-table th {
+      background-color: #f3f4f6 !important;
+      font-weight: bold !important;
+      text-align: center !important;
+    }
+    .col-sl { width: 5%; text-align: center; }
+    .col-desc { width: 35%; text-align: left; }
+    .col-price { width: 12%; text-align: right; }
+    .col-qty { width: 8%; text-align: center; }
+    .col-net { width: 12%; text-align: right; }
+    .col-hsn { width: 10%; text-align: center; }
+    .col-tax { width: 8%; text-align: center; }
+    .col-total { width: 10%; text-align: right; }
+  </component>
+
+  <!-- BEGIN: TopHeader -->
+  <header class="flex justify-between items-start mb-8">
+    <div data-purpose="logo-container">
+      <img
+        v-if="print.displayLogo && print.logo"
+        alt="Logo"
+        class="w-32 h-auto object-contain"
+        :src="print.logo"
+      />
+      <div v-else class="text-xl text-gray-700 font-bold" :style="{ color: print.color }">
+        {{ print.companyName }}
+      </div>
+    </div>
+    <div class="text-right" data-purpose="document-title">
+      <h1 class="text-xl font-bold">{{ doc.entryLabel || t`Tax Invoice/Bill of Supply` }}</h1>
+      <p class="text-xs text-gray-500">(Original for Recipient)</p>
+    </div>
+  </header>
+  <!-- END: TopHeader -->
+
+  <!-- BEGIN: AddressSection -->
+  <section class="grid grid-cols-2 gap-8 mb-6 text-sm" data-purpose="address-details">
+    <!-- Left Column: Sold By -->
+    <div>
+      <h2 class="font-bold">Sold By :</h2>
+      <address class="not-italic text-gray-800 whitespace-pre-line">
+        {{ print.companyName }}
+        {{ print.links?.address?.addressDisplay || print.address }}
+      </address>
+      <div class="mt-2 text-xs">
+        <p v-if="print.pan"><span class="font-bold">PAN No:</span> {{ print.pan }}</p>
+        <p v-if="print.gstin"><span class="font-bold">GST Registration No:</span> {{ print.gstin }}</p>
+      </div>
+    </div>
+    <!-- Right Column: Billing Address -->
+    <div class="text-right">
+      <h2 class="font-bold">Billing Address :</h2>
+      <address class="not-italic text-gray-800 whitespace-pre-line">
+        {{ doc.party }}
+        {{ doc.links?.party?.links?.address?.addressDisplay || doc.links?.party?.address || '' }}
+      </address>
+      <div v-if="doc.partyGSTIN" class="mt-2 text-xs">
+        <p><span class="font-bold">GSTIN:</span> {{ doc.partyGSTIN }}</p>
+      </div>
+    </div>
+  </section>
+  <!-- END: AddressSection -->
+
+  <!-- BEGIN: ShippingSection -->
+  <section class="flex flex-col items-end mb-6 text-sm" data-purpose="shipping-and-meta">
+    <div class="text-right">
+      <h2 class="font-bold">Shipping Address :</h2>
+      <address class="not-italic text-gray-800 whitespace-pre-line">
+        {{ doc.party }}
+        {{ doc.links?.shippingAddress?.addressDisplay || doc.links?.party?.links?.address?.addressDisplay || doc.links?.party?.address || '' }}
+      </address>
+    </div>
+  </section>
+  <!-- END: ShippingSection -->
+
+  <!-- BEGIN: MetaInformation -->
+  <section class="flex justify-between items-end mb-2 text-xs border-b pb-2 border-gray-200" data-purpose="order-invoice-meta">
+    <div>
+      <p v-if="doc.orderNumber"><span class="font-bold">Order Number:</span> {{ doc.orderNumber }}</p>
+      <p><span class="font-bold">Order Date:</span> {{ doc.date }}</p>
+    </div>
+    <div class="text-right">
+      <p><span class="font-bold">Invoice Number :</span> {{ doc.name }}</p>
+      <p><span class="font-bold">Invoice Date :</span> {{ doc.date }}</p>
+    </div>
+  </section>
+  <!-- END: MetaInformation -->
+
+  <!-- BEGIN: ItemsTable -->
+  <section class="mb-4" data-purpose="line-items">
+    <table class="amazon-table">
+      <thead>
+        <tr>
+          <th class="col-sl">Sl. No</th>
+          <th class="col-desc">Description</th>
+          <th class="col-price">Unit Price</th>
+          <th class="col-qty">Qty</th>
+          <th class="col-net">Net Amount</th>
+          <th v-if="doc.showHSN" class="col-hsn">HSN/SAC</th>
+          <th class="col-tax">Tax</th>
+          <th class="col-total">Total Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(row, index) in doc.items" :key="row.name">
+          <td class="col-sl">{{ index + 1 }}</td>
+          <td class="col-desc text-left">
+            <div class="font-semibold text-gray-950">{{ row.item }}</div>
+            <div v-if="row.description" class="text-xs text-gray-500 mt-1 whitespace-pre-line">{{ row.description }}</div>
+          </td>
+          <td class="col-price text-right">{{ row.rate }}</td>
+          <td class="col-qty text-center">
+            <div v-if="row.transferUnit">{{ row.transferUnit }} {{ row.qty }}</div>
+            <div v-else>{{ row.qty }}</div>
+          </td>
+          <td class="col-net text-right">{{ row.amount }}</td>
+          <td class="col-hsn text-center" v-if="doc.showHSN">{{ row.hsnCode || '-' }}</td>
+          <td class="col-tax text-center">{{ row.tax || '-' }}</td>
+          <td class="col-total text-right">{{ row.itemTaxedTotal || row.amount }}</td>
+        </tr>
+        <!-- Totals Row -->
+        <tr class="font-bold">
+          <td class="text-left font-bold" :colspan="doc.showHSN ? 7 : 6">TOTAL:</td>
+          <td class="col-total text-right">{{ doc.grandTotal }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <!-- END: ItemsTable -->
+
+  <!-- BEGIN: AmountInWords -->
+  <section class="border border-black border-t-0 p-2 mb-4" data-purpose="words-total">
+    <p class="font-bold text-xs">Amount in Words:</p>
+    <p class="text-xs">{{ doc.grandTotalInWords }}</p>
+  </section>
+  <!-- END: AmountInWords -->
+
+  <!-- BEGIN: SignatureSection -->
+  <section class="flex justify-between items-start" data-purpose="authorization">
+    <div class="text-[10px] text-gray-500">
+      <p>Whether tax is payable under reverse charge - No</p>
+    </div>
+    <div class="text-right border border-black p-4 min-w-[250px]" data-purpose="signatory-box">
+      <p class="font-bold text-xs mb-2">For {{ print.companyName }}:</p>
+      <div class="flex justify-end mb-2">
+        <div class="bg-gray-100 border border-gray-300 w-48 h-12 flex items-center justify-center italic text-xs text-gray-400">
+          Digitally Signed
+        </div>
+      </div>
+      <p class="font-bold text-xs">Authorized Signatory</p>
+    </div>
+  </section>
+  <!-- END: SignatureSection -->
+
+  <!-- BEGIN: Footer -->
+  <footer class="mt-12 text-[10px] text-gray-500 text-center border-t border-gray-100 pt-4" data-purpose="legal-footer">
+    <p v-if="print.termsAndConditions" class="whitespace-pre-line mb-2">{{ print.termsAndConditions }}</p>
+    <p>Please note that this invoice is not a demand for payment</p>
+  </footer>
+  <!-- END: Footer -->
+</main>
