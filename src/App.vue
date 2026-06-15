@@ -51,7 +51,6 @@ import * as injectionKeys from './utils/injectionKeys';
 import { showToast } from './utils/interactive';
 import { setLanguageMap } from './utils/language';
 import { updateConfigFiles } from './utils/misc';
-import { updatePrintTemplates } from './utils/printTemplates';
 import { Search } from './utils/search';
 import { Shortcuts } from './utils/shortcuts';
 import { routeTo } from './utils/ui';
@@ -201,7 +200,6 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
   }
 
   await initializeInstance(filePath, false, countryCode, fyo);
-  await updatePrintTemplates(fyo);
 
   const syncSettingsDoc = (await fyo.doc.getDoc(
     ModelNameEnum.ERPNextSyncSettings

@@ -1,17 +1,9 @@
-import { Fyo, t } from 'fyo';
+import { t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
 import { Invoice } from 'models/baseModels/Invoice/Invoice';
 import { ModelNameEnum } from 'models/types';
-import { FieldTypeEnum, Schema, TargetField } from 'schemas/types';
-import { getValueMapFromList } from 'utils/index';
-import { TemplateFile } from 'utils/types';
-import { showToast } from './interactive';
+import { FieldTypeEnum } from 'schemas/types';
 import { PrintValues } from './types';
-import {
-  getDocFromNameIfExistsElseNew,
-  getSavePath,
-  showExportInFolder,
-} from './ui';
 import { Money } from 'pesa';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 import { Payment } from 'models/baseModels/Payment/Payment';
@@ -20,13 +12,6 @@ export type PrintTemplateHint = {
   [key: string]: string | PrintTemplateHint | PrintTemplateHint[];
 };
 type PrintTemplateData = Record<string, unknown>;
-type TemplateUpdateItem = {
-  name: string;
-  template: string;
-  type: string;
-  width: number;
-  height: number;
-};
 
 const printSettingsFields = [
   'logo',
@@ -199,34 +184,7 @@ function getTime(dateString: string): string {
   return date.toTimeString().split(' ')[0];
 }
 
-export function getPrintTemplatePropHints(schemaName: string, fyo: Fyo) {
-  const hints: PrintTemplateHint = {};
-  const schema = fyo.schemaMap[schemaName]!;
-  hints.doc = getPrintTemplateDocHints(schema, fyo);
 
-  const printSettingsHints = getPrintTemplateDocHints(
-    fyo.schemaMap[ModelNameEnum.PrintSettings]!,
-    fyo,
-    printSettingsFields
-  );
-  const accountingSettingsHints = getPrintTemplateDocHints(
-    fyo.schemaMap[ModelNameEnum.AccountingSettings]!,
-    fyo,
-    accountingSettingsFields
-  );
-
-  hints.print = {
-    ...printSettingsHints,
-    ...accountingSettingsHints,
-  };
-
-  if (schemaName?.endsWith('Invoice')) {
-    (hints.doc as PrintTemplateData).totalDiscount = fyo.t`Total Discount`;
-    (hints.doc as PrintTemplateData).showHSN = fyo.t`Show HSN`;
-  }
-
-  return hints;
-}
 
 function getGrandTotalInWords(total: number) {
   const formattedTotal = total.toFixed(2);
@@ -363,53 +321,7 @@ function formattedTotalDiscount(doc: Doc): string {
   return doc.fyo.format(totalDiscount, ModelNameEnum.Currency);
 }
 
-function getPrintTemplateDocHints(
-  schema: Schema,
-  fyo: Fyo,
-  fieldnames?: string[],
-  linkLevel?: number
-): PrintTemplateHint {
-  linkLevel ??= 0;
-  const hints: PrintTemplateHint = {};
-  const links: PrintTemplateHint = {};
 
-  let fields = schema.fields;
-  if (fieldnames) {
-    fields = fields.filter((f) => fieldnames.includes(f.fieldname));
-  }
-
-  for (const field of fields) {
-    const { fieldname, fieldtype, label, meta } = field;
-    if (fieldtype === FieldTypeEnum.Attachment || meta) {
-      continue;
-    }
-
-    hints[fieldname] = label ?? fieldname;
-    const { target } = field as TargetField;
-    const targetSchema = fyo.schemaMap[target];
-    if (fieldtype === FieldTypeEnum.Link && targetSchema && linkLevel < 2) {
-      links[fieldname] = getPrintTemplateDocHints(
-        targetSchema,
-        fyo,
-        undefined,
-        linkLevel + 1
-      );
-    }
-
-    if (fieldtype === FieldTypeEnum.Table && targetSchema) {
-      hints[fieldname] = [getPrintTemplateDocHints(targetSchema, fyo)];
-    }
-  }
-
-  hints.submitted = fyo.t`Submitted`;
-  hints.entryType = fyo.t`Entry Type`;
-  hints.entryLabel = fyo.t`Entry Label`;
-
-  if (Object.keys(links).length) {
-    hints.links = links;
-  }
-  return hints;
-}
 
 async function getPrintTemplateDocValues(doc: Doc, fieldnames?: string[]) {
   const values: PrintTemplateData = {};
@@ -471,239 +383,4 @@ async function getPrintTemplateDocValues(doc: Doc, fieldnames?: string[]) {
   return values;
 }
 
-export async function getPathAndMakePDF(
-  name: string,
-  innerHTML: string,
-  width: number,
-  height: number,
-  shouldPrint?: boolean
-) {
-  const html = constructPrintDocument(innerHTML);
 
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    printWindow.document.write(html);
-    printWindow.document.title = name; // Set title so 'Save as PDF' uses the invoice name by default
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-    showToast({ message: t`Print/Save dialog opened`, type: 'success' });
-  } else {
-    showToast({ message: t`Print Failed`, type: 'error' });
-  }
-}
-
-function constructPrintDocument(innerHTML: string) {
-  const html = document.createElement('html');
-  const head = document.createElement('head');
-  const body = document.createElement('body');
-  const style = getAllCSSAsStyleElem();
-
-  const printCSS = document.createElement('style');
-  printCSS.innerHTML = `
-    @media print {
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: white;
-      }
-
-      @page {
-        margin: 0;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-    }
-  `;
-
-  head.innerHTML = [
-    '<meta charset="UTF-8">',
-    '<title>Print Window</title>',
-  ].join('\n');
-
-  head.append(style, printCSS);
-
-  body.innerHTML = innerHTML;
-  html.append(head, body);
-  return html.outerHTML;
-}
-
-function getAllCSSAsStyleElem() {
-  const cssTexts: string[] = [];
-  for (const sheet of document.styleSheets) {
-    for (const rule of sheet.cssRules) {
-      cssTexts.push(rule.cssText);
-    }
-
-    if (sheet.ownerRule) {
-      cssTexts.push(sheet.ownerRule.cssText);
-    }
-  }
-
-  const styleElem = document.createElement('style');
-  styleElem.innerHTML = cssTexts.join('\n');
-  return styleElem;
-}
-
-export async function updatePrintTemplates(fyo: Fyo) {
-  // In Tauri, load templates from bundled assets (served at /templates/)
-  // index.json contains metadata (file, modified, width, height) but NOT the HTML body.
-  // Each template's HTML is fetched individually from /templates/<file>.
-  type TemplateIndexEntry = Omit<TemplateFile, 'template'>;
-  let templateIndex: TemplateIndexEntry[] = [];
-  try {
-    const response = await fetch('/templates/index.json');
-    if (!response.ok) return;
-    templateIndex = (await response.json()) as TemplateIndexEntry[];
-  } catch {
-    // No template index — skip update
-    return;
-  }
-
-  const existingTemplates = (await fyo.db.getAll(ModelNameEnum.PrintTemplate, {
-    fields: ['name', 'modified'],
-    filters: { isCustom: false },
-  })) as { name: string; modified: Date }[];
-
-  const nameModifiedMap = getValueMapFromList(
-    existingTemplates,
-    'name',
-    'modified'
-  );
-  const isLogging = fyo.store.skipTelemetryLogging;
-  fyo.store.skipTelemetryLogging = true;
-
-  for (const { file, modified: modifiedString, width, height } of templateIndex) {
-    const dbModified = new Date(modifiedString);
-    const candidates = getNameAndTypeFromTemplateFile(file, fyo);
-
-    // Check if any candidate needs updating
-    const needsUpdate = candidates.some(({ name }) => {
-      const fileModified = nameModifiedMap[name];
-      return !fileModified || dbModified.valueOf() > fileModified.valueOf();
-    });
-
-    if (!needsUpdate) continue;
-
-    // Fetch the HTML content of this template file
-    let template: string;
-    try {
-      const res = await fetch(`/templates/${file}`);
-      if (!res.ok) continue;
-      template = await res.text();
-    } catch {
-      continue;
-    }
-
-    for (const { name, type } of candidates) {
-      const fileModified = nameModifiedMap[name];
-      if (fileModified && dbModified.valueOf() <= fileModified.valueOf()) {
-        continue;
-      }
-
-      const doc = await getDocFromNameIfExistsElseNew(
-        ModelNameEnum.PrintTemplate,
-        name
-      );
-
-      await doc.set({
-        name,
-        type,
-        template,
-        isCustom: false,
-        ...(width ? { width } : {}),
-        ...(height ? { height } : {}),
-      });
-      await doc.sync();
-    }
-  }
-
-  fyo.store.skipTelemetryLogging = isLogging;
-}
-
-function getPrintTemplateUpdateList(
-  { file, template, modified: modifiedString, width, height }: TemplateFile,
-  nameModifiedMap: Record<string, Date>,
-  fyo: Fyo
-): TemplateUpdateItem[] {
-  const templateList: TemplateUpdateItem[] = [];
-  const dbModified = new Date(modifiedString);
-
-  for (const { name, type } of getNameAndTypeFromTemplateFile(file, fyo)) {
-    const fileModified = nameModifiedMap[name];
-    if (fileModified && dbModified.valueOf() <= fileModified.valueOf()) {
-      continue;
-    }
-
-    templateList.push({
-      height,
-      width,
-      name,
-      type,
-      template,
-    });
-  }
-  return templateList;
-}
-
-function getNameAndTypeFromTemplateFile(
-  file: string,
-  fyo: Fyo
-): { name: string; type: string }[] {
-  /**
-   * Template File Name Format:
-   * TemplateName[.SchemaName].template.html
-   *
-   * If the SchemaName is absent then it is assumed
-   * that the SchemaName is:
-   * - SalesInvoice
-   * - SalesQuote
-   * - PurchaseInvoice
-   */
-
-  const fileName = file.split('.template.html')[0];
-  const name = fileName.split('.')[0];
-  const schemaName = fileName.split('.')[1];
-
-  if (schemaName) {
-    const label = fyo.schemaMap[schemaName]?.label ?? schemaName;
-    return [{ name: `${name} - ${label}`, type: schemaName }];
-  }
-
-  return [
-    ModelNameEnum.SalesInvoice,
-    ModelNameEnum.SalesQuote,
-    ModelNameEnum.PurchaseInvoice,
-  ].map((schemaName) => {
-    const label = fyo.schemaMap[schemaName]?.label ?? schemaName;
-    return { name: `${name} - ${label}`, type: schemaName };
-  });
-}
-
-export const baseTemplate = `<main class="h-full w-full bg-white">
-
-  <!-- Edit This Code -->
-  <header class="p-4 flex justify-between border-b">
-    <h2 
-      class="font-semibold text-2xl" 
-      :style="{ color: print.color }"
-    >
-      {{ print.companyName }}
-    </h2>
-    <h2 class="font-semibold text-2xl" >
-      {{ doc.name }}
-    </h2>
-  </header>
-
-  <div class="p-4 text-gray-600">
-    Edit the code in the Template Editor on the right
-    to create your own personalized custom template.
-  </div>
-
-</main>
-`;

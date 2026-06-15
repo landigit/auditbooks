@@ -41,9 +41,6 @@ export default () => {
               if (id.includes('lodash') || id.includes('luxon')) {
                 return 'vendor-utils';
               }
-              if (id.includes('codemirror') || id.includes('@codemirror')) {
-                return 'vendor-codemirror';
-              }
               return 'vendor';
             }
           }

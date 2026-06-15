@@ -49,9 +49,6 @@ export default async function setupInstance(
   await createDefaultNumberSeries(fyo);
   await updateInventorySettings(fyo);
 
-  const { updatePrintTemplates } = await import('src/utils/printTemplates');
-  await updatePrintTemplates(fyo);
-
   await completeSetup(companyName, fyo);
   if (!Object.keys(fyo.currencySymbols).length) {
     await setCurrencySymbols(fyo);

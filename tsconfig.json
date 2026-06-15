@@ -34,7 +34,12 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
   "ts-node": {
-    "files": true
+    "files": true,
+    "compilerOptions": {
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      "importHelpers": false
+    }
   },
   "include": [
     "src/**/*.ts",

@@ -39,7 +39,7 @@ export class TranslationString {
     indexFormat = getWhitespaceSanitized(indexFormat);
 
     const translatedIndexFormat =
-      this.languageMap![indexFormat]?.translation ?? indexFormat;
+      this.languageMap![indexFormat]?.translation || indexFormat;
 
     this.argList = getIndexList(translatedIndexFormat).map(
       (i) => this.argList![i]
