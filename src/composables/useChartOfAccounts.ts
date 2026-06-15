@@ -471,7 +471,7 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
     const styles: Record<string, string> = {
       height: 'calc(var(--h-row-mid) + 1px)',
     };
-    if (languageDirection === 'rtl') {
+    if (languageDirection?.value === 'rtl') {
       styles['padding-right'] = `calc(1rem + 2rem * ${level})`;
     } else {
       styles['padding-left'] = `calc(1rem + 2rem * ${level})`;
@@ -483,7 +483,7 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
     const styles: Record<string, string> = {
       height: 'height: calc(var(--h-row-mid) + 1px)',
     };
-    if (languageDirection === 'rtl') {
+    if (languageDirection?.value === 'rtl') {
       styles['padding-right'] = `calc(1rem + 2rem * ${level})`;
     } else {
       styles['padding-left'] = `calc(1rem + 2rem * ${level})`;

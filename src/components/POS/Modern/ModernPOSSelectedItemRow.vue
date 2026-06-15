@@ -225,7 +225,7 @@
             fieldtype: 'Text',
             fieldname: 'serialNumber',
           }"
-          :value="row.serialNumber"
+          :value="row.serialNumber as string | undefined"
           :show-label="true"
           :border="true"
           :required="hasSerialNumber"

@@ -58,7 +58,10 @@ const { isMobile } = useBreakpoint();
           <div v-if="route?.query?.edit">
             <component
               :is="Component"
-              :key="route.query.schemaName + route.query.name"
+              :key="
+                String(route.query.schemaName ?? '') +
+                String(route.query.name ?? '')
+              "
               :dark-mode="darkMode"
             />
           </div>

@@ -702,8 +702,6 @@ export function buildDocDefinition(
     }))
   );
 
-
-
   const colWidths = effectiveCols.map((c) => {
     if (c.width === '*' || c.width === 'auto') return c.width as '*' | 'auto';
     const n = parseFloat(c.width);

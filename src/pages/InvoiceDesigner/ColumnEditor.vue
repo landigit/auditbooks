@@ -9,8 +9,8 @@
         class="w-4 h-4 text-gray-400 cursor-grab active:cursor-grabbing shrink-0"
       />
       <input
-        type="checkbox"
         :id="`col-vis-${col.fieldname}`"
+        type="checkbox"
         :checked="col.visible"
         class="accent-blue-500 shrink-0"
         @change="

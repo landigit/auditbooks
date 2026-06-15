@@ -72,6 +72,7 @@ export default ts.config(
       'dist/**',
       'gen/**',
       'src/dist/**',
+      'scratch/**',
     ],
   }
 );

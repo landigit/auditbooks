@@ -3,19 +3,19 @@
     class="flex flex-col flex-1 h-full bg-gray-25 dark:bg-gray-875 overflow-hidden"
   >
     <PageHeader :border="true" :title="t`Invoice Designer`">
-      <Button @click="resetColumns" class="text-xs">
+      <Button class="text-xs" @click="resetColumns">
         <feather-icon name="refresh-cw" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Reset` }}</span>
       </Button>
-      <Button @click="save" class="text-xs">
+      <Button class="text-xs" @click="save">
         <feather-icon name="save" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Save Layout` }}</span>
       </Button>
       <Button
         type="primary"
         class="text-xs"
-        @click="download"
         :disabled="!values"
+        @click="download"
       >
         <feather-icon name="download" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Download PDF` }}</span>
@@ -23,8 +23,8 @@
       <Button
         type="primary"
         class="text-xs"
-        @click="doPrint"
         :disabled="!values"
+        @click="doPrint"
       >
         <feather-icon name="printer" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Print` }}</span>
@@ -79,9 +79,9 @@
           </p>
           <div class="flex items-center gap-2">
             <input
-              type="checkbox"
               id="showPageNumbers"
               v-model="showPageNumbers"
+              type="checkbox"
               class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
             />
             <label
@@ -93,9 +93,9 @@
           </div>
           <div class="flex items-center gap-2">
             <input
-              type="checkbox"
               id="displaySignature"
               v-model="displaySignature"
+              type="checkbox"
               class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
             />
             <label
@@ -113,17 +113,17 @@
               {{ t`Signature Size (px)` }}
             </label>
             <input
-              type="number"
               id="signatureSize"
               v-model="signatureSize"
+              type="number"
               class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
             />
           </div>
           <div class="flex items-center gap-2">
             <input
-              type="checkbox"
               id="displaySeal"
               v-model="displaySeal"
+              type="checkbox"
               class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
             />
             <label
@@ -141,9 +141,9 @@
               {{ t`Seal Size (px)` }}
             </label>
             <input
-              type="number"
               id="sealSize"
               v-model="sealSize"
+              type="number"
               class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
             />
           </div>
@@ -184,11 +184,11 @@
             v-for="(col, idx) in columns"
             :key="col.fieldname"
             draggable="true"
+            class="transition-opacity"
+            :class="dragging === idx ? 'opacity-40' : ''"
             @dragstart="onDragStart(idx)"
             @dragover.prevent="onDragOver(idx)"
             @drop="onDrop"
-            class="transition-opacity"
-            :class="dragging === idx ? 'opacity-40' : ''"
           >
             <ColumnEditor :col="col" @update:col="(c) => (columns[idx] = c)" />
           </div>

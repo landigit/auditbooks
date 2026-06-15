@@ -48,7 +48,6 @@ export class Fyo {
 
   constructor(conf: FyoConfig = {}) {
     this.isTest = conf.isTest ?? false;
-    this.isElectron = false;
 
     this.auth = new AuthHandler(this, conf.AuthDemux);
     this.db = new DatabaseHandler(this, conf.DatabaseDemux);
@@ -91,10 +90,6 @@ export class Fyo {
 
   format(value: unknown, field: FieldType | Field, doc?: Doc) {
     return format(value, field, doc ?? null, this);
-  }
-
-  setIsElectron() {
-    this.isElectron = false;
   }
 
   async initializeAndRegister(

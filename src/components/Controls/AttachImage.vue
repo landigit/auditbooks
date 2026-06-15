@@ -120,11 +120,11 @@ export default defineComponent({
         filters: [{ name: 'Image', extensions: Object.keys(mime_types) }],
       });
 
-      if (!selected) {
+      if (typeof selected !== 'string') {
         return;
       }
 
-      const filePath = typeof selected === 'string' ? selected : selected.path;
+      const filePath = selected;
       const name = filePath.split(/[/\\]/).pop() ?? '';
       const data = await readFile(filePath);
       const extension = name.split('.').at(-1) ?? '';

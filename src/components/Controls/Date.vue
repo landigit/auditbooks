@@ -9,7 +9,7 @@
         <div
           :class="[containerClasses, sizeClasses]"
           class="flex items-center justify-between cursor-pointer border rounded-md"
-          @click="() => !isReadOnly && $refs.popover.togglePopover()"
+          @click="() => !isReadOnly && ($refs.popover as any).togglePopover()"
         >
           <p
             v-if="!isEmpty"
@@ -51,7 +51,7 @@
             @update:model-value="
               (value) => {
                 triggerChange(value);
-                if (!selectTime) $refs.popover.togglePopover(false);
+                if (!selectTime) ($refs.popover as any).togglePopover(false);
               }
             "
           />

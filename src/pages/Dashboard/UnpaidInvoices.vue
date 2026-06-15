@@ -212,7 +212,7 @@ const setData = async () => {
 
 const { period } = useDashboardChart(
   props,
-  (val) => emit('period-change', val),
+  (val: any) => emit('period-change', val),
   setData,
   periodOptions
 );

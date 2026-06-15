@@ -55,7 +55,7 @@ export default {
         : uicolors.gray['800'];
       const passiveGray = this.darkMode
         ? uicolors.gray['500']
-        : uicolors.gray['650'];
+        : (uicolors.gray as any)['650'];
       return this.active ? activeGray : passiveGray;
     },
     bgColor(): string {

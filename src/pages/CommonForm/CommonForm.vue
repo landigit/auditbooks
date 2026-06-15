@@ -69,15 +69,15 @@
         </p>
         <feather-icon v-else name="more-horizontal" class="w-4 h-4" />
       </DropdownWithActions>
-      <Button v-if="doc?.canSave" type="primary" @click="sync" :icon="isMobile">
+      <Button v-if="doc?.canSave" type="primary" :icon="isMobile" @click="sync">
         <feather-icon name="save" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Save` }}</span>
       </Button>
       <Button
         v-else-if="doc?.canSubmit"
         type="primary"
-        @click="submit"
         :icon="isMobile"
+        @click="submit"
       >
         <feather-icon name="check-square" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Submit` }}</span>

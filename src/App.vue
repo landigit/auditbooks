@@ -30,7 +30,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, watch, provide, onMounted } from 'vue';
+import { ref, computed, watch, provide, onMounted, Ref } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
 import { exists as tauriExists } from '@tauri-apps/plugin-fs';
 import { RTL_LANGUAGES } from 'fyo/utils/consts';
@@ -75,7 +75,7 @@ const shortcuts = new Shortcuts(keys);
 const languageDirection = ref(getLanguageDirection(systemLanguageRef.value));
 
 provide(injectionKeys.keysKey, keys);
-provide(injectionKeys.searcherKey, searcher);
+provide(injectionKeys.searcherKey, searcher as Ref<Search | null>);
 provide(injectionKeys.shortcutsKey, shortcuts);
 provide(injectionKeys.languageDirectionKey, languageDirection);
 

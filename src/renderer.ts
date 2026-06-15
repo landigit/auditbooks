@@ -39,7 +39,6 @@ import { createPinia } from 'pinia';
   const app = createApp({
     template: '<App/>',
   });
-  app.config.unwrapInjectedRef = true;
   setErrorHandlers(app);
 
   app.use(createPinia());

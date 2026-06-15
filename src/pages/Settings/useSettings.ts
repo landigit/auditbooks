@@ -23,7 +23,7 @@ export function useSettings() {
   const shortcuts = useShortcuts();
 
   const errors = ref<Record<string, string>>({});
-  const activeTab = ref(ModelNameEnum.AccountingSettings);
+  const activeTab = ref<any>(ModelNameEnum.AccountingSettings);
   const groupedFields = ref<null | UIGroupedFields>(null);
 
   const canSave = computed(() => {

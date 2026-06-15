@@ -18,7 +18,7 @@ class TauriConfigStore {
   async init(): Promise<void> {
     if (this._initPromise) return this._initPromise;
     this._initPromise = (async () => {
-      this._store = await load('config.json', { autoSave: true });
+      this._store = await load('config.json', { autoSave: true, defaults: {} });
       // Populate the cache from persisted store
       const entries = await this._store.entries<unknown>();
       for (const [key, value] of entries) {

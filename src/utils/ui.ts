@@ -9,6 +9,7 @@ import {
 import { remove as tauriRemove } from '@tauri-apps/plugin-fs';
 import { invoke } from '@tauri-apps/api/core';
 import { t } from 'fyo';
+import type { ConfigFile } from 'fyo/core/types';
 import type { Doc } from 'fyo/model/doc';
 import { Action } from 'fyo/model/types';
 import { getActions } from 'fyo/utils';
@@ -508,7 +509,7 @@ export async function selectTextFile(filters?: SelectFileOptions['filters']) {
     return {};
   }
 
-  const filePath = typeof selected === 'string' ? selected : selected.path;
+  const filePath = typeof selected === 'string' ? selected : selected[0];
   const name = filePath.split(/[\/\\]/).pop() ?? '';
 
   try {
@@ -1093,7 +1094,7 @@ export async function deleteDb(filePath: string) {
 
   if (deleted) {
     // Remove the entry from the stored config so the selector refreshes correctly
-    const files = (fyo.config.get('files') ?? []) as Array<{ dbPath: string }>;
+    const files = (fyo.config.get('files') ?? []) as ConfigFile[];
     const updated = files.filter((f) => f.dbPath !== filePath);
     fyo.config.set('files', updated);
   }
@@ -1110,7 +1111,7 @@ export async function getSelectedFilePath(): Promise<{ filePaths: string[] }> {
     return { filePaths: [] };
   }
 
-  const filePath = typeof selected === 'string' ? selected : selected.path;
+  const filePath = typeof selected === 'string' ? selected : selected[0];
   return { filePaths: [filePath] };
 }
 

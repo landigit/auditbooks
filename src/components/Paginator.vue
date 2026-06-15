@@ -102,11 +102,13 @@ const props = withDefaults(
     itemCount?: number;
     allowedCounts?: number[];
     hideDetails?: boolean;
+    hideCountSelector?: boolean;
   }>(),
   {
     itemCount: 0,
     allowedCounts: () => [50, 100, 500, -1],
     hideDetails: false,
+    hideCountSelector: false,
   }
 );
 

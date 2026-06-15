@@ -18,7 +18,7 @@
           :key="d.account"
           class="flex items-center text-sm"
           @mouseover="active = i"
-          @mouseleave="active = null"
+          @mouseleave="active = undefined"
         >
           <div class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
           <p
@@ -86,7 +86,7 @@ const emit = defineEmits<{
   (e: 'period-change', period: PeriodKey): void;
 }>();
 
-const active = ref<null | number>(null);
+const active = ref<undefined | number>(undefined);
 const expenses = ref<
   {
     account: string;
@@ -158,7 +158,7 @@ const setData = async () => {
 
 const { period } = useDashboardChart(
   props,
-  (val) => emit('period-change', val),
+  (val: any) => emit('period-change', val),
   setData,
   periodOptions
 );

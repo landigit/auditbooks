@@ -136,7 +136,7 @@ function getStatus(doc: Doc) {
 
   if (
     doc.schemaName === ModelNameEnum.Party &&
-    doc.outstandingAmount?.isZero() !== true
+    (doc.outstandingAmount as any)?.isZero() !== true
   ) {
     return 'Outstanding';
   }
@@ -166,14 +166,18 @@ function getSubmittableStatus(doc: Doc) {
     ModelNameEnum.PurchaseInvoice,
   ].includes(doc.schemaName as ModelNameEnum);
 
-  if (doc.isSubmitted && isInvoice && (doc.stockNotTransferred ?? 0) > 0) {
+  if (
+    doc.isSubmitted &&
+    isInvoice &&
+    ((doc.stockNotTransferred as any) ?? 0) > 0
+  ) {
     return 'NotTransferred';
   }
 
   if (
     doc.isSubmitted &&
     isInvoice &&
-    doc.outstandingAmount?.isZero() === true
+    (doc.outstandingAmount as any)?.isZero() === true
   ) {
     return 'Paid';
   }
@@ -200,7 +204,7 @@ function getSubmittableStatus(doc: Doc) {
   if (
     doc.isSubmitted &&
     isInvoice &&
-    doc.outstandingAmount?.isZero() !== true
+    (doc.outstandingAmount as any)?.isZero() !== true
   ) {
     return 'Outstanding';
   }

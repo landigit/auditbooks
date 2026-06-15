@@ -255,7 +255,11 @@
           fieldtype: 'Text',
           fieldname: 'serialNumber',
         }"
-        :value="itemSerialNumbers[row.item as string] || row.serialNumber"
+        :value="
+          (itemSerialNumbers[row.item as string] || row.serialNumber) as
+            | string
+            | undefined
+        "
         :show-label="true"
         :border="true"
         :required="hasSerialNumber"
