@@ -36,6 +36,8 @@ const printSettingsFields = [
   'displaySignature',
   'displaySeal',
   'sigSealPosition',
+  'signatureSize',
+  'sealSize',
   'color',
   'font',
   'email',

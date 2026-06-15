@@ -136,22 +136,8 @@ export async function loadColumnConfig(
       } catch {}
     }
     
-    let saved = all[schemaName];
-    if (!saved) {
-      // Fallback to templates/columnConfig.json
-      try {
-        const response = await fetch('/templates/columnConfig.json');
-        if (response.ok) {
-          const fileAll = (await response.json()) as Record<string, SavedConfig>;
-          if (fileAll && fileAll[schemaName]) {
-            saved = fileAll[schemaName];
-          }
-        }
-      } catch (e) {
-        console.warn('Failed to load templates/columnConfig.json:', e);
-      }
-    }
-    
+
+    const saved = all[schemaName];
     if (!saved) {
       return { columns: DEFAULT_COLUMNS.map(c => ({ ...c })), style: 'Classic' };
     }
@@ -181,23 +167,7 @@ export async function saveColumnConfig(
     await ps.set('columnConfig', JSON.stringify(all));
     await ps.sync();
 
-    // Write to templates folder if in development mode
-    if ((import.meta as any).env?.DEV) {
-      try {
-        const { writeTextFile } = await import('@tauri-apps/plugin-fs');
-        const jsonStr = JSON.stringify(all, null, 2);
-        const paths = ['templates/columnConfig.json', 'src/public/templates/columnConfig.json'];
-        for (const p of paths) {
-          try {
-            await writeTextFile(p, jsonStr);
-          } catch (writeErr) {
-            console.warn(`Could not save template to ${p}:`, writeErr);
-          }
-        }
-      } catch (fsErr) {
-        console.warn('Tauri fs write failed in dev mode:', fsErr);
-      }
-    }
+
 
     showToast({ message: t`Layout saved`, type: 'success' });
   } catch {
@@ -490,6 +460,7 @@ export function buildDocDefinition(
     const footerBlock: Content = { text: '***** Thank You Visit Again *****', fontSize: 10, alignment: 'center' as const, margin: [0, 12, 0, 15] };
 
     return {
+      info: { title: str(doc.name) },
       pageSize,
       pageOrientation: 'portrait',
       pageMargins,
@@ -809,6 +780,9 @@ export function buildDocDefinition(
           })
     : null;
 
+  const signatureWidth = Number(print.signatureSize) || 80;
+  const sealWidth = Number(print.sealSize) || 50;
+
   // ── Signature / footer ──
     // ── Deduped signature and seal block ──
   const signatureAndSealBlock: Content | null = (print.displaySignature && print.signature) || (print.displaySeal && print.seal)
@@ -817,7 +791,7 @@ export function buildDocDefinition(
           print.displaySignature && print.signature
             ? {
                 stack: [
-                  { image: str(print.signature), width: 90, height: 30, alignment: 'center' as const },
+                  { image: str(print.signature), width: signatureWidth, alignment: 'center' as const },
                   { text: 'Signature', fontSize: 7, color: '#777', alignment: 'center' as const, margin: [0, 2, 0, 0] }
                 ]
               }
@@ -825,7 +799,7 @@ export function buildDocDefinition(
           print.displaySeal && print.seal
             ? {
                 stack: [
-                  { image: str(print.seal), width: 50, height: 50, alignment: 'center' as const },
+                  { image: str(print.seal), width: sealWidth, alignment: 'center' as const },
                   { text: 'Seal', fontSize: 7, color: '#777', alignment: 'center' as const, margin: [0, 2, 0, 0] }
                 ]
               }
@@ -854,11 +828,14 @@ export function buildDocDefinition(
              columns: [
                {
                  stack: [
-                   { text: 'Whether tax is payable under reverse charge - No', fontSize: 7.5, color: '#555' },
-                   { text: 'Declaration:', bold: true, fontSize: 7.5, margin: [0, 4, 0, 0] },
-                   { text: 'We declare that this invoice shows the actual price of the goods and that all particulars are true and correct.', fontSize: 7, color: '#777', lineHeight: 1.3 },
-                   print.displaytermsandconditions && print.displaytermsandconditions && print.termsAndConditions ? { text: str(print.termsAndConditions), fontSize: 7, color: '#777', margin: [0, 4, 0, 0], lineHeight: 1.3 } : null as unknown as Content,
-                   signatureAndSealBlock,
+                   sigSealBeforeTerms,
+                   print.displaytermsandconditions && print.termsAndConditions ? {
+                     stack: [
+                       { text: 'Terms & Conditions:', bold: true, fontSize: 7.5, margin: [0, 4, 0, 2] },
+                       { text: str(print.termsAndConditions), fontSize: 7, color: '#777', lineHeight: 1.3 }
+                     ]
+                   } : null as unknown as Content,
+                   sigSealAfterTerms,
                  ].filter(Boolean) as Content[],
                  width: '55%',
                },
@@ -869,7 +846,19 @@ export function buildDocDefinition(
                      {
                        stack: [
                           { text: `For ${str(print.companyName)}:`, bold: true, fontSize: 8, alignment: 'left' },
-                          { text: '\n\n\n', fontSize: 8 },
+                          sigSealInSignatory
+                            ? {
+                                columns: [
+                                  print.displaySignature && print.signature
+                                    ? { image: str(print.signature), width: signatureWidth * 0.75, alignment: 'center' as const }
+                                    : { text: '' },
+                                  print.displaySeal && print.seal
+                                    ? { image: str(print.seal), width: sealWidth * 0.75, alignment: 'center' as const }
+                                    : { text: '' }
+                                ],
+                                margin: [0, 4, 0, 4]
+                              }
+                            : { text: '\n\n\n', fontSize: 8 },
                           { text: 'Authorized Signatory', fontSize: 8, alignment: 'right', bold: true }
                        ]
                      }
@@ -890,19 +879,36 @@ export function buildDocDefinition(
              columns: [
                {
                  stack: [
-                   signatureAndSealBlock,
-                   { text: 'Declaration:', bold: true, fontSize: 7.5 },
-                   { text: 'We declare that this invoice shows the actual price of the goods and that all particulars are true and correct.', fontSize: 7, color: '#777', lineHeight: 1.3 },
-                   print.termsAndConditions ? { text: str(print.termsAndConditions), fontSize: 7, color: '#777', margin: [0, 4, 0, 0], lineHeight: 1.3 } : null as unknown as Content,
+                   sigSealBeforeTerms,
+                   print.termsAndConditions ? {
+                     stack: [
+                       { text: 'Terms & Conditions:', bold: true, fontSize: 7.5, margin: [0, 4, 0, 2] },
+                       { text: str(print.termsAndConditions), fontSize: 7, color: '#777', lineHeight: 1.3 }
+                     ]
+                   } : null as unknown as Content,
+                   sigSealAfterTerms,
                  ].filter(Boolean) as Content[],
                  width: '60%',
                },
                {
                  stack: [
                    { text: `For ${str(print.companyName)}`, bold: true, fontSize: 8, alignment: 'right' },
-                   { text: '\n\n\n', fontSize: 8 },
+                   sigSealInSignatory
+                     ? {
+                         columns: [
+                           { text: '' },
+                           print.displaySignature && print.signature
+                             ? { image: str(print.signature), width: signatureWidth * 0.75, alignment: 'right' as const }
+                             : { text: '' },
+                           print.displaySeal && print.seal
+                             ? { image: str(print.seal), width: sealWidth * 0.75, alignment: 'right' as const }
+                             : { text: '' }
+                         ],
+                         margin: [0, 4, 0, 4]
+                       }
+                     : { text: '\n\n\n', fontSize: 8 },
                    { text: 'Authorized Signatory', fontSize: 8, alignment: 'right', color: '#555' },
-                 ],
+                 ].filter(Boolean) as Content[],
                  width: '40%',
                },
              ],
@@ -912,6 +918,7 @@ export function buildDocDefinition(
 
   // ── Assemble ──
   const def: TDocumentDefinitions = {
+    info: { title: str(doc.name) },
     pageSize,
     pageOrientation: 'portrait',
     pageMargins: [pageMargins[0], pageMargins[1], pageMargins[2], pageMargins[3] + 15],
@@ -958,7 +965,12 @@ export function buildDocDefinition(
 
 // ─── Download / Print ─────────────────────────────────────────────────────────
 
+let cachedPdfMake: any = null;
+
 export async function getPdfMake() {
+  if (cachedPdfMake) {
+    return cachedPdfMake;
+  }
   const pdfMake = (await import('pdfmake/build/pdfmake')).default;
   const pdfFonts = (await import('pdfmake/build/vfs_fonts')).default;
   (pdfMake as any).vfs =
@@ -1014,6 +1026,7 @@ export async function getPdfMake() {
     pdfMake.fonts.Figtree = pdfMake.fonts.Roboto;
   }
 
+  cachedPdfMake = pdfMake;
   return pdfMake;
 }
 
@@ -1061,10 +1074,10 @@ export async function printInvoicePdf(
     
     const pdfBuffer = await pdfMake.createPdf(def).getBuffer();
     const buffer = new Uint8Array(pdfBuffer);
-    
     const { tempDir, join } = await import('@tauri-apps/api/path');
     const tempDirPath = await tempDir();
-    const filePath = await join(tempDirPath, 'auditbooks_invoice_print.pdf');
+    const sanitizedName = _name.replace(/[^a-zA-Z0-9-_ ]/g, '_') || 'invoice';
+    const filePath = await join(tempDirPath, `${sanitizedName}.pdf`);
 
     const { writeFile } = await import('@tauri-apps/plugin-fs');
     await writeFile(filePath, buffer);

@@ -53,8 +53,8 @@
         </div>
 
         <!-- Options -->
-        <div class="p-3 border-b dark:border-gray-800">
-          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+        <div class="p-3 border-b dark:border-gray-800 flex flex-col gap-2.5">
+          <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-0.5">
             {{ t`Options` }}
           </p>
           <div class="flex items-center gap-2">
@@ -62,6 +62,40 @@
             <label for="showPageNumbers" class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
               {{ t`Show Page Numbers` }}
             </label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="displaySignature" v-model="displaySignature" class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500" />
+            <label for="displaySignature" class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
+              {{ t`Display Signature` }}
+            </label>
+          </div>
+          <div v-if="displaySignature" class="flex items-center gap-2 ps-6">
+            <label for="signatureSize" class="text-xs text-gray-500 cursor-pointer shrink-0">
+              {{ t`Signature Size (px)` }}
+            </label>
+            <input type="number" id="signatureSize" v-model="signatureSize" class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5" />
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="displaySeal" v-model="displaySeal" class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500" />
+            <label for="displaySeal" class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer">
+              {{ t`Display Seal` }}
+            </label>
+          </div>
+          <div v-if="displaySeal" class="flex items-center gap-2 ps-6">
+            <label for="sealSize" class="text-xs text-gray-500 cursor-pointer shrink-0">
+              {{ t`Seal Size (px)` }}
+            </label>
+            <input type="number" id="sealSize" v-model="sealSize" class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5" />
+          </div>
+          <div class="flex flex-col gap-1 mt-1">
+            <label for="sigSealPosition" class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">
+              {{ t`Signature & Seal Position` }}
+            </label>
+            <select id="sigSealPosition" v-model="sigSealPosition" class="w-full text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1.5 px-2">
+              <option value="authorized_signatory">{{ t`Under Authorized Signatory` }}</option>
+              <option value="before_terms">{{ t`Before Terms and Conditions` }}</option>
+              <option value="after_terms">{{ t`After Terms and Conditions` }}</option>
+            </select>
           </div>
         </div>
 
@@ -255,32 +289,44 @@
             <!-- ── Signature Section ── -->
             <div style="display:flex; justify-content:space-between; align-items:start; font-size:0.72rem; margin-top:16px;">
               <div style="color:#4b5563; max-width:55%;">
-                <p style="margin:0;">Whether tax is payable under reverse charge - No</p>
                 <div style="margin-top:8px;">
-                  <p style="font-weight:bold; margin:0;">Declaration:</p>
-                  <p style="margin:2px 0 0 0; font-size:0.65rem; color:#6b7280; line-height:1.3;">
-                    We declare that this invoice shows the actual price of the goods and that all particulars are true and correct.
-                  </p>
-                  <p v-if="printData.displaytermsandconditions && printData.termsAndConditions" style="margin:4px 0 0 0; font-size:0.65rem; color:#6b7280; line-height:1.3; white-space:pre-line;">
-                    {{ printData.termsAndConditions }}
-                  </p>
-                </div>
-                <div v-if="(printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal)" style="display:flex; justify-content:start; align-items:flex-end; gap:16px; margin-top:8px;">
-                  <div v-if="printData.displaySignature && printData.signature" style="display:flex; flex-direction:column; align-items:center;">
-                    <img :src="printData.signature" style="max-height:30px; width:auto;" />
-                    <span style="font-size:0.6rem; color:#6b7280; margin-top:2px;">Signature</span>
+                  <!-- BEFORE TERMS -->
+                  <div v-if="printData.sigSealPosition === 'before_terms' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:start; align-items:flex-end; gap:16px; margin-top:8px; margin-bottom:8px;">
+                    <div v-if="printData.displaySignature && printData.signature" style="display:flex; flex-direction:column; align-items:center;">
+                      <img :src="printData.signature" :style="{ width: (printData.signatureSize || 80) + 'px' }" style="height:auto;" />
+                      <span style="font-size:0.6rem; color:#6b7280; margin-top:2px;">Signature</span>
+                    </div>
+                    <div v-if="printData.displaySeal && printData.seal" style="display:flex; flex-direction:column; align-items:center;">
+                      <img :src="printData.seal" :style="{ width: (printData.sealSize || 50) + 'px' }" style="height:auto;" />
+                      <span style="font-size:0.6rem; color:#6b7280; margin-top:2px;">Seal</span>
+                    </div>
                   </div>
-                  <div v-if="printData.displaySeal && printData.seal" style="display:flex; flex-direction:column; align-items:center;">
-                    <img :src="printData.seal" style="max-height:50px; width:auto;" />
-                    <span style="font-size:0.6rem; color:#6b7280; margin-top:2px;">Seal</span>
+
+                  <div v-if="printData.displaytermsandconditions && printData.termsAndConditions" style="margin-top:8px;">
+                    <p style="font-weight:bold; margin:0;">Terms & Conditions:</p>
+                    <p style="margin:2px 0 0 0; font-size:0.65rem; color:#6b7280; line-height:1.3; white-space:pre-line;">
+                      {{ printData.termsAndConditions }}
+                    </p>
+                  </div>
+
+                  <!-- AFTER TERMS -->
+                  <div v-if="printData.sigSealPosition === 'after_terms' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:start; align-items:flex-end; gap:16px; margin-top:8px;">
+                    <div v-if="printData.displaySignature && printData.signature" style="display:flex; flex-direction:column; align-items:center;">
+                      <img :src="printData.signature" :style="{ width: (printData.signatureSize || 80) + 'px' }" style="height:auto;" />
+                      <span style="font-size:0.6rem; color:#6b7280; margin-top:2px;">Signature</span>
+                    </div>
+                    <div v-if="printData.displaySeal && printData.seal" style="display:flex; flex-direction:column; align-items:center;">
+                      <img :src="printData.seal" :style="{ width: (printData.sealSize || 50) + 'px' }" style="height:auto;" />
+                      <span style="font-size:0.6rem; color:#6b7280; margin-top:2px;">Seal</span>
+                    </div>
                   </div>
                 </div>
               </div>
               <div style="border:1px solid #000; padding:8px; min-width:200px; text-align:right;">
                 <p style="font-weight:bold; margin:0 0 4px 0; text-align:left;">For {{ printData.companyName }}:</p>
-                <div v-if="printData.sigSealPosition === 'authorized_signatory' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:center; align-items:center; gap:8px; margin:4px 0;">
-                  <img v-if="printData.displaySignature && printData.signature" :src="printData.signature" style="max-height:25px; width:auto;" />
-                  <img v-if="printData.displaySeal && printData.seal" :src="printData.seal" style="max-height:25px; width:auto;" />
+                <div v-if="printData.sigSealPosition === 'authorized_signatory' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:center; align-items:center; gap:8px; margin:4px 0; min-height:35px;">
+                  <img v-if="printData.displaySignature && printData.signature" :src="printData.signature" :style="{ width: ((printData.signatureSize || 80) * 0.75) + 'px' }" style="height:auto;" />
+                  <img v-if="printData.displaySeal && printData.seal" :src="printData.seal" :style="{ width: ((printData.sealSize || 50) * 0.75) + 'px' }" style="height:auto;" />
                 </div>
                 <div v-else style="height:35px;"></div>
                 <p style="font-weight:bold; margin:0;">Authorized Signatory</p>
@@ -553,24 +599,31 @@
             <div style="display:flex; justify-content:space-between; align-items:start; font-size:0.72rem; margin-top:16px;">
               <div style="color:#4b5563; max-width:55%;">
                 <div style="margin-top:8px;">
-                  <p style="font-weight:bold; margin:0;">Declaration:</p>
-                  <p style="margin:2px 0 0 0; font-size:0.65rem; color:#6b7280; line-height:1.3;">
-                    We declare that this invoice shows the actual price of the goods and that all particulars are true and correct.
-                  </p>
-                  <p v-if="printData.displaytermsandconditions && printData.termsAndConditions" style="margin:4px 0 0 0; font-size:0.65rem; color:#6b7280; line-height:1.3; white-space:pre-line;">
-                    {{ printData.termsAndConditions }}
-                  </p>
-                </div>
-                <div v-if="(printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal)" style="display:flex; justify-content:start; align-items:center; gap:16px; margin-top:8px;">
-                  <img v-if="printData.displaySignature && printData.signature" :src="printData.signature" style="max-height:30px; width:auto;" />
-                  <img v-if="printData.displaySeal && printData.seal" :src="printData.seal" style="max-height:50px; width:auto;" />
+                  <!-- BEFORE TERMS -->
+                  <div v-if="printData.sigSealPosition === 'before_terms' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:start; align-items:center; gap:16px; margin-top:8px; margin-bottom:8px;">
+                    <img v-if="printData.displaySignature && printData.signature" :src="printData.signature" :style="{ width: (printData.signatureSize || 80) + 'px' }" style="height:auto;" />
+                    <img v-if="printData.displaySeal && printData.seal" :src="printData.seal" :style="{ width: (printData.sealSize || 50) + 'px' }" style="height:auto;" />
+                  </div>
+
+                  <div v-if="printData.displaytermsandconditions && printData.termsAndConditions" style="margin-top:8px;">
+                    <p style="font-weight:bold; margin:0;">Terms & Conditions:</p>
+                    <p style="margin:2px 0 0 0; font-size:0.65rem; color:#6b7280; line-height:1.3; white-space:pre-line;">
+                      {{ printData.termsAndConditions }}
+                    </p>
+                  </div>
+
+                  <!-- AFTER TERMS -->
+                  <div v-if="printData.sigSealPosition === 'after_terms' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:start; align-items:center; gap:16px; margin-top:8px;">
+                    <img v-if="printData.displaySignature && printData.signature" :src="printData.signature" :style="{ width: (printData.signatureSize || 80) + 'px' }" style="height:auto;" />
+                    <img v-if="printData.displaySeal && printData.seal" :src="printData.seal" :style="{ width: (printData.sealSize || 50) + 'px' }" style="height:auto;" />
+                  </div>
                 </div>
               </div>
               <div style="min-width:200px; text-align:right;">
                 <p style="font-weight:bold; margin:0 0 4px 0; text-align:left;">For {{ printData.companyName }}:</p>
-                <div v-if="printData.sigSealPosition === 'authorized_signatory' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin:4px 0;">
-                  <img v-if="printData.displaySignature && printData.signature" :src="printData.signature" style="max-height:25px; width:auto;" />
-                  <img v-if="printData.displaySeal && printData.seal" :src="printData.seal" style="max-height:25px; width:auto;" />
+                <div v-if="printData.sigSealPosition === 'authorized_signatory' && ((printData.displaySignature && printData.signature) || (printData.displaySeal && printData.seal))" style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin:4px 0; min-height:35px;">
+                  <img v-if="printData.displaySignature && printData.signature" :src="printData.signature" :style="{ width: ((printData.signatureSize || 80) * 0.75) + 'px' }" style="height:auto;" />
+                  <img v-if="printData.displaySeal && printData.seal" :src="printData.seal" :style="{ width: ((printData.sealSize || 50) * 0.75) + 'px' }" style="height:auto;" />
                 </div>
                 <div v-else style="height:35px;"></div>
                 <p style="font-weight:bold; margin:0; color:#555;">Authorized Signatory</p>
@@ -607,6 +660,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
+import { fyo } from 'src/initFyo';
 import Button from 'src/components/Button.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import ColumnEditor from './ColumnEditor.vue';
@@ -654,6 +708,39 @@ const showPageNumbers = ref(true);
 const containerHeight = ref(1123);
 const previewContainer = ref<HTMLElement | null>(null);
 
+// Signature and Seal options
+const displaySignature = ref(false);
+const displaySeal = ref(false);
+const sigSealPosition = ref('before_terms');
+const signatureSize = ref(80);
+const sealSize = ref(50);
+
+watch(displaySignature, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).displaySignature = val;
+  }
+});
+watch(displaySeal, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).displaySeal = val;
+  }
+});
+watch(sigSealPosition, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).sigSealPosition = val;
+  }
+});
+watch(signatureSize, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).signatureSize = val;
+  }
+});
+watch(sealSize, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).sealSize = val;
+  }
+});
+
 function updateHeight() {
   if (previewContainer.value) {
     containerHeight.value = previewContainer.value.clientHeight;
@@ -679,6 +766,15 @@ onMounted(async () => {
   const saved = await loadColumnConfig(props.schemaName);
   columns.value = saved.columns;
   selectedStyle.value = saved.style;
+
+  // Load PrintSettings fields
+  const ps = await fyo.doc.getDoc('PrintSettings');
+  displaySignature.value = !!ps.get('displaySignature');
+  displaySeal.value = !!ps.get('displaySeal');
+  sigSealPosition.value = (ps.get('sigSealPosition') as string) || 'before_terms';
+  signatureSize.value = Number(ps.get('signatureSize')) || 80;
+  sealSize.value = Number(ps.get('sealSize')) || 50;
+
   setTimeout(updateHeight, 300);
 });
 
@@ -698,15 +794,24 @@ function addField(f: ColumnDef) { columns.value.push({ ...f, visible: true }); }
 
 async function save() {
   await saveColumnConfig(props.schemaName, columns.value, selectedStyle.value);
+
+  // Save PrintSettings fields
+  const ps = await fyo.doc.getDoc('PrintSettings');
+  await ps.set('displaySignature', displaySignature.value);
+  await ps.set('displaySeal', displaySeal.value);
+  await ps.set('sigSealPosition', sigSealPosition.value);
+  await ps.set('signatureSize', Number(signatureSize.value) || 80);
+  await ps.set('sealSize', Number(sealSize.value) || 50);
+  await ps.sync();
 }
 
 async function download() {
   if (!values.value) return;
-  await downloadInvoicePdf(props.name, values.value, columns.value, selectedStyle.value, showPageNumbers.value);
+  await downloadInvoicePdf(props.name || (values.value.doc.name as string), values.value, columns.value, selectedStyle.value, showPageNumbers.value);
 }
 
 async function doPrint() {
   if (!values.value) return;
-  await printInvoicePdf(props.name, values.value, columns.value, selectedStyle.value, showPageNumbers.value);
+  await printInvoicePdf(props.name || (values.value.doc.name as string), values.value, columns.value, selectedStyle.value, showPageNumbers.value);
 }
 </script>

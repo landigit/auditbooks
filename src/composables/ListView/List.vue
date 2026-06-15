@@ -6,7 +6,7 @@
       <div class="overflow-x-auto min-w-0 flex-1 flex flex-col">
         <!-- Title Row -->
         <div
-          class="flex items-center list-header-row px-4"
+          class="flex items-center list-header-row px-4 min-w-max"
           :style="{
             paddingRight: dataSlice.length > 13 ? 'calc(var(--w-scrollbar) + 1rem)' : '',
           }"
@@ -53,7 +53,7 @@
         <div v-if="dataSlice.length !== 0">
           <div v-for="(row, i) in dataSlice" :key="(row.name as string)">
             <!-- Row Content -->
-            <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center px-4">
+            <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center px-4 min-w-max">
               <div
                 v-if="!isSelectionMode"
                 class="w-8 text-start me-2 text-gray-700 dark:text-gray-400"

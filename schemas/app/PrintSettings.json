@@ -183,6 +183,20 @@
       "section": "Customizations"
     },
     {
+      "fieldname": "signatureSize",
+      "label": "Signature Size (px)",
+      "fieldtype": "Int",
+      "default": 80,
+      "section": "Customizations"
+    },
+    {
+      "fieldname": "sealSize",
+      "label": "Seal Size (px)",
+      "fieldtype": "Int",
+      "default": 50,
+      "section": "Customizations"
+    },
+    {
       "fieldname": "signature",
       "label": "Signature",
       "fieldtype": "AttachImage",

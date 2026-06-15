@@ -27,34 +27,36 @@
           :height="size.height"
           :show-overflow="true"
         >
-          <div class="bg-white mx-auto">
-            <div class="p-2">
-              <div class="font-semibold text-xl w-full flex justify-between">
-                <h1>
-                  {{ `${fyo.singles.PrintSettings?.companyName}` }}
-                </h1>
-                <p class="text-gray-600">
-                  {{ title }}
-                </p>
+          <div class="bg-white mx-auto w-full min-h-full p-4 flex flex-col justify-between">
+            <div>
+              <div class="p-2">
+                <div class="font-semibold text-xl w-full flex justify-between">
+                  <h1>
+                    {{ `${fyo.singles.PrintSettings?.companyName}` }}
+                  </h1>
+                  <p class="text-gray-600">
+                    {{ title }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Report Data -->
+              <div class="grid w-full border-r border-b" :style="rowStyles">
+                <template v-for="(row, r) of matrix" :key="`row-${r}`">
+                  <div
+                    v-for="(cell, c) of row"
+                    :key="`cell-${r}.${c}`"
+                    :class="cellClasses(cell.idx, r)"
+                    class="text-sm p-2"
+                    style="min-height: 2rem"
+                  >
+                    {{ cell.value }}
+                  </div>
+                </template>
               </div>
             </div>
 
-            <!-- Report Data -->
-            <div class="grid" :style="rowStyles">
-              <template v-for="(row, r) of matrix" :key="`row-${r}`">
-                <div
-                  v-for="(cell, c) of row"
-                  :key="`cell-${r}.${c}`"
-                  :class="cellClasses(cell.idx, r)"
-                  class="text-sm p-2"
-                  style="min-height: 2rem"
-                >
-                  {{ cell.value }}
-                </div>
-              </template>
-            </div>
-
-            <div class="border-t p-2">
+            <div class="border-t p-2 mt-4">
               <p class="text-xs text-right w-full">
                 {{ fyo.format(new Date(), 'Datetime') }}
               </p>
@@ -166,7 +168,7 @@ import Check from 'src/components/Controls/Check.vue';
 import Int from 'src/components/Controls/Int.vue';
 import Select from 'src/components/Controls/Select.vue';
 import PageHeader from 'src/components/PageHeader.vue';
-import ScaledContainer from 'src/pages/TemplateBuilder/ScaledContainer.vue';
+import ScaledContainer from './ScaledContainer.vue';
 import { useApp } from 'src/composables/useApp';
 import { getReport } from 'src/utils/misc';
 import { getPdfMake } from 'src/composables/usePdfInvoice';
@@ -324,15 +326,42 @@ async function savePDF(shouldPrint?: boolean): Promise<void> {
       return;
     }
 
-    const numCols = tableBody[0].length;
-    const tableWidths = Array(numCols).fill('*');
+    // Map column widths dynamically based on the report's column widths and page width
+    const selectedCols = matrix.value[0];
+    const totalWeight = selectedCols.reduce((sum, cell) => {
+      const col = columns[cell.idx];
+      return sum + (col?.width || 1);
+    }, 0);
+
+    const pageSizeName = printSize.value;
+    const isLand = isLandscape.value;
+    const s = paperSizeMap[pageSizeName] || paperSizeMap.A4;
+    const pageWidth = isLand ? Math.max(s.width, s.height) : Math.min(s.width, s.height);
+    const pageHeight = isLand ? Math.min(s.width, s.height) : Math.max(s.width, s.height);
+    const pageWidthPts = pageWidth * 28.346;
+    const pageHeightPts = pageHeight * 28.346;
+
+    const pageMarginLeftRight = 20;
+    const printableWidth = pageWidthPts - (pageMarginLeftRight * 2);
+
+    const paddingPerCol = 10; // paddingLeft: 5, paddingRight: 5
+    const borderWidth = 0.5; // vLineWidth: 0.5
+    const totalPaddingAndBorders = (selectedCols.length * paddingPerCol) + ((selectedCols.length + 1) * borderWidth);
+    const availableContentWidth = Math.max(10, printableWidth - totalPaddingAndBorders);
+
+    const tableWidths = selectedCols.map((cell) => {
+      const col = columns[cell.idx];
+      const colWeight = col?.width || 1;
+      return (colWeight / totalWeight) * availableContentWidth;
+    });
 
     const name = title.value + ' - ' + fyo.format(new Date(), 'Date');
 
     const docDefinition: any = {
-      pageSize: printSize.value,
+      info: { title: name },
+      pageSize: pageSizeName === 'POS' ? { width: pageWidthPts, height: pageHeightPts } : printSize.value,
       pageOrientation: isLandscape.value ? 'landscape' : 'portrait',
-      pageMargins: [20, 40, 20, 40],
+      pageMargins: [pageMarginLeftRight, 40, pageMarginLeftRight, 40],
       content: [
         {
           text: fyo.singles.PrintSettings?.companyName || '',
@@ -393,7 +422,8 @@ async function savePDF(shouldPrint?: boolean): Promise<void> {
       const buffer = new Uint8Array(pdfBuffer);
       const { tempDir, join } = await import('@tauri-apps/api/path');
       const tempDirPath = await tempDir();
-      const filePath = await join(tempDirPath, 'auditbooks_report_print.pdf');
+      const sanitizedName = name.replace(/[^a-zA-Z0-9-_ ]/g, '_') || 'report';
+      const filePath = await join(tempDirPath, `${sanitizedName}.pdf`);
       const { writeFile } = await import('@tauri-apps/plugin-fs');
       await writeFile(filePath, buffer);
       const { openPath } = await import('@tauri-apps/plugin-opener');
