@@ -30,7 +30,12 @@ type TemplateUpdateItem = {
 
 const printSettingsFields = [
   'logo',
+  'signature',
+  'seal',
   'displayLogo',
+  'displaySignature',
+  'displaySeal',
+  'sigSealPosition',
   'color',
   'font',
   'email',
@@ -38,8 +43,12 @@ const printSettingsFields = [
   'address',
   'companyName',
   'amountInWords',
+  'roundOffGrandTotal',
+  'displayTime',
+  'displayDescription',
   'displaytermsandconditions',
   'termsAndConditions',
+  'posPrintWidth',
 ];
 const accountingSettingsFields = ['gstin', 'taxId'];
 
@@ -119,8 +128,23 @@ export async function getPrintTemplatePropValues(
   }
   (values.doc as PrintTemplateData).showHSN = showHSN(doc);
 
+  const roundOffGrandTotal = !!printSettings.roundOffGrandTotal;
+  const grandTotalMoney = ((doc.grandTotal as Money) ?? (doc.amount as Money));
+  const roundedFloat = Math.round(grandTotalMoney.float);
+  const roundOffFloat = roundedFloat - grandTotalMoney.float;
+
+  (values.doc as PrintTemplateData).roundedGrandTotal = doc.fyo.format(
+    fyo.pesa(roundedFloat),
+    ModelNameEnum.Currency
+  );
+  (values.doc as PrintTemplateData).roundOff = doc.fyo.format(
+    fyo.pesa(roundOffFloat),
+    ModelNameEnum.Currency
+  );
+  (values.doc as PrintTemplateData).hasRoundOff = roundOffFloat !== 0;
+
   (values.doc as PrintTemplateData).grandTotalInWords = getGrandTotalInWords(
-    ((doc.grandTotal as Money) ?? (doc.amount as Money)).float
+    roundOffGrandTotal ? roundedFloat : grandTotalMoney.float
   );
 
   (values.doc as PrintTemplateData).date = getDate(doc.date as string);
@@ -454,39 +478,17 @@ export async function getPathAndMakePDF(
 ) {
   const html = constructPrintDocument(innerHTML);
 
-  if (!shouldPrint) {
-    // In Tauri, save as PDF by opening a new print window
-    const { filePath: savePath } = await getSavePath(name, 'pdf');
-    if (!savePath) {
-      return;
-    }
-
-    // Write the HTML to a temp file and let the user print-to-PDF via system dialog
-    try {
-      const { writeTextFile } = await import('@tauri-apps/plugin-fs');
-      const tempPath = savePath.replace(/\.pdf$/, '_temp.html');
-      await writeTextFile(tempPath, html);
-
-      const { openPath } = await import('@tauri-apps/plugin-opener');
-      await openPath(tempPath);
-
-      showExportInFolder(t`PDF Ready — Print to save`, savePath);
-    } catch {
-      showToast({ message: t`Export Failed`, type: 'error' });
-    }
+  const printWindow = window.open('', '_blank');
+  if (printWindow) {
+    printWindow.document.write(html);
+    printWindow.document.title = name; // Set title so 'Save as PDF' uses the invoice name by default
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+    showToast({ message: t`Print/Save dialog opened`, type: 'success' });
   } else {
-    // Trigger browser print dialog
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(html);
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-      showToast({ message: t`Print Successful`, type: 'success' });
-    } else {
-      showToast({ message: t`Print Failed`, type: 'error' });
-    }
+    showToast({ message: t`Print Failed`, type: 'error' });
   }
 }
 

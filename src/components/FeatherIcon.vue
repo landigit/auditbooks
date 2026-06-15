@@ -50,6 +50,7 @@ const iconMap: Record<string, any> = {
   'x-circle': HugeiconsFree.CancelCircleIcon,
   'close': HugeiconsFree.Cancel01Icon,
   'check': HugeiconsFree.CheckmarkCircle01Icon,
+  'check-circle': HugeiconsFree.CheckmarkCircle01Icon,
   'check-square': HugeiconsFree.CheckmarkSquare01Icon,
   'green-check': HugeiconsFree.CheckmarkCircle01Icon,
   'log-out': HugeiconsFree.Logout01Icon,

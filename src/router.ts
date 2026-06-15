@@ -5,6 +5,7 @@ import GetStarted from 'src/pages/GetStarted.vue';
 import ImportWizard from 'src/pages/ImportWizard.vue';
 import ListView from 'src/composables/ListView/ListView.vue';
 import PrintView from 'src/pages/PrintView/PrintView.vue';
+import InvoiceDesigner from 'src/pages/InvoiceDesigner/InvoiceDesigner.vue';
 import ReportPrintView from 'src/pages/PrintView/ReportPrintView.vue';
 import QuickEditForm from 'src/pages/QuickEditForm.vue';
 import Report from 'src/pages/Report.vue';
@@ -71,6 +72,12 @@ const routes: RouteRecordRaw[] = [
     path: '/print/:schemaName/:name',
     name: 'PrintView',
     component: PrintView,
+    props: true,
+  },
+  {
+    path: '/invoice-designer/:schemaName/:name',
+    name: 'InvoiceDesigner',
+    component: InvoiceDesigner,
     props: true,
   },
   {

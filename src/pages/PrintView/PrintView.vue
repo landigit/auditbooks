@@ -16,6 +16,10 @@
         @change="onTemplateNameChange"
       />
       <DropdownWithActions :actions="actions" :title="t`More`" />
+      <Button class="text-xs" :icon="isMobile" @click="goToDesigner">
+        <feather-icon name="layout" class="w-4 h-4 md:me-1.5" />
+        <span class="hidden md:inline">{{ t`Design PDF` }}</span>
+      </Button>
       <Button class="text-xs" type="primary" :icon="isMobile" @click="savePDF()">
         <feather-icon name="file-text" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Save as PDF` }}</span>
@@ -61,6 +65,7 @@ import PrintContainer from 'src/pages/TemplateBuilder/PrintContainer.vue';
 import { useApp } from 'src/composables/useApp';
 import { usePrintView } from 'src/composables/usePrintView';
 import { useBreakpoint } from 'src/composables/useBreakpoint';
+import { useRouter } from 'vue-router';
 
 const props = defineProps<{
   schemaName: string;
@@ -69,6 +74,7 @@ const props = defineProps<{
 
 const { t, fyo } = useApp();
 const { isMobile } = useBreakpoint();
+const router = useRouter();
 
 const {
   doc,
@@ -84,6 +90,10 @@ const {
   onTemplateNameChange,
   savePDF,
 } = usePrintView(props);
+
+function goToDesigner() {
+  router.push({ name: 'InvoiceDesigner', params: { schemaName: props.schemaName, name: props.name } });
+}
 
 onMounted(() => {
   if (fyo.store.isDevelopment) {

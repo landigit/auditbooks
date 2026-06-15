@@ -73,7 +73,10 @@
     "store:allow-reset",
     "store:allow-length",
     "opener:allow-open-url",
-    "opener:allow-open-path",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [{ "path": "**" }]
+    },
     "opener:allow-reveal-item-in-dir"
   ]
 }

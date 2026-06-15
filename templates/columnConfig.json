@@ -1,0 +1,84 @@
+{
+  "SalesInvoice": {
+    "columns": [
+      {
+        "fieldname": "idx",
+        "label": "#",
+        "width": "20",
+        "align": "center",
+        "visible": true
+      },
+      {
+        "fieldname": "item",
+        "label": "Item",
+        "width": "*",
+        "align": "left",
+        "visible": true
+      },
+      {
+        "fieldname": "description",
+        "label": "Description",
+        "width": "*",
+        "align": "left",
+        "visible": false
+      },
+      {
+        "fieldname": "hsnCode",
+        "label": "HSN/SAC",
+        "width": "55",
+        "align": "center",
+        "visible": false
+      },
+      {
+        "fieldname": "qty",
+        "label": "Qty",
+        "width": "38",
+        "align": "center",
+        "visible": true
+      },
+      {
+        "fieldname": "unit",
+        "label": "Unit",
+        "width": "38",
+        "align": "center",
+        "visible": false
+      },
+      {
+        "fieldname": "rate",
+        "label": "Rate",
+        "width": "65",
+        "align": "right",
+        "visible": true
+      },
+      {
+        "fieldname": "tax",
+        "label": "Tax",
+        "width": "48",
+        "align": "center",
+        "visible": false
+      },
+      {
+        "fieldname": "amount",
+        "label": "Amount",
+        "width": "72",
+        "align": "right",
+        "visible": true
+      },
+      {
+        "fieldname": "itemTaxedTotal",
+        "label": "Total",
+        "width": "72",
+        "align": "right",
+        "visible": false
+      },
+      {
+        "fieldname": "itemDiscountPercent",
+        "label": "Disc%",
+        "width": "38",
+        "align": "right",
+        "visible": false
+      }
+    ],
+    "style": "POS"
+  }
+}

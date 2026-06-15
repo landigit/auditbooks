@@ -133,7 +133,8 @@
             {{ t`Pick Columns` }}
           </h2>
           <div
-            class="border dark:border-gray-800 rounded grid grid-cols-2 mt-1"
+            class="border dark:border-gray-800 rounded grid grid-cols-2 gap-2 mt-1"
+            style="display: grid !important; height: auto !important; padding: 12px !important;"
           >
             <Check
               v-for="(col, i) of report?.columns"
@@ -168,7 +169,7 @@ import PageHeader from 'src/components/PageHeader.vue';
 import ScaledContainer from 'src/pages/TemplateBuilder/ScaledContainer.vue';
 import { useApp } from 'src/composables/useApp';
 import { getReport } from 'src/utils/misc';
-import { getPathAndMakePDF } from 'src/utils/printTemplates';
+import { getPdfMake } from 'src/composables/usePdfInvoice';
 import { showSidebar } from 'src/utils/refs';
 import { paperSizeMap, printSizes } from 'src/utils/ui';
 
@@ -295,21 +296,131 @@ function setScale() {
 }
 
 async function savePDF(shouldPrint?: boolean): Promise<void> {
-  const innerHTML = scaledContainer.value?.$el?.children?.[0]?.innerHTML;
-  if (typeof innerHTML !== 'string') {
-    return;
+  try {
+    const pdfMake = await getPdfMake();
+    
+    const columns = report.value?.columns || [];
+    
+    // Construct table headers and rows
+    const tableBody: any[] = [];
+    matrix.value.forEach((row, rIdx) => {
+      const isHeader = rIdx === 0;
+      const tableRow = row.map((cell) => {
+        const col = columns[cell.idx];
+        const alignment = col?.align || 'left';
+        return {
+          text: cell.value || '',
+          bold: isHeader,
+          fontSize: isHeader ? 8 : 7.5,
+          alignment: alignment,
+          fillColor: isHeader ? '#f3f4f6' : undefined,
+        };
+      });
+      tableBody.push(tableRow);
+    });
+
+    // If there are no columns or data, return
+    if (tableBody.length === 0 || tableBody[0].length === 0) {
+      return;
+    }
+
+    const numCols = tableBody[0].length;
+    const tableWidths = Array(numCols).fill('*');
+
+    const name = title.value + ' - ' + fyo.format(new Date(), 'Date');
+
+    const docDefinition: any = {
+      pageSize: printSize.value,
+      pageOrientation: isLandscape.value ? 'landscape' : 'portrait',
+      pageMargins: [20, 40, 20, 40],
+      content: [
+        {
+          text: fyo.singles.PrintSettings?.companyName || '',
+          fontSize: 14,
+          bold: true,
+          margin: [0, 0, 0, 2],
+        },
+        {
+          text: title.value || '',
+          fontSize: 11,
+          color: '#555',
+          margin: [0, 0, 0, 10],
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: tableWidths,
+            body: tableBody,
+          },
+          layout: {
+            hLineWidth: (i: number, node: any) => (i === 0 || i === 1 || i === node.table.body.length ? 1 : 0.5),
+            vLineWidth: (i: number, node: any) => (i === 0 || i === node.table.widths.length ? 1 : 0.5),
+            hLineColor: () => '#cccccc',
+            vLineColor: () => '#e5e7eb',
+            paddingLeft: () => 5,
+            paddingRight: () => 5,
+            paddingTop: () => 4,
+            paddingBottom: () => 4,
+          }
+        },
+      ],
+      footer: (currentPage: number, pageCount: number) => {
+        return {
+          columns: [
+            {
+              text: fyo.format(new Date(), 'Datetime'),
+              fontSize: 7,
+              color: '#777',
+              margin: [20, 0, 0, 0],
+            },
+            {
+              text: `Page ${currentPage} of ${pageCount}`,
+              fontSize: 7,
+              color: '#777',
+              alignment: 'right',
+              margin: [0, 0, 20, 0],
+            }
+          ]
+        };
+      },
+      defaultStyle: {
+        font: 'Roboto',
+      }
+    };
+
+    if (shouldPrint) {
+      const pdfBuffer = await pdfMake.createPdf(docDefinition).getBuffer();
+      const buffer = new Uint8Array(pdfBuffer);
+      const { tempDir, join } = await import('@tauri-apps/api/path');
+      const tempDirPath = await tempDir();
+      const filePath = await join(tempDirPath, 'auditbooks_report_print.pdf');
+      const { writeFile } = await import('@tauri-apps/plugin-fs');
+      await writeFile(filePath, buffer);
+      const { openPath } = await import('@tauri-apps/plugin-opener');
+      await openPath(filePath);
+    } else {
+      const { getSavePath } = await import('src/utils/ui');
+      const { canceled, filePath } = await getSavePath(name, 'pdf');
+      if (canceled || !filePath) {
+        return;
+      }
+
+      const pdfBuffer = await pdfMake.createPdf(docDefinition).getBuffer();
+      const buffer = new Uint8Array(pdfBuffer);
+
+      const { writeFile } = await import('@tauri-apps/plugin-fs');
+      await writeFile(filePath, buffer);
+
+      const { showExportInFolder } = await import('src/utils/ui');
+      showExportInFolder(t`PDF Saved`, filePath);
+    }
+
+    fyo.telemetry.log(Verb.Printed, report.value!.reportName);
+  } catch (err) {
+    console.error(err);
+    const { showToast } = await import('src/utils/interactive');
+    showToast({ message: t`PDF generation failed`, type: 'error' });
   }
-
-  const name = title.value + ' - ' + fyo.format(new Date(), 'Date');
-  await getPathAndMakePDF(
-    name,
-    innerHTML,
-    size.value.width,
-    size.value.height,
-    shouldPrint
-  );
-
-  fyo.telemetry.log(Verb.Printed, report.value!.reportName);
 }
 
 function cellClasses(cIdx: number, rIdx: number): string[] {

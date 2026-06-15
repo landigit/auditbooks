@@ -9,6 +9,7 @@
       "fieldtype": "AttachImage",
       "section": "Default"
     },
+
     {
       "fieldname": "companyName",
       "label": "Company Name",
@@ -94,6 +95,10 @@
       "fieldtype": "Select",
       "options": [
         {
+          "value": "Figtree",
+          "label": "Figtree"
+        },
+        {
           "value": "Arial",
           "label": "Arial"
         },
@@ -106,7 +111,7 @@
           "label": "Courier"
         }
       ],
-      "default": "Arial",
+      "default": "Figtree",
       "section": "Customizations"
     },
     {
@@ -116,10 +121,29 @@
       "section": "Customizations"
     },
     {
+      "fieldname": "displaySignature",
+      "label": "Display Signature in Invoice",
+      "fieldtype": "Check",
+      "section": "Customizations"
+    },
+    {
+      "fieldname": "displaySeal",
+      "label": "Display Seal in Invoice",
+      "fieldtype": "Check",
+      "section": "Customizations"
+    },
+    {
       "fieldname": "amountInWords",
       "label": "Display Amount In Words",
       "fieldtype": "Check",
       "section": "Customizations"
+    },
+    {
+      "fieldname": "roundOffGrandTotal",
+      "label": "Round Off Grand Total",
+      "fieldtype": "Check",
+      "section": "Customizations",
+      "default": false
     },
     {
       "fieldname": "displayTime",
@@ -140,6 +164,18 @@
       "section": "Customizations"
     },
     {
+      "fieldname": "sigSealPosition",
+      "label": "Signature & Seal Position",
+      "fieldtype": "Select",
+      "options": [
+        { "value": "authorized_signatory", "label": "Under Authorized Signatory" },
+        { "value": "before_terms", "label": "Before Terms and Conditions" },
+        { "value": "after_terms", "label": "After Terms and Conditions" }
+      ],
+      "default": "before_terms",
+      "section": "Customizations"
+    },
+    {
       "fieldname": "posPrintWidth",
       "label": "Pos Print Width",
       "fieldtype": "Float",
@@ -147,10 +183,28 @@
       "section": "Customizations"
     },
     {
+      "fieldname": "signature",
+      "label": "Signature",
+      "fieldtype": "AttachImage",
+      "section": "Customizations"
+    },
+    {
+      "fieldname": "seal",
+      "label": "Seal",
+      "fieldtype": "AttachImage",
+      "section": "Customizations"
+    },
+    {
       "fieldname": "termsAndConditions",
       "label": "Terms and Conditions",
       "fieldtype": "Text",
       "section": "Customizations"
+    },
+    {
+      "fieldname": "columnConfig",
+      "label": "Column Config",
+      "fieldtype": "Text",
+      "hidden": true
     }
   ]
 }
