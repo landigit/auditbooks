@@ -24,7 +24,10 @@ const status = computed<Status>(() => {
 });
 
 const showStatus = computed(() => {
-  if (props.doc.schemaName === ModelNameEnum.SalesQuote && props.doc.isSubmitted) {
+  if (
+    props.doc.schemaName === ModelNameEnum.SalesQuote &&
+    props.doc.isSubmitted
+  ) {
     return false;
   }
   return true;
@@ -48,9 +51,7 @@ const text = computed(() => {
 
   if (hasOutstanding && status.value === 'PartlyPaid') {
     const outstandingPayment = fyo.format(
-      (props.doc.grandTotal as Money).sub(
-        props.doc.outstandingAmount as Money
-      ),
+      (props.doc.grandTotal as Money).sub(props.doc.outstandingAmount as Money),
       'Currency'
     );
     return t`Partly Paid ${outstandingPayment}`;
@@ -133,7 +134,10 @@ function getStatus(doc: Doc) {
     return 'Active';
   }
 
-  if (doc.schemaName === ModelNameEnum.Party && doc.outstandingAmount?.isZero() !== true) {
+  if (
+    doc.schemaName === ModelNameEnum.Party &&
+    doc.outstandingAmount?.isZero() !== true
+  ) {
     return 'Outstanding';
   }
 
@@ -157,7 +161,10 @@ function getSubmittableStatus(doc: Doc) {
     return 'ReturnIssued';
   }
 
-  const isInvoice = [ModelNameEnum.SalesInvoice, ModelNameEnum.PurchaseInvoice].includes(doc.schemaName as ModelNameEnum);
+  const isInvoice = [
+    ModelNameEnum.SalesInvoice,
+    ModelNameEnum.PurchaseInvoice,
+  ].includes(doc.schemaName as ModelNameEnum);
 
   if (doc.isSubmitted && isInvoice && (doc.stockNotTransferred ?? 0) > 0) {
     return 'NotTransferred';

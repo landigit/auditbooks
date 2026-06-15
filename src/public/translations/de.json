@@ -245,9 +245,6 @@
   "An error occurred.": {
     "translation": "Es ist ein Fehler aufgetreten"
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "Überall in Frappe Books anwendbar"
-  },
   "Applicable when Quick Search is open": {
     "translation": "Anwendbar, wenn die Schnellsuche geöffnet ist"
   },
@@ -368,9 +365,6 @@
   "Cannot Commit Error": {
     "translation": "Fehler kann nicht eingereicht werden"
   },
-  "Cannot Delete": {
-    "translation": "Löschen nicht möglich"
-  },
   "Cannot Delete Account": {
     "translation": "Account kann nicht gelöscht werden"
   },
@@ -388,9 +382,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "Kann ${0} \"${1}\" wegen verknüpfter Einträge nicht löschen"
-  },
-  "Cannot open file": {
-    "translation": "Datei kann nicht geöffnet werden"
   },
   "Cannot perform operation.": {
     "translation": "Kann die Operation nicht ausführen"
@@ -443,9 +434,6 @@
   "Chart of Accounts": {
     "translation": "Kontenplan"
   },
-  "Cheque": {
-    "translation": "Scheck"
-  },
   "City / Town": {
     "translation": "Stadt / Ortschaft"
   },
@@ -457,9 +445,6 @@
   },
   "Close": {
     "translation": "Schließen"
-  },
-  "Close Frappe Books and try manually.": {
-    "translation": "Schließen Sie Frappe Books und versuchen Sie es manuell."
   },
   "Close POS Shift": {
     "translation": "POS-Schicht abschließen"
@@ -587,9 +572,6 @@
   "Create Sales Invoice": {
     "translation": "Verkaufs-Rechnung anlegen"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "Erstelle eine Demofirma, um Frappe Books auszuprobieren"
-  },
   "Create a new company and store it on your computer": {
     "translation": "Erstelle eine neue Firma und speicher sie auf deinem Computer"
   },
@@ -658,9 +640,6 @@
   },
   "Custom Form": {
     "translation": "Benutzerdefiniertes Formular"
-  },
-  "Custom Hex": {
-    "translation": "Eigener Hex-Wert"
   },
   "Customer": {
     "translation": "Kunde"
@@ -812,9 +791,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "Die Anzeigegenauigkeit sollte einen Wert zwischen 0 und 9 haben."
   },
-  "Display Scale": {
-    "translation": "Skala anzeigen"
-  },
   "Dividends Paid": {
     "translation": "Ausgeschüttete Dividende"
   },
@@ -905,9 +881,6 @@
   "Enable Serial Number": {
     "translation": "Seriennummern aktivieren"
   },
-  "Enable Stock Returns": {
-    "translation": "Lagerrückgaben aktivieren"
-  },
   "Enable UOM Conversion": {
     "translation": "Einheitenumrechnung aktivieren"
   },
@@ -991,9 +964,6 @@
   },
   "Export": {
     "translation": "Exportieren"
-  },
-  "Export Failed": {
-    "translation": "Export gescheitert"
   },
   "Export Format": {
     "translation": "Export-Format"
@@ -1106,9 +1076,6 @@
   },
   "Payroll Payable": {
     "translation": "fällige Gehaltsabrechnung"
-  },
-  "Pending Qty. ${0}": {
-    "translation": "Ausstehende Menge: ${0}"
   },
   "Pending qty. ${0}": {
     "translation": "Ausstehende Menge: ${0}"

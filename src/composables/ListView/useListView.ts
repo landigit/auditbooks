@@ -1,6 +1,9 @@
 import { ref, computed, onActivated, onDeactivated } from 'vue';
 import { fyo } from 'src/initFyo';
-import { docsPathMap, getCreateFiltersFromListViewFilters } from 'src/utils/misc';
+import {
+  docsPathMap,
+  getCreateFiltersFromListViewFilters,
+} from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
 import { getFormRoute, routeTo } from 'src/utils/ui';
 import { QueryFilter } from 'utils/db/types';
@@ -9,7 +12,11 @@ import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import type { Field } from 'schemas/types';
 
-export function useListView(props: { schemaName: string; filters?: Record<string, any>; pageTitle?: string }) {
+export function useListView(props: {
+  schemaName: string;
+  filters?: Record<string, any>;
+  pageTitle?: string;
+}) {
   const shortcuts = useShortcuts();
 
   const listConfig = ref<any>(undefined);
@@ -45,7 +52,11 @@ export function useListView(props: { schemaName: string; filters?: Record<string
   const actionOptions = [
     { value: 'SalesQuote', label: 'Sales Quote', icon: 'invoice-04' },
     { value: 'SalesInvoice', label: 'Sales Invoice', icon: 'add-invoice' },
-    { value: 'PurchaseInvoice', label: 'Purchase Invoice', icon: 'add-invoice' },
+    {
+      value: 'PurchaseInvoice',
+      label: 'Purchase Invoice',
+      icon: 'add-invoice',
+    },
   ];
 
   function getListConfig(schemaName: string) {

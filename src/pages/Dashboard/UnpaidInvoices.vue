@@ -13,35 +13,64 @@
       <!-- Paid & Unpaid Amounts -->
       <div class="flex justify-between">
         <!-- Paid -->
-        <div class="text-sm font-medium dark:text-gray-25" :class="{
-          'bg-gray-200 dark:bg-gray-700 text-gray-200 dark:text-gray-700 rounded':
-            !count,
-          'cursor-pointer': paidCount > 0,
-        }" :title="paidCount > 0 ? t`View Paid Invoices` : ''" @click="() => routeToInvoices('paid')">
+        <div
+          class="text-sm font-medium dark:text-gray-25"
+          :class="{
+            'bg-gray-200 dark:bg-gray-700 text-gray-200 dark:text-gray-700 rounded':
+              !count,
+            'cursor-pointer': paidCount > 0,
+          }"
+          :title="paidCount > 0 ? t`View Paid Invoices` : ''"
+          @click="() => routeToInvoices('paid')"
+        >
           {{ fyo.format(paid, 'Currency') }}
-          <span :class="{ 'text-gray-900 dark:text-gray-200 font-normal': count }">{{ t`Paid` }}</span>
+          <span
+            :class="{ 'text-gray-900 dark:text-gray-200 font-normal': count }"
+            >{{ t`Paid` }}</span
+          >
         </div>
 
         <!-- Unpaid -->
-        <div class="text-sm font-medium dark:text-gray-25" :class="{
-          'bg-gray-200 dark:bg-gray-700 text-gray-200 dark:text-gray-700 rounded':
-            !count,
-          'cursor-pointer': unpaidCount > 0,
-        }" :title="unpaidCount > 0 ? t`View Unpaid Invoices` : ''" @click="() => routeToInvoices('unpaid')">
+        <div
+          class="text-sm font-medium dark:text-gray-25"
+          :class="{
+            'bg-gray-200 dark:bg-gray-700 text-gray-200 dark:text-gray-700 rounded':
+              !count,
+            'cursor-pointer': unpaidCount > 0,
+          }"
+          :title="unpaidCount > 0 ? t`View Unpaid Invoices` : ''"
+          @click="() => routeToInvoices('unpaid')"
+        >
           {{ fyo.format(unpaid, 'Currency') }}
-          <span :class="{ 'text-gray-900 dark:text-gray-200 font-normal': count }">{{ t`Unpaid` }}</span>
+          <span
+            :class="{ 'text-gray-900 dark:text-gray-200 font-normal': count }"
+            >{{ t`Unpaid` }}</span
+          >
         </div>
       </div>
 
       <!-- Widget Bar -->
-      <div class="mt-2 relative rounded overflow-hidden" @mouseenter="show = true" @mouseleave="show = false">
+      <div
+        class="mt-2 relative rounded overflow-hidden"
+        @mouseenter="show = true"
+        @mouseleave="show = false"
+      >
         <div class="w-full h-4" :class="unpaidColor"></div>
-        <div class="absolute inset-0 h-4" :class="paidColor" :style="`width: ${barWidth}%`"></div>
+        <div
+          class="absolute inset-0 h-4"
+          :class="paidColor"
+          :style="`width: ${barWidth}%`"
+        ></div>
       </div>
     </div>
-    <MouseFollower v-if="hasData" :offset="15" :show="show" placement="top"
+    <MouseFollower
+      v-if="hasData"
+      :offset="15"
+      :show="show"
+      placement="top"
       class="text-sm shadow-md px-2 py-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-s-4"
-      :style="{ borderColor: colors }">
+      :style="{ borderColor: colors }"
+    >
       <div class="flex justify-between gap-4">
         <p>{{ t`Paid` }}</p>
         <p class="font-semibold">{{ paidCount ?? 0 }}</p>
@@ -95,7 +124,12 @@ const count = ref(0);
 const unpaidCount = ref(0);
 const paidCount = ref(0);
 const barWidth = ref(40);
-const periodOptions: PeriodKey[] = ['This Year', 'YTD', 'This Quarter', 'This Month'];
+const periodOptions: PeriodKey[] = [
+  'This Year',
+  'YTD',
+  'This Quarter',
+  'This Month',
+];
 
 const title = computed(() => {
   return fyo.schemaMap[props.schemaName]?.label ?? '';
@@ -126,7 +160,11 @@ const unpaidColor = computed(() => {
   return `bg-${color.value}-${props.darkMode ? '700 bg-opacity-20' : '200'}`;
 });
 
-const getCounts = async (schemaName: string, fromDate: DateTime, toDate: DateTime) => {
+const getCounts = async (
+  schemaName: string,
+  fromDate: DateTime,
+  toDate: DateTime
+) => {
   const outstandingAmounts = await fyo.db.getAllRaw(schemaName, {
     fields: ['outstandingAmount'],
     filters: {
@@ -149,11 +187,12 @@ const getCounts = async (schemaName: string, fromDate: DateTime, toDate: DateTim
 const setData = async () => {
   const { fromDate, toDate } = getDatesAndPeriodList(period.value);
 
-  const { total: dbTotal, outstanding: dbOutstanding } = await fyo.db.getTotalOutstanding(
-    props.schemaName,
-    fromDate.toISO(),
-    toDate.toISO()
-  );
+  const { total: dbTotal, outstanding: dbOutstanding } =
+    await fyo.db.getTotalOutstanding(
+      props.schemaName,
+      fromDate.toISO(),
+      toDate.toISO()
+    );
 
   const { countTotal, countOutstanding } = await getCounts(
     props.schemaName,

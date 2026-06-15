@@ -144,7 +144,9 @@
     </div>
 
     <!-- Footer -->
-    <div class="flex p-3 w-full justify-between items-center border-t border-border mt-1">
+    <div
+      class="flex p-3 w-full justify-between items-center border-t border-border mt-1"
+    >
       <button
         class="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium cursor-pointer"
         @click="selectMonthYear = !selectMonthYear"
@@ -314,8 +316,14 @@ export default defineComponent({
       const today = this.today;
       const todayDay = today.getDate();
       const todayMonth = today.getMonth();
-      const isToday = item.day === todayDay && item.month === todayMonth && item.year === today.getFullYear();
-      const isSelected = item.day === this.day && item.month === this.month && item.year === this.year;
+      const isToday =
+        item.day === todayDay &&
+        item.month === todayMonth &&
+        item.year === today.getFullYear();
+      const isSelected =
+        item.day === this.day &&
+        item.month === this.month &&
+        item.year === this.year;
 
       if (item.month !== this.viewMonth) {
         dclass.push('text-muted-foreground opacity-30');
@@ -324,9 +332,13 @@ export default defineComponent({
       }
 
       if (isSelected && this.modelValue != null) {
-        dclass.push('bg-primary text-primary-foreground font-semibold rounded-md shadow-sm');
+        dclass.push(
+          'bg-primary text-primary-foreground font-semibold rounded-md shadow-sm'
+        );
       } else if (isToday) {
-        dclass.push('bg-accent text-accent-foreground font-semibold rounded-md');
+        dclass.push(
+          'bg-accent text-accent-foreground font-semibold rounded-md'
+        );
       } else {
         dclass.push('hover:bg-muted rounded-md transition-colors');
       }
@@ -340,7 +352,9 @@ export default defineComponent({
       if (this.modelValue != null && item === this.month) {
         dclass.push('bg-primary text-primary-foreground');
       } else {
-        dclass.push('text-muted-foreground hover:bg-muted hover:text-foreground');
+        dclass.push(
+          'text-muted-foreground hover:bg-muted hover:text-foreground'
+        );
       }
       return dclass;
     },
@@ -388,15 +402,7 @@ export default defineComponent({
       const seconds = values.seconds ?? this.seconds;
       const ms = values.ms ?? this.ms;
 
-      const date = new Date(
-        year,
-        month,
-        day,
-        hours,
-        minutes,
-        seconds,
-        ms
-      );
+      const date = new Date(year, month, day, hours, minutes, seconds, ms);
 
       this.viewMonth = month;
       this.viewYear = year;
@@ -505,7 +511,9 @@ function getWeekdayList(startYear: number, startMonth: number): WeekListItem[] {
   font-size: 0.875rem;
   outline: none;
   width: 100%;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .date-selector-input:focus {

@@ -52,7 +52,10 @@ const items = computed<DropdownItem[]>(() => {
     const cleanLabel = label?.toLowerCase() ?? '';
     if (cleanLabel.includes('duplicate')) {
       icon = 'copy';
-    } else if (cleanLabel.includes('new entry') || cleanLabel.includes('create')) {
+    } else if (
+      cleanLabel.includes('new entry') ||
+      cleanLabel.includes('create')
+    ) {
       icon = 'add-invoice';
     } else if (cleanLabel.includes('new')) {
       icon = 'plus';
@@ -68,11 +71,21 @@ const items = computed<DropdownItem[]>(() => {
       icon = 'x-circle';
     } else if (cleanLabel.includes('payment')) {
       icon = 'dollar-sign';
-    } else if (cleanLabel.includes('shipment') || cleanLabel.includes('delivery')) {
+    } else if (
+      cleanLabel.includes('shipment') ||
+      cleanLabel.includes('delivery')
+    ) {
       icon = 'truck';
-    } else if (cleanLabel.includes('receipt') || cleanLabel.includes('invoice') || cleanLabel.includes('quote')) {
+    } else if (
+      cleanLabel.includes('receipt') ||
+      cleanLabel.includes('invoice') ||
+      cleanLabel.includes('quote')
+    ) {
       icon = 'invoice-04';
-    } else if (cleanLabel.includes('ledger') || cleanLabel.includes('entries')) {
+    } else if (
+      cleanLabel.includes('ledger') ||
+      cleanLabel.includes('entries')
+    ) {
       icon = 'book-open';
     } else if (cleanLabel.includes('edit')) {
       icon = 'edit-3';

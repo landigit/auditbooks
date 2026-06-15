@@ -26,7 +26,6 @@ export default {
       const { openUrl } = await import('@tauri-apps/plugin-opener');
       await openUrl(this.link).catch(console.error);
     },
-
   },
 };
 </script>

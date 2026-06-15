@@ -1,4 +1,7 @@
 {
+  "${0}": {
+    "translation": "${0}"
+  },
   "${0} ${1} already exists.": {
     "translation": "\"${0} ${1} sudah ada.\""
   },
@@ -287,9 +290,6 @@
   "And": {
     "translation": "Dan"
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "Berlaku di mana saja dalam Frappe Books"
-  },
   "Applicable when POS is open": {
     "translation": "Berlaku saat POS terbuka"
   },
@@ -431,12 +431,6 @@
   "Buildings": {
     "translation": "Bangunan"
   },
-  "Buy": {
-    "translation": "Beli"
-  },
-  "Buy Button Colour": {
-    "translation": "Warna Tombol Beli"
-  },
   "Cancel": {
     "translation": "Batalkan"
   },
@@ -454,9 +448,6 @@
   },
   "Cannot Commit Error": {
     "translation": "Tidak Dapat Menyelesaikan Kesalahan"
-  },
-  "Cannot Delete": {
-    "translation": "Tidak Dapat Dihapus"
   },
   "Cannot Delete Account": {
     "translation": "Tidak Dapat Menghapus Akun"
@@ -481,9 +472,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "Tidak dapat menghapus ${0} \"${1}\" karena ada entri yang terhubung."
-  },
-  "Cannot open file": {
-    "translation": "Tidak dapat membuka file"
   },
   "Cannot perform operation.": {
     "translation": "Tidak dapat melakukan operasi."
@@ -566,9 +554,6 @@
   "Close": {
     "translation": "Tutup"
   },
-  "Close Frappe Books and try manually.": {
-    "translation": "Tutup Frappe Books dan coba secara manual."
-  },
   "Close POS Shift": {
     "translation": "Tutup Shift POS"
   },
@@ -604,9 +589,6 @@
   },
   "Collapse": {
     "translation": "Ciutkan"
-  },
-  "Collection Factor (=1 LP)": {
-    "translation": "Faktor Koleksi (=1 LP)"
   },
   "Collection Rules": {
     "translation": "Aturan Koleksi"
@@ -731,9 +713,6 @@
   "Create Sales Invoice": {
     "translation": "Buat Faktur Penjualan"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "Buat perusahaan demo untuk mencoba Frappe Books"
-  },
   "Create a new company and store it on your computer": {
     "translation": "Buat perusahaan baru dan simpan di komputer Anda"
   },
@@ -802,9 +781,6 @@
   },
   "Custom Form": {
     "translation": "Formulir Kustom"
-  },
-  "Custom Hex": {
-    "translation": "Kode Hex Kustom"
   },
   "Customer": {
     "translation": "Pelanggan"
@@ -980,9 +956,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "Presisi tampilan harus memiliki nilai antara 0 dan 9."
   },
-  "Display Scale": {
-    "translation": "Skala Tampilan"
-  },
   "Display Time In Invoice": {
     "translation": "Tampilkan Waktu di Faktur"
   },
@@ -1103,9 +1076,6 @@
   "Enable Serial Number": {
     "translation": "Aktifkan Nomor Seri"
   },
-  "Enable Stock Returns": {
-    "translation": "Aktifkan Pengembalian Stok"
-  },
   "Enable UOM Conversion": {
     "translation": "Aktifkan Konversi Satuan"
   },
@@ -1196,9 +1166,6 @@
   "Export": {
     "translation": "Ekspor"
   },
-  "Export Failed": {
-    "translation": "Ekspor Gagal"
-  },
   "Export Format": {
     "translation": "Format Ekspor"
   },
@@ -1240,9 +1207,6 @@
   },
   "Fifty": {
     "translation": "Lima Puluh"
-  },
-  "File ${0} does not exist.": {
-    "translation": "File ${0} tidak ada."
   },
   "File selection failed": {
     "translation": "Pemilihan file gagal"
@@ -1324,9 +1288,6 @@
   },
   "Fraction Units": {
     "translation": "Satuan Pecahan"
-  },
-  "Frappe Books does not have access to the selected file: ${0}": {
-    "translation": "Frappe Books tidak memiliki akses ke file yang dipilih: ${0}"
   },
   "Free Item": {
     "translation": "Item Gratis"
@@ -1613,9 +1574,6 @@
   "Is Landscape": {
     "translation": "Mode Lanskap"
   },
-  "Is Multiple": {
-    "translation": "Banyak"
-  },
   "Is Not": {
     "translation": "Bukan"
   },
@@ -1651,9 +1609,6 @@
   },
   "Item ${0} is not a batched item": {
     "translation": "Item ${0} bukan item dengan batch"
-  },
-  "Item ${0} is not an Inventory Item.": {
-    "translation": "Item ${0} bukan item persediaan."
   },
   "Item ${0} not in Stock": {
     "translation": "Item ${0} tidak tersedia dalam stok"
@@ -1717,9 +1672,6 @@
   },
   "June": {
     "translation": "Juni"
-  },
-  "Key Hints": {
-    "translation": "Petunjuk Kunci"
   },
   "Kg": {
     "translation": "Kg"
@@ -2303,9 +2255,6 @@
   "Payroll Payable": {
     "translation": "Gaji yang Harus Dibayar"
   },
-  "Pending Qty. ${0}": {
-    "translation": "Kuantitas Tertunda ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "Kuantitas Tertunda ${0}"
   },
@@ -2426,17 +2375,11 @@
   "Print ${0}": {
     "translation": "Cetak ${0}"
   },
-  "Print Failed": {
-    "translation": "Cetak Gagal"
-  },
   "Print Settings": {
     "translation": "Pengaturan Cetak"
   },
   "Print Setup": {
     "translation": "Pengaturan Cetak"
-  },
-  "Print Successful": {
-    "translation": "Cetak Berhasil"
   },
   "Print Template": {
     "translation": "Template Cetak"
@@ -2449,9 +2392,6 @@
   },
   "Print Templates": {
     "translation": "Template Cetak"
-  },
-  "Print View": {
-    "translation": "Tampilan Cetak"
   },
   "Print and Stationery": {
     "translation": "Percetakan dan Alat Tulis"
@@ -2657,9 +2597,6 @@
   "References": {
     "translation": "Referensi"
   },
-  "Reload Frappe Books?": {
-    "translation": "Muat Ulang Frappe Books?"
-  },
   "Replied": {
     "translation": "Dibalas"
   },
@@ -2840,9 +2777,6 @@
   "Save as PDF": {
     "translation": "Simpan sebagai PDF"
   },
-  "Save as PDF Successful": {
-    "translation": "Berhasil Menyimpan sebagai PDF"
-  },
   "Save changes made to ${0}?": {
     "translation": "Simpan perubahan yang dibuat pada ${0}?"
   },
@@ -2851,9 +2785,6 @@
   },
   "Saved": {
     "translation": "Tersimpan"
-  },
-  "Search an Item": {
-    "translation": "Cari Item"
   },
   "Secured Loans": {
     "translation": "Pinjaman Terjamin"
@@ -3656,9 +3587,6 @@
   "Weight Enabled Barcode": {
     "translation": "Barcode dengan Berat Diaktifkan"
   },
-  "Welcome to Frappe Books": {
-    "translation": "Selamat datang di Frappe Books"
-  },
   "When linking documents, if no match is found and filtering is in effect, allow to disable filters.": {
     "translation": "Saat menautkan dokumen, jika tidak ada kecocokan ditemukan dan penyaringan aktif, izinkan untuk menonaktifkan filter."
   },
@@ -3710,9 +3638,6 @@
   "in Batch ${0}": {
     "translation": "dalam Batch ${0}"
   },
-  "item Weight Digits": {
-    "translation": "Digit Berat Item"
-  },
   "john@doe.com": {
     "translation": "john@doe.com"
   },
@@ -3721,8 +3646,5 @@
   },
   "only": {
     "translation": "hanya"
-  },
-  "to apply changes": {
-    "translation": "untuk menerapkan perubahan"
   }
 }

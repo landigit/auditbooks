@@ -79,7 +79,9 @@ provide(injectionKeys.searcherKey, searcher);
 provide(injectionKeys.shortcutsKey, shortcuts);
 provide(injectionKeys.languageDirectionKey, languageDirection);
 
-const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(null);
+const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
+  null
+);
 
 const activeScreen = ref<null | Screen>(null);
 const dbPath = ref('');
@@ -159,7 +161,9 @@ async function fileSelected(filePath: string): Promise<void> {
   }
 }
 
-async function setupComplete(setupWizardOptions: SetupWizardOptions): Promise<void> {
+async function setupComplete(
+  setupWizardOptions: SetupWizardOptions
+): Promise<void> {
   const company = setupWizardOptions.companyName;
 
   // Ask the user where to save the new database file
@@ -169,7 +173,9 @@ async function setupComplete(setupWizardOptions: SetupWizardOptions): Promise<vo
   let filePath: string;
   if (canceled || !chosenPath) {
     // Fall back to the auto-generated default path in app data dir
-    filePath = await invoke<string>('get_db_default_path', { companyName: company });
+    filePath = await invoke<string>('get_db_default_path', {
+      companyName: company,
+    });
   } else {
     filePath = chosenPath;
   }
@@ -207,27 +213,22 @@ async function showSetupWizardOrDesk(filePath: string): Promise<void> {
 
   const baseURL = syncSettingsDoc.baseURL;
   const token = syncSettingsDoc.authToken;
-  const enableERPNextSync =
-    fyo.singles.AccountingSettings?.enableERPNextSync;
+  const enableERPNextSync = fyo.singles.AccountingSettings?.enableERPNextSync;
 
   if (enableERPNextSync && baseURL && token) {
     try {
       await registerInstanceToERPNext(fyo);
       await updateERPNSyncSettings(fyo);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : String(err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
 
       try {
-        const existing = await fyo.db.getAll(
-          ErrorLogEnum.IntegrationErrorLog,
-          {
-            filters: {
-              error: errorMessage,
-            },
-            limit: 1,
-          }
-        );
+        const existing = await fyo.db.getAll(ErrorLogEnum.IntegrationErrorLog, {
+          filters: {
+            error: errorMessage,
+          },
+          limit: 1,
+        });
 
         if (!existing.length) {
           await fyo.doc

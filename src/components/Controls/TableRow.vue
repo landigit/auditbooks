@@ -10,7 +10,10 @@
       @mouseenter="isRowIndexVisible = false"
       @mouseleave="isRowIndexVisible = true"
     >
-      <span v-if="!readOnly" class="relative w-4 h-4 flex items-center justify-start">
+      <span
+        v-if="!readOnly"
+        class="relative w-4 h-4 flex items-center justify-start"
+      >
         <feather-icon
           v-if="!isRowIndexVisible"
           name="x"

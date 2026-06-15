@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex bg-gray-25 dark:bg-gray-875 overflow-x-hidden"
-  >
+  <div class="flex bg-gray-25 dark:bg-gray-875 overflow-x-hidden">
     <div class="flex flex-1 flex-col">
       <!-- Page Header (Title, Buttons, etc) -->
       <PageHeader

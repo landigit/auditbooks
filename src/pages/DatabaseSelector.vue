@@ -8,12 +8,16 @@
   >
     <div
       class="w-full bg-white dark:bg-gray-875 relative flex flex-col"
-      :class="isMobile ? 'h-screen w-screen' : 'w-form shadow-lg rounded-lg border dark:border-gray-800 h-[700px]'"
+      :class="
+        isMobile
+          ? 'h-screen w-screen'
+          : 'w-form shadow-lg rounded-lg border dark:border-gray-800 h-[700px]'
+      "
     >
-      <!-- Welcome to Frappe Books -->
+      <!-- Welcome to Auditbooks -->
       <div class="px-4 py-4 safe-area-top-padding">
         <h1 class="text-2xl font-semibold select-none dark:text-gray-25">
-          {{ t`Welcome to Frappe Books` }}
+          {{ t`Welcome to Auditbooks` }}
         </h1>
         <p class="text-gray-600 dark:text-gray-400 text-base select-none">
           {{
@@ -101,7 +105,7 @@
             {{ t`Create Demo` }}
           </p>
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            {{ t`Create a demo company to try out Frappe Books` }}
+            {{ t`Create a demo company to try out Auditbooks` }}
           </p>
         </div>
       </div>
@@ -226,7 +230,11 @@ import Modal from 'src/components/Modal.vue';
 import { fyo } from 'src/initFyo';
 import { showDialog } from 'src/utils/interactive';
 import { updateConfigFiles } from 'src/utils/misc';
-import { deleteDb as deleteDbFile, getSavePath, getSelectedFilePath } from 'src/utils/ui';
+import {
+  deleteDb as deleteDbFile,
+  getSavePath,
+  getSelectedFilePath,
+} from 'src/utils/ui';
 import type { ConfigFilesWithModified } from 'utils/types';
 import { useApp } from 'src/composables/useApp';
 import { usePlatform } from 'src/composables/usePlatform';
@@ -367,7 +375,10 @@ async function existingDatabase() {
   const isMobilePlatform = ['Android', 'iOS'].includes(platform.value);
   if (isMobilePlatform) {
     const { showToast } = await import('src/utils/interactive');
-    showToast({ type: 'info', message: t`Select a .db file from your Files app` });
+    showToast({
+      type: 'info',
+      message: t`Select a .db file from your Files app`,
+    });
   }
   const filePath = (await getSelectedFilePath())?.filePaths?.[0];
   emitFileSelected(filePath);
@@ -408,4 +419,3 @@ defineExpose({
   existingDatabase,
 });
 </script>
-

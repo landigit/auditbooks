@@ -116,7 +116,7 @@ export async function getPrintTemplatePropValues(
   (values.doc as PrintTemplateData).showHSN = showHSN(doc);
 
   const roundOffGrandTotal = !!printSettings.roundOffGrandTotal;
-  const grandTotalMoney = ((doc.grandTotal as Money) ?? (doc.amount as Money));
+  const grandTotalMoney = (doc.grandTotal as Money) ?? (doc.amount as Money);
   const roundedFloat = Math.round(grandTotalMoney.float);
   const roundOffFloat = roundedFloat - grandTotalMoney.float;
 
@@ -183,8 +183,6 @@ function getTime(dateString: string): string {
 
   return date.toTimeString().split(' ')[0];
 }
-
-
 
 function getGrandTotalInWords(total: number) {
   const formattedTotal = total.toFixed(2);
@@ -321,8 +319,6 @@ function formattedTotalDiscount(doc: Doc): string {
   return doc.fyo.format(totalDiscount, ModelNameEnum.Currency);
 }
 
-
-
 async function getPrintTemplateDocValues(doc: Doc, fieldnames?: string[]) {
   const values: PrintTemplateData = {};
   if (!(doc instanceof Doc)) {
@@ -382,5 +378,3 @@ async function getPrintTemplateDocValues(doc: Doc, fieldnames?: string[]) {
   }
   return values;
 }
-
-

@@ -1,7 +1,6 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap');
-@import "../../node_modules/tw-animate-css/dist/tw-animate.css";
-@import "shadcn-vue/tailwind.css";
+@import '../../node_modules/tw-animate-css/dist/tw-animate.css';
+@import 'shadcn-vue/tailwind.css';
 
 @font-face {
   font-family: 'Figtree Variable';
@@ -32,8 +31,8 @@
 
 @tailwind utilities;
 
-[style*="display: none"],
-[style*="display:none"] {
+[style*='display: none'],
+[style*='display:none'] {
   display: none !important;
 }
 
@@ -184,8 +183,6 @@ input[type='number']::-webkit-inner-spin-button {
   @apply text-red-500;
 }
 
-
-
 /* Firefox standard scrollbar styling */
 * {
   scrollbar-width: thin;
@@ -266,8 +263,6 @@ input[type='number']::-webkit-inner-spin-button {
 [dir='rtl'] .rtl-rotate-180 {
   transform: rotate(180deg);
 }
-
-
 
 .pill {
   @apply py-0.5 px-1.5 rounded-md  text-xs;
@@ -357,9 +352,14 @@ input[type='number']::-webkit-inner-spin-button {
     @apply font-sans;
   }
   .safe-area-top-padding button {
-    transition: color 0.15s, background-color 0.15s;
+    transition:
+      color 0.15s,
+      background-color 0.15s;
   }
-  .safe-area-top-padding button:not([class*="bg-black"]):not([class*="bg-primary"]):not(.btn-primary):not([class*="btn-primary"]) {
+  .safe-area-top-padding
+    button:not([class*='bg-black']):not([class*='bg-primary']):not(
+      .btn-primary
+    ):not([class*='btn-primary']) {
     color: var(--foreground) !important;
   }
   .safe-area-top-padding .nav-link.text-gray-700,
@@ -381,11 +381,11 @@ input[type='number']::-webkit-inner-spin-button {
   }
 
   /* Global form control styling overrides to style legacy form inputs/buttons to match shadcn specs */
-  input[type="text"]:not(.bg-transparent),
-  input[type="number"]:not(.bg-transparent),
-  input[type="date"]:not(.bg-transparent),
-  input[type="password"]:not(.bg-transparent),
-  input[type="email"]:not(.bg-transparent),
+  input[type='text']:not(.bg-transparent),
+  input[type='number']:not(.bg-transparent),
+  input[type='date']:not(.bg-transparent),
+  input[type='password']:not(.bg-transparent),
+  input[type='email']:not(.bg-transparent),
   select,
   textarea,
   .border.rounded {
@@ -395,7 +395,9 @@ input[type='number']::-webkit-inner-spin-button {
     font-size: 14px !important;
     color: var(--foreground) !important;
     background-color: var(--background) !important;
-    transition: border-color 0.15s, box-shadow 0.15s !important;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s !important;
     outline: none !important;
     box-shadow: none !important;
   }
@@ -455,7 +457,9 @@ input[type='number']::-webkit-inner-spin-button {
     font-size: 14px !important;
     padding: 6px 12px !important;
     color: var(--popover-foreground) !important;
-    transition: background-color 0.1s, color 0.1s !important;
+    transition:
+      background-color 0.1s,
+      color 0.1s !important;
   }
 
   .absolute.z-10 li:hover,
@@ -506,18 +510,20 @@ input[type='number']::-webkit-inner-spin-button {
   }
 
   /* Force uniform height on all standard single-line form inputs and checkbox containers */
-  input[type="text"]:not(.bg-transparent),
-  input[type="number"]:not(.bg-transparent),
-  input[type="date"]:not(.bg-transparent),
-  input[type="password"]:not(.bg-transparent),
-  input[type="email"]:not(.bg-transparent),
+  input[type='text']:not(.bg-transparent),
+  input[type='number']:not(.bg-transparent),
+  input[type='date']:not(.bg-transparent),
+  input[type='password']:not(.bg-transparent),
+  input[type='email']:not(.bg-transparent),
   select {
     height: 2.25rem !important;
   }
 
-  .border.rounded:not(textarea):not(.image-attach-box):not(.absolute):not([style*="display: none"]):not([style*="display:none"]) {
+  .border.rounded:not(textarea):not(.image-attach-box):not(.absolute):not(
+      [style*='display: none']
+    ):not([style*='display:none']) {
     height: 2.25rem !important;
     display: flex !important;
     align-items: center !important;
   }
-}
+}

@@ -6,10 +6,7 @@
     v-bind="$attrs"
     @click="openSearch"
   >
-    <feather-icon
-      name="search"
-      class="w-4 h-4 text-current"
-    />
+    <feather-icon name="search" class="w-4 h-4 text-current" />
   </Button>
 
   <!-- Search Modal -->
@@ -75,9 +72,7 @@
                 {{ si.more.filter(Boolean).join(', ') }}
               </p>
             </div>
-            <p
-              class="text-sm text-end justify-self-end search-suggestion-tag"
-            >
+            <p class="text-sm text-end justify-self-end search-suggestion-tag">
               {{
                 si.group === 'Docs' ? si.schemaLabel : groupLabelMap[si.group]
               }}
@@ -157,7 +152,9 @@
         </div>
 
         <!-- Keybindings Help -->
-        <div class="flex text-sm justify-between items-baseline search-modal-footer">
+        <div
+          class="flex text-sm justify-between items-baseline search-modal-footer"
+        >
           <div class="flex gap-4">
             <p>↑↓ {{ t`Navigate` }}</p>
             <p>↩ {{ t`Select` }}</p>
@@ -237,7 +234,7 @@ const {
   down,
   select,
   getGroupFilterButtonClass,
-  setShortcuts
+  setShortcuts,
 } = useSearch(input);
 
 onMounted(() => {
@@ -254,7 +251,7 @@ onMounted(() => {
       suggestions,
       openSearch,
       closeSearch,
-      select
+      select,
     };
   }
   openModal.value = false;

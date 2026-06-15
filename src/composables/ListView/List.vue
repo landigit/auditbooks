@@ -1,14 +1,18 @@
 <template>
   <div class="text-base flex flex-col overflow-hidden h-full">
     <!-- Outer Vertical Scroll Container (Sticking to right wall) -->
-    <div v-if="data?.length" class="flex-1 overflow-y-auto overflow-x-hidden flex flex-col">
+    <div
+      v-if="data?.length"
+      class="flex-1 overflow-y-auto overflow-x-hidden flex flex-col"
+    >
       <!-- Inner Horizontal Scroll Container -->
       <div class="overflow-x-auto min-w-0 flex-1 flex flex-col">
         <!-- Title Row -->
         <div
           class="flex items-center list-header-row px-4 min-w-max"
           :style="{
-            paddingRight: dataSlice.length > 13 ? 'calc(var(--w-scrollbar) + 1rem)' : '',
+            paddingRight:
+              dataSlice.length > 13 ? 'calc(var(--w-scrollbar) + 1rem)' : '',
           }"
         >
           <div
@@ -51,9 +55,11 @@
 
         <!-- Data Rows (No individual vertical scrollbar here) -->
         <div v-if="dataSlice.length !== 0">
-          <div v-for="(row, i) in dataSlice" :key="(row.name as string)">
+          <div v-for="(row, i) in dataSlice" :key="row.name as string">
             <!-- Row Content -->
-            <div class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center px-4 min-w-max">
+            <div
+              class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center px-4 min-w-max"
+            >
               <div
                 v-if="!isSelectionMode"
                 class="w-8 text-start me-2 text-gray-700 dark:text-gray-400"
@@ -86,7 +92,7 @@
                     'text-end': isColumnNumeric(column),
                     'pe-4': c === columns.length - 1,
                   }"
-                  :row="(row as RenderData)"
+                  :row="row as RenderData"
                   :column="column"
                   @status-found="handleStatusFound"
                 />
@@ -105,11 +111,7 @@
     <div v-if="data?.length" class="mt-auto">
       <hr class="dark:border-gray-800" />
       <div v-if="isMobile" class="flex justify-center p-3">
-        <Button
-          v-if="pageEnd < data.length"
-          type="primary"
-          @click="loadMore"
-        >
+        <Button v-if="pageEnd < data.length" type="primary" @click="loadMore">
           {{ t`Load More` }}
         </Button>
       </div>
@@ -118,17 +120,21 @@
         :item-count="data.length"
         class="px-4"
         :hide-count-selector="schemaName === 'Tax'"
-        :style="schemaName === 'Tax' ? { width: '100%' } : { width: tableWidth, maxWidth: '100%' }"
+        :style="
+          schemaName === 'Tax'
+            ? { width: '100%' }
+            : { width: tableWidth, maxWidth: '100%' }
+        "
         @index-change="setPageIndices"
       />
     </div>
 
     <!-- Empty State -->
-    <div
-      v-else
-      class="flex-1 flex flex-col items-center justify-center"
-    >
-      <FeatherIcon name="file-attachment" class="w-24 h-24 text-gray-500 dark:text-gray-400 mb-2" />
+    <div v-else class="flex-1 flex flex-col items-center justify-center">
+      <FeatherIcon
+        name="file-attachment"
+        class="w-24 h-24 text-gray-500 dark:text-gray-400 mb-2"
+      />
       <p class="my-3 text-gray-800 dark:text-gray-200">
         {{ t`No entries found` }}
       </p>
@@ -190,7 +196,9 @@ const dataSlice = computed(() => {
 });
 
 const isAllSelected = computed(() => {
-  return data.value.length > 0 && selectedItems.value.length === data.value.length;
+  return (
+    data.value.length > 0 && selectedItems.value.length === data.value.length
+  );
 });
 
 const columns = computed(() => {
@@ -242,7 +250,11 @@ const gridTemplateColumns = computed(() => {
       if (fieldname === 'status') {
         return '6rem';
       }
-      if (fieldname.includes('customer') || fieldname.includes('supplier') || fieldname.includes('party')) {
+      if (
+        fieldname.includes('customer') ||
+        fieldname.includes('supplier') ||
+        fieldname.includes('party')
+      ) {
         return '11rem';
       }
       if (fieldtype === 'Check') {
@@ -269,7 +281,11 @@ const tableWidth = computed(() => {
       totalRem += 10;
     } else if (fieldname === 'status') {
       totalRem += 6;
-    } else if (fieldname.includes('customer') || fieldname.includes('supplier') || fieldname.includes('party')) {
+    } else if (
+      fieldname.includes('customer') ||
+      fieldname.includes('supplier') ||
+      fieldname.includes('party')
+    ) {
       totalRem += 11;
     } else if (fieldtype === 'Check') {
       totalRem += 3;
@@ -289,15 +305,23 @@ function isColumnNumeric(col: any) {
   if (!col) return false;
   const fieldname = col.fieldname?.toLowerCase() ?? '';
   const fieldtype = col.fieldtype;
-  return isNumeric(fieldtype) ||
+  return (
+    isNumeric(fieldtype) ||
     fieldname.includes('amount') ||
     fieldname.includes('total') ||
     fieldname.includes('credit') ||
     fieldname.includes('debit') ||
-    fieldname.includes('rate');
+    fieldname.includes('rate')
+  );
 }
 
-function handleStatusFound({ rowId, status }: { rowId: string; status: string }) {
+function handleStatusFound({
+  rowId,
+  status,
+}: {
+  rowId: string;
+  status: string;
+}) {
   statusMap.value[rowId] = status;
 }
 
@@ -311,7 +335,11 @@ function loadMore() {
 }
 
 // Track active listeners for cleanup
-let activeListeners: { event: string; listener: (...args: any[]) => void; isDb?: boolean }[] = [];
+let activeListeners: {
+  event: string;
+  listener: (...args: any[]) => void;
+  isDb?: boolean;
+}[] = [];
 
 function clearListeners() {
   activeListeners.forEach(({ event, listener, isDb }) => {
@@ -449,4 +477,3 @@ defineExpose({
   data,
 });
 </script>
-

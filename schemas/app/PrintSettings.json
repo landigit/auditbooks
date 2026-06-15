@@ -168,7 +168,10 @@
       "label": "Signature & Seal Position",
       "fieldtype": "Select",
       "options": [
-        { "value": "authorized_signatory", "label": "Under Authorized Signatory" },
+        {
+          "value": "authorized_signatory",
+          "label": "Under Authorized Signatory"
+        },
         { "value": "before_terms", "label": "Before Terms and Conditions" },
         { "value": "after_terms", "label": "After Terms and Conditions" }
       ],

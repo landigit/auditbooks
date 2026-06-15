@@ -71,14 +71,16 @@
     <ReturnSalesInvoiceModal
       :open-modal="openReturnSalesInvoiceModal"
       :modal-status="openReturnSalesInvoiceModal"
-      @selected-return-invoice="(value:any) => emitEvent('selectedReturnInvoice', value)"
+      @selected-return-invoice="
+        (value: any) => emitEvent('selectedReturnInvoice', value)
+      "
       @toggle-modal="emitEvent('toggleModal', 'ReturnSalesInvoice')"
     />
 
     <AlertModal
       :open-modal="openAlertModal"
       @toggle-modal="emitEvent('toggleModal', 'Alert')"
-      @save-and-continue="(value:any)=>emitEvent('saveAndContinue',value)"
+      @save-and-continue="(value: any) => emitEvent('saveAndContinue', value)"
     />
 
     <KeyboardModal
@@ -86,7 +88,7 @@
       :open-modal="openKeyboardModal"
       :modal-status="openKeyboardModal"
       :selected-item-field="selectedItemField"
-      :selected-item-row="(selectedItemRow as SalesInvoiceItem)"
+      :selected-item-row="selectedItemRow as SalesInvoiceItem"
       @toggle-modal="emitEvent('toggleModal', 'Keyboard')"
       @apply-pricing-rule="emitEvent('applyPricingRule')"
     />
@@ -106,7 +108,7 @@
               :value="sinvDoc?.party"
               :df="sinvDoc?.fieldMap.party"
               :show-clear-button="true"
-              @change="(value:string) => $emit('setCustomer',value)"
+              @change="(value: string) => $emit('setCustomer', value)"
             />
 
             <ModernPOSSelectedItemTable
@@ -149,7 +151,7 @@
                 :value="additionalDiscounts"
                 :read-only="true"
                 :text-right="true"
-                @change="(amount:Money)=> additionalDiscounts = amount"
+                @change="(amount: Money) => (additionalDiscounts = amount)"
               />
             </div>
 
@@ -303,7 +305,14 @@
               :border="true"
               :value="itemSearchTerm"
               :show-clear-button="true"
-              @keyup.enter="(event: KeyboardEvent) => emitEvent('handleItemSearch', (event.target as HTMLInputElement).value, true)"
+              @keyup.enter="
+                (event: KeyboardEvent) =>
+                  emitEvent(
+                    'handleItemSearch',
+                    (event.target as HTMLInputElement).value,
+                    true
+                  )
+              "
               @change="(item: string) => emitEvent('handleItemSearch', item)"
             />
 
@@ -318,7 +327,7 @@
               :border="true"
               :show-clear-button="true"
               :value="selectedItemGroup"
-              @change="(group: string) => emitEvent('setItemGroup',group)"
+              @change="(group: string) => emitEvent('setItemGroup', group)"
             />
           </div>
 
@@ -327,7 +336,7 @@
             :items="items"
             :item-qty-map="itemQuantityMap as ItemQtyMap"
             :item-visibility="itemVisibility"
-            @add-item="(item:string) => emitEvent('addItem', item)"
+            @add-item="(item: string) => emitEvent('addItem', item)"
           />
 
           <ModernPOSItemsGrid
@@ -335,7 +344,7 @@
             :items="items"
             :item-qty-map="itemQuantityMap as ItemQtyMap"
             :item-visibility="itemVisibility"
-            @add-item="(item:string) => emitEvent('addItem', item)"
+            @add-item="(item: string) => emitEvent('addItem', item)"
           />
 
           <div class="flex fixed bottom-0 p-1 ml-3 mb-7 gap-x-3">

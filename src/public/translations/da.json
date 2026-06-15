@@ -269,9 +269,6 @@
   "An error occurred.": {
     "translation": "Der opstod en fejl."
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "Gælder overalt i Frappe Books"
-  },
   "Applicable when Quick Search is open": {
     "translation": "Gælder, når Quick Search er åben"
   },
@@ -410,9 +407,6 @@
   "Cannot Commit Error": {
     "translation": "Kan ikke udføre fejl"
   },
-  "Cannot Delete": {
-    "translation": "Kan ikke slette"
-  },
   "Cannot Delete Account": {
     "translation": "Kan ikke slette konto"
   },
@@ -433,9 +427,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "Kan ikke slette ${0} \"${1}\" på grund af tilknyttede poster."
-  },
-  "Cannot open file": {
-    "translation": "Kan ikke åbne fil"
   },
   "Cannot perform operation.": {
     "translation": "Kan ikke udføre operation."
@@ -491,9 +482,6 @@
   "Check": {
     "translation": "Kontrollere"
   },
-  "Cheque": {
-    "translation": "Check"
-  },
   "City / Town": {
     "translation": "By / By"
   },
@@ -505,9 +493,6 @@
   },
   "Close": {
     "translation": "Luk"
-  },
-  "Close Frappe Books and try manually.": {
-    "translation": "Luk Frappe Books og prøv manuelt."
   },
   "Close POS Shift": {
     "translation": "Luk POS-skift"
@@ -638,9 +623,6 @@
   "Create Sales Invoice": {
     "translation": "Opret salgsfaktura"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "Opret et demo-selskab for at prøve Frappe Books"
-  },
   "Create a new company and store it on your computer": {
     "translation": "Opret et nyt selskab og gem det på din computer"
   },
@@ -709,9 +691,6 @@
   },
   "Custom Form": {
     "translation": "Brugerdefineret formular"
-  },
-  "Custom Hex": {
-    "translation": "Brugerdefineret hex"
   },
   "Customer": {
     "translation": "Kunde"
@@ -872,9 +851,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "Visningspræcision skal have en værdi mellem 0 og 9."
   },
-  "Display Scale": {
-    "translation": "Visningsskala"
-  },
   "Dividends Paid": {
     "translation": "Udbetalte udbytter"
   },
@@ -965,9 +941,6 @@
   "Enable Serial Number": {
     "translation": "Aktivér serienummer"
   },
-  "Enable Stock Returns": {
-    "translation": "Aktivér lagerretur"
-  },
   "Enable UOM Conversion": {
     "translation": "Aktivér enhedsomregning"
   },
@@ -1052,9 +1025,6 @@
   "Export": {
     "translation": "Exportér"
   },
-  "Export Failed": {
-    "translation": "Eksport mislykkedes"
-  },
   "Export Format": {
     "translation": "Eksportformat"
   },
@@ -1090,9 +1060,6 @@
   },
   "Fieldtype": {
     "translation": "Felttype"
-  },
-  "File ${0} does not exist.": {
-    "translation": "Filen ${0} findes ikke."
   },
   "File selection failed": {
     "translation": "Filvalg mislykkedes"
@@ -1159,9 +1126,6 @@
   },
   "Fraction Units": {
     "translation": "Brøkenheder"
-  },
-  "Frappe Books does not have access to the selected file: ${0}": {
-    "translation": "Frappe Books har ikke adgang til den valgte fil: ${0}"
   },
   "Freight and Forwarding Charges": {
     "translation": "Frakt og videresendingsgebyrer"
@@ -1495,9 +1459,6 @@
   },
   "June": {
     "translation": "Juni"
-  },
-  "Key Hints": {
-    "translation": "Nøglehints"
   },
   "Kg": {
     "translation": "Kg"
@@ -1961,9 +1922,6 @@
   "Payroll Payable": {
     "translation": "Løn til udbetaling"
   },
-  "Pending Qty. ${0}": {
-    "translation": "Afventende antal ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "Afventende antal ${0}"
   },
@@ -2068,9 +2026,6 @@
   },
   "Print Templates": {
     "translation": "Udskriftsskabeloner"
-  },
-  "Print View": {
-    "translation": "Udskriftsvisning"
   },
   "Print and Stationery": {
     "translation": "Udskrivning og papirvarer"
@@ -2249,9 +2204,6 @@
   "References": {
     "translation": "Referencer"
   },
-  "Reload Frappe Books?": {
-    "translation": "Genindlæs Frappe Bøger?"
-  },
   "Report": {
     "translation": "Rapport"
   },
@@ -2411,9 +2363,6 @@
   "Save as PDF": {
     "translation": "Gem som PDF"
   },
-  "Save as PDF Successful": {
-    "translation": "Gemt som PDF med succes"
-  },
   "Save changes made to ${0}?": {
     "translation": "Gem ændringer foretaget til ${0}?"
   },
@@ -2422,9 +2371,6 @@
   },
   "Saved": {
     "translation": "Gemt"
-  },
-  "Search an Item": {
-    "translation": "Søg efter en vare"
   },
   "Secured Loans": {
     "translation": "Sikrede lån"
@@ -2749,9 +2695,6 @@
   },
   "Submit ${0}?": {
     "translation": "Indsend ${0}?"
-  },
-  "Submit & Print": {
-    "translation": "Indsend og udskriv"
   },
   "Submit entries?": {
     "translation": "Indsend poster?"
@@ -3119,9 +3062,6 @@
   "We": {
     "translation": "Vi"
   },
-  "Welcome to Frappe Books": {
-    "translation": "Velkommen til Frappe Books"
-  },
   "Width (in cm)": {
     "translation": "Bredde (i cm)"
   },
@@ -3163,8 +3103,5 @@
   },
   "john@doe.com": {
     "translation": "john@doe.com"
-  },
-  "to apply changes": {
-    "translation": "for at anvende ændringer"
   }
 }

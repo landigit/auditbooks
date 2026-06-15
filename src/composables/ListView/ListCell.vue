@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center truncate" :class="cellClass">
     <span v-if="!customRenderer" class="truncate">{{ columnValue }}</span>
-    <component :is="(customRenderer as {})" v-else />
+    <component :is="customRenderer as {}" v-else />
   </div>
 </template>
 <script lang="ts">
@@ -50,7 +50,8 @@ export default defineComponent({
     },
     cellClass() {
       const fieldname = this.column.fieldname?.toLowerCase() ?? '';
-      const isNum = isNumeric(this.column.fieldtype) ||
+      const isNum =
+        isNumeric(this.column.fieldtype) ||
         fieldname.includes('amount') ||
         fieldname.includes('total') ||
         fieldname.includes('credit') ||

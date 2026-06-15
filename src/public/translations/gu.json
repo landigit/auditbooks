@@ -248,9 +248,6 @@
   "Cancelled": {
     "translation": "ફોક કરાયેલ"
   },
-  "Cannot Delete": {
-    "translation": "કાઢી શકાય તેમ નથી"
-  },
   "Cannot cancel ${0} ${1} because of the following ${2}: ${3}": {
     "translation": "${2} ના કારણે ${0} {1} ફોક થાઈ તેમ નથી : ${3}"
   },
@@ -295,9 +292,6 @@
   },
   "Chart of Accounts": {
     "translation": "હિસાબી આલેખ"
-  },
-  "Cheque": {
-    "translation": "ચેક"
   },
   "City / Town": {
     "translation": "શહેર / ગામ"
@@ -442,9 +436,6 @@
   },
   "Current Liabilities": {
     "translation": "વર્તમાન દેવું"
-  },
-  "Custom Hex": {
-    "translation": "કસ્ટમ હેક્સ"
   },
   "Customer": {
     "translation": "ગ્રાહક"
@@ -661,9 +652,6 @@
   },
   "Export": {
     "translation": "નિકાસ"
-  },
-  "Export Failed": {
-    "translation": "નિકાસ નિષ્ફળ"
   },
   "Export Format": {
     "translation": "નિકાસ સ્વરૂપ"
@@ -1496,9 +1484,6 @@
   "Save as PDF": {
     "translation": "PDF રીતે સંઘરો"
   },
-  "Save as PDF Successful": {
-    "translation": "PDF રીતે સંગ્રહ સફળકારક"
-  },
   "Saved": {
     "translation": "સંગ્રહિત"
   },
@@ -1942,9 +1927,6 @@
   },
   "We": {
     "translation": "બુધ"
-  },
-  "Welcome to Frappe Books": {
-    "translation": "Frappe Books પર આપનું સ્વાગત છે"
   },
   "Write Off": {
     "translation": "ખારીજ"

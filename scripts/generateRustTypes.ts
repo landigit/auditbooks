@@ -43,7 +43,58 @@ pub trait SqliteTable: Serialize + for<'de> Deserialize<'de> {
   const keys = Object.keys(schemas).sort();
 
   const RUST_KEYWORDS = new Set([
-    'as', 'break', 'const', 'continue', 'crate', 'else', 'enum', 'extern', 'false', 'fn', 'for', 'if', 'impl', 'in', 'let', 'loop', 'match', 'mod', 'move', 'mut', 'pub', 'ref', 'return', 'self', 'Self', 'static', 'struct', 'super', 'trait', 'true', 'type', 'unsafe', 'use', 'where', 'while', 'async', 'await', 'dyn', 'abstract', 'become', 'box', 'do', 'final', 'macro', 'override', 'priv', 'typeof', 'unsized', 'virtual', 'yield', 'try', 'union'
+    'as',
+    'break',
+    'const',
+    'continue',
+    'crate',
+    'else',
+    'enum',
+    'extern',
+    'false',
+    'fn',
+    'for',
+    'if',
+    'impl',
+    'in',
+    'let',
+    'loop',
+    'match',
+    'mod',
+    'move',
+    'mut',
+    'pub',
+    'ref',
+    'return',
+    'self',
+    'Self',
+    'static',
+    'struct',
+    'super',
+    'trait',
+    'true',
+    'type',
+    'unsafe',
+    'use',
+    'where',
+    'while',
+    'async',
+    'await',
+    'dyn',
+    'abstract',
+    'become',
+    'box',
+    'do',
+    'final',
+    'macro',
+    'override',
+    'priv',
+    'typeof',
+    'unsized',
+    'virtual',
+    'yield',
+    'try',
+    'union',
   ]);
 
   for (const key of keys) {
@@ -51,7 +102,7 @@ pub trait SqliteTable: Serialize + for<'de> Deserialize<'de> {
     if (!schema) continue;
 
     const structName = toRustStructName(schema.name);
-    
+
     code += `\n#[derive(Debug, Clone, Serialize, Deserialize)]\n`;
     code += `#[serde(rename_all = "camelCase")]\n`;
     code += `pub struct ${structName} {\n`;
@@ -69,7 +120,9 @@ pub trait SqliteTable: Serialize + for<'de> Deserialize<'de> {
       }
 
       if (field.fieldtype === 'Table') {
-        const targetType = toRustStructName(field.target || 'serde_json::Value');
+        const targetType = toRustStructName(
+          field.target || 'serde_json::Value'
+        );
         code += `    #[serde(default)]\n`;
         code += `    pub ${rustName}: Vec<${targetType}>,\n`;
       } else {

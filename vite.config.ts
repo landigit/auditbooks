@@ -35,7 +35,11 @@ export default () => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
+              if (
+                id.includes('vue') ||
+                id.includes('pinia') ||
+                id.includes('vue-router')
+              ) {
                 return 'vendor-vue';
               }
               if (id.includes('lodash') || id.includes('luxon')) {
@@ -43,9 +47,9 @@ export default () => {
               }
               return 'vendor';
             }
-          }
-        }
-      }
+          },
+        },
+      },
     },
     root: path.resolve(__dirname, './src'),
     plugins: [

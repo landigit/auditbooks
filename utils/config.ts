@@ -28,7 +28,10 @@ class TauriConfigStore {
     return this._initPromise;
   }
 
-  get<K extends ConfigKey>(key: K, defaultValue?: ConfigMap[K]): ConfigMap[K] | undefined {
+  get<K extends ConfigKey>(
+    key: K,
+    defaultValue?: ConfigMap[K]
+  ): ConfigMap[K] | undefined {
     const value = this._cache.get(key) as ConfigMap[K] | undefined;
     return value ?? defaultValue;
   }

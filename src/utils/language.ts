@@ -25,6 +25,7 @@ export const languageCodeMap: Record<string, string> = {
   Swedish: 'sv',
   Albanian: 'sq',
   Turkish: 'tr',
+  Tamil: 'ta',
 };
 
 export async function setLanguageMap(
@@ -76,7 +77,10 @@ async function fetchAndSetLanguageMap(code: string) {
     const response = await fetch(url);
     if (!response.ok) {
       const { showToast } = await import('src/utils/interactive');
-      showToast({ type: 'error', message: `Language map not found for: ${code}` });
+      showToast({
+        type: 'error',
+        message: `Language map not found for: ${code}`,
+      });
       return false;
     }
     const languageMap = await response.json();
@@ -85,7 +89,10 @@ async function fetchAndSetLanguageMap(code: string) {
     return true;
   } catch (err) {
     const { showToast } = await import('src/utils/interactive');
-    showToast({ type: 'error', message: `Failed to load language: ${String(err)}` });
+    showToast({
+      type: 'error',
+      message: `Failed to load language: ${String(err)}`,
+    });
     return false;
   }
 }

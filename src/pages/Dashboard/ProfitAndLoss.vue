@@ -3,13 +3,27 @@
     <SectionHeader>
       <template #title>{{ t`Profit and Loss` }}</template>
       <template #action>
-        <PeriodSelector :value="period" :options="periodOptions" @change="(value) => (period = value)" />
+        <PeriodSelector
+          :value="period"
+          :options="periodOptions"
+          @change="(value) => (period = value)"
+        />
       </template>
     </SectionHeader>
-    <BarChart v-if="hasData" class="mt-4" :aspect-ratio="aspectRatio" :colors="chartData.colors"
-      :grid-color="chartData.gridColor" :font-color="chartData.fontColor" :points="chartData.points"
-      :x-labels="chartData.xLabels" :format="chartData.format" :format-x="chartData.formatX" :y-max="chartData.yMax"
-      :y-min="chartData.yMin" />
+    <BarChart
+      v-if="hasData"
+      class="mt-4"
+      :aspect-ratio="aspectRatio"
+      :colors="chartData.colors"
+      :grid-color="chartData.gridColor"
+      :font-color="chartData.fontColor"
+      :points="chartData.points"
+      :x-labels="chartData.xLabels"
+      :format="chartData.format"
+      :format-x="chartData.formatX"
+      :y-max="chartData.yMax"
+      :y-min="chartData.yMin"
+    />
     <div v-else class="flex-1 w-full h-full flex-center my-20">
       <span class="text-base text-gray-600 dark:text-gray-500">
         {{ t`No transactions yet` }}
@@ -63,11 +77,7 @@ const setData = async () => {
     toDate.toISO()
   );
   const incomes = getValueMapFromList(dbData.income, 'yearmonth', 'balance');
-  const expenses = getValueMapFromList(
-    dbData.expense,
-    'yearmonth',
-    'balance'
-  );
+  const expenses = getValueMapFromList(dbData.expense, 'yearmonth', 'balance');
 
   data.value = periodList.map((d) => {
     const key = d.toFormat('yyyy-MM');

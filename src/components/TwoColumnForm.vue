@@ -16,13 +16,27 @@
       <div
         v-else
         :key="`${df.fieldname}-regular`"
-        :class="isMobile ? 'flex flex-col border-b dark:border-gray-800 py-1' : 'grid items-center border-b dark:border-gray-800'"
-        :style="isMobile ? {} : {
-          ...style,
-          height: getFieldHeight(df),
-        }"
+        :class="
+          isMobile
+            ? 'flex flex-col border-b dark:border-gray-800 py-1'
+            : 'grid items-center border-b dark:border-gray-800'
+        "
+        :style="
+          isMobile
+            ? {}
+            : {
+                ...style,
+                height: getFieldHeight(df),
+              }
+        "
       >
-        <div :class="isMobile ? 'ps-4 pt-1.5 pb-0.5 text-xs text-gray-800 dark:text-gray-200 font-medium' : 'ps-4 flex text-gray-800 dark:text-gray-200 font-medium'">
+        <div
+          :class="
+            isMobile
+              ? 'ps-4 pt-1.5 pb-0.5 text-xs text-gray-800 dark:text-gray-200 font-medium'
+              : 'ps-4 flex text-gray-800 dark:text-gray-200 font-medium'
+          "
+        >
           {{ df.label }}
         </div>
 
@@ -31,7 +45,7 @@
             isMobile ? 'px-4 pb-1.5' : 'py-2 pe-4',
             {
               'ps-2': df.fieldtype === 'AttachImage' && !isMobile,
-            }
+            },
           ]"
         >
           <FormControl
@@ -93,9 +107,12 @@ const style = computed(() => {
   };
 });
 
-watch(() => props.doc, () => {
-  setFormFields();
-});
+watch(
+  () => props.doc,
+  () => {
+    setFormFields();
+  }
+);
 
 onMounted(() => {
   setFormFields();

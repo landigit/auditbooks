@@ -1,5 +1,11 @@
 <template>
-  <div :class="$attrs.class && $attrs.class.includes('w-full') ? 'grid' : 'inline-grid'" :style="style" v-bind="$attrs">
+  <div
+    :class="
+      $attrs.class && $attrs.class.includes('w-full') ? 'grid' : 'inline-grid'
+    "
+    :style="style"
+    v-bind="$attrs"
+  >
     <slot></slot>
   </div>
 </template>

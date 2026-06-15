@@ -18,11 +18,17 @@
           >
             {{ formattedValue }}
           </p>
-          <p v-else-if="inputPlaceholder" class="text-sm text-muted-foreground w-full select-none">
+          <p
+            v-else-if="inputPlaceholder"
+            class="text-sm text-muted-foreground w-full select-none"
+          >
             {{ inputPlaceholder }}
           </p>
 
-          <span v-if="!isReadOnly" class="p-0.5 rounded -me-1 ms-1 text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center">
+          <span
+            v-if="!isReadOnly"
+            class="p-0.5 rounded -me-1 ms-1 text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center"
+          >
             <FeatherIcon
               name="calendar"
               class="w-4 h-4"
@@ -34,13 +40,20 @@
 
       <!-- Popover Content: The modernized DatetimePicker -->
       <template #content>
-        <div class="bg-popover text-popover-foreground border border-border rounded-md shadow-md">
+        <div
+          class="bg-popover text-popover-foreground border border-border rounded-md shadow-md"
+        >
           <DatetimePicker
             :show-clear="!isRequired"
             :select-time="selectTime"
             :model-value="internalValue"
             :format-value="formatValue"
-            @update:model-value="(value) => { triggerChange(value); if (!selectTime) $refs.popover.togglePopover(false); }"
+            @update:model-value="
+              (value) => {
+                triggerChange(value);
+                if (!selectTime) $refs.popover.togglePopover(false);
+              }
+            "
           />
         </div>
       </template>

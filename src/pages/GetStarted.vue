@@ -228,4 +228,3 @@ onActivated(async () => {
   await checkForCompletedTasks();
 });
 </script>
-

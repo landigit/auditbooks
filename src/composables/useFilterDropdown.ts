@@ -27,7 +27,10 @@ export type Filter = {
   implicit: boolean;
 };
 
-export function useFilterDropdown(props: { schemaName: string }, emit: (event: 'change', ...args: any[]) => void) {
+export function useFilterDropdown(
+  props: { schemaName: string },
+  emit: (event: 'change', ...args: any[]) => void
+) {
   const filters = ref<Filter[]>([]);
   const newFilters = ref<Filter[]>([]);
 

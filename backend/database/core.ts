@@ -284,7 +284,9 @@ export default class DatabaseCore extends DatabaseBase {
       order = 'desc',
     } = options;
 
-    let targetFields = (typeof fields === 'string' ? [fields] : fields).filter(Boolean);
+    let targetFields = (typeof fields === 'string' ? [fields] : fields).filter(
+      Boolean
+    );
     if (targetFields.length === 0) {
       targetFields = ['*'];
     }

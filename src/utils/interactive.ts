@@ -11,7 +11,8 @@ export async function showDialog<DO extends DialogOptions>(options: DO) {
   ];
 
   if ((window as any).isTestEnv) {
-    const primaryButton = preWrappedButtons.find((b) => b.isPrimary) || preWrappedButtons[0];
+    const primaryButton =
+      preWrappedButtons.find((b) => b.isPrimary) || preWrappedButtons[0];
     if (primaryButton) {
       return await primaryButton.action();
     }

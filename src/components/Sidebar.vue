@@ -1,47 +1,70 @@
 <template>
-  <div class="pb-2 h-full flex justify-between flex-col bg-gray-50 dark:bg-gray-900 relative" :class="{
-    'window-drag': platform !== 'Windows',
-  }">
+  <div
+    class="pb-2 h-full flex justify-between flex-col bg-gray-50 dark:bg-gray-900 relative"
+    :class="{
+      'window-drag': platform !== 'Windows',
+    }"
+  >
     <div>
       <!-- Company name -->
       <div
         class="px-4 flex flex-row items-center justify-between border-b dark:border-gray-800 flex-shrink-0 safe-area-top-padding"
         :style="`height: calc(var(--h-row-largest) + env(safe-area-inset-top, 0px))`"
-        :class="platform === 'Mac' && languageDirection === 'ltr' ? 'pt-8' : ''
-          ">
-        <h6 data-testid="company-name"
-          class="text-base md:text-xl font-semibold whitespace-nowrap overflow-auto no-scrollbar select-none sidebar-company-name">
+        :class="platform === 'Mac' && languageDirection === 'ltr' ? 'pt-8' : ''"
+      >
+        <h6
+          data-testid="company-name"
+          class="text-base md:text-xl font-semibold whitespace-nowrap overflow-auto no-scrollbar select-none sidebar-company-name"
+        >
           {{ companyName }}
         </h6>
       </div>
 
       <!-- Sidebar Items -->
       <div v-for="group in groups" :key="group.label">
-        <div class="px-4 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-875 h-10 group" :class="isGroupActive(group) && !group.items
-            ? 'bg-gray-100 dark:bg-gray-875 border-s-4 border-gray-800 dark:border-gray-100'
-            : ''
-          " @click="routeToSidebarItem(group)">
-          <Icon class="flex-shrink-0" :name="group.icon" :size="group.iconSize || '18'" :height="group.iconHeight ?? 0"
-            :active="!!isGroupActive(group)" :darkMode="darkMode"
-            :class="isGroupActive(group) && !group.items ? '-ms-1' : ''" />
+        <div
+          class="px-4 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-875 h-10 group"
+          :class="
+            isGroupActive(group) && !group.items
+              ? 'bg-gray-100 dark:bg-gray-875 border-s-4 border-gray-800 dark:border-gray-100'
+              : ''
+          "
+          @click="routeToSidebarItem(group)"
+        >
+          <Icon
+            class="flex-shrink-0"
+            :name="group.icon"
+            :size="group.iconSize || '18'"
+            :height="group.iconHeight ?? 0"
+            :active="!!isGroupActive(group)"
+            :darkMode="darkMode"
+            :class="isGroupActive(group) && !group.items ? '-ms-1' : ''"
+          />
           <div
             class="ms-2.5 text-lg font-medium transition-colors duration-150 sidebar-group-text"
-            :class="isGroupActive(group) && !group.items
+            :class="
+              isGroupActive(group) && !group.items
                 ? 'sidebar-group-text-active'
                 : ''
-              ">
+            "
+          >
             {{ group.label }}
           </div>
         </div>
 
         <!-- Expanded Group -->
         <div v-if="group.items && isGroupActive(group)">
-          <div v-for="item in group.items" :key="item.label"
+          <div
+            v-for="item in group.items"
+            :key="item.label"
             class="text-base h-10 ps-10 cursor-pointer flex items-center hover:bg-gray-100 dark:hover:bg-gray-875 sidebar-subitem"
-            :class="isItemActive(item)
+            :class="
+              isItemActive(item)
                 ? 'bg-gray-100 dark:bg-gray-875 border-s-4 border-gray-800 dark:border-gray-100 sidebar-subitem-active'
                 : ''
-              " @click="routeToSidebarItem(item)">
+            "
+            @click="routeToSidebarItem(item)"
+          >
             <p :style="isItemActive(item) ? 'margin-left: -4px' : ''">
               {{ item.label }}
             </p>
@@ -54,7 +77,8 @@
     <div class="window-no-drag flex flex-col gap-2 py-2 px-4">
       <button
         class="flex text-sm gap-1 items-center sidebar-footer-btn"
-        @click="openDocumentation">
+        @click="openDocumentation"
+      >
         <feather-icon name="help-circle" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Help` }}
@@ -63,29 +87,37 @@
 
       <button
         class="flex text-sm gap-1 items-center sidebar-footer-btn"
-        @click="viewShortcuts = true">
+        @click="viewShortcuts = true"
+      >
         <feather-icon name="command" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Shortcuts` }}</p>
       </button>
 
-      <button data-testid="change-db"
+      <button
+        data-testid="change-db"
         class="flex text-sm gap-1 items-center sidebar-footer-btn"
-        @click="$emit('change-db-file')">
+        @click="$emit('change-db-file')"
+      >
         <feather-icon name="database" class="h-4 w-4 flex-shrink-0" />
         <p>{{ t`Change DB` }}</p>
       </button>
 
       <button
         class="flex text-sm gap-1 items-center sidebar-footer-btn"
-        @click="() => reportIssue()">
+        @click="() => reportIssue()"
+      >
         <feather-icon name="flag" class="h-4 w-4 flex-shrink-0" />
         <p>
           {{ t`Report Issue` }}
         </p>
       </button>
 
-      <p v-if="showDevMode" class="text-xs select-none cursor-pointer sidebar-footer-dev" @click="showDevMode = false"
-        title="Open dev tools with Ctrl+Shift+I">
+      <p
+        v-if="showDevMode"
+        class="text-xs select-none cursor-pointer sidebar-footer-dev"
+        @click="showDevMode = false"
+        title="Open dev tools with Ctrl+Shift+I"
+      >
         dev mode
       </p>
     </div>
@@ -93,7 +125,8 @@
     <!-- Hide Sidebar Button -->
     <button
       class="absolute bottom-0 end-0 hover:bg-gray-100 dark:hover:bg-gray-875 rounded p-1 m-4 rtl-rotate-180 sidebar-footer-btn"
-      @click="() => toggleSidebar()">
+      @click="() => toggleSidebar()"
+    >
       <feather-icon name="chevrons-left" class="w-4 h-4" />
     </button>
 
@@ -152,7 +185,9 @@ const appVersion = computed(() => fyo.store.appVersion);
 
 async function openDocumentation() {
   const { openUrl } = await import('@tauri-apps/plugin-opener');
-  await openUrl('https://docs.frappe.io/' + docsPathRef.value).catch(console.error);
+  await openUrl('https://docs.frappe.io/' + docsPathRef.value).catch(
+    console.error
+  );
 }
 
 function setActiveGroup() {
@@ -271,7 +306,9 @@ onUnmounted(() => {
 }
 .sidebar-footer-btn {
   color: color-mix(in srgb, var(--foreground) 85%, transparent) !important;
-  transition: color 0.15s, background-color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
 }
 .sidebar-footer-btn:hover {
   color: var(--foreground) !important;

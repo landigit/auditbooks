@@ -1,7 +1,11 @@
 <template>
   <div
     class="bg-white dark:bg-gray-850 overflow-y-auto"
-    :class="isMobile ? 'w-full h-full fixed inset-0 z-50' : 'w-quick-edit border-l dark:border-gray-800'"
+    :class="
+      isMobile
+        ? 'w-full h-full fixed inset-0 z-50'
+        : 'w-quick-edit border-l dark:border-gray-800'
+    "
   >
     <!-- Page Header -->
     <div
@@ -9,7 +13,11 @@
       style="z-index: 1"
     >
       <div class="flex items-center justify-center w-full relative z-10">
-        <Button :icon="true" class="absolute left-0 z-20" @click="$emit('close')">
+        <Button
+          :icon="true"
+          class="absolute left-0 z-20"
+          @click="$emit('close')"
+        >
           <feather-icon name="x" class="w-4 h-4" />
         </Button>
         <p class="text-xl font-semibold linked-title text-center">
@@ -19,10 +27,7 @@
     </div>
 
     <!-- Linked Entry List -->
-    <div
-      v-if="sequence.length"
-      class="w-full overflow-y-auto"
-    >
+    <div v-if="sequence.length" class="w-full overflow-y-auto">
       <div
         v-for="sn of sequence"
         :key="sn"
@@ -34,9 +39,7 @@
           :class="entries[sn].collapsed ? '' : 'pb-4'"
           @click="entries[sn].collapsed = !entries[sn].collapsed"
         >
-          <h2
-            class="text-base font-semibold select-none linked-group-title"
-          >
+          <h2 class="text-base font-semibold select-none linked-group-title">
             {{ fyo.schemaMap[sn]?.label ?? sn
             }}<span class="font-normal">{{
               ` – ${entries[sn].details.length}`
@@ -61,8 +64,10 @@
             @click="routeToDoc(sn, String(e.name))"
           >
             <div class="flex justify-between">
-               <!-- Name -->
-              <p class="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+              <!-- Name -->
+              <p
+                class="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+              >
                 {{ e.name }}
               </p>
 
@@ -89,11 +94,7 @@
               </p>
 
               <!-- Party (Customer / Supplier / Party) -->
-              <p
-                v-if="e.party"
-                class="pill"
-                :class="colorClass('yellow')"
-              >
+              <p v-if="e.party" class="pill" :class="colorClass('yellow')">
                 {{ e.party }}
               </p>
 
@@ -101,17 +102,31 @@
               <p
                 v-else-if="e.entryType || e.account"
                 class="pill"
-                :class="colorClass(
-                  String(e.entryType || e.account).toLowerCase().includes('debtor') || 
-                  String(e.entryType || e.account).toLowerCase().includes('cash') 
-                    ? 'yellow' 
-                    : (String(e.entryType || e.account).toLowerCase().includes('sgst') || 
-                       String(e.entryType || e.account).toLowerCase().includes('cgst') ||
-                       String(e.entryType || e.account).toLowerCase().includes('igst') ||
-                       String(e.entryType || e.account).toLowerCase().includes('gst'))
-                    ? 'purple'
-                    : 'teal'
-                )"
+                :class="
+                  colorClass(
+                    String(e.entryType || e.account)
+                      .toLowerCase()
+                      .includes('debtor') ||
+                      String(e.entryType || e.account)
+                        .toLowerCase()
+                        .includes('cash')
+                      ? 'yellow'
+                      : String(e.entryType || e.account)
+                            .toLowerCase()
+                            .includes('sgst') ||
+                          String(e.entryType || e.account)
+                            .toLowerCase()
+                            .includes('cgst') ||
+                          String(e.entryType || e.account)
+                            .toLowerCase()
+                            .includes('igst') ||
+                          String(e.entryType || e.account)
+                            .toLowerCase()
+                            .includes('gst')
+                        ? 'purple'
+                        : 'teal'
+                  )
+                "
               >
                 {{ e.entryType || e.account }}
               </p>
@@ -203,7 +218,9 @@ const { fyo, t } = useApp();
 const shortcuts = useShortcuts();
 const { isMobile } = useBreakpoint();
 
-const entries = ref<Record<string, { collapsed: boolean; details: Record<string, unknown>[] }>>({});
+const entries = ref<
+  Record<string, { collapsed: boolean; details: Record<string, unknown>[] }>
+>({});
 
 const sequence = computed(() => {
   const seq: string[] = linkSequence.filter(

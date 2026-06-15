@@ -51,7 +51,10 @@
               class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar flex items-center"
               :class="[
                 getCellColorClass(cell),
-                cell.align === 'right' || (!cell.align && isNumeric(cell.fieldtype)) ? 'justify-end' : 'justify-start'
+                cell.align === 'right' ||
+                (!cell.align && isNumeric(cell.fieldtype))
+                  ? 'justify-end'
+                  : 'justify-start',
               ]"
             >
               <feather-icon

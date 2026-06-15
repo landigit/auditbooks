@@ -34,16 +34,14 @@ const { isMobile } = useBreakpoint();
         v-show="showSidebar"
         class="flex-shrink-0 border-e dark:border-gray-800 whitespace-nowrap w-sidebar"
         :class="{
-          'absolute inset-y-0 start-0 z-50 shadow-2xl h-full': isMobile
+          'absolute inset-y-0 start-0 z-50 shadow-2xl h-full': isMobile,
         }"
         :dark-mode="darkMode"
         @change-db-file="$emit('change-db-file')"
       />
     </Transition>
 
-    <div
-      class="flex flex-1 overflow-y-hidden bg-gray-50 dark:bg-gray-900"
-    >
+    <div class="flex flex-1 overflow-y-hidden bg-gray-50 dark:bg-gray-900">
       <router-view v-slot="{ Component }">
         <keep-alive>
           <component
@@ -78,7 +76,6 @@ const { isMobile } = useBreakpoint();
     </button>
   </div>
 </template>
-
 
 <style scoped>
 .sidebar-enter-from,

@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col gap-1 py-2 px-3 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-850">
+  <div
+    class="flex flex-col gap-1 py-2 px-3 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-850"
+  >
     <!-- Drag handle + toggle -->
     <div class="flex items-center gap-2">
       <feather-icon
@@ -11,9 +13,17 @@
         :id="`col-vis-${col.fieldname}`"
         :checked="col.visible"
         class="accent-blue-500 shrink-0"
-        @change="emit('update:col', { ...col, visible: ($event.target as HTMLInputElement).checked })"
+        @change="
+          emit('update:col', {
+            ...col,
+            visible: ($event.target as HTMLInputElement).checked,
+          })
+        "
       />
-      <label :for="`col-vis-${col.fieldname}`" class="text-xs font-medium text-gray-700 dark:text-gray-300 grow cursor-pointer select-none">
+      <label
+        :for="`col-vis-${col.fieldname}`"
+        class="text-xs font-medium text-gray-700 dark:text-gray-300 grow cursor-pointer select-none"
+      >
         {{ col.fieldname }}
       </label>
     </div>
@@ -28,7 +38,12 @@
             type="text"
             :value="col.label"
             class="text-xs border rounded px-1.5 py-0.5 w-28 dark:bg-gray-800 dark:border-gray-600"
-            @input="emit('update:col', { ...col, label: ($event.target as HTMLInputElement).value })"
+            @input="
+              emit('update:col', {
+                ...col,
+                label: ($event.target as HTMLInputElement).value,
+              })
+            "
           />
         </div>
 
@@ -40,7 +55,12 @@
             :value="col.width"
             placeholder="* / auto / 80"
             class="text-xs border rounded px-1.5 py-0.5 w-20 dark:bg-gray-800 dark:border-gray-600"
-            @input="emit('update:col', { ...col, width: ($event.target as HTMLInputElement).value })"
+            @input="
+              emit('update:col', {
+                ...col,
+                width: ($event.target as HTMLInputElement).value,
+              })
+            "
           />
         </div>
 
@@ -50,7 +70,13 @@
           <select
             :value="col.align"
             class="text-xs border rounded px-1 py-0.5 dark:bg-gray-800 dark:border-gray-600"
-            @change="emit('update:col', { ...col, align: ($event.target as HTMLSelectElement).value as ColumnDef['align'] })"
+            @change="
+              emit('update:col', {
+                ...col,
+                align: ($event.target as HTMLSelectElement)
+                  .value as ColumnDef['align'],
+              })
+            "
           >
             <option value="left">Left</option>
             <option value="center">Center</option>

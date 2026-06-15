@@ -1,0 +1,230 @@
+{
+  "Account": {
+    "translation": "கணக்கு",
+    "context": "\"Account ${0} does not exist.\""
+  },
+  "Accounts": {
+    "translation": "கணக்குகள்",
+    "context": "\"Accounts Payable\""
+  },
+  "Active": {
+    "translation": "செயலில் உள்ளது",
+    "context": "\"Add Account\""
+  },
+  "Add Row": {
+    "translation": "வரிசையைச் சேர்க்கவும்",
+    "context": "\"Add Suppliers\""
+  },
+  "Address": {
+    "translation": "முகவரி",
+    "context": "\"Address Display\""
+  },
+  "Amount": {
+    "translation": "தொகை",
+    "context": "\"Amount Paid\""
+  },
+  "Balance Sheet": {
+    "translation": "இருப்புநிலை குறிப்பு",
+    "context": "Bank"
+  },
+  "Bill To": {
+    "translation": "பில் பெறுபவர்",
+    "context": "Billing"
+  },
+  "Cancel": {
+    "translation": "ரத்துசெய்",
+    "context": "\"Cancel ${0}?\""
+  },
+  "Cancelled": {
+    "translation": "ரத்து செய்யப்பட்டது",
+    "context": "\"Cannot Commit Error\""
+  },
+  "Cash": {
+    "translation": "ரொக்கம்",
+    "context": "\"Cash Denominations\""
+  },
+  "Closing": {
+    "translation": "மூடுதல்",
+    "context": "\"Closing ${0} Amount can not be negative.\""
+  },
+  "Company": {
+    "translation": "நிறுவனம்",
+    "context": "\"Company Logo\""
+  },
+  "Credit": {
+    "translation": "வரவு",
+    "context": "\"Credit Card Entry\""
+  },
+  "Customer": {
+    "translation": "வாடிக்கையாளர்",
+    "context": "\"Customer Created\""
+  },
+  "Date": {
+    "translation": "தேதி",
+    "context": "\"Date Format\""
+  },
+  "Debit": {
+    "translation": "பற்று",
+    "context": "\"Debit Note\""
+  },
+  "Delete": {
+    "translation": "நீக்கு",
+    "context": "\"Delete ${0}?\""
+  },
+  "Description": {
+    "translation": "விளக்கம்",
+    "context": "Details"
+  },
+  "Discount": {
+    "translation": "தள்ளுபடி",
+    "context": "\"Discount Account\""
+  },
+  "Draft": {
+    "translation": "வரைவு",
+    "context": "Duplicate"
+  },
+  "Email": {
+    "translation": "மின்னஞ்சல்",
+    "context": "\"Email Address\""
+  },
+  "Enabled": {
+    "translation": "செயல்படுத்தப்பட்டது",
+    "context": "\"Enabled For\""
+  },
+  "Entry": {
+    "translation": "பதிவு",
+    "context": "\"Entry Currency\""
+  },
+  "Expense": {
+    "translation": "செலவு",
+    "context": "\"Expense Account\""
+  },
+  "Export": {
+    "translation": "ஏற்றுமதி",
+    "context": "\"Export Format\""
+  },
+  "GST": {
+    "translation": "ஜிஎஸ்டி",
+    "context": "\"GSTIN No.\""
+  },
+  "General Ledger": {
+    "translation": "பொது பேரேடு",
+    "context": "\"Get Started\""
+  },
+  "Grand Total": {
+    "translation": "பெரு மொத்தம்",
+    "context": "\"Greater Than\""
+  },
+  "Income": {
+    "translation": "வருமானம்",
+    "context": "\"Income Account\""
+  },
+  "Invoice": {
+    "translation": "இன்வாய்ஸ்",
+    "context": "\"Invoice Created\""
+  },
+  "Item": {
+    "translation": "பொருள்",
+    "context": "\"Item ${0} has Zero Quantity\""
+  },
+  "Items": {
+    "translation": "பொருட்கள்",
+    "context": "January"
+  },
+  "Language": {
+    "translation": "மொழி",
+    "context": "\"Layout saved\""
+  },
+  "Location": {
+    "translation": "இருப்பிடம்",
+    "context": "\"Location Name\""
+  },
+  "Name": {
+    "translation": "பெயர்",
+    "context": "Navigate"
+  },
+  "Net Total": {
+    "translation": "நிகர மொத்தம்",
+    "context": "\"New ${0}\""
+  },
+  "No": {
+    "translation": "இல்லை",
+    "context": "\"No Display Entries Found\""
+  },
+  "Notes": {
+    "translation": "குறிப்புகள்",
+    "context": "November"
+  },
+  "Payment": {
+    "translation": "கட்டணம்",
+    "context": "\"Payment ${0} is Saved\""
+  },
+  "Print": {
+    "translation": "அச்சிடு",
+    "context": "\"Print ${0}\""
+  },
+  "Purchase": {
+    "translation": "கொள்முதல்",
+    "context": "\"Purchase Acc.\""
+  },
+  "Quantity": {
+    "translation": "அளவு",
+    "context": "\"Quantity (${0}) has to be greater than zero\""
+  },
+  "Rate": {
+    "translation": "விகிதம்",
+    "context": "\"Rate (${0}) cannot be less zero.\""
+  },
+  "Report": {
+    "translation": "அறிக்கை",
+    "context": "\"Report Error\""
+  },
+  "Sales": {
+    "translation": "விற்பனை",
+    "context": "\"Sales Acc.\""
+  },
+  "Save": {
+    "translation": "சேமி",
+    "context": "\"Save ${0}?\""
+  },
+  "Settings": {
+    "translation": "அமைப்புகள்",
+    "context": "Setup"
+  },
+  "Supplier": {
+    "translation": "வழங்குநர்",
+    "context": "\"Supplier Created\""
+  },
+  "Tax": {
+    "translation": "வரி",
+    "context": "\"Tax Account\""
+  },
+  "Taxes": {
+    "translation": "வரிகள்",
+    "context": "\"Taxes and Charges\""
+  },
+  "Terms": {
+    "translation": "விதிமுறைகள்",
+    "context": "\"Terms and Conditions\""
+  },
+  "Total": {
+    "translation": "மொத்தம்",
+    "context": "\"Total Amount\""
+  },
+  "UOM": {
+    "translation": "அலகு",
+    "context": "\"UOM Conversion Item\""
+  },
+  "Unit": {
+    "translation": "அலகு",
+    "context": "\"Unit Type\""
+  },
+  "Value": {
+    "translation": "மதிப்பு",
+    "context": "\"Value missing for ${0}\""
+  },
+  "Yes": {
+    "translation": "ஆம்",
+    "context": "Zero"
+  }
+}

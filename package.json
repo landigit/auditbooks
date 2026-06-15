@@ -12,7 +12,6 @@
     "dev:frontend": "pnpm compile:translations && vite",
     "build": "tauri build",
     "build:frontend": "pnpm compile:translations && vite build",
-    "release": "scripts/publish-mac-arm.sh",
     "tauri": "tauri",
     "tauri:android:dev": "tauri android dev",
     "tauri:android:build": "tauri android build",

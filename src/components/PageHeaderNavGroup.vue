@@ -8,7 +8,7 @@
     >
       <feather-icon name="menu" class="w-4 h-4" />
     </a>
-    <SearchBar :class="(!showSidebar || isMobile) ? 'rounded-l-none' : ''" />
+    <SearchBar :class="!showSidebar || isMobile ? 'rounded-l-none' : ''" />
     <!-- Back Button -->
     <a
       v-if="!isMobile"
@@ -96,4 +96,3 @@ onDeactivated(() => {
   pointer-events: none;
 }
 </style>
-

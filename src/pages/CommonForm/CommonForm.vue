@@ -4,10 +4,12 @@
       <Barcode
         v-if="canShowBarcode"
         class="h-8"
-        @item-selected="(name:string) => {
-          // @ts-ignore
-          doc?.addItem(name);
-        }"
+        @item-selected="
+          (name: string) => {
+            // @ts-ignore
+            doc?.addItem(name);
+          }
+        "
       />
       <ExchangeRate
         v-if="canShowExchangeRate"
@@ -71,7 +73,12 @@
         <feather-icon name="save" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Save` }}</span>
       </Button>
-      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit" :icon="isMobile">
+      <Button
+        v-else-if="doc?.canSubmit"
+        type="primary"
+        @click="submit"
+        :icon="isMobile"
+      >
         <feather-icon name="check-square" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Submit` }}</span>
       </Button>
@@ -140,8 +147,8 @@
           :doc="doc"
           :fieldname="row.fieldname"
           :index="row.index"
-          @previous="(i:number) => row!.index = i"
-          @next="(i:number) => row!.index = i"
+          @previous="(i: number) => (row!.index = i)"
+          @next="(i: number) => (row!.index = i)"
           @close="() => (row = null)"
         />
       </Transition>
@@ -226,11 +233,11 @@ const {
 }
 
 /* Base custom input wrappers, selects, textareas, AutoComplete, and Link containers styling */
-:deep(input[type="text"]:not(.bg-transparent)),
-:deep(input[type="number"]:not(.bg-transparent)),
-:deep(input[type="date"]:not(.bg-transparent)),
-:deep(input[type="password"]:not(.bg-transparent)),
-:deep(input[type="email"]:not(.bg-transparent)),
+:deep(input[type='text']:not(.bg-transparent)),
+:deep(input[type='number']:not(.bg-transparent)),
+:deep(input[type='date']:not(.bg-transparent)),
+:deep(input[type='password']:not(.bg-transparent)),
+:deep(input[type='email']:not(.bg-transparent)),
 :deep(select),
 :deep(textarea),
 :deep(.border.rounded) {
@@ -240,7 +247,9 @@ const {
   font-size: 14px !important;
   color: var(--foreground) !important;
   background-color: var(--background) !important;
-  transition: border-color 0.15s, box-shadow 0.15s !important;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s !important;
   outline: none !important;
   box-shadow: none !important;
 }
@@ -362,5 +371,4 @@ const {
 :deep(button) {
   border-radius: 4px !important;
 }
-
 </style>

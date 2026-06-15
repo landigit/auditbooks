@@ -245,9 +245,6 @@
   "An error occurred.": {
     "translation": "Ocorreu um erro."
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "Aplicável em qualquer lugar no ContaMax"
-  },
   "Applicable when Quick Search is open": {
     "translation": "Aplicável quando a busca rápida está aberta."
   },
@@ -383,9 +380,6 @@
   "Cannot Commit Error": {
     "translation": "Não foi possível salvar no banco devido a um erro"
   },
-  "Cannot Delete": {
-    "translation": "Não foi possivel deletar"
-  },
   "Cannot Delete Account": {
     "translation": "Não é possivel deletar a conta"
   },
@@ -406,9 +400,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "Não foi possivel cnacelar ${0}: ${1} devido a registros ligados"
-  },
-  "Cannot open file": {
-    "translation": "Não foi possível abrir o arquivo"
   },
   "Cannot perform operation.": {
     "translation": "Não foi possível realizar a operação"
@@ -461,9 +452,6 @@
   "Check": {
     "translation": "Verificar"
   },
-  "Cheque": {
-    "translation": "Cheque"
-  },
   "City / Town": {
     "translation": "Cidade"
   },
@@ -475,9 +463,6 @@
   },
   "Close": {
     "translation": "Fechar"
-  },
-  "Close Frappe Books and try manually.": {
-    "translation": "Fechar o MaxConta e tentar manualmente"
   },
   "Close POS Shift": {
     "translation": "Fechar o PDV"
@@ -605,9 +590,6 @@
   "Create Sales Invoice": {
     "translation": "Criar Venda"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "Crie uma empresa de demonstração e teste o MaxConta"
-  },
   "Create a new company and store it on your computer": {
     "translation": "Criar uma nova empresa e armazene seus dados no seu PC."
   },
@@ -676,9 +658,6 @@
   },
   "Custom Form": {
     "translation": "Formulário Personalizado"
-  },
-  "Custom Hex": {
-    "translation": "Cores Hex Personalizadas"
   },
   "Customer": {
     "translation": "Cliente"
@@ -839,9 +818,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "A Qtd de Digitos deve ter um valor entre 0 e 9."
   },
-  "Display Scale": {
-    "translation": "Escala de Valor"
-  },
   "Dividends Paid": {
     "translation": "Dividendos pagos"
   },
@@ -932,9 +908,6 @@
   "Enable Serial Number": {
     "translation": "Habilitar Nº de Série"
   },
-  "Enable Stock Returns": {
-    "translation": "Habilitar Devoluções no Estoque"
-  },
   "Enable UOM Conversion": {
     "translation": "Habilitar Conversão de Unidade"
   },
@@ -1019,9 +992,6 @@
   "Export": {
     "translation": "Exportar"
   },
-  "Export Failed": {
-    "translation": "Exportação falhou"
-  },
   "Export Format": {
     "translation": "Formato de exportação"
   },
@@ -1057,9 +1027,6 @@
   },
   "Fieldtype": {
     "translation": "Tipo de Campo"
-  },
-  "File ${0} does not exist.": {
-    "translation": "Arquivo ${0} não existe."
   },
   "File selection failed": {
     "translation": "Falha ao selecionar o arquivo"
@@ -1123,9 +1090,6 @@
   },
   "Fraction Units": {
     "translation": "Unidades de Fração"
-  },
-  "Frappe Books does not have access to the selected file: ${0}": {
-    "translation": "MaxConta não tem permissão para acessar o arquivo: ${0}"
   },
   "Freight and Forwarding Charges": {
     "translation": "Taxas de frete e de remessa"
@@ -1444,9 +1408,6 @@
   },
   "June": {
     "translation": "Junho"
-  },
-  "Key Hints": {
-    "translation": "Teclas de Atalho"
   },
   "Label": {
     "translation": "Etiqueta"
@@ -1904,9 +1865,6 @@
   "Payroll Payable": {
     "translation": "Folha de pagamento a pagar"
   },
-  "Pending Qty. ${0}": {
-    "translation": "Qtd Pendente ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "Qtd Pendente ${0}"
   },
@@ -2005,9 +1963,6 @@
   },
   "Print Templates": {
     "translation": "Modelos de impressão"
-  },
-  "Print View": {
-    "translation": "Vista de Imprssão"
   },
   "Print and Stationery": {
     "translation": "Impressão"
@@ -2183,9 +2138,6 @@
   "References": {
     "translation": "Referências"
   },
-  "Reload Frappe Books?": {
-    "translation": "Recarregar o MaxConta?"
-  },
   "Report": {
     "translation": "Relatório"
   },
@@ -2345,9 +2297,6 @@
   "Save as PDF": {
     "translation": "Salvar como PDF"
   },
-  "Save as PDF Successful": {
-    "translation": "Salvar como PDF bem sucedido"
-  },
   "Save changes made to ${0}?": {
     "translation": "Salvar mudanças em ${0}?"
   },
@@ -2356,9 +2305,6 @@
   },
   "Saved": {
     "translation": "Salvo"
-  },
-  "Search an Item": {
-    "translation": "Buscar um registro"
   },
   "Secured Loans": {
     "translation": "Empréstimos Garantidos"
@@ -2666,9 +2612,6 @@
   },
   "Submit ${0}?": {
     "translation": "Enviar ${0}?"
-  },
-  "Submit & Print": {
-    "translation": "Enviar e imprimir"
   },
   "Submit entries?": {
     "translation": "Enviar entradas?"
@@ -3027,9 +2970,6 @@
   "We": {
     "translation": "Qa"
   },
-  "Welcome to Frappe Books": {
-    "translation": "Bem-vindo à Frappe Books"
-  },
   "Width (in cm)": {
     "translation": "Largura (em cm)"
   },
@@ -3071,8 +3011,5 @@
   },
   "john@doe.com": {
     "translation": "jose.silva@exemplo.com"
-  },
-  "to apply changes": {
-    "translation": "para aplicar alterações"
   }
 }

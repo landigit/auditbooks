@@ -1,4 +1,12 @@
-import { ref, computed, watch, onMounted, onActivated, onDeactivated, inject } from 'vue';
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onActivated,
+  onDeactivated,
+  inject,
+} from 'vue';
 import { Money } from 'pesa';
 import { fyo } from 'src/initFyo';
 import { ModelNameEnum } from 'models/types';
@@ -31,7 +39,12 @@ import {
   getItemVisibility,
   isLoyaltyProgramExpiredAndMaxed,
 } from 'models/helpers';
-import { ItemVisibility, POSItem, ItemQtyMap, ItemSerialNumbers } from 'src/components/POS/types';
+import {
+  ItemVisibility,
+  POSItem,
+  ItemQtyMap,
+  ItemSerialNumbers,
+} from 'src/components/POS/types';
 import { ValidationError } from 'fyo/utils/errors';
 import { getExistingActiveSerialNumbersForItem } from 'models/inventory/helpers';
 
@@ -91,12 +104,18 @@ export function usePOS() {
   const quickQtyKeyUpHandler = ref<((e: KeyboardEvent) => void) | null>(null);
 
   const selectedItemForBatch = ref('');
-  const pendingBatchItem = ref<{ item: POSItem; quantity: number } | null>(null);
+  const pendingBatchItem = ref<{ item: POSItem; quantity: number } | null>(
+    null
+  );
   const expandedBatchId = ref<string | null | undefined>(undefined);
   const itemVisibilityValue = ref<ItemVisibility>('Inventory Items');
 
-  const defaultPOSCashAccount = computed(() => fyo.singles.POSSettings?.cashAccount ?? undefined);
-  const isDiscountingEnabled = computed(() => !!fyo.singles.AccountingSettings?.enableDiscounting);
+  const defaultPOSCashAccount = computed(
+    () => fyo.singles.POSSettings?.cashAccount ?? undefined
+  );
+  const isDiscountingEnabled = computed(
+    () => !!fyo.singles.AccountingSettings?.enableDiscounting
+  );
   const isPosShiftOpen = computed(() => !!fyo.singles.POSSettings?.isShiftOpen);
   const itemVisibility = computed(() => itemVisibilityValue.value);
 
@@ -107,12 +126,16 @@ export function usePOS() {
     return false;
   });
 
-  watch(sinvDoc, () => {
-    if (sinvDoc.value.coupons?.length) {
-      setCouponsCount(sinvDoc.value.coupons.length);
-    }
-    updateValues();
-  }, { deep: true });
+  watch(
+    sinvDoc,
+    () => {
+      if (sinvDoc.value.coupons?.length) {
+        setCouponsCount(sinvDoc.value.coupons.length);
+      }
+      updateValues();
+    },
+    { deep: true }
+  );
 
   onMounted(async () => {
     await setItems();
@@ -150,17 +173,29 @@ export function usePOS() {
   function addQuickQtyListeners() {
     quickQtyKeyDownHandler.value = (e: KeyboardEvent) => onQuickQtyKeyDown(e);
     quickQtyKeyUpHandler.value = (e: KeyboardEvent) => onQuickQtyKeyUp(e);
-    window.addEventListener('keydown', quickQtyKeyDownHandler.value as EventListener);
-    window.addEventListener('keyup', quickQtyKeyUpHandler.value as EventListener);
+    window.addEventListener(
+      'keydown',
+      quickQtyKeyDownHandler.value as EventListener
+    );
+    window.addEventListener(
+      'keyup',
+      quickQtyKeyUpHandler.value as EventListener
+    );
   }
 
   function removeQuickQtyListeners() {
     if (quickQtyKeyDownHandler.value) {
-      window.removeEventListener('keydown', quickQtyKeyDownHandler.value as EventListener);
+      window.removeEventListener(
+        'keydown',
+        quickQtyKeyDownHandler.value as EventListener
+      );
       quickQtyKeyDownHandler.value = null;
     }
     if (quickQtyKeyUpHandler.value) {
-      window.removeEventListener('keyup', quickQtyKeyUpHandler.value as EventListener);
+      window.removeEventListener(
+        'keyup',
+        quickQtyKeyUpHandler.value as EventListener
+      );
       quickQtyKeyUpHandler.value = null;
     }
   }
@@ -247,7 +282,9 @@ export function usePOS() {
 
     let row = quickQtyRow.value;
     if (!row || !(sinvDoc.value.items || []).includes(row)) {
-      const activeItems = (sinvDoc.value.items || []).filter((r) => !r.isFreeItem);
+      const activeItems = (sinvDoc.value.items || []).filter(
+        (r) => !r.isFreeItem
+      );
       row = activeItems.length
         ? (activeItems[activeItems.length - 1] as SalesInvoiceItem)
         : null;
@@ -604,9 +641,7 @@ export function usePOS() {
 
   function setDefaultCustomer() {
     defaultCustomer.value =
-      posProfile.value?.posCustomer ??
-      fyo.singles.Defaults?.posCustomer ??
-      '';
+      posProfile.value?.posCustomer ?? fyo.singles.Defaults?.posCustomer ?? '';
     sinvDoc.value.party = defaultCustomer.value;
   }
 
@@ -1047,9 +1082,8 @@ export function usePOS() {
     await paymentDoc.value.set('amount', fyo.pesa(paidAmount.value.float));
     await paymentDoc.value.set('referenceType', ModelNameEnum.SalesInvoice);
 
-    const paymentMethodDoc = await paymentDoc.value.loadAndGetLink(
-      'paymentMethod'
-    );
+    const paymentMethodDoc =
+      await paymentDoc.value.loadAndGetLink('paymentMethod');
 
     if (paymentMethodDoc?.type !== 'Cash') {
       await paymentDoc.value.setMultiple({
@@ -1185,38 +1219,98 @@ export function usePOS() {
   }
 
   function toggleModal(modal: ModalName, val?: boolean) {
-    const key = `open${modal}Modal` as 'openAlertModal' | 'openPaymentModal' | 'openKeyboardModal' | 'openPriceListModal' | 'openItemEnquiryModal' | 'openCouponCodeModal' | 'openShiftCloseModal' | 'openSavedInvoiceModal' | 'openLoyaltyProgramModal' | 'openAppliedCouponsModal' | 'openReturnSalesInvoiceModal' | 'openBatchSelectionModal';
+    const key = `open${modal}Modal` as
+      | 'openAlertModal'
+      | 'openPaymentModal'
+      | 'openKeyboardModal'
+      | 'openPriceListModal'
+      | 'openItemEnquiryModal'
+      | 'openCouponCodeModal'
+      | 'openShiftCloseModal'
+      | 'openSavedInvoiceModal'
+      | 'openLoyaltyProgramModal'
+      | 'openAppliedCouponsModal'
+      | 'openReturnSalesInvoiceModal'
+      | 'openBatchSelectionModal';
     if (val !== undefined) {
-      switch(key) {
-        case 'openAlertModal': openAlertModal.value = val; break;
-        case 'openPaymentModal': openPaymentModal.value = val; break;
-        case 'openKeyboardModal': openKeyboardModal.value = val; break;
-        case 'openPriceListModal': openPriceListModal.value = val; break;
-        case 'openItemEnquiryModal': openItemEnquiryModal.value = val; break;
-        case 'openCouponCodeModal': openCouponCodeModal.value = val; break;
-        case 'openShiftCloseModal': openShiftCloseModal.value = val; break;
-        case 'openSavedInvoiceModal': openSavedInvoiceModal.value = val; break;
-        case 'openLoyaltyProgramModal': openLoyaltyProgramModal.value = val; break;
-        case 'openAppliedCouponsModal': openAppliedCouponsModal.value = val; break;
-        case 'openReturnSalesInvoiceModal': openReturnSalesInvoiceModal.value = val; break;
-        case 'openBatchSelectionModal': openBatchSelectionModal.value = val; break;
+      switch (key) {
+        case 'openAlertModal':
+          openAlertModal.value = val;
+          break;
+        case 'openPaymentModal':
+          openPaymentModal.value = val;
+          break;
+        case 'openKeyboardModal':
+          openKeyboardModal.value = val;
+          break;
+        case 'openPriceListModal':
+          openPriceListModal.value = val;
+          break;
+        case 'openItemEnquiryModal':
+          openItemEnquiryModal.value = val;
+          break;
+        case 'openCouponCodeModal':
+          openCouponCodeModal.value = val;
+          break;
+        case 'openShiftCloseModal':
+          openShiftCloseModal.value = val;
+          break;
+        case 'openSavedInvoiceModal':
+          openSavedInvoiceModal.value = val;
+          break;
+        case 'openLoyaltyProgramModal':
+          openLoyaltyProgramModal.value = val;
+          break;
+        case 'openAppliedCouponsModal':
+          openAppliedCouponsModal.value = val;
+          break;
+        case 'openReturnSalesInvoiceModal':
+          openReturnSalesInvoiceModal.value = val;
+          break;
+        case 'openBatchSelectionModal':
+          openBatchSelectionModal.value = val;
+          break;
       }
       return val;
     }
 
-    switch(key) {
-      case 'openAlertModal': openAlertModal.value = !openAlertModal.value; return openAlertModal.value;
-      case 'openPaymentModal': openPaymentModal.value = !openPaymentModal.value; return openPaymentModal.value;
-      case 'openKeyboardModal': openKeyboardModal.value = !openKeyboardModal.value; return openKeyboardModal.value;
-      case 'openPriceListModal': openPriceListModal.value = !openPriceListModal.value; return openPriceListModal.value;
-      case 'openItemEnquiryModal': openItemEnquiryModal.value = !openItemEnquiryModal.value; return openItemEnquiryModal.value;
-      case 'openCouponCodeModal': openCouponCodeModal.value = !openCouponCodeModal.value; return openCouponCodeModal.value;
-      case 'openShiftCloseModal': openShiftCloseModal.value = !openShiftCloseModal.value; return openShiftCloseModal.value;
-      case 'openSavedInvoiceModal': openSavedInvoiceModal.value = !openSavedInvoiceModal.value; return openSavedInvoiceModal.value;
-      case 'openLoyaltyProgramModal': openLoyaltyProgramModal.value = !openLoyaltyProgramModal.value; return openLoyaltyProgramModal.value;
-      case 'openAppliedCouponsModal': openAppliedCouponsModal.value = !openAppliedCouponsModal.value; return openAppliedCouponsModal.value;
-      case 'openReturnSalesInvoiceModal': openReturnSalesInvoiceModal.value = !openReturnSalesInvoiceModal.value; return openReturnSalesInvoiceModal.value;
-      case 'openBatchSelectionModal': openBatchSelectionModal.value = !openBatchSelectionModal.value; return openBatchSelectionModal.value;
+    switch (key) {
+      case 'openAlertModal':
+        openAlertModal.value = !openAlertModal.value;
+        return openAlertModal.value;
+      case 'openPaymentModal':
+        openPaymentModal.value = !openPaymentModal.value;
+        return openPaymentModal.value;
+      case 'openKeyboardModal':
+        openKeyboardModal.value = !openKeyboardModal.value;
+        return openKeyboardModal.value;
+      case 'openPriceListModal':
+        openPriceListModal.value = !openPriceListModal.value;
+        return openPriceListModal.value;
+      case 'openItemEnquiryModal':
+        openItemEnquiryModal.value = !openItemEnquiryModal.value;
+        return openItemEnquiryModal.value;
+      case 'openCouponCodeModal':
+        openCouponCodeModal.value = !openCouponCodeModal.value;
+        return openCouponCodeModal.value;
+      case 'openShiftCloseModal':
+        openShiftCloseModal.value = !openShiftCloseModal.value;
+        return openShiftCloseModal.value;
+      case 'openSavedInvoiceModal':
+        openSavedInvoiceModal.value = !openSavedInvoiceModal.value;
+        return openSavedInvoiceModal.value;
+      case 'openLoyaltyProgramModal':
+        openLoyaltyProgramModal.value = !openLoyaltyProgramModal.value;
+        return openLoyaltyProgramModal.value;
+      case 'openAppliedCouponsModal':
+        openAppliedCouponsModal.value = !openAppliedCouponsModal.value;
+        return openAppliedCouponsModal.value;
+      case 'openReturnSalesInvoiceModal':
+        openReturnSalesInvoiceModal.value = !openReturnSalesInvoiceModal.value;
+        return openReturnSalesInvoiceModal.value;
+      case 'openBatchSelectionModal':
+        openBatchSelectionModal.value = !openBatchSelectionModal.value;
+        return openBatchSelectionModal.value;
     }
   }
 
@@ -1238,9 +1332,7 @@ export function usePOS() {
     if (ignorePricingRules()) {
       return;
     }
-    const hasPricingRules = await getPricingRule(
-      sinvDoc.value as SalesInvoice
-    );
+    const hasPricingRules = await getPricingRule(sinvDoc.value as SalesInvoice);
 
     if (!hasPricingRules || !hasPricingRules.length) {
       sinvDoc.value.pricingRuleDetail = undefined;

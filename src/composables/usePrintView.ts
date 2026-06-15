@@ -32,19 +32,21 @@ export function usePrintView(props: { schemaName: string; name: string }) {
     return '';
   });
 
-  const printProps = computed<null | { template: string; values: PrintValues }>(() => {
-    const vals = values.value;
-    if (!vals) {
-      return null;
-    }
+  const printProps = computed<null | { template: string; values: PrintValues }>(
+    () => {
+      const vals = values.value;
+      if (!vals) {
+        return null;
+      }
 
-    const template = templateDoc.value?.template;
-    if (!template) {
-      return null;
-    }
+      const template = templateDoc.value?.template;
+      if (!template) {
+        return null;
+      }
 
-    return { values: vals, template };
-  });
+      return { values: vals, template };
+    }
+  );
 
   const actions = computed<Action[]>(() => {
     const actionsList = [
@@ -182,8 +184,7 @@ export function usePrintView(props: { schemaName: string; name: string }) {
     ) {
       defaultTemplateName = fyo.singles.Defaults?.posPrintTemplate;
 
-      const posProfileName = fyo.singles.POSSettings
-        ?.posProfile as string;
+      const posProfileName = fyo.singles.POSSettings?.posProfile as string;
 
       if (posProfileName) {
         const posProfile = await fyo.doc.getDoc(

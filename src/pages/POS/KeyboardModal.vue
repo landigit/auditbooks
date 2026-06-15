@@ -8,9 +8,11 @@
           :is="selectedItemRow?.fieldMap[selectedItemField!].fieldtype"
           ref="dynamicInput"
           :df="{
-            fieldname: selectedItemRow?.fieldMap[selectedItemField!].fieldname as string,
+            fieldname: selectedItemRow?.fieldMap[selectedItemField!]
+              .fieldname as string,
             fieldtype: selectedItemRow?.fieldMap[selectedItemField!].fieldtype,
-            label: selectedItemRow?.fieldMap[selectedItemField!].label as string,
+            label: selectedItemRow?.fieldMap[selectedItemField!]
+              .label as string,
           }"
           class="mb-3"
           :border="true"

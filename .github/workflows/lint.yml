@@ -2,7 +2,7 @@ name: Lint
 
 on:
   push:
-    branches: [$default-branch]
+    branches: [master]
     paths-ignore:
       - '**.md'
   pull_request:
@@ -12,24 +12,27 @@ on:
 
 jobs:
   setup_and_lint:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.18.1'
-
-      - name: Set yarn version
-        run: yarn set version 1.22.18
-
-      - name: Checkout Books
-        uses: actions/checkout@v4
+          node-version: '22'
+          cache: 'pnpm'
 
       - name: Install Dependencies
-        run: yarn
+        run: pnpm install
 
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
 
       - name: Check Formatting
-        run: yarn prettier --check .
+        run: pnpm exec prettier --check .

@@ -2,10 +2,10 @@ const fs = require('fs');
 
 const files = [
   'src/composables/usePdfInvoice.ts',
-  'src/pages/InvoiceDesigner/InvoiceDesigner.vue'
+  'src/pages/InvoiceDesigner/InvoiceDesigner.vue',
 ];
 
-files.forEach(file => {
+files.forEach((file) => {
   console.log(`\n=== File: ${file} ===`);
   const content = fs.readFileSync(file, 'utf8');
   const lines = content.split('\n');

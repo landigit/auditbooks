@@ -138,10 +138,13 @@ export class Fyo {
         }
       )) ?? [];
 
-    const acc = values.reduce((acc, sv) => {
-      acc[sv.fieldname] = sv.value as string | number | undefined;
-      return acc;
-    }, {} as Record<string, string | number | undefined>);
+    const acc = values.reduce(
+      (acc, sv) => {
+        acc[sv.fieldname] = sv.value as string | number | undefined;
+        return acc;
+      },
+      {} as Record<string, string | number | undefined>
+    );
 
     const precision: number =
       (acc.internalPrecision as number) ?? DEFAULT_INTERNAL_PRECISION;

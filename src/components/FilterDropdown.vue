@@ -10,10 +10,7 @@
     <template #target="{ togglePopover }">
       <Button :icon="isMobile" @click="togglePopover()">
         <span class="flex items-center">
-          <feather-icon
-            name="filter"
-            class="w-4 h-4 text-current"
-          />
+          <feather-icon name="filter" class="w-4 h-4 text-current" />
           <span class="md:ms-1">
             <template v-if="activeFilterCount > 0">
               {{ filterAppliedMessage }}
@@ -50,7 +47,7 @@
                     {{ i + 1 }}
                   </span>
                 </div>
-                 <Select
+                <Select
                   :border="true"
                   size="small"
                   class="w-40"

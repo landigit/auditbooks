@@ -1,4 +1,12 @@
-import { ref, computed, watch, onMounted, onUnmounted, provide, nextTick } from 'vue';
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onUnmounted,
+  provide,
+  nextTick,
+} from 'vue';
 import { useRouter } from 'vue-router';
 import { DocValue } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
@@ -52,7 +60,10 @@ export function useCommonForm(props: { name: string; schemaName: string }) {
   const row = ref<null | { index: number; fieldname: string }>(null);
 
   // Provide to child components
-  provide('doc', computed(() => docOrNull.value));
+  provide(
+    'doc',
+    computed(() => docOrNull.value)
+  );
 
   const canShowBarcode = computed(() => {
     if (!fyo.singles.InventorySettings?.enableBarcodes) {
@@ -167,14 +178,14 @@ export function useCommonForm(props: { name: string; schemaName: string }) {
     const rawGroups = getGroupedActionsForDoc(doc.value);
     if (isMobile.value) {
       // Flatten all action groups into a single action group (represented by the three-dot button)
-      const allActions = rawGroups.flatMap(group => group.actions);
+      const allActions = rawGroups.flatMap((group) => group.actions);
       return [
         {
           group: '',
           label: '',
           type: 'secondary',
           actions: allActions,
-        }
+        },
       ];
     }
     return rawGroups;

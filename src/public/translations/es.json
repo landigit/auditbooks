@@ -1,4 +1,7 @@
 {
+  "${0}": {
+    "translation": "${0}"
+  },
   "${0} ${1} already exists.": {
     "translation": "${0} ${1} ya existe."
   },
@@ -269,9 +272,6 @@
   "An error occurred.": {
     "translation": "Ocurrió un error."
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "Aplicable en cualquier parte de Frappe Books"
-  },
   "Applicable when Quick Search is open": {
     "translation": "Aplicable cuando la búsqueda rápida está abierta"
   },
@@ -410,9 +410,6 @@
   "Cannot Commit Error": {
     "translation": "No se puede confirmar el error."
   },
-  "Cannot Delete": {
-    "translation": "No se puede eliminar."
-  },
   "Cannot Delete Account": {
     "translation": "No se puede eliminar la cuenta."
   },
@@ -433,9 +430,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "No se puede eliminar ${0} \"${1}\" debido a entradas vinculadas."
-  },
-  "Cannot open file": {
-    "translation": "No se puede abrir el archivo."
   },
   "Cannot perform operation.": {
     "translation": "No se puede realizar la operación."
@@ -490,9 +484,6 @@
   },
   "Check": {
     "translation": "Chequeo"
-  },
-  "Cheque": {
-    "translation": "Cheque"
   },
   "City / Town": {
     "translation": "Ciudad / Pueblo"
@@ -611,9 +602,6 @@
   "Create Sales Invoice": {
     "translation": "Añadir facturas de ventas"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "Crear una empresa de demostración para probar Frappe Books"
-  },
   "Create a new company and store it on your computer": {
     "translation": "Cree una nueva empresa y guárdela en su computadora"
   },
@@ -682,9 +670,6 @@
   },
   "Custom Form": {
     "translation": "Formulario personalizado"
-  },
-  "Custom Hex": {
-    "translation": "Hex personalizado"
   },
   "Customer": {
     "translation": "Cliente"
@@ -842,9 +827,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "La precisión de visualización debe tener un valor entre 0 y 9."
   },
-  "Display Scale": {
-    "translation": "Escala de visualización"
-  },
   "Dividends Paid": {
     "translation": "Dividendos pagados"
   },
@@ -935,9 +917,6 @@
   "Enable Serial Number": {
     "translation": "Habilitar número de serie"
   },
-  "Enable Stock Returns": {
-    "translation": "Habilitar devoluciones de stock"
-  },
   "Enable UOM Conversion": {
     "translation": "Habilitar conversión de UOM"
   },
@@ -1019,9 +998,6 @@
   "Export": {
     "translation": "Exportar"
   },
-  "Export Failed": {
-    "translation": "Exportación fallida"
-  },
   "Export Successful": {
     "translation": "Exportación exitosa"
   },
@@ -1051,9 +1027,6 @@
   },
   "Fieldtype": {
     "translation": "Tipo de campo"
-  },
-  "File ${0} does not exist.": {
-    "translation": "El archivo ${0} no existe."
   },
   "File selection failed": {
     "translation": "Error al seleccionar el archivo"
@@ -1445,9 +1418,6 @@
   "June": {
     "translation": "Junio"
   },
-  "Key Hints": {
-    "translation": "Sugerencias de teclas"
-  },
   "Kg": {
     "translation": "Kilogramo"
   },
@@ -1814,9 +1784,6 @@
   "Payroll Payable": {
     "translation": "Nómina a pagar"
   },
-  "Pending Qty. ${0}": {
-    "translation": "Cantidad pendiente ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "Cantidad pendiente ${0}"
   },
@@ -1885,9 +1852,6 @@
   },
   "Print Templates": {
     "translation": "Plantillas de impresión"
-  },
-  "Print View": {
-    "translation": "Vista de impresión"
   },
   "Print and Stationery": {
     "translation": "Impresión y Papelería"
@@ -2177,14 +2141,8 @@
   "Save as PDF": {
     "translation": "Guardar como PDF"
   },
-  "Save as PDF Successful": {
-    "translation": "Guardar como PDF con éxito"
-  },
   "Saved": {
     "translation": "Guardado"
-  },
-  "Search an Item": {
-    "translation": "Buscar un artículo"
   },
   "Secured Loans": {
     "translation": "Préstamos garantizados"
@@ -2500,9 +2458,6 @@
   },
   "Submit ${0}?": {
     "translation": "¿Enviar ${0}?"
-  },
-  "Submit & Print": {
-    "translation": "Enviar y imprimir"
   },
   "Submit entries?": {
     "translation": "¿Enviar entradas?"
@@ -2867,9 +2822,6 @@
   "We": {
     "translation": "Mi"
   },
-  "Welcome to Frappe Books": {
-    "translation": "Bienvenido a Libros Frappe"
-  },
   "Width (in cm)": {
     "translation": "Ancho (en cm)"
   },
@@ -2911,8 +2863,5 @@
   },
   "john@doe.com": {
     "translation": "john@doe.com"
-  },
-  "to apply changes": {
-    "translation": "para aplicar cambios"
   }
 }

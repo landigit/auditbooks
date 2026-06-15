@@ -173,9 +173,6 @@
   "Cancelled": {
     "translation": "취소되었습니다."
   },
-  "Cannot Delete": {
-    "translation": "지울 수 없습니다."
-  },
   "Capital Equipments": {
     "translation": "자산장비"
   },
@@ -214,9 +211,6 @@
   },
   "Chart of Accounts": {
     "translation": "회계 계통도"
-  },
-  "Cheque": {
-    "translation": "수표"
   },
   "City / Town": {
     "translation": "시/군/구"
@@ -352,9 +346,6 @@
   },
   "Current Liabilities": {
     "translation": "유동 부채"
-  },
-  "Custom Hex": {
-    "translation": "사용자 16진수 설정"
   },
   "Customer": {
     "translation": "고객"
@@ -538,9 +529,6 @@
   },
   "Export": {
     "translation": "내보내기"
-  },
-  "Export Failed": {
-    "translation": "내보내기 실패"
   },
   "Export Successful": {
     "translation": "내보내기 성공"
@@ -1220,9 +1208,6 @@
   "Save as PDF": {
     "translation": "PDF 로 저장"
   },
-  "Save as PDF Successful": {
-    "translation": "PDF 로 저장 완료"
-  },
   "Saved": {
     "translation": "저장됨"
   },
@@ -1567,9 +1552,6 @@
   },
   "View Sales": {
     "translation": "판매 보기"
-  },
-  "Welcome to Frappe Books": {
-    "translation": "Frappe Books 에 오신것을 환영합니다"
   },
   "Write Off": {
     "translation": "공제"

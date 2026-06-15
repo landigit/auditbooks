@@ -69,7 +69,10 @@
           @change="setImportType"
         />
 
-        <p v-if="errorMessage.length > 0" class="text-base ms-0 md:ms-2 text-red-500">
+        <p
+          v-if="errorMessage.length > 0"
+          class="text-base ms-0 md:ms-2 text-red-500"
+        >
           {{ errorMessage }}
         </p>
         <p
@@ -120,7 +123,9 @@
             :border="true"
             :df="gridColumnTitleDf"
             :value="importer.assignedTemplateFields[index]!"
-            @change="(value: string | null) => importer.setTemplateField(index, value)"
+            @change="
+              (value: string | null) => importer.setTemplateField(index, value)
+            "
           />
         </div>
 
@@ -167,8 +172,8 @@
                   val.value != null
                     ? String(val.value)
                     : val.rawValue != null
-                    ? String(val.rawValue)
-                    : ''
+                      ? String(val.rawValue)
+                      : ''
                 "
                 :read-only="true"
               />
@@ -183,19 +188,21 @@
                 "
                 :title="getFieldTitle(val)"
                 :df="
-                    importer.templateFieldsMap.get(
-                      importer.assignedTemplateFields[cidx]!
-                    )
-                  "
+                  importer.templateFieldsMap.get(
+                    importer.assignedTemplateFields[cidx]!
+                  )
+                "
                 size="small"
                 :rows="1"
                 :border="true"
                 :value="val.error ? null : val.value"
                 :read-only="false"
-                @change="(value: DocValue)=> {
-                    importer.valueMatrix[ridx][cidx]!.error = false
-                    importer.valueMatrix[ridx][cidx]!.value = value
-                  }"
+                @change="
+                  (value: DocValue) => {
+                    importer.valueMatrix[ridx][cidx]!.error = false;
+                    importer.valueMatrix[ridx][cidx]!.value = value;
+                  }
+                "
               />
             </template>
           </template>
@@ -255,7 +262,7 @@
                 :show-label="true"
                 :read-only="tf.required"
                 :value="importer.templateFieldsPicked.get(tf.fieldKey)"
-                @change="(value:boolean) => pickColumn(tf.fieldKey, value)"
+                @change="(value: boolean) => pickColumn(tf.fieldKey, value)"
               />
               <p v-if="tf.required" class="w-0 text-red-600 -ml-4">*</p>
             </div>

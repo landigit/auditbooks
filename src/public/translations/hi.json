@@ -1,4 +1,7 @@
 {
+  "${0}": {
+    "translation": "${0}"
+  },
   "${0} ${1} already exists.": {
     "translation": "${0} ${1} पहले से मौजूद है।"
   },
@@ -281,9 +284,6 @@
   "And": {
     "translation": "और"
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "फ्रैपी बुक्स में कहीं भी लागू"
-  },
   "Applicable when POS is open": {
     "translation": "POS खुला होने पर लागू होगा"
   },
@@ -437,9 +437,6 @@
   "Cannot Commit Error": {
     "translation": "त्रुटि प्रतिबद्ध नहीं कर सकता"
   },
-  "Cannot Delete": {
-    "translation": "हटा नहीं सकता"
-  },
   "Cannot Delete Account": {
     "translation": "खाता हटा नहीं सकता"
   },
@@ -460,9 +457,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "लिंक की गई प्रविष्टियों के कारण ${0} \"${1}\" हटा नहीं सकता।"
-  },
-  "Cannot open file": {
-    "translation": "फ़ाइल नहीं खोल सकता"
   },
   "Cannot perform operation.": {
     "translation": "संचालन नहीं कर सकता।"
@@ -542,9 +536,6 @@
   "Close": {
     "translation": "बंद करें"
   },
-  "Close Frappe Books and try manually.": {
-    "translation": "फ्रेपे बुक्स बंद करें और मैन्युअल रूप से प्रयास करें।"
-  },
   "Close POS Shift": {
     "translation": "POS शिफ्ट बंद करें"
   },
@@ -580,9 +571,6 @@
   },
   "Collapse": {
     "translation": "संक्षिप्त करें"
-  },
-  "Collection Factor (=1 LP)": {
-    "translation": "संग्रह कारक (=1 एलपी)"
   },
   "Collection Rules": {
     "translation": "संग्रहण नियम"
@@ -707,9 +695,6 @@
   "Create Sales Invoice": {
     "translation": "बिक्री चालान बनाएँ"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "Frappe Books आज़माने के लिए एक डेमो कंपनी बनाएँ"
-  },
   "Create a new company and store it on your computer": {
     "translation": "एक नई कंपनी बनाएँ और इसे अपने कंप्यूटर पर संग्रहीत करें"
   },
@@ -778,9 +763,6 @@
   },
   "Custom Form": {
     "translation": "कस्टम फॉर्म"
-  },
-  "Custom Hex": {
-    "translation": "कस्टम हेक्स"
   },
   "Customer": {
     "translation": "ग्राहक"
@@ -953,9 +935,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "प्रदर्शन परिशुद्धता का मान 0 से 9 के बीच होना चाहिए।"
   },
-  "Display Scale": {
-    "translation": "प्रदर्शन स्केल"
-  },
   "Dividends Paid": {
     "translation": "भुगतान किए गए लाभांश"
   },
@@ -1073,9 +1052,6 @@
   "Enable Serial Number": {
     "translation": "सीरियल सक्षम करें संख्या"
   },
-  "Enable Stock Returns": {
-    "translation": "स्टॉक रिटर्न सक्षम करें"
-  },
   "Enable UOM Conversion": {
     "translation": "UOM रूपांतरण सक्षम करें"
   },
@@ -1163,9 +1139,6 @@
   "Export": {
     "translation": "निर्यात"
   },
-  "Export Failed": {
-    "translation": "निर्यात विफल"
-  },
   "Export Format": {
     "translation": "निर्यात प्रारूप"
   },
@@ -1207,9 +1180,6 @@
   },
   "Fifty": {
     "translation": "पचास"
-  },
-  "File ${0} does not exist.": {
-    "translation": "फ़ाइल ${0} मौजूद नहीं है।"
   },
   "File selection failed": {
     "translation": "फ़ाइल चयन विफल"
@@ -1292,14 +1262,8 @@
   "Fraction Units": {
     "translation": "अंश इकाइयाँ"
   },
-  "Frappe Books does not have access to the selected file: ${0}": {
-    "translation": "Frappe Books के पास चयनित फ़ाइल तक पहुँच नहीं है: ${0}"
-  },
   "Free Item": {
     "translation": "निःशुल्क वस्तु"
-  },
-  "Free item '${0}' does not have a specified quantity": {
-    "translation": "निःशुल्क वस्तु '${0}' की कोई निर्दिष्ट मात्रा नहीं है"
   },
   "Freight and Forwarding Charges": {
     "translation": "माल ढुलाई और अग्रेषण शुल्क"
@@ -1574,9 +1538,6 @@
   "Is Landscape": {
     "translation": "लैंडस्केप है"
   },
-  "Is Multiple": {
-    "translation": "क्या अनेक हैं"
-  },
   "Is Not": {
     "translation": "नहीं है"
   },
@@ -1669,9 +1630,6 @@
   },
   "June": {
     "translation": "जून"
-  },
-  "Key Hints": {
-    "translation": "मुख्य संकेत"
   },
   "Kg": {
     "translation": "Kg"
@@ -2240,9 +2198,6 @@
   "Payroll Payable": {
     "translation": "भुगतान योग्य वेतन-निधि"
   },
-  "Pending Qty. ${0}": {
-    "translation": "लंबित मात्रा ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "लंबित मात्रा ${0}"
   },
@@ -2374,9 +2329,6 @@
   },
   "Print Templates": {
     "translation": "प्रिंट टेम्पलेट"
-  },
-  "Print View": {
-    "translation": "प्रिंट दृश्य"
   },
   "Print and Stationery": {
     "translation": "प्रिंट और स्टेशनरी"
@@ -2582,9 +2534,6 @@
   "References": {
     "translation": "संदर्भ"
   },
-  "Reload Frappe Books?": {
-    "translation": "फ्रैपे बुक्स पुनः लोड करें?"
-  },
   "Replied": {
     "translation": "उत्तरित"
   },
@@ -2759,9 +2708,6 @@
   "Save as PDF": {
     "translation": "PDF के रूप में सहेजें"
   },
-  "Save as PDF Successful": {
-    "translation": "PDF के रूप में सहेजें सफल"
-  },
   "Save changes made to ${0}?": {
     "translation": "${0} में किए गए परिवर्तन सहेजें?"
   },
@@ -2770,12 +2716,6 @@
   },
   "Saved": {
     "translation": "सहेजा गया"
-  },
-  "Saved Invoices": {
-    "translation": "सहेजे गए चालान"
-  },
-  "Search an Item": {
-    "translation": "कोई वस्तु खोजें"
   },
   "Secured Loans": {
     "translation": "सुरक्षित ऋण"
@@ -3130,9 +3070,6 @@
   },
   "Submit ${0}?": {
     "translation": "${0} सबमिट करें?"
-  },
-  "Submit & Print": {
-    "translation": "सबमिट करके प्रिंट करें"
   },
   "Submit entries?": {
     "translation": "प्रविष्टियाँ सबमिट करें?"
@@ -3569,9 +3506,6 @@
   "We": {
     "translation": "बु"
   },
-  "Welcome to Frappe Books": {
-    "translation": "Frappe Books में आपका स्वागत है"
-  },
   "Width (in cm)": {
     "translation": "चौड़ाई (सें.मी. में)"
   },
@@ -3628,8 +3562,5 @@
   },
   "only": {
     "translation": "केवल"
-  },
-  "to apply changes": {
-    "translation": "परिवर्तन लागू करने के लिए"
   }
 }

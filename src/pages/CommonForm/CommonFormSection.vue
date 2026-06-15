@@ -15,7 +15,10 @@
         class="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors duration-150"
       />
     </div>
-    <div v-if="!collapsed" class="grid gap-4 gap-x-8 grid-cols-1 md:grid-cols-2">
+    <div
+      v-if="!collapsed"
+      class="grid gap-4 gap-x-8 grid-cols-1 md:grid-cols-2"
+    >
       <div
         v-for="(field, idx) of fields"
         :key="field.fieldname"
@@ -36,7 +39,10 @@
           :value="tableValue(doc[field.fieldname])"
           @editrow="(doc: Doc) => $emit('editrow', doc)"
           @change="(value: DocValue) => $emit('value-change', field, value)"
-          @row-change="(field:Field, value:DocValue, parentfield:Field) => $emit('row-change',field, value, parentfield)"
+          @row-change="
+            (field: Field, value: DocValue, parentfield: Field) =>
+              $emit('row-change', field, value, parentfield)
+          "
         />
         <template v-else>
           <div
@@ -54,7 +60,10 @@
             :align-with-inputs="shouldAlignWithInputs(idx)"
             @editrow="(doc: Doc) => $emit('editrow', doc)"
             @change="(value: DocValue) => $emit('value-change', field, value)"
-            @row-change="(field:Field, value:DocValue, parentfield:Field) => $emit('row-change',field, value, parentfield)"
+            @row-change="
+              (field: Field, value: DocValue, parentfield: Field) =>
+                $emit('row-change', field, value, parentfield)
+            "
           />
         </template>
         <div v-if="errors?.[field.fieldname]" class="text-sm text-red-600 mt-1">
@@ -136,7 +145,7 @@ export default defineComponent({
         if (f.fieldtype === 'Table' || f.fieldname === 'termsAndConditions') {
           if (currentRow.length > 0) {
             if (currentRow.includes(field)) {
-              return currentRow.find(x => x !== field) || null;
+              return currentRow.find((x) => x !== field) || null;
             }
             currentRow = [];
           }
@@ -144,14 +153,14 @@ export default defineComponent({
           currentRow.push(f);
           if (currentRow.length === 2) {
             if (currentRow.includes(field)) {
-              return currentRow.find(x => x !== field) || null;
+              return currentRow.find((x) => x !== field) || null;
             }
             currentRow = [];
           }
         }
       }
       if (currentRow.length > 0 && currentRow.includes(field)) {
-        return currentRow.find(x => x !== field) || null;
+        return currentRow.find((x) => x !== field) || null;
       }
       return null;
     },
@@ -160,7 +169,12 @@ export default defineComponent({
         return false;
       }
       const sibling = this.getSibling(field);
-      if (sibling && !sibling.hidden && sibling.fieldtype !== 'Table' && sibling.fieldtype !== 'Check') {
+      if (
+        sibling &&
+        !sibling.hidden &&
+        sibling.fieldtype !== 'Table' &&
+        sibling.fieldtype !== 'Check'
+      ) {
         return !this.isDuplicateLabel(sibling);
       }
       return false;
@@ -194,11 +208,27 @@ export default defineComponent({
       }
 
       if (field.fieldtype === 'Table') {
-        const stopwords = new Set(['and', 'or', 'of', 'the', 'for', 'in', 'to', 'with', 'by']);
-        const titleWords = cleanTitle.split(/[^a-zA-Z0-9]+/).map(getRootWord).filter(w => w && !stopwords.has(w));
-        const labelWords = cleanLabel.split(/[^a-zA-Z0-9]+/).map(getRootWord).filter(w => w && !stopwords.has(w));
+        const stopwords = new Set([
+          'and',
+          'or',
+          'of',
+          'the',
+          'for',
+          'in',
+          'to',
+          'with',
+          'by',
+        ]);
+        const titleWords = cleanTitle
+          .split(/[^a-zA-Z0-9]+/)
+          .map(getRootWord)
+          .filter((w) => w && !stopwords.has(w));
+        const labelWords = cleanLabel
+          .split(/[^a-zA-Z0-9]+/)
+          .map(getRootWord)
+          .filter((w) => w && !stopwords.has(w));
 
-        const hasOverlap = titleWords.some(tw => labelWords.includes(tw));
+        const hasOverlap = titleWords.some((tw) => labelWords.includes(tw));
         if (hasOverlap) {
           return true;
         }

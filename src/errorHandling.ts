@@ -195,20 +195,23 @@ function getFeatureFlags(): string[] {
       return {};
     }
 
-    return Object.entries(doc as Doc).reduce((acc, [key, value]) => {
-      const fieldsArray = fyo.schemaMap[docName]?.fields ?? [];
-      const fieldsMap = new Map(fieldsArray.map((f) => [f.fieldname, f]));
+    return Object.entries(doc as Doc).reduce(
+      (acc, [key, value]) => {
+        const fieldsArray = fyo.schemaMap[docName]?.fields ?? [];
+        const fieldsMap = new Map(fieldsArray.map((f) => [f.fieldname, f]));
 
-      const field = fieldsMap.get(key);
-      if (
-        typeof value === 'boolean' &&
-        !field?.hidden &&
-        !key.startsWith('_')
-      ) {
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as Record<string, boolean>);
+        const field = fieldsMap.get(key);
+        if (
+          typeof value === 'boolean' &&
+          !field?.hidden &&
+          !key.startsWith('_')
+        ) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
   };
 
   const sections = [
@@ -286,7 +289,6 @@ export function reportIssue(errorLogObj?: ErrorLog) {
     .then(({ openUrl }) => openUrl(urlQuery))
     .catch(() => window.open(urlQuery, '_blank'));
 }
-
 
 function getErrorLabel(error: Error) {
   const name = error.name;

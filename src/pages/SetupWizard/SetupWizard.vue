@@ -97,7 +97,10 @@ const docOrNull = ref<null | Doc>(null);
 const errors = ref<Record<string, string>>({});
 const loading = ref(false);
 
-provide('doc', computed(() => docOrNull.value));
+provide(
+  'doc',
+  computed(() => docOrNull.value)
+);
 
 const hasDoc = computed(() => docOrNull.value instanceof Doc);
 

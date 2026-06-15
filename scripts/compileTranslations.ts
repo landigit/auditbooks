@@ -47,7 +47,9 @@ async function compile() {
       count++;
     }
 
-    console.log(`Successfully compiled ${count} translation files to ${outputFolder}`);
+    console.log(
+      `Successfully compiled ${count} translation files to ${outputFolder}`
+    );
   } catch (error) {
     console.error('Failed to compile translations:', error);
     process.exit(1);

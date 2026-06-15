@@ -9,13 +9,15 @@ import fs from 'fs';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(dirname, '..');
 
-const releaseBinary = process.platform === 'win32'
-  ? path.join(root, 'src-tauri', 'target', 'release', 'app.exe')
-  : path.join(root, 'src-tauri', 'target', 'release', 'app');
+const releaseBinary =
+  process.platform === 'win32'
+    ? path.join(root, 'src-tauri', 'target', 'release', 'app.exe')
+    : path.join(root, 'src-tauri', 'target', 'release', 'app');
 
-const debugBinary = process.platform === 'win32'
-  ? path.join(root, 'src-tauri', 'target', 'debug', 'app.exe')
-  : path.join(root, 'src-tauri', 'target', 'debug', 'app');
+const debugBinary =
+  process.platform === 'win32'
+    ? path.join(root, 'src-tauri', 'target', 'debug', 'app.exe')
+    : path.join(root, 'src-tauri', 'target', 'debug', 'app');
 
 const appBinary = fs.existsSync(releaseBinary) ? releaseBinary : debugBinary;
 
@@ -40,18 +42,21 @@ async function waitForCDP(port, timeoutMs = 20000) {
       await wait(500);
     }
   }
-  throw new Error(`CDP debugging port ${port} did not become available in ${timeoutMs}ms`);
+  throw new Error(
+    `CDP debugging port ${port} did not become available in ${timeoutMs}ms`
+  );
 }
 
 (async function run() {
   console.log(`# Spawning Tauri application: ${appBinary}`);
-  
+
   // Set WebView2 environment variable for Windows remote debugging
-  process.env.WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = '--remote-debugging-port=5858';
+  process.env.WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS =
+    '--remote-debugging-port=5858';
 
   const errorLogPath = path.join(root, 'uitest-errors.log');
   fs.writeFileSync(errorLogPath, ''); // Clear previous logs
-  
+
   function logError(msg) {
     console.error(msg);
     fs.appendFileSync(errorLogPath, msg + '\n');
@@ -142,15 +147,21 @@ async function waitForCDP(port, timeoutMs = 20000) {
   });
 
   Runtime.exceptionThrown((params) => {
-    const desc = params.exceptionDetails.exception ? params.exceptionDetails.exception.description : params.exceptionDetails.text;
+    const desc = params.exceptionDetails.exception
+      ? params.exceptionDetails.exception.description
+      : params.exceptionDetails.text;
     logError(`# [WebView Exception] ${desc}`);
   });
-  
+
   if (Console) {
     await Console.enable();
     Console.messageAdded((params) => {
       const text = params.message.text;
-      if (text.startsWith('[FORMATTED_ERROR]') || text.startsWith('[UNHANDLED_ERROR]') || text.startsWith('[UNHANDLED_REJECTION]')) {
+      if (
+        text.startsWith('[FORMATTED_ERROR]') ||
+        text.startsWith('[UNHANDLED_ERROR]') ||
+        text.startsWith('[UNHANDLED_REJECTION]')
+      ) {
         logError(`# [WebView Error] ${text}`);
       } else if (text.startsWith('[FORMATTED_WARN]')) {
         logError(`# [WebView Warning] ${text}`);
@@ -162,9 +173,15 @@ async function waitForCDP(port, timeoutMs = 20000) {
 
   // Helper function to evaluate JavaScript inside WebView
   async function evalJS(expression) {
-    const res = await Runtime.evaluate({ expression, awaitPromise: true, returnByValue: true });
+    const res = await Runtime.evaluate({
+      expression,
+      awaitPromise: true,
+      returnByValue: true,
+    });
     if (res.exceptionDetails) {
-      throw new Error(`JS Evaluation failed: ${res.exceptionDetails.exception.description}`);
+      throw new Error(
+        `JS Evaluation failed: ${res.exceptionDetails.exception.description}`
+      );
     }
     return res.result.value;
   }
@@ -215,8 +232,12 @@ async function waitForCDP(port, timeoutMs = 20000) {
     const start = Date.now();
     let found = null;
     while (Date.now() - start < 20000) {
-      const changeDbExists = await evalJS(`!!document.querySelector('${changeDbSelector}')`);
-      const createNewExists = await evalJS(`!!document.querySelector('${createNewSelector}')`);
+      const changeDbExists = await evalJS(
+        `!!document.querySelector('${changeDbSelector}')`
+      );
+      const createNewExists = await evalJS(
+        `!!document.querySelector('${createNewSelector}')`
+      );
 
       if (changeDbExists) {
         found = 'change-db';
@@ -234,15 +255,21 @@ async function waitForCDP(port, timeoutMs = 20000) {
       await waitForSelector(createNewSelector);
     }
 
-    const isVisible = await evalJS(`!!document.querySelector('${createNewSelector}')`);
+    const isVisible = await evalJS(
+      `!!document.querySelector('${createNewSelector}')`
+    );
     t.ok(isVisible, 'create new is visible');
   });
 
   test('fill setup form', async (t) => {
-    await evalJS(`document.querySelector('[data-testid="create-new-file"]').click()`);
+    await evalJS(
+      `document.querySelector('[data-testid="create-new-file"]').click()`
+    );
     await waitForSelector('[data-testid="submit-button"]');
 
-    const isDisabled = await evalJS(`document.querySelector('[data-testid="submit-button"]').disabled`);
+    const isDisabled = await evalJS(
+      `document.querySelector('[data-testid="submit-button"]').disabled`
+    );
     t.equal(isDisabled, true, 'submit button is disabled before form fill');
 
     // Fill form fields and trigger input events to update Vue reactive states
@@ -290,22 +317,30 @@ async function waitForCDP(port, timeoutMs = 20000) {
 
     await wait(1000);
 
-    const isNowDisabled = await evalJS(`document.querySelector('[data-testid="submit-button"]').disabled`);
+    const isNowDisabled = await evalJS(
+      `document.querySelector('[data-testid="submit-button"]').disabled`
+    );
     t.equal(isNowDisabled, false, 'submit button enabled after form fill');
   });
 
   test('create new instance', async (t) => {
     console.log('# clicking submit');
     // Get the expected company name from Vue component state
-    const expectedCompanyName = await evalJS(`window.sw && window.sw.docOrNull && window.sw.docOrNull.value ? window.sw.docOrNull.value.companyName : 'Test Company'`);
-    await evalJS(`document.querySelector('[data-testid="submit-button"]').click()`);
+    const expectedCompanyName = await evalJS(
+      `window.sw && window.sw.docOrNull && window.sw.docOrNull.value ? window.sw.docOrNull.value.companyName : 'Test Company'`
+    );
+    await evalJS(
+      `document.querySelector('[data-testid="submit-button"]').click()`
+    );
     console.log('# submit clicked, waiting for company-name');
-    
+
     const companyNameSelector = '[data-testid="company-name"]';
     await waitForSelector(companyNameSelector, 60000);
-    
+
     console.log('# company-name found');
-    const companyNameText = await evalJS(`document.querySelector('${companyNameSelector}').innerText`);
+    const companyNameText = await evalJS(
+      `document.querySelector('${companyNameSelector}').innerText`
+    );
     t.equal(
       companyNameText.trim(),
       expectedCompanyName,
@@ -316,10 +351,10 @@ async function waitForCDP(port, timeoutMs = 20000) {
   test('create customer via list and form', async (t) => {
     console.log('# navigating to customers list');
     await evalJS(`window.router.push('/list/Party/Customers')`);
-    
+
     console.log('# waiting for create button');
     await waitForSelector('button .feather-plus');
-    
+
     console.log('# clicking plus/entry button');
     const clickResult = await evalJS(`
       (() => {
@@ -343,14 +378,18 @@ async function waitForCDP(port, timeoutMs = 20000) {
       })()
     `);
     console.log('# click result:', clickResult);
-    
-    await waitForExpression('!!(window.cf && window.cf.docOrNull && window.cf.docOrNull.value)');
-    const postClickRoute = await evalJS('window.router.currentRoute.value.fullPath');
+
+    await waitForExpression(
+      '!!(window.cf && window.cf.docOrNull && window.cf.docOrNull.value)'
+    );
+    const postClickRoute = await evalJS(
+      'window.router.currentRoute.value.fullPath'
+    );
     console.log('# route after click:', postClickRoute);
 
     console.log('# waiting for save button');
     await waitForSelector('button .feather-save');
-    
+
     console.log('# filling customer name');
     await evalJS(`
       (async () => {
@@ -369,9 +408,9 @@ async function waitForCDP(port, timeoutMs = 20000) {
         }
       })()
     `);
-    
+
     await wait(500);
-    
+
     console.log('# saving customer');
     await evalJS(`
       (() => {
@@ -384,9 +423,9 @@ async function waitForCDP(port, timeoutMs = 20000) {
         }
       })()
     `);
-    
+
     await wait(2000);
-    
+
     console.log('# verifying customer exists in database');
     const customerExistsInDb = await evalJS(`
       (async () => {
@@ -394,7 +433,10 @@ async function waitForCDP(port, timeoutMs = 20000) {
         return list.length > 0;
       })()
     `);
-    t.ok(customerExistsInDb, 'Customer "UI Test Customer" successfully created in database');
+    t.ok(
+      customerExistsInDb,
+      'Customer "UI Test Customer" successfully created in database'
+    );
   });
 
   test('global search navigation', async (t) => {
@@ -409,7 +451,9 @@ async function waitForCDP(port, timeoutMs = 20000) {
     await evalJS(`window.search.inputValue.value = 'Item'`);
     await wait(800);
 
-    const suggestions = await evalJS(`window.search.suggestions.value.map(s => s.label)`);
+    const suggestions = await evalJS(
+      `window.search.suggestions.value.map(s => s.label)`
+    );
     console.log('# search suggestions:', suggestions);
     t.ok(suggestions.length > 0, 'suggestions are found');
 
@@ -417,9 +461,14 @@ async function waitForCDP(port, timeoutMs = 20000) {
     await evalJS(`window.search.select(0)`);
     await wait(1000);
 
-    const currentRoute = await evalJS(`window.router.currentRoute.value.fullPath`);
+    const currentRoute = await evalJS(
+      `window.router.currentRoute.value.fullPath`
+    );
     console.log('# current route:', currentRoute);
-    t.ok(currentRoute.includes('/list/Item') || currentRoute.includes('/list/'), 'navigated successfully via search');
+    t.ok(
+      currentRoute.includes('/list/Item') || currentRoute.includes('/list/'),
+      'navigated successfully via search'
+    );
   });
 
   test('list view search / live filtering', async (t) => {
@@ -441,8 +490,10 @@ async function waitForCDP(port, timeoutMs = 20000) {
 
     console.log('# navigating to items list');
     await evalJS(`window.router.push('/list/Item')`);
-    
-    await waitForExpression('!!(window.lv && window.lv.filterDropdownRef && window.lv.filterDropdownRef.value)');
+
+    await waitForExpression(
+      '!!(window.lv && window.lv.filterDropdownRef && window.lv.filterDropdownRef.value)'
+    );
 
     console.log('# setting filter programmatically');
     await evalJS(`
@@ -452,13 +503,20 @@ async function waitForCDP(port, timeoutMs = 20000) {
         await dropdown.setFilter('name', 'like', 'POS Test Item');
       })()
     `);
-    
-    await waitForExpression('!!(window.lv && window.lv.listRef && window.lv.listRef.value && window.lv.listRef.value.data)');
+
+    await waitForExpression(
+      '!!(window.lv && window.lv.listRef && window.lv.listRef.value && window.lv.listRef.value.data)'
+    );
     await wait(500);
 
-    const listDataNames = await evalJS(`window.lv.listRef.value.data.map(d => d.name)`);
+    const listDataNames = await evalJS(
+      `window.lv.listRef.value.data.map(d => d.name)`
+    );
     console.log('# list data names after filtering:', listDataNames);
-    t.ok(listDataNames.includes('POS Test Item'), 'filtered list includes "POS Test Item"');
+    t.ok(
+      listDataNames.includes('POS Test Item'),
+      'filtered list includes "POS Test Item"'
+    );
 
     console.log('# clearing filters');
     await evalJS(`window.lv.filterDropdownRef.value.clearAllFilters()`);
@@ -486,9 +544,13 @@ async function waitForCDP(port, timeoutMs = 20000) {
 
     console.log('# navigating to POS page');
     await evalJS(`window.router.push('/pos')`);
-    
-    await waitForExpression("!!Array.from(document.querySelectorAll('input')).find(i => i.placeholder.includes('Search Item'))");
-    await waitForExpression('!!(window.pos && window.pos.items && window.pos.items.value)');
+
+    await waitForExpression(
+      "!!Array.from(document.querySelectorAll('input')).find(i => i.placeholder.includes('Search Item'))"
+    );
+    await waitForExpression(
+      '!!(window.pos && window.pos.items && window.pos.items.value)'
+    );
 
     console.log('# adding item via POS search');
     await evalJS(`
@@ -504,9 +566,14 @@ async function waitForCDP(port, timeoutMs = 20000) {
     `);
     await wait(1000);
 
-    const posItems = await evalJS(`window.pos.sinvDoc.value.items.map(i => i.item)`);
+    const posItems = await evalJS(
+      `window.pos.sinvDoc.value.items.map(i => i.item)`
+    );
     console.log('# items in POS sales invoice:', posItems);
-    t.ok(posItems.includes('POS Test Item'), 'POS Test Item was successfully added to POS invoice');
+    t.ok(
+      posItems.includes('POS Test Item'),
+      'POS Test Item was successfully added to POS invoice'
+    );
   });
 
   test('Sales Invoice line item calculations', async (t) => {
@@ -524,8 +591,10 @@ async function waitForCDP(port, timeoutMs = 20000) {
         }
       })()
     `);
-    
-    await waitForExpression('!!(window.cf && window.cf.docOrNull && window.cf.docOrNull.value)');
+
+    await waitForExpression(
+      '!!(window.cf && window.cf.docOrNull && window.cf.docOrNull.value)'
+    );
 
     console.log('# setting party and appending line items');
     await evalJS(`
@@ -554,9 +623,15 @@ async function waitForCDP(port, timeoutMs = 20000) {
     `);
     await wait(1000);
 
-    const netTotal = await evalJS(`window.cf.docOrNull.value.netTotal.toString()`);
+    const netTotal = await evalJS(
+      `window.cf.docOrNull.value.netTotal.toString()`
+    );
     console.log('# calculated net total:', netTotal);
-    t.equal(netTotal, '500', 'subtotal of line items is computed correctly (2 * 150 + 1 * 200 = 500)');
+    t.equal(
+      netTotal,
+      '500',
+      'subtotal of line items is computed correctly (2 * 150 + 1 * 200 = 500)'
+    );
   });
 
   test('Sales Invoice tax and grand total calculations', async (t) => {
@@ -611,12 +686,18 @@ async function waitForCDP(port, timeoutMs = 20000) {
         return tax.toString();
       })()
     `);
-    const grandTotal = await evalJS(`window.cf.docOrNull.value.grandTotal.toString()`);
+    const grandTotal = await evalJS(
+      `window.cf.docOrNull.value.grandTotal.toString()`
+    );
     console.log('# calculated tax amount:', taxAmount);
     console.log('# calculated grand total:', grandTotal);
 
     t.equal(taxAmount, '90', 'tax is computed correctly (500 * 18% = 90)');
-    t.equal(grandTotal, '590', 'grand total is computed correctly (500 + 90 = 590)');
+    t.equal(
+      grandTotal,
+      '590',
+      'grand total is computed correctly (500 + 90 = 590)'
+    );
 
     console.log('# saving invoice');
     await evalJS(`
@@ -639,9 +720,13 @@ async function waitForCDP(port, timeoutMs = 20000) {
   test('POS totals and payment change calculation', async (t) => {
     console.log('# navigating to POS page');
     await evalJS(`window.router.push('/pos')`);
-    
-    await waitForExpression("!!Array.from(document.querySelectorAll('input')).find(i => i.placeholder.includes('Search Item'))");
-    await waitForExpression('!!(window.pos && window.pos.items && window.pos.items.value && window.pos.sinvDoc && window.pos.sinvDoc.value)');
+
+    await waitForExpression(
+      "!!Array.from(document.querySelectorAll('input')).find(i => i.placeholder.includes('Search Item'))"
+    );
+    await waitForExpression(
+      '!!(window.pos && window.pos.items && window.pos.items.value && window.pos.sinvDoc && window.pos.sinvDoc.value)'
+    );
 
     console.log('# clearing and adding items to new POS session');
     await evalJS(`
@@ -657,7 +742,9 @@ async function waitForCDP(port, timeoutMs = 20000) {
     await wait(1000);
 
     const totalQty = await evalJS(`window.pos.totalQuantity.value`);
-    const netAmount = await evalJS(`window.pos.sinvDoc.value.netTotal.toString()`);
+    const netAmount = await evalJS(
+      `window.pos.sinvDoc.value.netTotal.toString()`
+    );
     console.log('# POS total qty:', totalQty);
     console.log('# POS net amount:', netAmount);
 
@@ -688,7 +775,11 @@ async function waitForCDP(port, timeoutMs = 20000) {
       })()
     `);
     console.log('# POS change amount:', changeAmount);
-    t.equal(changeAmount, '200', 'payment change is calculated correctly (500 - 300 = 200)');
+    t.equal(
+      changeAmount,
+      '200',
+      'payment change is calculated correctly (500 - 300 = 200)'
+    );
 
     console.log('# closing payment modal');
     await evalJS(`window.pos.toggleModal('Payment', false)`);

@@ -45,7 +45,9 @@
       <template #content>
         <div class="p-3 w-44 bg-popover text-popover-foreground">
           <!-- Header -->
-          <div class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 text-start select-none">
+          <div
+            class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 text-start select-none"
+          >
             {{ t`Select Color` }}
           </div>
           <!-- Colors Grid -->
@@ -69,14 +71,19 @@
           <!-- Custom Color Picker -->
           <div class="mt-3 pt-3 border-t border-border flex items-center gap-2">
             <!-- Custom Swatch triggering Native Picker -->
-            <div class="relative w-7 h-7 rounded border border-border overflow-hidden flex-shrink-0 cursor-pointer hover:border-ring transition-colors shadow-sm">
+            <div
+              class="relative w-7 h-7 rounded border border-border overflow-hidden flex-shrink-0 cursor-pointer hover:border-ring transition-colors shadow-sm"
+            >
               <input
                 type="color"
                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 :value="value"
                 @input="(e) => setColorValue(e.target.value)"
               />
-              <div class="w-full h-full" :style="{ backgroundColor: value || '#0000' }"></div>
+              <div
+                class="w-full h-full"
+                :style="{ backgroundColor: value || '#0000' }"
+              ></div>
             </div>
             <!-- HEX Input -->
             <input

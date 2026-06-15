@@ -42,7 +42,7 @@
         </h2>
         <div
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 border dark:border-gray-800 rounded mt-1"
-          style="display: grid !important; height: auto !important;"
+          style="display: grid !important; height: auto !important"
         >
           <Check
             v-for="ef of fields"
@@ -67,7 +67,7 @@
         </h2>
         <div
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 border dark:border-gray-800 rounded mt-1"
-          style="display: grid !important; height: auto !important;"
+          style="display: grid !important; height: auto !important"
         >
           <Check
             v-for="ef of efs.fields"
@@ -76,7 +76,9 @@
             :df="getField(ef)"
             :show-label="true"
             :value="ef.export"
-            @change="(value: boolean) => setExportFieldValue(ef, value, efs.target)"
+            @change="
+              (value: boolean) => setExportFieldValue(ef, value, efs.target)
+            "
           />
         </div>
       </div>

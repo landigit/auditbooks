@@ -9,12 +9,22 @@
 
     <div v-show="hasData" class="flex flex-col sm:flex-row gap-6 relative mt-4">
       <!-- Chart Legend -->
-      <div class="w-full sm:w-1/2 flex flex-col gap-4 justify-center dark:text-gray-25">
+      <div
+        class="w-full sm:w-1/2 flex flex-col gap-4 justify-center dark:text-gray-25"
+      >
         <!-- Legend Item -->
-        <div v-for="(d, i) in expenses" :key="d.account" class="flex items-center text-sm" @mouseover="active = i"
-          @mouseleave="active = null">
+        <div
+          v-for="(d, i) in expenses"
+          :key="d.account"
+          class="flex items-center text-sm"
+          @mouseover="active = i"
+          @mouseleave="active = null"
+        >
           <div class="w-3 h-3 rounded-sm flex-shrink-0" :class="d.class" />
-          <p class="ms-2 whitespace-nowrap no-scrollbar flex-1 truncate min-w-0 max-w-[15rem]" :title="d.account">
+          <p
+            class="ms-2 whitespace-nowrap no-scrollbar flex-1 truncate min-w-0 max-w-[15rem]"
+            :title="d.account"
+          >
             {{ d.account }}
           </p>
           <p class="whitespace-nowrap flex-shrink-0 ms-auto">
@@ -22,13 +32,25 @@
           </p>
         </div>
       </div>
-      <DonutChart class="w-full sm:w-1/2 my-auto" :active="active" :sectors="sectors" :offset-x="3" :thickness="10"
-        :text-offset-x="6.5" :value-formatter="(value: number) => fyo.format(value, 'Currency')"
-        :total-label="t`Total Spending`" :dark-mode="darkMode" @change="(value: number) => (active = value)" />
+      <DonutChart
+        class="w-full sm:w-1/2 my-auto"
+        :active="active"
+        :sectors="sectors"
+        :offset-x="3"
+        :thickness="10"
+        :text-offset-x="6.5"
+        :value-formatter="(value: number) => fyo.format(value, 'Currency')"
+        :total-label="t`Total Spending`"
+        :dark-mode="darkMode"
+        @change="(value: number) => (active = value)"
+      />
     </div>
 
     <!-- Empty Message -->
-    <div v-if="expenses.length === 0" class="flex-1 w-full h-full flex-center my-20">
+    <div
+      v-if="expenses.length === 0"
+      class="flex-1 w-full h-full flex-center my-20"
+    >
       <span class="text-base text-gray-600 dark:text-gray-500">
         {{ t`No expenses in this period` }}
       </span>
@@ -65,14 +87,21 @@ const emit = defineEmits<{
 }>();
 
 const active = ref<null | number>(null);
-const expenses = ref<{
-  account: string;
-  total: number;
-  color: { color: string; darkColor: string };
-  class: { class: string; darkClass: string };
-}[]>([]);
+const expenses = ref<
+  {
+    account: string;
+    total: number;
+    color: { color: string; darkColor: string };
+    class: { class: string; darkClass: string };
+  }[]
+>([]);
 
-const periodOptions: PeriodKey[] = ['This Year', 'YTD', 'This Quarter', 'This Month'];
+const periodOptions: PeriodKey[] = [
+  'This Year',
+  'YTD',
+  'This Quarter',
+  'This Month',
+];
 
 const totalExpense = computed(() => {
   return expenses.value.reduce((sum, expense) => sum + expense.total, 0);

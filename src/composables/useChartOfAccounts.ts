@@ -1,6 +1,22 @@
-import { ref, computed, onMounted, onActivated, onDeactivated, nextTick, inject, Component, h } from 'vue';
+import {
+  ref,
+  computed,
+  onMounted,
+  onActivated,
+  onDeactivated,
+  nextTick,
+  inject,
+  Component,
+  h,
+} from 'vue';
 import { HugeiconsIcon } from '@hugeicons/vue';
-import { SafeIcon, Invoice02Icon, Money01Icon, CreditCardIcon, Folder01Icon } from '@hugeicons/core-free-icons';
+import {
+  SafeIcon,
+  Invoice02Icon,
+  Money01Icon,
+  CreditCardIcon,
+  Folder01Icon,
+} from '@hugeicons/core-free-icons';
 import { useRoute } from 'vue-router';
 import { t } from 'fyo';
 import { isCredit } from 'models/helpers';
@@ -40,12 +56,16 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
 
   const isAllCollapsed = ref(true);
   const isAllExpanded = ref(false);
-  const root = ref<null | { label: string; balance: number; currency: string }>(null);
+  const root = ref<null | { label: string; balance: number; currency: string }>(
+    null
+  );
   const accounts = ref<AccountItem[]>([]);
   const schemaName = 'Account';
   const newAccountName = ref('');
   const insertingAccount = ref(false);
-  const totals = ref<Record<string, { totalDebit: number; totalCredit: number }>>({});
+  const totals = ref<
+    Record<string, { totalDebit: number; totalCredit: number }>
+  >({});
   const refetchTotals = ref(false);
   const settings = ref<null | TreeViewSettings>(null);
 
@@ -124,7 +144,10 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
     isAllCollapsed.value = true;
   }
 
-  async function toggleAll(items: AccountItem | AccountItem[], expandFlag: boolean) {
+  async function toggleAll(
+    items: AccountItem | AccountItem[],
+    expandFlag: boolean
+  ) {
     if (!Array.isArray(items)) {
       await toggle(items, expandFlag);
       items = items.children ?? [];
@@ -312,7 +335,9 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
     return !!account?.children?.length;
   }
 
-  async function getChildren(parent: null | string = null): Promise<AccountItem[]> {
+  async function getChildren(
+    parent: null | string = null
+  ): Promise<AccountItem[]> {
     const childrenList = await fyo.db.getAll(ModelNameEnum.Account, {
       filters: {
         parentAccount: parent,
@@ -331,7 +356,11 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
     });
   }
 
-  async function addAccount(parentAccount: AccountItem, key: AccKey, inputs: Record<string, HTMLInputElement[]>) {
+  async function addAccount(
+    parentAccount: AccountItem,
+    key: AccKey,
+    inputs: Record<string, HTMLInputElement[]>
+  ) {
     if (!parentAccount.expanded) {
       await fetchChildren(parentAccount);
       parentAccount.expanded = true;
@@ -354,7 +383,10 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
     newAccountName.value = '';
   }
 
-  async function createNewAccount(parentAccount: AccountItem, isGroupFlag: boolean) {
+  async function createNewAccount(
+    parentAccount: AccountItem,
+    isGroupFlag: boolean
+  ) {
     insertingAccount.value = true;
 
     const accountName = newAccountName.value.trim();
@@ -394,38 +426,45 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
   function getIconComponent(isGroupFlag: boolean, name?: string): Component {
     const icons: Record<string, any> = {
       'Application of Funds (Assets)': SafeIcon,
-      'Expenses': Invoice02Icon,
-      'Income': Money01Icon,
+      Expenses: Invoice02Icon,
+      Income: Money01Icon,
       'Source of Funds (Liabilities)': CreditCardIcon,
     };
 
     if (name && icons[name]) {
-      return (props: any, { attrs }: any) => h(HugeiconsIcon, {
-        icon: icons[name],
-        class: 'w-4 h-4 text-gray-700 dark:text-gray-300',
-        strokeWidth: 1.8,
-        ...attrs
-      });
+      return (props: any, { attrs }: any) =>
+        h(HugeiconsIcon, {
+          icon: icons[name],
+          class: 'w-4 h-4 text-gray-700 dark:text-gray-300',
+          strokeWidth: 1.8,
+          ...attrs,
+        });
     }
 
     if (isGroupFlag) {
-      return (props: any, { attrs }: any) => h(HugeiconsIcon, {
-        icon: Folder01Icon,
-        class: 'w-4 h-4 text-gray-500 dark:text-gray-400',
-        strokeWidth: 1.8,
-        ...attrs
-      });
+      return (props: any, { attrs }: any) =>
+        h(HugeiconsIcon, {
+          icon: Folder01Icon,
+          class: 'w-4 h-4 text-gray-500 dark:text-gray-400',
+          strokeWidth: 1.8,
+          ...attrs,
+        });
     }
 
     // Default leaf
-    return (props: any, { attrs }: any) => h('div', {
-      class: 'w-4 h-4 flex items-center justify-center',
-      ...attrs
-    }, [
-      h('div', {
-        class: 'w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-600'
-      })
-    ]);
+    return (props: any, { attrs }: any) =>
+      h(
+        'div',
+        {
+          class: 'w-4 h-4 flex items-center justify-center',
+          ...attrs,
+        },
+        [
+          h('div', {
+            class: 'w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-600',
+          }),
+        ]
+      );
   }
 
   function getItemStyle(level: number) {

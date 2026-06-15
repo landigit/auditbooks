@@ -1,10 +1,16 @@
 <template>
   <div v-if="tableFields?.length">
-    <div v-if="showLabel" class="text-gray-600 dark:text-gray-400 text-sm mb-1 control-label">
+    <div
+      v-if="showLabel"
+      class="text-gray-600 dark:text-gray-400 text-sm mb-1 control-label"
+    >
       {{ df.label }}
     </div>
 
-    <div :class="border ? 'border dark:border-gray-800 rounded-md' : ''" class="overflow-x-auto custom-scroll max-w-full">
+    <div
+      :class="border ? 'border dark:border-gray-800 rounded-md' : ''"
+      class="overflow-x-auto custom-scroll max-w-full"
+    >
       <div class="min-w-[700px] md:min-w-0">
         <!-- Title Row -->
         <Row
@@ -20,8 +26,8 @@
               df.sub_label
                 ? 'flex-col items-center text-center'
                 : isNumeric(df)
-                ? 'ms-auto items-center'
-                : 'items-center',
+                  ? 'ms-auto items-center'
+                  : 'items-center',
             ]"
           >
             <span>{{ df.label }}</span>
@@ -41,7 +47,9 @@
             v-for="(row, idx) of value"
             ref="table-row"
             :key="row.name"
-            :class="idx < value.length - 1 ? 'border-b dark:border-gray-800' : ''"
+            :class="
+              idx < value.length - 1 ? 'border-b dark:border-gray-800' : ''
+            "
             v-bind="{ row, tableFields, size, ratio, isNumeric }"
             :read-only="isReadOnly"
             :can-edit-row="canEditRow"

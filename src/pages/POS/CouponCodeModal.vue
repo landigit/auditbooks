@@ -12,7 +12,7 @@
         :style="{ height: appliedCoupons.length >= 2 ? '11vh' : '8vh' }"
       >
         <Row
-          v-for="(coupon,index) in appliedCoupons as AppliedCouponCodes[]"
+          v-for="(coupon, index) in appliedCoupons as AppliedCouponCodes[]"
           :key="index"
           :ratio="ratio"
           :border="true"

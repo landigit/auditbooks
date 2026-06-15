@@ -31,12 +31,19 @@
             class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm flex items-center"
             @click="createInvoice(option.value)"
           >
-            <feather-icon :name="option.icon" class="w-4 h-4 me-2 text-gray-500 dark:text-gray-400" />
+            <feather-icon
+              :name="option.icon"
+              class="w-4 h-4 me-2 text-gray-500 dark:text-gray-400"
+            />
             {{ option.label }}
           </div>
         </div>
       </div>
-      <Button ref="exportButtonRef" :icon="isMobile" @click="openExportModal = true">
+      <Button
+        ref="exportButtonRef"
+        :icon="isMobile"
+        @click="openExportModal = true"
+      >
         <feather-icon name="download" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Export` }}</span>
       </Button>
@@ -130,4 +137,3 @@ const {
   updateSelectedItems,
 } = useListView(props);
 </script>
-

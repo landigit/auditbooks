@@ -164,9 +164,6 @@
   "Chart of Accounts": {
     "translation": "Diagrama de comptes"
   },
-  "Cheque": {
-    "translation": "Xec"
-  },
   "City / Town": {
     "translation": "Ciutat"
   },
@@ -244,9 +241,6 @@
   },
   "Current Liabilities": {
     "translation": "Obligacions actuals"
-  },
-  "Custom Hex": {
-    "translation": "Hexadecimal personalitzat"
   },
   "Customer": {
     "translation": "Customer"
@@ -851,9 +845,6 @@
   "Save as PDF": {
     "translation": "Guardar com a PDF"
   },
-  "Save as PDF Successful": {
-    "translation": "Guardat com a PDF correctament"
-  },
   "Secured Loans": {
     "translation": "Préstecs"
   },
@@ -1099,9 +1090,6 @@
   },
   "Value missing for ${0}": {
     "translation": "Falta el valor de ${0}"
-  },
-  "Welcome to Frappe Books": {
-    "translation": "Benvingut a Frappe Books"
   },
   "Write Off": {
     "translation": "Sinistre"

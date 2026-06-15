@@ -143,7 +143,8 @@ export function useImportWizard() {
     if (!hasImporter.value) {
       return 0;
     }
-    return [...importer.value.templateFieldsPicked.values()].filter(Boolean).length;
+    return [...importer.value.templateFieldsPicked.values()].filter(Boolean)
+      .length;
   });
 
   const columnPickerFieldsMap = computed<Map<string, TemplateField[]>>(() => {
@@ -471,7 +472,9 @@ export function useImportWizard() {
       setLoadingStatus(doneCount, importer.value.docs.length);
       const oldName = doc.name ?? '';
       try {
-        const exists = doc.name ? await fyo.db.exists(doc.schemaName, doc.name) : false;
+        const exists = doc.name
+          ? await fyo.db.exists(doc.schemaName, doc.name)
+          : false;
         if (exists && doc.name) {
           const existingDoc = await fyo.doc.getDoc(doc.schemaName, doc.name);
           const data = doc.getValidDict(true, true);

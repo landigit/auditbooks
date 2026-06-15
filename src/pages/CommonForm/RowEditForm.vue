@@ -1,7 +1,11 @@
 <template>
   <div
     class="bg-white dark:bg-gray-890 custom-scroll custom-scroll-thumb2"
-    :class="isMobile ? 'w-full h-full fixed inset-0 z-50' : 'border-s dark:border-gray-800 h-full overflow-auto w-quick-edit'"
+    :class="
+      isMobile
+        ? 'w-full h-full fixed inset-0 z-50'
+        : 'border-s dark:border-gray-800 h-full overflow-auto w-quick-edit'
+    "
   >
     <!-- Row Edit Tool bar -->
     <div
@@ -86,7 +90,10 @@ const row = computed(() => {
   throw new ValueError(t`Invalid value found for ${label}`);
 });
 
-provide('doc', computed(() => row.value));
+provide(
+  'doc',
+  computed(() => row.value)
+);
 
 const fields = computed(() => {
   const fieldnames = row.value.schema.quickEditFields ?? [];
@@ -116,4 +123,3 @@ onUnmounted(() => {
   shortcuts?.delete(COMPONENT_NAME);
 });
 </script>
-

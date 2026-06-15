@@ -13,8 +13,8 @@
           :key="df.fieldname"
           class="flex items-center p-2 text-lg"
           :class="{
-        'ms-auto': isNumeric(df as Field),
-      }"
+            'ms-auto': isNumeric(df as Field),
+          }"
         >
           {{ df.label }}
         </div>
@@ -52,8 +52,8 @@
           :key="df.fieldname"
           class="flex items-center p-2 text-lg"
           :class="{
-        'ms-auto': isNumeric(df as Field),
-      }"
+            'ms-auto': isNumeric(df as Field),
+          }"
         >
           {{ df.label }}
         </div>

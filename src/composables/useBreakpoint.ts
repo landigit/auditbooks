@@ -16,8 +16,8 @@ export function useBreakpoint() {
   });
 
   return {
-    isMobile: computed(() => width.value < 640),    // < sm
-    isTablet: computed(() => width.value < 1024),   // < lg
+    isMobile: computed(() => width.value < 640), // < sm
+    isTablet: computed(() => width.value < 1024), // < lg
     isDesktop: computed(() => width.value >= 1024),
     width,
   };

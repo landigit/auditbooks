@@ -23,13 +23,17 @@
           class="py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-890 dark:text-gray-25 group flex items-center border-b dark:border-gray-800 flex-shrink-0 pe-4 transition-colors"
           :class="[
             account.level !== 0 ? 'text-base' : 'text-lg',
-            isQuickEditOpen(account, $route.query) ? 'bg-gray-200 dark:bg-gray-900' : '',
+            isQuickEditOpen(account, $route.query)
+              ? 'bg-gray-200 dark:bg-gray-900'
+              : '',
           ]"
           :style="getItemStyle(account.level)"
           @click="onClick(account)"
         >
           <!-- Chevron to show expand/collapse state -->
-          <span class="w-4 h-4 flex items-center justify-center me-1 flex-shrink-0">
+          <span
+            class="w-4 h-4 flex items-center justify-center me-1 flex-shrink-0"
+          >
             <feather-icon
               v-if="account.isGroup"
               :name="account.expanded ? 'chevron-down' : 'chevron-right'"
@@ -37,11 +41,17 @@
             />
           </span>
 
-          <component :is="getIconComponent(!!account.isGroup, account.name)" class="flex-shrink-0" />
+          <component
+            :is="getIconComponent(!!account.isGroup, account.name)"
+            class="flex-shrink-0"
+          />
           <div class="flex items-center flex-1 min-w-0">
             <div
               class="ms-4 truncate"
-              :class="[!account.parentAccount && 'font-semibold text-gray-900 dark:text-gray-100']"
+              :class="[
+                !account.parentAccount &&
+                  'font-semibold text-gray-900 dark:text-gray-100',
+              ]"
             >
               {{ account.name }}
             </div>
@@ -93,7 +103,9 @@
           <component :is="getIconComponent(account.addingGroupAccount)" />
           <div class="flex ms-4 h-row-mid items-center">
             <input
-              :ref="el => setInputRef(el as HTMLInputElement | null, account.name)"
+              :ref="
+                (el) => setInputRef(el as HTMLInputElement | null, account.name)
+              "
               v-model="newAccountName"
               class="focus:outline-none bg-transparent dark:placeholder-gray-600 dark:text-gray-400"
               :class="{ 'text-gray-600 dark:text-gray-400': insertingAccount }"

@@ -9,8 +9,8 @@
       :key="df.fieldname"
       class="text-lg flex m-2"
       :class="{
-      'ms-auto': isNumeric(df as Field),
-    }"
+        'ms-auto': isNumeric(df as Field),
+      }"
     >
       {{ df.label }}
     </div>
@@ -26,7 +26,7 @@
       class="p-2 border w-full hover:bg-gray-25 dark:border-gray-800 dark:bg-gray-890"
     >
       <ModernPOSSelectedItemRow
-        :row="(row as SalesInvoiceItem)"
+        :row="row as SalesInvoiceItem"
         :expanded-batch-id="expandedBatchId"
         @set-expanded-batch-id="
           (rowName) => $emit('setExpandedBatchId', rowName)

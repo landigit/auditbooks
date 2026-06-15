@@ -8,7 +8,9 @@ export async function sendAPIRequest(
 ) {
   const response = await fetch(endpoint, options);
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `API request failed: ${response.status} ${response.statusText}`
+    );
   }
   return response.json();
 }

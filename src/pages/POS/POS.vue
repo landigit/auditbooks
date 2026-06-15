@@ -17,7 +17,7 @@
         (!posProfile?.posUI && fyo.singles.POSSettings?.posUI === 'Classic')
       "
       :table-view="tableView"
-      :profile="(posProfile as POSProfile)"
+      :profile="posProfile as POSProfile"
       :total-quantity="totalQuantity"
       :item-quantity-qap="itemQtyMap"
       :loyalty-points="loyaltyPoints"
@@ -27,13 +27,13 @@
       :item-search-term="itemSearchTerm"
       :selected-item-group="selectedItemGroup"
       :is-pos-shift-open="isPosShiftOpen"
-      :items="(items as [] as POSItem[])"
+      :items="items as [] as POSItem[]"
       :item-visibility="itemVisibility"
-      :sinv-doc="(sinvDoc as SalesInvoice)"
+      :sinv-doc="sinvDoc as SalesInvoice"
       :disable-pay-button="disablePayButton"
       :open-payment-modal="openPaymentModal"
-      :item-discounts="(itemDiscounts as Money)"
-      :coupons="(coupons as AppliedCouponCodes)"
+      :item-discounts="itemDiscounts as Money"
+      :coupons="coupons as AppliedCouponCodes"
       :open-price-list-modal="openPriceListModal"
       :open-item-enquiry-modal="openItemEnquiryModal"
       :applied-coupons-count="appliedCouponsCount"
@@ -76,7 +76,7 @@
     <ModernPOS
       v-else
       :table-view="tableView"
-      :profile="(posProfile as POSProfile)"
+      :profile="posProfile as POSProfile"
       :total-quantity="totalQuantity"
       :item-quantity-qap="itemQtyMap"
       :loyalty-points="loyaltyPoints"
@@ -86,14 +86,14 @@
       :item-search-term="itemSearchTerm"
       :selected-item-group="selectedItemGroup"
       :is-pos-shift-open="isPosShiftOpen"
-      :items="(items as [] as POSItem[])"
+      :items="items as [] as POSItem[]"
       :item-visibility="itemVisibility"
-      :sinv-doc="(sinvDoc as SalesInvoice)"
+      :sinv-doc="sinvDoc as SalesInvoice"
       :disable-pay-button="disablePayButton"
       :open-payment-modal="openPaymentModal"
       :open-keyboard-modal="openKeyboardModal"
-      :item-discounts="(itemDiscounts as Money)"
-      :coupons="(coupons as AppliedCouponCodes)"
+      :item-discounts="itemDiscounts as Money"
+      :coupons="coupons as AppliedCouponCodes"
       :open-price-list-modal="openPriceListModal"
       :open-item-enquiry-modal="openItemEnquiryModal"
       :applied-coupons-count="appliedCouponsCount"
@@ -220,21 +220,66 @@ const {
   handleBatchSelected,
 } = usePOS();
 
-provide('doc', computed(() => sinvDoc.value));
-provide('sinvDoc', computed(() => sinvDoc.value));
-provide('coupons', computed(() => coupons.value));
-provide('itemQtyMap', computed(() => itemQtyMap.value));
-provide('paidAmount', computed(() => paidAmount.value));
-provide('paymentMethod', computed(() => paymentMethod.value));
-provide('transferRefNo', computed(() => transferRefNo.value));
-provide('itemDiscounts', computed(() => itemDiscounts.value));
-provide('transferAmount', computed(() => transferAmount.value));
-provide('appliedCoupons', computed(() => sinvDoc.value.coupons));
-provide('totalTaxedAmount', computed(() => totalTaxedAmount.value));
-provide('itemSerialNumbers', computed(() => itemSerialNumbers.value));
-provide('isDiscountingEnabled', computed(() => isDiscountingEnabled.value));
-provide('transferClearanceDate', computed(() => transferClearanceDate.value));
-provide('posSettings', computed(() => fyo.singles.POSSettings));
+provide(
+  'doc',
+  computed(() => sinvDoc.value)
+);
+provide(
+  'sinvDoc',
+  computed(() => sinvDoc.value)
+);
+provide(
+  'coupons',
+  computed(() => coupons.value)
+);
+provide(
+  'itemQtyMap',
+  computed(() => itemQtyMap.value)
+);
+provide(
+  'paidAmount',
+  computed(() => paidAmount.value)
+);
+provide(
+  'paymentMethod',
+  computed(() => paymentMethod.value)
+);
+provide(
+  'transferRefNo',
+  computed(() => transferRefNo.value)
+);
+provide(
+  'itemDiscounts',
+  computed(() => itemDiscounts.value)
+);
+provide(
+  'transferAmount',
+  computed(() => transferAmount.value)
+);
+provide(
+  'appliedCoupons',
+  computed(() => sinvDoc.value.coupons)
+);
+provide(
+  'totalTaxedAmount',
+  computed(() => totalTaxedAmount.value)
+);
+provide(
+  'itemSerialNumbers',
+  computed(() => itemSerialNumbers.value)
+);
+provide(
+  'isDiscountingEnabled',
+  computed(() => isDiscountingEnabled.value)
+);
+provide(
+  'transferClearanceDate',
+  computed(() => transferClearanceDate.value)
+);
+provide(
+  'posSettings',
+  computed(() => fyo.singles.POSSettings)
+);
 
 onMounted(() => {
   if (fyo.store.isDevelopment || (window as any).isTestEnv) {

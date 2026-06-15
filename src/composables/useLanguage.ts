@@ -6,6 +6,8 @@ export function useLanguage() {
   return {
     languageDirection,
     isRtl: computed(() => languageDirection?.value === 'rtl'),
-    isLtr: computed(() => languageDirection?.value === 'ltr' || !languageDirection?.value),
+    isLtr: computed(
+      () => languageDirection?.value === 'ltr' || !languageDirection?.value
+    ),
   };
 }

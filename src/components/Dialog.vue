@@ -28,7 +28,7 @@
           <div class="flex justify-end gap-4 mt-4">
             <Button
               v-for="b of orderedButtons"
-              :ref="el => setButtonRef(el, b.isPrimary)"
+              :ref="(el) => setButtonRef(el, b.isPrimary)"
               :key="b.label"
               style="min-width: 5rem"
               :type="b.isPrimary ? 'primary' : 'secondary'"

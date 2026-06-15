@@ -36,7 +36,9 @@
         :value="report.get(field.fieldname)"
         :read-only="loading"
         :align-with-inputs="field.fieldtype !== 'Check' && hasMixedFilters"
-        :class="{ 'self-end pb-0.5': field.fieldtype === 'Check' && hasMixedFilters }"
+        :class="{
+          'self-end pb-0.5': field.fieldtype === 'Check' && hasMixedFilters,
+        }"
         @change="async (value) => await report?.set(field.fieldname, value)"
       />
     </div>
@@ -81,7 +83,10 @@ const route = useRoute();
 const loading = ref(false);
 const report = ref<Report | null>(null);
 
-provide('report', computed(() => report.value));
+provide(
+  'report',
+  computed(() => report.value)
+);
 
 const title = computed(() => {
   return reports[props.reportClassName]?.title ?? t`Report`;
@@ -95,21 +100,24 @@ const hasMixedFilters = computed(() => {
 
 const groupedActions = computed(() => {
   const actions = report.value?.getActions() ?? [];
-  const actionsMap = actions.reduce((acc, ac) => {
-    if (!ac.group) {
-      ac.group = 'none';
-    }
+  const actionsMap = actions.reduce(
+    (acc, ac) => {
+      if (!ac.group) {
+        ac.group = 'none';
+      }
 
-    acc[ac.group] ??= {
-      group: ac.group,
-      label: ac.label ?? '',
-      type: ac.type ?? 'secondary',
-      actions: [],
-    };
+      acc[ac.group] ??= {
+        group: ac.group,
+        label: ac.label ?? '',
+        type: ac.type ?? 'secondary',
+        actions: [],
+      };
 
-    acc[ac.group].actions.push(ac);
-    return acc;
-  }, {} as Record<string, ActionGroup>);
+      acc[ac.group].actions.push(ac);
+      return acc;
+    },
+    {} as Record<string, ActionGroup>
+  );
 
   return Object.values(actionsMap);
 });
@@ -172,4 +180,3 @@ onDeactivated(() => {
   shortcuts?.delete(props.reportClassName);
 });
 </script>
-

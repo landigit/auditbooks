@@ -47,7 +47,10 @@ export function useSettings() {
   });
 
   // Provide to child components
-  provide('doc', computed(() => doc.value));
+  provide(
+    'doc',
+    computed(() => doc.value)
+  );
 
   const tabLabels = computed<Record<string, string>>(() => {
     return {
@@ -62,8 +65,7 @@ export function useSettings() {
   });
 
   const schemas = computed<Schema[]>(() => {
-    const enableInventory =
-      !!fyo.singles.AccountingSettings?.enableInventory;
+    const enableInventory = !!fyo.singles.AccountingSettings?.enableInventory;
     const enablePOS = !!fyo.singles.InventorySettings?.enablePointOfSale;
     const enableERPNextSync =
       !!fyo.singles.AccountingSettings?.enableERPNextSync;
@@ -130,7 +132,7 @@ export function useSettings() {
 
     update();
     await showDialog({
-      title: t`Reload Frappe Books?`,
+      title: t`Reload Auditbooks?`,
       detail: t`Changes made to settings will be visible on reload.`,
       type: 'info',
       buttons: [

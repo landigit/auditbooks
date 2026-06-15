@@ -27,7 +27,9 @@
           :height="size.height"
           :show-overflow="true"
         >
-          <div class="bg-white mx-auto w-full min-h-full p-4 flex flex-col justify-between">
+          <div
+            class="bg-white mx-auto w-full min-h-full p-4 flex flex-col justify-between"
+          >
             <div>
               <div class="p-2">
                 <div class="font-semibold text-xl w-full flex justify-between">
@@ -48,7 +50,7 @@
                     :key="`cell-${r}.${c}`"
                     :class="cellClasses(cell.idx, r)"
                     class="text-sm p-2"
-                    style="min-height: 2rem"
+                    style="min-height: 2rem; word-break: break-all"
                   >
                     {{ cell.value }}
                   </div>
@@ -136,7 +138,11 @@
           </h2>
           <div
             class="border dark:border-gray-800 rounded grid grid-cols-2 gap-2 mt-1"
-            style="display: grid !important; height: auto !important; padding: 12px !important;"
+            style="
+              display: grid !important;
+              height: auto !important;
+              padding: 12px !important;
+            "
           >
             <Check
               v-for="(col, i) of report?.columns"
@@ -216,7 +222,10 @@ const matrix = computed<{ value: string; idx: number }[][]>(() => {
 
   const mat: { value: string; idx: number }[][] = [columns];
   const startVal = Math.max(start.value - 1, 0);
-  const endVal = Math.min(startVal + limit.value, report.value.reportData.length);
+  const endVal = Math.min(
+    startVal + limit.value,
+    report.value.reportData.length
+  );
   const slice = report.value.reportData.slice(startVal, endVal);
 
   for (let i = 0; i < slice.length; i++) {
@@ -237,8 +246,10 @@ const matrix = computed<{ value: string; idx: number }[][]>(() => {
 
 const rowStyles = computed<Record<string, string>>(() => {
   const style: Record<string, string> = {};
-  const numColumns = columnSelection.value.filter(Boolean).length;
-  style['grid-template-columns'] = `repeat(${numColumns}, minmax(0, auto))`;
+  if (!report.value) return style;
+  const cols = report.value.columns.filter((_, i) => columnSelection.value[i]);
+  const template = cols.map((col) => `${col.width || 1}fr`).join(' ');
+  style['grid-template-columns'] = template;
   return style;
 });
 
@@ -300,9 +311,9 @@ function setScale() {
 async function savePDF(shouldPrint?: boolean): Promise<void> {
   try {
     const pdfMake = await getPdfMake();
-    
+
     const columns = report.value?.columns || [];
-    
+
     // Construct table headers and rows
     const tableBody: any[] = [];
     matrix.value.forEach((row, rIdx) => {
@@ -336,18 +347,27 @@ async function savePDF(shouldPrint?: boolean): Promise<void> {
     const pageSizeName = printSize.value;
     const isLand = isLandscape.value;
     const s = paperSizeMap[pageSizeName] || paperSizeMap.A4;
-    const pageWidth = isLand ? Math.max(s.width, s.height) : Math.min(s.width, s.height);
-    const pageHeight = isLand ? Math.min(s.width, s.height) : Math.max(s.width, s.height);
+    const pageWidth = isLand
+      ? Math.max(s.width, s.height)
+      : Math.min(s.width, s.height);
+    const pageHeight = isLand
+      ? Math.min(s.width, s.height)
+      : Math.max(s.width, s.height);
     const pageWidthPts = pageWidth * 28.346;
     const pageHeightPts = pageHeight * 28.346;
 
     const pageMarginLeftRight = 20;
-    const printableWidth = pageWidthPts - (pageMarginLeftRight * 2);
+    const printableWidth = pageWidthPts - pageMarginLeftRight * 2;
 
     const paddingPerCol = 10; // paddingLeft: 5, paddingRight: 5
     const borderWidth = 0.5; // vLineWidth: 0.5
-    const totalPaddingAndBorders = (selectedCols.length * paddingPerCol) + ((selectedCols.length + 1) * borderWidth);
-    const availableContentWidth = Math.max(10, printableWidth - totalPaddingAndBorders);
+    const totalPaddingAndBorders =
+      selectedCols.length * paddingPerCol +
+      (selectedCols.length + 1) * borderWidth;
+    const availableContentWidth = Math.max(
+      10,
+      printableWidth - totalPaddingAndBorders
+    );
 
     const tableWidths = selectedCols.map((cell) => {
       const col = columns[cell.idx];
@@ -359,7 +379,10 @@ async function savePDF(shouldPrint?: boolean): Promise<void> {
 
     const docDefinition: any = {
       info: { title: name },
-      pageSize: pageSizeName === 'POS' ? { width: pageWidthPts, height: pageHeightPts } : printSize.value,
+      pageSize:
+        pageSizeName === 'POS'
+          ? { width: pageWidthPts, height: pageHeightPts }
+          : printSize.value,
       pageOrientation: isLandscape.value ? 'landscape' : 'portrait',
       pageMargins: [pageMarginLeftRight, 40, pageMarginLeftRight, 40],
       content: [
@@ -382,15 +405,17 @@ async function savePDF(shouldPrint?: boolean): Promise<void> {
             body: tableBody,
           },
           layout: {
-            hLineWidth: (i: number, node: any) => (i === 0 || i === 1 || i === node.table.body.length ? 1 : 0.5),
-            vLineWidth: (i: number, node: any) => (i === 0 || i === node.table.widths.length ? 1 : 0.5),
+            hLineWidth: (i: number, node: any) =>
+              i === 0 || i === 1 || i === node.table.body.length ? 1 : 0.5,
+            vLineWidth: (i: number, node: any) =>
+              i === 0 || i === node.table.widths.length ? 1 : 0.5,
             hLineColor: () => '#cccccc',
             vLineColor: () => '#e5e7eb',
             paddingLeft: () => 5,
             paddingRight: () => 5,
             paddingTop: () => 4,
             paddingBottom: () => 4,
-          }
+          },
         },
       ],
       footer: (currentPage: number, pageCount: number) => {
@@ -408,13 +433,13 @@ async function savePDF(shouldPrint?: boolean): Promise<void> {
               color: '#777',
               alignment: 'right',
               margin: [0, 0, 20, 0],
-            }
-          ]
+            },
+          ],
         };
       },
       defaultStyle: {
         font: 'Roboto',
-      }
+      },
     };
 
     if (shouldPrint) {

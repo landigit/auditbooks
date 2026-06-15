@@ -63,10 +63,13 @@ export function useSearch(inputRef: any) {
   };
 
   const groupColorClassMap = computed<Record<SearchGroup, string>>(() => {
-    return searchGroups.reduce((map, g) => {
-      map[g] = getBgTextColorClass(groupColorMap[g]);
-      return map;
-    }, {} as Record<SearchGroup, string>);
+    return searchGroups.reduce(
+      (map, g) => {
+        map[g] = getBgTextColorClass(groupColorMap[g]);
+        return map;
+      },
+      {} as Record<SearchGroup, string>
+    );
   });
 
   const suggestions = computed<SearchItems>(() => {
@@ -84,7 +87,9 @@ export function useSearch(inputRef: any) {
 
   async function openDocs() {
     const { openUrl } = await import('@tauri-apps/plugin-opener');
-    await openUrl('https://docs.frappe.io/' + docsPathMap.Search).catch(console.error);
+    await openUrl('https://docs.frappe.io/' + docsPathMap.Search).catch(
+      console.error
+    );
   }
 
   function getShortcuts() {
@@ -214,6 +219,6 @@ export function useSearch(inputRef: any) {
     down,
     select,
     getGroupFilterButtonClass,
-    setShortcuts
+    setShortcuts,
   };
 }

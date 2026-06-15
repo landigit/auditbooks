@@ -224,6 +224,9 @@
   "All": {
     "translation": "Tout"
   },
+  "Allow to bypass filters": {
+    "translation": "Autoriser la désactivation des filtres"
+  },
   "Amount": {
     "translation": "Montant"
   },
@@ -350,9 +353,6 @@
   "Cancelled": {
     "translation": "Annulé"
   },
-  "Cannot Delete": {
-    "translation": "Impossible à supprimer"
-  },
   "Cannot Delete Account": {
     "translation": "Ne peut supprimer le compte"
   },
@@ -373,9 +373,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "Ne peut supprimer ${0} \"${1}\" à cause des entrées liées"
-  },
-  "Cannot open file": {
-    "translation": "Ne peut ouvrir le fichier"
   },
   "Cannot perform operation.": {
     "translation": "Ne peut exécuter l'opération"
@@ -424,9 +421,6 @@
   },
   "Chart of Accounts": {
     "translation": "Graphique des comptes"
-  },
-  "Cheque": {
-    "translation": "Chèque"
   },
   "City / Town": {
     "translation": "Ville / Village"
@@ -604,9 +598,6 @@
   },
   "Custom Form": {
     "translation": "Formulaire personnalisé"
-  },
-  "Custom Hex": {
-    "translation": "Hexadécimal custom"
   },
   "Customer": {
     "translation": "Client"
@@ -835,9 +826,6 @@
   },
   "Export": {
     "translation": "Exporter"
-  },
-  "Export Failed": {
-    "translation": "Export Échoué"
   },
   "Export Successful": {
     "translation": "Export réussi"
@@ -1313,9 +1301,6 @@
   "Payroll Payable": {
     "translation": "Paie à payer"
   },
-  "Pending Qty. ${0}": {
-    "translation": "Qué. en attente ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "Qué. en attente ${0}"
   },
@@ -1570,9 +1555,6 @@
   },
   "Save as PDF": {
     "translation": "Enregistrer en PDF"
-  },
-  "Save as PDF Successful": {
-    "translation": "Enregistré en PDF avec succès"
   },
   "Saved": {
     "translation": "Enregistré"
@@ -1967,8 +1949,8 @@
   "We": {
     "translation": "Me"
   },
-  "Welcome to Frappe Books": {
-    "translation": "Bienvenue chez Frappe Books"
+  "When linking documents, if no match is found and filtering is in effect, allow to disable filters.": {
+    "translation": "Lors de la sélection d'un document lié, autoriser à désactiver les filtres si aucun résultat n'est trouvé"
   },
   "Width (in cm)": {
     "translation": "Largeur (en cm)"
@@ -1999,14 +1981,5 @@
   },
   "check values and click on": {
     "translation": "Vérifiez les valeurs et cliquez sur"
-  },
-  "to apply changes": {
-    "translation": "pour appliquer les changements"
-  },
-  "Allow to bypass filters": {
-    "translation": "Autoriser la désactivation des filtres"
-  },
-  "When linking documents, if no match is found and filtering is in effect, allow to disable filters.": {
-    "translation": "Lors de la sélection d'un document lié, autoriser à désactiver les filtres si aucun résultat n'est trouvé"
   }
 }

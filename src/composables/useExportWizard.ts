@@ -108,7 +108,11 @@ export function useExportWizard(props: {
     return list.find((f) => f.fieldname === fieldname);
   }
 
-  function setExportFieldValue(ef: ExportField, value: boolean, target?: string) {
+  function setExportFieldValue(
+    ef: ExportField,
+    value: boolean,
+    target?: string
+  ) {
     const field = getExportField(ef.fieldname, target);
     if (!field) {
       return;

@@ -9,8 +9,8 @@
       :key="df.fieldname"
       class="items-center text-lg flex px-2 py-2"
       :class="{
-      'ms-auto': isNumeric(df as Field),
-    }"
+        'ms-auto': isNumeric(df as Field),
+      }"
       :style="{
         height: ``,
       }"
@@ -29,7 +29,7 @@
       class="border dark:border-gray-800 w-full px-2 py-2 group flex items-center justify-center hover:bg-gray-25 dark:bg-gray-890"
     >
       <SelectedItemRow
-        :row="(row as SalesInvoiceItem)"
+        :row="row as SalesInvoiceItem"
         :expanded-batch-id="expandedBatchId"
         @set-expanded-batch-id="
           (rowName) => $emit('setExpandedBatchId', rowName)

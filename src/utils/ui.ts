@@ -2,7 +2,10 @@
  * Utils to do UI stuff such as opening dialogs, toasts, etc.
  * Basically anything that may directly or indirectly import a Vue file.
  */
-import { open as tauriOpenDialog, save as tauriSaveDialog } from '@tauri-apps/plugin-dialog';
+import {
+  open as tauriOpenDialog,
+  save as tauriSaveDialog,
+} from '@tauri-apps/plugin-dialog';
 import { remove as tauriRemove } from '@tauri-apps/plugin-fs';
 import { invoke } from '@tauri-apps/api/core';
 import { t } from 'fyo';
@@ -223,21 +226,24 @@ export function getActionsForDoc(doc?: Doc): Action[] {
 
 export function getGroupedActionsForDoc(doc?: Doc): ActionGroup[] {
   const actions = getActionsForDoc(doc);
-  const actionsMap = actions.reduce((acc, ac) => {
-    if (!ac.group) {
-      ac.group = '';
-    }
+  const actionsMap = actions.reduce(
+    (acc, ac) => {
+      if (!ac.group) {
+        ac.group = '';
+      }
 
-    acc[ac.group] ??= {
-      group: ac.group,
-      label: ac.label ?? '',
-      type: ac.type ?? 'secondary',
-      actions: [],
-    };
+      acc[ac.group] ??= {
+        group: ac.group,
+        label: ac.label ?? '',
+        type: ac.type ?? 'secondary',
+        actions: [],
+      };
 
-    acc[ac.group].actions.push(ac);
-    return acc;
-  }, {} as Record<string, ActionGroup>);
+      acc[ac.group].actions.push(ac);
+      return acc;
+    },
+    {} as Record<string, ActionGroup>
+  );
 
   const grouped = Object.keys(actionsMap)
     .filter(Boolean)
@@ -1057,10 +1063,18 @@ export async function deleteDb(filePath: string) {
         detail: t`Please restart and try again.`,
         type: 'error',
       });
-    } else if (msg.includes('No such file') || msg.includes('ENOENT') || msg.includes('os error 2')) {
+    } else if (
+      msg.includes('No such file') ||
+      msg.includes('ENOENT') ||
+      msg.includes('os error 2')
+    ) {
       // File is already gone — still remove from config
       deleted = true;
-    } else if (msg.includes('Permission') || msg.includes('EPERM') || msg.includes('os error 5')) {
+    } else if (
+      msg.includes('Permission') ||
+      msg.includes('EPERM') ||
+      msg.includes('os error 5')
+    ) {
       await showDialog({
         title: t`Cannot Delete File`,
         detail: t`The file on disk could not be deleted. It will be removed from your recent list.`,
@@ -1084,7 +1098,6 @@ export async function deleteDb(filePath: string) {
     fyo.config.set('files', updated);
   }
 }
-
 
 export async function getSelectedFilePath(): Promise<{ filePaths: string[] }> {
   const selected = await tauriOpenDialog({
@@ -1116,8 +1129,13 @@ export async function getSavePath(name: string, extention: string) {
     return { canceled: true, filePath: undefined };
   }
 
-  let resolvedPath: string = typeof filePath === 'string' ? filePath : (filePath as any).path ?? '';
-  if (resolvedPath && !resolvedPath.endsWith(extention) && resolvedPath !== ':memory:') {
+  let resolvedPath: string =
+    typeof filePath === 'string' ? filePath : ((filePath as any).path ?? '');
+  if (
+    resolvedPath &&
+    !resolvedPath.endsWith(extention) &&
+    resolvedPath !== ':memory:'
+  ) {
     resolvedPath = `${resolvedPath}.${extention}`;
   }
 

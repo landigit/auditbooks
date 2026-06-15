@@ -227,9 +227,6 @@
   "Chart of Accounts": {
     "translation": "Hesap Planı"
   },
-  "Cheque": {
-    "translation": "Çek"
-  },
   "City / Town": {
     "translation": "Şehir"
   },
@@ -355,9 +352,6 @@
   },
   "Current Liabilities": {
     "translation": "Cari Borçlar"
-  },
-  "Custom Hex": {
-    "translation": "Özel Altıgen"
   },
   "Customer": {
     "translation": "Müşteri"
@@ -517,9 +511,6 @@
   },
   "Export": {
     "translation": "İhracat"
-  },
-  "Export Failed": {
-    "translation": "Dışa Aktarma Başarısız Oldu"
   },
   "Export Successful": {
     "translation": "İhracat Başarılı"
@@ -1193,9 +1184,6 @@
   "Save as PDF": {
     "translation": "PDF olarak kaydet"
   },
-  "Save as PDF Successful": {
-    "translation": "PDF olarak kaydet Başarılı"
-  },
   "Secured Loans": {
     "translation": "Teminatlı Krediler"
   },
@@ -1528,9 +1516,6 @@
   },
   "View Sales": {
     "translation": "Satışları Görüntüle"
-  },
-  "Welcome to Frappe Books": {
-    "translation": "Frappe Books'a hoş geldiniz"
   },
   "Write Off": {
     "translation": "Askıya Al"

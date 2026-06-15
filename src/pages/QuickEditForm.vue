@@ -1,7 +1,11 @@
 <template>
   <div
     class="bg-white dark:bg-gray-850"
-    :class="isMobile ? 'w-full h-full fixed inset-0 z-50 overflow-auto' : 'border-s dark:border-gray-800 h-full overflow-auto w-quick-edit'"
+    :class="
+      isMobile
+        ? 'w-full h-full fixed inset-0 z-50 overflow-auto'
+        : 'border-s dark:border-gray-800 h-full overflow-auto w-quick-edit'
+    "
   >
     <!-- Quick edit Tool bar -->
     <div
@@ -18,11 +22,7 @@
         <feather-icon name="save" class="w-4 h-4 me-1.5" />
         {{ t`Save` }}
       </Button>
-      <Button
-        v-else-if="doc?.canSubmit"
-        type="primary"
-        @click="submit"
-      >
+      <Button v-else-if="doc?.canSubmit" type="primary" @click="submit">
         <feather-icon name="check-square" class="w-4 h-4 me-1.5" />
         {{ t`Submit` }}
       </Button>
@@ -127,7 +127,10 @@ if (shortcuts) {
   context = useDocShortcuts(shortcuts, doc, context, true);
 }
 
-provide('doc', computed(() => doc.value));
+provide(
+  'doc',
+  computed(() => doc.value)
+);
 
 const titleField = ref<null | Field>(null);
 const imageField = ref<null | Field>(null);
@@ -250,4 +253,3 @@ onUnmounted(() => {
   shortcuts?.delete(context);
 });
 </script>
-

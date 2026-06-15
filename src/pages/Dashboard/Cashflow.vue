@@ -1,43 +1,80 @@
 <template>
   <div>
     <!-- Title and Period Selector -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2"
+    >
       <div class="flex items-center justify-between w-full sm:w-auto">
         <div class="font-semibold text-base dark:text-white">
           {{ t`Cashflow` }}
         </div>
         <!-- Period Selector only on mobile next to title -->
-        <PeriodSelector v-if="hasData" class="sm:hidden" :value="period" :options="periodOptions"
-          @change="(value) => (period = value)" />
-        <div v-else class="sm:hidden w-20 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
+        <PeriodSelector
+          v-if="hasData"
+          class="sm:hidden"
+          :value="period"
+          :options="periodOptions"
+          @change="(value) => (period = value)"
+        />
+        <div
+          v-else
+          class="sm:hidden w-20 h-5 bg-gray-200 dark:bg-gray-700 rounded"
+        />
       </div>
 
       <!-- Chart Legend & Period Selector for tablet/desktop -->
-      <div class="flex items-center justify-between sm:justify-start gap-6 sm:gap-8 w-full sm:w-auto">
+      <div
+        class="flex items-center justify-between sm:justify-start gap-6 sm:gap-8 w-full sm:w-auto"
+      >
         <div v-if="hasData" class="flex text-sm sm:text-base gap-6 sm:gap-8">
           <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-sm inline-block bg-blue-500 dark:bg-blue-600" />
+            <span
+              class="w-3 h-3 rounded-sm inline-block bg-blue-500 dark:bg-blue-600"
+            />
             <span class="text-gray-900 dark:text-gray-25">{{ t`Inflow` }}</span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-sm inline-block bg-pink-500 dark:bg-pink-600" />
-            <span class="text-gray-900 dark:text-gray-25">{{ t`Outflow` }}</span>
+            <span
+              class="w-3 h-3 rounded-sm inline-block bg-pink-500 dark:bg-pink-600"
+            />
+            <span class="text-gray-900 dark:text-gray-25">{{
+              t`Outflow`
+            }}</span>
           </div>
         </div>
         <div v-else class="w-16 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
 
         <!-- Period Selector on tablet/desktop -->
-        <PeriodSelector v-if="hasData" class="hidden sm:block" :value="period" :options="periodOptions"
-          @change="(value) => (period = value)" />
-        <div v-else class="hidden sm:block w-20 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
+        <PeriodSelector
+          v-if="hasData"
+          class="hidden sm:block"
+          :value="period"
+          :options="periodOptions"
+          @change="(value) => (period = value)"
+        />
+        <div
+          v-else
+          class="hidden sm:block w-20 h-5 bg-gray-200 dark:bg-gray-700 rounded"
+        />
       </div>
     </div>
 
     <!-- Line Chart -->
-    <LineChart v-if="chartData.points.length" class="mt-4" :aspect-ratio="aspectRatio" :colors="chartData.colors"
-      :grid-color="chartData.gridColor" :font-color="chartData.fontColor" :points="chartData.points"
-      :x-labels="chartData.xLabels" :format="chartData.format" :format-x="chartData.formatX" :y-max="chartData.yMax"
-      :draw-labels="hasData" :show-tooltip="hasData" />
+    <LineChart
+      v-if="chartData.points.length"
+      class="mt-4"
+      :aspect-ratio="aspectRatio"
+      :colors="chartData.colors"
+      :grid-color="chartData.gridColor"
+      :font-color="chartData.fontColor"
+      :points="chartData.points"
+      :x-labels="chartData.xLabels"
+      :format="chartData.format"
+      :format-x="chartData.formatX"
+      :y-max="chartData.yMax"
+      :draw-labels="hasData"
+      :show-tooltip="hasData"
+    />
   </div>
 </template>
 
@@ -126,9 +163,7 @@ const setHasData = async () => {
 };
 
 const setData = async () => {
-  const { periodList, fromDate, toDate } = getDatesAndPeriodList(
-    period.value
-  );
+  const { periodList, fromDate, toDate } = getDatesAndPeriodList(period.value);
 
   const dbData = await fyo.db.getCashflow(fromDate.toISO(), toDate.toISO());
   const dataMap = getMapFromList(dbData, 'yearmonth');

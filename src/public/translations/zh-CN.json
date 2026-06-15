@@ -266,9 +266,6 @@
   "An error occurred.": {
     "translation": "发生错误。"
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "适用于Frappe Books的任何地方"
-  },
   "Applicable when Quick Search is open": {
     "translation": "打开快速搜索时适用"
   },
@@ -401,9 +398,6 @@
   "Cannot Commit Error": {
     "translation": "无法提交错误"
   },
-  "Cannot Delete": {
-    "translation": "无法删除"
-  },
   "Cannot Delete Account": {
     "translation": "无法删除帐户"
   },
@@ -421,9 +415,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "由于存在链接条目，无法删除 ${0} \"${1}\""
-  },
-  "Cannot open file": {
-    "translation": "无法打开文件"
   },
   "Cannot perform operation.": {
     "translation": "无法执行操作"
@@ -476,9 +467,6 @@
   "Check": {
     "translation": "检查"
   },
-  "Cheque": {
-    "translation": "检查"
-  },
   "City / Town": {
     "translation": "城市"
   },
@@ -490,9 +478,6 @@
   },
   "Close": {
     "translation": "关闭"
-  },
-  "Close Frappe Books and try manually.": {
-    "translation": "关闭Frappe Books并手动尝试"
   },
   "Close Quick Search": {
     "translation": "关闭快速搜索"
@@ -602,9 +587,6 @@
   "Create Sales Invoice": {
     "translation": "创建销售订单"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "创建一个演示公司来试用Frappe Books"
-  },
   "Create a new company and store it on your computer": {
     "translation": "创建一个新公司并将其存储在您的计算机上"
   },
@@ -673,9 +655,6 @@
   },
   "Custom Form": {
     "translation": "自定义表单"
-  },
-  "Custom Hex": {
-    "translation": "自定义十六进制"
   },
   "Customer": {
     "translation": "客户"
@@ -827,9 +806,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "显示精度应具有介于 0 和 9 之间的值。"
   },
-  "Display Scale": {
-    "translation": "显示比例"
-  },
   "Dividends Paid": {
     "translation": "已支付股息"
   },
@@ -914,9 +890,6 @@
   "Enable Serial Number": {
     "translation": "启用序列号"
   },
-  "Enable Stock Returns": {
-    "translation": "启用库存退货"
-  },
   "Enable UOM Conversion": {
     "translation": "启用计量单位转换"
   },
@@ -998,9 +971,6 @@
   "Export": {
     "translation": "导出"
   },
-  "Export Failed": {
-    "translation": "导出失败"
-  },
   "Export Format": {
     "translation": "导出格式"
   },
@@ -1036,9 +1006,6 @@
   },
   "Fieldtype": {
     "translation": "字段类型"
-  },
-  "File ${0} does not exist.": {
-    "translation": "文件 ${0} 不存在"
   },
   "File selection failed": {
     "translation": "文件选择失败"
@@ -1102,9 +1069,6 @@
   },
   "Fraction Units": {
     "translation": "分数单位"
-  },
-  "Frappe Books does not have access to the selected file: ${0}": {
-    "translation": "Frappe Books无权访问所选文件: ${0}"
   },
   "Freight and Forwarding Charges": {
     "translation": "运费和转运费用"
@@ -1411,9 +1375,6 @@
   },
   "June": {
     "translation": "六月"
-  },
-  "Key Hints": {
-    "translation": "关键提示"
   },
   "Kg": {
     "translation": "千克"
@@ -1836,9 +1797,6 @@
   "Payroll Payable": {
     "translation": "应付工资"
   },
-  "Pending Qty. ${0}": {
-    "translation": "待收数量 ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "待收数量 ${0}"
   },
@@ -1940,9 +1898,6 @@
   },
   "Print Templates": {
     "translation": "打印模板"
-  },
-  "Print View": {
-    "translation": "打印查看"
   },
   "Print and Stationery": {
     "translation": "打印和文具"
@@ -2112,9 +2067,6 @@
   "References": {
     "translation": "关联资料"
   },
-  "Reload Frappe Books?": {
-    "translation": "重新加载 Frappe Books?"
-  },
   "Report": {
     "translation": "报告"
   },
@@ -2252,9 +2204,6 @@
   },
   "Save as PDF": {
     "translation": "另存为 PDF"
-  },
-  "Save as PDF Successful": {
-    "translation": "另存为 PDF 成功"
   },
   "Save changes made to ${0}?": {
     "translation": "保存对 ${0} 所做的更改？"
@@ -2922,9 +2871,6 @@
   "We": {
     "translation": "我们"
   },
-  "Welcome to Frappe Books": {
-    "translation": "欢迎使用 Frappe Books"
-  },
   "Width (in cm)": {
     "translation": "宽度 (cm)"
   },
@@ -2966,8 +2912,5 @@
   },
   "john@doe.com": {
     "translation": "电子邮件"
-  },
-  "to apply changes": {
-    "translation": "应用更改"
   }
 }

@@ -13,7 +13,11 @@
       :title="df?.label"
       :style="imageSizeStyle"
     >
-      <img v-if="value" :src="value" class="max-w-full max-h-full object-contain" />
+      <img
+        v-if="value"
+        :src="value"
+        class="max-w-full max-h-full object-contain"
+      />
       <div v-else :class="[!isReadOnly ? 'group-hover:opacity-90' : '']">
         <div
           v-if="letterPlaceholder"

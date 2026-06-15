@@ -89,14 +89,8 @@
   "${0} value ${1} does not exist.": {
     "translation": "${0} värde ${1} finns inte."
   },
-  "0.00%": {
-    "translation": "0.00%"
-  },
   "03-23-2022": {
     "translation": "03-23-2022"
-  },
-  "03/23/22": {
-    "translation": "03/23/22"
   },
   "1 filter applied": {
     "translation": "1 filter applicerat"
@@ -269,9 +263,6 @@
   "An error occurred.": {
     "translation": "Ett fel uppstod."
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "Tillämpligt överallt i Frappe Books"
-  },
   "Applicable when Quick Search is open": {
     "translation": "Tillämpligt när Snabbsök är öppen"
   },
@@ -410,9 +401,6 @@
   "Cannot Commit Error": {
     "translation": "Kan inte göra åtagande fel"
   },
-  "Cannot Delete": {
-    "translation": "Kan inte radera"
-  },
   "Cannot Delete Account": {
     "translation": "Kan inte radera konto"
   },
@@ -433,9 +421,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "Kan inte radera ${0} ”${1}” på grund av länkade poster."
-  },
-  "Cannot open file": {
-    "translation": "Kan inte öppna fil"
   },
   "Cannot perform operation.": {
     "translation": "Kan inte utföra operationen."
@@ -491,9 +476,6 @@
   "Check": {
     "translation": "Kontrollera"
   },
-  "Cheque": {
-    "translation": "Check"
-  },
   "City / Town": {
     "translation": "Stad / Ort"
   },
@@ -505,9 +487,6 @@
   },
   "Close": {
     "translation": "Stäng"
-  },
-  "Close Frappe Books and try manually.": {
-    "translation": "Stäng Frappe Books och försök manuellt."
   },
   "Close POS Shift": {
     "translation": "Stäng POS Skift"
@@ -638,9 +617,6 @@
   "Create Sales Invoice": {
     "translation": "Skapa försäljningsfaktura"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "Skapa ett demoföretag för att prova Frappe Books"
-  },
   "Create a new company and store it on your computer": {
     "translation": "Skapa ett nytt företag och lagra det på din dator"
   },
@@ -709,9 +685,6 @@
   },
   "Custom Form": {
     "translation": "Anpassat Formulär"
-  },
-  "Custom Hex": {
-    "translation": "Anpassat Hex"
   },
   "Customer": {
     "translation": "Kund"
@@ -872,9 +845,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "Visningsprecision bör ha ett värde mellan 0 och 9."
   },
-  "Display Scale": {
-    "translation": "Visningsskala"
-  },
   "Dividends Paid": {
     "translation": "Betalda Utdelningar"
   },
@@ -965,9 +935,6 @@
   "Enable Serial Number": {
     "translation": "Aktivera serienummer"
   },
-  "Enable Stock Returns": {
-    "translation": "Aktivera  aktieavkastning"
-  },
   "Enable UOM Conversion": {
     "translation": "Aktivera UOM-konvertering"
   },
@@ -1052,9 +1019,6 @@
   "Export": {
     "translation": "Exportera"
   },
-  "Export Failed": {
-    "translation": "Exporten misslyckades"
-  },
   "Export Format": {
     "translation": "Exportformat"
   },
@@ -1090,9 +1054,6 @@
   },
   "Fieldtype": {
     "translation": "Fälttyp"
-  },
-  "File ${0} does not exist.": {
-    "translation": "Filen ${0} finns inte."
   },
   "File selection failed": {
     "translation": "Filval misslyckades"
@@ -1156,9 +1117,6 @@
   },
   "Fraction Units": {
     "translation": "Fraktionsenheter"
-  },
-  "Frappe Books does not have access to the selected file: ${0}": {
-    "translation": "Frappe Books har inte tillgång till den valda filen: ${0}"
   },
   "Freight and Forwarding Charges": {
     "translation": "Frakt- och vidarebefordringsavgifter"
@@ -1472,9 +1430,6 @@
   "June": {
     "translation": "Juni"
   },
-  "Key Hints": {
-    "translation": "Viktiga tips"
-  },
   "Kg": {
     "translation": "Kg"
   },
@@ -1567,9 +1522,6 @@
   },
   "Manufacture Date": {
     "translation": "Tillverkningsdatum"
-  },
-  "03/22/22": {
-    "translation": "03/22/22"
   },
   "March": {
     "translation": "Mars"
@@ -1940,9 +1892,6 @@
   "Payroll Payable": {
     "translation": "Betalningsbara löner"
   },
-  "Pending Qty. ${0}": {
-    "translation": "Väntande antal ${0}"
-  },
   "Pending qty. ${0}": {
     "translation": "Väntande antal. ${0}"
   },
@@ -2047,9 +1996,6 @@
   },
   "Print Templates": {
     "translation": "Utskriftsmallar"
-  },
-  "Print View": {
-    "translation": "Utskriftsvy"
   },
   "Print and Stationery": {
     "translation": "Tryck och brevpapper"
@@ -2228,9 +2174,6 @@
   "References": {
     "translation": "Referenser"
   },
-  "Reload Frappe Books?": {
-    "translation": "Ladda om Frappe Books?"
-  },
   "Report": {
     "translation": "Rapportera"
   },
@@ -2387,9 +2330,6 @@
   "Save as PDF": {
     "translation": "Spara som PDF"
   },
-  "Save as PDF Successful": {
-    "translation": "PDF sparades"
-  },
   "Save changes made to ${0}?": {
     "translation": "Spara ändringar som gjorts i ${0}?"
   },
@@ -2398,9 +2338,6 @@
   },
   "Saved": {
     "translation": "Sparad"
-  },
-  "Search an Item": {
-    "translation": "Sök efter artikel"
   },
   "Secured Loans": {
     "translation": "Säkrade lån"
@@ -2725,9 +2662,6 @@
   },
   "Submit ${0}?": {
     "translation": "Skicka in ${0}?"
-  },
-  "Submit & Print": {
-    "translation": "Skicka in & Skriv ut"
   },
   "Submit entries?": {
     "translation": "Skicka in poster?"
@@ -3095,9 +3029,6 @@
   "We": {
     "translation": "Vi"
   },
-  "Welcome to Frappe Books": {
-    "translation": "Välkommen till Frappe Books"
-  },
   "Width (in cm)": {
     "translation": "Bredd (cm)"
   },
@@ -3139,8 +3070,5 @@
   },
   "john@doe.com": {
     "translation": "sven@svensson.se"
-  },
-  "to apply changes": {
-    "translation": "för att tillämpa ändringar"
   }
 }

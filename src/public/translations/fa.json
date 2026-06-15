@@ -245,9 +245,6 @@
   "An error occurred.": {
     "translation": "خطایی رخ داد"
   },
-  "Applicable anywhere in Frappe Books": {
-    "translation": "قابل استفاده در هر جای Frappe Books"
-  },
   "Applicable when Quick Search is open": {
     "translation": "قابل استفاده هنگام باز بودن جستجوی سریع"
   },
@@ -383,9 +380,6 @@
   "Cannot Commit Error": {
     "translation": "خطا قابل ثبت نیست"
   },
-  "Cannot Delete": {
-    "translation": "حذف امکان‌پذیر نیست"
-  },
   "Cannot Delete Account": {
     "translation": "حساب قابل حذف نیست"
   },
@@ -406,9 +400,6 @@
   },
   "Cannot delete ${0} \"${1}\" because of linked entries.": {
     "translation": "به دلیل ورودی‌های مرتبط، ${0} \"${1}\" قابل حذف نیست"
-  },
-  "Cannot open file": {
-    "translation": "امکان باز کردن فایل وجود ندارد"
   },
   "Cannot perform operation.": {
     "translation": "امکان انجام عملیات وجود ندارد"
@@ -464,9 +455,6 @@
   "Check": {
     "translation": "بررسی"
   },
-  "Cheque": {
-    "translation": "چک"
-  },
   "City / Town": {
     "translation": "شهر / شهرک"
   },
@@ -478,9 +466,6 @@
   },
   "Close": {
     "translation": "بستن"
-  },
-  "Close Frappe Books and try manually.": {
-    "translation": "Frappe Books را ببندید و به صورت دستی تلاش کنید"
   },
   "Close POS Shift": {
     "translation": "بستن شیفت فروشگاه"
@@ -611,9 +596,6 @@
   "Create Sales Invoice": {
     "translation": "ایجاد فاکتور فروش"
   },
-  "Create a demo company to try out Frappe Books": {
-    "translation": "یک شرکت نمایشی برای امتحان Frappe Books ایجاد کنید"
-  },
   "Create a new company and store it on your computer": {
     "translation": "یک شرکت جدید ایجاد کنید و آن را در کامپیوتر خود ذخیره کنید"
   },
@@ -682,9 +664,6 @@
   },
   "Custom Form": {
     "translation": "فرم سفارشی"
-  },
-  "Custom Hex": {
-    "translation": "مقدار هگز سفارشی"
   },
   "Customer": {
     "translation": "مشتری"
@@ -839,9 +818,6 @@
   "Display Precision should have a value between 0 and 9.": {
     "translation": "دقت نمایش باید مقداری بین 0 تا 9 داشته باشد"
   },
-  "Display Scale": {
-    "translation": "مقیاس نمایش"
-  },
   "Dividends Paid": {
     "translation": "سود سهام پرداخت شده"
   },
@@ -932,9 +908,6 @@
   "Enable Serial Number": {
     "translation": "فعال‌سازی شماره سریال"
   },
-  "Enable Stock Returns": {
-    "translation": "فعال‌سازی برگشت کالا"
-  },
   "Enable UOM Conversion": {
     "translation": "فعال‌سازی تبدیل واحد"
   },
@@ -1019,9 +992,6 @@
   "Export": {
     "translation": "صدور"
   },
-  "Export Failed": {
-    "translation": "صدور ناموفق بود"
-  },
   "Export Format": {
     "translation": "فرمت صدور"
   },
@@ -1057,9 +1027,6 @@
   },
   "Fieldtype": {
     "translation": "نوع فیلد"
-  },
-  "File ${0} does not exist.": {
-    "translation": "فایل ${0} وجود ندارد"
   },
   "File selection failed": {
     "translation": "انتخاب فایل ناموفق بود"
@@ -1405,9 +1372,6 @@
   },
   "June": {
     "translation": "خرداد"
-  },
-  "Key Hints": {
-    "translation": "نکات کلیدی"
   },
   "Kg": {
     "translation": "کیلوگرم"
@@ -1829,17 +1793,11 @@
   "Payment amount: ${0} should be less than Outstanding amount: ${1}.": {
     "translation": "مبلغ پرداخت: ${0} باید کمتر از مبلغ معوق: ${1} باشد"
   },
-  "Payment of ${0} will be made from account \\\"${1}\\\" to account \\\"${2}\\\" on Submit.": {
-    "translation": "پرداخت ${0} از حساب \\\"${1}\\\" به حساب \\\"${2}\\\" هنگام ثبت انجام خواهد شد"
-  },
   "Payments": {
     "translation": "پرداخت‌ها"
   },
   "Payroll Payable": {
     "translation": "حقوق و دستمزد پرداختنی"
-  },
-  "Pending Qty. ${0}": {
-    "translation": "مقدار معوق: ${0}"
   },
   "Pending qty. ${0}": {
     "translation": "مقدار معوق: ${0}"
@@ -1945,9 +1903,6 @@
   },
   "Print Templates": {
     "translation": "قالب‌های چاپ"
-  },
-  "Print View": {
-    "translation": "نمایش چاپ"
   },
   "Print and Stationery": {
     "translation": "چاپ و لوازم‌التحریر"
@@ -2117,9 +2072,6 @@
   "References": {
     "translation": "مراجع"
   },
-  "Reload Frappe Books?": {
-    "translation": "آیا Frappe Books را مجدداً بارگذاری می‌کنید؟"
-  },
   "Report": {
     "translation": "گزارش"
   },
@@ -2267,9 +2219,6 @@
   "Save as PDF": {
     "translation": "ذخیره به عنوان PDF"
   },
-  "Save as PDF Successful": {
-    "translation": "ذخیره به عنوان PDF با موفقیت انجام شد"
-  },
   "Save changes made to ${0}?": {
     "translation": "آیا تغییرات اعمال شده در ${0} ذخیره شود؟"
   },
@@ -2278,9 +2227,6 @@
   },
   "Saved": {
     "translation": "ذخیره شد"
-  },
-  "Search an Item": {
-    "translation": "جستجوی یک آیتم"
   },
   "Secured Loans": {
     "translation": "وام‌های تضمین شده"
@@ -2587,9 +2533,6 @@
   },
   "Submit ${0}?": {
     "translation": "آیا ${0} ثبت شود؟"
-  },
-  "Submit & Print": {
-    "translation": "ثبت و چاپ"
   },
   "Submit entries?": {
     "translation": "آیا ورودی‌ها ثبت شوند؟"
@@ -2933,9 +2876,6 @@
   "We": {
     "translation": "چ"
   },
-  "Welcome to Frappe Books": {
-    "translation": "به Frappe Books خوش آمدید"
-  },
   "Write Off": {
     "translation": "استهلاک"
   },
@@ -2968,8 +2908,5 @@
   },
   "in Batch ${0}": {
     "translation": "در دسته ${0}"
-  },
-  "to apply changes": {
-    "translation": "برای اعمال تغییرات"
   }
 }
