@@ -51,11 +51,17 @@ jobs:
           node-version: 22.22.3
           cache: 'pnpm'
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Install Dependencies
         run: pnpm install
 
       - name: Build Source Files
         run: pnpm build:frontend
+
+      - name: Build Tauri Binary
+        run: pnpm tauri build --debug
 
       - name: Run UI Tests
         run: pnpm uitest
