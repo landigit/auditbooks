@@ -11,13 +11,13 @@ const root = path.join(dirname, '..');
 
 const releaseBinary =
   process.platform === 'win32'
-    ? path.join(root, 'src-tauri', 'target', 'release', 'app.exe')
-    : path.join(root, 'src-tauri', 'target', 'release', 'app');
+    ? path.join(root, 'src-tauri', 'target', 'release', 'auditbooks.exe')
+    : path.join(root, 'src-tauri', 'target', 'release', 'auditbooks');
 
 const debugBinary =
   process.platform === 'win32'
-    ? path.join(root, 'src-tauri', 'target', 'debug', 'app.exe')
-    : path.join(root, 'src-tauri', 'target', 'debug', 'app');
+    ? path.join(root, 'src-tauri', 'target', 'debug', 'auditbooks.exe')
+    : path.join(root, 'src-tauri', 'target', 'debug', 'auditbooks');
 
 const appBinary = fs.existsSync(releaseBinary) ? releaseBinary : debugBinary;
 
@@ -47,7 +47,20 @@ async function waitForCDP(port, timeoutMs = 20000) {
   );
 }
 
+import os from 'os';
+
 (async function run() {
+  // Clean up com.landigit.books AppData directory to ensure a fresh setup wizard flow
+  const appDataDir = path.join(os.homedir(), 'AppData', 'Roaming', 'com.landigit.books');
+  if (fs.existsSync(appDataDir)) {
+    try {
+      fs.rmSync(appDataDir, { recursive: true, force: true });
+      console.log(`# Cleaned up test AppData directory: ${appDataDir}`);
+    } catch (err) {
+      console.warn(`# Warning: Could not clean up AppData directory: ${err.message}`);
+    }
+  }
+
   console.log(`# Spawning Tauri application: ${appBinary}`);
 
   // Set WebView2 environment variable for Windows remote debugging
@@ -88,6 +101,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
   const { Runtime, Page, Console } = client;
   await Runtime.enable();
   await Page.enable();
+  await Runtime.evaluate({ expression: 'window.isTestEnv = true;' });
   await Page.addScriptToEvaluateOnNewDocument({
     source: `
       window.isTestEnv = true;
@@ -216,12 +230,12 @@ async function waitForCDP(port, timeoutMs = 20000) {
     let title = '';
     while (Date.now() - start < 15000) {
       title = await evalJS('document.title');
-      if (title === 'Frappe Books') {
+      if (title === 'Auditbooks') {
         break;
       }
       await wait(500);
     }
-    t.equal(title, 'Frappe Books', 'title matches');
+    t.equal(title, 'Auditbooks', 'title matches');
     t.ok(true, 'webview has loaded');
   });
 
@@ -350,10 +364,10 @@ async function waitForCDP(port, timeoutMs = 20000) {
 
   test('create customer via list and form', async (t) => {
     console.log('# navigating to customers list');
-    await evalJS(`window.router.push('/list/Party/Customers')`);
+    await evalJS(`window.router.push('/list/Party/Customers'); undefined`);
 
     console.log('# waiting for create button');
-    await waitForSelector('button .feather-plus');
+    await waitForSelector('button [data-name="plus"]');
 
     console.log('# clicking plus/entry button');
     const clickResult = await evalJS(`
@@ -365,7 +379,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
           return "clicked Make Entry";
         }
         
-        const plusSvg = document.querySelector('.feather-plus');
+        const plusSvg = document.querySelector('button [data-name="plus"]');
         if (plusSvg) {
           const btn = plusSvg.closest('button');
           if (btn) {
@@ -388,7 +402,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
     console.log('# route after click:', postClickRoute);
 
     console.log('# waiting for save button');
-    await waitForSelector('button .feather-save');
+    await waitForSelector('button [data-name="save"]');
 
     console.log('# filling customer name');
     await evalJS(`
@@ -489,7 +503,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
     `);
 
     console.log('# navigating to items list');
-    await evalJS(`window.router.push('/list/Item')`);
+    await evalJS(`window.router.push('/list/Item'); undefined`);
 
     await waitForExpression(
       '!!(window.lv && window.lv.filterDropdownRef && window.lv.filterDropdownRef.value)'
@@ -500,7 +514,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
       (async () => {
         const dropdown = window.lv.filterDropdownRef.value;
         dropdown.clearAllFilters();
-        await dropdown.setFilter('name', 'like', 'POS Test Item');
+        await dropdown.setFilter({ name: ['like', 'POS Test Item'] });
       })()
     `);
 
@@ -543,7 +557,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
     `);
 
     console.log('# navigating to POS page');
-    await evalJS(`window.router.push('/pos')`);
+    await evalJS(`window.router.push('/pos'); undefined`);
 
     await waitForExpression(
       "!!Array.from(document.querySelectorAll('input')).find(i => i.placeholder.includes('Search Item'))"
@@ -578,7 +592,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
 
   test('Sales Invoice line item calculations', async (t) => {
     console.log('# navigating to Sales Invoice list');
-    await evalJS(`window.router.push('/list/SalesInvoice')`);
+    await evalJS(`window.router.push('/list/SalesInvoice'); undefined`);
     await wait(1000);
 
     console.log('# clicking Make Entry');
@@ -719,7 +733,7 @@ async function waitForCDP(port, timeoutMs = 20000) {
 
   test('POS totals and payment change calculation', async (t) => {
     console.log('# navigating to POS page');
-    await evalJS(`window.router.push('/pos')`);
+    await evalJS(`window.router.push('/pos'); undefined`);
 
     await waitForExpression(
       "!!Array.from(document.querySelectorAll('input')).find(i => i.placeholder.includes('Search Item'))"

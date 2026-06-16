@@ -4,6 +4,7 @@
     :size="size"
     :stroke-width="strokeWidth || 1.5"
     class="feather-icon"
+    :data-name="name"
   />
 </template>
 
