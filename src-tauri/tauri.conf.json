@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Auditbooks",
-  "version": "0.1.0",
+  "version": "0.37.10",
   "identifier": "com.landigit.books",
   "build": {
     "frontendDist": "../src/dist",

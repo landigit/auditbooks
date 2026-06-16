@@ -1,6 +1,6 @@
 {
   "name": "auditbooks",
-  "version": "0.37.1",
+  "version": "0.37.10",
   "type": "module",
   "packageManager": "pnpm@9.15.4",
   "description": "Simple book-keeping app for everyone",
