@@ -130,7 +130,10 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="initialLoaded" class="flex-1 flex flex-col items-center justify-center">
+    <div
+      v-else-if="initialLoaded"
+      class="flex-1 flex flex-col items-center justify-center"
+    >
       <FeatherIcon
         name="file-attachment"
         class="w-24 h-24 text-gray-500 dark:text-gray-400 mb-2"

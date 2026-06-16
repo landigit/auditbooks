@@ -133,7 +133,9 @@ export function translateSchema(
 
     // If the nested object is frozen, replace it with a shallow copy first.
     if (value !== null && Object.isFrozen(value)) {
-      map[key] = Array.isArray(value) ? [...(value as unknown[])] : { ...(value as UnknownMap) };
+      map[key] = Array.isArray(value)
+        ? [...(value as unknown[])]
+        : { ...(value as UnknownMap) };
     }
 
     translateSchema(

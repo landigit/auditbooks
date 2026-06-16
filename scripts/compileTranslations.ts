@@ -3,7 +3,10 @@ import * as path from 'path';
 import { parseCSV } from '../utils/csvParser';
 
 const translationsFolder = path.resolve(import.meta.dirname, '../translations');
-const outputFolder = path.resolve(import.meta.dirname, '../src/public/translations');
+const outputFolder = path.resolve(
+  import.meta.dirname,
+  '../src/public/translations'
+);
 
 async function compile() {
   try {

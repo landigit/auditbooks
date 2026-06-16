@@ -10,7 +10,11 @@ import {
 
 /* eslint-disable no-console, @typescript-eslint/no-floating-promises */
 
-const translationsFolder = path.resolve(import.meta.dirname, '..', 'translations');
+const translationsFolder = path.resolve(
+  import.meta.dirname,
+  '..',
+  'translations'
+);
 const PATTERN = /(?<!\w)t`([^`]+)`/g;
 
 type Content = { fileName: string; content: string };

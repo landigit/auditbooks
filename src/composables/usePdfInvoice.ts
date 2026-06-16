@@ -81,7 +81,8 @@ export const STYLE_PRESETS: Record<InvoiceStyleKey, InvoiceStylePreset> = {
   },
   Custom: {
     label: 'Custom',
-    description: 'Custom layout template — customize colors, fonts, columns & bank details',
+    description:
+      'Custom layout template — customize colors, fonts, columns & bank details',
     primaryColor: '#1e7a6e',
     accentColor: '#f59e0b',
     headerTextColor: '#ffffff',
@@ -212,9 +213,11 @@ type SavedConfig = {
   customBaseStyle?: 'Classic' | 'Modern' | 'POS';
 };
 
-export async function loadColumnConfig(
-  schemaName: string
-): Promise<{ columns: ColumnDef[]; style: InvoiceStyleKey; customBaseStyle?: 'Classic' | 'Modern' | 'POS' }> {
+export async function loadColumnConfig(schemaName: string): Promise<{
+  columns: ColumnDef[];
+  style: InvoiceStyleKey;
+  customBaseStyle?: 'Classic' | 'Modern' | 'POS';
+}> {
   try {
     const ps = await fyo.doc.getDoc(ModelNameEnum.PrintSettings);
     const raw = ps.get('columnConfig') as string | undefined;
@@ -368,7 +371,11 @@ export function buildDocDefinition(
   styleKey: InvoiceStyleKey = 'Classic',
   showPageNumbers: boolean = true
 ): TDocumentDefinitions {
-  const effectiveStyleKey = styleKey === 'Custom' ? ((values.print as any)?.customBaseStyle || 'Classic') as InvoiceStyleKey : styleKey;
+  const effectiveStyleKey =
+    styleKey === 'Custom'
+      ? (((values.print as any)?.customBaseStyle ||
+          'Classic') as InvoiceStyleKey)
+      : styleKey;
   const preset = STYLE_PRESETS[effectiveStyleKey];
   const doc = values.doc;
   const print = values.print;
@@ -379,8 +386,7 @@ export function buildDocDefinition(
     (print.color as string | undefined) ||
     preset.primaryColor;
   const accentColor =
-    (print.accentColor as string | undefined) ||
-    preset.accentColor;
+    (print.accentColor as string | undefined) || preset.accentColor;
   const headerTextColor = preset.headerTextColor;
   const { pageSize, pageMargins, compactItems } = preset;
 
@@ -1308,27 +1314,43 @@ export function buildDocDefinition(
       : null;
 
   // UPI QR Code block (mock QR image generated/simulated since we don't have user's actual UPI ID, but we can generate a QR code block using pdfmake's QR code feature!)
-  const paymentQrBlock: Content | null =
-    print.displayPaymentQr
-      ? {
-          stack: [
-            { text: 'Scan to Pay (UPI):', bold: true, fontSize: 8, margin: [0, 4, 0, 2] },
-            { qr: `upi://pay?pa=${str(print.email || 'pay')}&pn=${encodeURIComponent(str(print.companyName))}&am=${str(doc.grandTotal)}`, fit: 70 },
-          ],
-          margin: [0, 4, 0, 8],
-        }
-      : null;
+  const paymentQrBlock: Content | null = print.displayPaymentQr
+    ? {
+        stack: [
+          {
+            text: 'Scan to Pay (UPI):',
+            bold: true,
+            fontSize: 8,
+            margin: [0, 4, 0, 2],
+          },
+          {
+            qr: `upi://pay?pa=${str(print.email || 'pay')}&pn=${encodeURIComponent(str(print.companyName))}&am=${str(doc.grandTotal)}`,
+            fit: 70,
+          },
+        ],
+        margin: [0, 4, 0, 8],
+      }
+    : null;
 
-  const bankDetailsBlock: Content | null =
-    print.bankDetails
-      ? {
-          stack: [
-            { text: 'Bank Details:', bold: true, fontSize: 8, margin: [0, 4, 0, 2] },
-            { text: str(print.bankDetails), fontSize: 7.5, color: '#555', lineHeight: 1.2 },
-          ],
-          margin: [0, 4, 0, 8],
-        }
-      : null;
+  const bankDetailsBlock: Content | null = print.bankDetails
+    ? {
+        stack: [
+          {
+            text: 'Bank Details:',
+            bold: true,
+            fontSize: 8,
+            margin: [0, 4, 0, 2],
+          },
+          {
+            text: str(print.bankDetails),
+            fontSize: 7.5,
+            color: '#555',
+            lineHeight: 1.2,
+          },
+        ],
+        margin: [0, 4, 0, 8],
+      }
+    : null;
 
   const sigSealPos =
     (print.sigSealPosition as string | undefined) || 'before_terms';
@@ -1413,37 +1435,39 @@ export function buildDocDefinition(
                         },
                         (print.displaySignature && print.signature) ||
                         (print.displaySeal && print.seal && sigSealInSignatory)
-                          ? (
-                              (print.displaySignature && print.signature) && (print.displaySeal && print.seal && sigSealInSignatory)
-                                ? {
-                                    columns: [
-                                      {
-                                        image: str(print.signature),
-                                        width: signatureWidth * 0.75,
-                                        alignment: 'center' as const,
-                                      },
-                                      {
-                                        image: str(print.seal),
-                                        width: sealWidth * 0.75,
-                                        alignment: 'center' as const,
-                                      }
-                                    ],
-                                    margin: [0, 4, 0, 4],
-                                  }
-                                : (print.displaySignature && print.signature)
-                                  ? {
-                                      image: str(print.signature),
-                                      width: signatureWidth * 0.75,
-                                      alignment: 'center' as const,
-                                      margin: [0, 4, 0, 4],
-                                    }
-                                  : {
-                                      image: str(print.seal),
-                                      width: sealWidth * 0.75,
-                                      alignment: 'center' as const,
-                                      margin: [0, 4, 0, 4],
-                                    }
-                            )
+                          ? print.displaySignature &&
+                            print.signature &&
+                            print.displaySeal &&
+                            print.seal &&
+                            sigSealInSignatory
+                            ? {
+                                columns: [
+                                  {
+                                    image: str(print.signature),
+                                    width: signatureWidth * 0.75,
+                                    alignment: 'center' as const,
+                                  },
+                                  {
+                                    image: str(print.seal),
+                                    width: sealWidth * 0.75,
+                                    alignment: 'center' as const,
+                                  },
+                                ],
+                                margin: [0, 4, 0, 4],
+                              }
+                            : print.displaySignature && print.signature
+                              ? {
+                                  image: str(print.signature),
+                                  width: signatureWidth * 0.75,
+                                  alignment: 'center' as const,
+                                  margin: [0, 4, 0, 4],
+                                }
+                              : {
+                                  image: str(print.seal),
+                                  width: sealWidth * 0.75,
+                                  alignment: 'center' as const,
+                                  margin: [0, 4, 0, 4],
+                                }
                           : { text: '\n\n\n', fontSize: 8 },
                         {
                           text: 'Authorized Signatory',
@@ -1506,38 +1530,40 @@ export function buildDocDefinition(
                 },
                 (print.displaySignature && print.signature) ||
                 (print.displaySeal && print.seal && sigSealInSignatory)
-                  ? (
-                      (print.displaySignature && print.signature) && (print.displaySeal && print.seal && sigSealInSignatory)
-                        ? {
-                            columns: [
-                              { text: '' },
-                              {
-                                image: str(print.signature),
-                                width: signatureWidth * 0.75,
-                                alignment: 'right' as const,
-                              },
-                              {
-                                image: str(print.seal),
-                                width: sealWidth * 0.75,
-                                alignment: 'right' as const,
-                              }
-                            ],
-                            margin: [0, 4, 0, 4],
-                          }
-                        : (print.displaySignature && print.signature)
-                          ? {
-                              image: str(print.signature),
-                              width: signatureWidth * 0.75,
-                              alignment: 'right' as const,
-                              margin: [0, 4, 0, 4],
-                            }
-                          : {
-                              image: str(print.seal),
-                              width: sealWidth * 0.75,
-                              alignment: 'right' as const,
-                              margin: [0, 4, 0, 4],
-                            }
-                    )
+                  ? print.displaySignature &&
+                    print.signature &&
+                    print.displaySeal &&
+                    print.seal &&
+                    sigSealInSignatory
+                    ? {
+                        columns: [
+                          { text: '' },
+                          {
+                            image: str(print.signature),
+                            width: signatureWidth * 0.75,
+                            alignment: 'right' as const,
+                          },
+                          {
+                            image: str(print.seal),
+                            width: sealWidth * 0.75,
+                            alignment: 'right' as const,
+                          },
+                        ],
+                        margin: [0, 4, 0, 4],
+                      }
+                    : print.displaySignature && print.signature
+                      ? {
+                          image: str(print.signature),
+                          width: signatureWidth * 0.75,
+                          alignment: 'right' as const,
+                          margin: [0, 4, 0, 4],
+                        }
+                      : {
+                          image: str(print.seal),
+                          width: sealWidth * 0.75,
+                          alignment: 'right' as const,
+                          margin: [0, 4, 0, 4],
+                        }
                   : { text: '\n\n\n', fontSize: 8 },
                 {
                   text: 'Authorized Signatory',
@@ -1556,7 +1582,9 @@ export function buildDocDefinition(
   const def: TDocumentDefinitions = {
     info: { title: str(doc.name) },
     pageSize,
-    pageOrientation: (print.pageOrientation as 'portrait' | 'landscape' | undefined) || 'portrait',
+    pageOrientation:
+      (print.pageOrientation as 'portrait' | 'landscape' | undefined) ||
+      'portrait',
     pageMargins: [
       pageMargins[0],
       pageMargins[1],
@@ -1637,7 +1665,8 @@ export async function getPdfMake() {
   (pdfMake as any).vfs['data/Helvetica.afm'] = helveticaAfm;
   (pdfMake as any).vfs['data/Helvetica-Bold.afm'] = helveticaBoldAfm;
   (pdfMake as any).vfs['data/Helvetica-Oblique.afm'] = helveticaObliqueAfm;
-  (pdfMake as any).vfs['data/Helvetica-BoldOblique.afm'] = helveticaBoldObliqueAfm;
+  (pdfMake as any).vfs['data/Helvetica-BoldOblique.afm'] =
+    helveticaBoldObliqueAfm;
 
   (pdfMake as any).vfs['data/Times-Roman.afm'] = timesRomanAfm;
   (pdfMake as any).vfs['data/Times-Bold.afm'] = timesBoldAfm;

@@ -4,7 +4,8 @@ const Dashboard = () => import('src/pages/Dashboard/Dashboard.vue');
 const GetStarted = () => import('src/pages/GetStarted.vue');
 const ImportWizard = () => import('src/pages/ImportWizard.vue');
 const ListView = () => import('src/composables/ListView/ListView.vue');
-const InvoiceDesigner = () => import('src/pages/InvoiceDesigner/InvoiceDesigner.vue');
+const InvoiceDesigner = () =>
+  import('src/pages/InvoiceDesigner/InvoiceDesigner.vue');
 const ReportPrintView = () => import('src/pages/PrintView/ReportPrintView.vue');
 const QuickEditForm = () => import('src/pages/QuickEditForm.vue');
 const Report = () => import('src/pages/Report.vue');
@@ -143,7 +144,8 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/template-builder/:name',
     name: 'TemplateBuilderResolver',
-    component: () => import('src/pages/InvoiceDesigner/TemplateBuilderResolver.vue'),
+    component: () =>
+      import('src/pages/InvoiceDesigner/TemplateBuilderResolver.vue'),
     props: true,
   },
 ];

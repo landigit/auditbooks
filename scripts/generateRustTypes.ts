@@ -140,7 +140,10 @@ pub trait SqliteTable: Serialize + for<'de> Deserialize<'de> {
     }
   }
 
-  const outputPath = path.join(import.meta.dirname, '../src-tauri/src/models.rs');
+  const outputPath = path.join(
+    import.meta.dirname,
+    '../src-tauri/src/models.rs'
+  );
   fs.writeFileSync(outputPath, code, 'utf-8');
   console.log(`Successfully generated Rust types to ${outputPath}`);
 }

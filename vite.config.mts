@@ -72,13 +72,13 @@ export default () => {
     },
     esbuild: {
       supported: {
-        'destructuring': true,
+        destructuring: true,
       },
     },
     optimizeDeps: {
       esbuildOptions: {
         supported: {
-          'destructuring': true,
+          destructuring: true,
         },
       },
     },

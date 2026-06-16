@@ -2,8 +2,16 @@
   <div
     class="flex flex-col flex-1 h-full bg-gray-25 dark:bg-gray-875 overflow-hidden"
   >
-    <PageHeader :border="true" :title="isPrintView ? t`Print View` : t`Invoice Designer`">
-      <Button v-if="isPrintView" type="primary" class="text-xs" @click="customizeLayout">
+    <PageHeader
+      :border="true"
+      :title="isPrintView ? t`Print View` : t`Invoice Designer`"
+    >
+      <Button
+        v-if="isPrintView"
+        type="primary"
+        class="text-xs"
+        @click="customizeLayout"
+      >
         <feather-icon name="sliders" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Customize Layout` }}</span>
       </Button>
@@ -11,7 +19,11 @@
         <feather-icon name="refresh-cw" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Reset` }}</span>
       </Button>
-      <Button v-if="!isPrintView && selectedStyle === 'Custom'" class="text-xs" @click="save">
+      <Button
+        v-if="!isPrintView && selectedStyle === 'Custom'"
+        class="text-xs"
+        @click="save"
+      >
         <feather-icon name="save" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Save Layout` }}</span>
       </Button>
@@ -205,7 +217,10 @@
               {{ t`Branding Customizer` }}
             </p>
             <div class="flex items-center justify-between gap-2">
-              <label for="primaryColor" class="text-xs text-gray-700 dark:text-gray-300">
+              <label
+                for="primaryColor"
+                class="text-xs text-gray-700 dark:text-gray-300"
+              >
                 {{ t`Primary Color` }}
               </label>
               <input
@@ -216,7 +231,10 @@
               />
             </div>
             <div class="flex items-center justify-between gap-2">
-              <label for="accentColor" class="text-xs text-gray-700 dark:text-gray-300">
+              <label
+                for="accentColor"
+                class="text-xs text-gray-700 dark:text-gray-300"
+              >
                 {{ t`Accent Color` }}
               </label>
               <input
@@ -271,7 +289,10 @@
               {{ t`Legal & Payment Info` }}
             </p>
             <div class="flex flex-col gap-1">
-              <label for="bankDetails" class="text-xs text-gray-700 dark:text-gray-300">
+              <label
+                for="bankDetails"
+                class="text-xs text-gray-700 dark:text-gray-300"
+              >
                 {{ t`Bank Details` }}
               </label>
               <textarea
@@ -297,7 +318,10 @@
               </label>
             </div>
             <div class="flex flex-col gap-1">
-              <label for="termsAndConditions" class="text-xs text-gray-700 dark:text-gray-300">
+              <label
+                for="termsAndConditions"
+                class="text-xs text-gray-700 dark:text-gray-300"
+              >
                 {{ t`Terms & Conditions` }}
               </label>
               <textarea
@@ -328,7 +352,10 @@
               @dragover.prevent="onDragOver(idx)"
               @drop="onDrop"
             >
-              <ColumnEditor :col="col" @update:col="(c) => (columns[idx] = c)" />
+              <ColumnEditor
+                :col="col"
+                @update:col="(c) => (columns[idx] = c)"
+              />
             </div>
 
             <!-- Add unused fields -->
@@ -354,11 +381,18 @@
             </div>
           </div>
         </div>
-        <div v-else class="p-5 text-center text-xs text-gray-500 border-t dark:border-gray-800 flex flex-col gap-2 items-center justify-center">
+        <div
+          v-else
+          class="p-5 text-center text-xs text-gray-500 border-t dark:border-gray-800 flex flex-col gap-2 items-center justify-center"
+        >
           <feather-icon name="info" class="w-6 h-6 text-gray-400 mb-1" />
-          <p class="font-bold text-gray-700 dark:text-gray-300 text-xs">{{ t`Standard Layout (Read-Only)` }}</p>
+          <p class="font-bold text-gray-700 dark:text-gray-300 text-xs">
+            {{ t`Standard Layout (Read-Only)` }}
+          </p>
           <p class="text-[10px] text-gray-400 leading-relaxed max-w-[200px]">
-            {{ t`Modern, Classic, and POS layouts are system defaults and cannot be customized.` }}
+            {{
+              t`Modern, Classic, and POS layouts are system defaults and cannot be customized.`
+            }}
           </p>
         </div>
       </aside>
@@ -680,10 +714,8 @@
                 font-size: 0.72rem;
               "
             >
-              <p style="font-weight: bold; margin: 0 0 2px 0">
-                Bank Details:
-              </p>
-              <p style="margin: 0; color: #4b5563; white-space: pre-line;">
+              <p style="font-weight: bold; margin: 0 0 2px 0">Bank Details:</p>
+              <p style="margin: 0; color: #4b5563; white-space: pre-line">
                 {{ printData.bankDetails }}
               </p>
             </div>
@@ -702,7 +734,20 @@
               <p style="font-weight: bold; margin: 0 0 4px 0">
                 Scan to Pay (UPI)
               </p>
-              <div style="background: #f3f4f6; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 8px; border: 1px dashed #9ca3af; color: #6b7280;">
+              <div
+                style="
+                  background: #f3f4f6;
+                  width: 80px;
+                  height: 80px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin: 0 auto;
+                  font-size: 8px;
+                  border: 1px dashed #9ca3af;
+                  color: #6b7280;
+                "
+              >
                 [UPI QR Code]
               </div>
             </div>
@@ -723,7 +768,8 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'before_terms' &&
-                      printData.displaySeal && printData.seal
+                      printData.displaySeal &&
+                      printData.seal
                     "
                     style="
                       display: flex;
@@ -781,7 +827,8 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'after_terms' &&
-                      printData.displaySeal && printData.seal
+                      printData.displaySeal &&
+                      printData.seal
                     "
                     style="
                       display: flex;
@@ -832,7 +879,8 @@
                   v-if="
                     (printData.displaySignature && printData.signature) ||
                     (printData.sigSealPosition === 'authorized_signatory' &&
-                      printData.displaySeal && printData.seal)
+                      printData.displaySeal &&
+                      printData.seal)
                   "
                   style="
                     display: flex;
@@ -854,7 +902,8 @@
                   <img
                     v-if="
                       printData.sigSealPosition === 'authorized_signatory' &&
-                      printData.displaySeal && printData.seal
+                      printData.displaySeal &&
+                      printData.seal
                     "
                     :src="printData.seal"
                     :style="{ width: (printData.sealSize || 50) * 0.75 + 'px' }"
@@ -1421,10 +1470,8 @@
                 font-size: 0.72rem;
               "
             >
-              <p style="font-weight: bold; margin: 0 0 2px 0">
-                Bank Details:
-              </p>
-              <p style="margin: 0; color: #4b5563; white-space: pre-line;">
+              <p style="font-weight: bold; margin: 0 0 2px 0">Bank Details:</p>
+              <p style="margin: 0; color: #4b5563; white-space: pre-line">
                 {{ printData.bankDetails }}
               </p>
             </div>
@@ -1443,7 +1490,20 @@
               <p style="font-weight: bold; margin: 0 0 4px 0">
                 Scan to Pay (UPI)
               </p>
-              <div style="background: #f3f4f6; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 8px; border: 1px dashed #9ca3af; color: #6b7280;">
+              <div
+                style="
+                  background: #f3f4f6;
+                  width: 80px;
+                  height: 80px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin: 0 auto;
+                  font-size: 8px;
+                  border: 1px dashed #9ca3af;
+                  color: #6b7280;
+                "
+              >
                 [UPI QR Code]
               </div>
             </div>
@@ -1464,7 +1524,8 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'before_terms' &&
-                      printData.displaySeal && printData.seal
+                      printData.displaySeal &&
+                      printData.seal
                     "
                     style="
                       display: flex;
@@ -1482,7 +1543,7 @@
                     />
                   </div>
 
-                   <div
+                  <div
                     v-if="printData.termsAndConditions"
                     style="margin-top: 8px"
                   >
@@ -1506,7 +1567,8 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'after_terms' &&
-                      printData.displaySeal && printData.seal
+                      printData.displaySeal &&
+                      printData.seal
                     "
                     style="
                       display: flex;
@@ -1534,7 +1596,8 @@
                   v-if="
                     (printData.displaySignature && printData.signature) ||
                     (printData.sigSealPosition === 'authorized_signatory' &&
-                      printData.displaySeal && printData.seal)
+                      printData.displaySeal &&
+                      printData.seal)
                   "
                   style="
                     display: flex;
@@ -1556,7 +1619,8 @@
                   <img
                     v-if="
                       printData.sigSealPosition === 'authorized_signatory' &&
-                      printData.displaySeal && printData.seal
+                      printData.displaySeal &&
+                      printData.seal
                     "
                     :src="printData.seal"
                     :style="{ width: (printData.sealSize || 50) * 0.75 + 'px' }"
@@ -1633,11 +1697,21 @@ const { t } = useApp();
 const route = useRoute();
 const router = useRouter();
 
-const isPrintView = computed(() => route.name === 'PrintView' || route.path.startsWith('/print/'));
+const isPrintView = computed(
+  () => route.name === 'PrintView' || route.path.startsWith('/print/')
+);
 
 function customizeLayout() {
-  const tName = String(fyo.singles.Defaults?.get(props.schemaName[0].toLowerCase() + props.schemaName.slice(1) + 'PrintTemplate') || '');
-  routeTo(`/invoice-designer/${props.schemaName}/${encodeURIComponent(props.name)}?templateName=${encodeURIComponent(tName)}`);
+  const tName = String(
+    fyo.singles.Defaults?.get(
+      props.schemaName[0].toLowerCase() +
+        props.schemaName.slice(1) +
+        'PrintTemplate'
+    ) || ''
+  );
+  routeTo(
+    `/invoice-designer/${props.schemaName}/${encodeURIComponent(props.name)}?templateName=${encodeURIComponent(tName)}`
+  );
 }
 
 const { values: rawValues, initialize } = usePrintView(props);
@@ -1651,14 +1725,20 @@ let dragOverIdx = -1;
 // ── computed helpers ──
 const values = computed(() => rawValues.value as PdfInvoiceValues | null);
 const effectiveStyle = computed(() => {
-  if (selectedStyle.value === 'Custom' || (selectedStyle.value as string) === 'Quote') {
+  if (
+    selectedStyle.value === 'Custom' ||
+    (selectedStyle.value as string) === 'Quote'
+  ) {
     return customBaseStyle.value || 'Classic';
   }
   return selectedStyle.value;
 });
 const currentPreset = computed(() => {
   const style = effectiveStyle.value;
-  const key = (style as string) === 'Amazon' ? 'Modern' : ((style as string) === 'Quote' ? 'Custom' : style) as InvoiceStyleKey;
+  const key =
+    (style as string) === 'Amazon'
+      ? 'Modern'
+      : (((style as string) === 'Quote' ? 'Custom' : style) as InvoiceStyleKey);
   const preset = STYLE_PRESETS[key] || STYLE_PRESETS.Classic;
   return {
     ...preset,
@@ -1809,12 +1889,18 @@ onMounted(async () => {
       styleVal = 'POS';
     } else if (lowerName.startsWith('classic')) {
       styleVal = 'Classic';
-    } else if (lowerName.startsWith('custom') || lowerName.startsWith('quote')) {
+    } else if (
+      lowerName.startsWith('custom') ||
+      lowerName.startsWith('quote')
+    ) {
       styleVal = 'Custom';
     }
 
     try {
-      const templateDoc = await fyo.doc.getDoc(ModelNameEnum.PrintTemplate, tName);
+      const templateDoc = await fyo.doc.getDoc(
+        ModelNameEnum.PrintTemplate,
+        tName
+      );
       const templateContent = templateDoc.get('template') as string | undefined;
       if (templateContent) {
         const config = JSON.parse(templateContent);
@@ -1899,7 +1985,13 @@ function addField(f: ColumnDef) {
 async function save() {
   try {
     // Pass silent=true to prevent usePdfInvoice from firing the default toast
-    await saveColumnConfig(props.schemaName, columns.value, selectedStyle.value, customBaseStyle.value, true);
+    await saveColumnConfig(
+      props.schemaName,
+      columns.value,
+      selectedStyle.value,
+      customBaseStyle.value,
+      true
+    );
 
     // Save PrintSettings fields
     const ps = await fyo.doc.getDoc('PrintSettings');
@@ -1922,14 +2014,18 @@ async function save() {
     await ps.set('termsAndConditions', termsAndConditions.value);
     await ps.sync();
 
-    const templateLabel = fyo.schemaMap[props.schemaName]?.label || props.schemaName;
+    const templateLabel =
+      fyo.schemaMap[props.schemaName]?.label || props.schemaName;
     const templateName = `${STYLE_PRESETS[selectedStyle.value]?.label || selectedStyle.value} - ${templateLabel}`;
 
     // Dynamically sync PrintTemplate record for route integration
     try {
       let templateDoc;
       try {
-        templateDoc = await fyo.doc.getDoc(ModelNameEnum.PrintTemplate, templateName);
+        templateDoc = await fyo.doc.getDoc(
+          ModelNameEnum.PrintTemplate,
+          templateName
+        );
       } catch {
         templateDoc = fyo.doc.getNewDoc(ModelNameEnum.PrintTemplate, {
           name: templateName,
@@ -1937,7 +2033,7 @@ async function save() {
           isCustom: true,
         });
       }
-      
+
       const configObj = {
         columns: columns.value,
         style: selectedStyle.value,
@@ -1957,7 +2053,7 @@ async function save() {
       actionText: t`View Layouts`,
       action() {
         routeTo(`/list/PrintTemplate`);
-      }
+      },
     });
   } catch (err) {
     console.error('Save layout failed:', err);
@@ -1967,9 +2063,11 @@ async function save() {
 
 async function download() {
   if (!values.value) return;
-  
+
   // Clone values to make sure changes are passed to PDF builder
-  const pdfValues = JSON.parse(JSON.stringify(values.value)) as PdfInvoiceValues;
+  const pdfValues = JSON.parse(
+    JSON.stringify(values.value)
+  ) as PdfInvoiceValues;
   if (pdfValues.print) {
     const p = pdfValues.print as any;
     p.primaryColor = primaryColor.value;
@@ -1982,7 +2080,7 @@ async function download() {
     p.termsAndConditions = termsAndConditions.value;
     p.customBaseStyle = customBaseStyle.value;
   }
-  
+
   await downloadInvoicePdf(
     props.name || (values.value.doc.name as string),
     pdfValues,
@@ -1994,9 +2092,11 @@ async function download() {
 
 async function doPrint() {
   if (!values.value) return;
-  
+
   // Clone values to make sure changes are passed to PDF builder
-  const pdfValues = JSON.parse(JSON.stringify(values.value)) as PdfInvoiceValues;
+  const pdfValues = JSON.parse(
+    JSON.stringify(values.value)
+  ) as PdfInvoiceValues;
   if (pdfValues.print) {
     const p = pdfValues.print as any;
     p.primaryColor = primaryColor.value;
@@ -2009,7 +2109,7 @@ async function doPrint() {
     p.termsAndConditions = termsAndConditions.value;
     p.customBaseStyle = customBaseStyle.value;
   }
-  
+
   await printInvoicePdf(
     props.name || (values.value.doc.name as string),
     pdfValues,

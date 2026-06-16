@@ -51,13 +51,20 @@ import os from 'os';
 
 (async function run() {
   // Clean up com.landigit.books AppData directory to ensure a fresh setup wizard flow
-  const appDataDir = path.join(os.homedir(), 'AppData', 'Roaming', 'com.landigit.books');
+  const appDataDir = path.join(
+    os.homedir(),
+    'AppData',
+    'Roaming',
+    'com.landigit.books'
+  );
   if (fs.existsSync(appDataDir)) {
     try {
       fs.rmSync(appDataDir, { recursive: true, force: true });
       console.log(`# Cleaned up test AppData directory: ${appDataDir}`);
     } catch (err) {
-      console.warn(`# Warning: Could not clean up AppData directory: ${err.message}`);
+      console.warn(
+        `# Warning: Could not clean up AppData directory: ${err.message}`
+      );
     }
   }
 

@@ -42,7 +42,8 @@ const props = withDefaults(
 );
 
 const computedSize = computed(() => {
-  const size = typeof props.size === 'string' ? parseInt(props.size, 10) : props.size;
+  const size =
+    typeof props.size === 'string' ? parseInt(props.size, 10) : props.size;
   return !isNaN(size) && size > 0 ? size : 24;
 });
 
