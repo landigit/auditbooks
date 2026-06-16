@@ -103,8 +103,12 @@ export function translateSchema(
   translateables: string[]
 ) {
   if (Array.isArray(map)) {
-    for (const item of map) {
-      translateSchema(item, languageMap, translateables);
+    for (let i = 0; i < map.length; i++) {
+      // If the item is frozen, replace it with a mutable copy so we can write.
+      if (Object.isFrozen(map[i])) {
+        map[i] = { ...map[i] };
+      }
+      translateSchema(map[i], languageMap, translateables);
     }
     return;
   }
@@ -127,8 +131,13 @@ export function translateSchema(
       continue;
     }
 
+    // If the nested object is frozen, replace it with a shallow copy first.
+    if (value !== null && Object.isFrozen(value)) {
+      map[key] = Array.isArray(value) ? [...(value as unknown[])] : { ...(value as UnknownMap) };
+    }
+
     translateSchema(
-      value as UnknownMap | UnknownMap[],
+      map[key] as UnknownMap | UnknownMap[],
       languageMap,
       translateables
     );

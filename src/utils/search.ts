@@ -947,7 +947,7 @@ export class Search {
       let value = map[fn] as string | undefined;
       const field = this.fyo.getField(searchable.schemaName, fn);
 
-      const { options } = field as OptionField;
+      const { options } = (field ?? {}) as OptionField;
       if (options) {
         value = options.find((o) => o.value === value)?.label ?? value;
       }

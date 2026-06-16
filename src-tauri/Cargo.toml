@@ -1,10 +1,10 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+name = "auditbooks"
+version = "0.37.10"
+description = "Simple Book keeping app for Everyone"
+authors = ["Landgit Agency"]
+license = "AGPL-3.0-only"
+repository = "https://gitlab.com/landgit/auditbooks"
 edition = "2021"
 rust-version = "1.77.2"
 
@@ -29,6 +29,7 @@ tauri-plugin-dialog = "2.7.1"
 tauri-plugin-fs = "2.5.1"
 tauri-plugin-store = "2.4.3"
 tauri-plugin-opener = "2"
+tauri-plugin-updater = "2"
 
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.21"

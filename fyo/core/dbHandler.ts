@@ -86,12 +86,14 @@ export class DatabaseHandler extends DatabaseBase {
   }
 
   async translateSchemaMap(languageMap?: LanguageMap) {
+    // Always fetch a fresh copy and shallow-copy it first — getCoreSchemas()/getAppSchemas()
+    // deep-freezes the returned SchemaMap. We must pass a mutable top-level object
+    // to translateSchema so it can replace nested frozen schema objects.
+    this.#schemaMap = { ...(await this.#demux.getSchemaMap()) };
     if (languageMap) {
       translateSchema(this.#schemaMap, languageMap, schemaTranslateables);
-    } else {
-      this.#schemaMap = await this.#demux.getSchemaMap();
-      this.#setFieldMap();
     }
+    this.#setFieldMap();
   }
 
   async purgeCache() {

@@ -158,8 +158,8 @@ export default {
       return ratio;
     },
     tableFields() {
-      const fields = fyo.schemaMap[this.df.target].tableFields ?? [];
-      return fields.map((fieldname) => fyo.getField(this.df.target, fieldname));
+      const fields = fyo.schemaMap[this.df.target]?.tableFields ?? [];
+      return fields.map((fieldname) => fyo.getField(this.df.target, fieldname)).filter(Boolean);
     },
   },
   watch: {
