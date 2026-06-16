@@ -33,7 +33,34 @@ export class PrintTemplate extends Doc {
             return fyo.schemaMap[value as string]?.label ?? '';
           },
         },
-        'isCustom',
+        {
+          label: fyo.t`Is Custom`,
+          fieldname: 'isCustom',
+          fieldtype: 'Data',
+          display(value) {
+            return value ? fyo.t`Yes` : fyo.t`No`;
+          },
+        },
+        {
+          label: fyo.t`Created At`,
+          fieldname: 'created',
+          fieldtype: 'Datetime',
+          display(value) {
+            if (!value) return '';
+            const d = new Date(String(value));
+            if (isNaN(d.getTime())) return String(value);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            let hours = d.getHours();
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const strTime = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
+            return `${day}/${month}/${year} ${strTime}`;
+          },
+        },
       ],
     };
   }

@@ -130,7 +130,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="flex-1 flex flex-col items-center justify-center">
+    <div v-else-if="initialLoaded" class="flex-1 flex flex-col items-center justify-center">
       <FeatherIcon
         name="file-attachment"
         class="w-24 h-24 text-gray-500 dark:text-gray-400 mb-2"
@@ -190,6 +190,7 @@ const pageStart = ref(0);
 const pageEnd = ref(20);
 const statusMap = ref<Record<string, string>>({});
 const selectedItems = ref<string[]>([]);
+const initialLoaded = ref(false);
 
 const dataSlice = computed(() => {
   return data.value.slice(pageStart.value, pageEnd.value);
@@ -431,6 +432,7 @@ async function updateData(filters?: Record<string, unknown>) {
     pageEnd.value = Math.min(20, data.value.length);
   }
 
+  initialLoaded.value = true;
   emit('updatedData', filters);
 }
 
@@ -458,6 +460,7 @@ watch(
       return;
     }
     selectedItems.value = [];
+    initialLoaded.value = false;
     await updateData();
     setUpdateListeners();
   }

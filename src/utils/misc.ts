@@ -188,7 +188,8 @@ export async function getReport(name: keyof typeof reports) {
     return cachedReport;
   }
 
-  const report = new reports[name](fyo);
+  const ReportClass = await reports[name].load();
+  const report = new ReportClass(fyo);
   await report.initialize();
   fyo.store.reports[name] = report;
   return report;

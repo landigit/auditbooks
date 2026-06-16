@@ -11,7 +11,7 @@
         <feather-icon name="refresh-cw" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Reset` }}</span>
       </Button>
-      <Button v-if="!isPrintView && selectedStyle === 'Quote'" class="text-xs" @click="save">
+      <Button v-if="!isPrintView && selectedStyle === 'Custom'" class="text-xs" @click="save">
         <feather-icon name="save" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Save Layout` }}</span>
       </Button>
@@ -76,7 +76,7 @@
         </div>
 
         <!-- Customization controls - only visible for Custom layout ('Quote' preset) -->
-        <div v-if="selectedStyle === 'Quote'">
+        <div v-if="selectedStyle === 'Custom'">
           <!-- Base Design Selection -->
           <div class="p-3 border-b dark:border-gray-800 flex flex-col gap-1.5">
             <label
@@ -177,7 +177,7 @@
                 for="sigSealPosition"
                 class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest"
               >
-                {{ t`Signature & Seal Position` }}
+                {{ t`Seal Position` }}
               </label>
               <select
                 id="sigSealPosition"
@@ -374,7 +374,7 @@
           <div
             v-if="effectiveStyle === 'Modern'"
             ref="previewContainer"
-            class="bg-white mx-auto rounded-none shadow-md"
+            class="bg-white mx-auto rounded-none shadow-md invoice-preview-card"
             style="
               width: 794px;
               min-height: 1123px;
@@ -522,7 +522,7 @@
                 </p>
                 <p style="margin: 2px 0 0 0">
                   <span style="font-weight: bold">Order Date:</span>
-                  {{ docData.date }}
+                  {{ docData.date }} {{ docData.time }}
                 </p>
               </div>
               <div style="text-align: right">
@@ -532,7 +532,7 @@
                 </p>
                 <p style="margin: 2px 0 0 0">
                   <span style="font-weight: bold">Invoice Date :</span>
-                  {{ docData.date }}
+                  {{ docData.date }} {{ docData.time }}
                 </p>
               </div>
             </div>
@@ -723,8 +723,7 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'before_terms' &&
-                      ((printData.displaySignature && printData.signature) ||
-                        (printData.displaySeal && printData.seal))
+                      printData.displaySeal && printData.seal
                     "
                     style="
                       display: flex;
@@ -736,31 +735,6 @@
                     "
                   >
                     <div
-                      v-if="printData.displaySignature && printData.signature"
-                      style="
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                      "
-                    >
-                      <img
-                        :src="printData.signature"
-                        :style="{
-                          width: (printData.signatureSize || 80) + 'px',
-                        }"
-                        style="height: auto"
-                      />
-                      <span
-                        style="
-                          font-size: 0.6rem;
-                          color: #6b7280;
-                          margin-top: 2px;
-                        "
-                        >Signature</span
-                      >
-                    </div>
-                    <div
-                      v-if="printData.displaySeal && printData.seal"
                       style="
                         display: flex;
                         flex-direction: column;
@@ -807,8 +781,7 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'after_terms' &&
-                      ((printData.displaySignature && printData.signature) ||
-                        (printData.displaySeal && printData.seal))
+                      printData.displaySeal && printData.seal
                     "
                     style="
                       display: flex;
@@ -819,31 +792,6 @@
                     "
                   >
                     <div
-                      v-if="printData.displaySignature && printData.signature"
-                      style="
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                      "
-                    >
-                      <img
-                        :src="printData.signature"
-                        :style="{
-                          width: (printData.signatureSize || 80) + 'px',
-                        }"
-                        style="height: auto"
-                      />
-                      <span
-                        style="
-                          font-size: 0.6rem;
-                          color: #6b7280;
-                          margin-top: 2px;
-                        "
-                        >Signature</span
-                      >
-                    </div>
-                    <div
-                      v-if="printData.displaySeal && printData.seal"
                       style="
                         display: flex;
                         flex-direction: column;
@@ -882,9 +830,9 @@
                 </p>
                 <div
                   v-if="
-                    printData.sigSealPosition === 'authorized_signatory' &&
-                    ((printData.displaySignature && printData.signature) ||
-                      (printData.displaySeal && printData.seal))
+                    (printData.displaySignature && printData.signature) ||
+                    (printData.sigSealPosition === 'authorized_signatory' &&
+                      printData.displaySeal && printData.seal)
                   "
                   style="
                     display: flex;
@@ -904,7 +852,10 @@
                     style="height: auto"
                   />
                   <img
-                    v-if="printData.displaySeal && printData.seal"
+                    v-if="
+                      printData.sigSealPosition === 'authorized_signatory' &&
+                      printData.displaySeal && printData.seal
+                    "
                     :src="printData.seal"
                     :style="{ width: (printData.sealSize || 50) * 0.75 + 'px' }"
                     style="height: auto"
@@ -946,7 +897,7 @@
           <!-- POS Style card -->
           <div
             v-else-if="effectiveStyle === 'POS'"
-            class="bg-white mx-auto shadow-md border"
+            class="bg-white mx-auto shadow-md border invoice-preview-card"
             style="
               width: 320px;
               padding: 16px;
@@ -1032,7 +983,7 @@
                   <tr>
                     <td style="font-weight: bold">Date</td>
                     <td>:</td>
-                    <td>{{ docData.date }}</td>
+                    <td>{{ docData.date }} {{ docData.time }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -1222,7 +1173,7 @@
           <div
             v-else
             ref="previewContainer"
-            class="bg-white mx-auto rounded-none shadow-md"
+            class="bg-white mx-auto rounded-none shadow-md invoice-preview-card"
             style="
               width: 794px;
               min-height: 1123px;
@@ -1277,7 +1228,7 @@
                   # {{ docData.name }}
                 </div>
                 <div style="font-size: 0.7rem; color: #9ca3af">
-                  {{ docData.date }}
+                  {{ docData.date }} {{ docData.time }}
                 </div>
               </div>
             </div>
@@ -1513,8 +1464,7 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'before_terms' &&
-                      ((printData.displaySignature && printData.signature) ||
-                        (printData.displaySeal && printData.seal))
+                      printData.displaySeal && printData.seal
                     "
                     style="
                       display: flex;
@@ -1526,13 +1476,6 @@
                     "
                   >
                     <img
-                      v-if="printData.displaySignature && printData.signature"
-                      :src="printData.signature"
-                      :style="{ width: (printData.signatureSize || 80) + 'px' }"
-                      style="height: auto"
-                    />
-                    <img
-                      v-if="printData.displaySeal && printData.seal"
                       :src="printData.seal"
                       :style="{ width: (printData.sealSize || 50) + 'px' }"
                       style="height: auto"
@@ -1563,8 +1506,7 @@
                   <div
                     v-if="
                       printData.sigSealPosition === 'after_terms' &&
-                      ((printData.displaySignature && printData.signature) ||
-                        (printData.displaySeal && printData.seal))
+                      printData.displaySeal && printData.seal
                     "
                     style="
                       display: flex;
@@ -1575,13 +1517,6 @@
                     "
                   >
                     <img
-                      v-if="printData.displaySignature && printData.signature"
-                      :src="printData.signature"
-                      :style="{ width: (printData.signatureSize || 80) + 'px' }"
-                      style="height: auto"
-                    />
-                    <img
-                      v-if="printData.displaySeal && printData.seal"
                       :src="printData.seal"
                       :style="{ width: (printData.sealSize || 50) + 'px' }"
                       style="height: auto"
@@ -1597,9 +1532,9 @@
                 </p>
                 <div
                   v-if="
-                    printData.sigSealPosition === 'authorized_signatory' &&
-                    ((printData.displaySignature && printData.signature) ||
-                      (printData.displaySeal && printData.seal))
+                    (printData.displaySignature && printData.signature) ||
+                    (printData.sigSealPosition === 'authorized_signatory' &&
+                      printData.displaySeal && printData.seal)
                   "
                   style="
                     display: flex;
@@ -1619,7 +1554,10 @@
                     style="height: auto"
                   />
                   <img
-                    v-if="printData.displaySeal && printData.seal"
+                    v-if="
+                      printData.sigSealPosition === 'authorized_signatory' &&
+                      printData.displaySeal && printData.seal
+                    "
                     :src="printData.seal"
                     :style="{ width: (printData.sealSize || 50) * 0.75 + 'px' }"
                     style="height: auto"
@@ -1713,14 +1651,14 @@ let dragOverIdx = -1;
 // ── computed helpers ──
 const values = computed(() => rawValues.value as PdfInvoiceValues | null);
 const effectiveStyle = computed(() => {
-  if (selectedStyle.value === 'Quote') {
+  if (selectedStyle.value === 'Custom' || (selectedStyle.value as string) === 'Quote') {
     return customBaseStyle.value || 'Classic';
   }
   return selectedStyle.value;
 });
 const currentPreset = computed(() => {
   const style = effectiveStyle.value;
-  const key = (style as string) === 'Amazon' ? 'Modern' : style;
+  const key = (style as string) === 'Amazon' ? 'Modern' : ((style as string) === 'Quote' ? 'Custom' : style) as InvoiceStyleKey;
   const preset = STYLE_PRESETS[key] || STYLE_PRESETS.Classic;
   return {
     ...preset,
@@ -1857,10 +1795,48 @@ const docTaxes = computed(
 // ── lifecycle ──
 onMounted(async () => {
   await initialize();
-  const saved = await loadColumnConfig(props.schemaName);
-  columns.value = saved.columns;
-  selectedStyle.value = saved.style;
-  customBaseStyle.value = saved.customBaseStyle || 'Classic';
+
+  let columnsVal = DEFAULT_COLUMNS.map((c) => ({ ...c }));
+  let styleVal: InvoiceStyleKey = 'Classic';
+  let customBaseStyleVal: 'Classic' | 'Modern' | 'POS' = 'Classic';
+
+  const tName = route.query.templateName as string | undefined;
+  if (tName) {
+    const lowerName = tName.toLowerCase();
+    if (lowerName.startsWith('modern')) {
+      styleVal = 'Modern';
+    } else if (lowerName.startsWith('pos') || lowerName.includes('pos')) {
+      styleVal = 'POS';
+    } else if (lowerName.startsWith('classic')) {
+      styleVal = 'Classic';
+    } else if (lowerName.startsWith('custom') || lowerName.startsWith('quote')) {
+      styleVal = 'Custom';
+    }
+
+    try {
+      const templateDoc = await fyo.doc.getDoc(ModelNameEnum.PrintTemplate, tName);
+      const templateContent = templateDoc.get('template') as string | undefined;
+      if (templateContent) {
+        const config = JSON.parse(templateContent);
+        if (config.columns) columnsVal = config.columns;
+        if (config.style) {
+          styleVal = config.style === 'Quote' ? 'Custom' : config.style;
+        }
+        if (config.customBaseStyle) customBaseStyleVal = config.customBaseStyle;
+      }
+    } catch (err) {
+      console.error('Failed to load PrintTemplate config:', err);
+    }
+  } else {
+    const saved = await loadColumnConfig(props.schemaName);
+    columnsVal = saved.columns;
+    styleVal = saved.style;
+    customBaseStyleVal = saved.customBaseStyle || 'Classic';
+  }
+
+  columns.value = columnsVal;
+  selectedStyle.value = styleVal;
+  customBaseStyle.value = customBaseStyleVal;
 
   // Load PrintSettings fields
   const ps = await fyo.doc.getDoc('PrintSettings');
@@ -1947,7 +1923,7 @@ async function save() {
     await ps.sync();
 
     const templateLabel = fyo.schemaMap[props.schemaName]?.label || props.schemaName;
-    const templateName = `${selectedStyle.value} - ${templateLabel}`;
+    const templateName = `${STYLE_PRESETS[selectedStyle.value]?.label || selectedStyle.value} - ${templateLabel}`;
 
     // Dynamically sync PrintTemplate record for route integration
     try {
@@ -1968,6 +1944,7 @@ async function save() {
         customBaseStyle: customBaseStyle.value,
       };
       await templateDoc.set('template', JSON.stringify(configObj));
+      await templateDoc.set('created', new Date());
       await templateDoc.sync();
     } catch (err) {
       console.error('Failed to sync PrintTemplate:', err);
@@ -2042,3 +2019,27 @@ async function doPrint() {
   );
 }
 </script>
+
+<style>
+/* Force text and borders inside the white invoice preview cards to be dark/black in dark mode */
+html.dark .invoice-preview-card,
+html.dark .invoice-preview-card td,
+html.dark .invoice-preview-card p,
+html.dark .invoice-preview-card span,
+html.dark .invoice-preview-card div,
+html.dark .invoice-preview-card th,
+html.dark .invoice-preview-card table,
+html.dark .invoice-preview-card h1,
+html.dark .invoice-preview-card h2,
+html.dark .invoice-preview-card h3,
+html.dark .invoice-preview-card h4 {
+  color: #000;
+}
+
+html.dark .invoice-preview-card th,
+html.dark .invoice-preview-card td,
+html.dark .invoice-preview-card table,
+html.dark .invoice-preview-card div {
+  border-color: #000;
+}
+</style>

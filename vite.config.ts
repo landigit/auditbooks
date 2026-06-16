@@ -24,13 +24,16 @@ export default () => {
       port,
       strictPort: true,
       watch: {
-        ignored: ['**/node_modules/**'],
+        ignored: ['**/node_modules/**', '**/dist/**'],
       },
     },
+
     build: {
+      outDir: path.resolve(__dirname, './src/dist'),
       target: 'esnext',
       sourcemap: true,
       cssCodeSplit: true,
+      cssMinify: 'lightningcss',
       rollupOptions: {
         output: {
           manualChunks(id) {
@@ -45,9 +48,23 @@ export default () => {
               if (id.includes('lodash') || id.includes('luxon')) {
                 return 'vendor-utils';
               }
-              return 'vendor';
+              if (id.includes('pdfmake')) {
+                return 'vendor-pdfmake';
+              }
             }
           },
+        },
+      },
+    },
+    esbuild: {
+      supported: {
+        'destructuring': true,
+      },
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        supported: {
+          'destructuring': true,
         },
       },
     },

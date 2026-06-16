@@ -11,6 +11,21 @@ import { ModelNameEnum } from 'models/types';
 import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
 
+import courierAfm from 'pdfkit/js/data/Courier.afm?raw';
+import courierBoldAfm from 'pdfkit/js/data/Courier-Bold.afm?raw';
+import courierObliqueAfm from 'pdfkit/js/data/Courier-Oblique.afm?raw';
+import courierBoldObliqueAfm from 'pdfkit/js/data/Courier-BoldOblique.afm?raw';
+
+import helveticaAfm from 'pdfkit/js/data/Helvetica.afm?raw';
+import helveticaBoldAfm from 'pdfkit/js/data/Helvetica-Bold.afm?raw';
+import helveticaObliqueAfm from 'pdfkit/js/data/Helvetica-Oblique.afm?raw';
+import helveticaBoldObliqueAfm from 'pdfkit/js/data/Helvetica-BoldOblique.afm?raw';
+
+import timesRomanAfm from 'pdfkit/js/data/Times-Roman.afm?raw';
+import timesBoldAfm from 'pdfkit/js/data/Times-Bold.afm?raw';
+import timesItalicAfm from 'pdfkit/js/data/Times-Italic.afm?raw';
+import timesBoldItalicAfm from 'pdfkit/js/data/Times-BoldItalic.afm?raw';
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ColumnDef = {
@@ -24,7 +39,7 @@ export type ColumnDef = {
 /** Alias for the existing PrintValues type */
 export type PdfInvoiceValues = PrintValues;
 
-export type InvoiceStyleKey = 'Modern' | 'POS' | 'Quote' | 'Classic';
+export type InvoiceStyleKey = 'Modern' | 'POS' | 'Custom' | 'Classic';
 
 export type InvoiceStylePreset = {
   label: string;
@@ -64,7 +79,7 @@ export const STYLE_PRESETS: Record<InvoiceStyleKey, InvoiceStylePreset> = {
     pageMargins: [8, 8, 8, 8],
     compactItems: true,
   },
-  Quote: {
+  Custom: {
     label: 'Custom',
     description: 'Custom layout template — customize colors, fonts, columns & bank details',
     primaryColor: '#1e7a6e',
@@ -222,6 +237,8 @@ export async function loadColumnConfig(
     let style = saved.style ?? 'Classic';
     if ((style as string) === 'Amazon') {
       style = 'Modern';
+    } else if ((style as string) === 'Quote') {
+      style = 'Custom';
     }
     return {
       columns: saved.columns ?? DEFAULT_COLUMNS.map((c) => ({ ...c })),
@@ -334,6 +351,15 @@ function str(v: unknown): string {
   return v ? String(v) : '';
 }
 
+function dateTime(doc: any): string {
+  const dateVal = doc.date ? String(doc.date) : '';
+  const timeVal = doc.time ? String(doc.time) : '';
+  if (dateVal && timeVal) {
+    return `${dateVal} ${timeVal}`;
+  }
+  return dateVal || timeVal;
+}
+
 // ─── Core doc builder ─────────────────────────────────────────────────────────
 
 export function buildDocDefinition(
@@ -342,7 +368,7 @@ export function buildDocDefinition(
   styleKey: InvoiceStyleKey = 'Classic',
   showPageNumbers: boolean = true
 ): TDocumentDefinitions {
-  const effectiveStyleKey = styleKey === 'Quote' ? ((values.print as any)?.customBaseStyle || 'Classic') as InvoiceStyleKey : styleKey;
+  const effectiveStyleKey = styleKey === 'Custom' ? ((values.print as any)?.customBaseStyle || 'Classic') as InvoiceStyleKey : styleKey;
   const preset = STYLE_PRESETS[effectiveStyleKey];
   const doc = values.doc;
   const print = values.print;
@@ -402,7 +428,7 @@ export function buildDocDefinition(
   const items = (doc.items as Record<string, unknown>[]) ?? [];
   const taxes = (doc.taxes as { account: string; amount: string }[]) ?? [];
 
-  const isQuote = styleKey === 'Quote';
+  const isQuote = values.doc.entryType === 'SalesQuote';
   const isModern = effectiveStyleKey === 'Modern';
 
   const bodyStyle: Style = {
@@ -476,7 +502,7 @@ export function buildDocDefinition(
           [
             { text: 'Date', bold: true, fontSize: 8.5 },
             { text: ':', fontSize: 8.5 },
-            { text: str(doc.date), fontSize: 8.5 },
+            { text: dateTime(doc), fontSize: 8.5 },
           ],
         ],
       },
@@ -780,7 +806,7 @@ export function buildDocDefinition(
           },
           { text: str(doc.name), fontSize: 8, alignment: 'center' },
           {
-            text: str(doc.date),
+            text: dateTime(doc),
             fontSize: 8,
             alignment: 'center',
             color: '#555',
@@ -843,7 +869,7 @@ export function buildDocDefinition(
                   color: '#555',
                 },
                 {
-                  text: `Date: ${str(doc.date)}`,
+                  text: `Date: ${dateTime(doc)}`,
                   fontSize: 8,
                   alignment: 'right',
                   color: '#777',
@@ -1117,7 +1143,7 @@ export function buildDocDefinition(
                       }
                     : (null as unknown as Content),
                   {
-                    text: [{ text: 'Order Date: ', bold: true }, str(doc.date)],
+                    text: [{ text: 'Order Date: ', bold: true }, dateTime(doc)],
                     fontSize: 8,
                     margin: [0, 2, 0, 0],
                   },
@@ -1135,7 +1161,7 @@ export function buildDocDefinition(
                   {
                     text: [
                       { text: 'Invoice Date: ', bold: true },
-                      str(doc.date),
+                      dateTime(doc),
                     ],
                     fontSize: 8,
                     margin: [0, 2, 0, 0],
@@ -1259,48 +1285,23 @@ export function buildDocDefinition(
   const sealWidth = Number(print.sealSize) || 50;
 
   // ── Signature / footer ──
-  // ── Deduped signature and seal block ──
+  // ── Deduped signature and seal block (only for Seal, Signature is always in signatory) ──
   const signatureAndSealBlock: Content | null =
-    (print.displaySignature && print.signature) ||
-    (print.displaySeal && print.seal)
+    print.displaySeal && print.seal
       ? {
-          columns: [
-            print.displaySignature && print.signature
-              ? {
-                  stack: [
-                    {
-                      image: str(print.signature),
-                      width: signatureWidth,
-                      alignment: 'center' as const,
-                    },
-                    {
-                      text: 'Signature',
-                      fontSize: 7,
-                      color: '#777',
-                      alignment: 'center' as const,
-                      margin: [0, 2, 0, 0],
-                    },
-                  ],
-                }
-              : { text: '' },
-            print.displaySeal && print.seal
-              ? {
-                  stack: [
-                    {
-                      image: str(print.seal),
-                      width: sealWidth,
-                      alignment: 'center' as const,
-                    },
-                    {
-                      text: 'Seal',
-                      fontSize: 7,
-                      color: '#777',
-                      alignment: 'center' as const,
-                      margin: [0, 2, 0, 0],
-                    },
-                  ],
-                }
-              : { text: '' },
+          stack: [
+            {
+              image: str(print.seal),
+              width: sealWidth,
+              alignment: 'center' as const,
+            },
+            {
+              text: 'Seal',
+              fontSize: 7,
+              color: '#777',
+              alignment: 'center' as const,
+              margin: [0, 2, 0, 0],
+            },
           ],
           margin: [0, 0, 0, 8],
         }
@@ -1410,26 +1411,39 @@ export function buildDocDefinition(
                           fontSize: 8,
                           alignment: 'left',
                         },
-                        sigSealInSignatory
-                          ? {
-                              columns: [
-                                print.displaySignature && print.signature
+                        (print.displaySignature && print.signature) ||
+                        (print.displaySeal && print.seal && sigSealInSignatory)
+                          ? (
+                              (print.displaySignature && print.signature) && (print.displaySeal && print.seal && sigSealInSignatory)
+                                ? {
+                                    columns: [
+                                      {
+                                        image: str(print.signature),
+                                        width: signatureWidth * 0.75,
+                                        alignment: 'center' as const,
+                                      },
+                                      {
+                                        image: str(print.seal),
+                                        width: sealWidth * 0.75,
+                                        alignment: 'center' as const,
+                                      }
+                                    ],
+                                    margin: [0, 4, 0, 4],
+                                  }
+                                : (print.displaySignature && print.signature)
                                   ? {
                                       image: str(print.signature),
                                       width: signatureWidth * 0.75,
                                       alignment: 'center' as const,
+                                      margin: [0, 4, 0, 4],
                                     }
-                                  : { text: '' },
-                                print.displaySeal && print.seal
-                                  ? {
+                                  : {
                                       image: str(print.seal),
                                       width: sealWidth * 0.75,
                                       alignment: 'center' as const,
+                                      margin: [0, 4, 0, 4],
                                     }
-                                  : { text: '' },
-                              ],
-                              margin: [0, 4, 0, 4],
-                            }
+                            )
                           : { text: '\n\n\n', fontSize: 8 },
                         {
                           text: 'Authorized Signatory',
@@ -1490,27 +1504,40 @@ export function buildDocDefinition(
                   fontSize: 8,
                   alignment: 'right',
                 },
-                sigSealInSignatory
-                  ? {
-                      columns: [
-                        { text: '' },
-                        print.displaySignature && print.signature
+                (print.displaySignature && print.signature) ||
+                (print.displaySeal && print.seal && sigSealInSignatory)
+                  ? (
+                      (print.displaySignature && print.signature) && (print.displaySeal && print.seal && sigSealInSignatory)
+                        ? {
+                            columns: [
+                              { text: '' },
+                              {
+                                image: str(print.signature),
+                                width: signatureWidth * 0.75,
+                                alignment: 'right' as const,
+                              },
+                              {
+                                image: str(print.seal),
+                                width: sealWidth * 0.75,
+                                alignment: 'right' as const,
+                              }
+                            ],
+                            margin: [0, 4, 0, 4],
+                          }
+                        : (print.displaySignature && print.signature)
                           ? {
                               image: str(print.signature),
                               width: signatureWidth * 0.75,
                               alignment: 'right' as const,
+                              margin: [0, 4, 0, 4],
                             }
-                          : { text: '' },
-                        print.displaySeal && print.seal
-                          ? {
+                          : {
                               image: str(print.seal),
                               width: sealWidth * 0.75,
                               alignment: 'right' as const,
+                              margin: [0, 4, 0, 4],
                             }
-                          : { text: '' },
-                      ],
-                      margin: [0, 4, 0, 4],
-                    }
+                    )
                   : { text: '\n\n\n', fontSize: 8 },
                 {
                   text: 'Authorized Signatory',
@@ -1551,7 +1578,7 @@ export function buildDocDefinition(
                 color: '#555',
               },
               {
-                text: str(doc.date),
+                text: dateTime(doc),
                 fontSize: 8,
                 color: '#555',
                 alignment: 'right',
@@ -1601,6 +1628,22 @@ export async function getPdfMake() {
   (pdfMake as any).vfs =
     (pdfFonts as any)?.pdfMake?.vfs || (pdfFonts as any)?.vfs || pdfFonts;
 
+  // Inject AFM metrics for standard PDF fonts in client-side pdfmake
+  (pdfMake as any).vfs['data/Courier.afm'] = courierAfm;
+  (pdfMake as any).vfs['data/Courier-Bold.afm'] = courierBoldAfm;
+  (pdfMake as any).vfs['data/Courier-Oblique.afm'] = courierObliqueAfm;
+  (pdfMake as any).vfs['data/Courier-BoldOblique.afm'] = courierBoldObliqueAfm;
+
+  (pdfMake as any).vfs['data/Helvetica.afm'] = helveticaAfm;
+  (pdfMake as any).vfs['data/Helvetica-Bold.afm'] = helveticaBoldAfm;
+  (pdfMake as any).vfs['data/Helvetica-Oblique.afm'] = helveticaObliqueAfm;
+  (pdfMake as any).vfs['data/Helvetica-BoldOblique.afm'] = helveticaBoldObliqueAfm;
+
+  (pdfMake as any).vfs['data/Times-Roman.afm'] = timesRomanAfm;
+  (pdfMake as any).vfs['data/Times-Bold.afm'] = timesBoldAfm;
+  (pdfMake as any).vfs['data/Times-Italic.afm'] = timesItalicAfm;
+  (pdfMake as any).vfs['data/Times-BoldItalic.afm'] = timesBoldItalicAfm;
+
   if (!pdfMake.fonts) {
     pdfMake.fonts = {};
   }
@@ -1643,7 +1686,12 @@ export async function getPdfMake() {
               k.toLowerCase().includes('bolditalic')
           ) || 'Roboto-MediumItalic.ttf',
       }
-    : pdfMake.fonts.Roboto;
+    : {
+        normal: 'Courier',
+        bold: 'Courier-Bold',
+        italics: 'Courier-Oblique',
+        bolditalics: 'Courier-BoldOblique',
+      };
 
   const hasTimes = vfsKeys.some((k) => k.toLowerCase().includes('times'));
   pdfMake.fonts['Times New Roman'] = hasTimes
@@ -1673,7 +1721,12 @@ export async function getPdfMake() {
               k.toLowerCase().includes('bolditalic')
           ) || 'Roboto-MediumItalic.ttf',
       }
-    : pdfMake.fonts.Roboto;
+    : {
+        normal: 'Times-Roman',
+        bold: 'Times-Bold',
+        italics: 'Times-Italic',
+        bolditalics: 'Times-BoldItalic',
+      };
 
   const hasArial = vfsKeys.some((k) => k.toLowerCase().includes('arial'));
   pdfMake.fonts.Arial = hasArial
@@ -1703,7 +1756,12 @@ export async function getPdfMake() {
               k.toLowerCase().includes('bolditalic')
           ) || 'Roboto-MediumItalic.ttf',
       }
-    : pdfMake.fonts.Roboto;
+    : {
+        normal: 'Helvetica',
+        bold: 'Helvetica-Bold',
+        italics: 'Helvetica-Oblique',
+        bolditalics: 'Helvetica-BoldOblique',
+      };
 
   const hasFigtree = vfsKeys.some((k) => k.toLowerCase().includes('figtree'));
   if (hasFigtree) {

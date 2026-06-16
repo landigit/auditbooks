@@ -44,13 +44,15 @@ async function closeDbIfConnected(fyo: Fyo) {
 }
 
 async function setSingles(fyo: Fyo) {
+  const promises = [];
   for (const schema of Object.values(fyo.schemaMap)) {
     if (!schema?.isSingle || schema.name === ModelNameEnum.SetupWizard) {
       continue;
     }
 
-    await fyo.doc.getDoc(schema.name);
+    promises.push(fyo.doc.getDoc(schema.name));
   }
+  await Promise.all(promises);
 }
 
 async function checkSingleLinks(fyo: Fyo) {

@@ -9,14 +9,14 @@ import {
   Component,
   h,
 } from 'vue';
-import { HugeiconsIcon } from '@hugeicons/vue';
+import HugeiconsIcon from 'src/components/HugeiconsIcon.vue';
 import {
   SafeIcon,
   Invoice02Icon,
   Money01Icon,
   CreditCardIcon,
   Folder01Icon,
-} from '@hugeicons/core-free-icons';
+} from 'src/assets/icons/hugeicons';
 import { useRoute } from 'vue-router';
 import { t } from 'fyo';
 import { isCredit } from 'models/helpers';

@@ -168,7 +168,7 @@ function getReportList(fyo: Fyo): SearchItem[] {
   return reportNames
     .filter((r) => {
       const report = reports[r];
-      if (report.isInventory && !hasInventory) {
+      if ((report as { isInventory?: boolean }).isInventory && !hasInventory) {
         return false;
       }
 

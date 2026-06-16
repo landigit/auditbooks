@@ -219,7 +219,6 @@
 </template>
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { setupDummyInstance } from 'dummy';
 import { Verb } from 'fyo/telemetry/types';
 import { DateTime } from 'luxon';
 import Button from 'src/components/Button.vue';
@@ -313,6 +312,7 @@ async function startDummyInstanceSetup() {
   }
 
   creatingDemo.value = true;
+  const { setupDummyInstance } = await import('dummy');
   await setupDummyInstance(
     filePath,
     fyo,
