@@ -26,10 +26,24 @@ export default () => {
       watch: {
         ignored: ['**/node_modules/**', '**/dist/**'],
       },
+      // Pre-transform critical entry modules after the server starts.
+      // Vite will have them in its transform cache before the browser
+      // first requests them, avoiding the on-demand compilation delay.
+      warmup: {
+        clientFiles: [
+          './renderer.ts',
+          './App.vue',
+          './initFyo.ts',
+          './router.ts',
+          './pages/Desk.vue',
+          './pages/DatabaseSelector.vue',
+          './styles/index.css',
+        ],
+      },
     },
 
     build: {
-      outDir: path.resolve(__dirname, './src/dist'),
+      outDir: path.resolve(import.meta.dirname, './src/dist'),
       target: 'esnext',
       sourcemap: true,
       cssCodeSplit: true,
@@ -68,7 +82,7 @@ export default () => {
         },
       },
     },
-    root: path.resolve(__dirname, './src'),
+    root: path.resolve(import.meta.dirname, './src'),
     plugins: [
       vue({
         script: {
@@ -80,16 +94,16 @@ export default () => {
     resolve: {
       alias: {
         vue: 'vue/dist/vue.esm-bundler.js',
-        fyo: path.resolve(__dirname, './fyo'),
-        src: path.resolve(__dirname, './src'),
-        schemas: path.resolve(__dirname, './schemas'),
-        backend: path.resolve(__dirname, './backend'),
-        models: path.resolve(__dirname, './models'),
-        utils: path.resolve(__dirname, './utils'),
-        regional: path.resolve(__dirname, './regional'),
-        reports: path.resolve(__dirname, './reports'),
-        dummy: path.resolve(__dirname, './dummy'),
-        fixtures: path.resolve(__dirname, './fixtures'),
+        fyo: path.resolve(import.meta.dirname, './fyo'),
+        src: path.resolve(import.meta.dirname, './src'),
+        schemas: path.resolve(import.meta.dirname, './schemas'),
+        backend: path.resolve(import.meta.dirname, './backend'),
+        models: path.resolve(import.meta.dirname, './models'),
+        utils: path.resolve(import.meta.dirname, './utils'),
+        regional: path.resolve(import.meta.dirname, './regional'),
+        reports: path.resolve(import.meta.dirname, './reports'),
+        dummy: path.resolve(import.meta.dirname, './dummy'),
+        fixtures: path.resolve(import.meta.dirname, './fixtures'),
       },
     },
   });

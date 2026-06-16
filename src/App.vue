@@ -83,7 +83,10 @@ const databaseSelector = ref<InstanceType<typeof DatabaseSelector> | null>(
   null
 );
 
-const activeScreen = ref<null | Screen>(null);
+// Default to DatabaseSelector so something renders immediately after mount
+// (LCP element appears without waiting for onMounted async work).
+// setInitialScreen() will transition to Desk if a saved DB path exists.
+const activeScreen = ref<Screen>(Screen.DatabaseSelector);
 const dbPath = ref('');
 const companyName = ref('');
 const darkMode = ref<boolean | undefined>(false);

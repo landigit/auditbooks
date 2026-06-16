@@ -2,6 +2,11 @@ import { IPC } from 'main/preload';
 
 declare global {
   const ipc: IPC;
+
+  interface ImportMeta {
+    dirname: string;
+    filename: string;
+  }
 }
 
 declare module '*.vue' {

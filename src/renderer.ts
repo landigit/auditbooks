@@ -13,22 +13,24 @@ import { stringifyCircular } from './utils';
 import { setLanguageMap } from './utils/language';
 import { createPinia } from 'pinia';
 
+// Kick off all IPC calls at module-evaluation time — before the IIFE even
+// awaits. JS hoists function declarations so getTauriPlatform/Version are
+// already callable here, and fyo.config is ready from its import.
+const _startupReady = Promise.all([
+  fyo.config.initAsync(),
+  getTauriPlatform(),
+  getTauriVersion(),
+]);
+
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 (async () => {
-  // Initialize the persistent config store before any config access
-  await fyo.config.initAsync();
+  // All 4 IPC calls were already in-flight by the time this line runs.
+  const [, platform, version] = await _startupReady;
 
   const language = fyo.config.get('language') as string;
-  if (language) {
-    await setLanguageMap(language);
-  }
   fyo.store.language = language || 'English';
 
-  // In Tauri we always run as a desktop app — no Electron IPC
   const isDevelopment = import.meta.env.DEV ?? false;
-  const platform = await getTauriPlatform();
-  const version = await getTauriVersion();
-
   fyo.store.isDevelopment = isDevelopment;
   fyo.store.appVersion = version;
   fyo.store.platform = platform;
@@ -62,8 +64,14 @@ import { createPinia } from 'pinia';
     },
   });
 
-  await fyo.telemetry.logOpened();
+  // Mount first — this is what triggers LCP. Everything after is non-critical.
   app.mount('body');
+
+  // Run post-paint tasks asynchronously so they never block the first render.
+  Promise.all([
+    language ? setLanguageMap(language) : Promise.resolve(),
+    fyo.telemetry.logOpened(),
+  ]).catch(console.error);
 })();
 
 async function getTauriPlatform(): Promise<string> {

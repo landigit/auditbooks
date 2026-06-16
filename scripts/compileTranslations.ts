@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { parseCSV } from '../utils/csvParser';
 
-const translationsFolder = path.resolve(__dirname, '../translations');
-const outputFolder = path.resolve(__dirname, '../src/public/translations');
+const translationsFolder = path.resolve(import.meta.dirname, '../translations');
+const outputFolder = path.resolve(import.meta.dirname, '../src/public/translations');
 
 async function compile() {
   try {

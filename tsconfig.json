@@ -33,14 +33,6 @@
     },
     "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
-  "ts-node": {
-    "files": true,
-    "compilerOptions": {
-      "module": "CommonJS",
-      "moduleResolution": "node",
-      "importHelpers": false
-    }
-  },
   "include": [
     "src/**/*.ts",
     "src/**/*.vue",

@@ -22,7 +22,7 @@ describe('Importer Tests', () => {
 
   test('import Items', async () => {
     const importer = new Importer(ModelNameEnum.Item, fyo);
-    const csvPath = join(__dirname, 'items.csv');
+    const csvPath = join(import.meta.dirname, 'items.csv');
     const data = readFileSync(csvPath, { encoding: 'utf-8' });
     expect(importer.selectFile(data)).toBe(true);
     expect((await importer.checkLinks()).length).toBe(0);
@@ -34,7 +34,7 @@ describe('Importer Tests', () => {
 
   test('import Party', async () => {
     const importer = new Importer(ModelNameEnum.Party, fyo);
-    const csvPath = join(__dirname, 'parties.csv');
+    const csvPath = join(import.meta.dirname, 'parties.csv');
     const data = readFileSync(csvPath, { encoding: 'utf-8' });
     expect(importer.selectFile(data)).toBe(true);
     expect((await importer.checkLinks()).length).toBe(0);
@@ -46,7 +46,7 @@ describe('Importer Tests', () => {
 
   test('import SalesInvoices', async () => {
     const importer = new Importer(ModelNameEnum.SalesInvoice, fyo);
-    const csvPath = join(__dirname, 'sales_invoices.csv');
+    const csvPath = join(import.meta.dirname, 'sales_invoices.csv');
     const data = readFileSync(csvPath, { encoding: 'utf-8' });
 
     expect(importer.selectFile(data)).toBe(true);

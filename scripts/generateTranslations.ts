@@ -10,7 +10,7 @@ import {
 
 /* eslint-disable no-console, @typescript-eslint/no-floating-promises */
 
-const translationsFolder = path.resolve(__dirname, '..', 'translations');
+const translationsFolder = path.resolve(import.meta.dirname, '..', 'translations');
 const PATTERN = /(?<!\w)t`([^`]+)`/g;
 
 type Content = { fileName: string; content: string };
@@ -281,7 +281,7 @@ function pushTStringsFromSchema(
 }
 
 async function getSchemaTStrings() {
-  const root = path.resolve(__dirname, '../schemas');
+  const root = path.resolve(import.meta.dirname, '../schemas');
   const fileList = await getFileList(root, ['tests', 'regional'], /\.json$/);
   return await getTStringsFromJsonFileList(fileList);
 }
@@ -291,7 +291,7 @@ async function run() {
     return;
   }
 
-  const root = path.resolve(__dirname, '..');
+  const root = path.resolve(import.meta.dirname, '..');
   const ignoreList = ['node_modules', 'dist_electron', 'scripts'];
   const languageCode = getLanguageCode();
 
