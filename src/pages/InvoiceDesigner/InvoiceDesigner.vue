@@ -2,12 +2,16 @@
   <div
     class="flex flex-col flex-1 h-full bg-gray-25 dark:bg-gray-875 overflow-hidden"
   >
-    <PageHeader :border="true" :title="t`Invoice Designer`">
-      <Button class="text-xs" @click="resetColumns">
+    <PageHeader :border="true" :title="isPrintView ? t`Print View` : t`Invoice Designer`">
+      <Button v-if="isPrintView" type="primary" class="text-xs" @click="customizeLayout">
+        <feather-icon name="sliders" class="w-4 h-4 md:me-1.5" />
+        <span class="hidden md:inline">{{ t`Customize Layout` }}</span>
+      </Button>
+      <Button v-if="!isPrintView" class="text-xs" @click="resetColumns">
         <feather-icon name="refresh-cw" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Reset` }}</span>
       </Button>
-      <Button class="text-xs" @click="save">
+      <Button v-if="!isPrintView && selectedStyle === 'Quote'" class="text-xs" @click="save">
         <feather-icon name="save" class="w-4 h-4 md:me-1.5" />
         <span class="hidden md:inline">{{ t`Save Layout` }}</span>
       </Button>
@@ -34,6 +38,7 @@
     <div class="flex flex-1 overflow-hidden">
       <!-- ── Left sidebar ── -->
       <aside
+        v-if="!isPrintView"
         class="w-72 shrink-0 flex flex-col border-e dark:border-gray-800 bg-white dark:bg-gray-850 overflow-y-auto custom-scroll"
       >
         <!-- Style picker -->
@@ -70,150 +75,291 @@
           </div>
         </div>
 
-        <!-- Options -->
-        <div class="p-3 border-b dark:border-gray-800 flex flex-col gap-2.5">
-          <p
-            class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-0.5"
-          >
-            {{ t`Options` }}
-          </p>
-          <div class="flex items-center gap-2">
-            <input
-              id="showPageNumbers"
-              v-model="showPageNumbers"
-              type="checkbox"
-              class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
-            />
+        <!-- Customization controls - only visible for Custom layout ('Quote' preset) -->
+        <div v-if="selectedStyle === 'Quote'">
+          <!-- Base Design Selection -->
+          <div class="p-3 border-b dark:border-gray-800 flex flex-col gap-1.5">
             <label
-              for="showPageNumbers"
-              class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
-            >
-              {{ t`Show Page Numbers` }}
-            </label>
-          </div>
-          <div class="flex items-center gap-2">
-            <input
-              id="displaySignature"
-              v-model="displaySignature"
-              type="checkbox"
-              class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
-            />
-            <label
-              for="displaySignature"
-              class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
-            >
-              {{ t`Display Signature` }}
-            </label>
-          </div>
-          <div v-if="displaySignature" class="flex items-center gap-2 ps-6">
-            <label
-              for="signatureSize"
-              class="text-xs text-gray-500 cursor-pointer shrink-0"
-            >
-              {{ t`Signature Size (px)` }}
-            </label>
-            <input
-              id="signatureSize"
-              v-model="signatureSize"
-              type="number"
-              class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
-            />
-          </div>
-          <div class="flex items-center gap-2">
-            <input
-              id="displaySeal"
-              v-model="displaySeal"
-              type="checkbox"
-              class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
-            />
-            <label
-              for="displaySeal"
-              class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
-            >
-              {{ t`Display Seal` }}
-            </label>
-          </div>
-          <div v-if="displaySeal" class="flex items-center gap-2 ps-6">
-            <label
-              for="sealSize"
-              class="text-xs text-gray-500 cursor-pointer shrink-0"
-            >
-              {{ t`Seal Size (px)` }}
-            </label>
-            <input
-              id="sealSize"
-              v-model="sealSize"
-              type="number"
-              class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
-            />
-          </div>
-          <div class="flex flex-col gap-1 mt-1">
-            <label
-              for="sigSealPosition"
+              for="customBaseStyle"
               class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest"
             >
-              {{ t`Signature & Seal Position` }}
+              {{ t`Base Design` }}
             </label>
             <select
-              id="sigSealPosition"
-              v-model="sigSealPosition"
+              id="customBaseStyle"
+              v-model="customBaseStyle"
               class="w-full text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1.5 px-2"
             >
-              <option value="authorized_signatory">
-                {{ t`Under Authorized Signatory` }}
-              </option>
-              <option value="before_terms">
-                {{ t`Before Terms and Conditions` }}
-              </option>
-              <option value="after_terms">
-                {{ t`After Terms and Conditions` }}
-              </option>
+              <option value="Classic">{{ t`Classic` }}</option>
+              <option value="Modern">{{ t`Modern` }}</option>
             </select>
           </div>
-        </div>
 
-        <!-- Column configurator -->
-        <div class="p-3 flex flex-col gap-2">
-          <p
-            class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1"
-          >
-            {{ t`Columns` }} — drag to reorder
-          </p>
-
-          <div
-            v-for="(col, idx) in columns"
-            :key="col.fieldname"
-            draggable="true"
-            class="transition-opacity"
-            :class="dragging === idx ? 'opacity-40' : ''"
-            @dragstart="onDragStart(idx)"
-            @dragover.prevent="onDragOver(idx)"
-            @drop="onDrop"
-          >
-            <ColumnEditor :col="col" @update:col="(c) => (columns[idx] = c)" />
-          </div>
-
-          <!-- Add unused fields -->
-          <div
-            v-if="unusedFields.length"
-            class="mt-2 pt-2 border-t dark:border-gray-700"
-          >
+          <!-- Options -->
+          <div class="p-3 border-b dark:border-gray-800 flex flex-col gap-2.5">
             <p
-              class="text-[10px] text-gray-400 uppercase tracking-wider mb-1.5"
+              class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-0.5"
             >
-              {{ t`Add field` }}
+              {{ t`Options` }}
             </p>
-            <div class="flex gap-1 flex-wrap">
-              <button
-                v-for="f in unusedFields"
-                :key="f.fieldname"
-                class="text-[10px] px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 border dark:border-gray-700"
-                @click="addField(f)"
+            <div class="flex items-center gap-2">
+              <input
+                id="showPageNumbers"
+                v-model="showPageNumbers"
+                type="checkbox"
+                class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                for="showPageNumbers"
+                class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
               >
-                + {{ f.fieldname }}
-              </button>
+                {{ t`Show Page Numbers` }}
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+                id="displaySignature"
+                v-model="displaySignature"
+                type="checkbox"
+                class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                for="displaySignature"
+                class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+              >
+                {{ t`Display Signature` }}
+              </label>
+            </div>
+            <div v-if="displaySignature" class="flex items-center gap-2 ps-6">
+              <label
+                for="signatureSize"
+                class="text-xs text-gray-500 cursor-pointer shrink-0"
+              >
+                {{ t`Signature Size (px)` }}
+              </label>
+              <input
+                id="signatureSize"
+                v-model="signatureSize"
+                type="number"
+                class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
+              />
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+                id="displaySeal"
+                v-model="displaySeal"
+                type="checkbox"
+                class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                for="displaySeal"
+                class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+              >
+                {{ t`Display Seal` }}
+              </label>
+            </div>
+            <div v-if="displaySeal" class="flex items-center gap-2 ps-6">
+              <label
+                for="sealSize"
+                class="text-xs text-gray-500 cursor-pointer shrink-0"
+              >
+                {{ t`Seal Size (px)` }}
+              </label>
+              <input
+                id="sealSize"
+                v-model="sealSize"
+                type="number"
+                class="w-16 text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
+              />
+            </div>
+            <div class="flex flex-col gap-1 mt-1">
+              <label
+                for="sigSealPosition"
+                class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest"
+              >
+                {{ t`Signature & Seal Position` }}
+              </label>
+              <select
+                id="sigSealPosition"
+                v-model="sigSealPosition"
+                class="w-full text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1.5 px-2"
+              >
+                <option value="authorized_signatory">
+                  {{ t`Under Authorized Signatory` }}
+                </option>
+                <option value="before_terms">
+                  {{ t`Before Terms and Conditions` }}
+                </option>
+                <option value="after_terms">
+                  {{ t`After Terms and Conditions` }}
+                </option>
+              </select>
             </div>
           </div>
+
+          <!-- Branding Customizer -->
+          <div class="p-3 border-b dark:border-gray-800 flex flex-col gap-2.5">
+            <p
+              class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-0.5"
+            >
+              {{ t`Branding Customizer` }}
+            </p>
+            <div class="flex items-center justify-between gap-2">
+              <label for="primaryColor" class="text-xs text-gray-700 dark:text-gray-300">
+                {{ t`Primary Color` }}
+              </label>
+              <input
+                id="primaryColor"
+                v-model="primaryColor"
+                type="color"
+                class="w-8 h-8 p-0 border-0 rounded cursor-pointer bg-transparent"
+              />
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <label for="accentColor" class="text-xs text-gray-700 dark:text-gray-300">
+                {{ t`Accent Color` }}
+              </label>
+              <input
+                id="accentColor"
+                v-model="accentColor"
+                type="color"
+                class="w-8 h-8 p-0 border-0 rounded cursor-pointer bg-transparent"
+              />
+            </div>
+            <div class="flex flex-col gap-1 mt-1">
+              <label
+                for="fontFamily"
+                class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest"
+              >
+                {{ t`Font Family` }}
+              </label>
+              <select
+                id="fontFamily"
+                v-model="fontFamily"
+                class="w-full text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1.5 px-2"
+              >
+                <option value="Roboto">Roboto</option>
+                <option value="Courier">Courier</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Arial">Arial</option>
+                <option value="Figtree">Figtree</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1 mt-1">
+              <label
+                for="pageOrientation"
+                class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest"
+              >
+                {{ t`Page Orientation` }}
+              </label>
+              <select
+                id="pageOrientation"
+                v-model="pageOrientation"
+                class="w-full text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1.5 px-2"
+              >
+                <option value="portrait">{{ t`Portrait` }}</option>
+                <option value="landscape">{{ t`Landscape` }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Legal & Payment Info -->
+          <div class="p-3 border-b dark:border-gray-800 flex flex-col gap-2.5">
+            <p
+              class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-0.5"
+            >
+              {{ t`Legal & Payment Info` }}
+            </p>
+            <div class="flex flex-col gap-1">
+              <label for="bankDetails" class="text-xs text-gray-700 dark:text-gray-300">
+                {{ t`Bank Details` }}
+              </label>
+              <textarea
+                id="bankDetails"
+                v-model="bankDetails"
+                rows="3"
+                class="w-full text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
+                placeholder="Bank Name, A/C No, IFSC..."
+              ></textarea>
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+                id="displayPaymentQr"
+                v-model="displayPaymentQr"
+                type="checkbox"
+                class="rounded border-gray-350 dark:border-gray-700 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                for="displayPaymentQr"
+                class="text-xs text-gray-700 dark:text-gray-300 cursor-pointer"
+              >
+                {{ t`Display UPI QR Code` }}
+              </label>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label for="termsAndConditions" class="text-xs text-gray-700 dark:text-gray-300">
+                {{ t`Terms & Conditions` }}
+              </label>
+              <textarea
+                id="termsAndConditions"
+                v-model="termsAndConditions"
+                rows="3"
+                class="w-full text-xs rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-850 dark:text-gray-200 py-1 px-1.5"
+                placeholder="Terms of service, payment policies..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Column configurator -->
+          <div class="p-3 flex flex-col gap-2">
+            <p
+              class="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1"
+            >
+              {{ t`Columns` }} — drag to reorder
+            </p>
+
+            <div
+              v-for="(col, idx) in columns"
+              :key="col.fieldname"
+              draggable="true"
+              class="transition-opacity"
+              :class="dragging === idx ? 'opacity-40' : ''"
+              @dragstart="onDragStart(idx)"
+              @dragover.prevent="onDragOver(idx)"
+              @drop="onDrop"
+            >
+              <ColumnEditor :col="col" @update:col="(c) => (columns[idx] = c)" />
+            </div>
+
+            <!-- Add unused fields -->
+            <div
+              v-if="unusedFields.length"
+              class="mt-2 pt-2 border-t dark:border-gray-700"
+            >
+              <p
+                class="text-[10px] text-gray-400 uppercase tracking-wider mb-1.5"
+              >
+                {{ t`Add field` }}
+              </p>
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  v-for="f in unusedFields"
+                  :key="f.fieldname"
+                  class="text-[10px] px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 text-gray-700 dark:text-gray-300 border dark:border-gray-700"
+                  @click="addField(f)"
+                >
+                  + {{ f.fieldname }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="p-5 text-center text-xs text-gray-500 border-t dark:border-gray-800 flex flex-col gap-2 items-center justify-center">
+          <feather-icon name="info" class="w-6 h-6 text-gray-400 mb-1" />
+          <p class="font-bold text-gray-700 dark:text-gray-300 text-xs">{{ t`Standard Layout (Read-Only)` }}</p>
+          <p class="text-[10px] text-gray-400 leading-relaxed max-w-[200px]">
+            {{ t`Modern, Classic, and POS layouts are system defaults and cannot be customized.` }}
+          </p>
         </div>
       </aside>
 
@@ -225,9 +371,8 @@
           {{ t`Loading invoice data…` }}
         </div>
         <template v-else>
-          <!-- Modern Style Invoice Card -->
           <div
-            v-if="selectedStyle === 'Modern'"
+            v-if="effectiveStyle === 'Modern'"
             ref="previewContainer"
             class="bg-white mx-auto rounded-none shadow-md"
             style="
@@ -236,10 +381,10 @@
               padding: 48px;
               box-sizing: border-box;
               position: relative;
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               color: #000;
               line-height: 1.3;
             "
+            :style="{ fontFamily: fontFamily }"
           >
             <!-- ── Header ── -->
             <div
@@ -525,6 +670,43 @@
               </p>
             </div>
 
+            <!-- ── Bank Details & UPI QR Code ── -->
+            <div
+              v-if="printData.bankDetails"
+              style="
+                border: 1px solid #e5e7eb;
+                padding: 8px;
+                margin-bottom: 12px;
+                font-size: 0.72rem;
+              "
+            >
+              <p style="font-weight: bold; margin: 0 0 2px 0">
+                Bank Details:
+              </p>
+              <p style="margin: 0; color: #4b5563; white-space: pre-line;">
+                {{ printData.bankDetails }}
+              </p>
+            </div>
+
+            <div
+              v-if="printData.displayPaymentQr"
+              style="
+                display: inline-block;
+                border: 1px solid #e5e7eb;
+                padding: 8px;
+                margin-bottom: 12px;
+                font-size: 0.72rem;
+                text-align: center;
+              "
+            >
+              <p style="font-weight: bold; margin: 0 0 4px 0">
+                Scan to Pay (UPI)
+              </p>
+              <div style="background: #f3f4f6; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 8px; border: 1px dashed #9ca3af; color: #6b7280;">
+                [UPI QR Code]
+              </div>
+            </div>
+
             <!-- ── Signature Section ── -->
             <div
               style="
@@ -602,10 +784,7 @@
                   </div>
 
                   <div
-                    v-if="
-                      printData.displaytermsandconditions &&
-                      printData.termsAndConditions
-                    "
+                    v-if="printData.termsAndConditions"
                     style="margin-top: 8px"
                   >
                     <p style="font-weight: bold; margin: 0">
@@ -766,7 +945,7 @@
 
           <!-- POS Style card -->
           <div
-            v-else-if="selectedStyle === 'POS'"
+            v-else-if="effectiveStyle === 'POS'"
             class="bg-white mx-auto shadow-md border"
             style="
               width: 320px;
@@ -1040,7 +1219,6 @@
             </div>
           </div>
 
-          <!-- Fallback Classic / POS / Quote style card -->
           <div
             v-else
             ref="previewContainer"
@@ -1052,6 +1230,7 @@
               box-sizing: border-box;
               position: relative;
             "
+            :style="{ fontFamily: fontFamily }"
           >
             <!-- ── Header ── -->
             <div
@@ -1280,6 +1459,44 @@
               >{{ docData.grandTotalInWords }}
             </div>
 
+            <!-- ── Bank Details & UPI QR Code ── -->
+            <div
+              v-if="printData.bankDetails"
+              style="
+                border: 1px solid #e5e7eb;
+                padding: 8px;
+                margin-top: 12px;
+                margin-bottom: 12px;
+                font-size: 0.72rem;
+              "
+            >
+              <p style="font-weight: bold; margin: 0 0 2px 0">
+                Bank Details:
+              </p>
+              <p style="margin: 0; color: #4b5563; white-space: pre-line;">
+                {{ printData.bankDetails }}
+              </p>
+            </div>
+
+            <div
+              v-if="printData.displayPaymentQr"
+              style="
+                display: inline-block;
+                border: 1px solid #e5e7eb;
+                padding: 8px;
+                margin-bottom: 12px;
+                font-size: 0.72rem;
+                text-align: center;
+              "
+            >
+              <p style="font-weight: bold; margin: 0 0 4px 0">
+                Scan to Pay (UPI)
+              </p>
+              <div style="background: #f3f4f6; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 8px; border: 1px dashed #9ca3af; color: #6b7280;">
+                [UPI QR Code]
+              </div>
+            </div>
+
             <!-- ── Signature Section ── -->
             <div
               style="
@@ -1322,11 +1539,8 @@
                     />
                   </div>
 
-                  <div
-                    v-if="
-                      printData.displaytermsandconditions &&
-                      printData.termsAndConditions
-                    "
+                   <div
+                    v-if="printData.termsAndConditions"
                     style="margin-top: 8px"
                   >
                     <p style="font-weight: bold; margin: 0">
@@ -1453,12 +1667,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { fyo } from 'src/initFyo';
+import { ModelNameEnum } from 'models/types';
 import Button from 'src/components/Button.vue';
 import PageHeader from 'src/components/PageHeader.vue';
 import ColumnEditor from './ColumnEditor.vue';
 import { useApp } from 'src/composables/useApp';
 import { usePrintView } from 'src/composables/usePrintView';
+import { showToast } from 'src/utils/interactive';
+import { routeTo } from 'src/utils/ui';
 import {
   type ColumnDef,
   type PdfInvoiceValues,
@@ -1474,20 +1692,41 @@ import {
 
 const props = defineProps<{ schemaName: string; name: string }>();
 const { t } = useApp();
+const route = useRoute();
+const router = useRouter();
+
+const isPrintView = computed(() => route.name === 'PrintView' || route.path.startsWith('/print/'));
+
+function customizeLayout() {
+  const tName = String(fyo.singles.Defaults?.get(props.schemaName[0].toLowerCase() + props.schemaName.slice(1) + 'PrintTemplate') || '');
+  routeTo(`/invoice-designer/${props.schemaName}/${encodeURIComponent(props.name)}?templateName=${encodeURIComponent(tName)}`);
+}
 
 const { values: rawValues, initialize } = usePrintView(props);
 
 const columns = ref<ColumnDef[]>(DEFAULT_COLUMNS.map((c) => ({ ...c })));
 const selectedStyle = ref<InvoiceStyleKey>('Classic');
+const customBaseStyle = ref<'Classic' | 'Modern' | 'POS'>('Classic');
 const dragging = ref<number | null>(null);
 let dragOverIdx = -1;
 
 // ── computed helpers ──
 const values = computed(() => rawValues.value as PdfInvoiceValues | null);
+const effectiveStyle = computed(() => {
+  if (selectedStyle.value === 'Quote') {
+    return customBaseStyle.value || 'Classic';
+  }
+  return selectedStyle.value;
+});
 const currentPreset = computed(() => {
-  const style = selectedStyle.value;
+  const style = effectiveStyle.value;
   const key = (style as string) === 'Amazon' ? 'Modern' : style;
-  return STYLE_PRESETS[key] || STYLE_PRESETS.Classic;
+  const preset = STYLE_PRESETS[key] || STYLE_PRESETS.Classic;
+  return {
+    ...preset,
+    primaryColor: primaryColor.value || preset.primaryColor,
+    accentColor: accentColor.value || preset.accentColor,
+  };
 });
 const pageCount = computed(() => {
   return Math.ceil(containerHeight.value / 1123) || 1;
@@ -1509,6 +1748,17 @@ const displaySeal = ref(false);
 const sigSealPosition = ref('before_terms');
 const signatureSize = ref(80);
 const sealSize = ref(50);
+
+// Visual & Branding refs
+const primaryColor = ref('#000000');
+const accentColor = ref('#f3f4f6');
+const fontFamily = ref('Figtree');
+const pageOrientation = ref('portrait');
+
+// Legal & Payment refs
+const bankDetails = ref('');
+const displayPaymentQr = ref(false);
+const termsAndConditions = ref('');
 
 watch(displaySignature, (val) => {
   if (rawValues.value?.print) {
@@ -1536,6 +1786,48 @@ watch(sealSize, (val) => {
   }
 });
 
+// Branding & Legal watchers to update rawValues.value.print for live preview
+watch(primaryColor, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).primaryColor = val;
+  }
+});
+watch(accentColor, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).accentColor = val;
+  }
+});
+watch(fontFamily, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).fontFamily = val;
+  }
+});
+watch(pageOrientation, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).pageOrientation = val;
+  }
+});
+watch(bankDetails, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).bankDetails = val;
+  }
+});
+watch(displayPaymentQr, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).displayPaymentQr = val;
+  }
+});
+watch(termsAndConditions, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).termsAndConditions = val;
+  }
+});
+watch(customBaseStyle, (val) => {
+  if (rawValues.value?.print) {
+    (rawValues.value.print as any).customBaseStyle = val;
+  }
+});
+
 function updateHeight() {
   if (previewContainer.value) {
     containerHeight.value = previewContainer.value.clientHeight;
@@ -1543,7 +1835,7 @@ function updateHeight() {
 }
 
 watch(
-  [columns, selectedStyle, values],
+  [columns, selectedStyle, customBaseStyle, values],
   () => {
     setTimeout(updateHeight, 150);
   },
@@ -1568,6 +1860,7 @@ onMounted(async () => {
   const saved = await loadColumnConfig(props.schemaName);
   columns.value = saved.columns;
   selectedStyle.value = saved.style;
+  customBaseStyle.value = saved.customBaseStyle || 'Classic';
 
   // Load PrintSettings fields
   const ps = await fyo.doc.getDoc('PrintSettings');
@@ -1577,6 +1870,30 @@ onMounted(async () => {
     (ps.get('sigSealPosition') as string) || 'before_terms';
   signatureSize.value = Number(ps.get('signatureSize')) || 80;
   sealSize.value = Number(ps.get('sealSize')) || 50;
+
+  // Load visual/branding values
+  primaryColor.value = (ps.get('primaryColor') as string) || '#000000';
+  accentColor.value = (ps.get('accentColor') as string) || '#f3f4f6';
+  fontFamily.value = (ps.get('fontFamily') as string) || 'Figtree';
+  pageOrientation.value = (ps.get('pageOrientation') as string) || 'portrait';
+
+  // Load legal/payment values
+  bankDetails.value = (ps.get('bankDetails') as string) || '';
+  displayPaymentQr.value = !!ps.get('displayPaymentQr');
+  termsAndConditions.value = (ps.get('termsAndConditions') as string) || '';
+
+  // Synchronize initial state to rawValues for live preview
+  if (rawValues.value?.print) {
+    const p = rawValues.value.print as any;
+    p.primaryColor = primaryColor.value;
+    p.accentColor = accentColor.value;
+    p.fontFamily = fontFamily.value;
+    p.pageOrientation = pageOrientation.value;
+    p.bankDetails = bankDetails.value;
+    p.displayPaymentQr = displayPaymentQr.value;
+    p.termsAndConditions = termsAndConditions.value;
+    p.customBaseStyle = customBaseStyle.value;
+  }
 
   setTimeout(updateHeight, 300);
 });
@@ -1604,23 +1921,94 @@ function addField(f: ColumnDef) {
 }
 
 async function save() {
-  await saveColumnConfig(props.schemaName, columns.value, selectedStyle.value);
+  try {
+    // Pass silent=true to prevent usePdfInvoice from firing the default toast
+    await saveColumnConfig(props.schemaName, columns.value, selectedStyle.value, customBaseStyle.value, true);
 
-  // Save PrintSettings fields
-  const ps = await fyo.doc.getDoc('PrintSettings');
-  await ps.set('displaySignature', displaySignature.value);
-  await ps.set('displaySeal', displaySeal.value);
-  await ps.set('sigSealPosition', sigSealPosition.value);
-  await ps.set('signatureSize', Number(signatureSize.value) || 80);
-  await ps.set('sealSize', Number(sealSize.value) || 50);
-  await ps.sync();
+    // Save PrintSettings fields
+    const ps = await fyo.doc.getDoc('PrintSettings');
+    await ps.set('displaySignature', displaySignature.value);
+    await ps.set('displaySeal', displaySeal.value);
+    await ps.set('sigSealPosition', sigSealPosition.value);
+    await ps.set('signatureSize', Number(signatureSize.value) || 80);
+    await ps.set('sealSize', Number(sealSize.value) || 50);
+
+    // Save branding settings
+    await ps.set('primaryColor', primaryColor.value);
+    await ps.set('accentColor', accentColor.value);
+    await ps.set('font', fontFamily.value);
+    await ps.set('fontFamily', fontFamily.value);
+    await ps.set('pageOrientation', pageOrientation.value);
+
+    // Save legal/payment settings
+    await ps.set('bankDetails', bankDetails.value);
+    await ps.set('displayPaymentQr', displayPaymentQr.value);
+    await ps.set('termsAndConditions', termsAndConditions.value);
+    await ps.sync();
+
+    const templateLabel = fyo.schemaMap[props.schemaName]?.label || props.schemaName;
+    const templateName = `${selectedStyle.value} - ${templateLabel}`;
+
+    // Dynamically sync PrintTemplate record for route integration
+    try {
+      let templateDoc;
+      try {
+        templateDoc = await fyo.doc.getDoc(ModelNameEnum.PrintTemplate, templateName);
+      } catch {
+        templateDoc = fyo.doc.getNewDoc(ModelNameEnum.PrintTemplate, {
+          name: templateName,
+          type: props.schemaName,
+          isCustom: true,
+        });
+      }
+      
+      const configObj = {
+        columns: columns.value,
+        style: selectedStyle.value,
+        customBaseStyle: customBaseStyle.value,
+      };
+      await templateDoc.set('template', JSON.stringify(configObj));
+      await templateDoc.sync();
+    } catch (err) {
+      console.error('Failed to sync PrintTemplate:', err);
+    }
+
+    // Show customized save layout toast with a Locate action routing to print layouts list folder
+    showToast({
+      message: t`Layout "${templateName}" saved`,
+      type: 'success',
+      actionText: t`View Layouts`,
+      action() {
+        routeTo(`/list/PrintTemplate`);
+      }
+    });
+  } catch (err) {
+    console.error('Save layout failed:', err);
+    showToast({ message: t`Save failed`, type: 'error' });
+  }
 }
 
 async function download() {
   if (!values.value) return;
+  
+  // Clone values to make sure changes are passed to PDF builder
+  const pdfValues = JSON.parse(JSON.stringify(values.value)) as PdfInvoiceValues;
+  if (pdfValues.print) {
+    const p = pdfValues.print as any;
+    p.primaryColor = primaryColor.value;
+    p.accentColor = accentColor.value;
+    p.font = fontFamily.value;
+    p.fontFamily = fontFamily.value;
+    p.pageOrientation = pageOrientation.value;
+    p.bankDetails = bankDetails.value;
+    p.displayPaymentQr = displayPaymentQr.value;
+    p.termsAndConditions = termsAndConditions.value;
+    p.customBaseStyle = customBaseStyle.value;
+  }
+  
   await downloadInvoicePdf(
     props.name || (values.value.doc.name as string),
-    values.value,
+    pdfValues,
     columns.value,
     selectedStyle.value,
     showPageNumbers.value
@@ -1629,9 +2017,25 @@ async function download() {
 
 async function doPrint() {
   if (!values.value) return;
+  
+  // Clone values to make sure changes are passed to PDF builder
+  const pdfValues = JSON.parse(JSON.stringify(values.value)) as PdfInvoiceValues;
+  if (pdfValues.print) {
+    const p = pdfValues.print as any;
+    p.primaryColor = primaryColor.value;
+    p.accentColor = accentColor.value;
+    p.font = fontFamily.value;
+    p.fontFamily = fontFamily.value;
+    p.pageOrientation = pageOrientation.value;
+    p.bankDetails = bankDetails.value;
+    p.displayPaymentQr = displayPaymentQr.value;
+    p.termsAndConditions = termsAndConditions.value;
+    p.customBaseStyle = customBaseStyle.value;
+  }
+  
   await printInvoicePdf(
     props.name || (values.value.doc.name as string),
-    values.value,
+    pdfValues,
     columns.value,
     selectedStyle.value,
     showPageNumbers.value

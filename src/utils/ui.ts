@@ -429,6 +429,21 @@ export async function getDocFromNameIfExistsElseNew(
 }
 
 export async function isPrintable(schemaName: string) {
+  const printableModels = [
+    ModelNameEnum.SalesInvoice,
+    ModelNameEnum.SalesQuote,
+    ModelNameEnum.PurchaseInvoice,
+    ModelNameEnum.JournalEntry,
+    ModelNameEnum.Payment,
+    ModelNameEnum.Shipment,
+    ModelNameEnum.PurchaseReceipt,
+    ModelNameEnum.StockMovement,
+  ];
+
+  if (printableModels.includes(schemaName as ModelNameEnum)) {
+    return true;
+  }
+
   const numTemplates = await fyo.db.count(ModelNameEnum.PrintTemplate, {
     filters: { type: schemaName },
   });

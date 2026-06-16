@@ -140,6 +140,12 @@ const routes: RouteRecordRaw[] = [
       edit: (route) => route.query,
     },
   },
+  {
+    path: '/template-builder/:name',
+    name: 'TemplateBuilderResolver',
+    component: () => import('src/pages/InvoiceDesigner/TemplateBuilderResolver.vue'),
+    props: true,
+  },
 ];
 
 const router = createRouter({ routes, history: createWebHistory() });

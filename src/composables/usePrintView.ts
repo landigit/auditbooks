@@ -104,7 +104,11 @@ export function usePrintView(props: { schemaName: string; name: string }) {
   });
 
   async function initialize() {
-    doc.value = await fyo.doc.getDoc(props.schemaName, props.name);
+    try {
+      doc.value = await fyo.doc.getDoc(props.schemaName, props.name);
+    } catch {
+      doc.value = fyo.doc.getNewDoc(props.schemaName);
+    }
     await setTemplateList();
     await setTemplateFromDefault();
     if (!templateDoc.value && templateList.value.length) {

@@ -65,8 +65,8 @@ export const STYLE_PRESETS: Record<InvoiceStyleKey, InvoiceStylePreset> = {
     compactItems: true,
   },
   Quote: {
-    label: 'Quotation',
-    description: 'Professional quote — teal header, validity section',
+    label: 'Custom',
+    description: 'Custom layout template — customize colors, fonts, columns & bank details',
     primaryColor: '#1e7a6e',
     accentColor: '#f59e0b',
     headerTextColor: '#ffffff',
@@ -194,11 +194,12 @@ export const ALL_AVAILABLE_FIELDS: ColumnDef[] = [
 type SavedConfig = {
   columns: ColumnDef[];
   style: InvoiceStyleKey;
+  customBaseStyle?: 'Classic' | 'Modern' | 'POS';
 };
 
 export async function loadColumnConfig(
   schemaName: string
-): Promise<{ columns: ColumnDef[]; style: InvoiceStyleKey }> {
+): Promise<{ columns: ColumnDef[]; style: InvoiceStyleKey; customBaseStyle?: 'Classic' | 'Modern' | 'POS' }> {
   try {
     const ps = await fyo.doc.getDoc(ModelNameEnum.PrintSettings);
     const raw = ps.get('columnConfig') as string | undefined;
@@ -215,6 +216,7 @@ export async function loadColumnConfig(
       return {
         columns: DEFAULT_COLUMNS.map((c) => ({ ...c })),
         style: 'Classic',
+        customBaseStyle: 'Classic',
       };
     }
     let style = saved.style ?? 'Classic';
@@ -224,11 +226,13 @@ export async function loadColumnConfig(
     return {
       columns: saved.columns ?? DEFAULT_COLUMNS.map((c) => ({ ...c })),
       style,
+      customBaseStyle: saved.customBaseStyle ?? 'Classic',
     };
   } catch {
     return {
       columns: DEFAULT_COLUMNS.map((c) => ({ ...c })),
       style: 'Classic',
+      customBaseStyle: 'Classic',
     };
   }
 }
@@ -236,19 +240,25 @@ export async function loadColumnConfig(
 export async function saveColumnConfig(
   schemaName: string,
   columns: ColumnDef[],
-  style: InvoiceStyleKey
+  style: InvoiceStyleKey,
+  customBaseStyle?: 'Classic' | 'Modern' | 'POS',
+  silent: boolean = false
 ): Promise<void> {
   try {
     const ps = await fyo.doc.getDoc(ModelNameEnum.PrintSettings);
     const raw = (ps.get('columnConfig') as string | undefined) ?? '{}';
     const all = JSON.parse(raw) as Record<string, SavedConfig>;
-    all[schemaName] = { columns, style };
+    all[schemaName] = { columns, style, customBaseStyle };
     await ps.set('columnConfig', JSON.stringify(all));
     await ps.sync();
 
-    showToast({ message: t`Layout saved`, type: 'success' });
+    if (!silent) {
+      showToast({ message: t`Layout saved`, type: 'success' });
+    }
   } catch {
-    showToast({ message: t`Save failed`, type: 'error' });
+    if (!silent) {
+      showToast({ message: t`Save failed`, type: 'error' });
+    }
   }
 }
 
@@ -332,14 +342,19 @@ export function buildDocDefinition(
   styleKey: InvoiceStyleKey = 'Classic',
   showPageNumbers: boolean = true
 ): TDocumentDefinitions {
-  const preset = STYLE_PRESETS[styleKey];
+  const effectiveStyleKey = styleKey === 'Quote' ? ((values.print as any)?.customBaseStyle || 'Classic') as InvoiceStyleKey : styleKey;
+  const preset = STYLE_PRESETS[effectiveStyleKey];
   const doc = values.doc;
   const print = values.print;
 
   // ── Respect PrintSettings fields; fall back to preset defaults ──
   const primaryColor =
-    (print.color as string | undefined) || preset.primaryColor;
-  const accentColor = preset.accentColor; // accent is always preset-defined
+    (print.primaryColor as string | undefined) ||
+    (print.color as string | undefined) ||
+    preset.primaryColor;
+  const accentColor =
+    (print.accentColor as string | undefined) ||
+    preset.accentColor;
   const headerTextColor = preset.headerTextColor;
   const { pageSize, pageMargins, compactItems } = preset;
 
@@ -349,9 +364,11 @@ export function buildDocDefinition(
   const showDescription =
     (print.displayDescription as boolean | undefined) ?? false;
   const showLogo = (print.displayLogo as boolean | undefined) ?? false;
-  const isPOS = styleKey === 'POS';
+  const isPOS = effectiveStyleKey === 'POS';
   const printFont =
-    (print.font as string | undefined) || (isPOS ? 'Figtree' : 'Roboto');
+    (print.fontFamily as string | undefined) ||
+    (print.font as string | undefined) ||
+    (isPOS ? 'Figtree' : 'Roboto');
 
   // Auto-include description column if enabled in PrintSettings and not already visible
   const visibleCols = columns
@@ -386,7 +403,7 @@ export function buildDocDefinition(
   const taxes = (doc.taxes as { account: string; amount: string }[]) ?? [];
 
   const isQuote = styleKey === 'Quote';
-  const isModern = styleKey === 'Modern';
+  const isModern = effectiveStyleKey === 'Modern';
 
   const bodyStyle: Style = {
     font: printFont,
@@ -1289,6 +1306,29 @@ export function buildDocDefinition(
         }
       : null;
 
+  // UPI QR Code block (mock QR image generated/simulated since we don't have user's actual UPI ID, but we can generate a QR code block using pdfmake's QR code feature!)
+  const paymentQrBlock: Content | null =
+    print.displayPaymentQr
+      ? {
+          stack: [
+            { text: 'Scan to Pay (UPI):', bold: true, fontSize: 8, margin: [0, 4, 0, 2] },
+            { qr: `upi://pay?pa=${str(print.email || 'pay')}&pn=${encodeURIComponent(str(print.companyName))}&am=${str(doc.grandTotal)}`, fit: 70 },
+          ],
+          margin: [0, 4, 0, 8],
+        }
+      : null;
+
+  const bankDetailsBlock: Content | null =
+    print.bankDetails
+      ? {
+          stack: [
+            { text: 'Bank Details:', bold: true, fontSize: 8, margin: [0, 4, 0, 2] },
+            { text: str(print.bankDetails), fontSize: 7.5, color: '#555', lineHeight: 1.2 },
+          ],
+          margin: [0, 4, 0, 8],
+        }
+      : null;
+
   const sigSealPos =
     (print.sigSealPosition as string | undefined) || 'before_terms';
   const sigSealBeforeTerms =
@@ -1313,6 +1353,8 @@ export function buildDocDefinition(
             italics: true,
             margin: [0, 4, 0, 0],
           },
+          bankDetailsBlock,
+          paymentQrBlock,
           print.termsAndConditions
             ? {
                 text: str(print.termsAndConditions),
@@ -1331,7 +1373,9 @@ export function buildDocDefinition(
             {
               stack: [
                 sigSealBeforeTerms,
-                print.displaytermsandconditions && print.termsAndConditions
+                bankDetailsBlock,
+                paymentQrBlock,
+                print.termsAndConditions
                   ? {
                       stack: [
                         {
@@ -1414,6 +1458,8 @@ export function buildDocDefinition(
             {
               stack: [
                 sigSealBeforeTerms,
+                bankDetailsBlock,
+                paymentQrBlock,
                 print.termsAndConditions
                   ? {
                       stack: [
@@ -1483,7 +1529,7 @@ export function buildDocDefinition(
   const def: TDocumentDefinitions = {
     info: { title: str(doc.name) },
     pageSize,
-    pageOrientation: 'portrait',
+    pageOrientation: (print.pageOrientation as 'portrait' | 'landscape' | undefined) || 'portrait',
     pageMargins: [
       pageMargins[0],
       pageMargins[1],

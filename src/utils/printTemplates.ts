@@ -36,6 +36,12 @@ const printSettingsFields = [
   'displaytermsandconditions',
   'termsAndConditions',
   'posPrintWidth',
+  'primaryColor',
+  'accentColor',
+  'fontFamily',
+  'pageOrientation',
+  'bankDetails',
+  'displayPaymentQr',
 ];
 const accountingSettingsFields = ['gstin', 'taxId'];
 

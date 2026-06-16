@@ -1,6 +1,6 @@
 {
   "name": "PrintTemplate",
-  "label": "Print Template",
+  "label": "Print Layout",
   "naming": "manual",
   "isSingle": false,
   "fields": [

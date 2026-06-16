@@ -325,9 +325,9 @@ function getCompleteSidebar(): SidebarConfig {
           route: '/import-wizard',
         },
         {
-          label: t`Print Templates`,
+          label: t`Print Layouts`,
           name: 'print-template',
-          route: `/list/PrintTemplate/${t`Print Templates`}`,
+          route: `/list/PrintTemplate/${t`Print Layouts`}`,
         },
         {
           label: t`Customize Form`,
