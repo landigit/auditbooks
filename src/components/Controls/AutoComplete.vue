@@ -9,7 +9,8 @@
       }"
     >
       <div v-if="showLabel" :class="labelClasses">
-        {{ df.label }}
+        {{ df.label
+        }}<span v-if="showMandatory" class="text-red-500 ms-1">*</span>
       </div>
       <div
         class="flex items-center justify-between pe-2 rounded"

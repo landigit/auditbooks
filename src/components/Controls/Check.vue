@@ -12,7 +12,8 @@
         :class="spaceBetween ? 'justify-between' : ''"
       >
         <div v-if="showLabel && !labelRight" class="me-3" :class="labelClasses">
-          {{ df.label }}
+          {{ df.label
+          }}<span v-if="showMandatory" class="text-red-500 ms-1">*</span>
         </div>
         <span
           style="
@@ -81,9 +82,16 @@
           />
         </span>
         <div v-if="showLabel && labelRight" class="ms-3" :class="labelClasses">
-          {{ df.label }}
+          {{ df.label
+          }}<span v-if="showMandatory" class="text-red-500 ms-1">*</span>
         </div>
       </label>
+    </div>
+    <div
+      v-if="df.description"
+      class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 ml-1"
+    >
+      {{ df.description }}
     </div>
   </div>
 </template>

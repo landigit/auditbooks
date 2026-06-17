@@ -148,6 +148,14 @@
       "fieldtype": "Check",
       "default": false,
       "section": "Customizations"
+    },
+    {
+      "fieldname": "enableAuditTrail",
+      "label": "Enable Audit Trail",
+      "fieldtype": "Check",
+      "default": false,
+      "description": "Records all creations, updates, and deletions. Note: Once enabled, this option cannot be disabled.",
+      "section": "Customizations"
     }
   ],
   "quickEditFields": [
@@ -155,6 +163,7 @@
     "dateFormat",
     "currency",
     "displayPrecision",
-    "hideGetStarted"
+    "hideGetStarted",
+    "enableAuditTrail"
   ]
 }

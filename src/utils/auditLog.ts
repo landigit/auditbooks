@@ -69,6 +69,9 @@ async function writeAuditEntry(
     // Guard: DB must be connected and the AuditLog table must exist
     if (!fyo.db.isConnected) return;
 
+    const enableAuditTrail = fyo.singles?.SystemSettings?.enableAuditTrail;
+    if (!enableAuditTrail) return;
+
     const now = new Date().toISOString();
 
     // Best-effort user identification — prefer email, fall back to company name

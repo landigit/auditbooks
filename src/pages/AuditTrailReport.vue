@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex flex-col w-full h-full overflow-hidden text-foreground"
-  >
+  <div class="flex flex-col w-full h-full overflow-hidden text-foreground">
     <!-- Header -->
     <PageHeader :title="t`Audit Trail`">
       <template #left>
@@ -140,13 +138,6 @@
           >
             <div
               class="min-w-0 truncate h-full items-center justify-start flex select-none cursor-pointer hover:text-foreground transition-colors"
-              @click="sortBy('name')"
-            >
-              {{ t`Entry No.` }}
-              <span class="ml-1 text-[10px]">{{ sortIcon('name') }}</span>
-            </div>
-            <div
-              class="min-w-0 truncate h-full items-center justify-start flex select-none cursor-pointer hover:text-foreground transition-colors"
               @click="sortBy('timestamp')"
             >
               {{ t`Date & Time` }}
@@ -183,12 +174,6 @@
             >
               {{ t`User` }}
               <span class="ml-1 text-[10px]">{{ sortIcon('user') }}</span>
-            </div>
-            <div class="min-w-0 truncate h-full items-center justify-start flex">
-              {{ t`Changes` }}
-            </div>
-            <div class="min-w-0 truncate h-full items-center justify-start flex">
-              {{ t`Integrity` }}
             </div>
           </Row>
         </div>
@@ -228,9 +213,7 @@
             <div
               class="flex hover:bg-gray-50 dark:hover:bg-gray-850 items-center px-4 min-w-max"
             >
-              <div
-                class="w-8 text-start me-2 text-gray-700 dark:text-gray-400"
-              >
+              <div class="w-8 text-start me-2 text-gray-700 dark:text-gray-400">
                 {{ i + pageStart + 1 }}
               </div>
               <Row
@@ -239,13 +222,6 @@
                 gap="0.5rem"
                 @click="openDetail(log)"
               >
-                <!-- Entry No -->
-                <div
-                  class="min-w-0 truncate h-full items-center justify-start flex"
-                  :title="log.name"
-                >
-                  {{ log.name }}
-                </div>
                 <!-- Date & Time -->
                 <div
                   class="min-w-0 truncate h-full items-center justify-start flex"
@@ -280,7 +256,9 @@
                 <div
                   class="min-w-0 h-full items-center justify-start flex text-foreground"
                 >
-                  <div class="flex items-center gap-2 min-w-0 w-full justify-start">
+                  <div
+                    class="flex items-center gap-2 min-w-0 w-full justify-start"
+                  >
                     <Avatar
                       :label="log.user || 'System'"
                       size="sm"
@@ -290,30 +268,6 @@
                       log.user || 'System'
                     }}</span>
                   </div>
-                </div>
-                <!-- Changes -->
-                <div
-                  class="min-w-0 h-full items-center justify-start flex text-muted-foreground"
-                >
-                  <span
-                    v-if="log.changes"
-                    class="truncate block w-full"
-                    :title="formatChanges(log.changes)"
-                  >
-                    {{ truncateChanges(log.changes) }}
-                  </span>
-                  <span v-else class="text-muted-foreground/45">—</span>
-                </div>
-                <!-- Integrity -->
-                <div class="min-w-0 h-full items-center justify-start flex font-mono">
-                  <span
-                    v-if="log.checksum"
-                    class="bg-gray-100 dark:bg-gray-800 text-foreground px-1.5 py-0.5 rounded select-all font-mono truncate"
-                    :title="log.checksum"
-                  >
-                    {{ log.checksum.substring(0, 8) }}…
-                  </span>
-                  <span v-else class="text-muted-foreground/45">—</span>
                 </div>
               </Row>
             </div>
@@ -341,7 +295,7 @@
           <!-- Modal Header -->
           <div class="flex items-center justify-between">
             <p class="font-semibold text-lg text-foreground">
-              {{ t`Audit Entry` }} #{{ selectedLog?.name }}
+              {{ t`Audit Entry` }} #{{ selectedLogIndex + 1 }}
             </p>
             <button
               class="p-1 text-muted-foreground hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition"
@@ -356,6 +310,15 @@
           <!-- Modal Body -->
           <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
             <div class="grid grid-cols-3 gap-y-3 gap-x-2">
+              <div
+                class="text-xs font-semibold text-muted-foreground uppercase tracking-wider"
+              >
+                {{ t`Serial No.` }}
+              </div>
+              <div class="col-span-2 text-sm font-medium text-foreground">
+                {{ selectedLogIndex + 1 }}
+              </div>
+
               <div
                 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider"
               >
@@ -446,7 +409,8 @@
                 {{ t`Changed Data` }}
               </h3>
               <pre
-                class="bg-gray-55 dark:bg-gray-900 border dark:border-gray-800 text-xs font-mono p-4 rounded overflow-auto max-h-[220px] text-foreground select-all whitespace-pre-wrap break-all"
+                class="bg-gray-55 dark:bg-gray-900 border dark:border-gray-800 text-xs font-mono p-4 rounded text-foreground select-all whitespace-pre-wrap break-all"
+                style="max-height: 300px; min-height: 120px; overflow-y: auto"
                 >{{ formatChanges(selectedLog.changes) }}</pre
               >
             </div>
@@ -489,6 +453,7 @@ const {
   t,
   loading,
   selectedLog,
+  selectedLogIndex,
   pageStart,
   filters,
   gridTemplateColumns,

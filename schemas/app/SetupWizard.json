@@ -87,6 +87,14 @@
       "fieldtype": "Check",
       "hidden": true,
       "readOnly": true
+    },
+    {
+      "fieldname": "enableAuditTrail",
+      "label": "Enable Audit Trail",
+      "fieldtype": "Check",
+      "default": false,
+      "description": "Records all creations, updates, and deletions. Note: Once enabled, this option cannot be disabled.",
+      "section": "Accounting"
     }
   ],
   "quickEditFields": [
@@ -96,6 +104,7 @@
     "currency",
     "chartOfAccounts",
     "fiscalYearStart",
-    "fiscalYearEnd"
+    "fiscalYearEnd",
+    "enableAuditTrail"
   ]
 }

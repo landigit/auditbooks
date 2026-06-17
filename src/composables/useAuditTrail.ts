@@ -37,8 +37,7 @@ export function useAuditTrail() {
   });
 
   // ── Grid Columns Definition ───────────────────────────────────────────────────
-  const gridTemplateColumns =
-    'minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 2fr) minmax(0, 0.8fr)';
+  const gridTemplateColumns = '14rem 8rem 12rem 12rem 12rem';
 
   // ── Filter Schema Definitions for FormControl ──────────────────────────────────
   const fromDateDf = {
@@ -224,6 +223,11 @@ export function useAuditTrail() {
     return sortState.value.dir === 'asc' ? '↑' : '↓';
   }
 
+  const selectedLogIndex = computed(() => {
+    if (!selectedLog.value) return -1;
+    return filteredLogs.value.indexOf(selectedLog.value);
+  });
+
   function openDetail(log: AuditLogEntry) {
     selectedLog.value = log;
   }
@@ -249,16 +253,7 @@ export function useAuditTrail() {
 
   function formatFullDateTime(ts: string) {
     if (!ts) return '—';
-    return new Date(ts).toLocaleString('en-IN', {
-      weekday: 'long',
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-    });
+    return `${formatDate(ts)}, ${formatTime(ts)}`;
   }
 
   // Helper for truncation
@@ -341,6 +336,7 @@ export function useAuditTrail() {
     loading,
     logs,
     selectedLog,
+    selectedLogIndex,
     pageStart,
     pageEnd,
     filters,

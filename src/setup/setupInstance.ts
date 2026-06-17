@@ -116,7 +116,7 @@ async function updatePrintSettings(
 }
 
 async function updateSystemSettings(
-  { country, currency: companyCurrency }: SetupWizardOptions,
+  { country, currency: companyCurrency, enableAuditTrail }: SetupWizardOptions,
   fyo: Fyo
 ) {
   const countryInfo = getCountryInfo();
@@ -133,6 +133,7 @@ async function updateSystemSettings(
     currency,
     instanceId,
     countryCode,
+    enableAuditTrail: !!enableAuditTrail,
   });
 }
 

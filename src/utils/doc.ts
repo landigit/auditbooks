@@ -22,6 +22,14 @@ export function evaluateReadOnly(field: Field, doc?: Doc) {
     return true;
   }
 
+  if (
+    doc?.schemaName === 'SystemSettings' &&
+    field.fieldname === 'enableAuditTrail' &&
+    doc.get('enableAuditTrail')
+  ) {
+    return true;
+  }
+
   return evaluateFieldMeta(field, doc, 'readOnly');
 }
 

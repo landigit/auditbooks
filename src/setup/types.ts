@@ -9,4 +9,5 @@ export interface SetupWizardOptions {
   fiscalYearStart: string;
   fiscalYearEnd: string;
   chartOfAccounts: string;
+  enableAuditTrail?: boolean;
 }

@@ -1,7 +1,8 @@
 <template>
   <div>
     <div v-if="showLabel" :class="labelClasses">
-      {{ df.label }}
+      {{ df.label
+      }}<span v-if="showMandatory" class="text-red-500 ms-1">*</span>
     </div>
     <Popover ref="popover" placement="bottom-start" class="w-full">
       <!-- Target: The field input/display box -->

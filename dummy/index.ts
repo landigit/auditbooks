@@ -42,6 +42,7 @@ export async function setupDummyInstance(
     fiscalYearStart: getFiscalYear('04-01', true)!.toISOString(),
     fiscalYearEnd: getFiscalYear('04-01', false)!.toISOString(),
     chartOfAccounts: 'India - Chart of Accounts',
+    enableAuditTrail: true,
   };
   await setupInstance(dbPath, options, fyo);
   fyo.store.skipTelemetryLogging = true;

@@ -305,8 +305,9 @@ function getCompleteSidebar(): SidebarConfig {
     {
       label: t`Audit Trail`,
       name: 'audit-trail',
-      icon: 'audit',
+      icon: 'review-ac',
       route: '/audit-trail',
+      hidden: () => !fyo.singles.SystemSettings?.enableAuditTrail,
     },
     {
       label: t`Setup`,

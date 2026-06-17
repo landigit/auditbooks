@@ -1,7 +1,8 @@
 <template>
   <div>
     <div v-if="showLabel && df" :class="labelClasses">
-      {{ df.label }}
+      {{ df.label
+      }}<span v-if="showMandatory" class="text-red-500 ms-1">*</span>
     </div>
     <div :class="containerClasses" class="flex gap-2 items-center">
       <label
