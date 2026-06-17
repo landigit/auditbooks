@@ -7,22 +7,22 @@
         <div
           class="bg-white dark:bg-gray-850 border dark:border-gray-800 rounded-lg text-gray-900 dark:text-gray-25 p-4 shadow-2xl w-dialog flex flex-col gap-4 inner"
         >
-          <div class="flex justify-between items-center">
-            <h1 class="font-semibold">{{ title }}</h1>
+          <div class="flex justify-between items-start gap-4">
+            <h1 class="font-semibold break-words">{{ title }}</h1>
             <FeatherIcon
               :name="config.iconName"
-              class="w-6 h-6"
+              class="w-6 h-6 flex-shrink-0"
               :class="config.iconColor"
             />
           </div>
 
           <template v-if="detail">
-            <p v-if="typeof detail === 'string'" class="text-base">
+            <p v-if="typeof detail === 'string'" class="text-base break-all">
               {{ detail }}
             </p>
 
             <div v-else v-for="d of detail">
-              <p class="text-base">{{ d }}</p>
+              <p class="text-base break-all">{{ d }}</p>
             </div>
           </template>
           <div class="flex justify-end gap-4 mt-4">
