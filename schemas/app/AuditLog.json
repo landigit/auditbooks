@@ -1,0 +1,84 @@
+{
+  "name": "AuditLog",
+  "label": "Audit Log",
+  "naming": "autoincrement",
+  "create": false,
+  "isSingle": false,
+  "isChild": false,
+  "fields": [
+    {
+      "fieldname": "name",
+      "label": "Entry No.",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "timestamp",
+      "label": "Timestamp",
+      "fieldtype": "Datetime",
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "action",
+      "label": "Action",
+      "fieldtype": "Select",
+      "options": [
+        { "value": "Create", "label": "Create" },
+        { "value": "Update", "label": "Update" },
+        { "value": "Delete", "label": "Delete" },
+        { "value": "Submit", "label": "Submit" },
+        { "value": "Cancel", "label": "Cancel" },
+        { "value": "Rename", "label": "Rename" }
+      ],
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "documentType",
+      "label": "Document Type",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "documentName",
+      "label": "Document Name",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "user",
+      "label": "User",
+      "fieldtype": "Data",
+      "readOnly": true
+    },
+    {
+      "fieldname": "ipAddress",
+      "label": "IP Address",
+      "fieldtype": "Data",
+      "readOnly": true
+    },
+    {
+      "fieldname": "sessionId",
+      "label": "Session ID",
+      "fieldtype": "Data",
+      "readOnly": true
+    },
+    {
+      "fieldname": "changes",
+      "label": "Changes",
+      "fieldtype": "Text",
+      "readOnly": true
+    },
+    {
+      "fieldname": "checksum",
+      "label": "Integrity Hash",
+      "fieldtype": "Data",
+      "readOnly": true
+    }
+  ],
+  "keywordFields": ["documentType", "documentName", "action", "user"]
+}

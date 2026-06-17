@@ -12,6 +12,8 @@ const Report = () => import('src/pages/Report.vue');
 const Settings = () => import('src/pages/Settings/Settings.vue');
 const CustomizeForm = () => import('src/pages/CustomizeForm/CustomizeForm.vue');
 const POS = () => import('src/pages/POS/POS.vue');
+const AuditTrailReport = () => import('src/pages/AuditTrailReport.vue');
+
 import type { HistoryState } from 'vue-router';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import { historyState } from './utils/refs';
@@ -147,6 +149,11 @@ const routes: RouteRecordRaw[] = [
     component: () =>
       import('src/pages/InvoiceDesigner/TemplateBuilderResolver.vue'),
     props: true,
+  },
+  {
+    path: '/audit-trail',
+    name: 'Audit Trail',
+    component: AuditTrailReport,
   },
 ];
 

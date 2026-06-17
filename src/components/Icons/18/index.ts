@@ -1,5 +1,6 @@
 import Check from './check.vue';
 import CommonEntries from './common-entries.vue';
+import Audit from './audit.vue';
 import Customer from './customer.vue';
 import Dashboard from './dashboard.vue';
 import Fb from './fb.vue';
@@ -26,6 +27,7 @@ import System from './system.vue';
 
 // prettier-ignore
 export default {
+  'audit': Audit,
   'check': Check,
   'common-entries': CommonEntries,
   'customer': Customer,

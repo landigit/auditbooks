@@ -8,6 +8,7 @@ import {
   getRandomString,
   getValueMapFromList,
 } from 'utils/index';
+import { setupAuditHooks } from './auditLog';
 
 export async function initializeInstance(
   dbPath: string,
@@ -24,6 +25,9 @@ export async function initializeInstance(
 
   const regionalModels = await getRegionalModels(countryCode);
   await fyo.initializeAndRegister(models, regionalModels);
+
+  // Install audit trail hooks after DB + models are ready
+  setupAuditHooks(fyo);
 
   await checkSingleLinks(fyo);
   await setSingles(fyo);

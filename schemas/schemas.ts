@@ -84,6 +84,7 @@ import IntegrationErrorLog from './app/IntegrationErrorLog.json';
 import ItemGroup from './app/ItemGroup.json';
 import { Schema, SchemaStub } from './types';
 import ItemEnquiry from './app/ItemEnquiry.json';
+import AuditLog from './app/AuditLog.json';
 
 export const coreSchemas: Schema[] = [
   PatchRun as Schema,
@@ -196,4 +197,6 @@ export const appSchemas: Schema[] | SchemaStub[] = [
   FetchFromERPNextQueue as Schema,
 
   IntegrationErrorLog as Schema,
+
+  AuditLog as Schema,
 ];

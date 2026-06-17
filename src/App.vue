@@ -56,6 +56,8 @@ import { Shortcuts } from './utils/shortcuts';
 import { routeTo } from './utils/ui';
 import { useKeys } from './utils/vueUtils';
 import { setDarkMode } from 'src/utils/theme';
+import { logSystemEvent, resetAuditHooks } from 'src/utils/auditLog';
+
 import {
   registerInstanceToERPNext,
   updateERPNSyncSettings,
@@ -185,6 +187,10 @@ async function setupComplete(
 
   await setupInstance(filePath, setupWizardOptions, fyo);
   fyo.config.set('lastSelectedFilePath', filePath);
+  // Log new DB creation for audit trail
+  try {
+    logSystemEvent(fyo, 'DB_Created', filePath);
+  } catch {}
   await setDesk(filePath);
 }
 
@@ -284,6 +290,15 @@ async function setDeskRoute(): Promise<void> {
 }
 
 async function showDbSelector(): Promise<void> {
+  // Log DB closed / switched event — capture before purgeCache wipes the connection
+  const currentPath = fyo.db?.dbPath ?? dbPath.value;
+  if (currentPath && fyo.db.isConnected) {
+    try {
+      logSystemEvent(fyo, 'DB_Closed', currentPath);
+    } catch {}
+  }
+  // Reset audit hooks so they re-install on the next DB connection
+  resetAuditHooks();
   localStorage.clear();
   fyo.config.set('lastSelectedFilePath', null);
   fyo.telemetry.stop();

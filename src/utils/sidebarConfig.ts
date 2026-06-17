@@ -303,6 +303,12 @@ function getCompleteSidebar(): SidebarConfig {
     getPOSSidebar(),
     getRegionalSidebar(),
     {
+      label: t`Audit Trail`,
+      name: 'audit-trail',
+      icon: 'audit',
+      route: '/audit-trail',
+    },
+    {
       label: t`Setup`,
       name: 'setup',
       icon: 'settings',

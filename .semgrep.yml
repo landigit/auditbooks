@@ -1,0 +1,14 @@
+rules:
+  - id: avoid-unsafe-query-execution
+    pattern: |
+      $CONN.execute(..., &[$PARAMS])
+    message: 'Ensure database queries are parametrized properly to prevent SQL injection vulnerabilities.'
+    languages: [rust]
+    severity: WARNING
+
+  - id: verify-audit-trail-safe-insert
+    pattern: |
+      $CONN.execute("INSERT INTO Version ...", ...)
+    message: 'Verify Version table inserts are safe and parameterized.'
+    languages: [rust]
+    severity: INFO

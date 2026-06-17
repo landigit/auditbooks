@@ -5,14 +5,22 @@
   font-family: 'Figtree Variable';
   font-weight: 300 900;
   font-display: swap;
-  src: url('../assets/fonts/figtree-var.woff2') format('woff2');
+  src:
+    local('Figtree Variable'),
+    local('Figtree-Variable'),
+    local('Figtree'),
+    url('../assets/fonts/figtree-var.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Figtree';
   font-weight: 300 900;
   font-display: swap;
-  src: url('../assets/fonts/figtree-var.woff2') format('woff2');
+  src:
+    local('Figtree'),
+    local('Figtree Variable'),
+    local('Figtree-Regular'),
+    url('../assets/fonts/figtree-var.woff2') format('woff2');
 }
 
 @font-face {
@@ -278,7 +286,7 @@ input[type='number']::-webkit-inner-spin-button {
 
 @layer base {
   .theme {
-    --font-sans: 'Figtree Variable', sans-serif;
+    --font-sans: 'Figtree', 'Figtree Variable', sans-serif;
     --font-heading: var(--font-sans);
   }
   :root {
