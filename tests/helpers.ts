@@ -29,7 +29,7 @@ export function getTestSetupWizardOptions(): SetupWizardOptions {
 }
 
 export function getTestDbPath(dbPath?: string) {
-  config();
+  config({ quiet: true });
   return dbPath ?? process.env.TEST_DB_PATH ?? ':memory:';
 }
 

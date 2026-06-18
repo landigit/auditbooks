@@ -3,6 +3,8 @@ import { showSidebar } from 'src/utils/refs';
 import { toggleSidebar } from 'src/utils/ui';
 import Sidebar from '../components/Sidebar.vue';
 import { useBreakpoint } from 'src/composables/useBreakpoint.js';
+import ErrorBoundary from '../components/ErrorBoundary.vue';
+import { handleError } from '../errorHandling';
 
 const props = withDefaults(
   defineProps<{
@@ -18,6 +20,11 @@ defineEmits<{
 }>();
 
 const { isMobile } = useBreakpoint();
+
+function onPageError(error: any) {
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  handleError(false, error instanceof Error ? error : new Error(String(error)));
+}
 </script>
 <template>
   <div class="flex overflow-hidden relative">
@@ -42,32 +49,37 @@ const { isMobile } = useBreakpoint();
     </Transition>
 
     <div class="flex flex-1 overflow-y-hidden bg-gray-50 dark:bg-gray-900">
-      <router-view v-slot="{ Component }">
-        <keep-alive>
-          <component
-            :is="Component"
-            :key="$route.path"
-            :dark-mode="darkMode"
-            class="flex-1"
-          />
-        </keep-alive>
-      </router-view>
-
-      <router-view v-slot="{ Component, route }" name="edit">
-        <Transition name="quickedit">
-          <div v-if="route?.query?.edit">
+      <ErrorBoundary :propagate="false" @error-captured="onPageError">
+        <router-view v-slot="{ Component }">
+          <keep-alive>
             <component
               :is="Component"
-              :key="
-                String(route.query.schemaName ?? '') +
-                String(route.query.name ?? '')
-              "
+              :key="$route.path"
               :dark-mode="darkMode"
+              class="flex-1"
             />
-          </div>
-        </Transition>
-      </router-view>
+          </keep-alive>
+        </router-view>
+      </ErrorBoundary>
+
+      <ErrorBoundary :propagate="false" @error-captured="onPageError">
+        <router-view v-slot="{ Component, route }" name="edit">
+          <Transition name="quickedit">
+            <div v-if="route?.query?.edit">
+              <component
+                :is="Component"
+                :key="
+                  String(route.query.schemaName ?? '') +
+                  String(route.query.name ?? '')
+                "
+                :dark-mode="darkMode"
+              />
+            </div>
+          </Transition>
+        </router-view>
+      </ErrorBoundary>
     </div>
+
 
     <!-- Show Sidebar Button -->
     <button

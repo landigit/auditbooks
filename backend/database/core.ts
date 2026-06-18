@@ -704,6 +704,17 @@ export default class DatabaseCore extends DatabaseBase {
       for (const field of fields) {
         this.#buildColumnForTable(table, field);
       }
+
+      const schema = this.schemaMap[schemaName];
+      if (schema?.isChild) {
+        table.index(['parent']);
+      }
+
+      for (const field of fields) {
+        if (field.fieldtype === 'Link' && field.fieldname !== 'name') {
+          table.index([field.fieldname]);
+        }
+      }
     });
   }
 

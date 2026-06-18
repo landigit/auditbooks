@@ -11,21 +11,6 @@ import { ModelNameEnum } from 'models/types';
 import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
 
-import courierAfm from 'pdfkit/js/data/Courier.afm?raw';
-import courierBoldAfm from 'pdfkit/js/data/Courier-Bold.afm?raw';
-import courierObliqueAfm from 'pdfkit/js/data/Courier-Oblique.afm?raw';
-import courierBoldObliqueAfm from 'pdfkit/js/data/Courier-BoldOblique.afm?raw';
-
-import helveticaAfm from 'pdfkit/js/data/Helvetica.afm?raw';
-import helveticaBoldAfm from 'pdfkit/js/data/Helvetica-Bold.afm?raw';
-import helveticaObliqueAfm from 'pdfkit/js/data/Helvetica-Oblique.afm?raw';
-import helveticaBoldObliqueAfm from 'pdfkit/js/data/Helvetica-BoldOblique.afm?raw';
-
-import timesRomanAfm from 'pdfkit/js/data/Times-Roman.afm?raw';
-import timesBoldAfm from 'pdfkit/js/data/Times-Bold.afm?raw';
-import timesItalicAfm from 'pdfkit/js/data/Times-Italic.afm?raw';
-import timesBoldItalicAfm from 'pdfkit/js/data/Times-BoldItalic.afm?raw';
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type ColumnDef = {
@@ -1651,6 +1636,35 @@ export async function getPdfMake() {
   if (cachedPdfMake) {
     return cachedPdfMake;
   }
+
+  const [
+    courierAfm,
+    courierBoldAfm,
+    courierObliqueAfm,
+    courierBoldObliqueAfm,
+    helveticaAfm,
+    helveticaBoldAfm,
+    helveticaObliqueAfm,
+    helveticaBoldObliqueAfm,
+    timesRomanAfm,
+    timesBoldAfm,
+    timesItalicAfm,
+    timesBoldItalicAfm,
+  ] = await Promise.all([
+    import('pdfkit/js/data/Courier.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Courier-Bold.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Courier-Oblique.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Courier-BoldOblique.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Helvetica.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Helvetica-Bold.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Helvetica-Oblique.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Helvetica-BoldOblique.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Times-Roman.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Times-Bold.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Times-Italic.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Times-BoldItalic.afm?raw').then((m) => m.default),
+  ]);
+
   const pdfMake = (await import('pdfmake/build/pdfmake')).default;
   const pdfFonts = (await import('pdfmake/build/vfs_fonts')).default;
   (pdfMake as any).vfs =

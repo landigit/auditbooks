@@ -34,3 +34,13 @@ tauri-plugin-updater = "2"
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.21"
 ndk-context = "0.1"
+
+[profile.dev]
+opt-level = 1        # Minimal optimization: faster runtime, near-identical rebuild speed
+
+[profile.release]
+opt-level = "z"       # Optimize for binary size across all platforms
+lto = true            # Enable Link-Time Optimization
+codegen-units = 1     # Maximize compiler optimization passes
+panic = "abort"       # Disable stack unwinding to reduce binary footprint
+strip = true          # Strip debug symbols and symbol tables
