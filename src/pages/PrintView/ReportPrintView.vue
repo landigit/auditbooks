@@ -21,7 +21,7 @@
         <!-- Report Print Display Container -->
         <ScaledContainer
           ref="scaledContainer"
-          class="shadow-lg border bg-white"
+          class="shadow-lg border bg-white print-preview-paper"
           :scale="scale"
           :width="size.width"
           :height="size.height"
@@ -508,5 +508,29 @@ function cellClasses(cIdx: number, rIdx: number): string[] {
   display: grid;
   grid-template-columns: auto var(--w-quick-edit);
   @apply h-full overflow-auto;
+}
+</style>
+
+<style>
+/* Force text and borders inside the white report print preview card to be dark/black in dark mode */
+html.dark .print-preview-paper,
+html.dark .print-preview-paper td,
+html.dark .print-preview-paper p,
+html.dark .print-preview-paper span,
+html.dark .print-preview-paper div,
+html.dark .print-preview-paper th,
+html.dark .print-preview-paper table,
+html.dark .print-preview-paper h1,
+html.dark .print-preview-paper h2,
+html.dark .print-preview-paper h3,
+html.dark .print-preview-paper h4 {
+  color: oklch(0.145 0 0) !important;
+}
+
+html.dark .print-preview-paper th,
+html.dark .print-preview-paper td,
+html.dark .print-preview-paper table,
+html.dark .print-preview-paper div {
+  border-color: oklch(0.922 0 0) !important;
 }
 </style>

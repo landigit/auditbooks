@@ -5,3 +5,4 @@
 **/patches/v0_21_0/*
 **/src-tauri/*
 **/dist/*
+src/public/translations

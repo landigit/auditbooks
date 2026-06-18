@@ -350,13 +350,17 @@ const {
   color: var(--accent-foreground) !important;
 }
 
-/* Modals & Container styling */
 :deep(.form-card-shadow:not(.w-full)),
 :deep(.form-card:not(.w-full)) {
   border-radius: 0 0 6px 6px !important;
-  border: 1px solid var(--border) !important;
+  border: 1px solid #E2E2E2 !important;
   border-top: none !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+}
+
+html.dark :deep(.form-card-shadow:not(.w-full)),
+html.dark :deep(.form-card:not(.w-full)) {
+  border-color: var(--border) !important;
 }
 
 :deep(.form-card-shadow.w-full),

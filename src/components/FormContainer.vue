@@ -58,6 +58,6 @@ const isFullWidth = computed(() => props.useFullWidth || isMobile.value);
 
 <style scoped>
 .form-card-shadow {
-  clip-path: inset(0px -100px -100px -100px);
+  border-color: #E2E2E2;
 }
 </style>

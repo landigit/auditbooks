@@ -8,7 +8,7 @@ import { Field, Schema } from 'schemas/types';
 import { handleErrorWithDialog } from 'src/errorHandling';
 import { getErrorMessage } from 'src/utils';
 import { evaluateHidden } from 'src/utils/doc';
-import { showDialog } from 'src/utils/interactive';
+import { showDialog, showToast } from 'src/utils/interactive';
 import { docsPathMap } from 'src/utils/misc';
 import { docsPathRef } from 'src/utils/refs';
 import { UIGroupedFields } from 'src/utils/types';
@@ -131,24 +131,9 @@ export function useSettings() {
     }
 
     update();
-    await showDialog({
-      title: t`Reload Auditbooks?`,
-      detail: t`Changes made to settings will be visible on reload.`,
-      type: 'info',
-      buttons: [
-        {
-          label: t`Yes`,
-          isPrimary: true,
-          action: () => {
-            window.location.href = window.location.origin + '/index.html';
-          },
-        },
-        {
-          label: t`No`,
-          action: () => null,
-          isEscape: true,
-        },
-      ],
+    showToast({
+      type: 'success',
+      message: t`Settings saved successfully`,
     });
   }
 

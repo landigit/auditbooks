@@ -250,15 +250,28 @@ function getPath(item: SidebarItem | SidebarRoot) {
   return { path, query: { filters: JSON.stringify(filters) } };
 }
 
+async function refreshSidebar() {
+  const { companyName: name } = await fyo.doc.getDoc('AccountingSettings');
+  companyName.value = name as string;
+  groups.value = getSidebarConfig();
+  setActiveGroup();
+}
+
 onMounted(async () => {
   const { companyName: name } = await fyo.doc.getDoc('AccountingSettings');
   companyName.value = name as string;
-  groups.value = await getSidebarConfig();
+  groups.value = getSidebarConfig();
 
   setActiveGroup();
   router.afterEach(() => {
     setActiveGroup();
   });
+
+  fyo.doc.observer.on('sync:AccountingSettings', refreshSidebar);
+  fyo.doc.observer.on('sync:InventorySettings', refreshSidebar);
+  fyo.doc.observer.on('sync:POSSettings', refreshSidebar);
+  fyo.doc.observer.on('sync:SystemSettings', refreshSidebar);
+  fyo.doc.observer.on('sync:Defaults', refreshSidebar);
 
   shortcuts?.shift.set(COMPONENT_NAME, ['KeyH'], () => {
     if (document.body === document.activeElement) {
@@ -272,6 +285,11 @@ onMounted(async () => {
 
 onUnmounted(() => {
   shortcuts?.delete(COMPONENT_NAME);
+  fyo.doc.observer.off('sync:AccountingSettings', refreshSidebar);
+  fyo.doc.observer.off('sync:InventorySettings', refreshSidebar);
+  fyo.doc.observer.off('sync:POSSettings', refreshSidebar);
+  fyo.doc.observer.off('sync:SystemSettings', refreshSidebar);
+  fyo.doc.observer.off('sync:Defaults', refreshSidebar);
 });
 </script>
 
