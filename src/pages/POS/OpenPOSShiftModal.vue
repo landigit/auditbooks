@@ -39,21 +39,13 @@
         />
 
         <div class="mt-4 grid grid-cols-2 gap-4 items-end">
-          <Button
-            class="w-full py-5"
-            type="secondary"
-            @click="$router.back()"
-          >
+          <Button class="w-full py-5" type="secondary" @click="$router.back()">
             <span class="uppercase text-lg font-semibold">
               {{ t`Back` }}
             </span>
           </Button>
 
-          <Button
-            class="w-full py-5"
-            type="primary"
-            @click="handleSubmit"
-          >
+          <Button class="w-full py-5" type="primary" @click="handleSubmit">
             <span class="uppercase text-lg font-semibold">
               {{ t`Submit` }}
             </span>

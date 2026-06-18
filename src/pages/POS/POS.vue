@@ -2,10 +2,7 @@
   <div class="flex-col">
     <PageHeader :title="t`Point of Sale`">
       <slot>
-        <Button
-          type="secondary"
-          @click="toggleModal('ShiftClose')"
-        >
+        <Button type="secondary" @click="toggleModal('ShiftClose')">
           <feather-icon name="log-out" class="w-4 h-4 me-1.5" />
           <span class="font-medium">{{ t`Close POS Shift ` }}</span>
         </Button>

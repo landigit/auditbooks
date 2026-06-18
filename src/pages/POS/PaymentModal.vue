@@ -144,11 +144,7 @@
 
       <div class="grid grid-cols-2 gap-4 bottom-8">
         <div class="col-span-1">
-          <Button
-            class="w-full py-5"
-            type="primary"
-            @click="submitTransaction"
-          >
+          <Button class="w-full py-5" type="primary" @click="submitTransaction">
             <span class="uppercase text-lg font-semibold">
               {{ t`Submit` }}
             </span>
@@ -168,11 +164,7 @@
         </div>
 
         <div class="col-span-1">
-          <Button
-            class="w-full py-5"
-            type="primary"
-            @click="payTransaction"
-          >
+          <Button class="w-full py-5" type="primary" @click="payTransaction">
             <span class="uppercase text-lg font-semibold">
               {{ t`Pay` }}
             </span>

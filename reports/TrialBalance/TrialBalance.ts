@@ -203,9 +203,9 @@ export class TrialBalance extends AccountReport {
       const endpoints = await getFiscalEndpoints(year + 1, year, this.fyo);
 
       this.fromDate = endpoints.fromDate;
-      this.toDate = DateTime.fromISO(endpoints.toDate)
-        .minus({ days: 1 })
-        .toISODate() ?? undefined;
+      this.toDate =
+        DateTime.fromISO(endpoints.toDate).minus({ days: 1 }).toISODate() ??
+        undefined;
     }
 
     await this._setDateRanges();

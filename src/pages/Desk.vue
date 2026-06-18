@@ -80,7 +80,6 @@ function onPageError(error: any) {
       </ErrorBoundary>
     </div>
 
-
     <!-- Show Sidebar Button -->
     <button
       v-show="!showSidebar"

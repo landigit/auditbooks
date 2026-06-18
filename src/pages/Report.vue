@@ -39,7 +39,9 @@
         :class="{
           'self-end pb-0.5': field.fieldtype === 'Check' && hasMixedFilters,
         }"
-        @change="async (value: any) => await report?.set(field.fieldname, value)"
+        @change="
+          async (value: any) => await report?.set(field.fieldname, value)
+        "
       />
     </div>
 

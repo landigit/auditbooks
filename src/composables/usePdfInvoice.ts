@@ -1658,7 +1658,9 @@ export async function getPdfMake() {
     import('pdfkit/js/data/Helvetica.afm?raw').then((m) => m.default),
     import('pdfkit/js/data/Helvetica-Bold.afm?raw').then((m) => m.default),
     import('pdfkit/js/data/Helvetica-Oblique.afm?raw').then((m) => m.default),
-    import('pdfkit/js/data/Helvetica-BoldOblique.afm?raw').then((m) => m.default),
+    import('pdfkit/js/data/Helvetica-BoldOblique.afm?raw').then(
+      (m) => m.default
+    ),
     import('pdfkit/js/data/Times-Roman.afm?raw').then((m) => m.default),
     import('pdfkit/js/data/Times-Bold.afm?raw').then((m) => m.default),
     import('pdfkit/js/data/Times-Italic.afm?raw').then((m) => m.default),

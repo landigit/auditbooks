@@ -15,8 +15,9 @@ export default defineComponent({
         value = new Date(value);
       }
 
-        const iso = value instanceof Date ? DateTime.fromJSDate(value).toISO() : null;
-        return iso ? iso.split('.')[0] : '';
+      const iso =
+        value instanceof Date ? DateTime.fromJSDate(value).toISO() : null;
+      return iso ? iso.split('.')[0] : '';
 
       return '';
     },

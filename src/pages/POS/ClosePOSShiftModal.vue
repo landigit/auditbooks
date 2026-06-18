@@ -43,11 +43,7 @@
         </span>
       </Button>
 
-      <Button
-        class="w-full py-5"
-        type="primary"
-        @click="handleSubmit"
-      >
+      <Button class="w-full py-5" type="primary" @click="handleSubmit">
         <span class="uppercase text-lg font-semibold">
           {{ t`Submit` }}
         </span>
