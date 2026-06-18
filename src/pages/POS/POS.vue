@@ -3,11 +3,11 @@
     <PageHeader :title="t`Point of Sale`">
       <slot>
         <Button
-          class="bg-red-500 dark:bg-red-700"
+          type="secondary"
           @click="toggleModal('ShiftClose')"
         >
-          <feather-icon name="log-out" class="w-4 h-4 me-1.5 text-white" />
-          <span class="font-medium text-white">{{ t`Close POS Shift ` }}</span>
+          <feather-icon name="log-out" class="w-4 h-4 me-1.5" />
+          <span class="font-medium">{{ t`Close POS Shift ` }}</span>
         </Button>
       </slot>
     </PageHeader>

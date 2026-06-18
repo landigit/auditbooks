@@ -353,7 +353,7 @@ const {
 :deep(.form-card-shadow:not(.w-full)),
 :deep(.form-card:not(.w-full)) {
   border-radius: 0 0 6px 6px !important;
-  border: 1px solid #E2E2E2 !important;
+  border: 1px solid #e2e2e2 !important;
   border-top: none !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
 }

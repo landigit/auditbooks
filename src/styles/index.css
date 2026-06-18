@@ -530,4 +530,35 @@ input[type='number']::-webkit-inner-spin-button {
     display: flex !important;
     align-items: center !important;
   }
+
+  /* Ensure floating label inputs are not constrained or overridden by legacy styles */
+  input.floating-label-input {
+    border-radius: 8px !important;
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    padding-right: 0.625rem !important;
+    height: 2.75rem !important;
+    background-color: #fbfbfb !important;
+    border: 1.5px solid var(--border) !important;
+  }
+
+  .dark input.floating-label-input {
+    background-color: #282828 !important;
+  }
+
+  input.floating-label-input:not(.has-currency) {
+    padding-left: 0.625rem !important;
+  }
+
+  input.floating-label-input.has-currency {
+    padding-left: 2.25rem !important;
+  }
+
+  /* Ensure text sizing is not overridden by global 14px */
+  input.floating-label-input.text-lg {
+    font-size: 1.125rem !important;
+  }
+  input.floating-label-input.text-sm {
+    font-size: 0.875rem !important;
+  }
 }

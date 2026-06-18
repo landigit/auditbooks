@@ -15,14 +15,13 @@
         <Button
           v-for="method in paymentMethods"
           :key="method"
-          class="w-full py-5 bg-teal-500"
+          class="w-full py-5"
+          :type="paymentMethod === method ? 'primary' : 'secondary'"
           @click="setPaymentMethodAndAmount(method)"
         >
-          <slot>
-            <p class="uppercase text-lg text-white font-semibold">
-              {{ t`${method}` }}
-            </p>
-          </slot>
+          <span class="uppercase text-lg font-semibold">
+            {{ t`${method}` }}
+          </span>
         </Button>
       </div>
 
@@ -146,67 +145,49 @@
       <div class="grid grid-cols-2 gap-4 bottom-8">
         <div class="col-span-1">
           <Button
-            class="w-full"
-            :style="{
-              backgroundColor: fyo.singles.Defaults?.submitButtonColour,
-            }"
-            style="padding: 1.35rem"
+            class="w-full py-5"
+            type="primary"
             @click="submitTransaction"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Submit` }}
-              </p>
-            </slot>
+            <span class="uppercase text-lg font-semibold">
+              {{ t`Submit` }}
+            </span>
           </Button>
         </div>
 
         <div class="col-span-1">
           <Button
-            class="w-full"
-            :style="{
-              backgroundColor: fyo.singles.Defaults?.cancelButtonColour,
-            }"
-            style="padding: 1.35rem"
+            class="w-full py-5"
+            type="secondary"
             @click="cancelTransaction"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Cancel` }}
-              </p>
-            </slot>
+            <span class="uppercase text-lg font-semibold">
+              {{ t`Cancel` }}
+            </span>
           </Button>
         </div>
 
         <div class="col-span-1">
           <Button
-            class="w-full"
-            :style="{ backgroundColor: fyo.singles.Defaults?.payButtonColour }"
-            style="padding: 1.35rem"
+            class="w-full py-5"
+            type="primary"
             @click="payTransaction"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Pay` }}
-              </p>
-            </slot>
+            <span class="uppercase text-lg font-semibold">
+              {{ t`Pay` }}
+            </span>
           </Button>
         </div>
 
         <div class="col-span-1">
           <Button
-            class="w-full"
-            :style="{
-              backgroundColor: fyo.singles.Defaults?.payAndPrintButtonColour,
-            }"
-            style="padding: 1.35rem"
+            class="w-full py-5"
+            type="primary"
             @click="payAndPrintTransaction"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Pay & Print` }}
-              </p>
-            </slot>
+            <span class="uppercase text-lg font-semibold">
+              {{ t`Pay & Print` }}
+            </span>
           </Button>
         </div>
       </div>

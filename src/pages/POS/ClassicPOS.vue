@@ -252,35 +252,23 @@
                 <div class="w-full flex gap-2">
                   <Button
                     class="w-full"
-                    :style="{
-                      backgroundColor:
-                        profile?.saveButtonColour ||
-                        fyo.singles.Defaults?.saveButtonColour,
-                    }"
-                    :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
+                    type="primary"
+                    :class="isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'"
                     @click="$emit('saveInvoiceAction')"
                   >
-                    <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
-                        {{ t`Save` }}
-                      </p>
-                    </slot>
+                    <span class="uppercase text-lg font-semibold">
+                      {{ t`Save` }}
+                    </span>
                   </Button>
                   <Button
                     class="w-full"
-                    :style="{
-                      backgroundColor:
-                        profile?.cancelButtonColour ||
-                        fyo.singles.Defaults?.cancelButtonColour,
-                    }"
-                    :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
+                    type="secondary"
+                    :class="isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'"
                     @click="() => $emit('clearValues')"
                   >
-                    <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
-                        {{ t`Cancel` }}
-                      </p>
-                    </slot>
+                    <span class="uppercase text-lg font-semibold">
+                      {{ t`Cancel` }}
+                    </span>
                   </Button>
                 </div>
                 <div
@@ -289,72 +277,48 @@
                 >
                   <Button
                     class="w-full"
-                    :style="{
-                      backgroundColor:
-                        profile?.heldButtonColour ||
-                        fyo.singles.Defaults?.heldButtonColour,
-                    }"
-                    :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
+                    type="secondary"
+                    :class="isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'"
                     @click="emitEvent('toggleModal', 'SavedInvoice', true)"
                   >
-                    <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
-                        {{ t`held` }}
-                      </p>
-                    </slot>
+                    <span class="uppercase text-lg font-semibold">
+                      {{ t`held` }}
+                    </span>
                   </Button>
 
                   <Button
                     v-if="isReturnInvoiceEnabledReturn"
                     class="w-full py-5"
-                    :style="{
-                      backgroundColor:
-                        profile?.returnButtonColour ||
-                        fyo.singles.Defaults?.returnButtonColour,
-                    }"
+                    type="secondary"
                     @click="
                       emitEvent('toggleModal', 'ReturnSalesInvoice', true)
                     "
                   >
-                    <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
-                        {{ t`Return` }}
-                      </p>
-                    </slot>
+                    <span class="uppercase text-lg font-semibold">
+                      {{ t`Return` }}
+                    </span>
                   </Button>
                   <Button
                     v-else
                     class="w-full"
-                    :style="{
-                      backgroundColor:
-                        profile?.payButton ||
-                        fyo.singles.Defaults?.payButtonColour,
-                    }"
-                    :class="`${isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'}`"
+                    type="primary"
+                    :class="isReturnInvoiceEnabledReturn ? 'py-5' : 'py-6'"
                     @click="emitEvent('handlePaymentAction')"
                   >
-                    <slot>
-                      <p class="uppercase text-lg text-white font-semibold">
-                        {{ t`Pay` }}
-                      </p>
-                    </slot>
+                    <span class="uppercase text-lg font-semibold">
+                      {{ t`Pay` }}
+                    </span>
                   </Button>
                 </div>
                 <Button
                   v-if="isReturnInvoiceEnabledReturn"
                   class="w-full mt-2 py-5"
-                  :style="{
-                    backgroundColor:
-                      profile?.payButtonColour ||
-                      fyo.singles.Defaults?.payButtonColour,
-                  }"
+                  type="primary"
                   @click="emitEvent('handlePaymentAction')"
                 >
-                  <slot>
-                    <p class="uppercase text-lg text-white font-semibold">
-                      {{ t`Pay` }}
-                    </p>
-                  </slot>
+                  <span class="uppercase text-lg font-semibold">
+                    {{ t`Pay` }}
+                  </span>
                 </Button>
               </div>
             </div>

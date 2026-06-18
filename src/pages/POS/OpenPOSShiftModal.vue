@@ -40,25 +40,23 @@
 
         <div class="mt-4 grid grid-cols-2 gap-4 items-end">
           <Button
-            class="w-full py-5 bg-red-500 dark:bg-red-700"
+            class="w-full py-5"
+            type="secondary"
             @click="$router.back()"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Back` }}
-              </p>
-            </slot>
+            <span class="uppercase text-lg font-semibold">
+              {{ t`Back` }}
+            </span>
           </Button>
 
           <Button
-            class="w-full py-5 bg-green-500 dark:bg-green-700"
+            class="w-full py-5"
+            type="primary"
             @click="handleSubmit"
           >
-            <slot>
-              <p class="uppercase text-lg text-white font-semibold">
-                {{ t`Submit` }}
-              </p>
-            </slot>
+            <span class="uppercase text-lg font-semibold">
+              {{ t`Submit` }}
+            </span>
           </Button>
         </div>
       </div>
