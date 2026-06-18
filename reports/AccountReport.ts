@@ -296,16 +296,16 @@ export abstract class AccountReport extends LedgerReport {
     let fromDate: string;
 
     if (this.basedOn === 'Until Date') {
-      toDate = DateTime.fromISO(this.toDate!).plus({ days: 1 }).toISODate();
+      toDate = DateTime.fromISO(this.toDate!).plus({ days: 1 }).toISODate()!;
       const months = monthsMap[this.periodicity] * Math.max(this.count ?? 1, 1);
-      fromDate = DateTime.fromISO(this.toDate!).minus({ months }).toISODate();
+      fromDate = DateTime.fromISO(this.toDate!).minus({ months }).toISODate()!;
     } else {
       const fy = await getFiscalEndpoints(
         this.toYear!,
         this.fromYear!,
         this.fyo
       );
-      toDate = DateTime.fromISO(fy.toDate).plus({ days: 1 }).toISODate();
+      toDate = DateTime.fromISO(fy.toDate).plus({ days: 1 }).toISODate()!;
       fromDate = fy.fromDate;
     }
 

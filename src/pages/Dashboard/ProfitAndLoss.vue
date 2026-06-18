@@ -73,8 +73,8 @@ const setData = async () => {
   const { fromDate, toDate, periodList } = getDatesAndPeriodList(period.value);
 
   const dbData = await fyo.db.getIncomeAndExpenses(
-    fromDate.toISO(),
-    toDate.toISO()
+    fromDate.toISO()!,
+    toDate.toISO()!
   );
   const incomes = getValueMapFromList(dbData.income, 'yearmonth', 'balance');
   const expenses = getValueMapFromList(dbData.expense, 'yearmonth', 'balance');

@@ -122,8 +122,8 @@ const sectors = computed(() => {
 const setData = async () => {
   const { fromDate, toDate } = getDatesAndPeriodList(period.value);
   let topExpenses = await fyo.db.getTopExpenses(
-    fromDate.toISO(),
-    toDate.toISO()
+    fromDate.toISO()!,
+    toDate.toISO()!
   );
   const shades = [
     { class: 'bg-pink-500', hex: uicolors.pink['500'] },

@@ -55,7 +55,7 @@
             :value="doc[df.fieldname]"
             :class="{ 'p-2': df.fieldtype === 'Check' }"
             :text-end="false"
-            @change="async (value) => await onChange(df, value)"
+            @change="async (value: any) => await onChange(df, value)"
           />
           <div
             v-if="errors[df.fieldname]"

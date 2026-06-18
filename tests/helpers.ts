@@ -19,11 +19,11 @@ export function getTestSetupWizardOptions(): SetupWizardOptions {
     bankName: 'Test Bank of Scriptia',
     currency: 'INR',
     fiscalYearStart: DateTime.fromJSDate(
-      getFiscalYear('04-01', true)!
-    ).toISODate(),
+      getFiscalYear('04-01', true) as Date
+    ).toISODate()!,
     fiscalYearEnd: DateTime.fromJSDate(
-      getFiscalYear('04-01', false)!
-    ).toISODate(),
+      getFiscalYear('04-01', false) as Date
+    ).toISODate()!,
     chartOfAccounts: 'India - Chart of Accounts',
   };
 }

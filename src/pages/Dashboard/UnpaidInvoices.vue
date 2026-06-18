@@ -170,7 +170,7 @@ const getCounts = async (
     filters: {
       cancelled: false,
       submitted: true,
-      date: ['<=', toDate.toISO(), '>=', fromDate.toISO()],
+      date: ['<=', toDate.toISO()!, '>=', fromDate.toISO()!],
     },
   });
 
@@ -190,8 +190,8 @@ const setData = async () => {
   const { total: dbTotal, outstanding: dbOutstanding } =
     await fyo.db.getTotalOutstanding(
       props.schemaName,
-      fromDate.toISO(),
-      toDate.toISO()
+      fromDate.toISO()!,
+      toDate.toISO()!
     );
 
   const { countTotal, countOutstanding } = await getCounts(

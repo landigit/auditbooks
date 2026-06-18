@@ -15,9 +15,8 @@ export default defineComponent({
         value = new Date(value);
       }
 
-      if (value instanceof Date && !Number.isNaN(value.valueOf())) {
-        return DateTime.fromJSDate(value).toISO().split('.')[0];
-      }
+        const iso = value instanceof Date ? DateTime.fromJSDate(value).toISO() : null;
+        return iso ? iso.split('.')[0] : '';
 
       return '';
     },

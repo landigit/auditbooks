@@ -1,2 +1,4 @@
 pnpm rebuild better-sqlite3
+pnpm lint
+pnpm run type
 pnpm test

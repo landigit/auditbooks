@@ -165,7 +165,7 @@ const setHasData = async () => {
 const setData = async () => {
   const { periodList, fromDate, toDate } = getDatesAndPeriodList(period.value);
 
-  const dbData = await fyo.db.getCashflow(fromDate.toISO(), toDate.toISO());
+  const dbData = await fyo.db.getCashflow(fromDate.toISO()!, toDate.toISO()!);
   const dataMap = getMapFromList(dbData, 'yearmonth');
   data.value = periodList.map((p) => {
     const key = p.toFormat('yyyy-MM');
