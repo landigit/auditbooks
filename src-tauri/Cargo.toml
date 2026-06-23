@@ -1,6 +1,6 @@
 [package]
 name = "auditbooks"
-version = "0.37.9"
+version = "0.37.10"
 description = "Simple Book keeping app for Everyone"
 authors = ["Landgit Agency"]
 license = "AGPL-3.0-only"

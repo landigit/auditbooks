@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Auditbooks",
-  "version": "0.37.9",
+  "version": "0.37.10",
   "identifier": "com.landigit.books",
   "build": {
     "frontendDist": "../src/dist",
@@ -40,6 +40,9 @@
       "nsis": {
         "installerIcon": "icons/installerIcon.ico",
         "uninstallerIcon": "icons/uninstallerIcon.ico"
+      },
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
       }
     },
     "android": {
