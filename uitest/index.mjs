@@ -9,17 +9,28 @@ import fs from 'fs';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(dirname, '..');
 
-const releaseBinary =
-  process.platform === 'win32'
-    ? path.join(root, 'src-tauri', 'target', 'release', 'auditbooks.exe')
-    : path.join(root, 'src-tauri', 'target', 'release', 'auditbooks');
+const possiblePaths = [
+  // Windows paths
+  path.join(root, 'src-tauri', 'target', 'release', 'Auditbooks.exe'),
+  path.join(root, 'src-tauri', 'target', 'release', 'auditbooks.exe'),
+  path.join(root, 'src-tauri', 'target', 'debug', 'Auditbooks.exe'),
+  path.join(root, 'src-tauri', 'target', 'debug', 'auditbooks.exe'),
+  // Unix paths
+  path.join(root, 'src-tauri', 'target', 'release', 'Auditbooks'),
+  path.join(root, 'src-tauri', 'target', 'release', 'auditbooks'),
+  path.join(root, 'src-tauri', 'target', 'debug', 'Auditbooks'),
+  path.join(root, 'src-tauri', 'target', 'debug', 'auditbooks'),
+];
 
-const debugBinary =
-  process.platform === 'win32'
-    ? path.join(root, 'src-tauri', 'target', 'debug', 'auditbooks.exe')
-    : path.join(root, 'src-tauri', 'target', 'debug', 'auditbooks');
+let appBinary = possiblePaths.find((p) => fs.existsSync(p));
 
-const appBinary = fs.existsSync(releaseBinary) ? releaseBinary : debugBinary;
+if (!appBinary) {
+  // Default fallback if build hasn't run yet or checking in other scripts
+  appBinary =
+    process.platform === 'win32'
+      ? path.join(root, 'src-tauri', 'target', 'debug', 'Auditbooks.exe')
+      : path.join(root, 'src-tauri', 'target', 'debug', 'Auditbooks');
+}
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));

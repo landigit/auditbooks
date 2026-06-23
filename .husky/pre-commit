@@ -8,5 +8,6 @@ esac
 
 pnpm rebuild better-sqlite3
 pnpm lint
+pnpm format
 pnpm run type
 pnpm test

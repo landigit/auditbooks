@@ -1,79 +1,16 @@
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:50.486: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
+** (auditbooks:98197): WARNING **: 09:13:16.030: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:50.991: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
+** (auditbooks:98197): WARNING **: 09:13:16.534: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:51.496: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
+** (auditbooks:98197): WARNING **: 09:13:17.038: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:52.002: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
+** (auditbooks:98197): WARNING **: 09:13:17.542: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:52.504: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
+** (auditbooks:98197): WARNING **: 09:13:18.044: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:53.008: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
+** (auditbooks:98197): WARNING **: 09:13:18.548: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:53.512: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
+** (auditbooks:98197): WARNING **: 09:13:19.052: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
 [Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:54.019: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:54.524: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:55.028: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:55.532: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:56.034: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:56.537: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:57.041: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:57.545: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:58.049: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:58.554: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:59.058: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:13:59.561: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:00.065: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:00.567: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:01.069: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:01.573: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:02.076: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:02.580: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:03.084: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:03.588: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:04.092: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:04.596: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:05.100: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:05.604: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:06.107: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:06.612: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:07.115: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:07.619: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:08.123: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:08.627: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:09.131: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-[Tauri Stderr] 
-** (auditbooks:62731): WARNING **: 08:14:09.635: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist
-CDP debugging port 5858 did not become available in 20000ms
+** (auditbooks:98197): WARNING **: 09:13:19.559: Failed to load inspector resource /org/webkit/inspector/UserInterface/json/list: The resource at “/org/webkit/inspector/UserInterface/json/list” does not exist

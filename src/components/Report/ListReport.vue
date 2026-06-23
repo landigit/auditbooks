@@ -195,7 +195,11 @@ export default defineComponent({
       const columnLabel = column?.label;
       const fieldname = column?.fieldname;
 
-      if (fieldname === 'index' || fieldname === 'name' || columnLabel === '#') {
+      if (
+        fieldname === 'index' ||
+        fieldname === 'name' ||
+        columnLabel === '#'
+      ) {
         if (this.languageDirection === 'rtl') {
           styles['padding-right'] = '0px';
         } else {

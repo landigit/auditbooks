@@ -13,7 +13,10 @@
           inherit system;
         };
 
-        libraries = with pkgs; [
+        isDarwin = pkgs.stdenv.isDarwin;
+
+        # Linux-only libraries
+        linuxLibraries = with pkgs; [
           webkitgtk_4_1
           gtk3
           cairo
@@ -27,34 +30,43 @@
           libxkbcommon
         ];
 
-        packages = with pkgs; [
+        libraries = if isDarwin then [ ] else linuxLibraries;
+
+        # Common packages for both macOS and Linux
+        commonPackages = with pkgs; [
           curl
           wget
           pkg-config
-          dbus
           openssl
+          nodejs_22
+          pnpm_10
+          rustc
+          cargo
+          direnv
+        ];
+
+        # Linux-only build/runtime packages
+        linuxPackages = with pkgs; [
+          dbus
           glib
           gtk3
           webkitgtk_4_1
           librsvg
           libsoup_3
-          nodejs_22
-          pnpm_10
           clang
           llvm
-          rustc
-          cargo
           wayland
           libxkbcommon
-          direnv
           mold
         ];
+
+        packages = commonPackages ++ (if isDarwin then [ ] else linuxPackages);
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = packages;
 
-          shellHook = ''
+          shellHook = if isDarwin then "" else ''
             export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath libraries}:${pkgs.mesa}/lib
             export LIBGL_DRIVERS_PATH=${pkgs.mesa}/lib/dri
             export GDK_BACKEND=wayland,x11

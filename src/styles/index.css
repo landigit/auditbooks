@@ -12,7 +12,6 @@
     url('../assets/fonts/figtree-var.woff2') format('woff2');
 }
 
-
 * {
   outline-color: theme('colors.pink.400');
   font-variation-settings: 'slnt' 0deg;
@@ -350,7 +349,10 @@ input[type='number']::-webkit-inner-spin-button {
       background-color 0.15s;
   }
 
-  .safe-area-top-padding button:not([class*='bg-black']):not([class*='bg-primary']):not(.btn-primary):not([class*='btn-primary']) {
+  .safe-area-top-padding
+    button:not([class*='bg-black']):not([class*='bg-primary']):not(
+      .btn-primary
+    ):not([class*='btn-primary']) {
     color: var(--foreground) !important;
   }
 
@@ -513,7 +515,9 @@ input[type='number']::-webkit-inner-spin-button {
     height: 2.25rem !important;
   }
 
-  .border.rounded:not(textarea):not(.image-attach-box):not(.absolute):not([style*='display: none']):not([style*='display:none']) {
+  .border.rounded:not(textarea):not(.image-attach-box):not(.absolute):not(
+      [style*='display: none']
+    ):not([style*='display:none']) {
     height: 2.25rem !important;
     display: flex !important;
     align-items: center !important;
