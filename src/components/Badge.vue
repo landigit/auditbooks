@@ -1,6 +1,6 @@
 <template>
   <div
-    class="inline-block rounded-md px-2 py-1 truncate select-none"
+    class="inline-block rounded-[4px] px-2 py-1 truncate select-none"
     :class="colorClass"
   >
     <slot></slot>

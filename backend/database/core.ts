@@ -332,9 +332,13 @@ export default class DatabaseCore extends DatabaseBase {
       }
     });
 
-    let values: { fieldname: string; parent: string; value: RawValue }[] = [];
+    let values: { fieldname: string; parent: string; value: RawValue }[];
     try {
-      values = await builder.select('fieldname', 'value', 'parent');
+      values = (await builder.select('fieldname', 'value', 'parent')) as {
+        fieldname: string;
+        parent: string;
+        value: RawValue;
+      }[];
     } catch (err) {
       if (getDbError(err as Error) === NotFoundError) {
         return [];

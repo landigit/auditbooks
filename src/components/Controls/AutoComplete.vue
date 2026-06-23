@@ -76,7 +76,8 @@
             class="p-0.5 rounded -me1 bg-transparent"
             @mouseenter="showQuickView = true"
             @mouseleave="showQuickView = false"
-            @click="routeToLinkedDoc"
+            @mousedown.prevent
+            @click.stop.prevent="routeToLinkedDoc"
           >
             <Popover
               :show-popup="showQuickView"

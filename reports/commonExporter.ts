@@ -183,7 +183,8 @@ export async function saveExportData(
   filePath: string,
   message?: string
 ) {
-  await ipc.saveData(data, filePath);
+  const { writeTextFile } = await import('@tauri-apps/plugin-fs');
+  await writeTextFile(filePath, data);
   message ??= t`Export Successful`;
   showExportInFolder(message, filePath);
 }

@@ -633,7 +633,7 @@ export async function performInitialFullSync(fyo: Fyo) {
           const fullErrorMsg = `Failed to process document ${String(
             doc.name ?? doc.fbooksDocName
           )} of type ${docType}: ${errorMsg}`;
-          throw new Error(fullErrorMsg);
+          throw new Error(fullErrorMsg, { cause: error });
         }
       }
     }

@@ -365,15 +365,19 @@ export class GeneralLedger extends LedgerReport {
         width: 0.5,
       },
       {
-        label: t`Account`,
-        fieldtype: 'Link',
-        fieldname: 'account',
-        width: 1.5,
-      },
-      {
         label: t`Date`,
         fieldtype: 'Date',
         fieldname: 'date',
+      },
+      {
+        label: t`Party`,
+        fieldtype: 'Link',
+        fieldname: 'party',
+      },
+      {
+        label: t`Ref Name`,
+        fieldtype: 'Data',
+        fieldname: 'referenceName',
       },
       {
         label: t`Debit`,
@@ -397,19 +401,15 @@ export class GeneralLedger extends LedgerReport {
         width: 1.25,
       },
       {
-        label: t`Party`,
-        fieldtype: 'Link',
-        fieldname: 'party',
-      },
-      {
-        label: t`Ref Name`,
-        fieldtype: 'Data',
-        fieldname: 'referenceName',
-      },
-      {
         label: t`Ref Type`,
         fieldtype: 'Data',
         fieldname: 'referenceType',
+      },
+      {
+        label: t`Account`,
+        fieldtype: 'Link',
+        fieldname: 'account',
+        width: 1.5,
       },
       {
         label: t`Reverted`,

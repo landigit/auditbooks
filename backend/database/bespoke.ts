@@ -259,6 +259,9 @@ export class BespokeQueries {
       if (!!docItemsMap[item.item]) {
         if (item.batch) {
           let serialNumbers: string[] | undefined;
+          if (item.serialNumber) {
+            serialNumbers = item.serialNumber.split('\n');
+          }
 
           if (!docItemsMap[item.item].batches![item.batch]) {
             docItemsMap[item.item].batches![item.batch] = {

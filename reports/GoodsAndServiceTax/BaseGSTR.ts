@@ -87,10 +87,9 @@ export abstract class BaseGSTR extends Report {
     return gstrRows.filter((row) => {
       let allow = true;
       if (this.place) {
-        allow &&= codeStateMap[this.place] === row.place;
+        allow = codeStateMap[this.place] === row.place;
       }
-      this.place;
-      return (allow &&= this.transferFilterFunction(row));
+      return allow && this.transferFilterFunction(row);
     });
   }
 

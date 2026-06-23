@@ -81,10 +81,9 @@ export class StockMovementItem extends TransferItem {
     },
     batch: async (doc: Doc) => {
       let suggestedBatch: string | undefined;
-      let hasBatch = false;
 
       if (doc.parentdoc?.movementType === MovementTypeEnum.MaterialReceipt) {
-        hasBatch = !!(await doc.fyo.getValue(
+        const hasBatch = !!(await doc.fyo.getValue(
           ModelNameEnum.Item,
           doc.item as string,
           'hasBatch'

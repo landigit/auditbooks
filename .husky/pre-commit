@@ -1,3 +1,11 @@
+pnpm_path=$(which pnpm 2>/dev/null)
+case "$pnpm_path" in
+  *"/mnt/c/"*|*"/c/"*|"")
+    echo "pnpm is not available on Linux or points to a Windows installation. Skipping pre-commit checks."
+    exit 0
+    ;;
+esac
+
 pnpm rebuild better-sqlite3
 pnpm lint
 pnpm run type

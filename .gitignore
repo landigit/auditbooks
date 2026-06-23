@@ -44,3 +44,4 @@ src-tauri/gen/android/local.properties
 src-tauri/gen/android/.idea/
 src-tauri/gen/apple/
 *.pyc
+.direnv/
