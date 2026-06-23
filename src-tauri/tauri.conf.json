@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Auditbooks",
-  "version": "0.37.10",
+  "version": "0.37.11",
   "identifier": "com.landigit.books",
   "build": {
     "frontendDist": "../src/dist",
@@ -48,8 +48,10 @@
   },
   "plugins": {
     "updater": {
-      "active": false,
-      "endpoints": [],
+      "active": true,
+      "endpoints": [
+        "https://github.com/landigit/auditbooks/releases/latest/download/latest.json"
+      ],
       "pubkey": ""
     }
   }

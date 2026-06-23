@@ -689,7 +689,15 @@ export class Doc extends Observable<DocValue | Doc[]> {
   }
 
   async _loadLinkDoc(fieldname: string, schemaName: string, name: string) {
-    this.links![fieldname] = await this.fyo.doc.getDoc(schemaName, name);
+    try {
+      this.links![fieldname] = await this.fyo.doc.getDoc(schemaName, name);
+    } catch (err) {
+      if (err instanceof NotFoundError) {
+        // Linked document not found (e.g. deleted or invalid reference), ignore gracefully
+      } else {
+        throw err;
+      }
+    }
   }
 
   getLink(fieldname: string): Doc | null {

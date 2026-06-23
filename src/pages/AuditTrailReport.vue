@@ -494,7 +494,7 @@ const {
   div,
   span,
   p {
-    font-family: 'Figtree', 'Figtree Variable', sans-serif !important;
+    font-family: 'Figtree', sans-serif !important;
   }
 
   #audit-table {

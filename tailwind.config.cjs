@@ -30,7 +30,7 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      sans: ['Figtree Variable', 'Inter', 'sans-serif'],
+      sans: ['Figtree', 'sans-serif'],
     },
     screens: {
       sm: '640px',

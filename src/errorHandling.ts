@@ -10,6 +10,8 @@ import { getErrorMessage, stringifyCircular } from './utils';
 import type { DialogOptions, ToastOptions } from './utils/types';
 import { ModelNameEnum } from 'models/types';
 
+import { sendErrorToMothership } from './utils/contactMothership';
+
 function shouldNotStore(error: Error) {
   const shouldLog = (error as BaseError).shouldStore ?? true;
   return !shouldLog;
@@ -38,6 +40,7 @@ export async function sendError(errorLogObj: ErrorLog) {
   };
 
   console.error('Captured Error:', body);
+  await sendErrorToMothership(body);
 }
 
 function getToastProps(errorLogObj: ErrorLog) {

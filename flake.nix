@@ -39,7 +39,7 @@
           librsvg
           libsoup_3
           nodejs_22
-          pnpm_9
+          pnpm_10
           clang
           llvm
           rustc

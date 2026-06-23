@@ -229,7 +229,7 @@ const {
 :deep(textarea),
 :deep(span),
 :deep(div) {
-  font-family: 'Figtree Variable', 'Inter', sans-serif !important;
+  font-family: 'Figtree', sans-serif !important;
 }
 
 /* Base custom input wrappers, selects, textareas, AutoComplete, and Link containers styling */

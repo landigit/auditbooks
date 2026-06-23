@@ -74,6 +74,9 @@ import os from 'os';
   process.env.WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS =
     '--remote-debugging-port=5858';
 
+  // Set WebKitGTK environment variable for Linux/macOS remote debugging
+  process.env.WEBKIT_INSPECTOR_HTTP_SERVER = '127.0.0.1:5858';
+
   const errorLogPath = path.join(root, 'uitest-errors.log');
   fs.writeFileSync(errorLogPath, ''); // Clear previous logs
 

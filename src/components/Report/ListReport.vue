@@ -191,17 +191,18 @@ export default defineComponent({
         styles['text-align'] = 'right';
       }
 
-      const columnLabel = this.report?.columns?.[i]?.label;
-      if (columnLabel === '#') {
+      const column = this.report?.columns?.[i];
+      const columnLabel = column?.label;
+      const fieldname = column?.fieldname;
+
+      if (fieldname === 'index' || fieldname === 'name' || columnLabel === '#') {
         if (this.languageDirection === 'rtl') {
           styles['padding-right'] = '0px';
-          styles['text-align'] = 'right';
         } else {
           styles['padding-left'] = '0px';
-          styles['text-align'] = 'left';
         }
         styles['width'] = '3rem';
-      } else if (columnLabel === 'Account') {
+      } else if (fieldname === 'account' || columnLabel === 'Account') {
         styles['width'] = '20rem';
         if (i === 0) {
           if (this.languageDirection === 'rtl') {
@@ -210,6 +211,12 @@ export default defineComponent({
             styles['padding-left'] = '0px';
           }
         }
+      } else if (fieldname === 'referenceType' || columnLabel === 'Ref Type') {
+        styles['width'] = '12rem';
+      } else if (fieldname === 'party' || columnLabel === 'Party') {
+        styles['width'] = '12rem';
+      } else if (fieldname === 'referenceName' || columnLabel === 'Ref Name') {
+        styles['width'] = '10rem';
       } else if (i === 0) {
         if (this.languageDirection === 'rtl') {
           styles['padding-right'] = '0px';

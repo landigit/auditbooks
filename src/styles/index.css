@@ -2,17 +2,6 @@
 @import 'shadcn-vue/tailwind.css';
 
 @font-face {
-  font-family: 'Figtree Variable';
-  font-weight: 300 900;
-  font-display: swap;
-  src:
-    local('Figtree Variable'),
-    local('Figtree-Variable'),
-    local('Figtree'),
-    url('../assets/fonts/figtree-var.woff2') format('woff2');
-}
-
-@font-face {
   font-family: 'Figtree';
   font-weight: 300 900;
   font-display: swap;
@@ -23,18 +12,12 @@
     url('../assets/fonts/figtree-var.woff2') format('woff2');
 }
 
-@font-face {
-  font-family: 'Inter';
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: oblique 0deg 10deg;
-  src: url('../assets/fonts/Inter.var.woff2') format('woff2');
-}
 
 * {
   outline-color: theme('colors.pink.400');
   font-variation-settings: 'slnt' 0deg;
 }
+
 .italic {
   font-variation-settings: 'slnt' 10deg;
 }
@@ -200,6 +183,7 @@ input[type='number']::-webkit-inner-spin-button {
     width: 0 !important;
     height: 0 !important;
   }
+
   * {
     scrollbar-width: none !important;
   }
@@ -269,16 +253,17 @@ input[type='number']::-webkit-inner-spin-button {
 }
 
 .pill {
-  @apply py-0.5 px-1.5 rounded-[4px]  text-xs;
+  @apply py-0.5 px-1.5 rounded-[4px] text-xs;
   width: fit-content;
   height: fit-content;
 }
 
 @layer base {
   .theme {
-    --font-sans: 'Figtree', 'Figtree Variable', sans-serif;
+    --font-sans: 'Figtree', sans-serif;
     --font-heading: var(--font-sans);
   }
+
   :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -313,6 +298,7 @@ input[type='number']::-webkit-inner-spin-button {
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
   }
+
   .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -346,34 +332,38 @@ input[type='number']::-webkit-inner-spin-button {
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
   }
+
   * {
     border-color: var(--border);
     outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
     @apply font-sans;
   }
+
   .safe-area-top-padding button {
     transition:
       color 0.15s,
       background-color 0.15s;
   }
-  .safe-area-top-padding
-    button:not([class*='bg-black']):not([class*='bg-primary']):not(
-      .btn-primary
-    ):not([class*='btn-primary']) {
+
+  .safe-area-top-padding button:not([class*='bg-black']):not([class*='bg-primary']):not(.btn-primary):not([class*='btn-primary']) {
     color: var(--foreground) !important;
   }
+
   .safe-area-top-padding .nav-link.text-gray-700,
   .safe-area-top-padding .nav-link:not(.text-gray-400) {
     color: var(--foreground) !important;
   }
+
   .safe-area-top-padding .nav-link.text-gray-400 {
     color: var(--muted-foreground) !important;
     opacity: 0.5 !important;
   }
+
   .list-header-row,
   .list-header-row div,
   .list-header-row span,
@@ -523,9 +513,7 @@ input[type='number']::-webkit-inner-spin-button {
     height: 2.25rem !important;
   }
 
-  .border.rounded:not(textarea):not(.image-attach-box):not(.absolute):not(
-      [style*='display: none']
-    ):not([style*='display:none']) {
+  .border.rounded:not(textarea):not(.image-attach-box):not(.absolute):not([style*='display: none']):not([style*='display:none']) {
     height: 2.25rem !important;
     display: flex !important;
     align-items: center !important;
@@ -558,6 +546,7 @@ input[type='number']::-webkit-inner-spin-button {
   input.floating-label-input.text-lg {
     font-size: 1.125rem !important;
   }
+
   input.floating-label-input.text-sm {
     font-size: 0.875rem !important;
   }
