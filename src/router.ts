@@ -58,10 +58,19 @@ const routes: RouteRecordRaw[] = [
         const { schemaName } = route.params;
         const pageTitle = route.params.pageTitle ?? '';
 
-        const filters = {};
+        let filters = {};
         const filterString = route.query.filters;
         if (typeof filterString === 'string') {
-          Object.assign(filters, JSON.parse(filterString));
+          try {
+            const parsed = JSON.parse(filterString);
+            if (
+              parsed &&
+              typeof parsed === 'object' &&
+              !Array.isArray(parsed)
+            ) {
+              filters = { ...parsed };
+            }
+          } catch {}
         }
 
         return {

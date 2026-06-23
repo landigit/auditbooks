@@ -73,10 +73,12 @@ function evaluateFieldMeta(
   return defaultValue;
 }
 
+/**
+ * Retrieves entries linked to the given document, including those from child tables.
+ */
 export async function getLinkedEntries(
   doc: Doc
 ): Promise<Record<string, string[]>> {
-  // TODO: Normalize this function.
   const fyo = doc.fyo;
   const target = doc.schemaName;
 

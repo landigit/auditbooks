@@ -82,7 +82,8 @@ export async function getPrintTemplatePropValues(
   let totalTax;
 
   if (values.doc.entryType !== ModelNameEnum.Shipment) {
-    totalTax = await ((sinvDoc as Invoice) ?? (doc as Payment))?.getTotalTax();
+    const targetDoc = (sinvDoc as Invoice) ?? (doc as Payment);
+    totalTax = typeof targetDoc?.getTotalTax === 'function' ? await targetDoc.getTotalTax() : undefined;
   }
 
   if (doc.schema.name == ModelNameEnum.Payment) {
@@ -91,10 +92,13 @@ export async function getPrintTemplatePropValues(
     );
   }
 
-  (values.doc as PrintTemplateData).subTotal = doc.fyo.format(
-    ((doc.grandTotal as Money) ?? (doc.amount as Money)).sub(totalTax || 0),
-    ModelNameEnum.Currency
-  );
+  const grandTotal = (doc.grandTotal as Money) ?? (doc.amount as Money);
+  if (grandTotal) {
+    (values.doc as PrintTemplateData).subTotal = doc.fyo.format(
+      grandTotal.sub(totalTax || 0),
+      ModelNameEnum.Currency
+    );
+  }
 
   const printSettings = await fyo.doc.getDoc(ModelNameEnum.PrintSettings);
   const printValues = await getPrintTemplateDocValues(
@@ -123,8 +127,9 @@ export async function getPrintTemplatePropValues(
 
   const roundOffGrandTotal = !!printSettings.roundOffGrandTotal;
   const grandTotalMoney = (doc.grandTotal as Money) ?? (doc.amount as Money);
-  const roundedFloat = Math.round(grandTotalMoney.float);
-  const roundOffFloat = roundedFloat - grandTotalMoney.float;
+  const grandTotalFloat = grandTotalMoney?.float ?? 0;
+  const roundedFloat = Math.round(grandTotalFloat);
+  const roundOffFloat = roundedFloat - grandTotalFloat;
 
   (values.doc as PrintTemplateData).roundedGrandTotal = doc.fyo.format(
     fyo.pesa(roundedFloat),
@@ -135,9 +140,8 @@ export async function getPrintTemplatePropValues(
     ModelNameEnum.Currency
   );
   (values.doc as PrintTemplateData).hasRoundOff = roundOffFloat !== 0;
-
   (values.doc as PrintTemplateData).grandTotalInWords = getGrandTotalInWords(
-    roundOffGrandTotal ? roundedFloat : grandTotalMoney.float
+    roundOffGrandTotal ? roundedFloat : grandTotalFloat
   );
 
   (values.doc as PrintTemplateData).date = getDate(doc.date as string);

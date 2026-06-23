@@ -19,7 +19,7 @@ function shouldNotStore(error: Error) {
 
 export async function sendError(errorLogObj: ErrorLog) {
   if (!errorLogObj.stack) {
-    return;
+    errorLogObj.stack = new Error().stack;
   }
 
   errorLogObj.more ??= {};
@@ -55,10 +55,13 @@ function getToastProps(errorLogObj: ErrorLog) {
 }
 
 export function getErrorLogObject(
-  error: Error,
+  error: Error | any,
   more: Record<string, unknown>
 ): ErrorLog {
-  const { name, stack, message, cause } = error;
+  const name = error.name ?? 'Error';
+  const stack = error.stack;
+  const message = error.message ?? String(error);
+  const cause = error.cause;
   if (cause) {
     more.cause = cause;
   }
@@ -69,10 +72,9 @@ export function getErrorLogObject(
 
   return errorLogObj;
 }
-
 export async function handleError(
   logToConsole: boolean,
-  error: Error,
+  error: Error | any,
   more: Record<string, unknown> = {},
   notifyUser = true
 ) {
@@ -250,7 +252,8 @@ function getFeatureFlags(): string[] {
 }
 
 function getIssueUrlQuery(errorLogObj?: ErrorLog): string {
-  const baseUrl = 'https://github.com/frappe/books/issues/new?labels=bug';
+  const baseUrl =
+    'https://github.com/landigit/auditbooks/issues/new?labels=bug';
 
   const body = [
     '<h2>Description</h2>',

@@ -282,7 +282,7 @@ export abstract class Invoice extends Transactional {
     if (this.isReturn) {
       await this._removeLoyaltyPointEntry();
       await this._updateIsItemsReturned();
-      this.reduceUsedCountOfCoupons();
+      await this.reduceUsedCountOfCoupons();
       await this.updateIsItemsFullyReturned(this);
     }
 
@@ -329,7 +329,7 @@ export abstract class Invoice extends Transactional {
     }
 
     if (this.schemaName === ModelNameEnum.SalesInvoice) {
-      this.updateUsedCountOfCoupons();
+      await this.updateUsedCountOfCoupons();
     }
 
     if (this.loyaltyProgram) {
@@ -343,7 +343,7 @@ export abstract class Invoice extends Transactional {
     await this._updatePartyOutStanding();
     await this._updateIsItemsReturned();
     await this._removeLoyaltyPointEntry();
-    this.reduceUsedCountOfCoupons();
+    await this.reduceUsedCountOfCoupons();
 
     if (this.loyaltyProgram) {
       await this.reduceUsedCountOfLoyaltyProgram();
@@ -890,29 +890,37 @@ export abstract class Invoice extends Transactional {
     return newReturnDoc;
   }
 
-  updateUsedCountOfCoupons() {
-    this.coupons?.map(async (coupon) => {
-      const couponDoc = await this.fyo.doc.getDoc(
-        ModelNameEnum.CouponCode,
-        coupon.coupons
-      );
+  async updateUsedCountOfCoupons() {
+    if (!this.coupons?.length) {
+      return;
+    }
+    await Promise.all(
+      this.coupons.map(async (coupon) => {
+        const couponDoc = await this.fyo.doc.getDoc(
+          ModelNameEnum.CouponCode,
+          coupon.coupons
+        );
 
-      await couponDoc.setAndSync({ used: (couponDoc.used as number) + 1 });
-    });
+        await couponDoc.setAndSync({ used: (couponDoc.used as number) + 1 });
+      })
+    );
   }
-  reduceUsedCountOfCoupons() {
+
+  async reduceUsedCountOfCoupons() {
     if (!this.coupons?.length) {
       return;
     }
 
-    this.coupons?.map(async (coupon) => {
-      const couponDoc = await this.fyo.doc.getDoc(
-        ModelNameEnum.CouponCode,
-        coupon.coupons
-      );
+    await Promise.all(
+      this.coupons.map(async (coupon) => {
+        const couponDoc = await this.fyo.doc.getDoc(
+          ModelNameEnum.CouponCode,
+          coupon.coupons
+        );
 
-      await couponDoc.setAndSync({ used: (couponDoc.used as number) - 1 });
-    });
+        await couponDoc.setAndSync({ used: (couponDoc.used as number) - 1 });
+      })
+    );
   }
 
   async updateUsedCountOfLoyaltyProgram() {

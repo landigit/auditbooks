@@ -42,19 +42,21 @@ export default {
   name: 'FormControl',
   methods: {
     clear() {
-      const input = this.$refs.control.$refs.input;
+      const input = this.$refs.control?.$refs?.input;
       if (input instanceof HTMLInputElement) {
         input.value = '';
       }
     },
     select() {
-      this.$refs.control.$refs?.input?.select();
+      this.$refs.control?.$refs?.input?.select?.();
     },
     focus() {
-      this.$refs.control.focus();
+      if (typeof this.$refs.control?.focus === 'function') {
+        this.$refs.control.focus();
+      }
     },
     getInput() {
-      return this.$refs.control.$refs.input;
+      return this.$refs.control?.$refs?.input;
     },
   },
   render() {

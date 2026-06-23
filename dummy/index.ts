@@ -395,19 +395,23 @@ async function getSalesPurchaseInvoices(
       purchaseQty[name] ??= 0;
       let prevQty = purchaseQty[name];
 
+      let orderQty = 0;
       if (prevQty <= quantity) {
-        prevQty = quantity - prevQty;
+        orderQty = Math.ceil((quantity - prevQty) / 10) * 10;
       }
 
-      purchaseQty[name] = Math.ceil(prevQty / 10) * 10;
+      purchaseQty[name] = prevQty + orderQty - quantity;
+      itemGrouped[name] = orderQty;
     });
 
     const supplierGrouped = Object.keys(itemGrouped).reduce(
       (acc, item) => {
-        const supplier = purchaseItemPartyMap[item];
-        acc[supplier] ??= [];
-        acc[supplier].push(item);
-
+        const orderQty = itemGrouped[item];
+        if (orderQty > 0) {
+          const supplier = purchaseItemPartyMap[item];
+          acc[supplier] ??= [];
+          acc[supplier].push(item);
+        }
         return acc;
       },
       {} as Record<string, string[]>
@@ -435,7 +439,7 @@ async function getSalesPurchaseInvoices(
        */
       for (const item of supplierGrouped[supplier]) {
         await doc.append('items', {});
-        const quantity = purchaseQty[item];
+        const quantity = itemGrouped[item];
         await doc.items!.at(-1)!.set({ item, quantity });
       }
 

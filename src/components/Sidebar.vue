@@ -185,9 +185,9 @@ const appVersion = computed(() => fyo.store.appVersion);
 
 async function openDocumentation() {
   const { openUrl } = await import('@tauri-apps/plugin-opener');
-  await openUrl('https://docs.frappe.io/' + docsPathRef.value).catch(
-    console.error
-  );
+  await openUrl(
+    'https://docs.landigit.com/auditbooks/' + docsPathRef.value
+  ).catch(console.error);
 }
 
 function setActiveGroup() {
