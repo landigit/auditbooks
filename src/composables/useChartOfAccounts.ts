@@ -436,7 +436,7 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
         h(HugeiconsIcon, {
           icon: icons[name],
           class: 'w-4 h-4 text-gray-700 dark:text-gray-300',
-          strokeWidth: 1.8,
+          strokeWidth: 1.5,
           ...attrs,
         });
     }
@@ -446,7 +446,7 @@ export function useChartOfAccounts(props: { darkMode: boolean }) {
         h(HugeiconsIcon, {
           icon: Folder01Icon,
           class: 'w-4 h-4 text-gray-500 dark:text-gray-400',
-          strokeWidth: 1.8,
+          strokeWidth: 1.5,
           ...attrs,
         });
     }

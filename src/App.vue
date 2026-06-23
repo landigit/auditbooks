@@ -57,6 +57,7 @@ import { routeTo } from './utils/ui';
 import { useKeys } from './utils/vueUtils';
 import { setDarkMode } from 'src/utils/theme';
 import { logSystemEvent, resetAuditHooks } from 'src/utils/auditLog';
+import { useUpdater } from './composables/useUpdater';
 
 import {
   registerInstanceToERPNext,
@@ -100,6 +101,9 @@ watch(language, (value) => {
 });
 
 onMounted(async () => {
+  const { checkForUpdates } = useUpdater();
+  checkForUpdates().catch(console.error);
+
   await setInitialScreen();
   const isDark = !!fyo.singles.SystemSettings?.darkMode;
   setDarkMode(isDark);
