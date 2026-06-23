@@ -1,6 +1,11 @@
 pnpm_path=$(which pnpm 2>/dev/null)
 case "$pnpm_path" in
   *"/mnt/c/"*|*"/c/"*|"")
+    if command -v nix >/dev/null 2>&1; then
+      echo "pnpm not found in host PATH. Running checks inside Nix environment..."
+      nix develop --command bash -c "pnpm rebuild better-sqlite3 && pnpm lint && pnpm format && pnpm run type && pnpm test"
+      exit $?
+    fi
     echo "pnpm is not available on Linux or points to a Windows installation. Skipping pre-commit checks."
     exit 0
     ;;
