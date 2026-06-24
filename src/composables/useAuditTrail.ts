@@ -1,4 +1,5 @@
 import { ref, computed, onMounted } from 'vue';
+import { Field } from 'schemas/types';
 import { useApp } from 'src/composables/useApp';
 import { getBgTextColorClass } from 'src/utils/colors';
 
@@ -40,19 +41,19 @@ export function useAuditTrail() {
   const gridTemplateColumns = '14rem 8rem 12rem 12rem 12rem';
 
   // ── Filter Schema Definitions for FormControl ──────────────────────────────────
-  const fromDateDf = {
+  const fromDateDf: Field = {
     fieldname: 'fromDate',
     label: t`From Date`,
     fieldtype: 'Datetime',
   };
 
-  const toDateDf = {
+  const toDateDf: Field = {
     fieldname: 'toDate',
     label: t`To Date`,
     fieldtype: 'Datetime',
   };
 
-  const actionDf = computed(() => ({
+  const actionDf = computed<Field>(() => ({
     fieldname: 'action',
     label: t`Action`,
     fieldtype: 'Select',
@@ -70,7 +71,7 @@ export function useAuditTrail() {
     ],
   }));
 
-  const documentTypeDf = computed(() => ({
+  const documentTypeDf = computed<Field>(() => ({
     fieldname: 'documentType',
     label: t`Document Type`,
     fieldtype: 'Select',
@@ -80,7 +81,7 @@ export function useAuditTrail() {
     ],
   }));
 
-  const searchDf = {
+  const searchDf: Field = {
     fieldname: 'search',
     label: t`Search Document`,
     fieldtype: 'Data',

@@ -190,7 +190,7 @@
                 :df="
                   importer.templateFieldsMap.get(
                     importer.assignedTemplateFields[cidx]!
-                  )
+                  )!
                 "
                 size="small"
                 :rows="1"

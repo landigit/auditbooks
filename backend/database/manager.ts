@@ -10,6 +10,7 @@ import { databaseMethodSet, unlinkIfExists } from '../helpers';
 import patches from '../patches';
 import { BespokeQueries } from './bespoke';
 import DatabaseCore from './core';
+import { Kysely, sql } from 'kysely';
 import { runPatches } from './runPatch';
 import { BespokeFunction, Patch, RawCustomField } from './types';
 
@@ -18,7 +19,7 @@ export class DatabaseManager extends DatabaseDemuxBase {
   rawCustomFields: RawCustomField[] = [];
 
   get #isInitialized(): boolean {
-    return this.db !== undefined && this.db.knex !== undefined;
+    return this.db !== undefined && this.db.kysely !== undefined;
   }
 
   getSchemaMap() {
@@ -52,9 +53,15 @@ export class DatabaseManager extends DatabaseDemuxBase {
 
   async setRawCustomFields() {
     try {
-      this.rawCustomFields = (await this.db?.knex?.(
-        'CustomField'
-      )) as RawCustomField[];
+      if (!this.db?.kysely) return;
+      // Cast dynamic CustomField table name in Kysely
+      const kyselyDb = this.db.kysely as unknown as Kysely<
+        Record<string, Record<string, unknown>>
+      >;
+      this.rawCustomFields = (await kyselyDb
+        .selectFrom('CustomField')
+        .selectAll()
+        .execute()) as unknown as RawCustomField[];
     } catch {}
   }
 
@@ -167,16 +174,15 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async #getIsFirstRun(): Promise<boolean> {
-    const knex = this.db?.knex;
-    if (!knex) {
+    const kysely = this.db?.kysely;
+    if (!kysely) {
       return true;
     }
 
-    const query = await knex('sqlite_master').where({
-      type: 'table',
-      name: 'PatchRun',
-    });
-    return !query.length;
+    const query = await sql<{ name: string }>`
+      select name from sqlite_master where type='table' and name='PatchRun'
+    `.execute(kysely);
+    return !query.rows.length;
   }
 
   async #createBackup() {
@@ -214,16 +220,18 @@ export class DatabaseManager extends DatabaseDemuxBase {
   }
 
   async #getAppVersion(): Promise<string> {
-    const knex = this.db?.knex;
-    if (!knex) {
+    const kysely = this.db?.kysely;
+    if (!kysely) {
       return '0.0.0';
     }
 
-    const query = await knex('SingleValue')
+    const query = await kysely
+      .selectFrom('SingleValue')
       .select('value')
-      .where({ fieldname: 'version', parent: 'SystemSettings' });
-    const value = (query[0] as undefined | { value: string })?.value;
-    return value || '0.0.0';
+      .where('fieldname', '=', 'version')
+      .where('parent', '=', 'SystemSettings')
+      .executeTakeFirst();
+    return query?.value || '0.0.0';
   }
 
   getDriver() {

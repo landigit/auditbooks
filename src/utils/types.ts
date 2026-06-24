@@ -4,6 +4,7 @@ import type { ModelNameEnum } from 'models/types';
 import type { Field, FieldType } from 'schemas/types';
 import type { QueryFilter } from 'utils/db/types';
 import type { Ref } from 'vue';
+import type { IconName, IconSize } from 'src/components/Icon.vue';
 import type { toastDurationMap } from './ui';
 
 export type DocRef<D extends Doc = Doc> = Ref<D | null>;
@@ -49,8 +50,8 @@ export interface SidebarRoot {
   label: string;
   name: string;
   route: string;
-  icon: string;
-  iconSize?: string;
+  icon: IconName;
+  iconSize?: IconSize;
   iconHeight?: number;
   hidden?: () => boolean;
   items?: SidebarItem[];

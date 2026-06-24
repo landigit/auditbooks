@@ -1,0 +1,21 @@
+{
+  "servers": {
+    "rust-analyzer": {
+      "command": "/nix/store/qjnh4ffw6qkydcsh0i8jl3wf6yvf9n8r-rust-analyzer-2026-06-01/bin/rust-analyzer",
+      "fileTypes": [".rs"],
+      "rootMarkers": ["Cargo.toml"]
+    },
+    "typescript-language-server": {
+      "command": "/nix/store/0fm002iw8wq367lmwp520ml62ag5pq56-typescript-language-server-5.3.0/bin/typescript-language-server",
+      "args": ["--stdio"],
+      "fileTypes": [".ts", ".tsx", ".js", ".jsx"],
+      "rootMarkers": ["package.json", "tsconfig.json"]
+    },
+    "vue-language-server": {
+      "command": "/nix/store/qp970nlc0j6k1gchziqbs05c1nc8vkjk-vue-language-server-3.2.9/bin/vue-language-server",
+      "args": ["--stdio"],
+      "fileTypes": [".vue"],
+      "rootMarkers": ["package.json", "tsconfig.json"]
+    }
+  }
+}

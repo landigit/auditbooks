@@ -101,7 +101,7 @@ function getInventorySidebar(): SidebarRoot[] {
   ];
 }
 
-function getPOSSidebar() {
+function getPOSSidebar(): SidebarRoot {
   return {
     label: t`POS`,
     name: 'pos',
@@ -111,7 +111,7 @@ function getPOSSidebar() {
   };
 }
 
-function getReportSidebar() {
+function getReportSidebar(): SidebarRoot {
   return {
     label: t`Reports`,
     name: 'reports',
@@ -143,7 +143,7 @@ function getReportSidebar() {
 }
 
 function getCompleteSidebar(): SidebarConfig {
-  return [
+  const sidebarItems: (SidebarRoot | SidebarRoot[])[] = [
     {
       label: t`Get Started`,
       name: 'get-started',
@@ -351,5 +351,6 @@ function getCompleteSidebar(): SidebarConfig {
         },
       ] as SidebarItem[],
     },
-  ].flat();
+  ];
+  return sidebarItems.flat();
 }

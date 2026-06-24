@@ -43,6 +43,9 @@
           rustc
           cargo
           direnv
+          rust-analyzer
+          typescript-language-server
+          vue-language-server
         ];
 
         # Linux-only build/runtime packages

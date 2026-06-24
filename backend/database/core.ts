@@ -1,6 +1,58 @@
 import { getDbError, NotFoundError, ValueError } from 'fyo/utils/errors';
 import { knex, Knex } from 'knex';
 import {
+  Kysely,
+  SqliteAdapter,
+  SqliteIntrospector,
+  SqliteQueryCompiler,
+  Driver,
+  DatabaseConnection,
+  QueryResult,
+  CompiledQuery,
+  Expression,
+  SqlBool,
+  InsertObject,
+} from 'kysely';
+import { DatabaseSchema } from './schema';
+
+class KnexConnection implements DatabaseConnection {
+  knex: Knex;
+  constructor(knex: Knex) {
+    this.knex = knex;
+  }
+  async executeQuery<R>(compiledQuery: CompiledQuery): Promise<QueryResult<R>> {
+    const rows = await this.knex.raw(
+      compiledQuery.sql,
+      compiledQuery.parameters as unknown as unknown[]
+    );
+    // Cast dynamic database row results to type R
+    const typedRows = rows as unknown as R[];
+    return {
+      rows: typedRows,
+    };
+  }
+  async *streamQuery<R>(): AsyncGenerator<QueryResult<R>> {
+    throw new Error('Streaming not supported');
+    yield* []; // satisfy eslint require-yield
+  }
+}
+
+class KnexDriver implements Driver {
+  knex: Knex;
+  constructor(knex: Knex) {
+    this.knex = knex;
+  }
+  async init(): Promise<void> {}
+  async acquireConnection(): Promise<DatabaseConnection> {
+    return new KnexConnection(this.knex);
+  }
+  async beginTransaction(): Promise<void> {}
+  async commitTransaction(): Promise<void> {}
+  async rollbackTransaction(): Promise<void> {}
+  async releaseConnection(): Promise<void> {}
+  async destroy(): Promise<void> {}
+}
+import {
   Field,
   FieldTypeEnum,
   RawValue,
@@ -47,6 +99,7 @@ import {
 
 export default class DatabaseCore extends DatabaseBase {
   knex?: Knex;
+  kysely?: Kysely<DatabaseSchema>;
   typeMap = sqliteTypeMap;
   dbPath: string;
   schemaMap: SchemaMap = {};
@@ -72,10 +125,12 @@ export default class DatabaseCore extends DatabaseBase {
 
     let query: { value: string }[] = [];
     try {
-      query = (await db.knex!('SingleValue').where({
-        fieldname: 'countryCode',
-        parent: 'SystemSettings',
-      })) as { value: string }[];
+      query = (await db
+        .kysely!.selectFrom('SingleValue')
+        .select('value')
+        .where('fieldname', '=', 'countryCode')
+        .where('parent', '=', 'SystemSettings')
+        .execute()) as { value: string }[];
     } catch {
       // Database not inialized and no countryCode passed
     }
@@ -95,9 +150,18 @@ export default class DatabaseCore extends DatabaseBase {
   async connect() {
     this.knex = knex(this.connectionParams);
     await this.knex.raw('PRAGMA foreign_keys=ON');
+    this.kysely = new Kysely<DatabaseSchema>({
+      dialect: {
+        createDriver: () => new KnexDriver(this.knex!),
+        createQueryCompiler: () => new SqliteQueryCompiler(),
+        createAdapter: () => new SqliteAdapter(),
+        createIntrospector: (db) => new SqliteIntrospector(db),
+      },
+    });
   }
 
   async close() {
+    await this.kysely?.destroy();
     await this.knex!.destroy();
   }
 
@@ -321,20 +385,42 @@ export default class DatabaseCore extends DatabaseBase {
       return fieldname;
     });
 
-    let builder = this.knex!('SingleValue');
-    builder = builder.where(fieldnameList[0]);
+    let query = this.kysely!.selectFrom('SingleValue').select([
+      'fieldname',
+      'value',
+      'parent',
+    ]);
 
-    fieldnameList.slice(1).forEach(({ fieldname, parent }) => {
-      if (typeof parent === 'undefined') {
-        builder = builder.orWhere({ fieldname });
-      } else {
-        builder = builder.orWhere({ fieldname, parent });
+    query = query.where((eb) => {
+      const firstConditions: Expression<SqlBool>[] = [
+        eb('fieldname', '=', fieldnameList[0].fieldname),
+      ];
+      if (fieldnameList[0].parent !== undefined) {
+        firstConditions.push(eb('parent', '=', fieldnameList[0].parent));
       }
+      const expression = eb.and(firstConditions);
+
+      const orExpressions = fieldnameList
+        .slice(1)
+        .map(({ fieldname, parent }) => {
+          const conds: Expression<SqlBool>[] = [
+            eb('fieldname', '=', fieldname),
+          ];
+          if (parent !== undefined) {
+            conds.push(eb('parent', '=', parent));
+          }
+          return eb.and(conds);
+        });
+
+      if (orExpressions.length > 0) {
+        return eb.or([expression, ...orExpressions]);
+      }
+      return expression;
     });
 
     let values: { fieldname: string; parent: string; value: RawValue }[];
     try {
-      values = (await builder.select('fieldname', 'value', 'parent')) as {
+      values = (await query.execute()) as {
         fieldname: string;
         parent: string;
         value: RawValue;
@@ -395,15 +481,12 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async #singleExists(singleSchemaName: string): Promise<boolean> {
-    const res = await this.knex!('SingleValue')
-      .count('parent as count')
-      .where('parent', singleSchemaName)
-      .first();
-    if (typeof res?.count === 'number') {
-      return res.count > 0;
-    }
-
-    return false;
+    const res = await this.kysely!.selectFrom('SingleValue')
+      .select(({ fn }) => fn.count('parent').as('count'))
+      .where('parent', '=', singleSchemaName)
+      .executeTakeFirst();
+    const count = Number(res?.count);
+    return count > 0;
   }
 
   async #dropColumns(schemaName: string, targetColumns: string[]) {
@@ -724,9 +807,10 @@ export default class DatabaseCore extends DatabaseBase {
 
   async #getNonExtantSingleValues(singleSchemaName: string) {
     const existingFields = (
-      (await this.knex!('SingleValue')
-        .where({ parent: singleSchemaName })
-        .select('fieldname')) as { fieldname: string }[]
+      await this.kysely!.selectFrom('SingleValue')
+        .select('fieldname')
+        .where('parent', '=', singleSchemaName)
+        .execute()
     ).map(({ fieldname }) => fieldname);
 
     const nonExtant: NonExtantConfig['nonExtant'] = [];
@@ -747,9 +831,11 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async #deleteSingle(schemaName: string, fieldname: string) {
-    return await this.knex!('SingleValue')
-      .where({ parent: schemaName, fieldname })
-      .delete();
+    const res = await this.kysely!.deleteFrom('SingleValue')
+      .where('parent', '=', schemaName)
+      .where('fieldname', '=', fieldname)
+      .executeTakeFirst();
+    return Number(res.numDeletedRows);
   }
 
   #deleteChildren(schemaName: string, parentName: string) {
@@ -873,23 +959,26 @@ export default class DatabaseCore extends DatabaseBase {
     fieldname: string,
     value: RawValue
   ) {
-    const updateKey = {
-      parent: singleSchemaName,
-      fieldname,
-    };
-
-    const names = (await this.knex!('SingleValue')
+    const names = await this.kysely!.selectFrom('SingleValue')
       .select('name')
-      .where(updateKey)) as { name: string }[];
+      .where('parent', '=', singleSchemaName)
+      .where('fieldname', '=', fieldname)
+      .execute();
+
+    const stringValue = value === null ? null : String(value);
 
     if (!names?.length) {
-      this.#insertSingleValue(singleSchemaName, fieldname, value);
+      await this.#insertSingleValue(singleSchemaName, fieldname, value);
     } else {
-      return await this.knex!('SingleValue').where(updateKey).update({
-        value,
-        modifiedBy: SYSTEM,
-        modified: new Date().toISOString(),
-      });
+      await this.kysely!.updateTable('SingleValue')
+        .set({
+          value: stringValue,
+          modifiedBy: SYSTEM,
+          modified: new Date().toISOString(),
+        } as unknown as Record<string, unknown>)
+        .where('parent', '=', singleSchemaName)
+        .where('fieldname', '=', fieldname)
+        .execute();
     }
   }
 
@@ -899,13 +988,18 @@ export default class DatabaseCore extends DatabaseBase {
     value: RawValue
   ) {
     const updateMap = getDefaultMetaFieldValueMap();
-    const fieldValueMap: FieldValueMap = Object.assign({}, updateMap, {
+    const stringValue = value === null ? null : String(value);
+    const fieldValueMap = Object.assign({}, updateMap, {
       parent: singleSchemaName,
       fieldname,
-      value,
+      value: stringValue,
       name: getRandomString(),
     });
-    return await this.knex!('SingleValue').insert(fieldValueMap);
+    return await this.kysely!.insertInto('SingleValue')
+      .values(
+        fieldValueMap as unknown as InsertObject<DatabaseSchema, 'SingleValue'>
+      )
+      .execute();
   }
 
   async #getSinglesUpdateList() {

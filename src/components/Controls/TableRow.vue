@@ -34,11 +34,11 @@
           @focus="isRowIndexVisible = false"
           @keydown.enter="$emit('remove')"
         >
-          {{ row.idx + 1 }}
+          {{ (row.idx ?? 0) + 1 }}
         </span>
       </span>
       <span v-else>
-        {{ row.idx + 1 }}
+        {{ (row.idx ?? 0) + 1 }}
       </span>
     </div>
 
@@ -48,8 +48,8 @@
       :key="df.fieldname"
       :size="size"
       :df="df"
-      :value="row[df.fieldname]"
-      @change="(value) => onChange(df, value)"
+      :value="(row as unknown as Record<string, unknown>)[df.fieldname]"
+      @change="(value: unknown) => onChange(df, value)"
       @focus="onFieldFocus(i)"
       @blur="onFieldBlur(i)"
     />
@@ -76,15 +76,18 @@
     </div>
   </Row>
 </template>
-<script>
+
+<script lang="ts">
+import { defineComponent, PropType, computed, nextTick } from 'vue';
+import { DocValue, DocValueMap } from 'fyo/core/types';
 import { Doc } from 'fyo/model/doc';
 import Row from 'src/components/Row.vue';
 import { getErrorMessage } from 'src/utils';
-import { computed, nextTick } from 'vue';
+import { Field } from 'schemas/types';
 import Button from '../Button.vue';
 import FormControl from './FormControl.vue';
 
-export default {
+export default defineComponent({
   name: 'TableRow',
   components: {
     Row,
@@ -97,57 +100,87 @@ export default {
     };
   },
   props: {
-    row: Doc,
-    tableFields: Array,
-    size: String,
-    ratio: Array,
-    isNumeric: Function,
-    readOnly: Boolean,
+    row: {
+      type: Object as PropType<Doc>,
+      required: true,
+    },
+    tableFields: {
+      type: Array as PropType<Field[]>,
+      required: true,
+    },
+    size: {
+      type: String,
+      default: '',
+    },
+    ratio: {
+      type: Array as PropType<number[]>,
+      required: true,
+    },
+    isNumeric: {
+      type: Function as PropType<(df: Field) => boolean>,
+      required: true,
+    },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
     canEditRow: {
       type: Boolean,
       default: false,
     },
   },
   emits: ['remove', 'change'],
-  data: () => ({
-    isRowIndexVisible: false,
-    errors: {},
-  }),
+  data() {
+    return {
+      isRowIndexVisible: false,
+      errors: {} as Record<string, string | null>,
+    };
+  },
   computed: {
-    hasErrors() {
-      return Object.values(this.errors).filter(Boolean).length;
+    hasErrors(): boolean {
+      return Object.values(this.errors).filter(Boolean).length > 0;
     },
   },
   beforeCreate() {
-    this.$options.components.FormControl = FormControl;
+    if (this.$options.components) {
+      this.$options.components.FormControl = FormControl;
+    }
   },
   methods: {
-    async onChange(df, value) {
+    async onChange(df: Field, value: unknown) {
       const fieldname = df.fieldname;
       this.errors[fieldname] = null;
-      const oldValue = this.row[fieldname];
+      const oldValue = (this.row as unknown as Record<string, unknown>)[
+        fieldname
+      ];
       try {
-        await this.row.set(fieldname, value);
+        // Cast unknown value from template input to valid DocValue types for ORM setting
+        const docVal = value as unknown as DocValue | Doc[] | DocValueMap[];
+        await this.row.set(fieldname, docVal);
         this.$emit('change', df, value);
       } catch (e) {
-        this.errors[fieldname] = getErrorMessage(e, this.row);
-        this.row[fieldname] = '';
-        nextTick(() => (this.row[fieldname] = oldValue));
+        this.errors[fieldname] = getErrorMessage(e as Error, this.row);
+        (this.row as unknown as Record<string, unknown>)[fieldname] = '';
+        nextTick(
+          () =>
+            ((this.row as unknown as Record<string, unknown>)[fieldname] =
+              oldValue)
+        );
       }
     },
-    getErrorString() {
+    getErrorString(): string {
       return Object.values(this.errors).filter(Boolean).join(' ');
     },
     openRowQuickEdit() {
       if (!this.row) return;
-      this.$parent.$emit('editrow', this.row);
+      this.$parent?.$emit('editrow', this.row);
     },
-    onFieldFocus(index) {
+    onFieldFocus(index: number) {
       if (index === 0) {
         this.isRowIndexVisible = true;
       }
     },
-    onFieldBlur(index) {
+    onFieldBlur(index: number) {
       if (index === 0) {
         this.isRowIndexVisible = false;
       }
@@ -156,10 +189,10 @@ export default {
       const firstControl = this.$el.querySelector(
         '.form-control, input, textarea, select'
       );
-      if (firstControl) {
+      if (firstControl instanceof HTMLElement) {
         firstControl.focus();
       }
     },
   },
-};
+});
 </script>
