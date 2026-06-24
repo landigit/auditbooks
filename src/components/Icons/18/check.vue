@@ -16,9 +16,11 @@
     </g>
   </svg>
 </template>
-<script>
+
+<script setup lang="ts">
 import Base from '../base.vue';
-export default {
+
+defineOptions({
   extends: Base,
-};
+});
 </script>
