@@ -83,7 +83,10 @@ export async function getPrintTemplatePropValues(
 
   if (values.doc.entryType !== ModelNameEnum.Shipment) {
     const targetDoc = (sinvDoc as Invoice) ?? (doc as Payment);
-    totalTax = typeof targetDoc?.getTotalTax === 'function' ? await targetDoc.getTotalTax() : undefined;
+    totalTax =
+      typeof targetDoc?.getTotalTax === 'function'
+        ? await targetDoc.getTotalTax()
+        : undefined;
   }
 
   if (doc.schema.name == ModelNameEnum.Payment) {

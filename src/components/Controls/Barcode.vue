@@ -125,7 +125,7 @@ export default defineComponent({
         return;
       }
 
-      clearInterval(this.timerId);
+      clearTimeout(this.timerId);
       this.timerId = null;
     },
     error(message: string) {
