@@ -7,20 +7,24 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed } from 'vue';
 import { getBgTextColorClass } from 'src/utils/colors';
 
-export default {
+defineOptions({
   name: 'Badge',
-  props: {
-    color: {
-      default: 'gray',
-    },
-  },
-  computed: {
-    colorClass() {
-      return getBgTextColorClass(this.color);
-    },
-  },
-};
+});
+
+const props = withDefaults(
+  defineProps<{
+    color?: string;
+  }>(),
+  {
+    color: 'gray',
+  }
+);
+
+const colorClass = computed(() => {
+  return getBgTextColorClass(props.color);
+});
 </script>

@@ -15,24 +15,31 @@
   </div>
 </template>
 
-<script>
-export default {
+<script setup lang="ts">
+import { computed } from 'vue';
+
+defineOptions({
   name: 'Avatar',
-  props: {
-    imageURL: String,
-    label: String,
-    size: {
-      default: 'md',
-    },
-  },
-  computed: {
-    sizeClasses() {
-      return {
-        sm: 'w-5 h-5',
-        md: 'w-7 h-7',
-        lg: 'w-9 h-9',
-      }[this.size];
-    },
-  },
-};
+});
+
+const props = withDefaults(
+  defineProps<{
+    imageURL?: string;
+    label?: string;
+    size?: 'sm' | 'md' | 'lg';
+  }>(),
+  {
+    size: 'md',
+  }
+);
+
+const sizeClasses = computed(() => {
+  return (
+    {
+      sm: 'w-5 h-5',
+      md: 'w-7 h-7',
+      lg: 'w-9 h-9',
+    }[props.size] ?? 'w-7 h-7'
+  );
+});
 </script>

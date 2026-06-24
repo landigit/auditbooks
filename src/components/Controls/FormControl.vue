@@ -1,9 +1,5 @@
 <template>
-  <component
-    :is="component"
-    v-bind="$attrs"
-    ref="control"
-  />
+  <component :is="component" v-bind="$attrs" ref="control" />
 </template>
 
 <script setup lang="ts">
