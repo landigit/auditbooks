@@ -1,176 +1,117 @@
 <template>
   <div>
-    <svg
-      version="1.1"
-      viewBox="0 0 100 100"
-      @mouseleave="$emit('change', null)"
-    >
-      <defs>
-        <clipPath id="donut-hole">
-          <circle
-            :cx="cx"
-            :cy="cy"
-            :r="radius + thickness / 2"
-            fill="black"
-            stroke-width="0"
-          />
-        </clipPath>
-      </defs>
-      <circle
-        v-if="thetasAndStarts.length === 1 || thetasAndStarts.length === 0"
-        clip-path="url(#donut-hole)"
-        :cx="cx"
-        :cy="cy"
-        :r="radius"
-        :stroke-width="
-          thickness +
-          (hasNonZeroValues && active === thetasAndStarts[0][0] ? 4 : 0)
-        "
-        :stroke="
-          hasNonZeroValues ? sectors[thetasAndStarts[0][0]].color : '#f4f4f6'
-        "
-        :class="hasNonZeroValues ? 'sector' : ''"
-        :style="{ transformOrigin: `${cx}px ${cy}px` }"
-        fill="transparent"
-        @mouseover="
-          $emit(
-            'change',
-            thetasAndStarts.length === 1 ? thetasAndStarts[0][0] : null
-          )
-        "
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path
+        v-for="[i, theta, start] in thetasAndStarts"
+        :key="i"
+        :d="getArcPath(cx, cy, radius, start, theta)"
+        :fill="getSectorColor(i)"
+        @click="$emit('change', i)"
+        :class="{ 'opacity-50': active !== null && active !== i }"
+        class="cursor-pointer transition-opacity duration-300"
       />
-      <template v-if="thetasAndStarts.length > 1">
-        <path
-          v-for="[i, theta, start_] in thetasAndStarts"
-          :key="i"
-          clip-path="url(#donut-hole)"
-          :d="getArcPath(cx, cy, radius, start_, theta)"
-          :stroke="getSectorColor(i)"
-          :stroke-width="thickness + (active === i ? 4 : 0)"
-          :style="{ transformOrigin: `${cx}px ${cy}px` }"
-          class="sector"
-          fill="transparent"
-          @mouseover="$emit('change', i)"
-        />
-      </template>
       <text
-        :x="cx"
-        :y="cy"
+        :x="50 + textOffsetX"
+        :y="50 + textOffsetY"
         text-anchor="middle"
-        :style="{
-          fontSize: '6px',
-          fontWeight: 'bold',
-          fill: darkMode ? '#FFFFFF' : '#0f172a',
-        }"
+        class="text-sm font-bold select-none"
+        :fill="darkMode ? '#F9FAFB' : '#111827'"
       >
-        {{
-          valueFormatter(
-            active !== null && sectors.length !== 0
-              ? sectors[active].value
-              : totalValue,
-            'Currency'
-          )
-        }}
+        {{ totalLabel }}
       </text>
       <text
-        :x="cx"
-        :y="cy + 8"
+        :x="50 + textOffsetX"
+        :y="55 + textOffsetY"
         text-anchor="middle"
-        :style="{
-          fontSize: '5px',
-          fill: darkMode ? '#94a3b8' : '#475569',
-        }"
+        class="text-lg font-bold select-none"
+        :fill="darkMode ? '#F9FAFB' : '#111827'"
       >
-        {{
-          active !== null && sectors.length !== 0
-            ? sectors[active].label
-            : totalLabel
-        }}
+        {{ valueFormatter(totalValue) }}
       </text>
     </svg>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    sectors: {
-      default: () => [],
-      type: Array,
-    },
-    totalLabel: { default: 'Total', type: String },
-    radius: { default: 36, type: Number },
-    startAngle: { default: Math.PI, type: Number },
-    thickness: { default: 10, type: Number },
-    active: { default: null, type: Number },
-    valueFormatter: { default: (v) => v.toString(), Function },
-    offsetX: { default: 0, type: Number },
-    offsetY: { default: 0, type: Number },
-    textOffsetX: { default: 0, type: Number },
-    textOffsetY: { default: 0, type: Number },
-    darkMode: { type: Boolean, default: false },
-  },
-  emits: ['change'],
-  computed: {
-    cx() {
-      return 50 + this.offsetX;
-    },
-    cy() {
-      return 50 + this.offsetY;
-    },
-    totalValue() {
-      return this.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0);
-    },
-    thetasAndStarts() {
-      const thetas = this.sectors
-        .map(({ value }, i) => ({
-          value: (2 * Math.PI * value) / this.totalValue,
-          filterOut: value !== 0,
-          i,
-        }))
-        .filter(({ filterOut }) => filterOut);
+<script setup lang="ts">
+import { computed } from 'vue';
 
-      const starts = [...thetas.map(({ value }) => value)];
-      starts.forEach(({ value }, i) => {
-        starts[i] += starts[i - 1] ?? 0;
-      });
+defineOptions({
+  name: 'DonutChart',
+});
 
-      starts.unshift(0);
-      starts.pop();
+const props = withDefaults(
+  defineProps<{
+    sectors?: { value: number; color: { color: string; darkColor: string } }[];
+    totalLabel?: string;
+    radius?: number;
+    startAngle?: number;
+    thickness?: number;
+    active?: number | null;
+    valueFormatter?: (v: number) => string;
+    offsetX?: number;
+    offsetY?: number;
+    textOffsetX?: number;
+    textOffsetY?: number;
+    darkMode?: boolean;
+  }>(),
+  {
+    sectors: () => [],
+    totalLabel: 'Total',
+    radius: 36,
+    startAngle: Math.PI,
+    thickness: 10,
+    active: null,
+    valueFormatter: (v: number) => v.toString(),
+    offsetX: 0,
+    offsetY: 0,
+    textOffsetX: 0,
+    textOffsetY: 0,
+    darkMode: false,
+  }
+);
 
-      return thetas.map((t, i) => [t.i, t.value, starts[i]]);
-    },
-    hasNonZeroValues() {
-      return this.thetasAndStarts.some((t) => this.sectors[t[0]].value !== 0);
-    },
-  },
-  methods: {
-    getArcPath(...args) {
-      let [cx, cy, r, start, theta] = args.map(parseFloat);
+defineEmits(['change']);
 
-      start += parseFloat(this.startAngle);
-      const startX = cx + r * Math.cos(start);
-      const startY = cy + r * Math.sin(start);
-      const endX = cx + r * Math.cos(start + theta);
-      const endY = cy + r * Math.sin(start + theta);
-      const largeArcFlag = theta > Math.PI ? 1 : 0;
-      const sweepFlag = 1;
+const cx = computed(() => 50 + props.offsetX);
+const cy = computed(() => 50 + props.offsetY);
 
-      return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
-    },
-    getSectorColor(index) {
-      if (this.darkMode) {
-        return this.sectors[index].color.darkColor;
-      } else {
-        return this.sectors[index].color.color;
-      }
-    },
-  },
-};
-</script>
+const totalValue = computed(() => {
+  return props.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0);
+});
 
-<style scoped>
-.sector {
-  transition: 100ms stroke-width ease-out;
+const thetasAndStarts = computed(() => {
+  const thetas = props.sectors
+    .map(({ value }, i) => ({
+      value: (2 * Math.PI * value) / totalValue.value,
+      filterOut: value !== 0,
+      i,
+    }))
+    .filter(({ filterOut }) => filterOut);
+
+  const starts = [...thetas.map(({ value }) => value)];
+  starts.forEach((_, i) => {
+    if (i > 0) starts[i] += starts[i - 1];
+  });
+  
+  starts.unshift(0);
+  starts.pop();
+
+  return thetas.map((t, i) => [t.i, t.value, starts[i]]);
+});
+
+function getArcPath(cx: number, cy: number, r: number, start: number, theta: number) {
+  start += props.startAngle;
+  const startX = cx + r * Math.cos(start);
+  const startY = cy + r * Math.sin(start);
+  const endX = cx + r * Math.cos(start + theta);
+  const endY = cy + r * Math.sin(start + theta);
+  const largeArcFlag = theta > Math.PI ? 1 : 0;
+  const sweepFlag = 1;
+
+  return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
 }
-</style>
+
+function getSectorColor(index: number) {
+  return props.darkMode ? props.sectors[index].color.darkColor : props.sectors[index].color.color;
+}
+</script>
