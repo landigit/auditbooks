@@ -294,6 +294,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@reference "../styles/index.css";
 .nav-link {
   @apply flex items-center bg-gray-200 px-3 h-8;
 }

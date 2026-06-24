@@ -477,6 +477,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@reference "../styles/index.css";
 .index-cell {
   @apply flex pe-4 justify-end items-center border-e last:border-b dark:border-gray-800 bg-white dark:bg-gray-875 sticky left-0 -my-4 text-gray-600 dark:text-gray-400;
 }

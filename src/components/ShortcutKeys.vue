@@ -9,23 +9,29 @@
     >
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { computed } from 'vue';
 import { getShortcutKeyMap } from 'src/utils/ui';
-import { defineComponent, PropType } from 'vue';
-export default defineComponent({
-  props: {
-    keys: { type: Array as PropType<string[]>, required: true },
-    simple: { type: Boolean, default: false },
-  },
-  method() {},
-  computed: {
-    keyMap(): Record<string, string> {
-      return getShortcutKeyMap(this.platform);
-    },
-  },
-});
+import { usePlatform } from 'src/composables/usePlatform';
+
+const props = withDefaults(
+  defineProps<{
+    keys: string[];
+    simple?: boolean;
+  }>(),
+  {
+    simple: false,
+  }
+);
+
+const { platformName } = usePlatform();
+
+const keyMap = computed<Record<string, string>>(
+  () => getShortcutKeyMap(platformName.value) as any
+);
 </script>
 <style scoped>
+@reference "../styles/index.css";
 .key-common {
   font-family: monospace;
   font-weight: 600;

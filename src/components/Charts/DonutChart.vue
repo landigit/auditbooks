@@ -24,10 +24,10 @@
         :r="radius"
         :stroke-width="
           thickness +
-          (hasNonZeroValues && active === thetasAndStarts[0][0] ? 4 : 0)
+          (hasNonZeroValues && active === thetasAndStarts[0]?.[0] ? 4 : 0)
         "
         :stroke="
-          hasNonZeroValues ? sectors[thetasAndStarts[0][0]].color : '#f4f4f6'
+          hasNonZeroValues ? getSectorColor(thetasAndStarts[0]?.[0]) : '#f4f4f6'
         "
         :class="hasNonZeroValues ? 'sector' : ''"
         :style="{ transformOrigin: `${cx}px ${cy}px` }"
@@ -91,82 +91,107 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    sectors: {
-      default: () => [],
-      type: Array,
-    },
-    totalLabel: { default: 'Total', type: String },
-    radius: { default: 36, type: Number },
-    startAngle: { default: Math.PI, type: Number },
-    thickness: { default: 10, type: Number },
-    active: { default: null, type: Number },
-    valueFormatter: { default: (v) => v.toString(), Function },
-    offsetX: { default: 0, type: Number },
-    offsetY: { default: 0, type: Number },
-    textOffsetX: { default: 0, type: Number },
-    textOffsetY: { default: 0, type: Number },
-    darkMode: { type: Boolean, default: false },
-  },
-  emits: ['change'],
-  computed: {
-    cx() {
-      return 50 + this.offsetX;
-    },
-    cy() {
-      return 50 + this.offsetY;
-    },
-    totalValue() {
-      return this.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0);
-    },
-    thetasAndStarts() {
-      const thetas = this.sectors
-        .map(({ value }, i) => ({
-          value: (2 * Math.PI * value) / this.totalValue,
-          filterOut: value !== 0,
-          i,
-        }))
-        .filter(({ filterOut }) => filterOut);
+<script setup lang="ts">
+import { computed } from 'vue';
 
-      const starts = [...thetas.map(({ value }) => value)];
-      starts.forEach(({ value }, i) => {
-        starts[i] += starts[i - 1] ?? 0;
-      });
-
-      starts.unshift(0);
-      starts.pop();
-
-      return thetas.map((t, i) => [t.i, t.value, starts[i]]);
-    },
-    hasNonZeroValues() {
-      return this.thetasAndStarts.some((t) => this.sectors[t[0]].value !== 0);
-    },
-  },
-  methods: {
-    getArcPath(...args) {
-      let [cx, cy, r, start, theta] = args.map(parseFloat);
-
-      start += parseFloat(this.startAngle);
-      const startX = cx + r * Math.cos(start);
-      const startY = cy + r * Math.sin(start);
-      const endX = cx + r * Math.cos(start + theta);
-      const endY = cy + r * Math.sin(start + theta);
-      const largeArcFlag = theta > Math.PI ? 1 : 0;
-      const sweepFlag = 1;
-
-      return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
-    },
-    getSectorColor(index) {
-      if (this.darkMode) {
-        return this.sectors[index].color.darkColor;
-      } else {
-        return this.sectors[index].color.color;
-      }
-    },
-  },
+type Sector = {
+  value: number;
+  label: string;
+  color: any;
 };
+
+const props = withDefaults(
+  defineProps<{
+    sectors?: Sector[];
+    totalLabel?: string;
+    radius?: number;
+    startAngle?: number;
+    thickness?: number;
+    active?: number | null;
+    valueFormatter?: (v: any, type?: string) => string;
+    offsetX?: number;
+    offsetY?: number;
+    textOffsetX?: number;
+    textOffsetY?: number;
+    darkMode?: boolean;
+  }>(),
+  {
+    sectors: () => [],
+    totalLabel: 'Total',
+    radius: 36,
+    startAngle: Math.PI,
+    thickness: 10,
+    active: null,
+    valueFormatter: (v: any) => v.toString(),
+    offsetX: 0,
+    offsetY: 0,
+    textOffsetX: 0,
+    textOffsetY: 0,
+    darkMode: false,
+  }
+);
+
+defineEmits<{
+  (e: 'change', index: any): void;
+}>();
+
+const cx = computed(() => 50 + props.offsetX);
+const cy = computed(() => 50 + props.offsetY);
+
+const totalValue = computed(() => {
+  return props.sectors.map(({ value }) => value).reduce((a, b) => a + b, 0);
+});
+
+const thetasAndStarts = computed(() => {
+  const thetas = props.sectors
+    .map(({ value }, i) => ({
+      value:
+        totalValue.value === 0 ? 0 : (2 * Math.PI * value) / totalValue.value,
+      filterOut: value !== 0,
+      i,
+    }))
+    .filter(({ filterOut }) => filterOut);
+
+  const starts = [...thetas.map(({ value }) => value)];
+  starts.forEach((_, i) => {
+    starts[i] += starts[i - 1] ?? 0;
+  });
+
+  starts.unshift(0);
+  starts.pop();
+
+  return thetas.map(
+    (t, i) => [t.i, t.value, starts[i]] as [number, number, number]
+  );
+});
+
+const hasNonZeroValues = computed(() => {
+  return thetasAndStarts.value.some((t) => props.sectors[t[0]].value !== 0);
+});
+
+function getArcPath(...args: [number, number, number, number, number]) {
+  let [cxVal, cyVal, rVal, startVal, thetaVal] = args.map(Number);
+
+  startVal += Number(props.startAngle);
+  const startX = cxVal + rVal * Math.cos(startVal);
+  const startY = cyVal + rVal * Math.sin(startVal);
+  const endX = cxVal + rVal * Math.cos(startVal + thetaVal);
+  const endY = cyVal + rVal * Math.sin(startVal + thetaVal);
+  const largeArcFlag = thetaVal > Math.PI ? 1 : 0;
+  const sweepFlag = 1;
+
+  return `M ${startX} ${startY} A ${rVal} ${rVal} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
+}
+
+function getSectorColor(index: number) {
+  if (index === undefined || !props.sectors[index]) return '#f4f4f6';
+  const sector = props.sectors[index];
+  if (props.darkMode) {
+    return sector.color?.darkColor ?? sector.color ?? '#f4f4f6';
+  } else {
+    return sector.color?.color ?? sector.color ?? '#f4f4f6';
+  }
+}
 </script>
 
 <style scoped>

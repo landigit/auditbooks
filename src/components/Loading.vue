@@ -46,27 +46,38 @@
     </div>
   </div>
 </template>
-<script>
-export default {
-  props: {
-    open: { type: Boolean, default: false },
-    percent: { type: Number, default: 0.5 },
-    message: { type: String, default: '' },
-    fullWidth: { type: Boolean, default: false },
-    showX: { type: Boolean, default: true },
-  },
-  data() {
-    return {
-      close: false,
-    };
-  },
-  mounted() {
-    window.l = this;
-  },
-  methods: {
-    closeToast() {
-      this.close = true;
-    },
-  },
-};
+<script setup lang="ts">
+import { ref, onMounted, getCurrentInstance } from 'vue';
+
+const props = withDefaults(
+  defineProps<{
+    open?: boolean;
+    percent?: number;
+    message?: string;
+    fullWidth?: boolean;
+    showX?: boolean;
+  }>(),
+  {
+    open: false,
+    percent: 0.5,
+    message: '',
+    fullWidth: false,
+    showX: true,
+  }
+);
+
+const close = ref(false);
+
+function closeToast() {
+  close.value = true;
+}
+
+onMounted(() => {
+  (window as any).l = getCurrentInstance()?.proxy;
+});
+
+defineExpose({
+  close,
+  closeToast,
+});
 </script>

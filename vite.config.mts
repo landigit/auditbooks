@@ -1,4 +1,5 @@
 import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { defineConfig } from 'vite';
 
@@ -84,6 +85,7 @@ export default () => {
     },
     root: path.resolve(import.meta.dirname, './src'),
     plugins: [
+      tailwindcss(),
       vue({
         script: {
           defineModel: true,

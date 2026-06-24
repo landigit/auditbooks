@@ -96,15 +96,15 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
-import { defineComponent, inject } from 'vue';
 import { t } from 'fyo';
+import { fyo } from 'src/initFyo';
 import { showToast } from 'src/utils/interactive';
 import { AppliedCouponCodes } from 'models/baseModels/AppliedCouponCodes/AppliedCouponCodes';
-import Link from 'src/components/Controls/Link.vue';
 import { ModelNameEnum } from 'models/types';
 import { validateCouponCode } from 'models/helpers';
 import { Field } from 'schemas/types';
@@ -112,101 +112,87 @@ import FormControl from 'src/components/Controls/FormControl.vue';
 import Row from 'src/components/Row.vue';
 import { InvoiceItem } from 'models/baseModels/InvoiceItem/InvoiceItem';
 
-export default defineComponent({
-  name: 'CouponCodeModal',
-  components: {
-    Modal,
-    Button,
-    Link,
-    FormControl,
-    Row,
-  },
-  emits: ['setCouponsCount', 'toggleModal', 'applyPricingRule'],
+const emit = defineEmits<{
+  (e: 'setCouponsCount', length: number): void;
+  (e: 'toggleModal', modalName: string): void;
+  (e: 'applyPricingRule'): void;
+}>();
 
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-      coupons: inject('coupons') as AppliedCouponCodes,
-      appliedCoupons: inject('appliedCoupons') as AppliedCouponCodes[],
-    };
-  },
-  data() {
-    return {
-      validationError: false,
-      couponCode: '',
-    };
-  },
-  computed: {
-    ratio() {
-      return [1, 0.1, 1, 0.7];
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+const coupons = inject('coupons') as AppliedCouponCodes;
+const appliedCoupons = inject('appliedCoupons') as AppliedCouponCodes[];
+
+const validationError = ref(false);
+const couponCode = ref('');
+
+const ratio = computed(() => [1, 0.1, 1, 0.7]);
+const tableFields = computed(() => {
+  return [
+    {
+      fieldname: 'coupons',
+      fieldtype: 'Link',
+      required: true,
+      readOnly: true,
     },
-    tableFields() {
-      return [
-        {
-          fieldname: 'coupons',
-          fieldtype: 'Link',
-          required: true,
-          readOnly: true,
-        },
-      ] as Field[];
-    },
-  },
-  methods: {
-    async updateCouponCode(value: string | Event) {
-      try {
-        if (!value) {
-          return;
-        }
-        this.validationError = false;
-
-        if ((value as Event).type === 'keydown') {
-          value = ((value as Event).target as HTMLInputElement).value;
-        }
-
-        this.couponCode = value as string;
-        const appliedCouponCodes = this.fyo.doc.getNewDoc(
-          ModelNameEnum.AppliedCouponCodes
-        );
-
-        await validateCouponCode(
-          appliedCouponCodes as AppliedCouponCodes,
-          this.couponCode,
-          this.sinvDoc
-        );
-
-        await this.sinvDoc.append('coupons', { coupons: this.couponCode });
-
-        this.$emit('applyPricingRule');
-        this.couponCode = '';
-        this.validationError = false;
-      } catch (error) {
-        this.validationError = true;
-
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-        });
-      }
-    },
-    setCouponCode() {
-      this.$emit('toggleModal', 'CouponCode');
-    },
-    async removeAppliedCoupon(coupon: AppliedCouponCodes) {
-      this.sinvDoc?.items?.map((item: InvoiceItem) => {
-        item.itemDiscountAmount = this.fyo.pesa(0);
-        item.itemDiscountPercent = 0;
-        item.setItemDiscountAmount = false;
-      });
-
-      await coupon?.parentdoc?.remove('coupons', coupon.idx as number);
-
-      this.$emit('applyPricingRule');
-      this.$emit('setCouponsCount', this.coupons?.length);
-    },
-    cancelApplyCouponCode() {
-      this.couponCode = '';
-      this.$emit('toggleModal', 'CouponCode');
-    },
-  },
+  ] as Field[];
 });
+
+async function updateCouponCode(value: any) {
+  try {
+    if (!value) {
+      return;
+    }
+    validationError.value = false;
+
+    if (value && typeof value === 'object' && value.type === 'keydown') {
+      value = (value.target as HTMLInputElement).value;
+    }
+
+    couponCode.value = value as string;
+    const appliedCouponCodes = fyo.doc.getNewDoc(
+      ModelNameEnum.AppliedCouponCodes
+    );
+
+    await validateCouponCode(
+      appliedCouponCodes as AppliedCouponCodes,
+      couponCode.value,
+      sinvDoc
+    );
+
+    await sinvDoc.append('coupons', { coupons: couponCode.value });
+
+    emit('applyPricingRule');
+    couponCode.value = '';
+    validationError.value = false;
+  } catch (error) {
+    validationError.value = true;
+
+    showToast({
+      type: 'error',
+      message: t`${error as string}`,
+    });
+  }
+}
+
+function setCouponCode() {
+  emit('toggleModal', 'CouponCode');
+}
+
+async function removeAppliedCoupon(coupon: AppliedCouponCodes) {
+  sinvDoc?.items?.forEach((item: InvoiceItem) => {
+    item.itemDiscountAmount = fyo.pesa(0);
+    item.itemDiscountPercent = 0;
+    item.setItemDiscountAmount = false;
+  });
+
+  await coupon?.parentdoc?.remove('coupons', coupon.idx as number);
+
+  emit('applyPricingRule');
+  emit('setCouponsCount', (coupons as any)?.length);
+}
+
+function cancelApplyCouponCode() {
+  couponCode.value = '';
+  emit('toggleModal', 'CouponCode');
+}
 </script>
