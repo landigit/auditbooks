@@ -14,7 +14,7 @@
         <div
           v-for="(col, c) in report.columns"
           :key="c + '-col'"
-          :style="getCellStyle(col, c)"
+          :style="getCellStyle(col, c as number)"
           class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar"
         >
           {{ col.label }}
@@ -41,24 +41,25 @@
                 ? 'hover:bg-gray-50 dark:hover:bg-gray-890 cursor-pointer'
                 : '',
             ]"
-            @click="() => onRowClick(row, r)"
+            @click="() => onRowClick(row, r as number)"
           >
             <!-- Report Cell -->
             <div
               v-for="(cell, c) in row.cells"
               :key="`${c}-${r}-cell`"
-              :style="getCellStyle(cell, c)"
+              :style="getCellStyle(cell, c as number)"
               class="text-base px-3 flex-shrink-0 overflow-x-auto whitespace-nowrap no-scrollbar flex items-center"
               :class="[
                 getCellColorClass(cell),
                 cell.align === 'right' ||
-                (!cell.align && isNumeric(cell.fieldtype))
+                (!cell.align &&
+                  isNumeric(report.columns?.[c as number]?.fieldtype))
                   ? 'justify-end'
                   : 'justify-start',
               ]"
             >
               <feather-icon
-                v-if="isGroupCell(row, c)"
+                v-if="isGroupCell(row, c as number)"
                 :name="row.foldedBelow ? 'chevron-right' : 'chevron-down'"
                 class="w-4 h-4 me-1 flex-shrink-0"
               />
@@ -87,192 +88,187 @@
     <div v-else class="h-4" />
   </div>
 </template>
-<script>
+<script setup lang="ts">
+import { ref, computed, inject } from 'vue';
 import { Report } from 'reports/Report';
-import { isNumeric } from 'src/utils';
+import { isNumeric as checkIsNumeric } from 'src/utils';
 import { languageDirectionKey } from 'src/utils/injectionKeys';
-import { defineComponent } from 'vue';
 import Paginator from '../Paginator.vue';
 import WithScroll from '../WithScroll.vue';
-import { inject } from 'vue';
+import { fyo } from 'src/initFyo';
+import { t } from 'fyo';
 
-export default defineComponent({
-  components: { Paginator, WithScroll },
-  props: {
-    report: Report,
-  },
-  setup() {
-    return {
-      languageDirection: inject(languageDirectionKey),
-    };
-  },
-  data() {
-    return {
-      wconst: 6,
-      hconst: 48,
-      pageStart: 0,
-      pageEnd: 0,
-    };
-  },
-  computed: {
-    dataSlice() {
-      if (this.report?.usePagination) {
-        return this.report.reportData.slice(this.pageStart, this.pageEnd);
-      }
+const props = defineProps<{
+  report: any;
+}>();
 
-      return this.report.reportData;
-    },
-  },
-  methods: {
-    isGroupCell(row, c) {
-      if (!row.isGroup) return false;
-      const firstColLabel = this.report?.columns?.[0]?.label;
-      if (firstColLabel === '#') {
-        return c === 1;
-      }
-      return c === 0;
-    },
-    isNumeric(fieldtype) {
-      return isNumeric(fieldtype);
-    },
-    scroll({ scrollLeft }) {
-      this.$refs.titlerow.scrollLeft = scrollLeft;
-    },
-    setPageIndices({ start, end }) {
-      this.pageStart = start;
-      this.pageEnd = end;
-    },
-    onRowClick(clickedRow, r) {
-      if (!clickedRow.isGroup) {
-        return;
-      }
+const languageDirection = inject(languageDirectionKey);
 
-      r += 1;
-      clickedRow.foldedBelow = !clickedRow.foldedBelow;
-      const folded = clickedRow.foldedBelow;
-      let row = this.dataSlice[r];
+const wconst = ref(6);
+const hconst = ref(48);
+const pageStart = ref(0);
+const pageEnd = ref(0);
 
-      while (row && row.level > clickedRow.level) {
-        row.folded = folded;
-        r += 1;
-        row = this.dataSlice[r];
-      }
-    },
-    getCellStyle(cell, i) {
-      const styles = {};
-      const width = cell.width ?? 1;
+const titlerow = ref<HTMLElement | null>(null);
 
-      let align = cell.align ?? 'left';
-      if (this.languageDirection === 'rtl') {
-        align = this.languageDirection === 'rtl' ? 'right' : 'left';
-      }
-
-      const labelLength = this.report?.columns?.[i]?.label?.length ?? 0;
-      let colWidth = width * this.wconst;
-      if (labelLength > 0) {
-        const minWidthForLabel = labelLength * 0.65;
-        if (colWidth < minWidthForLabel) {
-          colWidth = minWidthForLabel;
-        }
-      }
-
-      styles['width'] = `${colWidth}rem`;
-      styles['text-align'] = align;
-
-      if (cell.bold) {
-        styles['font-weight'] = 'bold';
-      }
-
-      if (cell.italics) {
-        styles['font-style'] = 'oblique 15deg';
-      }
-
-      if (!cell.align && isNumeric(cell.fieldtype)) {
-        styles['text-align'] = 'right';
-      }
-
-      const column = this.report?.columns?.[i];
-      const columnLabel = column?.label;
-      const fieldname = column?.fieldname;
-
-      if (
-        fieldname === 'index' ||
-        fieldname === 'name' ||
-        columnLabel === '#'
-      ) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-right'] = '0px';
-        } else {
-          styles['padding-left'] = '0px';
-        }
-        styles['width'] = '3rem';
-      } else if (fieldname === 'account' || columnLabel === 'Account') {
-        styles['width'] = '20rem';
-        if (i === 0) {
-          if (this.languageDirection === 'rtl') {
-            styles['padding-right'] = '0px';
-          } else {
-            styles['padding-left'] = '0px';
-          }
-        }
-      } else if (fieldname === 'referenceType' || columnLabel === 'Ref Type') {
-        styles['width'] = '12rem';
-      } else if (fieldname === 'party' || columnLabel === 'Party') {
-        styles['width'] = '12rem';
-      } else if (fieldname === 'referenceName' || columnLabel === 'Ref Name') {
-        styles['width'] = '10rem';
-      } else if (i === 0) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-right'] = '0px';
-        } else {
-          styles['padding-left'] = '0px';
-        }
-      }
-
-      if (i === this.report.columns.length - 1) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-left'] = '0px';
-        } else {
-          styles['padding-right'] = '0px';
-        }
-      }
-
-      if (cell.indent) {
-        if (this.languageDirection === 'rtl') {
-          styles['padding-right'] = `${cell.indent * 2}rem`;
-        } else {
-          styles['padding-left'] = `${cell.indent * 2}rem`;
-        }
-      }
-
-      return styles;
-    },
-    getCellColorClass(cell) {
-      if (cell.color === 'red') {
-        return 'text-red-600';
-      } else if (cell.color === 'green') {
-        return 'text-green-600';
-      }
-
-      if (!cell.rawValue) {
-        return 'text-gray-600 dark:text-gray-400';
-      }
-
-      if (typeof cell.rawValue !== 'number') {
-        return 'text-gray-900 dark:text-gray-100';
-      }
-
-      if (cell.rawValue === 0) {
-        return 'text-gray-600 dark:text-gray-400';
-      }
-
-      const prec = this.fyo?.singles?.displayPrecision ?? 2;
-      if (Number(cell.rawValue.toFixed(prec)) === 0) {
-        return 'text-gray-600 dark:text-gray-500';
-      }
-
-      return 'text-gray-900 dark:text-gray-300';
-    },
-  },
+const dataSlice = computed(() => {
+  if (props.report?.usePagination) {
+    return props.report.reportData.slice(pageStart.value, pageEnd.value);
+  }
+  return props.report.reportData;
 });
+
+function isGroupCell(row: any, c: number) {
+  if (!row.isGroup) return false;
+  const firstColLabel = props.report?.columns?.[0]?.label;
+  if (firstColLabel === '#') {
+    return c === 1;
+  }
+  return c === 0;
+}
+
+function isNumeric(fieldtype: any) {
+  return checkIsNumeric(fieldtype);
+}
+
+function scroll({ scrollLeft }: { scrollLeft: number }) {
+  if (titlerow.value) {
+    titlerow.value.scrollLeft = scrollLeft;
+  }
+}
+
+function setPageIndices({ start, end }: { start: number; end: number }) {
+  pageStart.value = start;
+  pageEnd.value = end;
+}
+
+function onRowClick(clickedRow: any, r: number) {
+  if (!clickedRow.isGroup) {
+    return;
+  }
+
+  r += 1;
+  clickedRow.foldedBelow = !clickedRow.foldedBelow;
+  const folded = clickedRow.foldedBelow;
+  let row = dataSlice.value[r];
+
+  while (row && (row.level ?? 0) > (clickedRow.level ?? 0)) {
+    row.folded = folded;
+    r += 1;
+    row = dataSlice.value[r];
+  }
+}
+
+function getCellStyle(cell: any, i: number) {
+  const styles: Record<string, string> = {};
+  const width = cell.width ?? 1;
+
+  let align = cell.align ?? 'left';
+  if (languageDirection?.value === 'rtl') {
+    align = 'right';
+  }
+
+  const labelLength = props.report?.columns?.[i]?.label?.length ?? 0;
+  let colWidth = width * wconst.value;
+  if (labelLength > 0) {
+    const minWidthForLabel = labelLength * 0.65;
+    if (colWidth < minWidthForLabel) {
+      colWidth = minWidthForLabel;
+    }
+  }
+
+  styles['width'] = `${colWidth}rem`;
+  styles['text-align'] = align;
+
+  if (cell.bold) {
+    styles['font-weight'] = 'bold';
+  }
+
+  if (cell.italics) {
+    styles['font-style'] = 'oblique 15deg';
+  }
+
+  if (!cell.align && isNumeric(props.report.columns?.[i]?.fieldtype)) {
+    styles['text-align'] = 'right';
+  }
+
+  const column = props.report?.columns?.[i];
+  const columnLabel = column?.label;
+  const fieldname = column?.fieldname;
+
+  if (fieldname === 'index' || fieldname === 'name' || columnLabel === '#') {
+    if (languageDirection?.value === 'rtl') {
+      styles['padding-right'] = '0px';
+    } else {
+      styles['padding-left'] = '0px';
+    }
+    styles['width'] = '3rem';
+  } else if (fieldname === 'account' || columnLabel === 'Account') {
+    styles['width'] = '20rem';
+    if (i === 0) {
+      if (languageDirection?.value === 'rtl') {
+        styles['padding-right'] = '0px';
+      } else {
+        styles['padding-left'] = '0px';
+      }
+    }
+  } else if (fieldname === 'referenceType' || columnLabel === 'Ref Type') {
+    styles['width'] = '12rem';
+  } else if (fieldname === 'party' || columnLabel === 'Party') {
+    styles['width'] = '12rem';
+  } else if (fieldname === 'referenceName' || columnLabel === 'Ref Name') {
+    styles['width'] = '10rem';
+  } else if (i === 0) {
+    if (languageDirection?.value === 'rtl') {
+      styles['padding-right'] = '0px';
+    } else {
+      styles['padding-left'] = '0px';
+    }
+  }
+
+  if (i === props.report.columns.length - 1) {
+    if (languageDirection?.value === 'rtl') {
+      styles['padding-left'] = '0px';
+    } else {
+      styles['padding-right'] = '0px';
+    }
+  }
+
+  if (cell.indent) {
+    if (languageDirection?.value === 'rtl') {
+      styles['padding-right'] = `${cell.indent * 2}rem`;
+    } else {
+      styles['padding-left'] = `${cell.indent * 2}rem`;
+    }
+  }
+
+  return styles;
+}
+
+function getCellColorClass(cell: any) {
+  if (cell.color === 'red') {
+    return 'text-red-600';
+  } else if (cell.color === 'green') {
+    return 'text-green-600';
+  }
+
+  if (!cell.rawValue) {
+    return 'text-gray-600 dark:text-gray-400';
+  }
+
+  if (typeof cell.rawValue !== 'number') {
+    return 'text-gray-900 dark:text-gray-100';
+  }
+
+  if (cell.rawValue === 0) {
+    return 'text-gray-600 dark:text-gray-400';
+  }
+
+  const prec = fyo?.singles?.displayPrecision ?? 2;
+  if (Number(cell.rawValue.toFixed(prec)) === 0) {
+    return 'text-gray-600 dark:text-gray-500';
+  }
+
+  return 'text-gray-900 dark:text-gray-300';
+}
 </script>

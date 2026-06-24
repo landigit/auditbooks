@@ -504,6 +504,7 @@ function cellClasses(cIdx: number, rIdx: number): string[] {
 </script>
 
 <style scoped>
+@reference "../../styles/index.css";
 .outer-container {
   display: grid;
   grid-template-columns: auto var(--w-quick-edit);

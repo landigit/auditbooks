@@ -46,21 +46,14 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
-import { defineComponent } from 'vue';
 import { routeTo } from 'src/utils/ui';
+import { t } from 'fyo';
 
-export default defineComponent({
-  name: 'AlertModal',
-  components: {
-    Modal,
-    Button,
-  },
-  emits: ['toggleModal', 'saveAndContinue'],
-  methods: {
-    routeTo,
-  },
-});
+defineEmits<{
+  (e: 'toggleModal', modalName: string): void;
+  (e: 'saveAndContinue', value?: any): void;
+}>();
 </script>

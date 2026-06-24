@@ -511,7 +511,7 @@ export default defineComponent({
   methods: {
     emitEvent(
       eventName: PosEmits,
-      ...args: (string | boolean | Item | number | Money)[]
+      ...args: (string | boolean | Item | number | Money | Date | undefined)[]
     ) {
       this.$emit(eventName, ...args);
     },

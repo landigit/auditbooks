@@ -2,34 +2,47 @@
   <Tooltip ref="tooltip"><slot></slot></Tooltip>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, watch, onBeforeUnmount } from 'vue';
 import Tooltip from './Tooltip.vue';
 
-export default defineComponent({
-  components: { Tooltip },
-  props: { show: { type: Boolean, default: false } },
-  watch: {
-    show(val) {
-      if (val) {
-        this.$refs.tooltip.create();
-        this.setListeners();
-      } else {
-        this.$refs.tooltip.destroy();
-        this.removeListener();
-      }
-    },
-  },
-  methods: {
-    mousemoveListener(e) {
-      this.$refs.tooltip.update(e);
-    },
-    setListeners() {
-      window.addEventListener('mousemove', this.mousemoveListener);
-    },
-    removeListener() {
-      window.removeEventListener('mousemove', this.mousemoveListener);
-    },
-  },
+const props = withDefaults(
+  defineProps<{
+    show?: boolean;
+  }>(),
+  {
+    show: false,
+  }
+);
+
+const tooltip = ref<InstanceType<typeof Tooltip> | null>(null);
+
+function mousemoveListener(e: MouseEvent) {
+  tooltip.value?.update(e);
+}
+
+function setListeners() {
+  window.addEventListener('mousemove', mousemoveListener);
+}
+
+function removeListener() {
+  window.removeEventListener('mousemove', mousemoveListener);
+}
+
+watch(
+  () => props.show,
+  (val) => {
+    if (val) {
+      tooltip.value?.create();
+      setListeners();
+    } else {
+      tooltip.value?.destroy();
+      removeListener();
+    }
+  }
+);
+
+onBeforeUnmount(() => {
+  removeListener();
 });
 </script>

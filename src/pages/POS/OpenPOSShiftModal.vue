@@ -56,7 +56,8 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref, computed, provide, onMounted } from 'vue';
 import Button from 'src/components/Button.vue';
 import Modal from 'src/components/Modal.vue';
 import Table from 'src/components/Controls/Table.vue';
@@ -64,154 +65,151 @@ import { AccountTypeEnum } from 'models/baseModels/Account/types';
 import { ModelNameEnum } from 'models/types';
 import { Money } from 'pesa';
 import { POSOpeningShift } from 'models/inventory/Point of Sale/POSOpeningShift';
-import { computed } from 'vue';
-import { defineComponent } from 'vue';
 import { fyo } from 'src/initFyo';
 import { showToast } from 'src/utils/interactive';
 import { t } from 'fyo';
 import { ValidationError } from 'fyo/utils/errors';
 import { getPOSOpeningShiftDoc } from 'src/utils/pos';
 
-export default defineComponent({
-  name: 'OpenPOSShift',
-  components: { Button, Modal, Table },
-  provide() {
-    return {
-      doc: computed(() => this.posShiftDoc),
-    };
-  },
-  emits: ['toggleModal'],
-  data() {
-    return {
-      posShiftDoc: undefined as POSOpeningShift | undefined,
+const emit = defineEmits<{
+  (e: 'toggleModal', modalName: string): void;
+}>();
 
-      isValuesSeeded: false,
-    };
-  },
-  computed: {
-    getDefaultCashDenominations() {
-      return this.fyo.singles.Defaults?.posCashDenominations;
-    },
-    posCashAccount() {
-      return fyo.singles.POSSettings?.cashAccount;
-    },
-    posOpeningCashAmount(): Money {
-      return this.posShiftDoc?.openingCashAmount as Money;
-    },
-  },
-  async mounted() {
-    this.isValuesSeeded = false;
-    this.posShiftDoc = await getPOSOpeningShiftDoc(fyo);
+const posShiftDoc = ref<POSOpeningShift | undefined>(undefined);
+const isValuesSeeded = ref(false);
 
-    await this.seedDefaults();
-    this.isValuesSeeded = true;
-  },
-  methods: {
-    async seedDefaultCashDenomiations() {
-      if (!this.posShiftDoc) {
-        return;
-      }
+provide(
+  'doc',
+  computed(() => posShiftDoc.value)
+);
 
-      this.posShiftDoc.openingCash = [];
-      const denominations = this.getDefaultCashDenominations;
+const getDefaultCashDenominations = computed(() => {
+  return fyo.singles.Defaults?.posCashDenominations;
+});
 
-      if (!denominations) {
-        return;
-      }
+const posCashAccount = computed(() => {
+  return fyo.singles.POSSettings?.cashAccount;
+});
 
-      for (const row of denominations) {
-        await this.posShiftDoc.append('openingCash', {
-          denomination: row.denomination,
-          count: 0,
-        });
-      }
-    },
-    async seedPaymentMethods() {
-      if (!this.posShiftDoc) {
-        return;
-      }
+const posOpeningCashAmount = computed<Money>(() => {
+  return posShiftDoc.value?.openingCashAmount as Money;
+});
 
-      this.posShiftDoc.openingAmounts = [];
+async function seedDefaultCashDenomiations() {
+  if (!posShiftDoc.value) {
+    return;
+  }
 
-      const paymentMethods = (
-        (await this.fyo.db.getAll(ModelNameEnum.PaymentMethod, {
-          fields: ['name'],
-        })) as { name: string }[]
-      ).map((doc) => ({ paymentMethod: doc.name, amount: fyo.pesa(0) }));
+  posShiftDoc.value.openingCash = [];
+  const denominations = getDefaultCashDenominations.value;
 
-      await this.posShiftDoc.set('openingAmounts', paymentMethods);
-    },
-    async seedDefaults() {
-      if (!!this.posShiftDoc?.isShiftOpen) {
-        return;
-      }
+  if (!denominations) {
+    return;
+  }
 
-      await this.seedDefaultCashDenomiations();
-      await this.seedPaymentMethods();
-    },
-    getField(fieldname: string) {
-      return this.fyo.getField(ModelNameEnum.POSOpeningShift, fieldname);
-    },
-    setOpeningCashAmount() {
-      if (!this.posShiftDoc?.openingAmounts) {
-        return;
-      }
+  for (const row of denominations) {
+    await posShiftDoc.value.append('openingCash', {
+      denomination: row.denomination,
+      count: 0,
+    });
+  }
+}
 
-      this.posShiftDoc.openingAmounts.map((row) => {
-        if (row.paymentMethod === 'Cash') {
-          row.amount = this.posShiftDoc?.openingCashAmount as Money;
-        }
+async function seedPaymentMethods() {
+  if (!posShiftDoc.value) {
+    return;
+  }
+
+  posShiftDoc.value.openingAmounts = [];
+
+  const paymentMethods = (
+    (await fyo.db.getAll(ModelNameEnum.PaymentMethod, {
+      fields: ['name'],
+    })) as { name: string }[]
+  ).map((doc) => ({ paymentMethod: doc.name, amount: fyo.pesa(0) }));
+
+  await posShiftDoc.value.set('openingAmounts', paymentMethods);
+}
+
+async function seedDefaults() {
+  if (posShiftDoc.value?.isShiftOpen) {
+    return;
+  }
+
+  await seedDefaultCashDenomiations();
+  await seedPaymentMethods();
+}
+
+function getField(fieldname: string) {
+  return fyo.getField(ModelNameEnum.POSOpeningShift, fieldname);
+}
+
+function setOpeningCashAmount() {
+  if (!posShiftDoc.value?.openingAmounts) {
+    return;
+  }
+
+  posShiftDoc.value.openingAmounts.forEach((row) => {
+    if (row.paymentMethod === 'Cash') {
+      row.amount = posShiftDoc.value?.openingCashAmount as Money;
+    }
+  });
+}
+
+function handleChange() {
+  setOpeningCashAmount();
+}
+
+async function handleSubmit() {
+  try {
+    if (posShiftDoc.value?.openingCashAmount.isNegative()) {
+      throw new ValidationError(t`Opening Cash Amount can not be negative.`);
+    }
+
+    await posShiftDoc.value?.setMultiple({
+      isShiftOpen: true,
+      openingDate: new Date(),
+    });
+
+    await posShiftDoc.value?.sync();
+    await fyo.singles.POSSettings?.setAndSync('isShiftOpen', true);
+
+    if (posShiftDoc.value && !posShiftDoc.value.openingCashAmount.isZero()) {
+      const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
+        entryType: 'Journal Entry',
       });
-    },
-    handleChange() {
-      this.setOpeningCashAmount();
-    },
-    async handleSubmit() {
-      try {
-        if (this.posShiftDoc?.openingCashAmount.isNegative()) {
-          throw new ValidationError(
-            t`Opening Cash Amount can not be negative.`
-          );
-        }
 
-        await this.posShiftDoc?.setMultiple({
-          isShiftOpen: true,
-          openingDate: new Date(),
-        });
+      await jvDoc.append('accounts', {
+        account: posCashAccount.value,
+        debit: posShiftDoc.value.openingCashAmount as Money,
+        credit: fyo.pesa(0),
+      });
 
-        await this.posShiftDoc?.sync();
-        await this.fyo.singles.POSSettings?.setAndSync('isShiftOpen', true);
+      await jvDoc.append('accounts', {
+        account: AccountTypeEnum.Cash,
+        debit: fyo.pesa(0),
+        credit: posShiftDoc.value.openingCashAmount as Money,
+      });
 
-        if (!this.posShiftDoc?.openingCashAmount.isZero()) {
-          const jvDoc = fyo.doc.getNewDoc(ModelNameEnum.JournalEntry, {
-            entryType: 'Journal Entry',
-          });
+      await (await jvDoc.sync()).submit();
+    }
 
-          await jvDoc.append('accounts', {
-            account: this.posCashAccount,
-            debit: this.posShiftDoc?.openingCashAmount as Money,
-            credit: this.fyo.pesa(0),
-          });
+    emit('toggleModal', 'ShiftOpen');
+  } catch (error) {
+    showToast({
+      type: 'error',
+      message: t`${error as string}`,
+      duration: 'short',
+    });
+    return;
+  }
+}
 
-          await jvDoc.append('accounts', {
-            account: AccountTypeEnum.Cash,
-            debit: this.fyo.pesa(0),
-            credit: this.posShiftDoc?.openingCashAmount as Money,
-          });
+onMounted(async () => {
+  isValuesSeeded.value = false;
+  posShiftDoc.value = await getPOSOpeningShiftDoc(fyo);
 
-          await (await jvDoc.sync()).submit();
-        }
-
-        this.$emit('toggleModal', 'ShiftOpen');
-      } catch (error) {
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-          duration: 'short',
-        });
-        return;
-      }
-    },
-  },
+  await seedDefaults();
+  isValuesSeeded.value = true;
 });
 </script>

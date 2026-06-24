@@ -56,36 +56,36 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import { POSItem } from '../types';
+import { fyo } from 'src/initFyo';
 
-export default defineComponent({
-  name: 'ItemsGrid',
-  emits: ['addItem', 'updateValues'],
-  props: {
-    items: {
-      type: Array,
-    },
-    itemQtyMap: {
-      type: Object,
-    },
-    itemVisibility: {
-      type: String,
-      default: 'Inventory Items',
-    },
-  },
-  methods: {
-    getExtractedWords(item: string) {
-      const initials = item.split(' ').map((word) => {
-        return word[0].toUpperCase();
-      });
-      return initials.join('');
-    },
-    handleChange(value: POSItem) {
-      this.$emit('addItem', value);
-      this.$emit('updateValues');
-    },
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    items?: POSItem[];
+    itemQtyMap?: any;
+    itemVisibility?: string;
+  }>(),
+  {
+    items: () => [],
+    itemVisibility: 'Inventory Items',
+  }
+);
+
+const emit = defineEmits<{
+  (e: 'addItem', value: any): void;
+  (e: 'updateValues'): void;
+}>();
+
+function getExtractedWords(item: string) {
+  const initials = item.split(' ').map((word) => {
+    return word[0].toUpperCase();
+  });
+  return initials.join('');
+}
+
+function handleChange(value: POSItem) {
+  emit('addItem', value);
+  emit('updateValues');
+}
 </script>

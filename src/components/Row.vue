@@ -1,7 +1,9 @@
 <template>
   <div
     :class="
-      $attrs.class && $attrs.class.includes('w-full') ? 'grid' : 'inline-grid'
+      $attrs.class && ($attrs.class as string).includes('w-full')
+        ? 'grid'
+        : 'inline-grid'
     "
     :style="style"
     v-bind="$attrs"
@@ -9,49 +11,42 @@
     <slot></slot>
   </div>
 </template>
-<script>
-export default {
-  name: 'Row',
-  props: {
-    columnWidth: {
-      type: String,
-      default: '1fr',
-    },
-    columnCount: {
-      type: Number,
-      default: 0,
-    },
-    ratio: {
-      type: Array,
-      default: () => [],
-    },
-    gridTemplateColumns: {
-      type: String,
-      default: null,
-    },
-    gap: String,
-  },
-  computed: {
-    style() {
-      let obj = {};
-      if (this.columnCount) {
-        // prettier-ignore
-        obj['grid-template-columns'] = `repeat(${this.columnCount}, ${this.columnWidth})`;
-      }
-      if (this.ratio.length) {
-        obj['grid-template-columns'] = this.ratio
-          .map((r) => `minmax(0, ${r}fr)`)
-          .join(' ');
-      }
-      if (this.gridTemplateColumns) {
-        obj['grid-template-columns'] = this.gridTemplateColumns;
-      }
-      if (this.gap) {
-        obj['grid-gap'] = this.gap;
-      }
+<script setup lang="ts">
+import { computed } from 'vue';
 
-      return obj;
-    },
-  },
-};
+const props = withDefaults(
+  defineProps<{
+    columnWidth?: string;
+    columnCount?: number;
+    ratio?: (number | string)[];
+    gridTemplateColumns?: string | null;
+    gap?: string;
+  }>(),
+  {
+    columnWidth: '1fr',
+    columnCount: 0,
+    ratio: () => [],
+    gridTemplateColumns: null,
+  }
+);
+
+const style = computed(() => {
+  let obj: Record<string, string> = {};
+  if (props.columnCount) {
+    obj['grid-template-columns'] =
+      `repeat(${props.columnCount}, ${props.columnWidth})`;
+  }
+  if (props.ratio.length) {
+    obj['grid-template-columns'] = props.ratio
+      .map((r) => `minmax(0, ${r}fr)`)
+      .join(' ');
+  }
+  if (props.gridTemplateColumns) {
+    obj['grid-template-columns'] = props.gridTemplateColumns;
+  }
+  if (props.gap) {
+    obj['grid-gap'] = props.gap;
+  }
+  return obj;
+});
 </script>

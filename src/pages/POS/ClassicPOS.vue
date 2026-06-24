@@ -55,7 +55,7 @@
     <PaymentModal
       :open-modal="openPaymentModal"
       @toggle-modal="emitEvent('toggleModal', 'Payment')"
-      @set-paid-amount="(amount: Money) => emitEvent('setPaidAmount', amount)"
+      @set-paid-amount="(amount: number) => emitEvent('setPaidAmount', amount)"
       @set-payment-method="
         (paymentMethod) => emitEvent('setPaymentMethod', paymentMethod)
       "
@@ -504,7 +504,7 @@ export default defineComponent({
   methods: {
     emitEvent(
       eventName: PosEmits,
-      ...args: (string | boolean | Item | number | Money)[]
+      ...args: (string | boolean | Item | number | Money | Date | undefined)[]
     ) {
       this.$emit(eventName, ...args);
     },

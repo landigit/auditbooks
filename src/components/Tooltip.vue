@@ -9,76 +9,98 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref } from 'vue';
 import flip from '@popperjs/core/lib/modifiers/flip';
-import offset from '@popperjs/core/lib/modifiers/offset';
+import offsetModifier from '@popperjs/core/lib/modifiers/offset';
 import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow';
-import { createPopper } from '@popperjs/core/lib/popper-lite';
+import { createPopper, Instance } from '@popperjs/core/lib/popper-lite';
+
+const props = withDefaults(
+  defineProps<{
+    offset?: number;
+    placement?: string;
+  }>(),
+  {
+    offset: 10,
+    placement: 'auto',
+  }
+);
+
+const tooltip = ref<HTMLElement | null>(null);
+const opacity = ref(0);
+let popper: Instance | null = null;
+let virtualElement: { getBoundingClientRect: () => DOMRect } | null = null;
 
 function generateGetBoundingClientRect(x = 0, y = 0) {
-  return () => ({
-    width: 0,
-    height: 0,
-    top: y,
-    right: x,
-    bottom: y,
-    left: x,
-  });
+  return () =>
+    ({
+      width: 0,
+      height: 0,
+      top: y,
+      right: x,
+      bottom: y,
+      left: x,
+    }) as DOMRect;
 }
 
-export default {
-  props: {
-    offset: { type: Number, default: 10 },
-    placement: { type: String, default: 'auto' },
-  },
-  data() {
-    return { popper: null, virtualElement: null, opacity: 0 };
-  },
-  methods: {
-    create() {
-      if (this.popper) {
-        this.opacity = 1;
-        return;
-      }
+function create() {
+  if (popper) {
+    opacity.value = 1;
+    return;
+  }
 
-      this.$refs.tooltip.setAttribute('data-show', '');
-      this.virtualElement = {
-        getBoundingClientRect: generateGetBoundingClientRect(-1000, -1000),
-      };
-      this.popper = createPopper(this.virtualElement, this.$refs.tooltip, {
-        placement: this.placement,
-        modifiers: [
-          flip,
-          preventOverflow,
-          Object.assign(offset, { options: { offset: [0, this.offset] } }),
-        ],
-      });
-      this.opacity = 1;
-    },
-    update({ clientX, clientY }) {
-      if (!this.popper || !this.virtualElement) {
-        return;
-      }
-      this.virtualElement.getBoundingClientRect = generateGetBoundingClientRect(
-        clientX,
-        clientY
-      );
-      this.popper.update();
-    },
-    destroy() {
-      this.opacity = 0;
-      this.$refs.tooltip.removeAttribute('data-show');
-      this.popper?.destroy();
-      this.virtualElement = null;
-      this.popper = null;
-    },
-  },
-};
+  if (tooltip.value) {
+    tooltip.value.setAttribute('data-show', '');
+    virtualElement = {
+      getBoundingClientRect: generateGetBoundingClientRect(-1000, -1000),
+    };
+    popper = createPopper(virtualElement, tooltip.value, {
+      placement: props.placement as any,
+      modifiers: [
+        flip,
+        preventOverflow,
+        Object.assign(offsetModifier, {
+          options: { offset: [0, props.offset] },
+        }),
+      ],
+    });
+    opacity.value = 1;
+  }
+}
+
+function update({ clientX, clientY }: { clientX: number; clientY: number }) {
+  if (!popper || !virtualElement) {
+    return;
+  }
+  virtualElement.getBoundingClientRect = generateGetBoundingClientRect(
+    clientX,
+    clientY
+  );
+  popper.update();
+}
+
+function destroy() {
+  opacity.value = 0;
+  if (tooltip.value) {
+    tooltip.value.removeAttribute('data-show');
+  }
+  popper?.destroy();
+  virtualElement = null;
+  popper = null;
+}
+
+defineExpose({
+  create,
+  update,
+  destroy,
+});
 </script>
 
 <style scoped>
 #tooltip {
   display: none;
+  pointer-events: none;
 }
 
 #tooltip[data-show] {

@@ -61,53 +61,46 @@
   </Modal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { inject } from 'vue';
 import { t } from 'fyo';
 import Modal from 'src/components/Modal.vue';
-import { defineComponent, inject } from 'vue';
 import Button from 'src/components/Button.vue';
 import { showToast } from 'src/utils/interactive';
 import Link from 'src/components/Controls/Link.vue';
 import { SalesInvoice } from 'models/baseModels/SalesInvoice/SalesInvoice';
 
-export default defineComponent({
-  name: 'PriceListModal',
-  components: {
-    Link,
-    Modal,
-    Button,
-  },
-  emits: ['toggleModal'],
-  setup() {
-    return {
-      sinvDoc: inject('sinvDoc') as SalesInvoice,
-    };
-  },
-  methods: {
-    async removePriceList() {
-      await this.sinvDoc.set('priceList', '');
-    },
-    async applyPriceList(value?: string) {
-      try {
-        if (!value || value == this.sinvDoc.priceList) {
-          return;
-        }
+const emit = defineEmits<{
+  (e: 'toggleModal', modalName: string): void;
+}>();
 
-        await this.sinvDoc.set('priceList', value);
-        this.$emit('toggleModal', 'PriceList');
-      } catch (error) {
-        showToast({
-          type: 'error',
-          message: t`${error as string}`,
-        });
-      }
-    },
-    cancelPriceList() {
-      this.$emit('toggleModal', 'PriceList');
-    },
-    setPriceList() {
-      this.$emit('toggleModal', 'PriceList');
-    },
-  },
-});
+const sinvDoc = inject('sinvDoc') as SalesInvoice;
+
+async function removePriceList() {
+  await sinvDoc.set('priceList', '');
+}
+
+async function applyPriceList(value?: string) {
+  try {
+    if (!value || value == sinvDoc.priceList) {
+      return;
+    }
+
+    await sinvDoc.set('priceList', value);
+    emit('toggleModal', 'PriceList');
+  } catch (error) {
+    showToast({
+      type: 'error',
+      message: t`${error as string}`,
+    });
+  }
+}
+
+function cancelPriceList() {
+  emit('toggleModal', 'PriceList');
+}
+
+function setPriceList() {
+  emit('toggleModal', 'PriceList');
+}
 </script>

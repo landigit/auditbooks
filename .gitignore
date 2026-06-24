@@ -5,6 +5,7 @@ node_modules
 src/dist/
 /notebook
 *landigit/
+*.agents/
 
 # local env files
 .env

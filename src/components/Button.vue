@@ -8,45 +8,35 @@
     <slot></slot>
   </button>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 
-export default defineComponent({
-  name: 'Button',
-  props: {
-    type: {
-      type: String,
-      default: 'secondary',
-    },
-    icon: {
-      type: Boolean,
-      default: false,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    padding: {
-      type: Boolean,
-      default: true,
-    },
-    background: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  computed: {
-    _class() {
-      return {
-        'btn-primary': this.type === 'primary',
-        'btn-secondary': this.type !== 'primary',
-        'h-8': this.background,
-        'px-3': this.padding && this.icon,
-        'px-6': this.padding && !this.icon,
-        'border-none': !this.background,
-      };
-    },
-  },
+const props = withDefaults(
+  defineProps<{
+    type?: string;
+    icon?: boolean;
+    disabled?: boolean;
+    padding?: boolean;
+    background?: boolean;
+  }>(),
+  {
+    type: 'secondary',
+    icon: false,
+    disabled: false,
+    padding: true,
+    background: true,
+  }
+);
+
+const _class = computed(() => {
+  return {
+    'btn-primary': props.type === 'primary',
+    'btn-secondary': props.type !== 'primary',
+    'h-8': props.background,
+    'px-3': props.padding && props.icon,
+    'px-6': props.padding && !props.icon,
+    'border-none': !props.background,
+  };
 });
 </script>
 <style scoped>

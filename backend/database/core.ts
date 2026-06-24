@@ -439,8 +439,8 @@ export default class DatabaseCore extends DatabaseBase {
   async rename(schemaName: string, oldName: string, newName: string) {
     /**
      * Rename is expensive mostly won't allow it.
-    * NOTE: rename all links - Not implemented as rename is expensive
-    * NOTE: rename in childtables - Not implemented as rename is expensive
+     * NOTE: rename all links - Not implemented as rename is expensive
+     * NOTE: rename in childtables - Not implemented as rename is expensive
      */
     await this.knex!(schemaName)
       .update({ name: newName })
