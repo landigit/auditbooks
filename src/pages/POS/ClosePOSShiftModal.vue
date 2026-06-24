@@ -135,19 +135,23 @@ export default defineComponent({
         new Date()
       );
     },
-    seedClosingCash() {
+    async seedClosingCash() {
       if (!this.posClosingShiftDoc) {
         return;
       }
 
       this.posClosingShiftDoc.closingCash = [];
 
-      this.posOpeningShiftDoc?.openingCash?.map(async (row) => {
-        await this.posClosingShiftDoc?.append('closingCash', {
-          count: row.count,
-          denomination: row.denomination as Money,
-        });
-      });
+      if (this.posOpeningShiftDoc?.openingCash) {
+        await Promise.all(
+          this.posOpeningShiftDoc.openingCash.map(async (row) => {
+            await this.posClosingShiftDoc?.append('closingCash', {
+              count: row.count,
+              denomination: row.denomination as Money,
+            });
+          })
+        );
+      }
     },
     setClosingCashAmount() {
       if (!this.posClosingShiftDoc?.closingAmounts) {
@@ -198,7 +202,7 @@ export default defineComponent({
     },
     async seedValues() {
       this.isValuesSeeded = false;
-      this.seedClosingCash();
+      await this.seedClosingCash();
       await this.seedClosingAmounts();
       this.isValuesSeeded = true;
     },
