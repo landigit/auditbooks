@@ -34,7 +34,7 @@
           <Icon
             class="flex-shrink-0"
             :name="group.icon"
-            :size="group.iconSize || '18'"
+            :size="(group.iconSize || '18') as any"
             :height="group.iconHeight ?? 0"
             :active="!!isGroupActive(group)"
             :darkMode="darkMode"
