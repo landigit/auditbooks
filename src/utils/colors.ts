@@ -1,4 +1,4 @@
-import colors from '../../colors.json';
+import colors from './colors.json';
 
 export const uicolors = colors;
 export const indicators = {

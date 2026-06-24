@@ -5,14 +5,18 @@
       <hr class="dark:border-gray-800" />
       <div class="mx-6 my-3">
         <component
+          :is="
+            selectedItemRow?.fieldMap?.[selectedItemField]?.fieldtype || 'div'
+          "
           v-if="selectedItemRow && selectedItemField"
-          :is="selectedItemRow.fieldMap[selectedItemField].fieldtype"
           ref="dynamicInput"
           :df="{
-            fieldname: selectedItemRow.fieldMap[selectedItemField]
-              .fieldname as string,
-            fieldtype: selectedItemRow.fieldMap[selectedItemField].fieldtype,
-            label: selectedItemRow.fieldMap[selectedItemField].label as string,
+            fieldname: selectedItemRow?.fieldMap?.[selectedItemField]
+              ?.fieldname as string,
+            fieldtype:
+              selectedItemRow?.fieldMap?.[selectedItemField]?.fieldtype,
+            label: selectedItemRow?.fieldMap?.[selectedItemField]
+              ?.label as string,
           }"
           class="mb-3"
           :border="true"

@@ -184,7 +184,7 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
 
-  /* Custom color palette from colors.json */
+  /* Custom color palette from src/utils/colors.json */
   --color-black: #1e293b;
   --color-gray-25: #fbfbfb;
   --color-gray-50: #f8f8f8;
