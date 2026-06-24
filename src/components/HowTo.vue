@@ -8,24 +8,27 @@
     />
   </button>
 </template>
-<script>
+
+<script setup lang="ts">
 import FeatherIcon from './FeatherIcon.vue';
 
-export default {
-  components: { FeatherIcon },
-  props: {
-    link: String,
-    icon: {
-      default: true,
-      type: Boolean,
-    },
-  },
-  methods: {
-    async openHelpLink() {
-      if (!this.link) return;
-      const { openUrl } = await import('@tauri-apps/plugin-opener');
-      await openUrl(this.link).catch(console.error);
-    },
-  },
-};
+defineOptions({
+  name: 'HowTo',
+});
+
+const props = withDefaults(
+  defineProps<{
+    link?: string;
+    icon?: boolean;
+  }>(),
+  {
+    icon: true,
+  }
+);
+
+async function openHelpLink() {
+  if (!props.link) return;
+  const { openUrl } = await import('@tauri-apps/plugin-opener');
+  await openUrl(props.link).catch(console.error);
+}
 </script>
