@@ -1,5 +1,6 @@
 <template>
   <Row
+    ref="root"
     :ratio="ratio"
     class="w-full px-2 group flex items-center justify-center h-row-mid"
     :class="readOnly ? '' : 'hover:bg-gray-25 dark:hover:bg-gray-900'"
@@ -34,11 +35,11 @@
           @focus="isRowIndexVisible = false"
           @keydown.enter="$emit('remove')"
         >
-          {{ row.idx + 1 }}
+          {{ (row as any).idx + 1 }}
         </span>
       </span>
       <span v-else>
-        {{ row.idx + 1 }}
+        {{ (row as any).idx + 1 }}
       </span>
     </div>
 
@@ -49,7 +50,7 @@
       :size="size"
       :df="df"
       :value="row[df.fieldname]"
-      @change="(value) => onChange(df, value)"
+      @change="(value: any) => onChange(df, value)"
       @focus="onFieldFocus(i)"
       @blur="onFieldBlur(i)"
     />
@@ -76,90 +77,91 @@
     </div>
   </Row>
 </template>
-<script>
+
+<script setup lang="ts">
+import { ref, computed, provide, nextTick } from 'vue';
 import { Doc } from 'fyo/model/doc';
 import Row from 'src/components/Row.vue';
 import { getErrorMessage } from 'src/utils';
-import { computed, nextTick } from 'vue';
 import Button from '../Button.vue';
 import FormControl from './FormControl.vue';
+import FeatherIcon from '../FeatherIcon.vue';
 
-export default {
+defineOptions({
   name: 'TableRow',
-  components: {
-    Row,
-    FormControl,
-    Button,
-  },
-  provide() {
-    return {
-      doc: computed(() => this.row),
-    };
-  },
-  props: {
-    row: Doc,
-    tableFields: Array,
-    size: String,
-    ratio: Array,
-    isNumeric: Function,
-    readOnly: Boolean,
-    canEditRow: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['remove', 'change'],
-  data: () => ({
-    isRowIndexVisible: false,
-    errors: {},
-  }),
-  computed: {
-    hasErrors() {
-      return Object.values(this.errors).filter(Boolean).length;
-    },
-  },
-  beforeCreate() {
-    this.$options.components.FormControl = FormControl;
-  },
-  methods: {
-    async onChange(df, value) {
-      const fieldname = df.fieldname;
-      this.errors[fieldname] = null;
-      const oldValue = this.row[fieldname];
-      try {
-        await this.row.set(fieldname, value);
-        this.$emit('change', df, value);
-      } catch (e) {
-        this.errors[fieldname] = getErrorMessage(e, this.row);
-        this.row[fieldname] = '';
-        nextTick(() => (this.row[fieldname] = oldValue));
-      }
-    },
-    getErrorString() {
-      return Object.values(this.errors).filter(Boolean).join(' ');
-    },
-    openRowQuickEdit() {
-      if (!this.row) return;
-      this.$parent.$emit('editrow', this.row);
-    },
-    onFieldFocus(index) {
-      if (index === 0) {
-        this.isRowIndexVisible = true;
-      }
-    },
-    onFieldBlur(index) {
-      if (index === 0) {
-        this.isRowIndexVisible = false;
-      }
-    },
-    focusFirstInput() {
-      const firstControl = this.$el.querySelector(
-        '.form-control, input, textarea, select'
-      );
-      if (firstControl) {
-        firstControl.focus();
-      }
-    },
-  },
-};
+});
+
+const props = defineProps<{
+  row: Doc;
+  tableFields?: any[];
+  size?: string;
+  ratio?: any[];
+  isNumeric?: Function;
+  readOnly?: boolean;
+  canEditRow?: boolean;
+}>();
+
+const emit = defineEmits(['remove', 'change', 'editrow']);
+
+provide(
+  'doc',
+  computed(() => props.row)
+);
+
+const isRowIndexVisible = ref(false);
+const errors = ref<Record<string, any>>({});
+
+const hasErrors = computed(() => {
+  return Object.values(errors.value).filter(Boolean).length;
+});
+
+async function onChange(df: any, value: any) {
+  const fieldname = df.fieldname;
+  errors.value[fieldname] = null;
+  const oldValue = props.row[fieldname];
+  try {
+    await props.row.set(fieldname, value);
+    emit('change', df, value);
+  } catch (e) {
+    errors.value[fieldname] = getErrorMessage(e as Error, props.row);
+    (props.row as any)[fieldname] = '';
+    await nextTick(() => ((props.row as any)[fieldname] = oldValue));
+  }
+}
+
+function getErrorString() {
+  return Object.values(errors.value).filter(Boolean).join(' ');
+}
+
+function openRowQuickEdit() {
+  if (!props.row) return;
+  emit('editrow', props.row);
+}
+
+function onFieldFocus(index: number) {
+  if (index === 0) {
+    isRowIndexVisible.value = true;
+  }
+}
+
+function onFieldBlur(index: number) {
+  if (index === 0) {
+    isRowIndexVisible.value = false;
+  }
+}
+
+const root = ref<HTMLElement | null>(null);
+
+function focusFirstInput() {
+  const firstControl = root.value?.querySelector(
+    '.form-control, input, textarea, select'
+  ) as HTMLElement;
+  if (firstControl) {
+    firstControl.focus();
+  }
+}
+
+defineExpose({
+  focusFirstInput,
+});
 </script>

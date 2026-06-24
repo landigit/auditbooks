@@ -92,14 +92,20 @@ const thetasAndStarts = computed(() => {
   starts.forEach((_, i) => {
     if (i > 0) starts[i] += starts[i - 1];
   });
-  
+
   starts.unshift(0);
   starts.pop();
 
   return thetas.map((t, i) => [t.i, t.value, starts[i]]);
 });
 
-function getArcPath(cx: number, cy: number, r: number, start: number, theta: number) {
+function getArcPath(
+  cx: number,
+  cy: number,
+  r: number,
+  start: number,
+  theta: number
+) {
   start += props.startAngle;
   const startX = cx + r * Math.cos(start);
   const startY = cy + r * Math.sin(start);
@@ -112,6 +118,8 @@ function getArcPath(cx: number, cy: number, r: number, start: number, theta: num
 }
 
 function getSectorColor(index: number) {
-  return props.darkMode ? props.sectors[index].color.darkColor : props.sectors[index].color.color;
+  return props.darkMode
+    ? props.sectors[index].color.darkColor
+    : props.sectors[index].color.color;
 }
 </script>
