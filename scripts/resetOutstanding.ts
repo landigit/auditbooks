@@ -1,30 +1,34 @@
-import BetterSQLite3 from 'better-sqlite3';
+import { join } from 'path';
+import { createClient } from '@libsql/client';
 
-function resetOutstanding() {
+async function resetOutstanding() {
   const dbPath =
-    process.env.DB_PATH ||
-    require('path').join(process.cwd(), '..', 'GRVEP', 'GRVe Printers.db');
-  const db = new BetterSQLite3(dbPath);
+    process.env['DB_PATH'] ||
+    join(process.cwd(), '..', 'GRVEP', 'GRVe Printers.db');
+
+  const client = createClient({ url: `file:${dbPath}` });
 
   console.log(
     'Resetting outstandingAmount to grandTotal on all Invoices/Bills...'
   );
 
-  const updateSales = db
-    .prepare('UPDATE SalesInvoice SET outstandingAmount = grandTotal')
-    .run();
-  console.log(
-    `Reset outstandingAmount for ${updateSales.changes} Sales Invoices.`
-  );
+  try {
+    const updateSales = await client.execute(
+      'UPDATE SalesInvoice SET outstandingAmount = grandTotal'
+    );
+    console.log(
+      `Reset outstandingAmount for ${updateSales.rowsAffected} Sales Invoices.`
+    );
 
-  const updatePurchase = db
-    .prepare('UPDATE PurchaseInvoice SET outstandingAmount = grandTotal')
-    .run();
-  console.log(
-    `Reset outstandingAmount for ${updatePurchase.changes} Purchase Invoices (Bills).`
-  );
-
-  db.close();
+    const updatePurchase = await client.execute(
+      'UPDATE PurchaseInvoice SET outstandingAmount = grandTotal'
+    );
+    console.log(
+      `Reset outstandingAmount for ${updatePurchase.rowsAffected} Purchase Invoices (Bills).`
+    );
+  } finally {
+    client.close();
+  }
 }
 
 resetOutstanding();

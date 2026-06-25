@@ -1,4 +1,3 @@
-import BetterSQLite3 from 'better-sqlite3';
 import fs from 'fs-extra';
 import { DatabaseError } from 'fyo/utils/errors';
 import path from 'path';
@@ -195,12 +194,12 @@ export class DatabaseManager extends DatabaseDemuxBase {
     }
 
     const backupPath = await this.#getBackupFilePath();
-    if (!backupPath) {
+    if (!backupPath || !this.db?.kysely) {
       return;
     }
 
-    const db = this.getDriver();
-    await db?.backup(backupPath).then(() => db.close());
+    const escaped = backupPath.replace(/'/g, "''");
+    await sql.raw(`VACUUM INTO '${escaped}'`).execute(this.db.kysely);
   }
 
   async #getBackupFilePath() {
@@ -235,15 +234,6 @@ export class DatabaseManager extends DatabaseDemuxBase {
       .where('parent', '=', 'SystemSettings')
       .executeTakeFirst();
     return query?.value || '0.0.0';
-  }
-
-  getDriver() {
-    const { dbPath } = this.db ?? {};
-    if (!dbPath) {
-      return null;
-    }
-
-    return BetterSQLite3(dbPath, { readonly: true });
   }
 }
 

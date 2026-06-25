@@ -1,9 +1,9 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import os from 'os';
-import BetterSQLite3 from 'better-sqlite3';
+import { createClient } from '@libsql/client';
 
-function deleteEverything() {
+async function deleteEverything() {
   const configPath = join(
     os.homedir(),
     'AppData',
@@ -16,17 +16,30 @@ function deleteEverything() {
 
   if (existsSync(configPath)) {
     try {
-      const config = JSON.parse(readFileSync(configPath, 'utf8'));
-      if (config.files && Array.isArray(config.files)) {
-        dbPaths = config.files.map((f: any) => f.dbPath).filter(Boolean);
+      const config: unknown = JSON.parse(readFileSync(configPath, 'utf8'));
+      if (
+        config &&
+        typeof config === 'object' &&
+        'files' in config &&
+        Array.isArray(config.files)
+      ) {
+        dbPaths = config.files
+          .map((f: unknown) => {
+            if (f && typeof f === 'object' && 'dbPath' in f) {
+              return typeof f.dbPath === 'string' ? f.dbPath : null;
+            }
+            return null;
+          })
+          .filter((p): p is string => p !== null);
       }
-    } catch (err: any) {
-      console.warn(`Warning: Could not parse config.json: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`Warning: Could not parse config.json: ${message}`);
     }
   }
 
   const mainDbPath =
-    process.env.DB_PATH ||
+    process.env['DB_PATH'] ||
     join(process.cwd(), '..', 'GRVEP', 'GRVe Printers.db');
   if (!dbPaths.includes(mainDbPath)) {
     dbPaths.push(mainDbPath);
@@ -36,107 +49,97 @@ function deleteEverything() {
     if (!existsSync(dbPath)) continue;
 
     console.log(`Connecting to database to clear tables: ${dbPath}`);
+    const client = createClient({ url: `file:${dbPath}` });
     try {
-      const db = new BetterSQLite3(dbPath);
-
       // 1. Payments
-      const pCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='Payment'"
-        )
-        .get();
-      if (pCheck) {
-        const r1 = db.prepare('DELETE FROM Payment').run();
-        console.log(`Deleted ${r1.changes} records from Payment`);
+      const pCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='Payment'"
+      );
+      if (pCheck.rows.length > 0) {
+        const r1 = await client.execute('DELETE FROM Payment');
+        console.log(`Deleted ${r1.rowsAffected} records from Payment`);
       }
-      const pfCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='PaymentFor'"
-        )
-        .get();
-      if (pfCheck) {
-        const r2 = db.prepare('DELETE FROM PaymentFor').run();
-        console.log(`Deleted ${r2.changes} records from PaymentFor`);
+
+      const pfCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='PaymentFor'"
+      );
+      if (pfCheck.rows.length > 0) {
+        const r2 = await client.execute('DELETE FROM PaymentFor');
+        console.log(`Deleted ${r2.rowsAffected} records from PaymentFor`);
       }
 
       // 2. Sales Invoices
-      const siCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='SalesInvoice'"
-        )
-        .get();
-      if (siCheck) {
-        const r3 = db.prepare('DELETE FROM SalesInvoice').run();
-        console.log(`Deleted ${r3.changes} records from SalesInvoice`);
+      const siCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='SalesInvoice'"
+      );
+      if (siCheck.rows.length > 0) {
+        const r3 = await client.execute('DELETE FROM SalesInvoice');
+        console.log(`Deleted ${r3.rowsAffected} records from SalesInvoice`);
       }
-      const siiCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='SalesInvoiceItem'"
-        )
-        .get();
-      if (siiCheck) {
-        const r4 = db.prepare('DELETE FROM SalesInvoiceItem').run();
-        console.log(`Deleted ${r4.changes} records from SalesInvoiceItem`);
+
+      const siiCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='SalesInvoiceItem'"
+      );
+      if (siiCheck.rows.length > 0) {
+        const r4 = await client.execute('DELETE FROM SalesInvoiceItem');
+        console.log(`Deleted ${r4.rowsAffected} records from SalesInvoiceItem`);
       }
 
       // 3. Purchase Invoices (Bills)
-      const piCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='PurchaseInvoice'"
-        )
-        .get();
-      if (piCheck) {
-        const r5 = db.prepare('DELETE FROM PurchaseInvoice').run();
-        console.log(`Deleted ${r5.changes} records from PurchaseInvoice`);
+      const piCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='PurchaseInvoice'"
+      );
+      if (piCheck.rows.length > 0) {
+        const r5 = await client.execute('DELETE FROM PurchaseInvoice');
+        console.log(`Deleted ${r5.rowsAffected} records from PurchaseInvoice`);
       }
-      const piiCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='PurchaseInvoiceItem'"
-        )
-        .get();
-      if (piiCheck) {
-        const r6 = db.prepare('DELETE FROM PurchaseInvoiceItem').run();
-        console.log(`Deleted ${r6.changes} records from PurchaseInvoiceItem`);
+
+      const piiCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='PurchaseInvoiceItem'"
+      );
+      if (piiCheck.rows.length > 0) {
+        const r6 = await client.execute('DELETE FROM PurchaseInvoiceItem');
+        console.log(
+          `Deleted ${r6.rowsAffected} records from PurchaseInvoiceItem`
+        );
       }
 
       // 4. Journal Entries
-      const jeCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='JournalEntry'"
-        )
-        .get();
-      if (jeCheck) {
-        const r8 = db.prepare('DELETE FROM JournalEntry').run();
-        console.log(`Deleted ${r8.changes} records from JournalEntry`);
+      const jeCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='JournalEntry'"
+      );
+      if (jeCheck.rows.length > 0) {
+        const r8 = await client.execute('DELETE FROM JournalEntry');
+        console.log(`Deleted ${r8.rowsAffected} records from JournalEntry`);
       }
-      const jeaCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='JournalEntryAccount'"
-        )
-        .get();
-      if (jeaCheck) {
-        const r9 = db.prepare('DELETE FROM JournalEntryAccount').run();
-        console.log(`Deleted ${r9.changes} records from JournalEntryAccount`);
+
+      const jeaCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='JournalEntryAccount'"
+      );
+      if (jeaCheck.rows.length > 0) {
+        const r9 = await client.execute('DELETE FROM JournalEntryAccount');
+        console.log(
+          `Deleted ${r9.rowsAffected} records from JournalEntryAccount`
+        );
       }
 
       // 5. Ledger Entries
-      const aleCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='AccountingLedgerEntry'"
-        )
-        .get();
-      if (aleCheck) {
-        const r7 = db
-          .prepare(
-            "DELETE FROM AccountingLedgerEntry WHERE referenceType IN ('Payment', 'SalesInvoice', 'PurchaseInvoice', 'JournalEntry')"
-          )
-          .run();
-        console.log(`Deleted ${r7.changes} records from AccountingLedgerEntry`);
+      const aleCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='AccountingLedgerEntry'"
+      );
+      if (aleCheck.rows.length > 0) {
+        const r7 = await client.execute(
+          "DELETE FROM AccountingLedgerEntry WHERE referenceType IN ('Payment', 'SalesInvoice', 'PurchaseInvoice', 'JournalEntry')"
+        );
+        console.log(
+          `Deleted ${r7.rowsAffected} records from AccountingLedgerEntry`
+        );
       }
-
-      db.close();
-    } catch (err: any) {
-      console.error(`Error clearing tables in ${dbPath}: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`Error clearing tables in ${dbPath}: ${message}`);
+    } finally {
+      client.close();
     }
   }
 }

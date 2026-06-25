@@ -1,13 +1,7 @@
 import { getDbError, NotFoundError, ValueError } from 'fyo/utils/errors';
-import {
-  Kysely,
-  SqliteDialect,
-  sql,
-  Expression,
-  SqlBool,
-  InsertObject,
-} from 'kysely';
-import BetterSQLite3 from 'better-sqlite3';
+import { Kysely, sql, Expression, SqlBool, InsertObject } from 'kysely';
+import { createClient } from '@libsql/client';
+import { LibsqlDialect } from '@libsql/kysely-libsql';
 import { DB } from './schema';
 import {
   Field,
@@ -95,13 +89,13 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async connect() {
-    const db = new BetterSQLite3(this.dbPath);
-    db.pragma('foreign_keys = ON');
+    const url =
+      this.dbPath === ':memory:' ? 'file::memory:' : `file:${this.dbPath}`;
+    const client = createClient({ url });
     this.kysely = new Kysely<DB>({
-      dialect: new SqliteDialect({
-        database: db,
-      }),
+      dialect: new LibsqlDialect({ client }),
     });
+    await sql`PRAGMA foreign_keys = ON`.execute(this.kysely);
   }
 
   async close() {

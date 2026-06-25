@@ -1,34 +1,62 @@
-import BetterSQLite3 from 'better-sqlite3';
+import { join } from 'path';
+import { createClient } from '@libsql/client';
+import type { Value } from '@libsql/client';
+
 const dbPath =
-  process.env.DB_PATH ||
-  require('path').join(process.cwd(), '..', 'GRVEP', 'GRVe Printers.db');
-const db = new BetterSQLite3(dbPath);
+  process.env['DB_PATH'] ||
+  join(process.cwd(), '..', 'GRVEP', 'GRVe Printers.db');
 
-const checkTable = (name: string) => {
-  const check = db
-    .prepare(
-      `SELECT name FROM sqlite_master WHERE type='table' AND name='${name}'`
-    )
-    .get();
-  if (!check) return { total: 0, submitted: 0 };
-  const total = db.prepare(`SELECT count(*) as count FROM ${name}`).get() as {
-    count: number;
-  };
-  const sub = db
-    .prepare(`SELECT count(*) as count FROM ${name} WHERE submitted = 1`)
-    .get() as { count: number };
-  return { total: total.count, submitted: sub.count };
-};
+const client = createClient({ url: `file:${dbPath}` });
 
-console.log('=== FINAL DATABASE INTEGRITY CHECK ===');
-console.log('SalesInvoice:      ', checkTable('SalesInvoice'));
-console.log('PurchaseInvoice:   ', checkTable('PurchaseInvoice'));
-console.log('Payment:           ', checkTable('Payment'));
-console.log('JournalEntry:      ', checkTable('JournalEntry'));
+async function tableCount(
+  name: string
+): Promise<{ total: number; submitted: number }> {
+  const checkResult = await client.execute({
+    sql: "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+    args: [name],
+  });
+  if (checkResult.rows.length === 0) {
+    return { total: 0, submitted: 0 };
+  }
 
-const ledger = db
-  .prepare('SELECT count(*) as count FROM AccountingLedgerEntry')
-  .get() as { count: number };
-console.log('Accounting Ledger Entries: ', ledger.count);
+  const totalResult = await client.execute(
+    `SELECT count(*) as count FROM ${name}`
+  );
+  const subResult = await client.execute(
+    `SELECT count(*) as count FROM ${name} WHERE submitted = 1`
+  );
 
-db.close();
+  const toNumber = (v: Value): number =>
+    typeof v === 'number' ? v : typeof v === 'bigint' ? Number(v) : 0;
+
+  const total = toNumber(totalResult.rows[0]?.['count'] ?? 0);
+  const submitted = toNumber(subResult.rows[0]?.['count'] ?? 0);
+  return { total, submitted };
+}
+
+async function main() {
+  try {
+    console.log('=== FINAL DATABASE INTEGRITY CHECK ===');
+    console.log('SalesInvoice:      ', await tableCount('SalesInvoice'));
+    console.log('PurchaseInvoice:   ', await tableCount('PurchaseInvoice'));
+    console.log('Payment:           ', await tableCount('Payment'));
+    console.log('JournalEntry:      ', await tableCount('JournalEntry'));
+
+    const ledgerCheck = await client.execute(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='AccountingLedgerEntry'"
+    );
+    if (ledgerCheck.rows.length > 0) {
+      const ledger = await client.execute(
+        'SELECT count(*) as count FROM AccountingLedgerEntry'
+      );
+      const count = ledger.rows[0]?.['count'];
+      console.log('Accounting Ledger Entries: ', count);
+    } else {
+      console.log('Accounting Ledger Entries:  (table absent)');
+    }
+  } finally {
+    client.close();
+  }
+}
+
+main();

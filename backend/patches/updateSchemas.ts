@@ -1,7 +1,8 @@
 import fs from 'fs/promises';
 import { RawValueMap } from 'fyo/core/types';
-import { Kysely, SqliteDialect, sql } from 'kysely';
-import BetterSQLite3 from 'better-sqlite3';
+import { Kysely, sql } from 'kysely';
+import { createClient } from '@libsql/client';
+import { LibsqlDialect } from '@libsql/kysely-libsql';
 import path from 'path';
 import { changeKeys, deleteKeys, getIsNullOrUndef, invertMap } from 'utils';
 import { getCountryCodeFromCountry } from 'utils/misc';
@@ -29,11 +30,9 @@ async function execute(dm: DatabaseManager) {
     return;
   }
 
-  const sourceDb = new BetterSQLite3(dm.db!.dbPath);
+  const sourceClient = createClient({ url: `file:${dm.db!.dbPath}` });
   const sourceKysely = new Kysely<any>({
-    dialect: new SqliteDialect({
-      database: sourceDb,
-    }),
+    dialect: new LibsqlDialect({ client: sourceClient }),
   });
 
   const versionRow = await sourceKysely

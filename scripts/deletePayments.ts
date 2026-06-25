@@ -1,9 +1,9 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import os from 'os';
-import BetterSQLite3 from 'better-sqlite3';
+import { createClient } from '@libsql/client';
 
-function deletePayments() {
+async function deletePayments() {
   const configPath = join(
     os.homedir(),
     'AppData',
@@ -16,17 +16,30 @@ function deletePayments() {
 
   if (existsSync(configPath)) {
     try {
-      const config = JSON.parse(readFileSync(configPath, 'utf8'));
-      if (config.files && Array.isArray(config.files)) {
-        dbPaths = config.files.map((f: any) => f.dbPath).filter(Boolean);
+      const config: unknown = JSON.parse(readFileSync(configPath, 'utf8'));
+      if (
+        config &&
+        typeof config === 'object' &&
+        'files' in config &&
+        Array.isArray(config.files)
+      ) {
+        dbPaths = config.files
+          .map((f: unknown) => {
+            if (f && typeof f === 'object' && 'dbPath' in f) {
+              return typeof f.dbPath === 'string' ? f.dbPath : null;
+            }
+            return null;
+          })
+          .filter((p): p is string => p !== null);
       }
-    } catch (err: any) {
-      console.warn(`Warning: Could not parse config.json: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.warn(`Warning: Could not parse config.json: ${message}`);
     }
   }
 
   const mainDbPath =
-    process.env.DB_PATH ||
+    process.env['DB_PATH'] ||
     join(process.cwd(), '..', 'GRVEP', 'GRVe Printers.db');
   if (!dbPaths.includes(mainDbPath)) {
     dbPaths.push(mainDbPath);
@@ -36,48 +49,40 @@ function deletePayments() {
     if (!existsSync(dbPath)) continue;
 
     console.log(`Connecting to database to clear Payments: ${dbPath}`);
+    const client = createClient({ url: `file:${dbPath}` });
     try {
-      const db = new BetterSQLite3(dbPath);
-
-      const pCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='Payment'"
-        )
-        .get();
-      if (pCheck) {
-        const result1 = db.prepare('DELETE FROM Payment').run();
-        console.log(`Deleted ${result1.changes} records from Payment`);
+      const pCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='Payment'"
+      );
+      if (pCheck.rows.length > 0) {
+        const result1 = await client.execute('DELETE FROM Payment');
+        console.log(`Deleted ${result1.rowsAffected} records from Payment`);
       }
 
-      const pfCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='PaymentFor'"
-        )
-        .get();
-      if (pfCheck) {
-        const result2 = db.prepare('DELETE FROM PaymentFor').run();
-        console.log(`Deleted ${result2.changes} records from PaymentFor`);
+      const pfCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='PaymentFor'"
+      );
+      if (pfCheck.rows.length > 0) {
+        const result2 = await client.execute('DELETE FROM PaymentFor');
+        console.log(`Deleted ${result2.rowsAffected} records from PaymentFor`);
       }
 
-      const aleCheck = db
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='AccountingLedgerEntry'"
-        )
-        .get();
-      if (aleCheck) {
-        const result3 = db
-          .prepare(
-            "DELETE FROM AccountingLedgerEntry WHERE referenceType = 'Payment'"
-          )
-          .run();
+      const aleCheck = await client.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='AccountingLedgerEntry'"
+      );
+      if (aleCheck.rows.length > 0) {
+        const result3 = await client.execute(
+          "DELETE FROM AccountingLedgerEntry WHERE referenceType = 'Payment'"
+        );
         console.log(
-          `Deleted ${result3.changes} records from AccountingLedgerEntry`
+          `Deleted ${result3.rowsAffected} records from AccountingLedgerEntry`
         );
       }
-
-      db.close();
-    } catch (err: any) {
-      console.error(`Error clearing Payments in ${dbPath}: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`Error clearing Payments in ${dbPath}: ${message}`);
+    } finally {
+      client.close();
     }
   }
 }
