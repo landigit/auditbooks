@@ -468,7 +468,7 @@ export class Importer {
     }
 
     if (!tf?.options.length) {
-      return { value: null, rawValue };
+      return { value: rawValue, rawValue };
     }
 
     if (!this.optionsMap.labelValueMap[tf.fieldKey]) {

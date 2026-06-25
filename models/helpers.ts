@@ -541,18 +541,19 @@ export function getInvoiceStatus(doc: RenderData | Doc): InvoiceStatus {
     return 'ReturnIssued';
   }
 
-  if (
-    doc.submitted &&
-    !doc.cancelled &&
-    (doc.outstandingAmount as Money).isZero()
-  ) {
+  const outstanding = Math.abs(
+    parseFloat((doc.outstandingAmount ?? 0).toString())
+  );
+  const grandTotal = Math.abs(parseFloat((doc.grandTotal ?? 0).toString()));
+
+  if (doc.submitted && !doc.cancelled && outstanding < 0.01) {
     return 'Paid';
   }
 
   if (
     doc.submitted &&
     !doc.cancelled &&
-    (doc.outstandingAmount as Money).eq(doc.grandTotal as Money)
+    Math.abs(outstanding - grandTotal) < 0.01
   ) {
     return 'Unpaid';
   }
@@ -564,8 +565,8 @@ export function getInvoiceStatus(doc: RenderData | Doc): InvoiceStatus {
   if (
     doc.submitted &&
     !doc.isCancelled &&
-    (doc.outstandingAmount as Money).isPositive() &&
-    (doc.outstandingAmount as Money).neq(doc.grandTotal as Money)
+    outstanding >= 0.01 &&
+    Math.abs(outstanding - grandTotal) >= 0.01
   ) {
     return 'PartlyPaid';
   }

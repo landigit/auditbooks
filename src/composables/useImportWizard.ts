@@ -173,6 +173,7 @@ export function useImportWizard() {
     const importables = [
       ModelNameEnum.SalesInvoice,
       ModelNameEnum.PurchaseInvoice,
+      ModelNameEnum.SalesQuote,
       ModelNameEnum.Payment,
       ModelNameEnum.Party,
       ModelNameEnum.Item,

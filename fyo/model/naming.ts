@@ -28,6 +28,17 @@ export function isNameAutoSet(schemaName: string, fyo: Fyo): boolean {
 }
 
 export async function setName(doc: Doc, fyo: Fyo) {
+  if (doc.name && !fyo.doc.isTemporaryName(doc.name, doc.schema)) {
+    if (doc.numberSeries !== undefined) {
+      const nameIsOnlyDigits = /^\d+$/.test(doc.name);
+      if (!nameIsOnlyDigits) {
+        return doc.name;
+      }
+    } else {
+      return doc.name;
+    }
+  }
+
   if (doc.schema.naming === 'manual') {
     return;
   }

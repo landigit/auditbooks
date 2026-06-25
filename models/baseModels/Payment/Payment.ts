@@ -713,7 +713,11 @@ export class Payment extends Transactional {
     },
     referenceType: {
       formula: () => {
-        return this.referenceType || undefined;
+        const firstRef = this.for?.[0];
+        if (firstRef?.referenceType) {
+          return firstRef.referenceType;
+        }
+        return undefined;
       },
       dependsOn: ['for'],
     },

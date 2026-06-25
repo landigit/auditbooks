@@ -6,3 +6,4 @@
 **/src-tauri/*
 **/dist/*
 src/public/translations
+pnpm-lock.yaml
