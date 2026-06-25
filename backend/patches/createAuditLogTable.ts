@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { DatabaseManager } from '../database/manager';
 
 /**
@@ -5,34 +6,51 @@ import { DatabaseManager } from '../database/manager';
  * For new databases this happens automatically via migrate().
  */
 async function execute(dm: DatabaseManager) {
-  const knex = dm.db?.knex;
-  if (!knex) return;
+  const kysely = dm.db?.kysely;
+  if (!kysely) return;
 
-  const tableExists = await knex.schema.hasTable('AuditLog');
+  const result = await sql<{ name: string }>`
+    select name from sqlite_schema
+    where type='table' and name='AuditLog'
+  `.execute(kysely);
+  const tableExists = result.rows.length > 0;
   if (tableExists) return;
 
-  await knex.schema.createTable('AuditLog', (table) => {
-    table.increments('name').primary();
-    table.datetime('timestamp').notNullable();
-    table.text('action').notNullable();
-    table.text('documentType').notNullable();
-    table.text('documentName').notNullable();
-    table.text('user').nullable();
-    table.text('ipAddress').nullable();
-    table.text('sessionId').nullable();
-    table.text('changes').nullable();
-    table.text('checksum').nullable();
-    // standard meta fields
-    table.datetime('created').nullable();
-    table.datetime('modified').nullable();
-    table.text('createdBy').nullable();
-    table.text('modifiedBy').nullable();
+  await kysely.schema
+    .createTable('AuditLog')
+    .addColumn('name', 'integer', (col) => col.primaryKey().autoIncrement())
+    .addColumn('timestamp', 'text', (col) => col.notNull())
+    .addColumn('action', 'text', (col) => col.notNull())
+    .addColumn('documentType', 'text', (col) => col.notNull())
+    .addColumn('documentName', 'text', (col) => col.notNull())
+    .addColumn('user', 'text')
+    .addColumn('ipAddress', 'text')
+    .addColumn('sessionId', 'text')
+    .addColumn('changes', 'text')
+    .addColumn('checksum', 'text')
+    .addColumn('created', 'text')
+    .addColumn('modified', 'text')
+    .addColumn('createdBy', 'text')
+    .addColumn('modifiedBy', 'text')
+    .execute();
 
-    // indexes for fast filtering
-    table.index(['timestamp']);
-    table.index(['documentType', 'documentName']);
-    table.index(['action']);
-  });
+  await kysely.schema
+    .createIndex('AuditLog_timestamp_idx')
+    .on('AuditLog')
+    .columns(['timestamp'])
+    .execute();
+
+  await kysely.schema
+    .createIndex('AuditLog_doc_idx')
+    .on('AuditLog')
+    .columns(['documentType', 'documentName'])
+    .execute();
+
+  await kysely.schema
+    .createIndex('AuditLog_action_idx')
+    .on('AuditLog')
+    .columns(['action'])
+    .execute();
 }
 
 export default { execute };

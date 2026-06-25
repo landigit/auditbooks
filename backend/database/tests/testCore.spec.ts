@@ -4,13 +4,13 @@ import { getMapFromList, getValueMapFromList, sleep } from 'utils';
 import { getDefaultMetaFieldValueMap, sqliteTypeMap } from '../../helpers';
 import DatabaseCore from '../core';
 import { FieldValueMap, SqliteTableInfo } from '../types';
+import { sql } from 'kysely';
 import {
   assertDoesNotThrow,
   assertThrows,
   BaseMetaKey,
   getBuiltTestSchemaMap,
 } from './helpers';
-
 const schemaMap = getBuiltTestSchemaMap();
 
 async function getDb(shouldMigrate: boolean = true): Promise<DatabaseCore> {
@@ -34,7 +34,7 @@ describe('DatabaseCore Tests', () => {
     expect(db.schemaMap).toBe(schemaMap);
 
     await assertDoesNotThrow(async () => await db.connect());
-    expect(db.knex).not.toBeUndefined();
+    expect(db.kysely).not.toBeUndefined();
 
     await assertDoesNotThrow(async () => await db.migrate());
     await assertDoesNotThrow(async () => await db.close());
@@ -43,7 +43,11 @@ describe('DatabaseCore Tests', () => {
   test('Pre Migrate TableInfo', async () => {
     const db = await getDb(false);
     for (const schemaName in schemaMap) {
-      const columns = await db.knex?.raw('pragma table_info(??)', schemaName);
+      const columns = (
+        await sql<any>`pragma table_info(${sql.raw(schemaName)})`.execute(
+          db.kysely!
+        )
+      ).rows;
       expect(columns.length).toBe(0);
     }
     await db.close();
@@ -54,10 +58,11 @@ describe('DatabaseCore Tests', () => {
     for (const schemaName in schemaMap) {
       const schema = schemaMap[schemaName] as Schema;
       const fieldMap = getMapFromList(schema.fields, 'fieldname');
-      const columns: SqliteTableInfo[] = await db.knex!.raw(
-        'pragma table_info(??)',
-        schemaName
-      );
+      const columns: SqliteTableInfo[] = (
+        await sql<any>`pragma table_info(${sql.raw(schemaName)})`.execute(
+          db.kysely!
+        )
+      ).rows;
 
       let columnCount = schema.fields.filter(
         (f) => f.fieldtype !== FieldTypeEnum.Table
@@ -71,7 +76,10 @@ describe('DatabaseCore Tests', () => {
 
       for (const column of columns) {
         const field = fieldMap[column.name];
-        const dbColType = sqliteTypeMap[field.fieldtype];
+        let dbColType = sqliteTypeMap[field.fieldtype] as string;
+        if (dbColType === 'float') {
+          dbColType = 'real';
+        }
 
         expect(column.name).toBe(field.fieldname);
         expect(column.type.toLowerCase()).toBe(dbColType);
@@ -107,9 +115,7 @@ describe('DatabaseCore Tests', () => {
 
   test('CRUD single values', async () => {
     const db = await getDb();
-    let rows: Record<string, RawValue>[] = await db.knex!.raw(
-      'select * from SingleValue'
-    );
+    let rows = (await db.getAll('SingleValue', { fields: ['*'] })) as any[];
     const defaultMap = getValueMapFromList(
       (schemaMap.SystemSettings as Schema).fields,
       'fieldname',
@@ -125,7 +131,7 @@ describe('DatabaseCore Tests', () => {
 
     let locale = 'hi-IN';
     await db.insert('SystemSettings', { locale });
-    rows = await db.knex!.raw('select * from SingleValue');
+    rows = (await db.getAll('SingleValue', { fields: ['*'] })) as any[];
     localeRow = rows.find((r) => r.fieldname === 'locale');
 
     expect(localeEntryName).not.toBeUndefined();
@@ -136,7 +142,7 @@ describe('DatabaseCore Tests', () => {
 
     locale = 'ca-ES';
     await db.update('SystemSettings', { locale });
-    rows = await db.knex!.raw('select * from SingleValue');
+    rows = (await db.getAll('SingleValue', { fields: ['*'] })) as any[];
     localeRow = rows.find((r) => r.fieldname === 'locale');
 
     expect(localeEntryName).not.toBeUndefined();
@@ -146,15 +152,15 @@ describe('DatabaseCore Tests', () => {
     expect(localeRow?.created).toBe(localeEntryCreated);
 
     await db.delete('SystemSettings', 'locale');
-    rows = await db.knex!.raw('select * from SingleValue');
+    rows = (await db.getAll('SingleValue', { fields: ['*'] })) as any[];
     expect(rows.length).toBe(1);
     await db.delete('SystemSettings', 'dateFormat');
-    rows = await db.knex!.raw('select * from SingleValue');
+    rows = (await db.getAll('SingleValue', { fields: ['*'] })) as any[];
     expect(rows.length).toBe(0);
 
     const dateFormat = 'dd/mm/yy';
     await db.insert('SystemSettings', { locale, dateFormat });
-    rows = await db.knex!.raw('select * from SingleValue');
+    rows = (await db.getAll('SingleValue', { fields: ['*'] })) as any[];
     expect(rows.length).toBe(2);
 
     const svl = await db.getSingleValues('locale', 'dateFormat');
@@ -175,7 +181,7 @@ describe('DatabaseCore Tests', () => {
   test('CRUD nondependent schema', async () => {
     const db = await getDb();
     const schemaName = 'Customer';
-    let rows = await db.knex!(schemaName);
+    let rows = await db.getAll(schemaName, { fields: ['*'] });
     expect(rows.length).toBe(0);
 
     const metaValues = getDefaultMetaFieldValueMap();
@@ -188,7 +194,7 @@ describe('DatabaseCore Tests', () => {
 
     const updateMap = Object.assign({}, metaValues, { name });
     await db.insert(schemaName, updateMap);
-    rows = await db.knex!(schemaName);
+    rows = await db.getAll(schemaName, { fields: ['*'] });
     let firstRow = rows?.[0];
     expect(rows.length).toBe(1);
     expect(firstRow.name).toBe(name);
@@ -205,7 +211,7 @@ describe('DatabaseCore Tests', () => {
       email,
       modified: new Date().toISOString(),
     });
-    rows = await db.knex!(schemaName);
+    rows = await db.getAll(schemaName, { fields: ['*'] });
     firstRow = rows?.[0];
     expect(rows.length).toBe(1);
     expect(firstRow.name).toBe(name);
@@ -218,7 +224,7 @@ describe('DatabaseCore Tests', () => {
       phone,
       modified: new Date().toISOString(),
     });
-    rows = await db.knex!(schemaName);
+    rows = await db.getAll(schemaName, { fields: ['*'] });
     firstRow = rows?.[0];
     expect(firstRow.email).toBe(email);
     expect(firstRow.phone).toBe(phone);
@@ -234,7 +240,7 @@ describe('DatabaseCore Tests', () => {
     }
 
     await db.delete(schemaName, name);
-    rows = await db.knex!(schemaName);
+    rows = await db.getAll(schemaName, { fields: ['*'] });
     expect(rows.length).toBe(0);
 
     let fvMap = await db.get(schemaName, name);
@@ -244,9 +250,9 @@ describe('DatabaseCore Tests', () => {
     const cTwo = { name: 'Jane Whoe', ...getDefaultMetaFieldValueMap() };
 
     await db.insert(schemaName, cOne);
-    expect((await db.knex!(schemaName)).length).toBe(1);
+    expect((await db.getAll(schemaName, { fields: ['*'] })).length).toBe(1);
     await db.insert(schemaName, cTwo);
-    rows = await db.knex!(schemaName);
+    rows = await db.getAll(schemaName, { fields: ['*'] });
     expect(rows.length).toBe(2);
 
     const cs = [cOne, cTwo];
@@ -273,7 +279,7 @@ describe('DatabaseCore Tests', () => {
     expect(fvMap.email).toBe(email);
 
     await db.delete(schemaName, newName);
-    rows = await db.knex!(schemaName);
+    rows = await db.getAll(schemaName, { fields: ['*'] });
     expect(rows.length).toBe(1);
     expect(rows[0].name).toBe(cTwo.name);
     await db.close();
@@ -395,7 +401,7 @@ describe('DatabaseCore Tests', () => {
       modified: invoice.modified,
     });
 
-    rows = await db.knex!(SalesInvoiceItem);
+    rows = await db.getAll(SalesInvoiceItem);
     expect(rows.length).toBe(2);
 
     await db.delete(SalesInvoice, invoice.name as string);

@@ -3,10 +3,10 @@ import { join } from 'path';
 import { parseCSV, generateCSV } from '../utils/csvParser';
 
 function getPaths(filename: string, convertedFilename: string) {
-  const pathZafar = join(process.cwd(), '..', 'GRVEP', filename);
-  if (existsSync(pathZafar)) {
+  const path = join(process.cwd(), '..', 'GRVEP', filename);
+  if (existsSync(path)) {
     return {
-      input: pathZafar,
+      input: path,
       output: join(process.cwd(), '..', 'GRVEP', convertedFilename),
     };
   }
@@ -25,7 +25,7 @@ function getPaths(filename: string, convertedFilename: string) {
     };
   }
   return {
-    input: pathZafar,
+    input: path,
     output: join(process.cwd(), '..', 'GRVEP', convertedFilename),
   };
 }

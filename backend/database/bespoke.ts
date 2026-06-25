@@ -47,7 +47,7 @@ export class BespokeQueries {
           'total'
         ),
       ])
-      .where('reverted', '=', false)
+      .where('reverted', '=', 0)
       .where('account', 'in', expenseAccountsQuery)
       .where('date', '>=', fromDate)
       .where('date', '<=', toDate)
@@ -74,8 +74,8 @@ export class BespokeQueries {
         sql<number>`sum(baseGrandTotal)`.as('total'),
         sql<number>`sum(outstandingAmount)`.as('outstanding'),
       ])
-      .where('submitted', '=', true)
-      .where('cancelled', '=', false)
+      .where('submitted', '=', 1)
+      .where('cancelled', '=', 0)
       .where('date', '>=', fromDate)
       .where('date', '<=', toDate)
       .executeTakeFirst()) as unknown as TotalOutstanding;
@@ -86,7 +86,7 @@ export class BespokeQueries {
       .kysely!.selectFrom('Account')
       .select('name')
       .where('accountType', 'in', ['Cash', 'Bank'])
-      .where('isGroup', '=', false);
+      .where('isGroup', '=', 0);
 
     const result = await db
       .kysely!.selectFrom('AccountingLedgerEntry')
@@ -95,7 +95,7 @@ export class BespokeQueries {
         sql<number>`sum(debit)`.as('inflow'),
         sql<number>`sum(credit)`.as('outflow'),
       ])
-      .where('reverted', '=', false)
+      .where('reverted', '=', 0)
       .where('account', 'in', cashAndBankAccounts)
       .where('date', '>=', fromDate)
       .where('date', '<=', toDate)
@@ -209,8 +209,8 @@ export class BespokeQueries {
         .selectFrom(schemaName)
         .select('name')
         .where('returnAgainst', '=', docName)
-        .where('submitted', '=', true)
-        .where('cancelled', '=', false)
+        .where('submitted', '=', 1)
+        .where('cancelled', '=', 0)
         .execute()
     ).map((i) => i.name as string);
 
@@ -447,7 +447,7 @@ export class BespokeQueries {
     let invoicesQuery = db
       .kysely!.selectFrom('SalesInvoice')
       .select(['name', 'returnAgainst'])
-      .where('isPOS', '=', true)
+      .where('isPOS', '=', 1)
       .where('date', '>=', fromDate.toISOString())
       .where('date', '<=', toDate.toISOString());
 

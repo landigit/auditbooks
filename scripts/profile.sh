@@ -1,4 +1,4 @@
-#! /usr/bin/env zsh
+#!/bin/sh
 
 # https://nodejs.org/en/docs/guides/simple-profiling/
 

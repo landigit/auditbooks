@@ -1,8 +1,9 @@
-TEST_PATH=$@
+#!/bin/sh
+TEST_PATH="$@"
 
 if [ $# -eq 0 ]
-  then
-    TEST_PATH=./**/tests/**/*.spec.ts
+then
+  TEST_PATH="./**/tests/**/*.spec.ts"
 fi
 
 export IS_TEST=true

@@ -1,57 +1,14 @@
 import { getDbError, NotFoundError, ValueError } from 'fyo/utils/errors';
-import { knex, Knex } from 'knex';
 import {
   Kysely,
-  SqliteAdapter,
-  SqliteIntrospector,
-  SqliteQueryCompiler,
-  Driver,
-  DatabaseConnection,
-  QueryResult,
-  CompiledQuery,
+  SqliteDialect,
+  sql,
   Expression,
   SqlBool,
   InsertObject,
 } from 'kysely';
-import { DatabaseSchema } from './schema';
-
-class KnexConnection implements DatabaseConnection {
-  knex: Knex;
-  constructor(knex: Knex) {
-    this.knex = knex;
-  }
-  async executeQuery<R>(compiledQuery: CompiledQuery): Promise<QueryResult<R>> {
-    const rows = await this.knex.raw(
-      compiledQuery.sql,
-      compiledQuery.parameters as unknown as unknown[]
-    );
-    // Cast dynamic database row results to type R
-    const typedRows = rows as unknown as R[];
-    return {
-      rows: typedRows,
-    };
-  }
-  async *streamQuery<R>(): AsyncGenerator<QueryResult<R>> {
-    throw new Error('Streaming not supported');
-    yield* []; // satisfy eslint require-yield
-  }
-}
-
-class KnexDriver implements Driver {
-  knex: Knex;
-  constructor(knex: Knex) {
-    this.knex = knex;
-  }
-  async init(): Promise<void> {}
-  async acquireConnection(): Promise<DatabaseConnection> {
-    return new KnexConnection(this.knex);
-  }
-  async beginTransaction(): Promise<void> {}
-  async commitTransaction(): Promise<void> {}
-  async rollbackTransaction(): Promise<void> {}
-  async releaseConnection(): Promise<void> {}
-  async destroy(): Promise<void> {}
-}
+import BetterSQLite3 from 'better-sqlite3';
+import { DB } from './schema';
 import {
   Field,
   FieldTypeEnum,
@@ -98,24 +55,14 @@ import {
  */
 
 export default class DatabaseCore extends DatabaseBase {
-  knex?: Knex;
-  kysely?: Kysely<DatabaseSchema>;
+  kysely?: Kysely<DB>;
   typeMap = sqliteTypeMap;
   dbPath: string;
   schemaMap: SchemaMap = {};
-  connectionParams: Knex.Config;
 
   constructor(dbPath?: string) {
     super();
     this.dbPath = dbPath ?? ':memory:';
-    this.connectionParams = {
-      client: 'better-sqlite3',
-      connection: {
-        filename: this.dbPath,
-      },
-      useNullAsDefault: true,
-      asyncStackTraces: process.env.NODE_ENV === 'development',
-    };
   }
 
   static async getCountryCode(dbPath: string): Promise<string> {
@@ -148,21 +95,17 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async connect() {
-    this.knex = knex(this.connectionParams);
-    await this.knex.raw('PRAGMA foreign_keys=ON');
-    this.kysely = new Kysely<DatabaseSchema>({
-      dialect: {
-        createDriver: () => new KnexDriver(this.knex!),
-        createQueryCompiler: () => new SqliteQueryCompiler(),
-        createAdapter: () => new SqliteAdapter(),
-        createIntrospector: (db) => new SqliteIntrospector(db),
-      },
+    const db = new BetterSQLite3(this.dbPath);
+    db.pragma('foreign_keys = ON');
+    this.kysely = new Kysely<DB>({
+      dialect: new SqliteDialect({
+        database: db,
+      }),
     });
   }
 
   async close() {
     await this.kysely?.destroy();
-    await this.knex!.destroy();
   }
 
   async migrate(config: MigrationConfig = {}) {
@@ -242,12 +185,11 @@ export default class DatabaseCore extends DatabaseBase {
 
     let row = [];
     try {
-      const qb = this.knex!(schemaName);
+      let query = (this.kysely as any).selectFrom(schemaName).select('name');
       if (name !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        qb.where({ name });
+        query = query.where('name', '=', name);
       }
-      row = await qb.limit(1);
+      row = await query.limit(1).execute();
     } catch (err) {
       if (getDbError(err as Error) !== NotFoundError) {
         throw err;
@@ -355,7 +297,7 @@ export default class DatabaseCore extends DatabaseBase {
       targetFields = ['*'];
     }
 
-    return (await this.#getQueryBuilder(
+    const query = this.#getKyselySelectQuery(
       schemaName,
       targetFields,
       filters ?? {},
@@ -366,13 +308,15 @@ export default class DatabaseCore extends DatabaseBase {
         orderBy,
         order,
       }
-    )) as FieldValueMap[];
+    );
+    return (await query.execute()) as FieldValueMap[];
   }
 
   async deleteAll(schemaName: string, filters: QueryFilter): Promise<number> {
-    const builder = this.knex!(schemaName);
-    this.#applyFiltersToBuilder(builder, filters);
-    return await builder.delete();
+    let query = (this.kysely as any).deleteFrom(schemaName);
+    query = this.#applyFiltersToKyselyQuery(query, filters);
+    const result = await query.executeTakeFirst();
+    return Number(result.numDeletedRows);
   }
 
   async getSingleValues(
@@ -442,9 +386,11 @@ export default class DatabaseCore extends DatabaseBase {
      * NOTE: rename all links - Not implemented as rename is expensive
      * NOTE: rename in childtables - Not implemented as rename is expensive
      */
-    await this.knex!(schemaName)
-      .update({ name: newName })
-      .where('name', oldName);
+    await (this.kysely as any)
+      .updateTable(schemaName)
+      .set({ name: newName })
+      .where('name', '=', oldName)
+      .execute();
   }
 
   async update(schemaName: string, fieldValueMap: FieldValueMap) {
@@ -477,7 +423,11 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async #tableExists(schemaName: string): Promise<boolean> {
-    return await this.knex!.schema.hasTable(schemaName);
+    const result = await sql<{ name: string }>`
+      select name from sqlite_schema
+      where type='table' and name=${schemaName}
+    `.execute(this.kysely!);
+    return result.rows.length > 0;
   }
 
   async #singleExists(singleSchemaName: string): Promise<boolean> {
@@ -489,152 +439,164 @@ export default class DatabaseCore extends DatabaseBase {
     return count > 0;
   }
 
-  async #dropColumns(schemaName: string, targetColumns: string[]) {
-    await this.knex!.schema.table(schemaName, (table) => {
-      table.dropColumns(...targetColumns);
-    });
-  }
-
   async prestigeTheTable(schemaName: string, tableRows: FieldValueMap[]) {
-    // Alter table hacx for sqlite in case of schema change.
     const tempName = `__${schemaName}`;
 
-    // Create replacement table
-    await this.knex!.schema.dropTableIfExists(tempName);
-    await this.knex!.raw('PRAGMA foreign_keys=OFF');
+    await this.kysely!.schema.dropTable(tempName).ifExists().execute();
+    await sql`PRAGMA foreign_keys=OFF`.execute(this.kysely!);
     await this.#createTable(schemaName, tempName);
 
-    // Insert rows from source table into the replacement table
-    await this.knex!.batchInsert(tempName, tableRows, 200);
+    const validFields = new Set(
+      this.schemaMap[schemaName]!.fields.filter(
+        (f) => !f.computed && f.fieldtype !== FieldTypeEnum.Table
+      ).map((f) => f.fieldname)
+    );
 
-    // Replace with the replacement table
-    await this.knex!.schema.dropTable(schemaName);
-    await this.knex!.schema.renameTable(tempName, schemaName);
-    await this.knex!.raw('PRAGMA foreign_keys=ON');
+    const sanitizedRows = tableRows.map((row) => {
+      const sanitized: any = {};
+      for (const key of Object.keys(row)) {
+        if (validFields.has(key)) {
+          sanitized[key] = row[key];
+        }
+      }
+      return sanitized;
+    });
+
+    await this.#batchInsert(tempName, sanitizedRows, 200);
+
+    await this.kysely!.schema.dropTable(schemaName).execute();
+    await this.kysely!.schema.alterTable(tempName)
+      .renameTo(schemaName)
+      .execute();
+    await sql`PRAGMA foreign_keys=ON`.execute(this.kysely!);
+  }
+
+  async #batchInsert(tableName: string, rows: any[], chunkSize = 200) {
+    for (let i = 0; i < rows.length; i += chunkSize) {
+      const chunk = rows.slice(i, i + chunkSize);
+      await (this.kysely as any).insertInto(tableName).values(chunk).execute();
+    }
   }
 
   async #getTableColumns(schemaName: string): Promise<string[]> {
-    const info: FieldValueMap[] = await this.knex!.raw(
-      `PRAGMA table_info(${schemaName})`
-    );
-    return info.map((d) => d.name as string);
+    const info =
+      await sql<any>`PRAGMA table_info(${sql.raw(schemaName)})`.execute(
+        this.kysely!
+      );
+    return info.rows.map((d) => d.name as string);
   }
 
   async truncate(tableNames?: string[]) {
     if (tableNames === undefined) {
-      const q = (await this.knex!.raw(`
+      const q = await sql<{ name: string }>`
         select name from sqlite_schema
         where type='table'
-        and name not like 'sqlite_%'`)) as { name: string }[];
-      tableNames = q.map((i) => i.name);
+        and name not like 'sqlite_%'
+      `.execute(this.kysely!);
+      tableNames = q.rows.map((i) => i.name);
     }
 
     for (const name of tableNames) {
-      await this.knex!(name).del();
+      await sql`delete from ${sql.raw(name)}`.execute(this.kysely!);
     }
   }
 
   async #getForeignKeys(schemaName: string): Promise<string[]> {
-    const foreignKeyList: FieldValueMap[] = await this.knex!.raw(
-      `PRAGMA foreign_key_list(${schemaName})`
-    );
-    return foreignKeyList.map((d) => d.from as string);
+    const foreignKeyList =
+      await sql<any>`PRAGMA foreign_key_list(${sql.raw(schemaName)})`.execute(
+        this.kysely!
+      );
+    return foreignKeyList.rows.map((d) => d.from as string);
   }
 
-  #getQueryBuilder(
+  #getKyselySelectQuery(
     schemaName: string,
     fields: string[],
     filters: QueryFilter,
     options: GetQueryBuilderOptions
-  ): Knex.QueryBuilder {
-    /* eslint-disable @typescript-eslint/no-floating-promises */
-    const builder = this.knex!.select(fields).from(schemaName);
+  ): any {
+    let query = (this.kysely as any).selectFrom(schemaName);
+    if (fields.length === 1 && fields[0] === '*') {
+      query = query.selectAll();
+    } else {
+      query = query.select(fields);
+    }
 
-    this.#applyFiltersToBuilder(builder, filters);
+    query = this.#applyFiltersToKyselyQuery(query, filters);
 
     const { orderBy, groupBy, order } = options;
     if (Array.isArray(orderBy)) {
-      builder.orderBy(orderBy.map((column) => ({ column, order })));
+      for (const column of orderBy) {
+        query = query.orderBy(column, order);
+      }
     }
 
     if (typeof orderBy === 'string') {
-      builder.orderBy(orderBy, order);
+      query = query.orderBy(orderBy, order);
     }
 
     if (Array.isArray(groupBy)) {
-      builder.groupBy(...groupBy);
+      query = query.groupBy(groupBy);
     }
 
     if (typeof groupBy === 'string') {
-      builder.groupBy(groupBy);
+      query = query.groupBy(groupBy);
     }
 
     if (options.offset) {
-      builder.offset(options.offset);
+      query = query.offset(options.offset);
     }
 
     if (options.limit) {
-      builder.limit(options.limit);
+      query = query.limit(options.limit);
     }
 
-    return builder;
+    return query;
   }
 
-  #applyFiltersToBuilder(builder: Knex.QueryBuilder, filters: QueryFilter) {
-    // {"status": "Open"} => `status = "Open"`
-
-    // {"status": "Open", "name": ["like", "apple%"]}
-    // => `status="Open" and name like "apple%"
-
-    // {"date": [">=", "2017-09-09", "<=", "2017-11-01"]}
-    // => `date >= 2017-09-09 and date <= 2017-11-01`
-
+  #applyFiltersToKyselyQuery(query: any, filters: QueryFilter): any {
     const filtersArray = this.#getFiltersArray(filters);
     for (let i = 0; i < filtersArray.length; i++) {
       const filter = filtersArray[i];
       const field = filter[0] as string;
       const operator = filter[1];
       const comparisonValue = filter[2];
-      const type = i === 0 ? 'where' : 'andWhere';
+
+      let val = comparisonValue;
+      if (Array.isArray(val)) {
+        val = val.map((v) => this.#formatValueForDatabase(v));
+      } else {
+        val = this.#formatValueForDatabase(val);
+      }
 
       if (operator === '=') {
-        builder[type](field, comparisonValue);
+        if (val === null) {
+          query = query.where(field, 'is', null);
+        } else {
+          query = query.where(field, '=', val);
+        }
       } else if (operator === 'in') {
-        const list = Array.isArray(comparisonValue)
-          ? comparisonValue
-          : [comparisonValue];
+        const list = Array.isArray(val) ? val : [val];
         if (list.includes(null)) {
-          const nonNulls = list.filter(Boolean) as string[];
-          if (type === 'where') {
-            builder.where(function () {
-              this.whereIn(field, nonNulls).orWhereNull(field);
-            });
+          const nonNulls = list.filter((v) => v !== null) as string[];
+          if (nonNulls.length > 0) {
+            query = query.where((eb: any) =>
+              eb.or([eb(field, 'in', nonNulls), eb(field, 'is', null)])
+            );
           } else {
-            builder.andWhere(function () {
-              this.whereIn(field, nonNulls).orWhereNull(field);
-            });
+            query = query.where(field, 'is', null);
           }
         } else {
-          const method = type === 'where' ? 'whereIn' : 'whereIn';
-          if (type === 'where') {
-            builder.whereIn(field, list as string[]);
-          } else {
-            builder.whereIn(field, list as string[]);
-          }
+          query = query.where(field, 'in', list as string[]);
         }
       } else if (operator === 'not in') {
-        const list = Array.isArray(comparisonValue)
-          ? comparisonValue
-          : [comparisonValue];
-        if (type === 'where') {
-          builder.whereNotIn(field, list as string[]);
-        } else {
-          builder.whereNotIn(field, list as string[]);
-        }
+        const list = Array.isArray(val) ? val : [val];
+        query = query.where(field, 'not in', list as string[]);
       } else {
-        builder[type](field, operator as string, comparisonValue as string);
+        query = query.where(field, operator, val);
       }
     }
+    return query;
   }
 
   #getFiltersArray(filters: QueryFilter) {
@@ -714,66 +676,37 @@ export default class DatabaseCore extends DatabaseBase {
     return newForeignKeys;
   }
 
-  #buildColumnForTable(table: Knex.AlterTableBuilder, field: Field) {
-    if (field.fieldtype === FieldTypeEnum.Table) {
-      // In case columnType is "Table"
-      // childTable links are handled using the childTable's "parent" field
-      return;
-    }
-
-    const columnType = this.typeMap[field.fieldtype];
-    if (!columnType) {
-      return;
-    }
-
-    const column = table[columnType](
-      field.fieldname
-    ) as Knex.SqlLiteColumnBuilder;
-
-    // primary key
-    if (field.fieldname === 'name') {
-      column.primary();
-    }
-
-    // default value
-    if (field.default !== undefined) {
-      column.defaultTo(field.default);
-    }
-
-    // required
-    if (field.required) {
-      column.notNullable();
-    }
-
-    // link
-    if (field.fieldtype === FieldTypeEnum.Link && field.target) {
-      const targetSchemaName = field.target;
-      const schema = this.schemaMap[targetSchemaName] as Schema;
-      table
-        .foreign(field.fieldname)
-        .references('name')
-        .inTable(schema.name)
-        .onUpdate('CASCADE')
-        .onDelete('RESTRICT');
-    }
-  }
-
   async #alterTable({ schemaName, diff, newForeignKeys }: AlterConfig) {
-    await this.knex!.schema.table(schemaName, (table) => {
-      if (!diff.added.length) {
-        return;
-      }
-
+    if (diff.added.length) {
+      let builder: any = this.kysely!.schema.alterTable(schemaName);
       for (const field of diff.added) {
-        this.#buildColumnForTable(table, field);
+        let columnType = this.typeMap[field.fieldtype] as string;
+        if (!columnType) continue;
+        if (columnType === 'float') {
+          columnType = 'real';
+        }
+
+        builder = builder.addColumn(
+          field.fieldname,
+          columnType as any,
+          (col: any) => {
+            if (field.default !== undefined) {
+              col = col.defaultTo(String(field.default));
+            }
+            if (field.required) {
+              col = col.notNull();
+            }
+            return col;
+          }
+        );
       }
-    });
+      await builder.execute();
+    }
 
     if (diff.removed.length) {
-      await this.#dropColumns(schemaName, diff.removed);
-    }
-
-    if (newForeignKeys.length) {
+      const tableRows = await this.getAll(schemaName);
+      await this.prestigeTheTable(schemaName, tableRows);
+    } else if (newForeignKeys.length) {
       await this.#addForeignKeys(schemaName);
     }
   }
@@ -783,26 +716,76 @@ export default class DatabaseCore extends DatabaseBase {
     const fields = this.schemaMap[schemaName]!.fields.filter(
       (f) => !f.computed
     );
-    return await this.#runCreateTableQuery(tableName, fields);
+    return await this.#runCreateTableQuery(tableName, fields, schemaName);
   }
 
-  #runCreateTableQuery(schemaName: string, fields: Field[]) {
-    return this.knex!.schema.createTable(schemaName, (table) => {
-      for (const field of fields) {
-        this.#buildColumnForTable(table, field);
+  async #runCreateTableQuery(
+    tableName: string,
+    fields: Field[],
+    schemaName: string
+  ) {
+    let builder: any = this.kysely!.schema.createTable(tableName);
+    for (const field of fields) {
+      let columnType = this.typeMap[field.fieldtype] as string;
+      if (!columnType) {
+        continue;
       }
-
-      const schema = this.schemaMap[schemaName];
-      if (schema?.isChild) {
-        table.index(['parent']);
+      if (columnType === 'float') {
+        columnType = 'real';
       }
+      builder = builder.addColumn(
+        field.fieldname,
+        columnType as any,
+        (col: any) => {
+          if (field.fieldname === 'name') {
+            col = col.primaryKey();
+          }
+          if (field.default !== undefined) {
+            col = col.defaultTo(String(field.default));
+          }
+          if (field.required) {
+            col = col.notNull();
+          }
+          return col;
+        }
+      );
+    }
 
-      for (const field of fields) {
-        if (field.fieldtype === 'Link' && field.fieldname !== 'name') {
-          table.index([field.fieldname]);
+    for (const field of fields) {
+      if (field.fieldtype === FieldTypeEnum.Link && field.target) {
+        const targetSchema = this.schemaMap[field.target] as Schema;
+        if (targetSchema) {
+          builder = builder.addForeignKeyConstraint(
+            `${tableName}_${field.fieldname}_fk`,
+            [field.fieldname],
+            targetSchema.name as any,
+            ['name'],
+            (cb: any) => cb.onUpdate('cascade').onDelete('restrict')
+          );
         }
       }
-    });
+    }
+
+    await builder.execute();
+
+    const schema = this.schemaMap[schemaName];
+    if (schema?.isChild) {
+      await this.kysely!.schema.createIndex(`${tableName}_parent_idx`)
+        .on(tableName)
+        .columns(['parent'])
+        .execute();
+    }
+
+    for (const field of fields) {
+      if (field.fieldtype === 'Link' && field.fieldname !== 'name') {
+        await this.kysely!.schema.createIndex(
+          `${tableName}_${field.fieldname}_idx`
+        )
+          .on(tableName)
+          .columns([field.fieldname])
+          .execute();
+      }
+    }
   }
 
   async #getNonExtantSingleValues(singleSchemaName: string) {
@@ -827,7 +810,10 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async #deleteOne(schemaName: string, name: string) {
-    return await this.knex!(schemaName).where('name', name).delete();
+    await (this.kysely as any)
+      .deleteFrom(schemaName)
+      .where('name', '=', name)
+      .execute();
   }
 
   async #deleteSingle(schemaName: string, fieldname: string) {
@@ -838,20 +824,25 @@ export default class DatabaseCore extends DatabaseBase {
     return Number(res.numDeletedRows);
   }
 
-  #deleteChildren(schemaName: string, parentName: string) {
-    return this.knex!(schemaName).where('parent', parentName).delete();
+  async #deleteChildren(schemaName: string, parentName: string) {
+    await (this.kysely as any)
+      .deleteFrom(schemaName)
+      .where('parent', '=', parentName)
+      .execute();
   }
 
-  #runDeleteOtherChildren(
+  async #runDeleteOtherChildren(
     field: TargetField,
     parentName: string,
     added: string[]
   ) {
-    // delete other children
-    return this.knex!(field.target)
-      .where('parent', parentName)
-      .andWhere('name', 'not in', added)
-      .delete();
+    let query = (this.kysely as any)
+      .deleteFrom(field.target)
+      .where('parent', '=', parentName);
+    if (added.length > 0) {
+      query = query.where('name', 'not in', added);
+    }
+    await query.execute();
   }
 
   #prepareChild(
@@ -871,7 +862,10 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async #addForeignKeys(schemaName: string) {
-    const tableRows = await this.knex!.select().from(schemaName);
+    const tableRows = await (this.kysely as any)
+      .selectFrom(schemaName)
+      .selectAll()
+      .execute();
     await this.prestigeTheTable(schemaName, tableRows);
   }
 
@@ -891,11 +885,12 @@ export default class DatabaseCore extends DatabaseBase {
   }
 
   async #getOne(schemaName: string, name: string, fields: string[]) {
-    const fieldValueMap = (await this.knex!.select(fields)
-      .from(schemaName)
-      .where('name', name)
-      .first()) as FieldValueMap;
-    return fieldValueMap;
+    const fieldValueMap = await (this.kysely as any)
+      .selectFrom(schemaName)
+      .select(fields)
+      .where('name', '=', name)
+      .executeTakeFirst();
+    return fieldValueMap as FieldValueMap;
   }
 
   async #getSingle(schemaName: string): Promise<FieldValueMap> {
@@ -919,7 +914,7 @@ export default class DatabaseCore extends DatabaseBase {
     return fieldValueMap;
   }
 
-  #insertOne(schemaName: string, fieldValueMap: FieldValueMap) {
+  async #insertOne(schemaName: string, fieldValueMap: FieldValueMap) {
     if (!fieldValueMap.name) {
       fieldValueMap.name = getRandomString();
     }
@@ -931,10 +926,16 @@ export default class DatabaseCore extends DatabaseBase {
 
     const validMap: FieldValueMap = {};
     for (const { fieldname } of fields) {
-      validMap[fieldname] = fieldValueMap[fieldname];
+      const val = fieldValueMap[fieldname];
+      if (val !== undefined) {
+        validMap[fieldname] = this.#formatValueForDatabase(val);
+      }
     }
 
-    return this.knex!(schemaName).insert(validMap);
+    await (this.kysely as any)
+      .insertInto(schemaName)
+      .values(validMap)
+      .execute();
   }
 
   async #updateSingleValues(
@@ -996,9 +997,7 @@ export default class DatabaseCore extends DatabaseBase {
       name: getRandomString(),
     });
     return await this.kysely!.insertInto('SingleValue')
-      .values(
-        fieldValueMap as unknown as InsertObject<DatabaseSchema, 'SingleValue'>
-      )
+      .values(fieldValueMap as unknown as InsertObject<DB, 'SingleValue'>)
       .execute();
   }
 
@@ -1062,6 +1061,14 @@ export default class DatabaseCore extends DatabaseBase {
   async #updateOne(schemaName: string, fieldValueMap: FieldValueMap) {
     const updateMap = { ...fieldValueMap };
     delete updateMap.name;
+    for (const key of Object.keys(updateMap)) {
+      const val = updateMap[key];
+      if (val === undefined) {
+        delete updateMap[key];
+      } else {
+        updateMap[key] = this.#formatValueForDatabase(val);
+      }
+    }
     const schema = this.schemaMap[schemaName] as Schema;
     for (const { fieldname, fieldtype, computed } of schema.fields) {
       if (fieldtype !== FieldTypeEnum.Table && !computed) {
@@ -1075,9 +1082,11 @@ export default class DatabaseCore extends DatabaseBase {
       return;
     }
 
-    return await this.knex!(schemaName)
-      .where('name', fieldValueMap.name as string)
-      .update(updateMap);
+    await (this.kysely as any)
+      .updateTable(schemaName)
+      .set(updateMap)
+      .where('name', '=', fieldValueMap.name)
+      .execute();
   }
 
   async #insertOrUpdateChildren(
@@ -1128,5 +1137,26 @@ export default class DatabaseCore extends DatabaseBase {
     return this.schemaMap[schemaName]!.fields.filter(
       (f) => f.fieldtype === FieldTypeEnum.Table
     ) as TargetField[];
+  }
+
+  #formatValueForDatabase(value: any): any {
+    if (value === null || value === undefined) {
+      return null;
+    }
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    if (typeof value === 'boolean') {
+      return value ? 1 : 0;
+    }
+    if (typeof value === 'object') {
+      if (typeof value.toISOString === 'function') {
+        return value.toISOString();
+      }
+      if (typeof value.toString === 'function') {
+        return value.toString();
+      }
+    }
+    return value;
   }
 }

@@ -1,3 +1,2 @@
-#! /usr/bin/env zsh
-
-npx tsx $@
+#!/bin/sh
+npx tsx "$@"

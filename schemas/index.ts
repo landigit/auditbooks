@@ -1,5 +1,6 @@
 import { RawCustomField } from 'backend/database/types';
-import { cloneDeep } from 'lodash';
+import lodash from 'lodash';
+const { cloneDeep } = lodash;
 import { getListFromMap, getMapFromList } from 'utils';
 import regionalSchemas from './regional';
 import { appSchemas, coreSchemas, metaSchemas } from './schemas';

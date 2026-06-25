@@ -107,7 +107,10 @@ export class DatabaseManager extends DatabaseDemuxBase {
       return { pre: [], post: [] };
     }
 
-    const query = (await this.db.knex!('PatchRun').select()) as {
+    const query = (await this.db
+      .kysely!.selectFrom('PatchRun')
+      .selectAll()
+      .execute()) as unknown as {
       name: string;
       version?: string;
       failed?: boolean;

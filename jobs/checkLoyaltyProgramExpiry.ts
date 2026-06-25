@@ -18,12 +18,14 @@ export async function checkLoyaltyProgramExpiry() {
     if (loyaltyPrograms) {
       for (const program of loyaltyPrograms) {
         if (program.toDate && new Date(String(program.toDate)) <= currentDate) {
-          await dm.db?.knex!(ModelNameEnum.LoyaltyProgram)
-            .where({ name: program.name })
-            .update({
+          await (dm.db?.kysely as any)
+            .updateTable(ModelNameEnum.LoyaltyProgram)
+            .set({
               status: 'Expired',
               isEnabled: false,
-            });
+            })
+            .where('name', '=', program.name)
+            .execute();
         }
       }
     }

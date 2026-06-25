@@ -61,6 +61,7 @@
           wayland
           libxkbcommon
           mold
+          xdg-utils
         ];
 
         packages = commonPackages ++ (if isDarwin then [ ] else linuxPackages);
